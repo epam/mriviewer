@@ -1,0 +1,37 @@
+
+# node modules, need for development
+node_modules/
+
+dist/
+
+# temporary folder for develpoment run on localhost
+.tmp/
+
+# bowere modules, need for development
+bower_components/
+
+test/bower_components/
+
+coverage/
+
+# Logs/
+logs
+
+# Compiled binary addons (http://nodejs.org/api/addons.html)
+build/Release/
+
+# Compiled autodocumentation
+build/apidocs/
+
+# documentation
+.doc/
+.doc_opensource/
+
+# Builded autodocumentation for thos project
+docs/auto/
+
+.sonar/
+
+.idea/
+
+

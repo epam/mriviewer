@@ -1,0 +1,819 @@
+/*
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+*/
+
+/**
+* 3D volume/isosurface rendering engine
+* @module app/scripts/graphics3d/graphics3d
+*/
+
+import THREE from 'n3d-threejs';
+import swal from 'sweetalert';
+
+import OrbitControl from '../controls/orbitcontrol';
+import MaterialBF from '../gfx/matbackface';
+import MaterialFF from '../gfx/matfrontface';
+import MaterialRenderToTexture from '../gfx/matrendertotexture';
+import MaterialInterpolation from '../gfx/matinterpolation';
+import MaterialVolumeRender from '../gfx/matvolumerender';
+import MaterialBlur from '../gfx/matblur';
+import GlCheck from './glcheck';
+
+/**  @constant {number} SCENE_3D_BACKGROUND_COLOR - backgroudn color for 3d window */
+const SCENE_3D_BACKGROUND_COLOR = 0x0;// 0xbbbbff;
+const VOLUME_COLOR1_MIN_R = 0.1;
+const VOLUME_COLOR1_MIN_G = 0.0;
+const VOLUME_COLOR1_MIN_B = 0.0;
+const VOLUME_COLOR3_MIN_R = 0.0;
+const VOLUME_COLOR3_MIN_G = 0.8;
+const VOLUME_COLOR3_MIN_B = 0.0;
+const VOLUME_COLOR1_MAX_R = 1.0;
+const VOLUME_COLOR1_MAX_G = 0.0;
+const VOLUME_COLOR1_MAX_B = 0.0;
+const VOLUME_COLOR2_MIN_R = 1.0;
+const VOLUME_COLOR2_MIN_G = 0.902;
+const VOLUME_COLOR2_MIN_B = 0.773;
+const VOLUME_COLOR2_MAX_R = 0.5;
+const VOLUME_COLOR2_MAX_G = 0.4;
+const VOLUME_COLOR2_MAX_B = 0.3;
+const STEP_SIZE1 = 0.0025;
+const STEP_SIZE2 = 0.0033;
+const STEP_SIZE3 = 0.0025;
+//const STEP_SIZE3 = 0.0039;
+const STEP_SIZE4 = 0.0029;
+const OPACITY_SCALE = 75.0;
+const MIN_FPS = 10;
+
+// Special values to check frame buffer
+const CHECK_MODE_NOT_CHECKED = 0;
+const CHECK_MODE_RESULT_OK = 1;
+const CHECK_MODE_RESULT_BAD = 2;
+
+/** Class Graphics3d is used for 3d render */
+export default class Graphics3d {
+
+  /**
+  * Initialize render
+  * @param (object) engine2d - object container for 2d rendering
+  * @param (object) root3dContainer - object container for 3d rendering
+  * @param (object) curFileDataType - file type
+  * @return {Object} Instance of this class (singleton)
+  */
+  constructor(engine2d, root3dContainer, curFileDataType) {
+    this.curFileDataType = curFileDataType;
+    this.scene = new THREE.Scene();
+    this.engine2d = engine2d;
+    this.mesh = null;
+    this.renderer = null;
+    this.volTexture = null;
+    this.bfTexture = null;
+    this.ffTexture = null;
+    this.renderToTexture = null;
+    this.geometry = null;
+    this.matBF = null;
+    this.matFF = null;
+    this.matRenderToTexture = null;
+    this.matInterpolation = null;
+    this.matVolumeRender = null;
+    this.checkFrameBufferMode = CHECK_MODE_NOT_CHECKED;
+    // eslint-disable-next-line
+    this.planeCenterPt = new THREE.Vector3(-0.5, -0.5, 0.5 * 1.4);
+    // this.renderer = new THREE.WebGLRenderer({ antialias: false, logarithmicDepthBuffer: false });
+    this.renderer = new THREE.WebGLRenderer({ antialias: false });
+    this.renderer.autoClearStencil = false;
+    this.renderer.autoClearColor = false;
+    if (!this.renderer) {
+      console.log('cant create 3d renderer');
+    }
+
+    // Assign current window to render area
+    this.SCENE_3D_WINDOW_W = root3dContainer.width();
+    // eslint-disable-next-line
+    this.SCENE_3D_WINDOW_H = root3dContainer.height() - 5;
+    const camAspect = this.SCENE_3D_WINDOW_W / this.SCENE_3D_WINDOW_H;
+    // eslint-disable-next-line
+    this.camera = new THREE.PerspectiveCamera(60, camAspect, 0.01, 100);
+    this.camera.position.z = 10;
+    this.renderer.setSize(this.SCENE_3D_WINDOW_W, this.SCENE_3D_WINDOW_H);
+
+    this.renderer.setClearColor(SCENE_3D_BACKGROUND_COLOR);
+
+    if (root3dContainer.length === 1) {
+      root3dContainer.append(this.renderer.domElement);
+    } else {
+      console.log('containter with id=med3web-container-3d not found in scene');
+    }
+    // When rotating an object, it is necessary to reverse the rotation of
+    // the cutting plane and the direction vector onto the light source
+    this.orbitControl = new OrbitControl(root3dContainer, this.camera, this.scene, this.mesh, () => {
+      this.updateCutPlanes();
+      this.updateLightDir();
+    });
+    this.orbitControl.addCallbacks();
+    this.renderer.gammaInput = true;
+    this.renderer.gammaOutput = true;
+
+    this.RENDER_STATE = {
+      ENABLED : 0,
+      ONCE : 1,
+      DISABLED : 2
+    };
+
+    this.renderState = this.RENDER_STATE.ENABLED;
+    this.fps = 0;
+    root3dContainer.on('mousedown', () => { this.onMouseDown(); });
+    root3dContainer.on('mouseup', () => { this.onMouseUp(); });
+    root3dContainer.on('DOMMouseScroll', (e) => { this.onMouseWheel(e); });
+    root3dContainer.on('mousewheel', (e) => { this.onMouseWheel(e); });
+  }
+
+
+  setFileDataType(curFileDataType) {
+    this.curFileDataType = curFileDataType;
+  }
+
+  /**
+  * Returns true if the maderial for VolumeRender is set
+  */
+  isVolumeLoaded() {
+    return (this.matVolumeRender !== null);
+  }
+
+  /**
+  * Setting a variable for conditional compilation (Volume Render)
+  */
+  switchToVolumeRender() {
+    this.matVolumeRender.defines.isoRenderFlag = 0;
+    this.matVolumeRender.needsUpdate = true;
+    this.matInterpolation.defines.isoRenderFlag = 0;
+    this.matInterpolation.needsUpdate = true;
+    this.matRenderToTexture.defines.isoRenderFlag = 0;
+    this.matRenderToTexture.needsUpdate = true;
+    this.renderState = this.RENDER_STATE.ONCE;
+  }
+
+  /**
+  * Setting a variable for conditional compilation (Isosurface render)
+  */
+  switchToIsosurfRender() {
+    this.matVolumeRender.defines.isoRenderFlag = 1;
+    this.matVolumeRender.needsUpdate = true;
+    this.matInterpolation.defines.isoRenderFlag = 1;
+    this.matInterpolation.needsUpdate = true;
+    this.matRenderToTexture.defines.isoRenderFlag = 1;
+    this.matRenderToTexture.needsUpdate = true;
+    this.renderState = this.RENDER_STATE.ONCE;
+  }
+
+  /**
+   * Setting a variable for conditional compilation (Max projection render)
+  */
+  switchToFLATRender() {
+    this.matVolumeRender.defines.isoRenderFlag = 2;
+    this.matVolumeRender.needsUpdate = true;
+    this.matInterpolation.defines.isoRenderFlag = 2;
+    this.matInterpolation.needsUpdate = true;
+    this.matRenderToTexture.defines.isoRenderFlag = 2;
+    this.matRenderToTexture.needsUpdate = true;
+    this.renderState = this.RENDER_STATE.ONCE;
+  }
+
+  /**
+   * Setting isosurface threshold
+  */
+  setIsoThresholdValue(sliderValue) {
+    this.matRenderToTexture.uniforms.isoThreshold.value = sliderValue;
+    this.matRenderToTexture.uniforms.isoThreshold.needsUpdate = true;
+    this.matVolumeRender.uniforms.isoThreshold.value = sliderValue;
+    this.matVolumeRender.uniforms.isoThreshold.needsUpdate = true;
+    this.renderState = this.RENDER_STATE.ONCE;
+  }
+
+  /**
+  * Setting volume opacity
+  * @param (number) sliderValue - slider ration in 0..1
+  */
+  setOpacityBarrier(sliderValue) {
+    this.matVolumeRender.uniforms.opacityBarrier.value = OPACITY_SCALE * sliderValue;
+    this.matVolumeRender.uniforms.opacityBarrier.needsUpdate = true;
+    this.matRenderToTexture.uniforms.opacityBarrier.value = OPACITY_SCALE * sliderValue;
+    this.matRenderToTexture.uniforms.opacityBarrier.needsUpdate = true;
+  }
+
+  /**
+  * Setting Brightness
+  * @param (number) value - brightness of ???
+  */
+  updateBrightness(value) {
+    this.matRenderToTexture.uniforms.brightness3D.value = value;
+    this.matRenderToTexture.uniforms.brightness3D.needsUpdate = true;
+    this.matVolumeRender.uniforms.brightness3D.value = value;
+    this.matVolumeRender.uniforms.brightness3D.needsUpdate = true;
+  }
+
+  /**
+  * Setting Contrast
+  * @param (number) value - constrast of ???
+  */
+  updateContrast(value) {
+    this.matRenderToTexture.uniforms.contrast3D.value = value;
+    this.matVolumeRender.uniforms.contrast3D.value = value;
+    this.matRenderToTexture.uniforms.contrast3D.needsUpdate = true;
+    this.matVolumeRender.uniforms.contrast3D.needsUpdate = true;
+  }
+
+  /**
+  * Setting Cut Plane
+  * @param (number) value - ???
+  */
+  updateZCutPlane(value) {
+    const Z_MULTIPLIER = 1.4;
+    this.planeCenterPt.z = Z_MULTIPLIER * value;
+    this.updateCutPlanes();
+  }
+
+  /**
+  * Setting Transfer Function Params
+  * @param (array) values - 3 threshold values for volumetric render
+  */
+  setTransferFuncVec3(values, colorFlag) {
+    if (colorFlag === 0) {
+      this.matRenderToTexture.uniforms.t_function1min.value =
+        new THREE.Vector4(VOLUME_COLOR1_MIN_R, VOLUME_COLOR1_MIN_G, VOLUME_COLOR1_MIN_B, values[0]);
+    } else {
+      this.matRenderToTexture.uniforms.t_function1min.value =
+        new THREE.Vector4(VOLUME_COLOR3_MIN_R, VOLUME_COLOR3_MIN_G, VOLUME_COLOR3_MIN_B, values[0]);
+    }
+    this.matRenderToTexture.uniforms.t_function1min.needsUpdate = true;
+    this.matRenderToTexture.uniforms.t_function1max.value =
+      new THREE.Vector4(VOLUME_COLOR1_MAX_R, VOLUME_COLOR1_MAX_G, VOLUME_COLOR1_MAX_B, values[1]);
+    this.matRenderToTexture.uniforms.t_function1max.needsUpdate = true;
+    this.matRenderToTexture.uniforms.t_function2min.value =
+      new THREE.Vector4(VOLUME_COLOR2_MIN_R, VOLUME_COLOR2_MIN_G, VOLUME_COLOR2_MIN_B, values[2]);
+    this.matRenderToTexture.uniforms.t_function2min.needsUpdate = true;
+    this.matRenderToTexture.uniforms.t_function2max.value =
+      new THREE.Vector4(VOLUME_COLOR2_MAX_R, VOLUME_COLOR2_MAX_G, VOLUME_COLOR2_MAX_B, values[2]);
+    this.matRenderToTexture.uniforms.t_function2max.needsUpdate = true;
+    this.matRenderToTexture.uniforms.stepSize.value =
+      new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
+    this.matRenderToTexture.uniforms.stepSize.needsUpdate = true;
+    if (colorFlag === 0) {
+      this.matVolumeRender.uniforms.t_function1min.value =
+        new THREE.Vector4(VOLUME_COLOR1_MIN_R, VOLUME_COLOR1_MIN_G, VOLUME_COLOR1_MIN_B, values[0]);
+    } else {
+      this.matVolumeRender.uniforms.t_function1min.value =
+        new THREE.Vector4(VOLUME_COLOR3_MIN_R, VOLUME_COLOR3_MIN_G, VOLUME_COLOR3_MIN_B, values[0]);
+    }
+    this.matVolumeRender.uniforms.t_function1min.needsUpdate = true;
+    this.matVolumeRender.uniforms.t_function1max.value =
+      new THREE.Vector4(VOLUME_COLOR1_MAX_R, VOLUME_COLOR1_MAX_G, VOLUME_COLOR1_MAX_B, values[1]);
+    this.matVolumeRender.uniforms.t_function1max.needsUpdate = true;
+    this.matVolumeRender.uniforms.t_function2min.value =
+      new THREE.Vector4(VOLUME_COLOR2_MIN_R, VOLUME_COLOR2_MIN_G, VOLUME_COLOR2_MIN_B, values[2]);
+    this.matVolumeRender.uniforms.t_function2min.needsUpdate = true;
+    this.matVolumeRender.uniforms.t_function2max.value =
+      new THREE.Vector4(VOLUME_COLOR2_MAX_R, VOLUME_COLOR2_MAX_G, VOLUME_COLOR2_MAX_B, values[2]);
+    this.matVolumeRender.uniforms.t_function2max.needsUpdate = true;
+    this.matVolumeRender.uniforms.stepSize.value =
+      new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
+    this.matVolumeRender.uniforms.stepSize.needsUpdate = true;
+  }
+
+  /**
+  * Filtering the source data and building the normals on the GPU
+  * @param (object) volumeTexIn - ???
+  * @param (object) bufferRgba - ???
+  */
+  processVolumeData(volumeTexIn, bufferRgba) {
+    const header = this.engine2d.m_volumeHeader;
+    const xDim = header.m_pixelWidth;
+    const yDim = header.m_pixelHeight;
+    const zDim = header.m_pixelDepth;
+
+    const zDimSqrt = Math.ceil(Math.sqrt(zDim));
+    const xTex = xDim * zDimSqrt;
+    const yTex = yDim * zDimSqrt;
+    const numPixelsBuffer = xTex * yTex;
+
+    const sceneBlur = new THREE.Scene();
+    // eslint-disable-next-line
+    const cameraOrtho = new THREE.OrthographicCamera(xTex / -2, xTex / 2, yTex / 2, yTex / -2, 0.1, 100);
+    const rendererBlur = new THREE.WebGLRenderer();
+    const geometryBlur = new THREE.PlaneGeometry(1.0, 1.0);
+    // eslint-disable-next-line
+    const bufferFrame = new Uint8Array(4 * numPixelsBuffer);
+    rendererBlur.setSize(xTex, yTex);
+    const bufferTexture = new THREE.WebGLRenderTarget(xTex, yTex);
+    const gl = rendererBlur.getContext();
+
+    const texelSize = new THREE.Vector3(1.0 / xDim, 1.0 / yDim, 1.0 / zDim);
+    const matBlur = new MaterialBlur();
+    matBlur.create(volumeTexIn, texelSize, (mat) => {
+      const mesh = new THREE.Mesh(geometryBlur, mat);
+      mat.uniforms.tileCountX.value = zDimSqrt;
+      mat.uniforms.volumeSizeZ.value = zDim;
+      sceneBlur.add(mesh);
+
+      rendererBlur.render(sceneBlur, cameraOrtho, bufferTexture, true);
+
+      // Reading result from video memory
+      gl.readPixels(0, 0, xTex, yTex, gl.RGBA, gl.UNSIGNED_BYTE, bufferFrame);
+      for (let pix = 0; pix < numPixelsBuffer; pix++) {
+        // eslint-disable-next-line
+        bufferRgba[pix * 4 + 0] = bufferFrame[pix * 4 + 0];
+        // eslint-disable-next-line
+        bufferRgba[pix * 4 + 1] = bufferFrame[pix * 4 + 1];
+        // eslint-disable-next-line
+        bufferRgba[pix * 4 + 2] = bufferFrame[pix * 4 + 2];
+        // eslint-disable-next-line
+        bufferRgba[pix * 4 + 3] = bufferFrame[pix * 4 + 3];
+      }
+    });
+  }
+
+  /**
+  * Create 3D texture containing filtered source data and calculated normal values
+  * @return (object) Created texture
+  */
+  createTexture() {
+    //
+    // Some notes about tetxure layout.
+    // Actually we have replaces3d texture with 2d texture (large size).
+    // Idea: pack 2d slices of original texture into single 2d texture, looking
+    // like tile map
+    //
+    // Let we have 7 slices on z direction and want to create
+    // 2d visualization in (x,y) plane.
+    // We can arrange 7 slices in a following manner (ooo - means unused)
+    //
+    // +-----+-----+-----+
+    // |     |     |     |
+    // |  0  |  1  |  2  |
+    // |     |     |     |
+    // +-----+-----+-----+
+    // |     |     |     |
+    // |  3  |  4  |  5  |
+    // |     |     |     |
+    // +-----+-----+-----+
+    // |     |00000|00000|
+    // |  6  |00000|00000|
+    // |     |00000|00000|
+    // +-----+-----+-----+
+    //
+    // Numbers 0..6 inside tiles shows original tiles indices
+    //
+    // Shader parameter
+    // tileCointX: number of tiles in hor direction
+    // volumeSizeZ: number of slices in z directiion
+    //
+    const header = this.engine2d.m_volumeHeader;
+    const arrPixels = this.engine2d.m_volumeData;
+    const xDim = header.m_pixelWidth;
+    const yDim = header.m_pixelHeight;
+    const zDim = header.m_pixelDepth;
+    const zDimSqrt = Math.ceil(Math.sqrt(zDim));
+    const xTex = xDim * zDimSqrt;
+    const yTex = yDim * zDimSqrt;
+    const numPixelsBuffer = xTex * yTex;
+    // eslint-disable-next-line
+    const bufferRgba = new Uint8Array(4 * numPixelsBuffer);
+    for (let yTile = 0; yTile < zDimSqrt; yTile++) {
+      const yTileOff = (yTile * yDim) * xTex;
+      for (let xTile = 0; xTile < zDimSqrt; xTile++) {
+        const xTileOff = xTile * xDim;
+        const zVol = xTile + (yTile * zDimSqrt);
+        if (zVol >= zDim) {
+          break;
+        }
+        const zVolOff = zVol * xDim * yDim;
+        for (let y = 0; y < yDim; y++) {
+          const yVol = y;
+          const yVolOff = yVol * xDim;
+          for (let x = 0; x < xDim; x++) {
+            const xVol = x;
+            const val = arrPixels[xVol + yVolOff + zVolOff];
+            const offDst = yTileOff + xTileOff + (y * xTex) + x;
+            const offDst3 = (offDst + offDst + offDst + offDst);
+            // eslint-disable-next-line
+            bufferRgba[offDst3 + 0] = val;
+            // eslint-disable-next-line
+            bufferRgba[offDst3 + 1] = val;
+            // eslint-disable-next-line
+            bufferRgba[offDst3 + 2] = val;
+            // eslint-disable-next-line
+            bufferRgba[offDst3 + 3] = val;
+          }
+        }
+      }
+    }
+    const textureOut = new THREE.DataTexture(bufferRgba, xTex, yTex, THREE.RGBAFormat);
+    textureOut.needsUpdate = true;
+    textureOut.wrapS = THREE.ClampToEdgeWrapping;
+    textureOut.wrapT = THREE.ClampToEdgeWrapping;
+    if (this.isRoiVolume === false) {
+      textureOut.magFilter = THREE.LinearFilter;
+      textureOut.minFilter = THREE.LinearFilter;
+      // perform additional texture gauss smoothing
+      this.processVolumeData(textureOut, bufferRgba);
+    } else {
+      textureOut.magFilter = THREE.NearestFilter;
+      textureOut.minFilter = THREE.NearestFilter;
+    }
+    textureOut.needsUpdate = true;
+
+    return textureOut;
+  }
+
+  /**
+  * Compute 3D texture coordinates on BBOX
+  * @param (object) nonEmptyBoxMin - Min corner for non empty box in volume
+  * @param (object) nonEmptyBoxMax - Max corner for non empty box in volume
+  */
+  computeGeometryUVs(nonEmptyBoxMin, nonEmptyBoxMax) {
+    this.geometry.computeBoundingBox();
+
+    const VAL_3 = 3;
+    const HALF = 0.5;
+
+    const max = this.geometry.boundingBox.max;
+    const min = this.geometry.boundingBox.min;
+    const offset = new THREE.Vector3(0 - min.x, 0 - min.y, 0 - min.z);
+    const range = new THREE.Vector3(max.x - min.x, max.y - min.y, max.z - min.z);
+    const uvw = new Float32Array(this.geometry.getAttribute('position').count * VAL_3);
+
+    for (let i = 0; i < this.geometry.getAttribute('position').count; i++) {
+      const vx = this.geometry.getAttribute('position').getX(i);
+      const vy = this.geometry.getAttribute('position').getY(i);
+      const vz = this.geometry.getAttribute('position').getZ(i);
+      // eslint-disable-next-line
+      uvw[i * VAL_3 + 0] = -(vx + offset.x) * (nonEmptyBoxMax.x - nonEmptyBoxMin.x) / range.x + nonEmptyBoxMin.x + HALF;
+      // eslint-disable-next-line
+      uvw[i * VAL_3 + 1] = (vy + offset.y) * (nonEmptyBoxMax.y - nonEmptyBoxMin.y) / range.y + nonEmptyBoxMin.y - HALF;
+      // eslint-disable-next-line
+      uvw[i * VAL_3 + 2] = (vz + offset.z) * (nonEmptyBoxMax.z - nonEmptyBoxMin.z) / range.z + nonEmptyBoxMin.z - HALF;
+    }
+    this.geometry.addAttribute('uvw', new THREE.BufferAttribute(uvw, VAL_3));
+    this.geometry.getAttribute('uvw').needsUpdate = true;
+  }
+
+  /**
+  * Create geometry and materials for 3D rendering
+  * @param (object) window - browser related
+  * @param (object) box - physic volume box dimensions
+  * @param (object) nonEmptyBoxMin - Min corner for non empty box in volume
+  * @param (object) nonEmptyBoxMin - Min corner for non empty box in volume
+  * @param (bool) isRoiVolume) - is roi volume
+  */
+  callbackCreateCubeVolumeBF(window, box, nonEmptyBoxMin, nonEmptyBoxMax, isRoiVolume = false) {
+    let matBfThreeGS = null;
+    let matFfThreeGS = null;
+    let matRenderToTextureThreeGS = null;
+    let matIntetpl = null;
+    let matSkullThreeGS = null;
+    if (!this.scene) {
+      return;
+    }
+    // remove old mesh
+    if (this.mesh !== null) {
+      this.scene.remove(this.mesh);
+    }
+    if (this.geometry !== null) {
+      this.geometry.dispose();
+    }
+    this.mesh = null;
+    // Create geometry
+    this.geometry = new THREE.BufferGeometry();
+    let sideMax = (box.x > box.y) ? box.x : box.y;
+    sideMax = (box.z > sideMax) ? box.z : sideMax;
+    const vBoxVirt = {
+      x: box.x / sideMax,
+      y: box.y / sideMax,
+      z: box.z / sideMax,
+    };
+    this.geometry.fromGeometry(new THREE.BoxGeometry(vBoxVirt.x, vBoxVirt.y, vBoxVirt.z));
+    // Compute texture coordinates
+    this.computeGeometryUVs(nonEmptyBoxMin, nonEmptyBoxMax);
+    // Set camera
+    // eslint-disable-next-line
+    this.camera.position.set(0.0, 0.0, 1.5);
+    // eslint-disable-next-line
+    this.camera.lookAt(new THREE.Vector3(0.0, 0.0, 0.0));
+    // Create 3D texture
+    const header = this.engine2d.m_volumeHeader;
+    const zDim = header.m_pixelDepth;
+    const zDimSqrt = Math.ceil(Math.sqrt(zDim));
+    if (this.volTexture) {
+      this.volTexture.dispose();
+    }
+    this.isRoiVolume = isRoiVolume;
+    this.volTexture = this.createTexture();
+    if (this.renderer.getContext().getExtension('OES_texture_float')) {
+      if (this.bfTexture) {
+        this.bfTexture.dispose();
+      }
+      // Create Render Target for back face render
+      this.bfTexture = new THREE.WebGLRenderTarget(this.SCENE_3D_WINDOW_W * window.devicePixelRatio,
+        this.SCENE_3D_WINDOW_H * window.devicePixelRatio, {
+          minFilter: THREE.NearestFilter,
+          magFilter: THREE.NearestFilter,
+          format: THREE.RGBAFormat,
+          type: THREE.FloatType,
+          depthBuffer: false,
+        });
+
+      if (this.ffTexture) {
+        this.ffTexture.dispose();
+      }
+      // Create Render Target for front face render
+      this.ffTexture = new THREE.WebGLRenderTarget(this.SCENE_3D_WINDOW_W * window.devicePixelRatio,
+        this.SCENE_3D_WINDOW_H * window.devicePixelRatio, {
+          minFilter: THREE.NearestFilter,
+          magFilter: THREE.NearestFilter,
+          format: THREE.RGBAFormat,
+          type: THREE.FloatType,
+          depthBuffer: false,
+        });
+
+      if (this.renderfTexture) {
+        this.renderToTexture.dispose();
+      }
+      // Create Render Target for volume render to texture
+      const VAL_3 = 3;
+      this.renderToTexture = new THREE.WebGLRenderTarget((this.SCENE_3D_WINDOW_W * window.devicePixelRatio) / VAL_3,
+        (this.SCENE_3D_WINDOW_H * window.devicePixelRatio) / VAL_3, {
+          minFilter: THREE.NearestFilter,
+          magFilter: THREE.NearestFilter,
+          format: THREE.RGBAFormat,
+          type: THREE.FloatType,
+          depthBuffer: false,
+        });
+    } else {
+      console.log('cant create float texture');
+    }
+
+    // Create material for back face render
+    matBfThreeGS = new MaterialBF();
+    matBfThreeGS.create((mat) => {
+      this.matBF = mat;
+    });
+
+    // Create material for front face render
+    matFfThreeGS = new MaterialFF();
+    matFfThreeGS.m_uniforms.PlaneX.value = new THREE.Vector4(-1.0, 0.0, 0.0, 0.5);
+    matFfThreeGS.m_uniforms.PlaneY.value = new THREE.Vector4(0.0, -1.0, 0.0, 0.5);
+    matFfThreeGS.m_uniforms.PlaneZ.value = new THREE.Vector4(0.0, 0.0, -1.0, 0.5);
+    matFfThreeGS.create(this.bfTexture, (mat) => {
+      this.matFF = mat;
+    });
+
+    // Create mesh
+    this.mesh = new THREE.Mesh(this.geometry);
+    this.mesh.rotation.y += this.curFileDataType.startRotY;
+    this.mesh.rotation.x += this.curFileDataType.startRotX;
+    console.log(`startRot = ${this.curFileDataType.startRotX} ${this.curFileDataType.startRotY}`);
+    this.orbitControl.setMesh(this.mesh);
+
+    // Create material for volume render to texture
+    matRenderToTextureThreeGS = new MaterialRenderToTexture();
+    matRenderToTextureThreeGS.m_uniforms.colorMap1D.value = this.colorMapTexture;
+    matRenderToTextureThreeGS.create(this.volTexture, this.bfTexture, this.ffTexture, (mat) => {
+      mat.uniforms.t_function1min.value =
+        new THREE.Vector4(VOLUME_COLOR1_MIN_R, VOLUME_COLOR1_MIN_G, VOLUME_COLOR1_MIN_B,
+          this.curFileDataType.thresholdTissue1);
+      mat.uniforms.t_function1max.value =
+        new THREE.Vector4(VOLUME_COLOR1_MAX_R, VOLUME_COLOR1_MAX_G, VOLUME_COLOR1_MAX_B,
+          this.curFileDataType.thresholdTissue2);
+      mat.uniforms.t_function2min.value =
+        new THREE.Vector4(VOLUME_COLOR2_MIN_R, VOLUME_COLOR2_MIN_G, VOLUME_COLOR2_MIN_B,
+          this.curFileDataType.thresholdIsosurf);
+      mat.uniforms.t_function2max.value =
+        new THREE.Vector4(VOLUME_COLOR2_MAX_R, VOLUME_COLOR2_MAX_G, VOLUME_COLOR2_MAX_B,
+          this.curFileDataType.thresholdIsosurf);
+      mat.uniforms.stepSize.value =
+        new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
+      mat.uniforms.texSize.value = this.engine2d.m_volumeHeader.m_pixelWidth;
+      mat.uniforms.isoThreshold.value = this.curFileDataType.thresholdIsosurf;
+      mat.uniforms.brightness3D.value = this.curFileDataType.brightness;
+      mat.uniforms.opacityBarrier.value = OPACITY_SCALE * this.curFileDataType.opacityTissue;
+      mat.uniforms.tileCountX.value = zDimSqrt;
+      mat.uniforms.volumeSizeZ.value = zDim;
+      mat.uniforms.lightDir.value = new THREE.Vector3(this.curFileDataType.lightDirComp,
+        this.curFileDataType.lightDirComp, this.curFileDataType.lightDirComp);
+      mat.uniforms.needsUpdate = true;
+      this.matRenderToTexture = mat;
+    });
+
+    // Create material for interpolation
+    matIntetpl = new MaterialInterpolation();
+    const VAL_3 = 3.0;
+    matIntetpl.m_uniforms.isoSurfTexel.value = new THREE.Vector2(VAL_3 / this.SCENE_3D_WINDOW_W,
+      VAL_3 / this.SCENE_3D_WINDOW_H);
+    matIntetpl.create(this.renderToTexture, (mat) => {
+      mat.uniforms.needsUpdate = true;
+      this.matInterpolation = mat;
+    });
+
+    // Create material for main pass of volume render
+    matSkullThreeGS = new MaterialVolumeRender();
+    matSkullThreeGS.m_uniforms.isoSurfTexel.value = new THREE.Vector2(VAL_3 / this.SCENE_3D_WINDOW_W,
+      VAL_3 / this.SCENE_3D_WINDOW_H);
+    matSkullThreeGS.m_uniforms.colorMap1D.value = this.colorMapTexture;
+    matSkullThreeGS.create(this.volTexture, this.bfTexture, this.ffTexture, this.renderToTexture, (mat) => {
+      mat.uniforms.t_function1min.value =
+        new THREE.Vector4(VOLUME_COLOR1_MIN_R, VOLUME_COLOR1_MIN_G, VOLUME_COLOR1_MIN_B,
+          this.curFileDataType.thresholdTissue1);
+      mat.uniforms.t_function1max.value =
+        new THREE.Vector4(VOLUME_COLOR1_MAX_R, VOLUME_COLOR1_MAX_G, VOLUME_COLOR1_MAX_B,
+          this.curFileDataType.thresholdTissue2);
+      mat.uniforms.t_function2min.value =
+        new THREE.Vector4(VOLUME_COLOR2_MIN_R, VOLUME_COLOR2_MIN_G, VOLUME_COLOR2_MIN_B,
+          this.curFileDataType.thresholdIsosurf);
+      mat.uniforms.t_function2max.value =
+        new THREE.Vector4(VOLUME_COLOR2_MAX_R, VOLUME_COLOR2_MAX_G, VOLUME_COLOR2_MAX_B,
+          this.curFileDataType.thresholdIsosurf);
+      mat.uniforms.stepSize.value =
+        new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
+      mat.uniforms.texSize.value = this.engine2d.m_volumeHeader.m_pixelWidth;
+      mat.uniforms.isoThreshold.value = this.curFileDataType.thresholdIsosurf;
+      mat.uniforms.brightness3D.value = this.curFileDataType.brightness;
+      mat.uniforms.tileCountX.value = zDimSqrt;
+      mat.uniforms.volumeSizeZ.value = zDim;
+      mat.uniforms.opacityBarrier.value = OPACITY_SCALE * this.curFileDataType.opacityTissue;
+      mat.uniforms.lightDir.value = new THREE.Vector3(this.curFileDataType.lightDirComp,
+        this.curFileDataType.lightDirComp, this.curFileDataType.lightDirComp);
+      mat.uniforms.needsUpdate = true;
+      this.scene.add(this.mesh);
+      this.matVolumeRender = mat;
+      this.mesh.material = this.matVolumeRender;
+    });
+  } // callbackCreateCubeVolume
+
+
+  /**
+  * Rotate Cut Plane (Rotation is inverse to the object)
+  */
+  updateCutPlanes() {
+    if (!this.mesh) {
+      return;
+    }
+    const mtx = new THREE.Matrix4();
+    mtx.getInverse(mtx.extractRotation(this.mesh.matrix));
+    const xAxis = new THREE.Vector3(-1.0, 0.0, 0.0);
+    const yAxis = new THREE.Vector3(0.0, -1.0, 0.0);
+    const zAxis = new THREE.Vector3(0.0, 0.0, -1.0);
+    const centerPt = new THREE.Vector3().copy(this.planeCenterPt);
+    centerPt.applyMatrix4(mtx);
+    xAxis.applyMatrix4(mtx);
+    yAxis.applyMatrix4(mtx);
+    zAxis.applyMatrix4(mtx);
+    this.matFF.uniforms.PlaneX.value.x = xAxis.x;
+    this.matFF.uniforms.PlaneX.value.y = xAxis.y;
+    this.matFF.uniforms.PlaneX.value.z = xAxis.z;
+    this.matFF.uniforms.PlaneX.value.w = -centerPt.dot(xAxis);
+
+    this.matFF.uniforms.PlaneY.value.x = yAxis.x;
+    this.matFF.uniforms.PlaneY.value.y = yAxis.y;
+    this.matFF.uniforms.PlaneY.value.z = yAxis.z;
+    this.matFF.uniforms.PlaneY.value.w = -centerPt.dot(yAxis);
+
+    this.matFF.uniforms.PlaneZ.value.x = -zAxis.x;
+    this.matFF.uniforms.PlaneZ.value.y = zAxis.y;
+    this.matFF.uniforms.PlaneZ.value.z = zAxis.z;
+    this.matFF.uniforms.PlaneZ.value.w = -centerPt.dot(zAxis);
+  }
+
+  /**
+  * Rotate light direction (Rotation is inverse to the object)
+  */
+  updateLightDir() {
+    if (!this.mesh) {
+      console.log('UpdateLightDir call mesh is not created');
+      return;
+    }
+
+    const mtx = new THREE.Matrix4();
+    mtx.getInverse(mtx.extractRotation(this.mesh.matrix));
+    const lightDir = new THREE.Vector3(1.0, 1.0, 1.0);
+    lightDir.normalize();
+    lightDir.applyMatrix4(mtx);
+    lightDir.x = -lightDir.x;
+    this.matRenderToTexture.uniforms.lightDir.value = lightDir;
+    this.matRenderToTexture.uniforms.lightDir.needsUpdate = true;
+    this.matVolumeRender.uniforms.lightDir.value = lightDir;
+    this.matVolumeRender.uniforms.lightDir.needsUpdate = true;
+  }
+
+  /** Render 3d scene */
+  render() {
+    if (this.mesh == null) {
+      // render empty scene to show "black" empty screen
+      this.renderer.render(this.scene, this.camera);
+      return;
+    }
+    const matReady = (this.matVolumeRender !== null) && (this.matBF !== null) &&
+      (this.matFF !== null) && (this.matRenderToTexture !== null);
+    if (!matReady) {
+      // do nothing
+    } else {
+      // check once render target
+      if (this.checkFrameBufferMode === CHECK_MODE_NOT_CHECKED) {
+        const isGood = GlCheck.checkFrameBuffer(this.renderer, this.bfTexture);
+        this.checkFrameBufferMode = (isGood) ? CHECK_MODE_RESULT_OK : CHECK_MODE_RESULT_BAD;
+        if (this.checkFrameBufferMode === CHECK_MODE_RESULT_BAD) {
+          const strTitle = 'Device video card problem';
+          const strLog = 'Cant setup render framebuffer. Application can not run in this browser/device';
+          swal({
+            title: strTitle,
+            text: strLog,
+            icon: 'error',
+            button: 'continue',
+          });
+        }
+      }
+
+      this.renderer.clearTarget(this.bfTexture);
+      this.scene.overrideMaterial = this.matBF;
+      this.renderer.render(this.scene, this.camera, this.bfTexture);
+
+      this.renderer.clearTarget(this.ffTexture);
+      this.scene.overrideMaterial = this.matFF;
+      this.renderer.render(this.scene, this.camera, this.ffTexture);
+
+      this.renderer.clearTarget(this.renderfTexture);
+      this.scene.overrideMaterial = this.matRenderToTexture;
+      this.renderer.render(this.scene, this.camera, this.renderToTexture);
+      // get a reference to the internal WebGL rendering context
+      const gl = this.renderer.context;
+
+      // enable stencil test
+      const FF_VAL = 0xff;
+      gl.clearStencil(0);
+      gl.enable(gl.STENCIL_TEST);
+      gl.stencilFunc(gl.ALWAYS, 1, FF_VAL);
+      gl.stencilOp(gl.REPLACE, gl.REPLACE, gl.REPLACE);
+      this.scene.overrideMaterial = this.matInterpolation;
+      this.renderer.render(this.scene, this.camera);
+
+      // change stencil function and operation for testing
+      gl.stencilFunc(gl.EQUAL, 0, FF_VAL);
+      gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
+      // this.scene.overrideMaterial = this.matVolumeRender;
+      this.scene.overrideMaterial = null;
+      this.renderer.render(this.scene, this.camera);
+
+      // disable stencil test
+      gl.disable(gl.STENCIL_TEST);
+    }
+  }
+
+  onMouseDown() {
+    if (!this.mesh) {
+      return;
+    }
+    if (this.fps < MIN_FPS) {
+      this.matRenderToTexture.uniforms.stepSize.value.multiplyScalar(1.0);
+      this.matRenderToTexture.uniforms.needsUpdate = true;
+      this.matVolumeRender.uniforms.stepSize.value.multiplyScalar(1.0);
+      this.matVolumeRender.uniforms.needsUpdate = true;
+    }
+    this.renderState = this.RENDER_STATE.ENABLED;
+  }
+
+  onMouseUp() {
+    if (!this.mesh) {
+      return;
+    }
+    this.matRenderToTexture.uniforms.stepSize.value = new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
+    this.matRenderToTexture.uniforms.needsUpdate = true;
+    this.matVolumeRender.uniforms.stepSize.value = new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
+    this.matVolumeRender.uniforms.needsUpdate = true;
+    this.renderState = this.RENDER_STATE.ONCE;
+  }
+
+  onMouseWheel(e) {
+    if (!this.mesh) {
+      return;
+    }
+    this.matRenderToTexture.uniforms.stepSize.value = new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
+    this.matRenderToTexture.uniforms.needsUpdate = true;
+    this.matVolumeRender.uniforms.stepSize.value = new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
+    this.matVolumeRender.uniforms.needsUpdate = true;
+    this.renderState = this.RENDER_STATE.ONCE;
+    e.preventDefault();
+  }
+} // class Graphics2d

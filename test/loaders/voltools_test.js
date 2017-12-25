@@ -1,0 +1,298 @@
+/**
+* Loaders. Volume tools
+*/
+
+import { expect, assert } from 'chai';
+import VolumeTools from '../../app/scripts/loaders/voltools';
+
+describe('Test: VolumeTools', () => {
+  describe('check gaussSmooth()', () => {
+    it('invalid radius check', () => {
+      const DIM = 16;
+      const volBuf = new Uint8Array(DIM * DIM * DIM);
+      const gaussSmoother = new VolumeTools();
+      const GAUSS_RADIUS_LARGE = 22;
+      const GAUSS_SIGMA = 1.1;
+      const retL = gaussSmoother.gaussSmooth(volBuf, DIM, DIM, DIM, GAUSS_RADIUS_LARGE, GAUSS_SIGMA);
+      expect(retL < 0).to.be.true;
+    });
+    it('invalid sigma check', () => {
+      const DIM = 16;
+      const volBuf = new Uint8Array(DIM * DIM * DIM);
+      const gaussSmoother = new VolumeTools();
+      const GAUSS_RADIUS = 6;
+      const GAUSS_SIGMA_NEG = -1.1;
+      const retL = gaussSmoother.gaussSmooth(volBuf, DIM, DIM, DIM, GAUSS_RADIUS, GAUSS_SIGMA_NEG);
+      expect(retL < 0).to.be.true;
+    });
+    it('negative volume dimension check', () => {
+      const DIM = 16;
+      const volBuf = new Uint8Array(DIM * DIM * DIM);
+      const gaussSmoother = new VolumeTools();
+      const GAUSS_RADIUS = 6;
+      const GAUSS_SIGMA = 1.1;
+      const retL = gaussSmoother.gaussSmooth(volBuf, -DIM, DIM, DIM, GAUSS_RADIUS, GAUSS_SIGMA);
+      expect(retL < 0).to.be.true;
+    });
+    it('too big volume dimension check', () => {
+      const DIM = 16;
+      const volBuf = new Uint8Array(DIM * DIM * DIM);
+      const gaussSmoother = new VolumeTools();
+      const GAUSS_RADIUS = 6;
+      const GAUSS_SIGMA = 1.1;
+      const SOME_LARGE_MULTIPLIER = 1024;
+      const DIM_LARGE = DIM * SOME_LARGE_MULTIPLIER;
+      const retL = gaussSmoother.gaussSmooth(volBuf, DIM_LARGE, DIM, DIM, GAUSS_RADIUS, GAUSS_SIGMA);
+      expect(retL < 0).to.be.true;
+    });
+    it('check empty buffer', () => {
+      const DIM = 16;
+      const gaussSmoother = new VolumeTools();
+      const GAUSS_RADIUS = 6;
+      const GAUSS_SIGMA = 1.1;
+      const retL = gaussSmoother.gaussSmooth(null, DIM, DIM, DIM, GAUSS_RADIUS, GAUSS_SIGMA);
+      expect(retL < 0).to.be.true;
+    });
+    it('check invalid buffer size', () => {
+      const DIM = 16;
+      const volBuf = new Uint8Array(DIM * DIM * DIM);
+      const gaussSmoother = new VolumeTools();
+      const GAUSS_RADIUS = 6;
+      const GAUSS_SIGMA = 1.1;
+      const DIM_TWICE = DIM + DIM;
+      const retL = gaussSmoother.gaussSmooth(volBuf, DIM_TWICE, DIM, DIM, GAUSS_RADIUS, GAUSS_SIGMA);
+      expect(retL < 0).to.be.true;
+    });
+    it('check is good smoothing on low sigma', () => {
+      const DIM = 9;
+      const volBuf = new Uint8Array(DIM * DIM * DIM);
+      const gaussSmoother = new VolumeTools();
+      const GAUSS_RADIUS = 2;
+      const GAUSS_SIGMA = 0.4;
+      // init buffer
+      let i;
+      for (i = 0; i < DIM * DIM * DIM; i++) {
+        volBuf[i] = 0;
+      }
+      const HALF_SIZE = 4;
+      const indCenter = HALF_SIZE + HALF_SIZE * DIM + HALF_SIZE * (DIM * DIM);
+      volBuf[indCenter] = 255;
+      const retL = gaussSmoother.gaussSmooth(volBuf, DIM, DIM, DIM, GAUSS_RADIUS, GAUSS_SIGMA);
+      const valCenter = volBuf[indCenter];
+      const valNeigh = volBuf[indCenter - 1];
+      const BOUND_MAX = 198;
+      const BOUND_MIN = 8;
+      expect(valCenter <= BOUND_MAX).to.be.true;
+      expect(valNeigh >= BOUND_MIN).to.be.true;
+      expect(retL === 1).to.be.true;
+    });
+    it('check is good smoothing on high sigma', () => {
+      const DIM = 9;
+      const volBuf = new Uint8Array(DIM * DIM * DIM);
+      const gaussSmoother = new VolumeTools();
+      const GAUSS_RADIUS = 2;
+      const GAUSS_SIGMA = 2.5;
+      // init buffer
+      let i;
+      for (i = 0; i < DIM * DIM * DIM; i++) {
+        volBuf[i] = 0;
+      }
+      const HALF_SIZE = 4;
+      const indCenter = HALF_SIZE + HALF_SIZE * DIM + HALF_SIZE * (DIM * DIM);
+      volBuf[indCenter] = 255;
+      const retL = gaussSmoother.gaussSmooth(volBuf, DIM, DIM, DIM, GAUSS_RADIUS, GAUSS_SIGMA);
+      const valCenter = volBuf[indCenter];
+      const valNeigh = volBuf[indCenter - 1];
+      const valDif = Math.abs(valCenter - valNeigh);
+      const DIF_MAX = 4;
+      expect(valDif < DIF_MAX).to.be.true;
+      expect(retL === 1).to.be.true;
+    });
+    it('check result array is in range 0..255 ', () => {
+      const DIM = 9;
+      const volBuf = new Uint16Array(DIM * DIM * DIM);
+      const gaussSmoother = new VolumeTools();
+      const GAUSS_RADIUS = 2;
+      const GAUSS_SIGMA = 2.5;
+      // init buffer
+      let i;
+      for (i = 0; i < DIM * DIM * DIM; i++) {
+        volBuf[i] = 0;
+      }
+      const HALF_SIZE = 4;
+      const indCenter = HALF_SIZE + HALF_SIZE * DIM + HALF_SIZE * (DIM * DIM);
+      volBuf[indCenter] = 255;
+      gaussSmoother.gaussSmooth(volBuf, DIM, DIM, DIM, GAUSS_RADIUS, GAUSS_SIGMA);
+      const MAX_VAL = 255;
+      for (i = 0; i < DIM * DIM * DIM; i++) {
+        expect(volBuf[i] <= MAX_VAL).to.be.true;
+      }
+    });
+    it('check result array is clipped by upper bound 255', () => {
+      const DIM = 9;
+      const volBuf = new Uint32Array(DIM * DIM * DIM);
+      const gaussSmoother = new VolumeTools();
+      const GAUSS_RADIUS = 2;
+      const GAUSS_SIGMA = 0.3;
+      // init buffer
+      const SOME_VALUE_ABOVE_256 = 260;
+      const MASK_1023 = 1023;
+      let i;
+      for (i = 0; i < DIM * DIM * DIM; i++) {
+        volBuf[i] = SOME_VALUE_ABOVE_256 + (i & MASK_1023);
+      }
+      const HALF_SIZE = 4;
+      const indCenter = HALF_SIZE + HALF_SIZE * DIM + HALF_SIZE * (DIM * DIM);
+      volBuf[indCenter] = 300;
+      gaussSmoother.gaussSmooth(volBuf, DIM, DIM, DIM, GAUSS_RADIUS, GAUSS_SIGMA);
+      const MAX_VAL = 255;
+      for (i = 0; i < DIM * DIM * DIM; i++) {
+        expect(volBuf[i] <= MAX_VAL).to.be.true;
+      }
+    });
+  });
+
+  describe('check buildSmoothedHistogram()', () => {
+    it('check empty src', () => {
+      const DIM = 256;
+      const hist = new Uint32Array(DIM);
+      const GAUSS_SIGMA = 1.1;
+      const retL = VolumeTools.buildSmoothedHistogram(null, hist, DIM, GAUSS_SIGMA);
+      assert.isBelow(retL, 0);
+    });
+    it('check empty dst', () => {
+      const DIM = 256;
+      const hist = new Uint32Array(DIM);
+      const GAUSS_SIGMA = 1.1;
+      const retL = VolumeTools.buildSmoothedHistogram(hist, null, DIM, GAUSS_SIGMA);
+      assert.isBelow(retL, 0);
+    });
+    it('check both histogram same size', () => {
+      const DIM = 256;
+      const histSrc = new Uint32Array(DIM);
+      const histDst = new Uint32Array(DIM + 1);
+      const GAUSS_SIGMA = 1.1;
+      const retL = VolumeTools.buildSmoothedHistogram(histSrc, histDst, DIM, GAUSS_SIGMA);
+      assert.isBelow(retL, 0);
+    });
+    it('check both histogram src length match', () => {
+      const DIM = 256;
+      const histSrc = new Uint32Array(DIM);
+      const histDst = new Uint32Array(DIM);
+      const GAUSS_SIGMA = 1.1;
+      const retL = VolumeTools.buildSmoothedHistogram(histSrc, histDst, DIM + 1, GAUSS_SIGMA);
+      assert.isBelow(retL, 0);
+    });
+    it('check negative sigma', () => {
+      const DIM = 256;
+      const histSrc = new Uint32Array(DIM);
+      const histDst = new Uint32Array(DIM);
+      const GAUSS_SIGMA = -1.1;
+      const retL = VolumeTools.buildSmoothedHistogram(histSrc, histDst, DIM, GAUSS_SIGMA);
+      assert.isBelow(retL, 0);
+    });
+    it('check too large sigma', () => {
+      const DIM = 256;
+      const histSrc = new Uint32Array(DIM);
+      const histDst = new Uint32Array(DIM);
+      const GAUSS_SIGMA = 128.0;
+      const retL = VolumeTools.buildSmoothedHistogram(histSrc, histDst, DIM, GAUSS_SIGMA);
+      assert.isBelow(retL, 0);
+    });
+    it('check too large histogram array size', () => {
+      const DIM = 2048;
+      const histSrc = new Uint32Array(DIM);
+      const histDst = new Uint32Array(DIM);
+      const GAUSS_SIGMA = 0.4;
+      const retL = VolumeTools.buildSmoothedHistogram(histSrc, histDst, DIM, GAUSS_SIGMA);
+      assert.equal(retL, 1);
+    });
+    it('check is really smoothed histogram', () => {
+      const DIM = 256;
+      const histSrc = new Uint32Array(DIM);
+      const histDst = new Uint32Array(DIM);
+      const GAUSS_SIGMA = 26.0;
+      let i;
+      for (i = 0; i < DIM; i++) {
+        histSrc[i] = 0;
+      }
+      histSrc[125] = 128;
+      histSrc[126] = 256;
+      histSrc[127] = 512;
+      histSrc[128] = 1024;
+      histSrc[129] = 512;
+      histSrc[130] = 256;
+      histSrc[131] = 128;
+      const retL = VolumeTools.buildSmoothedHistogram(histSrc, histDst, DIM, GAUSS_SIGMA);
+      assert.equal(retL, 1);
+      assert.isBelow(histDst[127], histDst[128]);
+      assert.isBelow(histDst[126], histDst[127]);
+      assert.equal(histDst[0], 0);
+    });
+    it('check do not modify equal distribution', () => {
+      const DIM = 256;
+      const histSrc = new Uint32Array(DIM);
+      const histDst = new Uint32Array(DIM);
+      const GAUSS_SIGMA = 26.0;
+      const VAL_ENTRY = 512;
+      let i;
+      for (i = 0; i < DIM; i++) {
+        histSrc[i] = VAL_ENTRY;
+      }
+      const retL = VolumeTools.buildSmoothedHistogram(histSrc, histDst, DIM, GAUSS_SIGMA);
+      assert.equal(retL, 1);
+      for (i = 0; i < DIM; i++) {
+        assert.equal(histDst[i], VAL_ENTRY);
+      }
+    });
+  });
+
+  describe('check scaleDownXYtwice()', () => {
+    it('check equal values', () => {
+      const DIM = 8;
+      const HALF = 2;
+      const DIM_DIV_2 = DIM / HALF;
+      const VALUE_TEST = 176;
+      const volumeSrc = new Uint8Array(DIM * DIM * DIM);
+      let i;
+      for (i = 0; i < DIM * DIM * DIM; i++) {
+        volumeSrc[i] = VALUE_TEST;
+      }
+      const loader = {
+        m_xDim: DIM,
+        m_yDim: DIM,
+        m_zDim: DIM
+      };
+      const volumeDst = VolumeTools.scaleDownXYtwice(loader, volumeSrc);
+      for (i = 0; i < DIM_DIV_2 * DIM_DIV_2 * DIM; i++) {
+        assert.equal(volumeDst[i], VALUE_TEST);
+      }
+    });
+    it('check pixel spacing', () => {
+      const DIM = 8;
+      const HALF = 2;
+      const DIM_DIV_2 = DIM / HALF;
+      const VALUE_TEST = 176;
+      const volumeSrc = new Uint8Array(DIM * DIM * DIM);
+      let i;
+      for (i = 0; i < DIM * DIM * DIM; i++) {
+        volumeSrc[i] = VALUE_TEST;
+      }
+      const loader = {
+        m_xDim: DIM,
+        m_yDim: DIM,
+        m_zDim: DIM,
+        m_pixelSpacing: {
+          x: DIM / HALF,
+          y: DIM / HALF
+        }
+      };
+      const volumeDst = VolumeTools.scaleDownXYtwice(loader, volumeSrc);
+      for (i = 0; i < DIM_DIV_2 * DIM_DIV_2 * DIM; i++) {
+        assert.equal(volumeDst[i], VALUE_TEST);
+      }
+      assert.equal(loader.m_pixelSpacing.x, DIM);
+      assert.equal(loader.m_pixelSpacing.y, DIM);
+    });
+  });
+});
