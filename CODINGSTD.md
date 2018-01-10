@@ -16,6 +16,9 @@ There are (at least) 2 methods to see console.log content:
 
 ## Coding standard
 
+Project applies very strict rules to ECMA2016 script language. Please refer to 
+[Airbnb style guide](https://github.com/airbnb/javascript)
+
 This coding standard is written with 3 most important project targets. Also this is connected to open source project life cycle.
 - ES2016 (ES6) programming language. This is some kind of great extension of the standard JavaScript language. Allow to build code close to C++ and other high-level strict syntax languages
 - Source code quality is automatically checked by EsLint node package, which is configured as eslint-config-airbnb-base. You can check project syntax using command: **gulp lint:js > style_err.txt**
@@ -75,7 +78,7 @@ a = a + 2;
 ### Using a single quote instead of double quote
 
 For almost all string constants, you need to use a single quote.
-This is a violation of the Strings must use singlequote quotes.
+This is a violation of the Strings must use single quote quotes.
 
 ~~WRONG CODE~~
 ```
