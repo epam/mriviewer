@@ -27,7 +27,7 @@ Core developers have rights to push. So if you are one of them, then clone the m
 
 ### External developers: fork and branch
 
-External contributors are welcome to fork, branch and create pull-requests. Fork the project [on GitHub](https://github.com/epam/med3web)and clone your fork locally. Apply changes, run automated and manual tests to verify that everything works correctly.
+External contributors are welcome to fork, branch and create pull-requests. Fork the project [on GitHub](https://github.com/epam/med3web) and clone your fork locally. Apply changes, run automated and manual tests to verify that everything works correctly.
 
 ```sh
 # grab the project

@@ -53,7 +53,7 @@ variable / object via var (this is worm-bound by the scope of the variable / obj
 You need to declare a variable or object using let or const. It is desirable to strive for
 to the maximum use of const (as far as possible). This is an error of type Unexpected var, use let or const instead of no-var.
 
-~~НЕПРАВИЛЬНЫЙ КОД~~
+~~WRONG CODE~~
 ```
 var a = 6;
 ```
