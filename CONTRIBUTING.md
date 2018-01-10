@@ -55,6 +55,8 @@ The commit message should describe what changed and why. The first line should:
 - don't end with a period,
 - be 50 characters or less.
 
+E.g. "add dicom reader", "change style of 2d tools panel". The second line should be empty, and then details should follow if any.
+
 ### Build instructions, prerequisites, coding standard
 Please read [DEVNOTES.md](DEVNOTES.md) for details.
 
