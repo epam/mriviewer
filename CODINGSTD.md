@@ -1,25 +1,25 @@
  
 # Med3Web project coding standard
 
-## Debuuging
+## Debugging
 
 Display object data:
-- Inside integrated development environmebt (most correct way)
+- Inside integrated development environment (most correct way)
 - Using web app gui (may be, good way too)
 - Using console.log(msg)
 - Using alert(msg) (should be strongly avoided)
 
 
 There are (at least) 2 methods to see console.log content:
-- Open console output window in your development environment / browser (usually byt pressing F12 key)
-- Install [Firefox Developer Edition v54.0a2](https://www.mozilla.org/ru/firefox/developer/) and press Ctrl+Shift+K, or select menu command Setings/Web Console
+- Open console output window in your development environment / browser (usually by pressing F12 key)
+- Install [Firefox Developer Edition v54.0a2](https://www.mozilla.org/ru/firefox/developer/) and press Ctrl+Shift+K, or select menu command Settings/Web Console
 
 ## Coding standard
 
-This coding standrd is written with 3 most important project targets. Also this is connected to open source project life cycle.
-- ES2016 (ES6) progeramming language. This is some kind of great extension of the standard JavaScript language. Allow to build code close to C++ and other high-level strict syntaxed languages
+This coding standard is written with 3 most important project targets. Also this is connected to open source project life cycle.
+- ES2016 (ES6) programming language. This is some kind of great extension of the standard JavaScript language. Allow to build code close to C++ and other high-level strict syntax languages
 - Source code quality is automatically checked by EsLint node package, which is configured as eslint-config-airbnb-base. You can check project syntax using command: **gulp lint:js > style_err.txt**
-- You can build autodocumentation from the source code using gulp-jsdoc3 node package. Run in command line: **gulp docs**
+- You can build auto documentation from the source code using gulp-jsdoc3 node package. Run in command line: **gulp docs**
 
 > IMPORTANT !!!
 
@@ -28,7 +28,7 @@ The reason why you should do both these command - Jsdoc parser is significantly 
 
 #### Coding standard rules list
 
-Source code rulwe list can be found in:
+Source code rule list can be found in:
 YourProjectFolder/node_modules/eslint-config-airbnb-base/rules
 
 
@@ -36,12 +36,12 @@ YourProjectFolder/node_modules/eslint-config-airbnb-base/rules
 
 ### Source text file (file somename.js) should be ended with exactly 1 empty string
 
-This requirement is taken from some old-dusted cores of unix-programmig. Also you cant use mor then 1 empty string.
+This requirement is taken from some old-dusted cores of unix-programmig. Also you can't use more then 1 empty string.
 
 ### Spaces at the end of each line of the source text
 
 Any line of source code (even including comments) should not contain spaces or tab characters at the end.
-This is erro type: Trailing spaces not allowed              no-trailing-spaces
+This is error type: Trailing spaces not allowed              no-trailing-spaces
 
 ### Using  let or const instead of var
 
@@ -142,7 +142,7 @@ Stylistics of comments should provide for one space
 
 ### Chained assignment
 
-You can not do chain assignment in one line. For some reason, it is believed that such code is worse read and potentially bug-dangerous.
+You cannot do chain assignment in one line. For some reason, it is believed that such code is worse read and potentially bug-dangerous.
 
 ~~WRONG CODE~~
 ```
@@ -223,7 +223,7 @@ if (someCondition) {
 
 ### Blank lines in blocks
 
-You can not leave blank lines in code blocks.
+You cannot leave blank lines in code blocks.
 This is an error of the type Block must be padded by blank lines padded-blocks.
 
 ~~WRONG CODE~~
@@ -337,11 +337,11 @@ KtxHeader.KTX_GL_RED = 0x1903;
 ```
 
 
---------------------------------------------------------------------------
-## Important Notes in Connection with the Use of the JSDOC3 Autodocumenter
---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+## Important Notes in Connection with the Use of the JSDOC3 Auto documenter
+---------------------------------------------------------------------------
 
-### You can not leave a final comma in the last argument of a function or class method
+### You cannot leave a final comma in the last argument of a function or class method
 
 ~~WRONG CODE~~
 ```
@@ -361,7 +361,7 @@ KtxHeader.KTX_GL_RED = 0x1903;
            0.0, 0.0, 0.0, 1.0);
 ```
 
-#### You can not move arguments to the next line when calling functions or methods
+#### You cannot move arguments to the next line when calling functions or methods
 
 ~~WRONG CODE~~
 ```
