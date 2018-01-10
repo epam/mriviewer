@@ -57,7 +57,7 @@ Important language features are listed in
 Project applies very strict rules to ECMA2016 script language. Please refer to 
 [Airbnb style guide](https://github.com/airbnb/javascript)
 
-Some thoughts about project future, features enchancement and other important improvements/fixes,
+Some thoughts about project future, features enhancement and other important improvements/fixes,
 please see in [To Do list](LISTTODO.md)
 
 ### Commit
@@ -75,7 +75,7 @@ The commit message should describe what changed and why. The first line should:
 Download link:
 [NodeJS](https://nodejs.org/en/download/)
 
-Version noit below than v.6.10.3 is required
+Version not below than v.6.10.3 is required
 
 After NodeJS installation please check that everything is installed correctly (for example, PATH ), using command:
 ```
@@ -111,7 +111,7 @@ Other OS:
 Important note: before sonar scanner start, you need to run test coverage utility, 
 which will create file 'coverage/lcov.info' (this file is used by sonar scanner)
 In order to run scanner, you need to install [SonarQube scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner).
-File 'sonar-project.properties' inthe project root is used to configure sonar scaner for this project. After SonarQube server is started, you can run
+File 'sonar-project.properties' in the project root is used to configure sonar scanner for this project. After SonarQube server is started, you can run
 sonar tool, by typing in command line:
 ```
 sonar-scanner

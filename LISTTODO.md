@@ -6,16 +6,16 @@ List of incomplete features in Med3Wewb project
 - Support read several series inside single file folder. Now only 1 series is supported.
 
 ## Nifti reader
-- Suport big ednian file bytes encoding (now only little endian is supported)
-- Support "datatype" 512 read (now only datatype == 4 is supported)
+- Support big endian file bytes encoding (now only little endian is supported)
+- Support "data type" 512 read (now only data type == 4 is supported)
 - Support compressed nifti files (usually distributed in open web repositories)
 
 ## MHD reader
-- Add reading data in the form of pair files XXX.mhd + XXX.raw, where mhd - is text volume descritption, raw - binary volume raw pixels
+- Add reading data in the form of pair files XXX.mhd + XXX.raw, where mhd - is text volume description, raw - binary volume raw pixels
 
 ## 2D mode functionality
 - Add area selection and measurement.
-- Add image contrast enhancement, edges enchancement, non-rectangular area selection, automatic area selection, etc.
+- Add image contrast enhancement, edges enhancement, non-rectangular area selection, automatic area selection, etc.
 
 ## Dicom tags
 - In future tags edition functionality (probably) will be implemented. 
@@ -27,7 +27,7 @@ List of incomplete features in Med3Wewb project
 ## Project code issues
 
 - Complete project autodocumentation (insert special comment tags). Update readme.md on this issue.
-**STATUS:** Now auto documentation is partially builded
+**STATUS:** Now auto documentation is partially built
 
 - Add a lot of unit-tests, based on mocha framework. Write short instructions (how to use) in readme.md.
 **STATUS:** Now first unit-test module has created. See project/test/loaders/voltools.js. Need more wide unit-test source code coverage.

@@ -20,10 +20,10 @@ MRI and CT scanning results can be viewed in any computer (inside medical office
 and qualified medical personnel can provide diagnosis or conclusion based on provided visualization.
 Unlike the range of standalone Dicom viewers executables, this app can be used as web
 application as a part of large web sites and services. Also it can be used by research institutes
-due to Nifti file standard support (more popular for researchers rather then medicans).
+due to Nifti file standard support (more popular for researchers rather then physicians).
 Medical centers can create their clients database, based on this viewer.
 
-## Refefences
+## References
 
 Dicom file format description can be found [here](http://dicom.nema.org/standard.html) and [here](https://www.leadtools.com/sdk/medical/dicom-spec)
 Ktx file format details are listed in [KTX](https://www.khronos.org/opengles/sdk/tools/KTX/file_format_spec/).
@@ -35,7 +35,7 @@ Some JavaScript libraries to work with Dicom file format:
 
 ## 3d volumetric rendering idea in a few words
 
-Three.js is used as some gateway to WebGL renderer. Current Three.js version is not suppored 3d textures,
+Three.js is used as some gateway to WebGL renderer. Current Three.js version is not supported 3d textures,
 so we use tricky way to build 2d texture from initial 3d texture by linking 2d slices all together
 as a large tile map. This idea (with source codes) can be seen in project [WebGL Volume Rendering](https://github.com/lebarba/WebGLVolumeRendering)
 
@@ -59,7 +59,7 @@ git clone https://github.com/epam/med3web.git
 
 Start operations in order to load all required Node.js packages:
 ```
-cd mriwebapp
+cd med3web
 npm install
 ```
 
@@ -70,7 +70,7 @@ npm install
 Download link:
 [NodeJS](https://nodejs.org/en/download/)
 
-Version noit below than v.6.10.3 is required
+Version not below than v.6.10.3 is required
 
 After NodeJS installation please check that everything is installed correctly (for example, PATH ), using command:
 ```
@@ -86,7 +86,7 @@ npm install -g gulp-cli
 ```
 
 
-## Project runnig details
+## Project running details
 
 All gulp targets are listed in:
 gulpfile.babel.js
@@ -96,7 +96,7 @@ For the virtual server create process, all source file are "merged" into single 
 
 ### Browser support
 Currently only Chrome, Firefox, Safari browsers are supported. Other browsers can be used but with performance slowdown and other
-rendering artifacts. Mobile browsers are not currently supported, but some of them can be used with performance problems and so on.
+rendering artefacts. Mobile browsers are not currently supported, but some of them can be used with performance problems and so on.
 
 
 ### Important note concerning project running modes
@@ -104,7 +104,7 @@ App can be run in 3 modes:
 1. Run remote web app. Steps: build app locally, performing command "gulp build", then copy ready web app (from "dist" folder) to your server.
 2. Run local web app under virtual server. Steps: run command "gulp server"
 3. Run local web app. Steps: Build app via command "gulp build" and open file <LocalProjectLocation>/dist/index.html in your browser.
-Important note: Local run mode (3) is not completely working under Google Chrome browser due to its strong security policy concerning loacl files opening.
+Important note: Local run mode (3) is not completely working under Google Chrome browser due to its strong security policy concerning local files opening.
 Other browsers has no such strong security restrictions and can be used. Local run (mode 3) is not recommended way to use this application.
 
 

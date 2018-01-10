@@ -1,12 +1,12 @@
-# Autodocumentation standart on the Med3Web project
+# Autodocumentation standard on the Med3Web project
 
 It is required to keep autodocumentation standard [JSDOC](http://speakingjs.com/es5/ch29.html) from the very
 early stage of the development process. This is important action to make project source code more understandable,
-buggy free and easy maintanable in the future.
+buggy free and easy maintainable in the future.
 
 Good [JSDOC](http://2ality.com/2011/08/jsdoc-intro.html) tutorial can be used to make your autodocumentation better.
 
-## Source file begining
+## Source file beginning
 
 In the fist rows of source text file (with *.js extension) you need to add keyword **@module**
 
