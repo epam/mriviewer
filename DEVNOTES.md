@@ -32,7 +32,7 @@ npm install
 ### SonarQube 
 
 In order to maintain project code clean and buggy-free as much as possible, SonarQube technology is used.
-To start working with sonar, plase dowwnload [SonarQube server](https://www.sonarqube.org/downloads/).
+To start working with sonar, please download [SonarQube server](https://www.sonarqube.org/downloads/).
 After installation, start Sonar server, run command:
 ```
 Windows:

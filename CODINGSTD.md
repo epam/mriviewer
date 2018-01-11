@@ -26,7 +26,7 @@ This coding standard is written with 3 most important project targets. Also this
 
 > IMPORTANT !!!
 
-Before making any new commit into project, please, run Eslint + Jsdoc to be ensure that your commit do not add errors.
+Before making any new commit into project, please run Eslint + Jsdoc to be ensure that your commit does not add errors.
 The reason why you should do both these command - Jsdoc parser is significantly more strict in comparison with parser in EsLint.
 
 #### Coding standard rules list
@@ -94,7 +94,7 @@ import THREE from 'n3d-threejs';
 ### Unnecessary quotes when declaring object properties
 
 It should avoid using a single quote when declaring properties of an object. So intuitively you might want to,
-considering the JSON standard, but inside * .js modules so do not need.
+considering the JSON standard, but inside * .js modules so is not needed.
 This is a violation of the type Unnecessarily quoted property 'propertyName' found quote-props.
 
 ~~WRONG CODE~~

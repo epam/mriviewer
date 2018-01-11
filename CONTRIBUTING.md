@@ -17,17 +17,20 @@ please see in [To Do list](LISTTODO.md)
 
 We use [GitHub Issues](https://guides.github.com/features/issues/) to keep track of tasks,
 enhancements, and bugs.
-available.
 
 ## Development
 
 ### Core developers: clone the origin
 
-Core developers have rights to push. So if you are one of them, then clone the main repository and just start working on `master` branch. Commit and push to the origin but make sure you do not ruin anything.
+Core developers have rights to push. So if you are one of them, then clone the main
+repository and just start working on `master` branch. Commit and push to the origin
+but make sure you do not ruin anything.
 
 ### External developers: fork and branch
 
-External contributors are welcome to fork, branch and create pull-requests. Fork the project [on GitHub](https://github.com/epam/med3web) and clone your fork locally. Apply changes, run automated and manual tests to verify that everything works correctly.
+External contributors are welcome to fork, branch and create pull-requests. 
+Fork the project [on GitHub](https://github.com/epam/med3web) and clone your fork locally. 
+Apply changes, run automated and manual tests to verify that everything works correctly.
 
 ```sh
 # grab the project
@@ -51,7 +54,7 @@ Important language features are listed in
 
 The commit message should describe what changed and why. The first line should:
 
-- start from an verb in imperative mood,
+- start from a verb in imperative mood,
 - don't end with a period,
 - be 50 characters or less.
 
