@@ -19,18 +19,16 @@ under the License.
 
 /**
 /**
-* Nifti file loader
+* Hdr file loader
 * @module app/scripts/loaders/hdrloader
 */
-
 
 // ******************************************************************
 // imports
 // ******************************************************************
 
-import FileLoader from './fileloader';
-import LocalFileLoader from './localfile';
 import LoadResult from './loadresult';
+import LoadFilePromise from './loadpromise';
 
 const HDR_DT_NONE = 0;
 // const HDR_DT_BINARY = 1;
@@ -43,10 +41,11 @@ const HDR_DT_SIGNED_SHORT = 4;
 // const HDR_DT_ARGB = 128;
 // const HDR_DT_ALL = 255;
 
-// ******************************************************************
-// Class
-// ******************************************************************
+// *******************************************************************
+// HdrLoader
+// *******************************************************************
 
+/** Class HdrLoader implements HDR format reading */
 export default class HdrLoader {
   /**
   * Create loader
@@ -59,7 +58,6 @@ export default class HdrLoader {
     this.m_yDim = 0;
     this.m_zDim = 0;
     this.m_folder = null;
-    this.m_localFileLoader = null;
     this.m_isLoadedSuccessfull = false;
     /** @property {object} m_boxSize - vertex3f with physic volume dimension */
     this.m_boxSize = {
@@ -167,7 +165,7 @@ export default class HdrLoader {
     const bufLen = bufBytes.length;
 
     const HDR_HEADER_SIZE = 348;
-    // Hdri file header size is 348 bytes
+    // Hdr file header size should be 348 bytes: check this fact
     if (bufLen < HDR_HEADER_SIZE) {
       console.log('Hdr header too small');
       if (callbackComplete) {
@@ -429,81 +427,98 @@ export default class HdrLoader {
   /**
   * Read hdr file set from given file
   * @param {object} files - selected files from app GUI
-  * @param {object} callbackFunc - function, invoked after read binary file into byte array
+  * @param {object} callbackComplete - function, invoked after completed read
+  * @param {object} callbackProgress - function, invoked during reading
   * @return {boolean} true, if read success
   */
   readFromFiles(files, callbackComplete, callbackProgress) {
-    console.log(`HDR: going to read from ${files[0].name}, ${files[1].name}`);
-    this.m_folder = null;
-    // this.m_slicesVolume.destroy();
     const numFiles = files.length;
-    for (let i = 0; i < numFiles; i++) {
-      const file = files[i];
-      this.m_localFileLoader = new LocalFileLoader(file);
-      const fileName = file.name;
-      if ((fileName.indexOf('.hdr') !== -1) || (fileName.indexOf('.HDR') !== -1)) {
-        this.m_localFileLoader.readFile((arrBuf) => {
-          this.readBufferHead(arrBuf, callbackComplete, callbackProgress);
-          return true;
+    const NUM_FILES_IN_SET = 2;
+    if (numFiles === NUM_FILES_IN_SET) {
+      let fileHdr = files[0];
+      let fileImg = files[1];
+      const loaderHdr = new LoadFilePromise();
+      const loaderImg = new LoadFilePromise();
+      let indPointH = fileHdr.name.indexOf('.h');
+      if (indPointH === -1) {
+        indPointH = fileHdr.name.indexOf('.hdr');
+      }
+      if (indPointH === -1) {
+        const fileCopy = fileHdr;
+        fileHdr = fileImg;
+        fileImg = fileCopy;
+      }
+      indPointH = fileHdr.name.indexOf('.h');
+      if (indPointH === -1) {
+        indPointH = fileHdr.name.indexOf('.hdr');
+      }
+      if (indPointH === -1) {
+        console.log('Hdr file [0] should be with h/hdr extension');
+        return false;
+      }
+      const indPointImg = fileImg.name.indexOf('.img');
+      if (indPointImg < 0) {
+        console.log('Hdr file [1] should be with img extension');
+        return false;
+      }
+      loaderHdr.readLocal(fileHdr).then((arrBufHdr) => {
+        this.readBufferHead(arrBufHdr, callbackComplete, callbackProgress);
+        console.log(`Load success HDR file: ${fileHdr.name}`);
+        loaderImg.readLocal(fileImg).then((arrBufImg) => {
+          this.readBufferImg(arrBufImg, callbackComplete, callbackProgress);
+          console.log(`Load success IMG file: ${fileImg.name}`);
         });
-      } // if
-      if ((fileName.indexOf('.img') !== -1) || (fileName.indexOf('.IMG') !== -1)) {
-        this.m_localFileLoader.readFile((arrBuf) => {
-          this.readBufferImg(arrBuf, callbackComplete, callbackProgress);
-          return true;
-        });
-      } // if
-    } // for (i) all files
+      }, (error) => {
+        console.log('HDR File read error', error);
+        return false;
+      });
+    } else {
+      console.log(`Error read hdr files. Should be ${NUM_FILES_IN_SET} files`);
+      return false;
+    }// if number of files equal to 2
     return true;
   } // readFromFiles
 
   /**
   * Read hdr+img file set from URL
-  * @param {string} strUrl - where file open
-  * @param {object} callbackFunc - function, invoked after read binary file into byte array
+  * @param {string} arrUrls - array with string URLs of 2 files: hdr + img
+  * @param {object} callbackComplete - function, invoked after completed read
+  * @param {object} callbackProgress - function, invoked during reading
   * @return {boolean} true, if read success
   */
   readFromURLS(arrUrls, callbackComplete, callbackProgress) {
-    this.m_folder = null;
-    // this.m_slicesVolume.destroy();
-    const numFiles = arrUrls.length;
-    for (let i = 0; i < numFiles; i++) {
-      const url = arrUrls[i];
-      const isHdr = ((url.indexOf('.hdr') !== -1) || (url.indexOf('.h') !== -1));
-      const isImg = ((url.indexOf('.img') !== -1) || (url.indexOf('.IMG') !== -1));
-      this.m_localFileLoader = new FileLoader(url);
-      if (isHdr) {
-        this.m_localFileLoader.readFile((arrBuf) => {
-          this.readBufferHead(arrBuf, callbackComplete, callbackProgress);
-          return true;
-        });
+    const numUrls = arrUrls.length;
+    const NUM_URLS_IN_SET = 2;
+    if (numUrls === NUM_URLS_IN_SET) {
+      let urlHdr = arrUrls[0];
+      let urlImg = arrUrls[1];
+      const loaderHdr = new LoadFilePromise();
+      const loaderImg = new LoadFilePromise();
+      let indPointH = urlHdr.indexOf('.h');
+      if (indPointH === -1) {
+        indPointH = urlHdr.indexOf('.hdr');
       }
-      if (isImg) {
-        this.m_localFileLoader.readFile((arrBuf) => {
-          this.readBufferImg(arrBuf, callbackComplete, callbackProgress);
-          return true;
-        });
+      if (indPointH === -1) {
+        const strCopy = urlHdr;
+        urlHdr = urlImg;
+        urlImg = strCopy;
       }
-    }
-    /*
-    this.m_fileLoaderH = new FileLoader(strUrlH);
-    this.m_isLoadedSuccessfull = false;
-    this.m_dataSize = 0;
-    this.m_dataArray = null;
 
-    this.m_fileLoaderH.readFile((arrBuf) => {
-      this.readBufferHead(arrBuf, callbackComplete, callbackProgress);
-      return true;
-    });
-
-
-    this.m_fileLoaderI = new FileLoader(strUrlI);
-    this.m_fileLoaderI.readFile((arrBuf) => {
-      this.readBufferImg(arrBuf, callbackComplete, callbackProgress);
-      return true;
-    });
-    */
-    // console.log(`HDR loader from URL: ${strUrl}`);
+      loaderHdr.readFromUrl(urlHdr).then((arrBufHdr) => {
+        this.readBufferHead(arrBufHdr, callbackComplete, callbackProgress);
+        console.log(`Load success HDR file: ${urlHdr}`);
+        loaderImg.readFromUrl(urlImg).then((arrBufImg) => {
+          this.readBufferImg(arrBufImg, callbackComplete, callbackProgress);
+          console.log(`Load success IMG file: ${urlImg}`);
+        });
+      }, (error) => {
+        console.log('HDR File read error', error);
+        return false;
+      });
+    } else {
+      console.log(`Error read hdr files. Should be ${NUM_URLS_IN_SET} files`);
+      return false;
+    }// if number of files equal to 2
     return true;
   } // readFromFile
 }
