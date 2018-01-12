@@ -54,11 +54,16 @@ Important language features are listed in
 
 The commit message should describe what changed and why. The first line should:
 
-- start from a verb in imperative mood,
-- don't end with a period,
+- start with a verb in present perfect and with a small letter,
+- don't end with a dot,
 - be 50 characters or less.
 
-E.g. "add dicom reader", "change style of 2d tools panel". The second line should be empty, and then details should follow if any.
+E.g. "added dicom reader", "changeed style of 2d tools panel". The second line should be empty, and then details should follow if any.
+
+Commit message consists of a title and body text (optional).
+The title and body text are separated with empty line.
+Body text can contain several lines.
+Each line can start with '-', altogether representing a list of changes. 
 
 ### Build instructions, prerequisites, coding standard
 Please read [DEVNOTES.md](DEVNOTES.md) for details.
