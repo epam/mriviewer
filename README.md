@@ -1,15 +1,15 @@
 # Med3Web Dicom 2d/3d web viewer.
 
-Copyright (c) 2015–2017 [EPAM Systems, Inc.](https://www.epam.com/)
+Copyright (c) 2015–2018 [EPAM Systems, Inc.](https://www.epam.com/)
 
 Med3Web is a high performance web tool for advanced visualization (both in 2d and 3d modes)
-medical volumetric data, provided in popular file formats: Dicom, Nifti, Ktx.
+medical volumetric data, provided in popular file formats: Dicom, Nifti, Ktx, Hdr.
+Another popular formats will be planned for future improvements.
 Med3Web can read local data from files/folders and from predefined web locations.
 Demonstration project shows both (local data / remote data) usage types.
 It works as a standalone HTML5 web application. The latest version can be used with
-WebGL-enabled desktop browsers (Chrome, Firefox, Safari) and allow limited usage
-with mobile browsers (Android Chrome). browsers are supported.
-
+WebGL-enabled desktop browsers (Chrome, Firefox, Safari, Opera) and allow limited usage
+with mobile browsers (Android Chrome).
 
 ![Background image](app/images/med3web_logo.png)
 
@@ -20,7 +20,7 @@ MRI and CT scanning results can be viewed in any computer (inside medical office
 and qualified medical personnel can provide diagnosis or conclusion based on provided visualization.
 Unlike the range of standalone Dicom viewers executables, this app can be used as web
 application as a part of large web sites and services. Also it can be used by research institutes
-due to Nifti file standard support (more popular for researchers rather then physicians).
+due to Nifti, Hdr, etc. file standards support (more popular for researchers rather then physicians).
 Medical centers can create their clients database, based on this viewer.
 
 ## References
@@ -95,8 +95,8 @@ For the virtual server create process, all source file are "merged" into single 
 ./.tmp/scripts
 
 ### Browser support
-Currently only Chrome, Firefox, Safari browsers are supported. Other browsers can be used but with performance slowdown and other
-rendering artefacts. Mobile browsers are not currently supported, but some of them can be used with performance problems and so on.
+Currently only Chrome, Firefox, Safari, Opera browsers are supported. Other browsers can be used with some performance slowdown and other
+rendering artefacts. Mobile browsers are not currently supported, but some of them can be used with performance/rendering problems and so on.
 
 
 ### Important note concerning project running modes
