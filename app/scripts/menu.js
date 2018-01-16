@@ -430,6 +430,84 @@ export default class Menu {
       });
     }
 
+    // Callback for open file by URL
+    const urlOpen = $('#med3web-input-url-open');
+    const urlOpenBtn = $('#med3web-btn-load-url');
+    const urlOpenModal = $('#med3web-modal-open-url');
+    const alertMsg = urlOpenModal.find('.alert');
+    if (urlOpenBtn.length === 1) {
+      urlOpenBtn.on('click', () => {
+        const fileName = urlOpen.val();
+        // detect file type
+        let isKtx = (fileName.indexOf('.ktx') !== -1);
+        isKtx = (fileName.indexOf('.KTX') !== -1) ? true : isKtx;
+        let isDicom = (fileName.indexOf('.dcm') !== -1);
+        isDicom = (fileName.indexOf('.DCM') !== -1) ? true : isDicom;
+        let isNifti = (fileName.indexOf('.nii') !== -1);
+        isNifti = (fileName.indexOf('.NII') !== -1) ? true : isNifti;
+        let isHdr = (fileName.indexOf('.hdr') !== -1);
+        isHdr = (fileName.indexOf('.HDR') !== -1) ? true : isHdr;
+        let isImg = (fileName.indexOf('.img') !== -1);
+        isImg = (fileName.indexOf('.IMG') !== -1) ? true : isImg;
+
+        // read local file
+        if (isKtx) {
+          this.loadFileEvent.detail.fileType = loadFileType.KTX;
+          this.loadFileEvent.detail.data = fileName;
+          this.loadFileEvent.detail.dataType = 'undefined';
+          dispatchEvent(this.loadFileEvent);
+          this.clearDicomTagsTable();
+        }
+        if (isDicom) {
+          const folderURL = fileName.substring(0, fileName.lastIndexOf('/'));
+          this.loadFileEvent.detail.fileType = loadFileType.DICOM;
+          this.loadFileEvent.detail.data = folderURL;
+          this.loadFileEvent.detail.dataType = 'undefined';
+          dispatchEvent(this.loadFileEvent);
+          this.clearDicomTagsTable();
+        }
+        if (isNifti) {
+          this.loadFileEvent.detail.fileType = loadFileType.NIFTI;
+          this.loadFileEvent.detail.data = fileName;
+          this.loadFileEvent.detail.dataType = 'undefined';
+          dispatchEvent(this.loadFileEvent);
+          this.clearDicomTagsTable();
+        }
+        if (isHdr) {
+          this.loadFileEvent.detail.fileType = loadFileType.HDR;
+          this.loadFileEvent.detail.data = fileName;
+          this.loadFileEvent.detail.dataType = 'hdr';
+          dispatchEvent(this.loadFileEvent);
+          this.clearDicomTagsTable();
+        }
+        if (isImg) {
+          this.loadFileEvent.detail.fileType = loadFileType.IMG;
+          this.loadFileEvent.detail.data = fileName;
+          this.loadFileEvent.detail.dataType = 'undefined';
+          dispatchEvent(this.loadFileEvent);
+          this.clearDicomTagsTable();
+        }
+
+        if (!isKtx && !isDicom && !isHdr && !isImg && !isNifti) {
+          alertMsg.show();
+        } else {
+          $('#med3web-modal-open-url').modal('hide');
+        }
+      });
+    }
+    if (urlOpen.length === 1) {
+      urlOpen.on('input', () => {
+        alertMsg.hide();
+      });
+    }
+
+    if (urlOpenModal.length === 1) {
+      urlOpenModal.on('hidden.bs.modal', () => {
+        urlOpen.val(''); // clear input
+      });
+    }
+
+
     // callback on open preset value
     const modalOpenPreset = $('#med3web-modal-open');
     if (modalOpenPreset.length === 1) {

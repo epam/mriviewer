@@ -88,6 +88,7 @@
                     </a>
                   </li>
                   <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open" style="display: none;"><span class="fa fa-server"> Server</span></a></li>
+                  <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open-url"><span class="fa fa-globe"> URL</span></a></li>
                 </ul>
               </li>
               <li class="navbar-btn" id="med3web-button-dicom-tags">
@@ -317,7 +318,32 @@
       </div>
     </div>
 
-    <!-- Open model modal -->
+    <!-- Open model by URL modal -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="med3web-modal-open-url">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Input URL to open</h4>
+          </div>
+          <div class="modal-body">
+            <div class="input-group">
+              <input id="med3web-input-url-open" type="text" class="form-control" placeholder="Input URL...">
+              <span class="input-group-btn">
+                <button id="med3web-btn-load-url" class="btn btn-primary" type="button">Load</button>
+              </span>
+            </div><!-- /input-group -->
+            <div class="alert alert-danger" role="alert" style="display: none; margin-top: 10px;">
+              Incorrect URL! <br>
+              It must contain file extension, for example 'http://example.com/example/example.ktx'.
+              In case of dicom files use 'http://example.com/example/*.dcm'
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Show tags modal -->
     <div class="modal fade" tabindex="-1" role="dialog" id="med3web-modal-dicom-tags">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
