@@ -437,58 +437,38 @@ export default class Menu {
     const alertMsg = urlOpenModal.find('.alert');
     if (urlOpenBtn.length === 1) {
       urlOpenBtn.on('click', () => {
-        const fileName = urlOpen.val();
+        const strUrlFile = urlOpen.val().trim();
+        // console.log(`URL File = ${strUrlFile}`);
         // detect file type
-        let isKtx = (fileName.indexOf('.ktx') !== -1);
-        isKtx = (fileName.indexOf('.KTX') !== -1) ? true : isKtx;
-        let isDicom = (fileName.indexOf('.dcm') !== -1);
-        isDicom = (fileName.indexOf('.DCM') !== -1) ? true : isDicom;
-        let isNifti = (fileName.indexOf('.nii') !== -1);
-        isNifti = (fileName.indexOf('.NII') !== -1) ? true : isNifti;
-        let isHdr = (fileName.indexOf('.hdr') !== -1);
-        isHdr = (fileName.indexOf('.HDR') !== -1) ? true : isHdr;
-        let isImg = (fileName.indexOf('.img') !== -1);
-        isImg = (fileName.indexOf('.IMG') !== -1) ? true : isImg;
-
-        // read local file
-        if (isKtx) {
-          this.loadFileEvent.detail.fileType = loadFileType.KTX;
-          this.loadFileEvent.detail.data = fileName;
-          this.loadFileEvent.detail.dataType = 'undefined';
-          dispatchEvent(this.loadFileEvent);
-          this.clearDicomTagsTable();
-        }
-        if (isDicom) {
-          const folderURL = fileName.substring(0, fileName.lastIndexOf('/'));
+        let isDicom = false;
+        let isKtx = false;
+        let isNifti = false;
+        let isHdr = false;
+        if (strUrlFile.startsWith('http')) {
+          // default is dicom
+          isDicom = true;
           this.loadFileEvent.detail.fileType = loadFileType.DICOM;
-          this.loadFileEvent.detail.data = folderURL;
+          if (strUrlFile.endsWith('.ktx')) {
+            isDicom = false;
+            isKtx = true;
+            this.loadFileEvent.detail.fileType = loadFileType.KTX;
+          }
+          if (strUrlFile.endsWith('.nii')) {
+            isDicom = false;
+            isNifti = true;
+            this.loadFileEvent.detail.fileType = loadFileType.NIFTI;
+          }
+          if (strUrlFile.endsWith('.h')) {
+            isDicom = false;
+            isHdr = true;
+            this.loadFileEvent.detail.fileType = loadFileType.HDR;
+          }
+          this.loadFileEvent.detail.data = strUrlFile;
           this.loadFileEvent.detail.dataType = 'undefined';
           dispatchEvent(this.loadFileEvent);
           this.clearDicomTagsTable();
         }
-        if (isNifti) {
-          this.loadFileEvent.detail.fileType = loadFileType.NIFTI;
-          this.loadFileEvent.detail.data = fileName;
-          this.loadFileEvent.detail.dataType = 'undefined';
-          dispatchEvent(this.loadFileEvent);
-          this.clearDicomTagsTable();
-        }
-        if (isHdr) {
-          this.loadFileEvent.detail.fileType = loadFileType.HDR;
-          this.loadFileEvent.detail.data = fileName;
-          this.loadFileEvent.detail.dataType = 'hdr';
-          dispatchEvent(this.loadFileEvent);
-          this.clearDicomTagsTable();
-        }
-        if (isImg) {
-          this.loadFileEvent.detail.fileType = loadFileType.IMG;
-          this.loadFileEvent.detail.data = fileName;
-          this.loadFileEvent.detail.dataType = 'undefined';
-          dispatchEvent(this.loadFileEvent);
-          this.clearDicomTagsTable();
-        }
-
-        if (!isKtx && !isDicom && !isHdr && !isImg && !isNifti) {
+        if (!isKtx && !isDicom && !isHdr && !isNifti) {
           alertMsg.show();
         } else {
           $('#med3web-modal-open-url').modal('hide');
