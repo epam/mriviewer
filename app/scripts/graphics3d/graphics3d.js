@@ -64,6 +64,9 @@ const CHECK_MODE_NOT_CHECKED = 0;
 const CHECK_MODE_RESULT_OK = 1;
 const CHECK_MODE_RESULT_BAD = 2;
 
+// When scene is ready (how much materials are created via arrow functions)
+const SCENE_READY_COUNTER_OK = 5;
+
 /** Class Graphics3d is used for 3d render */
 export default class Graphics3d {
 
@@ -76,6 +79,7 @@ export default class Graphics3d {
   */
   constructor(engine2d, root3dContainer, curFileDataType) {
     this.curFileDataType = curFileDataType;
+    this.sceneReadyCounter = 0;
     this.scene = new THREE.Scene();
     this.engine2d = engine2d;
     this.mesh = null;
@@ -121,8 +125,10 @@ export default class Graphics3d {
     // When rotating an object, it is necessary to reverse the rotation of
     // the cutting plane and the direction vector onto the light source
     this.orbitControl = new OrbitControl(root3dContainer, this.camera, this.scene, this.mesh, () => {
-      this.updateCutPlanes();
-      this.updateLightDir();
+      if (this.checkFrameBufferMode === CHECK_MODE_RESULT_OK) {
+        this.updateCutPlanes();
+        this.updateLightDir();
+      }
     });
     this.orbitControl.addCallbacks();
     this.renderer.gammaInput = true;
@@ -152,6 +158,62 @@ export default class Graphics3d {
   */
   isVolumeLoaded() {
     return (this.matVolumeRender !== null);
+  }
+  fov2Tan(fov) {
+    const HALF = 0.5;
+    return Math.tan(THREE.Math.degToRad(HALF * fov));
+  }
+
+  tan2Fov(tan) {
+    const TWICE = 2.0;
+    return THREE.Math.radToDeg(Math.atan(tan)) * TWICE;
+  }
+
+  /**
+  * Get screen copy image from current render
+  *
+  * @param {number} width Desired image width
+  * @param {number} height Desired image height
+  * @return {Object} Image with 3d renderer output (as URI string)
+  */
+  screenshot(width, height) {
+    if (this.renderer === null) {
+      return null;
+    }
+    let screenshotImage = null;
+    if (typeof width === 'undefined') {
+      screenshotImage = this.renderer.domElement.toDataURL('image/png');
+    } else {
+      // width and height are specified
+      const originalAspect = this.camera.aspect;
+      const originalFov = this.camera.fov;
+      const originalTanFov2 = this.fov2Tan(this.camera.fov);
+
+      // screen shot should contain the principal area of interest (a centered square touching screen sides)
+      const areaOfInterestSize = Math.min(this.windowWidth, this.windowHeight);
+      const areaOfInterestTanFov2 = originalTanFov2 * areaOfInterestSize / this.windowHeight;
+
+      // set appropriate camera aspect & FOV
+      const shotAspect = width / height;
+      this.camera.aspect = shotAspect;
+      this.camera.fov = this.tan2Fov(areaOfInterestTanFov2 / Math.min(shotAspect, 1.0));
+      this.camera.updateProjectionMatrix();
+
+      // resize canvas to the required size of screen shot
+      this.renderer.setSize(width, height);
+
+      // make screen shot
+      this.render();
+      screenshotImage = this.renderer.domElement.toDataURL('image/png');
+
+      // restore original camera & canvas proportions
+      this.camera.aspect = originalAspect;
+      this.camera.fov = originalFov;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(this.windowWidth, this.windowHeight);
+      this.render();
+    }
+    return screenshotImage;
   }
 
   /**
@@ -480,6 +542,7 @@ export default class Graphics3d {
   * @param (bool) isRoiVolume) - is roi volume
   */
   callbackCreateCubeVolumeBF(window, box, nonEmptyBoxMin, nonEmptyBoxMax, isRoiVolume = false) {
+    this.sceneReadyCounter = 0;
     let matBfThreeGS = null;
     let matFfThreeGS = null;
     let matRenderToTextureThreeGS = null;
@@ -570,6 +633,7 @@ export default class Graphics3d {
     matBfThreeGS = new MaterialBF();
     matBfThreeGS.create((mat) => {
       this.matBF = mat;
+      this.sceneReadyCounter++;
     });
 
     // Create material for front face render
@@ -579,6 +643,7 @@ export default class Graphics3d {
     matFfThreeGS.m_uniforms.PlaneZ.value = new THREE.Vector4(0.0, 0.0, -1.0, 0.5);
     matFfThreeGS.create(this.bfTexture, (mat) => {
       this.matFF = mat;
+      this.sceneReadyCounter++;
     });
 
     // Create mesh
@@ -616,6 +681,7 @@ export default class Graphics3d {
         this.curFileDataType.lightDirComp, this.curFileDataType.lightDirComp);
       mat.uniforms.needsUpdate = true;
       this.matRenderToTexture = mat;
+      this.sceneReadyCounter++;
     });
 
     // Create material for interpolation
@@ -626,6 +692,7 @@ export default class Graphics3d {
     matIntetpl.create(this.renderToTexture, (mat) => {
       mat.uniforms.needsUpdate = true;
       this.matInterpolation = mat;
+      this.sceneReadyCounter++;
     });
 
     // Create material for main pass of volume render
@@ -660,6 +727,7 @@ export default class Graphics3d {
       this.scene.add(this.mesh);
       this.matVolumeRender = mat;
       this.mesh.material = this.matVolumeRender;
+      this.sceneReadyCounter++;
     });
   } // callbackCreateCubeVolume
 
@@ -720,7 +788,7 @@ export default class Graphics3d {
 
   /** Render 3d scene */
   render() {
-    if (this.mesh == null) {
+    if (this.sceneReadyCounter !== SCENE_READY_COUNTER_OK) {
       // render empty scene to show "black" empty screen
       this.renderer.render(this.scene, this.camera);
       return;
@@ -782,7 +850,7 @@ export default class Graphics3d {
   }
 
   onMouseDown() {
-    if (!this.mesh) {
+    if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return;
     }
     if (this.fps < MIN_FPS) {
@@ -795,7 +863,7 @@ export default class Graphics3d {
   }
 
   onMouseUp() {
-    if (!this.mesh) {
+    if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return;
     }
     this.matRenderToTexture.uniforms.stepSize.value = new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
@@ -806,7 +874,7 @@ export default class Graphics3d {
   }
 
   onMouseWheel(e) {
-    if (!this.mesh) {
+    if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return;
     }
     this.matRenderToTexture.uniforms.stepSize.value = new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);

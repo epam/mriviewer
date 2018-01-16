@@ -329,6 +329,9 @@ function ktxOnFail(dataName, status) {
 
 /** Load KTX volume (lungs data) from URL */
 function callbackLoadKtxFile(strUrl) {
+  if (strUrl.length < 1) {
+    return;
+  }
   const canOpen = !isChromeAndFile();
   if (!canOpen) {
     swal({
@@ -460,6 +463,9 @@ function callbackLoadLocalNiftiFile(file) {
   });
 }
 function callbackLoadNiftiFile(url) {
+  if (url.length < 1) {
+    return;
+  }
   const canOpen = !isChromeAndFile();
   if (!canOpen) {
     swal({
@@ -579,6 +585,9 @@ function callbackLoadLocalHdrFiles(files) {
   });
 }
 function callbackLoadHdrFiles(strFileNameHead) {
+  if (strFileNameHead.length < 1) {
+    return;
+  }
   const canOpen = !isChromeAndFile();
   if (!canOpen) {
     swal({
