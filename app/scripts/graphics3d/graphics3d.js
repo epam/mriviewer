@@ -98,7 +98,9 @@ export default class Graphics3d {
     // eslint-disable-next-line
     this.planeCenterPt = new THREE.Vector3(-0.5, -0.5, 0.5 * 1.4);
     // this.renderer = new THREE.WebGLRenderer({ antialias: false, logarithmicDepthBuffer: false });
-    this.renderer = new THREE.WebGLRenderer({ antialias: false });
+
+    // use preserveDrawingBuffer for screen shot take functionality
+    this.renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true });
     this.renderer.autoClearStencil = false;
     this.renderer.autoClearColor = false;
     if (!this.renderer) {
@@ -106,14 +108,14 @@ export default class Graphics3d {
     }
 
     // Assign current window to render area
-    this.SCENE_3D_WINDOW_W = root3dContainer.width();
+    this.windowWidth = root3dContainer.width();
     // eslint-disable-next-line
-    this.SCENE_3D_WINDOW_H = root3dContainer.height() - 5;
-    const camAspect = this.SCENE_3D_WINDOW_W / this.SCENE_3D_WINDOW_H;
+    this.windowHeight = root3dContainer.height() - 5;
+    const camAspect = this.windowWidth / this.windowHeight;
     // eslint-disable-next-line
     this.camera = new THREE.PerspectiveCamera(60, camAspect, 0.01, 100);
     this.camera.position.z = 10;
-    this.renderer.setSize(this.SCENE_3D_WINDOW_W, this.SCENE_3D_WINDOW_H);
+    this.renderer.setSize(this.windowWidth, this.windowHeight);
 
     this.renderer.setClearColor(SCENE_3D_BACKGROUND_COLOR);
 
@@ -590,8 +592,8 @@ export default class Graphics3d {
         this.bfTexture.dispose();
       }
       // Create Render Target for back face render
-      this.bfTexture = new THREE.WebGLRenderTarget(this.SCENE_3D_WINDOW_W * window.devicePixelRatio,
-        this.SCENE_3D_WINDOW_H * window.devicePixelRatio, {
+      this.bfTexture = new THREE.WebGLRenderTarget(this.windowWidth * window.devicePixelRatio,
+        this.windowHeight * window.devicePixelRatio, {
           minFilter: THREE.NearestFilter,
           magFilter: THREE.NearestFilter,
           format: THREE.RGBAFormat,
@@ -603,8 +605,8 @@ export default class Graphics3d {
         this.ffTexture.dispose();
       }
       // Create Render Target for front face render
-      this.ffTexture = new THREE.WebGLRenderTarget(this.SCENE_3D_WINDOW_W * window.devicePixelRatio,
-        this.SCENE_3D_WINDOW_H * window.devicePixelRatio, {
+      this.ffTexture = new THREE.WebGLRenderTarget(this.windowWidth * window.devicePixelRatio,
+        this.windowHeight * window.devicePixelRatio, {
           minFilter: THREE.NearestFilter,
           magFilter: THREE.NearestFilter,
           format: THREE.RGBAFormat,
@@ -617,8 +619,8 @@ export default class Graphics3d {
       }
       // Create Render Target for volume render to texture
       const VAL_3 = 3;
-      this.renderToTexture = new THREE.WebGLRenderTarget((this.SCENE_3D_WINDOW_W * window.devicePixelRatio) / VAL_3,
-        (this.SCENE_3D_WINDOW_H * window.devicePixelRatio) / VAL_3, {
+      this.renderToTexture = new THREE.WebGLRenderTarget((this.windowWidth * window.devicePixelRatio) / VAL_3,
+        (this.windowHeight * window.devicePixelRatio) / VAL_3, {
           minFilter: THREE.NearestFilter,
           magFilter: THREE.NearestFilter,
           format: THREE.RGBAFormat,
@@ -687,8 +689,8 @@ export default class Graphics3d {
     // Create material for interpolation
     matIntetpl = new MaterialInterpolation();
     const VAL_3 = 3.0;
-    matIntetpl.m_uniforms.isoSurfTexel.value = new THREE.Vector2(VAL_3 / this.SCENE_3D_WINDOW_W,
-      VAL_3 / this.SCENE_3D_WINDOW_H);
+    matIntetpl.m_uniforms.isoSurfTexel.value = new THREE.Vector2(VAL_3 / this.windowWidth,
+      VAL_3 / this.windowHeight);
     matIntetpl.create(this.renderToTexture, (mat) => {
       mat.uniforms.needsUpdate = true;
       this.matInterpolation = mat;
@@ -697,8 +699,8 @@ export default class Graphics3d {
 
     // Create material for main pass of volume render
     matSkullThreeGS = new MaterialVolumeRender();
-    matSkullThreeGS.m_uniforms.isoSurfTexel.value = new THREE.Vector2(VAL_3 / this.SCENE_3D_WINDOW_W,
-      VAL_3 / this.SCENE_3D_WINDOW_H);
+    matSkullThreeGS.m_uniforms.isoSurfTexel.value = new THREE.Vector2(VAL_3 / this.windowWidth,
+      VAL_3 / this.windowHeight);
     matSkullThreeGS.m_uniforms.colorMap1D.value = this.colorMapTexture;
     matSkullThreeGS.create(this.volTexture, this.bfTexture, this.ffTexture, this.renderToTexture, (mat) => {
       mat.uniforms.t_function1min.value =

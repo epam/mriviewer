@@ -27,6 +27,7 @@ import c3 from 'c3'; // eslint-disable-line no-unused-vars
 import Spinner from 'spin'; // eslint-disable-line no-unused-vars
 import Graphics2d from './graphics2d/graphics2d';
 import packageJson from '../../package.json';
+import Screenshot from './utils/screenshot';
 import config from '../../tools/config';
 
 const developerMode = true;
@@ -438,7 +439,17 @@ export default class Menu {
     if (urlOpenBtn.length === 1) {
       urlOpenBtn.on('click', () => {
         const strUrlFile = urlOpen.val().trim();
-        // console.log(`URL File = ${strUrlFile}`);
+
+        // some debug trick: if user press Load button in URL open
+        // with empty URL => perform screen copy take
+        if (strUrlFile.length < 1) {
+          $('#med3web-modal-open-url').modal('hide');
+
+          const containter3d = $('#med3web-container-3d');
+          containter3d.click();
+          Screenshot.makeScreenshot(this.engine3d);
+          return;
+        }
         // detect file type
         let isDicom = false;
         let isKtx = false;
