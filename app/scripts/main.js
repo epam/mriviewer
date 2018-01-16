@@ -577,7 +577,7 @@ function callbackLoadLocalHdrFiles(files) {
     if (status === LoadResult.SUCCESS) {
       hdrOnSuccess(files[0].name, loaderHdr, header, dataSize, dataArray, isRoiVolume);
     } else {
-      hdrOnFail(file.name, status);
+      hdrOnFail(files[0].name, status);
     }
   }, (ratioLoaded) => {
     console.log(`Loading ratio = ${ratioLoaded}`);
