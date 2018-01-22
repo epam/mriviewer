@@ -153,9 +153,7 @@ html, body {
           outline: none;
           box-shadow: none;
           border: none;
-          .glyphicon {
-            padding: 5px;
-          }
+
         }
         a:hover, a:focus {
           a:hover, a:focus {
@@ -183,7 +181,7 @@ html, body {
           display: flex;
           flex-direction: column;
           text-align: center;
-          .glyphicon {
+          .glyphicon, .fa {
             padding: 0 !important;
             font-size: 20px;
           }
@@ -200,7 +198,7 @@ html, body {
           display: flex;
           flex-direction: column;
           text-align: center;
-          .glyphicon {
+          .glyphicon, .fa {
             padding: 0 !important;
             font-size: 20px;
           }

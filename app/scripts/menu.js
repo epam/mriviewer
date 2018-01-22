@@ -439,17 +439,6 @@ export default class Menu {
     if (urlOpenBtn.length === 1) {
       urlOpenBtn.on('click', () => {
         const strUrlFile = urlOpen.val().trim();
-
-        // some debug trick: if user press Load button in URL open
-        // with empty URL => perform screen copy take
-        if (strUrlFile.length < 1) {
-          $('#med3web-modal-open-url').modal('hide');
-
-          const containter3d = $('#med3web-container-3d');
-          containter3d.click();
-          Screenshot.makeScreenshot(this.engine3d);
-          return;
-        }
         // detect file type
         let isDicom = false;
         let isKtx = false;
@@ -498,7 +487,6 @@ export default class Menu {
       });
     }
 
-
     // callback on open preset value
     const modalOpenPreset = $('#med3web-modal-open');
     if (modalOpenPreset.length === 1) {
@@ -524,6 +512,15 @@ export default class Menu {
         if (this.dicomTagsTable.length === 1) {
           this.showDicomTagsOnSliceIdx(this.dicomTagsSliceSelector.prop('selectedIndex'));
         }
+      });
+    }
+    // handler for screenshot button click
+    const buttonScreenshot = $('#med3web-button-screenshot');
+    if (buttonScreenshot.length === 1) {
+      buttonScreenshot.on('click', () => {
+        const containter3d = $('#med3web-container-3d');
+        containter3d.click();
+        Screenshot.makeScreenshot(this.engine3d);
       });
     }
 

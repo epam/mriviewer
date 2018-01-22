@@ -91,12 +91,21 @@
                   <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open-url"><span class="fa fa-globe"> URL</span></a></li>
                 </ul>
               </li>
-              <li class="navbar-btn" id="med3web-button-dicom-tags">
-                <a href="#" data-toggle="modal" data-target="#med3web-modal-dicom-tags" role="button">
-                  <span data-tooltip="tooltip" data-placement="bottom" title="Dicom tags viewer">
-                    <span class="glyphicon glyphicon-list-alt"></span><span>Tags</span>
+
+              <li class="dropdown navbar-btn" id="med3web-button-dropdown-report">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                  <span data-tooltip="tooltip" data-placement="bottom" title="Report">
+                    <span class="fa fa-file-text-o"></span><span>Report</span>
                   </span>
                 </a>
+                <ul class="dropdown-menu">
+                  <li id="med3web-button-dicom-tags">
+                    <a href="#" data-toggle="modal" data-target="#med3web-modal-dicom-tags">
+                      <span class="fa fa-list-alt"> Show tags</span>
+                    </a>
+                  </li>
+                  <li id="med3web-button-screenshot"><a href="#"><span class="fa fa-camera"> Screenshot</span></a></li>
+                </ul>
               </li>
               <li class="btn-group" data-toggle="buttons">
                 <label class="navbar-btn btn btn-default" id="med3web-mode-2d" data-toggle="mode" data-value="2d" data-tooltip="tooltip" data-placement="bottom" title="2D viewer">
