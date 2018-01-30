@@ -57,12 +57,18 @@ export default class Golden {
   startDriver(webDriver, urlToOpen) {
     this.m_driver = webDriver;
     this.m_appUrl = urlToOpen;
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.m_driver.get(urlToOpen).then(() => {
         if (USE_AGRESSIVE_LOGGING) {
           console.log(`resolved url (in promise) = ${urlToOpen}`);
         }
-        resolve();
+        // check is page loaded correctly
+        this.m_driver.findElement(By.id('med3web-input-url-open')).then(() => {
+          resolve();
+        }).catch((err) => {
+          // console.log(`Open element is NOT found with err = ${err}`);
+          reject(err);
+        }); // end catch reject after findElement on page
       }); // then after get url
     }); // return promise
   }
@@ -76,14 +82,18 @@ export default class Golden {
   * promise resolve callback.
   */
   loadAndCompare(urlSceneToLoad) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       // locate and press button 'Open'
       const elemDropdn = this.m_driver.findElement(By.linkText('Open'));
-      if (!elemDropdn && USE_AGRESSIVE_LOGGING) {
+      if (elemDropdn && USE_AGRESSIVE_LOGGING) {
         console.log('Error locate button Open');
       }
       if (USE_AGRESSIVE_LOGGING) {
         console.log('Clicking Open button...');
+      }
+      if (elemDropdn === null) {
+        reject();
+        return;
       }
       elemDropdn.click();
 
@@ -186,6 +196,8 @@ export default class Golden {
             });
           }); // end then receive screen shot as a string
         }, SOME_TIME);
+      }).catch((err) => {
+        reject(err);
       }); // end of wait correct title in app
 
     }); // end of promise

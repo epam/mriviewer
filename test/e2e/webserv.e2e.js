@@ -61,6 +61,7 @@ const URL_TEST_PAGE_APP = 'vaak+yywww*someanr*rzykrmhtanyins3wnby2018_01_30ymesn
 * replace encypted text to more human-readable and avoid usage _encode / _decode
 */
 const _filesList = [
+  // 'vaak+yysomeanr*rzykybrtme_256_256_256*pax',
   'vaak+yysomeanr*rzykrmhtanyins3wnbystatypaxybrtme_256_256_256*pax',
   'vaak+yysomeanr*rzykrmhtanyins3wnbystatypaxylzegd_256_256_256*pax',
   'vaak+yysomeanr*rzykrmhtanyins3wnbystatyemfamycrtmg*emm'
@@ -138,8 +139,15 @@ function testLoadUrl(fileName) {
       }
       // finalize test iterator
       done();
+    }, () => {
+      console.log('Error load and compare');
+      // this code leaf means error load scene
+      expect(false).to.be.true;
+      done();
+      return false;
     }); // end of load and compare
   }); // end of it
+  return true;
 }
 /** Main test with browser */
 describe('Test series to load scene into browser', () => {
@@ -176,6 +184,10 @@ describe('Test series to load scene into browser', () => {
     const urlDecoded = _decode(URL_TEST_PAGE_APP);
     golden.startDriver(driver, urlDecoded).then(() => {
       done();
+    }).catch((err) => {
+      // rejection code
+      console.log(`Cant open URL = ${urlDecoded} in browser. Error message = ${err}`);
+      return Promise.reject(err);
     });
 
   });
@@ -194,8 +206,10 @@ describe('Test series to load scene into browser', () => {
   });
 
   const numFiles = _filesList.length;
-  for (let i = 0; i < numFiles; i++) {
+  let isTestOk = true;
+  for (let i = 0; (i < numFiles) && (isTestOk); i++) {
     const fileName = _decode(_filesList[i]);
-    testLoadUrl(fileName);
+    isTestOk = testLoadUrl(fileName);
   } // for all files in list
+
 }); // end of describe
