@@ -72,6 +72,13 @@
                   </li>
                 </ul>
               </li>
+
+              <li class="dropdown navbar-text">
+                <small id="med3web-menu-scene-title">
+                  Not loaded
+                </small>
+              </li>
+
             </ul>
             <ul class="nav navbar-nav navbar-center">
               <li class="dropdown navbar-btn" id="med3web-button-dropdown-open">
@@ -84,14 +91,16 @@
                   <li>
                     <a href="#" data-target="#med3web-input-open">
                       <label class="input-file-label" for="med3web-input-file-open"><span class="fa fa-desktop"> Computer</span></label>
-                      <input type="file" class="form-control hidden" id="med3web-input-file-open" accept=".dcm,.ktx,.nii,.hdr,.img" multiple>
+                      <input type="file" class="form-control hidden" id="med3web-input-file-open" accept=".dcm,.ktx,.nii,.hdr,.h,.img" multiple>
                     </a>
                   </li>
                   <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open" style="display: none;"><span class="fa fa-server"> Server</span></a></li>
                   <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open-url"><span class="fa fa-globe"> URL</span></a></li>
                 </ul>
               </li>
-
+              
+              
+              <!-- drop down menu with tags and screen shot -->
               <li class="dropdown navbar-btn" id="med3web-button-dropdown-report">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                   <span data-tooltip="tooltip" data-placement="bottom" title="Report">
@@ -106,7 +115,10 @@
                   </li>
                   <li id="med3web-button-screenshot"><a href="#"><span class="fa fa-camera"> Screenshot</span></a></li>
                 </ul>
-              </li>
+              </li>              
+              
+              
+              
               <li class="btn-group" data-toggle="buttons">
                 <label class="navbar-btn btn btn-default" id="med3web-mode-2d" data-toggle="mode" data-value="2d" data-tooltip="tooltip" data-placement="bottom" title="2D viewer">
                   <input type="radio" name="med3web-modes" autocomplete="off"> 2D

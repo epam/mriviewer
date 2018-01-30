@@ -3,7 +3,7 @@
 */
 
 import { expect, assert } from 'chai';
-import NiftiLoader from '../../app/scripts/loaders/niiloader';
+import NiftiLoader from '../../lib/scripts/loaders/niiloader';
 
 describe('Test: NiftiLoader', () => {
   describe('check NiftiLoader class', () => {

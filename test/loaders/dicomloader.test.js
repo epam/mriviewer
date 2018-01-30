@@ -3,7 +3,7 @@
 */
 
 import { expect, assert } from 'chai';
-import DicomFolderLoader from '../../app/scripts/loaders/dicomloader';
+import DicomFolderLoader from '../../lib/scripts/loaders/dicomloader';
 
 describe('Test: DicomFolderLoader', () => {
   describe('check DicomFolderLoader class', () => {
