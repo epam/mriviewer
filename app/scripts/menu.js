@@ -398,7 +398,7 @@ export default class Menu {
   /** Initialize navigation bar */
   initNavBar() {
     // Callback for open local file from computer
-    const localOpen = $('#med3web-input-file-open');
+    const localOpen = $('#med3web-input-file-open-local');
     if (localOpen.length === 1) {
       localOpen.on('change', (evt) => {
         $('#med3web-button-dropdown-open').click(); // close dropdown menu
