@@ -18,7 +18,7 @@ under the License.
 */
 
 /**
-* Main app mopdule
+* Main app module
 * @module app/scripts/main
 */
 

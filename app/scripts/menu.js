@@ -428,37 +428,35 @@ export default class Menu {
           this.loadFileEvent.detail.dataType = 'undefined';
           dispatchEvent(this.loadFileEvent);
           this.clearDicomTagsTable();
-        }
-        if (isDicom) {
+        } else if (isDicom) {
           const files = evt.target.files;
           this.loadFileEvent.detail.fileType = loadFileType.LOCALDICOM;
           this.loadFileEvent.detail.data = files;
           this.loadFileEvent.detail.dataType = 'undefined';
           dispatchEvent(this.loadFileEvent);
           this.clearDicomTagsTable();
-        }
-        if (isNifti) {
+        } else if (isNifti) {
           this.loadFileEvent.detail.fileType = loadFileType.LOCALNIFTI;
           this.loadFileEvent.detail.data = file;
           this.loadFileEvent.detail.dataType = 'undefined';
           dispatchEvent(this.loadFileEvent);
           this.clearDicomTagsTable();
-        }
-        if (isHdr) {
+        } else if (isHdr) {
           const files = evt.target.files;
           this.loadFileEvent.detail.fileType = loadFileType.LOCALHDR;
           this.loadFileEvent.detail.data = files;
           this.loadFileEvent.detail.dataType = 'hdr';
           dispatchEvent(this.loadFileEvent);
           this.clearDicomTagsTable();
-        }
-        if (isImg) {
+        } else if (isImg) {
           const files = evt.target.files;
           this.loadFileEvent.detail.fileType = loadFileType.LOCALIMG;
           this.loadFileEvent.detail.data = files;
           this.loadFileEvent.detail.dataType = 'undefined';
           dispatchEvent(this.loadFileEvent);
           this.clearDicomTagsTable();
+        } else {
+          console.log('Local open file: unknown file type');
         }
       });
     }
