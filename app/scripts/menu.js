@@ -416,6 +416,8 @@ export default class Menu {
         isNifti = (fileName.indexOf('.NII') !== -1) ? true : isNifti;
         let isHdr = (fileName.indexOf('.hdr') !== -1);
         isHdr = (fileName.indexOf('.HDR') !== -1) ? true : isHdr;
+        isHdr = (fileName.indexOf('.h') !== -1) ? true : isHdr;
+        isHdr = (fileName.indexOf('.H') !== -1) ? true : isHdr;
         let isImg = (fileName.indexOf('.img') !== -1);
         isImg = (fileName.indexOf('.IMG') !== -1) ? true : isImg;
 
@@ -490,7 +492,7 @@ export default class Menu {
             isNifti = true;
             this.loadFileEvent.detail.fileType = loadFileType.NIFTI;
           }
-          if (strUrlFile.endsWith('.h')) {
+          if ((strUrlFile.endsWith('.h')) || (strUrlFile.endsWith('.hdr'))) {
             isDicom = false;
             isHdr = true;
             this.loadFileEvent.detail.fileType = loadFileType.HDR;
