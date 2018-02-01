@@ -10,6 +10,8 @@ export default {
     src: [
       'app/scripts/*.js',
       'app/scripts/**/*.js',
+      'lib/scripts/*.js',
+      'lib/scripts/**/*.js',
     ],
     tmpdst: '.tmp/scripts',
     distdst: 'dist/scripts',
@@ -37,12 +39,13 @@ export default {
     src: 'app/data/*.*',
     tmpdst: '.tmp/data',
     distdst: 'dist/data',
-    onloadsrc: 'data/lungs.ktx',
+    onloadsrc: '', // 'data/lungs.ktx',
   },
   jsdocConfig: {
     source: [
       'README.md',
       './app/scripts/**/*.js',
+      './lib/scripts/**/*.js',
       '!app/scripts/__mmm.js',
     ],
     opts: {
@@ -68,6 +71,19 @@ export default {
         },
       },
     },
+  },
+  test: {
+    src: [
+      'test/**/*.test.js',
+    ],
+  },
+  e2e: {
+    src: 'test/**/*.e2e.js',
+    dst: [
+      'test/e2e/mismatch/*.png',
+      'test/e2e/mismatch/*.html',
+    ],
+    show: 'test/e2e/mismatch/*.html',
   },
   presetListPath: '',
 };

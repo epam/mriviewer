@@ -98,6 +98,12 @@ gulp test:cover
 ```
 See result in coverage/lcov-report/index.html
 
+### Run functional tests (with Selenium webdriver)
+Check you have installed Chrome browser before run functional tests
+```
+gulp test:e2e
+```
+
 ### Build project ready for server upload
 
 ```

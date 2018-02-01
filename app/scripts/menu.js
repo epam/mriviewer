@@ -25,26 +25,13 @@ under the License.
 import noUiSlider from 'nouislider'; // eslint-disable-line no-unused-vars
 import c3 from 'c3'; // eslint-disable-line no-unused-vars
 import Spinner from 'spin'; // eslint-disable-line no-unused-vars
-import Graphics2d from './graphics2d/graphics2d';
+import { loadFileType, RenderMode, LoadState } from '../../lib/scripts/med3web';
+import Graphics2d from '../../lib/scripts/graphics2d/graphics2d';
 import packageJson from '../../package.json';
-import Screenshot from './utils/screenshot';
+import Screenshot from '../../lib/scripts/utils/screenshot';
 import config from '../../tools/config';
 
 const developerMode = true;
-
-/** Possible 3d render modes */
-export const loadFileType = {
-  LOCALKTX: 'local ktx',
-  LOCALDICOM: 'local dicom',
-  LOCALNIFTI: 'local nifti',
-  LOCALHDR: 'local hdr',
-  LOCALIMG: 'local img',
-  KTX: 'ktx',
-  DICOM: 'dicom',
-  NIFTI: 'nifti',
-  HDR: 'hdr',
-  IMG: 'img',
-};
 
 /** Possible 3d render modes */
 export const renderModes = {
@@ -90,9 +77,10 @@ export default class Menu {
    * @param {Object} engine3d - object container for 3d rendering
    * @return {Object} Instance of this class (singleton)
    */
-  constructor(engine2d, engine3d) {
-    this.engine2d = engine2d;
-    this.engine3d = engine3d;
+  constructor() {
+    this.app = null;
+    this.engine2d = null;
+    this.engine3d = null;
     this.prevTime = 0;
     this.fps = 0;
     this.infoContainer = $('#med3web-info');
@@ -138,6 +126,15 @@ export default class Menu {
     this.panelAboutCopyright.text(strCopyright);
     // console.log(`strCopyright = ${strCopyright}`);
 
+    /** HTML element with data title  (or file name) */
+    this.title = $('#med3web-menu-scene-title');
+    if (!this.title) {
+      console.log('med3web-menu-scene-title element is not found in html');
+    }
+    this.title.text('Press Open button to load scene');
+    /** File(or scene name) to open */
+    this.fileToOpen = '';
+
     this.isHandleGreen = 0;
     /** loaded data histogram */
     this.hist = null;
@@ -182,6 +179,11 @@ export default class Menu {
         container: 'body',
       });
     });
+  }
+  setRenderEngine(app) {
+    this.app = app;
+    this.engine2d = app.m_engine2d;
+    this.engine3d = app.m_engine3d;
   }
 
   startProgressBar() {
@@ -299,7 +301,33 @@ export default class Menu {
     }
   }
 
-  updateInfoContainer() {
+  /** Update each frame */
+  updateEachFrame() {
+    const app = this.app;
+    if (app === 'undefined') {
+      return;
+    }
+    if (app === null) {
+      return;
+    }
+    const loadState = app.getLoadState();
+    // console.log(`in updateEachFrame... loadState = ${loadState}`);
+    if (loadState === LoadState.LOAD_STATE_LOADING) {
+      const TEXT_LOADING = 'Loading...';
+      this.title.text(TEXT_LOADING);
+      // console.log('set title text loading...');
+    }
+    const eng3d = app.m_engine3d;
+    const eng2d = app.m_engine2d;
+    const eng3dReady = eng3d.isReadyToRender();
+    const eng2dLoaded = eng2d.isLoaded();
+
+    if ((loadState === LoadState.LOAD_STATE_READY) && (eng3dReady) && (eng2dLoaded)) {
+      // set loaded file/data title
+      this.title.text(this.fileToOpen);
+      // console.log('set title text to opened file');
+    }
+
     const currentTime = new Date().getTime();
     this.fps += 1;
     const TIME_TO_UPDATE_CONTAINER = 1000;
@@ -370,13 +398,15 @@ export default class Menu {
   /** Initialize navigation bar */
   initNavBar() {
     // Callback for open local file from computer
-    const localOpen = $('#med3web-input-file-open');
+    const localOpen = $('#med3web-input-file-open-local');
     if (localOpen.length === 1) {
       localOpen.on('change', (evt) => {
         $('#med3web-button-dropdown-open').click(); // close dropdown menu
 
         const file = evt.target.files[0];
         const fileName = file.name;
+        this.fileToOpen = fileName.slice(0); // copy data, not reference
+
         // detect file type
         let isKtx = (fileName.indexOf('.ktx') !== -1);
         isKtx = (fileName.indexOf('.KTX') !== -1) ? true : isKtx;
@@ -386,6 +416,8 @@ export default class Menu {
         isNifti = (fileName.indexOf('.NII') !== -1) ? true : isNifti;
         let isHdr = (fileName.indexOf('.hdr') !== -1);
         isHdr = (fileName.indexOf('.HDR') !== -1) ? true : isHdr;
+        isHdr = (fileName.indexOf('.h') !== -1) ? true : isHdr;
+        isHdr = (fileName.indexOf('.H') !== -1) ? true : isHdr;
         let isImg = (fileName.indexOf('.img') !== -1);
         isImg = (fileName.indexOf('.IMG') !== -1) ? true : isImg;
 
@@ -396,37 +428,35 @@ export default class Menu {
           this.loadFileEvent.detail.dataType = 'undefined';
           dispatchEvent(this.loadFileEvent);
           this.clearDicomTagsTable();
-        }
-        if (isDicom) {
+        } else if (isDicom) {
           const files = evt.target.files;
           this.loadFileEvent.detail.fileType = loadFileType.LOCALDICOM;
           this.loadFileEvent.detail.data = files;
           this.loadFileEvent.detail.dataType = 'undefined';
           dispatchEvent(this.loadFileEvent);
           this.clearDicomTagsTable();
-        }
-        if (isNifti) {
+        } else if (isNifti) {
           this.loadFileEvent.detail.fileType = loadFileType.LOCALNIFTI;
           this.loadFileEvent.detail.data = file;
           this.loadFileEvent.detail.dataType = 'undefined';
           dispatchEvent(this.loadFileEvent);
           this.clearDicomTagsTable();
-        }
-        if (isHdr) {
+        } else if (isHdr) {
           const files = evt.target.files;
           this.loadFileEvent.detail.fileType = loadFileType.LOCALHDR;
           this.loadFileEvent.detail.data = files;
           this.loadFileEvent.detail.dataType = 'hdr';
           dispatchEvent(this.loadFileEvent);
           this.clearDicomTagsTable();
-        }
-        if (isImg) {
+        } else if (isImg) {
           const files = evt.target.files;
           this.loadFileEvent.detail.fileType = loadFileType.LOCALIMG;
           this.loadFileEvent.detail.data = files;
           this.loadFileEvent.detail.dataType = 'undefined';
           dispatchEvent(this.loadFileEvent);
           this.clearDicomTagsTable();
+        } else {
+          console.log('Local open file: unknown file type');
         }
       });
     }
@@ -439,6 +469,8 @@ export default class Menu {
     if (urlOpenBtn.length === 1) {
       urlOpenBtn.on('click', () => {
         const strUrlFile = urlOpen.val().trim();
+        this.fileToOpen = strUrlFile.slice(0); // copy data, not reference
+
         // detect file type
         let isDicom = false;
         let isKtx = false;
@@ -458,7 +490,7 @@ export default class Menu {
             isNifti = true;
             this.loadFileEvent.detail.fileType = loadFileType.NIFTI;
           }
-          if (strUrlFile.endsWith('.h')) {
+          if ((strUrlFile.endsWith('.h')) || (strUrlFile.endsWith('.hdr'))) {
             isDicom = false;
             isHdr = true;
             this.loadFileEvent.detail.fileType = loadFileType.HDR;
@@ -514,7 +546,8 @@ export default class Menu {
         }
       });
     }
-    // handler for screenshot button click
+
+    // handler for screen shot button click
     const buttonScreenshot = $('#med3web-button-screenshot');
     if (buttonScreenshot.length === 1) {
       buttonScreenshot.on('click', () => {
@@ -526,6 +559,7 @@ export default class Menu {
 
     // mode switching buttons
     $('[data-toggle=mode]').on('click', (e) => {
+      // newModeSuffix is '2d' or '3d' depending on tab, pressed by user
       const newModeSuffix = $(e.currentTarget).attr('data-value');
       if (newModeSuffix !== this.curModeSuffix) {
         $(`#med3web-container-${this.curModeSuffix}`).hide();
@@ -539,6 +573,11 @@ export default class Menu {
           $(`#med3web-toolbar-${newModeSuffix}`).show();
         }
         this.curModeSuffix = newModeSuffix;
+        if (newModeSuffix === '2d') {
+          this.app.setRenderMode(RenderMode.RENDER_MODE_2D);
+        } else if (newModeSuffix === '3d') {
+          this.app.setRenderMode(RenderMode.RENDER_MODE_3D);
+        }
       }
     });
   }

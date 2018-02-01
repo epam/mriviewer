@@ -3,7 +3,7 @@
 */
 
 import { expect, assert } from 'chai';
-import KtxLoader from '../../app/scripts/loaders/ktxloader';
+import KtxLoader from '../../lib/scripts/loaders/ktxloader';
 
 describe('Test: KtxLoader', () => {
   describe('check KtxLoader class', () => {

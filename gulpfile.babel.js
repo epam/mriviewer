@@ -65,7 +65,7 @@ gulp.task('lint', done =>
   runSequence('lint:css', 'lint:js', done));
 
 gulp.task('lint:js', () =>
-  gulp.src(['*.js', 'app/scripts/**/*.js', 'test/**/*.js'])
+  gulp.src(['*.js', 'app/scripts/**/*.js', 'test/**/*.js', 'lib/scripts/**/*.js'])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError()));
@@ -79,12 +79,12 @@ gulp.task('lint:css', () =>
     })));
 
 gulp.task('test', () =>
-  gulp.src('test/**/*.js', { read: false })
+  gulp.src(config.test.src, { read: false })
     .pipe(mocha({ compilers: 'js:babel-core/register' })));
 
 gulp.task('test:cover', ['clean:cover', 'test:cover-hook'], () =>
-  gulp.src('test/**/*.js', { read: false })
-    .pipe(mocha({ compilers: 'js:babel-core/register' }))
+  gulp.src(config.test.src, { read: false })
+    .pipe(mocha({ require: 'babel-core/register' }))
     .pipe(istanbul.writeReports()));
 
 gulp.task('test:coveralls', () =>
@@ -94,15 +94,20 @@ gulp.task('test:coveralls', () =>
 gulp.task('test:cover-hook', () =>
   gulp.src([
     'app/**/*.js',
-    '!app/scripts/controls/*.js',
-    '!app/scripts/gfx/*.js',
-    '!app/scripts/graphics2d/*.js',
-    'app/scripts/graphics3d/*.js',
-    'app/scripts/loaders/*.js',
-    '!app/scripts/utils/*.js',
+    '!lib/scripts/controls/*.js',
+    '!lib/scripts/gfx/*.js',
+    '!lib/scripts/graphics2d/*.js',
+    'lib/scripts/graphics3d/*.js',
+    'lib/scripts/loaders/*.js',
+    '!lib/scripts/utils/*.js',
   ])
     .pipe(istanbul({ includeUntested: true }))
     .pipe(istanbul.hookRequire()));
+
+
+gulp.task('test:e2e', ['clean:e2e'], () =>
+  gulp.src(config.e2e.src, { read: false })
+    .pipe(mocha({ require: 'babel-core/register', timeout:55000 })));
 
 const NEED_CONSOLE_LOGS_BUILD = true;
 
@@ -182,7 +187,7 @@ gulp.task('extras', () => {
   gulp.src(['app/*.*', '!app/*.html'], { dot: true }).pipe(gulp.dest('dist'));
 });
 
-gulp.task('clean', ['clean:docs', 'clean:dist', 'clean:cover']);
+gulp.task('clean', ['clean:docs', 'clean:dist', 'clean:cover', 'clean:e2e']);
 
 gulp.task('clean:docs', () => {
   del(['docs/auto/']);
@@ -194,6 +199,10 @@ gulp.task('clean:dist', () => {
 
 gulp.task('clean:cover', () => {
   del(['coverage/*']);
+});
+
+gulp.task('clean:e2e', () => {
+  del(['test/e2e/mismatch/*.png', 'test/e2e/mismatch/*.html']);
 });
 
 gulp.task('serve', () => {

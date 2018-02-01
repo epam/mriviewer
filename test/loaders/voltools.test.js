@@ -3,7 +3,7 @@
 */
 
 import { expect, assert } from 'chai';
-import VolumeTools from '../../app/scripts/loaders/voltools';
+import VolumeTools from '../../lib/scripts/loaders/voltools';
 
 describe('Test: VolumeTools', () => {
   describe('check gaussSmooth()', () => {
