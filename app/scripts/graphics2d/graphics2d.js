@@ -30,6 +30,8 @@ import MeshText2D from './meshtext2d';
 import Line2D from './line2d';
 import DistanceTool from './distancetool';
 import AngleTool from './angletool';
+import AreaTool from './areatool';
+import RectTool from './recttool';
 import PickTool from './picktool';
 
 /**  @constant {number} SCENE_3D_BACKGROUND_COLOR - backgroudn color for 3d window */
@@ -40,6 +42,8 @@ const tools2d = {
   INTENSITY: 'intensity',
   DISTANCE: 'distance',
   ANGLE: 'angle',
+  AREA: 'area',
+  RECT: 'rect',
 };
 
 /** Class Graphics2d is used for simple debug style 2d render */
@@ -167,6 +171,8 @@ export default class Graphics2d {
     this.m_toolType = tools2d.INTENSITY;
     this.m_distanceTool = new DistanceTool(this.m_scene, this.m_lineWidth);
     this.m_angleTool = new AngleTool(this.m_scene, this.m_lineWidth);
+    this.m_areaTool = new AreaTool(this.m_scene, this.m_lineWidth);
+    this.m_rectTool = new RectTool(this.m_scene, this.m_lineWidth);
     this.m_pickTool = new PickTool(this.m_scene);
 
     /*
@@ -208,12 +214,16 @@ export default class Graphics2d {
   onFileLoaded() {
     this.m_distanceTool.clearLines();
     this.m_angleTool.clearLines();
+    this.m_areaTool.clearLines();
+    this.m_rectTool.clearLines();
     this.m_pickTool.clear();
   }
 
   clear2DTools() {
     this.m_distanceTool.clearLines();
     this.m_angleTool.clearLines();
+    this.m_areaTool.clearLines();
+    this.m_rectTool.clearLines();
     this.m_pickTool.clear();
   }
 
@@ -242,6 +252,12 @@ export default class Graphics2d {
         break;
       case tools2d.ANGLE:
         this.m_angleTool.onMouseDown(xt, yt);
+        break;
+      case tools2d.AREA:
+        this.m_areaTool.onMouseDown(xt, yt);
+        break;
+      case tools2d.RECT:
+        this.m_rectTool.onMouseDown(xt, yt);
         break;
       default:
         console.log('Unexpected 2d tool');
@@ -274,6 +290,12 @@ export default class Graphics2d {
         break;
       case tools2d.ANGLE:
         this.m_angleTool.onMouseMove(xt, yt);
+        break;
+      case tools2d.AREA:
+        this.m_areaTool.onMouseMove(xt, yt);
+        break;
+      case tools2d.RECT:
+        this.m_rectTool.onMouseMove(xt, yt);
         break;
       default:
         console.log('Unexpected 2d tool');
@@ -714,11 +736,23 @@ export default class Graphics2d {
     if (this.m_sliceAxis === Graphics2d.SLICE_AXIS_Z) {
       this.m_distanceTool.setPixelSize(this.m_volumeBox.x / (SCREEN_MULT * this.m_wProjScreen),
         this.m_volumeBox.y / (SCREEN_MULT * this.m_hProjScreen));
+      this.m_areaTool.setPixelSize(this.m_volumeBox.x / (SCREEN_MULT * this.m_wProjScreen),
+        this.m_volumeBox.y / (SCREEN_MULT * this.m_hProjScreen));
+      this.m_rectTool.setPixelSize(this.m_volumeBox.x / (SCREEN_MULT * this.m_wProjScreen),
+        this.m_volumeBox.y / (SCREEN_MULT * this.m_hProjScreen));
     } else if (this.m_sliceAxis === Graphics2d.SLICE_AXIS_Y) {
       this.m_distanceTool.setPixelSize(this.m_volumeBox.x / (SCREEN_MULT * this.m_wProjScreen),
         this.m_volumeBox.z / (SCREEN_MULT * this.m_hProjScreen));
+      this.m_areaTool.setPixelSize(this.m_volumeBox.x / (SCREEN_MULT * this.m_wProjScreen),
+        this.m_volumeBox.z / (SCREEN_MULT * this.m_hProjScreen));
+      this.m_rectTool.setPixelSize(this.m_volumeBox.x / (SCREEN_MULT * this.m_wProjScreen),
+        this.m_volumeBox.z / (SCREEN_MULT * this.m_hProjScreen));
     } else if (this.m_sliceAxis === Graphics2d.SLICE_AXIS_X) {
       this.m_distanceTool.setPixelSize(this.m_volumeBox.y / (SCREEN_MULT * this.m_wProjScreen),
+        this.m_volumeBox.z / (SCREEN_MULT * this.m_hProjScreen));
+      this.m_areaTool.setPixelSize(this.m_volumeBox.y / (SCREEN_MULT * this.m_wProjScreen),
+        this.m_volumeBox.z / (SCREEN_MULT * this.m_hProjScreen));
+      this.m_rectTool.setPixelSize(this.m_volumeBox.y / (SCREEN_MULT * this.m_wProjScreen),
         this.m_volumeBox.z / (SCREEN_MULT * this.m_hProjScreen));
     }
     this.m_pickTool.setProjScreen(this.m_wProjScreen, this.m_hProjScreen);
@@ -766,6 +800,8 @@ export default class Graphics2d {
     }
     this.m_distanceTool.clearLines();
     this.m_angleTool.clearLines();
+    this.m_areaTool.clearLines();
+    this.m_rectTool.clearLines();
     this.m_pickTool.clear();
   }
 
@@ -781,6 +817,8 @@ export default class Graphics2d {
     this.createTileMaps();
     this.m_distanceTool.clearLines();
     this.m_angleTool.clearLines();
+    this.m_areaTool.clearLines();
+    this.m_rectTool.clearLines();
     this.m_pickTool.clear();
     return true;
   }
