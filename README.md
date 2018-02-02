@@ -37,12 +37,12 @@ Some JavaScript libraries to work with Dicom file format:
 
 Three.js is used as some gateway to WebGL renderer. Current Three.js version is not supported 3d textures,
 so we use tricky way to build 2d texture from initial 3d texture by linking 2d slices all together
-as a large tile map. This idea (with source codes) can be seen in project [WebGL Volume Rendering](https://github.com/lebarba/WebGLVolumeRendering)
+as a large tile map. This idea (with source codes) can be seen in project [WebGL Volume Rendering](https://github.com/lebarba/WebGLVolumeRendering).
 
 ## Project documentation
 
 Introduction to the project can be loaded here:
-[Application user interface documentation](docs/general/README.md)
+[Application user interface documentation](docs/general/README.md).
 
 ## Demo app
 [Here](https://epa.ms/mri) you can find a demo app.
@@ -68,9 +68,9 @@ npm install
 ### Node.js and Tools
 
 Download link:
-[NodeJS](https://nodejs.org/en/download/)
+[NodeJS](https://nodejs.org/en/download/).
 
-Version not below than v.6.10.3 is required
+Version not below than v.6.10.3 is required.
 
 After NodeJS installation please check that everything is installed correctly (for example, PATH ), using command:
 ```
@@ -102,7 +102,7 @@ rendering artefacts. Mobile browsers are not currently supported, but some of th
 ### Important note concerning project running modes
 App can be run in 3 modes:
 1. Run remote web app. Steps: build app locally, performing command "gulp build", then copy ready web app (from "dist" folder) to your server.
-2. Run local web app under virtual server. Steps: run command "gulp server"
+2. Run local web app under virtual server. Steps: run command "gulp server".
 3. Run local web app. Steps: Build app via command "gulp build" and open file <LocalProjectLocation>/dist/index.html in your browser.
 Important note: Local run mode (3) is not completely working under Google Chrome browser due to its strong security policy concerning local files opening.
 Other browsers has no such strong security restrictions and can be used. Local run (mode 3) is not recommended way to use this application.
@@ -127,7 +127,7 @@ localhost:9000
 gulp docs
 ```
 
-Result will be in folder docs/auto
+Result will be in folder docs/auto.
 
 
 ### Build project ready for server upload
