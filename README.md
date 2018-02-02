@@ -25,13 +25,13 @@ Medical centers can create their clients database, based on this viewer.
 
 ## References
 
-Dicom file format description can be found [here](http://dicom.nema.org/standard.html) and [here](https://www.leadtools.com/sdk/medical/dicom-spec)
+Dicom file format description can be found [here](http://dicom.nema.org/standard.html) and [here](https://www.leadtools.com/sdk/medical/dicom-spec).
 Ktx file format details are listed in [KTX](https://www.khronos.org/opengles/sdk/tools/KTX/file_format_spec/).
-Popular Dicom loader framework: [GDCM](http://gdcm.sourceforge.net/wiki/index.php/Main_Page)
+Popular Dicom loader framework: [GDCM](http://gdcm.sourceforge.net/wiki/index.php/Main_Page).
 Some JavaScript libraries to work with Dicom file format:
 1. [dicomParser](https://github.com/chafey/dicomParser)
 2. [Daikon](https://github.com/rii-mango/Daikon)
-3. [Xtk](https://github.com/xtk/X#readme)
+3. [Xtk](https://github.com/xtk/X#readme).
 
 ## 3d volumetric rendering idea in a few words
 
@@ -77,7 +77,7 @@ After NodeJS installation please check that everything is installed correctly (f
 node --version
 ```
 Stdout should be
-v6.10.3 (or higher)
+v6.10.3 (or higher).
 
 Then, please install gulp:
 
@@ -88,11 +88,9 @@ npm install -g gulp-cli
 
 ## Project running details
 
-All gulp targets are listed in:
-gulpfile.babel.js
+All gulp targets are listed in `gulpfile.babel.js`.
 
-For the virtual server create process, all source file are "merged" into single file bundle.js which can be found in:
-./.tmp/scripts
+For the virtual server create process, all source file are "merged" into single file bundle.js which can be found in `./.tmp/scripts`.
 
 ### Browser support
 Currently only Chrome, Firefox, Safari, Opera browsers are supported. Other browsers can be used with some performance slowdown and other
@@ -101,9 +99,9 @@ rendering artefacts. Mobile browsers are not currently supported, but some of th
 
 ### Important note concerning project running modes
 App can be run in 3 modes:
-1. Run remote web app. Steps: build app locally, performing command "gulp build", then copy ready web app (from "dist" folder) to your server.
+1. Run remote web app. Steps: build app locally, performing command "gulp build", then copy ready web app (from `dist` folder) to your server.
 2. Run local web app under virtual server. Steps: run command "gulp server".
-3. Run local web app. Steps: Build app via command "gulp build" and open file <LocalProjectLocation>/dist/index.html in your browser.
+3. Run local web app. Steps: Build app via command "gulp build" and open file `<LocalProjectLocation>/dist/index.html` in your browser.
 Important note: Local run mode (3) is not completely working under Google Chrome browser due to its strong security policy concerning local files opening.
 Other browsers has no such strong security restrictions and can be used. Local run (mode 3) is not recommended way to use this application.
 
@@ -136,7 +134,7 @@ Result will be in folder docs/auto.
 gulp build
 ```
 
-Result folder will be in folder 'dist'.
+Result folder will be in folder `dist`.
 
 ## Contributing
 
