@@ -77,6 +77,13 @@ export default {
       'test/**/*.test.js',
     ],
   },
+  cover: {
+    src: [
+      'lib/**/*.js',
+    ],
+    dst: 'coverage/',
+    show: 'coverage/lcov-report/index.html',
+  },
   e2e: {
     src: 'test/**/*.e2e.js',
     dst: [

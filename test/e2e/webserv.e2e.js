@@ -51,7 +51,8 @@ import Golden from './golden';
 * where app is placed for tests.
 *
 */
-const URL_TEST_PAGE_APP = 'vaak+yywww*someanr*rzykrmhtanyins3wnby2018_01_30ymesnx*vail';
+// const URL_TEST_PAGE_APP = 'vaak+yywww*someanr*rzykrmhtanyins3wnby2018_01_30ymesnx*vail';
+const URL_TEST_PAGE_APP = 'http://miew.opensource.epam.com:8080/';
 
 /**
 * List of tested scenes
@@ -181,7 +182,7 @@ describe('Test series to load scene into browser', () => {
     const H_TEST_BROWSER_SIZE = 720;
     driver.manage().window().setSize(W_TEST_BROWSER_SIZE, H_TEST_BROWSER_SIZE);
     golden = new Golden();
-    const urlDecoded = _decode(URL_TEST_PAGE_APP);
+    const urlDecoded = URL_TEST_PAGE_APP;
     golden.startDriver(driver, urlDecoded).then(() => {
       done();
     }).catch((err) => {

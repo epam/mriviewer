@@ -80,30 +80,26 @@ gulp.task('lint:css', () =>
 
 gulp.task('test', () =>
   gulp.src(config.test.src, { read: false })
-    .pipe(mocha({ compilers: 'js:babel-core/register' })));
+    .pipe(mocha({ require: 'babel-core/register' })));
 
-gulp.task('test:cover', ['clean:cover', 'test:cover-hook'], () =>
-  gulp.src(config.test.src, { read: false })
+gulp.task('test:cover', ['test:cover-hook'], () =>
+  gulp.src(config.test.src)
     .pipe(mocha({ require: 'babel-core/register' }))
-    .pipe(istanbul.writeReports()));
-
-gulp.task('test:coveralls', () =>
-  gulp.src('coverage/**/lcov.info')
-    .pipe(coveralls()));
+    .pipe(istanbul.writeReports({
+      dir: config.cover.dst,
+      includeAllSources: true,
+      reporters: ['lcov', 'json', 'text-summary'],
+      reportOpts: { dir: config.cover.dst },
+    })));
 
 gulp.task('test:cover-hook', () =>
-  gulp.src([
-    'app/**/*.js',
-    '!lib/scripts/controls/*.js',
-    '!lib/scripts/gfx/*.js',
-    '!lib/scripts/graphics2d/*.js',
-    'lib/scripts/graphics3d/*.js',
-    'lib/scripts/loaders/*.js',
-    '!lib/scripts/utils/*.js',
-  ])
+  gulp.src(config.cover.src)
     .pipe(istanbul({ includeUntested: true }))
     .pipe(istanbul.hookRequire()));
 
+gulp.task('test:coveralls', () =>
+  gulp.src(config.cover.dst.concat('lcov.info'))
+    .pipe(coveralls()));
 
 gulp.task('test:e2e', ['clean:e2e'], () =>
   gulp.src(config.e2e.src, { read: false })

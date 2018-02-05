@@ -35,7 +35,7 @@
     "express": "^4.16.2",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.0.1",
-    "gulp-babel": "^6.1.1",
+    "gulp-babel": "^7.0.1",
     "gulp-babel-istanbul": "^1.6.0",
     "gulp-cache": "^0.4.2",
     "gulp-coveralls": "^0.1.4",

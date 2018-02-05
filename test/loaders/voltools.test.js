@@ -3,7 +3,7 @@
 */
 
 import { expect, assert } from 'chai';
-import VolumeTools from '../../lib/scripts/loaders/voltools';
+import { VolumeTools, VolToolsErrors } from '../../lib/scripts/loaders/voltools';
 
 describe('Test: VolumeTools', () => {
   describe('check gaussSmooth()', () => {
@@ -294,5 +294,114 @@ describe('Test: VolumeTools', () => {
       assert.equal(loader.m_pixelSpacing.x, DIM);
       assert.equal(loader.m_pixelSpacing.y, DIM);
     });
-  });
-});
+  }); // scale down tests
+
+  describe('check contrastEnchanceUnsharpMask()', () => {
+    it('check undefined arg', () => {
+      const err = VolumeTools.contrastEnchanceUnsharpMask();
+      assert.equal(err, VolToolsErrors.VOLTOOLS_ERROR_BAD_NUMBER);
+
+    }); // end of it
+    it('check invalid arg', () => {
+      const err = VolumeTools.contrastEnchanceUnsharpMask(0, 0, 0, 0, 0, 0, 0, 0);
+      assert.equal(err, VolToolsErrors.VOLTOOLS_ERROR_BAD_ARRAY);
+
+    }); // end of it
+    it('check smoothing black volume', () => {
+      const DIM = 16;
+      const pixelsSrc = new Uint8Array(DIM * DIM * DIM);
+      const pixelsDst = new Uint8Array(DIM * DIM * DIM);
+      let i;
+      for (i = 0; i < DIM * DIM * DIM; i++) {
+        pixelsSrc[i] = 0;
+      }
+      const RAD_SMOOTH = 2;
+      const SIGMA_SMOOTH = 1.2;
+      const MULT = 32;
+      const err = VolumeTools.contrastEnchanceUnsharpMask(pixelsSrc,
+        DIM, DIM, DIM,
+        pixelsDst,
+        RAD_SMOOTH, SIGMA_SMOOTH, MULT);
+      assert.equal(err, VolToolsErrors.VOLTOOLS_ERROR_OK);
+      let isZero = 0;
+      for (i = 0; i < DIM * DIM * DIM; i++) {
+        isZero += pixelsDst[i];
+      }
+      assert.equal(isZero, 0);
+    }); // end of it
+
+    it('check smoothing spot in volume', () => {
+      const DIM = 16;
+      const pixelsSrc = new Uint8Array(DIM * DIM * DIM);
+      const pixelsDst = new Uint8Array(DIM * DIM * DIM);
+      let i;
+      for (i = 0; i < DIM * DIM * DIM; i++) {
+        pixelsSrc[i] = 0;
+      }
+      // add point into central pixel
+      const TWO = 2;
+      const offCentral = (DIM / TWO) + (DIM / TWO) * DIM + (DIM / TWO) * DIM * DIM;
+      const VAL_SRC = 64;
+      pixelsSrc[offCentral] = VAL_SRC;
+
+      const RAD_SMOOTH = 3;
+      const SIGMA_SMOOTH = 1.6;
+      const MULT = 90;
+      const err = VolumeTools.contrastEnchanceUnsharpMask(pixelsSrc,
+        DIM, DIM, DIM,
+        pixelsDst,
+        RAD_SMOOTH, SIGMA_SMOOTH, MULT);
+      assert.equal(err, VolToolsErrors.VOLTOOLS_ERROR_OK);
+      // console.log(`dst pixels = ${pixelsDst[offCentral-1]}, ${pixelsDst[offCentral+0]}, ${pixelsDst[offCentral+1]}`);
+      const valCenterDst = pixelsDst[offCentral];
+      const MAX_COLOR = 255;
+      assert.equal(valCenterDst, MAX_COLOR);
+    }); // end of it
+
+    it('check smoothing quater in volume', () => {
+      const DIM = 16;
+      const pixelsSrc = new Uint8Array(DIM * DIM * DIM);
+      const pixelsDst = new Uint8Array(DIM * DIM * DIM);
+      let i;
+      for (i = 0; i < DIM * DIM * DIM; i++) {
+        pixelsSrc[i] = 0;
+      }
+      // add non-zero value into low quater of the volume
+      const TWO = 2;
+      const VAL_SRC = 64;
+      let x, y, z;
+      for (z = 0; z <= DIM / TWO; z++) {
+        const zOff = z * DIM * DIM;
+        for (y = 0; y <= DIM / TWO; y++) {
+          const yOff = y * DIM;
+          for (x = 0; x <= DIM / TWO; x++) {
+            const off = x + yOff + zOff;
+            pixelsSrc[off] = VAL_SRC;
+          } // for (x)
+        } // for (y)
+      } // for (z)
+
+      const RAD_SMOOTH = 3;
+      const SIGMA_SMOOTH = 1.6;
+      const MULT = 30;
+      const err = VolumeTools.contrastEnchanceUnsharpMask(pixelsSrc,
+        DIM, DIM, DIM,
+        pixelsDst,
+        RAD_SMOOTH, SIGMA_SMOOTH, MULT);
+      assert.equal(err, VolToolsErrors.VOLTOOLS_ERROR_OK);
+      const offCentral = (DIM / TWO) + (DIM / TWO) * DIM + (DIM / TWO) * DIM * DIM;
+
+      // const va = pixelsDst[offCentral - 1];
+      // const vb = pixelsDst[offCentral + 0];
+      // const vc = pixelsDst[offCentral + 1];
+      // console.log(`dst pixels = ${va}, ${vb}, ${vc}`);
+      const valCenterDst = pixelsDst[offCentral];
+      assert.isAbove(valCenterDst, VAL_SRC);
+      const valCenterPre = pixelsDst[offCentral - 1];
+      assert.isAbove(valCenterPre, VAL_SRC);
+      const valCenterNex = pixelsDst[offCentral + 1];
+      assert.equal(valCenterNex, 0);
+    }); // end of it
+
+  }); // contrastEnchanceUnsharpMask tests
+}); // end of tests volume tools
