@@ -3,7 +3,7 @@
 */
 
 import { expect, assert } from 'chai';
-import { VolumeTools, VolToolsErrors } from '../../lib/scripts/loaders/voltools';
+import VolumeTools from '../../lib/scripts/loaders/voltools';
 
 describe('Test: VolumeTools', () => {
   describe('check gaussSmooth()', () => {
@@ -299,12 +299,12 @@ describe('Test: VolumeTools', () => {
   describe('check contrastEnchanceUnsharpMask()', () => {
     it('check undefined arg', () => {
       const err = VolumeTools.contrastEnchanceUnsharpMask();
-      assert.equal(err, VolToolsErrors.VOLTOOLS_ERROR_BAD_NUMBER);
+      assert.equal(err, VolumeTools.VOLTOOLS_ERROR_BAD_NUMBER);
 
     }); // end of it
     it('check invalid arg', () => {
       const err = VolumeTools.contrastEnchanceUnsharpMask(0, 0, 0, 0, 0, 0, 0, 0);
-      assert.equal(err, VolToolsErrors.VOLTOOLS_ERROR_BAD_ARRAY);
+      assert.equal(err, VolumeTools.VOLTOOLS_ERROR_BAD_ARRAY);
 
     }); // end of it
     it('check smoothing black volume', () => {
@@ -322,7 +322,7 @@ describe('Test: VolumeTools', () => {
         DIM, DIM, DIM,
         pixelsDst,
         RAD_SMOOTH, SIGMA_SMOOTH, MULT);
-      assert.equal(err, VolToolsErrors.VOLTOOLS_ERROR_OK);
+      assert.equal(err, VolumeTools.VOLTOOLS_ERROR_OK);
       let isZero = 0;
       for (i = 0; i < DIM * DIM * DIM; i++) {
         isZero += pixelsDst[i];
@@ -351,7 +351,7 @@ describe('Test: VolumeTools', () => {
         DIM, DIM, DIM,
         pixelsDst,
         RAD_SMOOTH, SIGMA_SMOOTH, MULT);
-      assert.equal(err, VolToolsErrors.VOLTOOLS_ERROR_OK);
+      assert.equal(err, VolumeTools.VOLTOOLS_ERROR_OK);
       // console.log(`dst pixels = ${pixelsDst[offCentral-1]}, ${pixelsDst[offCentral+0]}, ${pixelsDst[offCentral+1]}`);
       const valCenterDst = pixelsDst[offCentral];
       const MAX_COLOR = 255;
@@ -388,7 +388,7 @@ describe('Test: VolumeTools', () => {
         DIM, DIM, DIM,
         pixelsDst,
         RAD_SMOOTH, SIGMA_SMOOTH, MULT);
-      assert.equal(err, VolToolsErrors.VOLTOOLS_ERROR_OK);
+      assert.equal(err, VolumeTools.VOLTOOLS_ERROR_OK);
       const offCentral = (DIM / TWO) + (DIM / TWO) * DIM + (DIM / TWO) * DIM * DIM;
 
       // const va = pixelsDst[offCentral - 1];
