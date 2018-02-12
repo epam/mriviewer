@@ -266,7 +266,8 @@ export default class Menu {
       this.curDataType.thresholdIsosurf]);
     this.sliderBrightness.noUiSlider.set(this.curDataType.brightness);
     this.sliderZCut.noUiSlider.set(1);
-    this.sliderQuality.noUiSlider.set(400);
+    const VAL_400 = 400;
+    this.sliderQuality.noUiSlider.set(VAL_400);
   }
 
   resetHist() {
@@ -688,8 +689,7 @@ export default class Menu {
         this.engine3d.onMouseUp();
       });
     }
-    
-     // slider quality
+    // slider quality
     this.sliderQuality = $('#med3web-slider-3d-quality').get(0);
     if (this.sliderQuality) {
       noUiSlider.create(this.sliderQuality, {
