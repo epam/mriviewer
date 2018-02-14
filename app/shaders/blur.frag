@@ -7,6 +7,7 @@ uniform vec3 texelSize;
 
 uniform float tileCountX;
 uniform float volumeSizeZ;
+uniform float blurSigma;
 
 
 /**
@@ -59,11 +60,11 @@ vec3 getTex3DCoord(vec2 base) {
 void main() {
   vec3 base = getTex3DCoord(texCoord);
   vec4 acc = vec4(0.0, 0.0, 0.0, 0.0);
-  float sigma = 1.2;//0.965;
+  float sigma = blurSigma;//0.965;
   float sigma2 = sigma*sigma;
-  float sigmaD = 1.2;//0.965;
+  float sigmaD = blurSigma;//0.965;
   float sigmaD2 = sigmaD*sigmaD;
-  float sigmaB = 1.2;//0.9515;
+  float sigmaB = blurSigma;//0.9515;
   float sigmaB2 = sigmaB*sigmaB;
  
   float val = tex3D(base).r;
