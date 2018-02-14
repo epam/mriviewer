@@ -101,6 +101,8 @@ export default class Menu {
     this.sliderBrightness = null;
     /** slider object for z cut */
     this.sliderZCut = null;
+    /** slider object for quality */
+    this.sliderQuality = null;
     /** 2d toolbar */
     this.toolbar2d = $('#med3web-toolbar-2d');
     this.curModeSuffix = $('[data-toggle=mode].active').attr('data-value');
@@ -264,6 +266,8 @@ export default class Menu {
       this.curDataType.thresholdIsosurf]);
     this.sliderBrightness.noUiSlider.set(this.curDataType.brightness);
     this.sliderZCut.noUiSlider.set(1);
+    const VAL_400 = 400;
+    this.sliderQuality.noUiSlider.set(VAL_400);
   }
 
   resetHist() {
@@ -609,6 +613,8 @@ export default class Menu {
             slider.appendTo(curDiv);
             slider = $('#med3web-setting-3d-z-cut').detach();
             slider.appendTo(curDiv);
+            slider = $('#med3web-setting-3d-quality').detach();
+            slider.appendTo(curDiv);
             this.engine3d.switchToVolumeRender();
             break;
           case renderModes.ISOSURF:
@@ -619,11 +625,16 @@ export default class Menu {
             slider.appendTo(curDiv);
             slider = $('#med3web-setting-3d-z-cut').detach();
             slider.appendTo(curDiv);
+            slider = $('#med3web-setting-3d-quality').detach();
+            slider.appendTo(curDiv);
             this.engine3d.switchToIsosurfRender();
             break;
           case renderModes.MIP:
+            curDiv = $('#med3web-3d-mip-body').find('div')[0];
             slider = $('#med3web-setting-3d-z-cut').detach();
-            slider.appendTo($('#med3web-3d-mip-body').find('div')[0]);
+            slider.appendTo(curDiv);
+            slider = $('#med3web-setting-3d-quality').detach();
+            slider.appendTo(curDiv);
             this.engine3d.switchToFLATRender();
             break;
           default:
@@ -675,6 +686,29 @@ export default class Menu {
       });
 
       this.sliderOpacityTissue.noUiSlider.on('end', () => {
+        this.engine3d.onMouseUp();
+      });
+    }
+    // slider quality
+    this.sliderQuality = $('#med3web-slider-3d-quality').get(0);
+    if (this.sliderQuality) {
+      noUiSlider.create(this.sliderQuality, {
+        start: 400,
+        step: 10,
+        range: {
+          min: 100,
+          max: 1000,
+        },
+      });
+      this.sliderQuality.noUiSlider.on('slide', (sliderValue) => {
+        this.engine3d.setStepsize(sliderValue);
+      });
+
+      this.sliderQuality.noUiSlider.on('start', () => {
+        this.engine3d.onMouseDown();
+      });
+
+      this.sliderQuality.noUiSlider.on('end', () => {
         this.engine3d.onMouseUp();
       });
     }

@@ -110,7 +110,6 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
     float sumAlpha = 0.0, t12 = 1.0 / (t_function1max.a - t_function1min.a), lighting;
     bool inFlag = false, oldInFlag = false;
     int count = int(floor(length(iterator - back) / StepSize));
-    
     // Calc volume integral
     for (int i = 0; i < MAX_I; i++)
     {
@@ -217,20 +216,25 @@ void main() {
   vec4 backTexel = texture2D(texBF, tc, 0.0);
   vec3 back = backTexel.xyz;
   vec4 start = texture2D(texFF, tc, 0.0);
+  if (start.a < 0.5) 
+  {
+    gl_FragColor = acc;
+    return;
+  }
   vec3 dir = normalize(back - start.xyz);
 //  const float ISO_VOLUME_STEP_SIZE = 0.0035;
   //Direct volume render  
   #if isoRenderFlag == 0
   {
-   acc = Isosurface(start.xyz, dir, back, t_function1min.a, stepSize.b);
-    if (acc.a < 1.9)
+    float vol = tex3D(start.xyz).a;
+    if (vol > t_function2min.a)
+      acc.rgb = 0.75 * vol * t_function2min.rgb;
+    else
     {
-      float vol = tex3D(start.xyz).a;
-      if (vol > t_function2min.a)
-        acc.rgb = 0.75 * vol * t_function2min.rgb;
-      else
+      acc = Isosurface(start.xyz, dir, back, t_function1min.a, stepSize.b);
+      if (acc.a < 1.9)
         acc.rgb = VolumeRender(acc.rgb, dir, back).rgb; 
-    }
+    } 
     gl_FragColor = acc;
     return;
   }
