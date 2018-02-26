@@ -71,9 +71,12 @@ void main() {
   float norm_factor = 0.0;
   float norm_factorB = 0.0;
   //Bilateral Filtering 
-  for (float i = -2.0; i < 2.5; i += 1.0)
-    for (float j = -2.0; j < 2.5; j += 1.0)
-      for (float k = -2.0; k < 2.5; k += 1.0)
+//  for (float i = -2.0; i < 2.5; i += 1.0)
+//    for (float j = -2.0; j < 2.5; j += 1.0)
+//      for (float k = -2.0; k < 2.5; k += 1.0)
+  for (float i = -1.0; i < 1.5; i += 1.0)
+    for (float j = -1.0; j < 1.5; j += 1.0)
+      for (float k = -1.0; k < 1.5; k += 1.0)
       {
         float curVal = tex3D(base + vec3(texelSize.x * i, texelSize.y * j, texelSize.z * k)).r;
         float gaussB = exp( -(i*i + j*j + k*k) / (2.0 * sigma2));// - (val - curVal)*(val - curVal) / (2.0 * sigmaB2) );
