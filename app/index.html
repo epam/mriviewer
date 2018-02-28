@@ -98,8 +98,8 @@
                   <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open-url"><span class="fa fa-globe"> URL</span></a></li>
                 </ul>
               </li>
-              
-              
+
+
               <!-- drop down menu with tags and screen shot -->
               <li class="dropdown navbar-btn" id="med3web-button-dropdown-report">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -115,10 +115,10 @@
                   </li>
                   <li id="med3web-button-screenshot"><a href="#"><span class="fa fa-camera"> Screenshot</span></a></li>
                 </ul>
-              </li>              
-              
-              
-              
+              </li>
+
+
+
               <li class="btn-group" data-toggle="buttons">
                 <label class="navbar-btn btn btn-default" id="med3web-mode-2d" data-toggle="mode" data-value="2d" data-tooltip="tooltip" data-placement="bottom" title="2D viewer">
                   <input type="radio" name="med3web-modes" autocomplete="off"> 2D
@@ -303,10 +303,35 @@
                           <img src="images/icon_tools2d_clear.png" alt="ico_clear">
                         </a>
                       </label>
+                      <label class="btn col-xs-3"  id="med3web-toolbar-2d-save" data-tooltip="tooltip" data-placement="bottom" title="Save" data-tool-type="save">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_save.png" alt="ico_clear">
+                        </a>
+                      </label>
                     </div>
                   </div>
                 </div>
               </div>
+
+
+              <div class="panel panel-default">
+                <div class="panel-body">
+                  <div id = "med3web-settings-2d-contrast">
+                    <label for = "med3web-slider-2d-contrast"><h4>Contrast</h4></label>
+                    <div class = "med3web-slider" id = "med3web-slider-2d-contrast"></div>
+                  </div>
+                  <div id = "med3web-settings-2d-brightness">
+                    <label for = "med3web-slider-2d-brightness"><h4>Brightness</h4></label>
+                    <div class = "med3web-slider" id = "med3web-slider-2d-brightness"></div>
+                  </div>
+                  <div id = "med3web-settings-2d-smoothing">
+                    <label for = "med3web-slider-2d-smoothing"><h4>Smoothing</h4></label>
+                    <div class = "med3web-slider" id = "med3web-slider-2d-smoothing"></div>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
           </div>
           <div id="med3web-menu-panel-hide">

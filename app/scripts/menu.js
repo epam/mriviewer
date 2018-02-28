@@ -897,6 +897,56 @@ export default class Menu {
       });
     }
 
+    const sliderContrast = $('#med3web-slider-2d-contrast').get(0);
+    if (sliderContrast) {
+      noUiSlider.create(sliderContrast, {
+        start: 1,
+        tooltips: true,
+        step: 0.01,
+        range: {
+          min: 0.5,
+          max: 2,
+        },
+      });
+      sliderContrast.noUiSlider.on('slide', (sliderValue) => {
+        this.engine2d.updateContrastFromSliders(sliderValue);
+      });
+    }
+
+    const sliderBrightness = $('#med3web-slider-2d-brightness').get(0);
+    if (sliderBrightness) {
+      noUiSlider.create(sliderBrightness, {
+        start: 0,
+        tooltips: true,
+        step: 0.01,
+        range: {
+          min: -0.5,
+          max: 0.5,
+        },
+      });
+      sliderBrightness.noUiSlider.on('slide', (sliderValue) => {
+        this.engine2d.updateBrightnessFromSliders(sliderValue);
+      });
+    }
+
+
+    const sliderSmoothing = $('#med3web-slider-2d-smoothing').get(0);
+    if (sliderSmoothing) {
+      noUiSlider.create(sliderSmoothing, {
+        start: 0,
+        tooltips: true,
+        step: 0.01,
+        range: {
+          min: 0,
+          max: 1.5,
+        },
+      });
+      sliderSmoothing.noUiSlider.on('slide', (sliderValue) => {
+        this.engine2d.updateFilterFromSliders(sliderValue);
+      });
+    }
+
+
     const buttonAxisX = $('#med3web-2d-axis-x');
     if (buttonAxisX.length === 1) {
       buttonAxisX.on('click', () => {

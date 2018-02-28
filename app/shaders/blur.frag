@@ -8,10 +8,12 @@ uniform vec3 texelSize;
 uniform float tileCountX;
 uniform float volumeSizeZ;
 uniform float blurSigma;
+uniform float contrast;
+uniform float brightness;
 
 
 /**
-* Reading from 3D texture  
+* Reading from 3D texture
 */
   vec4 tex3D(vec3 vecCur) {
   float tCX = 1.0/tileCountX;
@@ -32,7 +34,7 @@ uniform float blurSigma;
   // Add an offset to the original UV coordinates depending on the row and column number.
   texCoordSlice1.x += (mod(zSliceNumber1, tileCountX )*tCX);
   texCoordSlice1.y += floor(zSliceNumber1 / tileCountX)*tCX;
-  
+
   texCoordSlice2.x += (mod(zSliceNumber2, tileCountX )*tCX);
   texCoordSlice2.y += floor(zSliceNumber2 / tileCountX)*tCX;
   vec4 colorSlice1 = texture2D(texVolume, texCoordSlice1, 0.0);
@@ -43,7 +45,7 @@ uniform float blurSigma;
 }
 
 /**
-* Calculate 3D texture coordinates  
+* Calculate 3D texture coordinates
 */
 vec3 getTex3DCoord(vec2 base) {
   vec3 res;
@@ -66,11 +68,11 @@ void main() {
   float sigmaD2 = sigmaD*sigmaD;
   float sigmaB = blurSigma;//0.9515;
   float sigmaB2 = sigmaB*sigmaB;
- 
+
   float val = tex3D(base).r;
   float norm_factor = 0.0;
   float norm_factorB = 0.0;
-  //Bilateral Filtering 
+  //Bilateral Filtering
 //  for (float i = -2.0; i < 2.5; i += 1.0)
 //    for (float j = -2.0; j < 2.5; j += 1.0)
 //      for (float k = -2.0; k < 2.5; k += 1.0)
@@ -93,5 +95,6 @@ void main() {
   acc.rgb = acc.rgb / norm_factor + vec3(0.5, 0.5, 0.5);
   // intencity
   acc.a = acc.a / norm_factorB;
+  acc = contrast * (acc - 0.5) + 0.5 + brightness;
   gl_FragColor = acc;
 }
