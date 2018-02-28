@@ -880,6 +880,14 @@ export default class Menu {
 
   /** Initialize 2d menu panel */
   init2DPanel() {
+    // add keyboard logger
+    document.addEventListener('keydown', (evt) => {
+      if (this.curModeSuffix === '2d') {
+        // console.log(`KeyEvent = ${evt.keyCode}`);
+        this.engine2d.onKeyDown(evt.keyCode);
+      }
+    });
+
     // slider 2d level
     const sliderSlice = $('#med3web-slider-2d-slice').get(0);
     if (sliderSlice) {
