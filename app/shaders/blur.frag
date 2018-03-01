@@ -73,26 +73,21 @@ void main() {
   float norm_factor = 0.0;
   float norm_factorB = 0.0;
   //Bilateral Filtering
-//  for (float i = -2.0; i < 2.5; i += 1.0)
-//    for (float j = -2.0; j < 2.5; j += 1.0)
-//      for (float k = -2.0; k < 2.5; k += 1.0)
-  for (float i = -1.0; i < 1.5; i += 1.0)
-    for (float j = -1.0; j < 1.5; j += 1.0)
-      for (float k = -1.0; k < 1.5; k += 1.0)
+  for (float i = -2.0; i < 2.5; i += 1.0)
+    for (float j = -2.0; j < 2.5; j += 1.0)
+      for (float k = -2.0; k < 2.5; k += 1.0)
       {
         float curVal = tex3D(base + vec3(texelSize.x * i, texelSize.y * j, texelSize.z * k)).r;
         float gaussB = exp( -(i*i + j*j + k*k) / (2.0 * sigma2));// - (val - curVal)*(val - curVal) / (2.0 * sigmaB2) );
-//        float gaussB = exp( -(i*i + j*j + k*k) / (2.0 * sigma2) - (val - curVal)*(val - curVal) / (2.0 * sigmaB2) );
-        float gaussW = exp( -(i*i + j*j + k*k) / (2.0 * sigmaD2) ) / (2.0 * 3.1415 * sigmaD2);
+        float gaussW = exp( -(i*i + j*j + k*k) / (2.0 * sigmaD2) ); // (2.0 * 3.1415 * sigmaD2);
         acc.r += curVal * gaussW * (-i / sigmaD2);
         acc.g += curVal * gaussW * (-j / sigmaD2);
         acc.b += curVal * gaussW * (-k / sigmaD2);
         acc.a += curVal * gaussB;
-        norm_factor += gaussW;
         norm_factorB += gaussB;
       }
   // normal
-  acc.rgb = acc.rgb / norm_factor + vec3(0.5, 0.5, 0.5);
+  acc.rgb = acc.rgb + vec3(0.5, 0.5, 0.5);
   // intencity
   acc.a = acc.a / norm_factorB;
   acc = contrast * (acc - 0.5) + 0.5 + brightness;

@@ -880,14 +880,6 @@ export default class Menu {
 
   /** Initialize 2d menu panel */
   init2DPanel() {
-    // add keyboard logger
-    document.addEventListener('keydown', (evt) => {
-      if (this.curModeSuffix === '2d') {
-        // console.log(`KeyEvent = ${evt.keyCode}`);
-        this.engine2d.onKeyDown(evt.keyCode);
-      }
-    });
-
     // slider 2d level
     const sliderSlice = $('#med3web-slider-2d-slice').get(0);
     if (sliderSlice) {
@@ -941,12 +933,12 @@ export default class Menu {
     const sliderSmoothing = $('#med3web-slider-2d-smoothing').get(0);
     if (sliderSmoothing) {
       noUiSlider.create(sliderSmoothing, {
-        start: 0,
+        start: 0.8,
         tooltips: true,
         step: 0.01,
         range: {
           min: 0,
-          max: 1.5,
+          max: 2.4,
         },
       });
       sliderSmoothing.noUiSlider.on('slide', (sliderValue) => {
