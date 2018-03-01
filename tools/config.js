@@ -17,7 +17,7 @@ export default {
     distdst: 'dist/scripts',
   },
   shaders: {
-    src: 'app/shaders/*.glsl',
+    src: 'app/shaders/*.+(frag|vert)',
     tmpdst: '.tmp/shaders',
     distdst: 'dist/shaders',
   },
