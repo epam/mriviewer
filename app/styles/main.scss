@@ -400,7 +400,7 @@ html, body {
   }
 }
 
-#med3web-container-progressbar, #med3web-menu-panel-hide {
+#med3web-container-progressbar {
   padding: 0;
   margin: 0;
   height: 100%;
@@ -409,6 +409,18 @@ html, body {
   position: absolute;
   left: 0;
   top: 0;
+  background: rgba(128, 128, 128, 0.3);
+}
+
+#med3web-menu-panel-hide {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 3;
+  position: fixed;
+  left: 0;
+  bottom: 0;
   background: rgba(128, 128, 128, 0.3);
 }
 #med3web-container-progressbar-inner {
