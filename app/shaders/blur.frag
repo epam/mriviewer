@@ -84,7 +84,8 @@ vec4 filterROI(vec3 base)
         vec3  segColor = texture2D(texSegColorPalette, vec2(curVal.a, 0.0)).rgb;
         //acc.rgb += (segInUse * segColor + (1.0 - segInUse) * BackGroundColor) * gaussB;
         acc.rgb += mix(BackGroundColor, segColor, segInUse) * gaussB;
-        float val = max(0.5 * curVal.r, segInUse);
+        //float val = max(0.5 * curVal.r, segInUse);
+        float val = curVal.a *segInUse;
         acc.a += val * gaussB;
         seg_norm_factor += segInUse * gaussB;
         norm_factor += gaussB;
