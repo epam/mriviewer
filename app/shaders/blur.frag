@@ -77,13 +77,9 @@ vec4 filterROI(vec3 base)
     for (float j = -2.0; j < 2.5; j += 1.0)
       for (float k = -2.0; k < 2.5; k += 1.0)
       {
-        //vec4 curVal = tex3D(base + vec3(texelSize.x * i, texelSize.y  j, texelSize.z * k));
         vec4 curVal = tex3D(base + vec3(texelSize.x * i, texelSize.y * j, texelSize.z * k));
         float gaussB = exp( -(i*i + j*j + k*k) / (2.0 * sigma2));
-        //float curIndex = curVal.a;
         //pick selected roi from 1d texture
-        //texSegInUse;
-        //texSegColorPalette;
         float segInUse = texture2D(texSegInUse, vec2(curVal.a, 0.0)).r;
         vec3  segColor = texture2D(texSegColorPalette, vec2(curVal.a, 0.0)).rgb;
         //acc.rgb += (segInUse * segColor + (1.0 - segInUse) * BackGroundColor) * gaussB;
@@ -94,7 +90,8 @@ vec4 filterROI(vec3 base)
         norm_factor += gaussB;
       }
   // color
-  acc.rgb = acc.rgb / seg_norm_factor;
+  if (seg_norm_factor > 0.0)
+    acc.rgb = acc.rgb / seg_norm_factor;
   // intencity
   acc.a = acc.a / norm_factor;
   //gl_FragColor = acc;
@@ -144,6 +141,6 @@ void main() {
     acc = filterBlur(base);
   #endif
   //Apply contrast/brightness adjustments
-  acc = contrast * (acc - 0.5) + 0.5 + brightness;
+  //acc = contrast * (acc - 0.5) + 0.5 + brightness;
   gl_FragColor = acc;
 }
