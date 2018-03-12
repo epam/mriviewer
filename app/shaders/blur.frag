@@ -63,6 +63,13 @@ vec3 getTex3DCoord(vec2 base) {
 
 vec4 filterROI(vec3 base)
 {
+  /*
+  // Simplified filter: no gauss, just copy
+  float indPalette = tex3D(base).a;
+  vec4 palARGB = texture2D(texSegColorPalette, vec2(indPalette, 0.0));
+  vec4 acc = palARGB;
+  return acc;
+  */
   float sigma = blurSigma;//0.965;
   float sigma2 = sigma*sigma;
   float sigmaD = blurSigma;//0.965;
