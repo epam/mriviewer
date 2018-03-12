@@ -295,7 +295,7 @@
                       <label class="btn col-xs-3" data-tooltip="tooltip" data-placement="bottom" title="Rectangle area" data-tool-type="rect">
                         <input type="radio" name="options" id="med3web-toolbar-2d-rect" autocomplete="off">
                         <a href="#" class="thumbnail" style="margin-bottom: 0;">
-                          <img src="images/icon_tools2d_rect.png" alt="ico_area">
+                          <img src="images/icon_tools2d_rect.png" alt="ico_rect">
                         </a>
                       </label>
                       <label class="btn col-xs-3"  id="med3web-toolbar-2d-clear" data-tooltip="tooltip" data-placement="bottom" title="Clear all" data-tool-type="clear">
@@ -303,35 +303,15 @@
                           <img src="images/icon_tools2d_clear.png" alt="ico_clear">
                         </a>
                       </label>
-                      <label class="btn col-xs-3"  id="med3web-toolbar-2d-save" data-tooltip="tooltip" data-placement="bottom" title="Save" data-tool-type="save">
-                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
-                          <img src="images/icon_tools2d_save.png" alt="ico_clear">
+                      <label class="btn col-xs-3"  id="med3web-toolbar-2d-filter" data-tooltip="tooltip" data-placement="bottom" title="Filter data" data-tool-type="filter">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;" data-toggle="modal" data-target="#med3web-modal-filter-data">
+                          <img src="images/icon_tools2d_filter.png" alt="ico_filter">
                         </a>
                       </label>
                     </div>
                   </div>
                 </div>
               </div>
-
-
-              <div class="panel panel-default">
-                <div class="panel-body">
-                  <div id = "med3web-settings-2d-contrast">
-                    <label for = "med3web-slider-2d-contrast"><h4>Contrast</h4></label>
-                    <div class = "med3web-slider" id = "med3web-slider-2d-contrast"></div>
-                  </div>
-                  <div id = "med3web-settings-2d-brightness">
-                    <label for = "med3web-slider-2d-brightness"><h4>Brightness</h4></label>
-                    <div class = "med3web-slider" id = "med3web-slider-2d-brightness"></div>
-                  </div>
-                  <div id = "med3web-settings-2d-smoothing">
-                    <label for = "med3web-slider-2d-smoothing"><h4>Smoothing</h4></label>
-                    <div class = "med3web-slider" id = "med3web-slider-2d-smoothing"></div>
-                  </div>
-                </div>
-
-              </div>
-
             </div>
           </div>
           <div id="med3web-menu-panel-hide">
@@ -435,6 +415,35 @@
 
               </tbody>
             </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Open model by URL modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="med3web-modal-filter-data" data-backdrop="static">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Filter data</h4>
+          </div>
+          <div class="modal-body">
+            <div id = "med3web-settings-2d-contrast">
+              <label for = "med3web-slider-2d-contrast"><h4>Contrast</h4></label>
+              <div class = "med3web-slider" id = "med3web-slider-2d-contrast"></div>
+            </div>
+            <div id = "med3web-settings-2d-brightness">
+              <label for = "med3web-slider-2d-brightness"><h4>Brightness</h4></label>
+              <div class = "med3web-slider" id = "med3web-slider-2d-brightness"></div>
+            </div>
+            <div id = "med3web-settings-2d-smoothing">
+              <label for = "med3web-slider-2d-smoothing"><h4>Smoothing</h4></label>
+              <div class = "med3web-slider" id = "med3web-slider-2d-smoothing"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="save">Save changes</button>
           </div>
         </div>
       </div>

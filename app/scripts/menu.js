@@ -965,6 +965,14 @@ export default class Menu {
         this.engine2d.setSliceAxis(Graphics2d.SLICE_AXIS_Z);
       });
     }
+    const modalFilterData = $('#med3web-modal-filter-data');
+    if (modalFilterData.length === 1) {
+      modalFilterData.find('[data-btn-role=cancel]').on('click', () => {
+      });
+      modalFilterData.find('[data-btn-role=save]').on('click', () => {
+        this.engine2d.saveFiltersChanges();
+      });
+    }
   }
 
 
@@ -975,7 +983,7 @@ export default class Menu {
         const toolType = tgt.attr('data-tool-type');
         if (toolType === 'clear') {
           this.engine2d.clear2DTools();
-        } else {
+        } else if (toolType !== 'save') {
           this.engine2d.set2dToolType(toolType);
         }
       }
