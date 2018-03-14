@@ -1,9 +1,13 @@
 /**
 * Main pass pixel shader 
 */
-//precision highp float;
+
 precision mediump float;
 precision mediump int; 
+
+uniform int xDim;
+uniform int yDim;
+uniform int zDim;
 
 uniform sampler2D texBF;
 uniform sampler2D texFF;
@@ -32,7 +36,7 @@ varying vec4 screenpos;
 * Reading from 3D texture  
 */
   vec4 tex3D(vec3 vecCur) {
-  float tCX = 1.0/tileCountX;
+  float tCX = 1.0 / tileCountX;
   vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   // check outside of texture volume
   if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
@@ -40,21 +44,27 @@ varying vec4 screenpos;
   float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ - 1.0));
   // As we use trilinear we go the next Z slice.
   float zSliceNumber2 = min( zSliceNumber1 + 1.0, (volumeSizeZ - 1.0)); //Clamp to 255
-  // The Z slices are stored in a matrix of 16x16 of Z slices.
-  // The original UV coordinates have to be rescaled by the tile numbers in each row and column.
-  //vec2 texCoord = vecCur.xy / 16.0;
-  vec2 texCoord = vecCur.xy*tCX;
+  vec2 texCoord = vecCur.xy * tCX;
   vec2 texCoordSlice1, texCoordSlice2;
   texCoordSlice1 = texCoordSlice2 = texCoord;
 
   // Add an offset to the original UV coordinates depending on the row and column number.
   texCoordSlice1.x += (mod(zSliceNumber1, tileCountX )*tCX);
   texCoordSlice1.y += floor(zSliceNumber1*tCX)*tCX;
-  vec4 colorSlice1 = texture2D(texVolume, texCoordSlice1, 0.0);
   // ratio mix between slices
   float zRatio = mod(vecCur.z * (volumeSizeZ - 1.0), 1.0);
   texCoordSlice2.x += (mod(zSliceNumber2, tileCountX )*tCX);
   texCoordSlice2.y += floor(zSliceNumber2*tCX)*tCX;
+  
+  // add 0.5 correction to texture coordinates
+  float xSize = float(xDim) * tileCountX;
+  float ySize = float(yDim) * tileCountX;
+  vec2 vAdd = vec2(0.5 / xSize, 0.5 / ySize);
+  texCoordSlice1 += vAdd;
+  texCoordSlice2 += vAdd;
+  
+  // get colors from neighbour slices
+  vec4 colorSlice1 = texture2D(texVolume, texCoordSlice1, 0.0);
   vec4 colorSlice2 = texture2D(texVolume, texCoordSlice2, 0.0);
   return mix(colorSlice1, colorSlice2, zRatio);
 }

@@ -4,6 +4,10 @@
 precision mediump float;
 precision mediump int; 
 
+uniform int xDim;
+uniform int yDim;
+uniform int zDim;
+
 uniform sampler2D texBF;
 uniform sampler2D texFF;
 uniform sampler2D texVolume;
@@ -18,9 +22,10 @@ uniform vec4 t_function2min;
 uniform vec4 t_function2max;
 uniform vec4 stepSize;
 uniform float texSize;
-varying vec4 screenpos;
 uniform float tileCountX;
 uniform float volumeSizeZ;
+
+varying vec4 screenpos;
 
 /**
 * Reading from 3D texture  
@@ -44,11 +49,19 @@ vec4 tex3D(vec3 vecCur) {
   // Add an offset to the original UV coordinates depending on the row and column number.
   texCoordSlice1.x += (mod(zSliceNumber1, tileCountX )*tCX);
   texCoordSlice1.y += floor(zSliceNumber1*tCX)*tCX;
-  vec4 colorSlice1 = texture2D(texVolume, texCoordSlice1, 0.0);
   // ratio mix between slices
   float zRatio = mod(vecCur.z * (volumeSizeZ - 1.0), 1.0);
   texCoordSlice2.x += (mod(zSliceNumber2, tileCountX )*tCX);
   texCoordSlice2.y += floor(zSliceNumber2*tCX)*tCX;
+
+  // add 0.5 correction to texture coordinates
+  float xSize = float(xDim) * tileCountX;
+  float ySize = float(yDim) * tileCountX;
+  vec2 vAdd = vec2(0.5 / xSize, 0.5 / ySize);
+  texCoordSlice1 += vAdd;
+  texCoordSlice2 += vAdd;
+
+  vec4 colorSlice1 = texture2D(texVolume, texCoordSlice1, 0.0);
   vec4 colorSlice2 = texture2D(texVolume, texCoordSlice2, 0.0);
   return mix(colorSlice1, colorSlice2, zRatio);
 }
