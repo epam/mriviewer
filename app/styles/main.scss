@@ -406,11 +406,12 @@ html, body {
   height: 100%;
   width: 100%;
   z-index: 3;
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   background: rgba(128, 128, 128, 0.3);
 }
+
 #med3web-container-progressbar-inner {
   height: calc(100% - #{$top-navbar-height} - 10px);
   position: relative;
