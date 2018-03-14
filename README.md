@@ -85,6 +85,12 @@ Then, please install gulp:
 npm install -g gulp-cli
 ```
 
+### Troubleshooting
+
+If you use Node.js v.8.x.x, you may face node-sass installation issue. Please use lower version of Node.js or run command:
+```
+npm install node-sass@latest
+```
 
 ## Project running details
 

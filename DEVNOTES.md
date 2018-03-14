@@ -29,6 +29,14 @@ Start operations in order to load all required Node.js packages:
 cd med3web
 npm install
 ```
+
+### Troubleshooting
+
+If you use Node.js v.8.x.x, you may face node-sass installation issue. Please use lower version of Node.js or run command:
+```
+npm install node-sass@latest
+```
+
 ### SonarQube 
 
 In order to maintain project code clean and buggy-free as much as possible, SonarQube technology is used.
