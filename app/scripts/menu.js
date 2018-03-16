@@ -881,9 +881,9 @@ export default class Menu {
   /** Initialize 2d menu panel */
   init2DPanel() {
     // slider 2d level
-    const sliderSlice = $('#med3web-slider-2d-slice').get(0);
-    if (sliderSlice) {
-      noUiSlider.create(sliderSlice, {
+    this.sliderSlice = $('#med3web-slider-2d-slice').get(0);
+    if (this.sliderSlice) {
+      noUiSlider.create(this.sliderSlice, {
         start: 0.5,
         tooltips: true,
         step: 0.01,
@@ -892,14 +892,14 @@ export default class Menu {
           max: 1,
         },
       });
-      sliderSlice.noUiSlider.on('slide', (sliderValue) => {
+      this.sliderSlice.noUiSlider.on('slide', (sliderValue) => {
         this.engine2d.setSliderPosition(sliderValue);
       });
     }
 
-    const sliderContrast = $('#med3web-slider-2d-contrast').get(0);
-    if (sliderContrast) {
-      noUiSlider.create(sliderContrast, {
+    this.sliderContrast = $('#med3web-slider-2d-contrast').get(0);
+    if (this.sliderContrast) {
+      noUiSlider.create(this.sliderContrast, {
         start: 1,
         tooltips: true,
         step: 0.01,
@@ -908,14 +908,14 @@ export default class Menu {
           max: 2,
         },
       });
-      sliderContrast.noUiSlider.on('slide', (sliderValue) => {
+      this.sliderContrast.noUiSlider.on('slide', (sliderValue) => {
         this.engine2d.updateContrastFromSliders(sliderValue);
       });
     }
 
-    const sliderBrightness = $('#med3web-slider-2d-brightness').get(0);
-    if (sliderBrightness) {
-      noUiSlider.create(sliderBrightness, {
+    this.sliderBrightness = $('#med3web-slider-2d-brightness').get(0);
+    if (this.sliderBrightness) {
+      noUiSlider.create(this.sliderBrightness, {
         start: 0,
         tooltips: true,
         step: 0.01,
@@ -924,15 +924,15 @@ export default class Menu {
           max: 0.5,
         },
       });
-      sliderBrightness.noUiSlider.on('slide', (sliderValue) => {
+      this.sliderBrightness.noUiSlider.on('slide', (sliderValue) => {
         this.engine2d.updateBrightnessFromSliders(sliderValue);
       });
     }
 
 
-    const sliderSmoothing = $('#med3web-slider-2d-smoothing').get(0);
-    if (sliderSmoothing) {
-      noUiSlider.create(sliderSmoothing, {
+    this.sliderSmoothing = $('#med3web-slider-2d-smoothing').get(0);
+    if (this.sliderSmoothing) {
+      noUiSlider.create(this.sliderSmoothing, {
         start: 0.8,
         tooltips: true,
         step: 0.01,
@@ -941,11 +941,11 @@ export default class Menu {
           max: 2.4,
         },
       });
-      sliderSmoothing.noUiSlider.on('slide', (sliderValue) => {
+      this.sliderSmoothing.noUiSlider.on('slide', (sliderValue) => {
         this.engine2d.updateFilterFromSliders(sliderValue);
+        this.engine2d.saveFiltersChanges(false);
       });
     }
-
 
     const buttonAxisX = $('#med3web-2d-axis-x');
     if (buttonAxisX.length === 1) {
@@ -967,25 +967,54 @@ export default class Menu {
     }
     const modalFilterData = $('#med3web-modal-filter-data');
     if (modalFilterData.length === 1) {
+      modalFilterData.find('[data-btn-role=reset]').on('click', () => {
+        this.resetSliders();
+        this.engine2d.saveFiltersChanges(true);
+      });
       modalFilterData.find('[data-btn-role=cancel]').on('click', () => {
       });
       modalFilterData.find('[data-btn-role=save]').on('click', () => {
-        this.engine2d.saveFiltersChanges();
+        this.engine2d.saveFiltersChanges(true);
       });
     }
   }
 
-
+  resetSliders() {
+    this.sliderContrast.noUiSlider.reset();
+    this.sliderBrightness.noUiSlider.reset();
+    this.sliderSmoothing.noUiSlider.reset();
+    this.engine2d.m_contrastBrightTool.clear();
+    this.engine2d.m_materialsTex2d.m_uniforms.contrast.value = this.engine2d.m_contrastBrightTool.m_contrast;
+    this.engine2d.m_materialsTex2d.m_uniforms.brightness.value = this.engine2d.m_contrastBrightTool.m_brightness;
+    this.engine2d.m_filterTool.clear();
+    this.engine2d.m_materialsTex2d.m_uniforms.sigma.value = this.engine2d.m_filterTool.m_sigma;
+  }
   init2DToolbar() {
     this.toolbar2d.find('label').on('click', (e) => {
       const tgt = $(e.currentTarget);
       if (!(tgt.hasClass('active'))) {
         const toolType = tgt.attr('data-tool-type');
-        if (toolType === 'clear') {
+        switch (toolType) {
+          case 'clear':
+            this.engine2d.clear2DTools();
+            break;
+          case 'default':
+            this.engine2d.default2DTools();
+            break;
+          case 'save':
+            this.engine2d.set2dToolType(toolType);
+            break;
+          case 'filter':
+            break;
+          default:
+            this.engine2d.set2dToolType(toolType);
+            break;
+        }
+        /*if (toolType === 'clear') {
           this.engine2d.clear2DTools();
         } else if (toolType !== 'save') {
           this.engine2d.set2dToolType(toolType);
-        }
+        }*/
       }
     });
   }

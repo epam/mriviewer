@@ -12,6 +12,7 @@ uniform float volumeSizeZ;
 uniform float blurSigma;
 uniform float contrast;
 uniform float brightness;
+uniform bool save_flag;
 
 
 /**
@@ -115,24 +116,32 @@ vec4 filterBlur(vec3 base)
   float sigmaD2 = sigmaD*sigmaD;
   float sigmaB = blurSigma;//0.9515;
   float sigmaB2 = sigmaB*sigmaB;
-
   float val = tex3D(base).r;
   float norm_factor = 0.0;
   float norm_factorB = 0.0;
+
+  bool skip = false;
+  if(save_flag==false){
+    if(base.r != 0.5)
+      return vec4(acc.x,acc.y,acc.z,val);
+  }
   //Bilateral Filtering
-  for (float i = -2.0; i < 2.5; i += 1.0)
-    for (float j = -2.0; j < 2.5; j += 1.0)
-      for (float k = -2.0; k < 2.5; k += 1.0)
-      {
-        float curVal = tex3D(base + vec3(texelSize.x * i, texelSize.y * j, texelSize.z * k)).r;
-        float gaussB = exp( -(i*i + j*j + k*k) / (2.0 * sigma2));// - (val - curVal)*(val - curVal) / (2.0 * sigmaB2) );
-        float gaussW = exp( -(i*i + j*j + k*k) / (2.0 * sigmaD2) ); // (2.0 * 3.1415 * sigmaD2);
-        acc.r += curVal * gaussW * (-i / sigmaD2);
-        acc.g += curVal * gaussW * (-j / sigmaD2);
-        acc.b += curVal * gaussW * (-k / sigmaD2);
-        acc.a += curVal * gaussB;
-        norm_factorB += gaussB;
-      }
+  if(skip == false)
+  {
+    for (float i = -2.0; i < 2.5; i += 1.0)
+      for (float j = -2.0; j < 2.5; j += 1.0)
+        for (float k = -2.0; k < 2.5; k += 1.0)
+        {
+          float curVal = tex3D(base + vec3(texelSize.x * i, texelSize.y * j, texelSize.z * k)).r;
+          float gaussB = exp( -(i*i + j*j + k*k) / (2.0 * sigma2));// - (val - curVal)*(val - curVal) / (2.0 * sigmaB2) );
+          float gaussW = exp( -(i*i + j*j + k*k) / (2.0 * sigmaD2) ); // (2.0 * 3.1415 * sigmaD2);
+          acc.r += curVal * gaussW * (-i / sigmaD2);
+          acc.g += curVal * gaussW * (-j / sigmaD2);
+          acc.b += curVal * gaussW * (-k / sigmaD2);
+          acc.a += curVal * gaussB;
+          norm_factorB += gaussB;
+        }
+   }
   // normal
   acc.rgb = acc.rgb + vec3(0.5, 0.5, 0.5);
   // intencity

@@ -21,7 +21,7 @@
     <![endif]-->
 
     <div class="container-fluid" id="med3web-container-main">
-      
+
       <nav class="navbar navbar-default navbar-static-top">
         <div class="container-fluid">
           <!-- Brand and toggle get grouped for better mobile display -->
@@ -298,6 +298,29 @@
                           <img src="images/icon_tools2d_rect.png" alt="ico_rect">
                         </a>
                       </label>
+					  <label class="btn col-xs-3" data-tooltip="tooltip" data-placement="bottom" title="Zoom" data-tool-type="zoom">
+                        <input type="radio" name="options" id="med3web-toolbar-2d-zoom" autocomplete="off">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_zoom.png" alt="ico_rect">
+                        </a>
+                      </label>
+                      <label class="btn col-xs-3" data-tooltip="tooltip" data-placement="bottom" title="Delete" data-tool-type="delete">
+                        <input type="radio" name="options" id="med3web-toolbar-2d-delete" autocomplete="off">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_delete.png" alt="ico_delete">
+                        </a>
+                      </label>
+                      <label class="btn col-xs-3" data-tooltip="tooltip" data-placement="bottom" title="Edit" data-tool-type="edit">
+                        <input type="radio" name="options" id="med3web-toolbar-2d-edit" autocomplete="off">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_edit.png" alt="ico_edit">
+                        </a>
+                      </label>
+					  <label class="btn col-xs-3"  id="med3web-toolbar-2d-default" data-tooltip="tooltip" data-placement="bottom" title="Default all" data-tool-type="default">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_default.png" alt="ico_default">
+                        </a>
+                      </label>
                       <label class="btn col-xs-3"  id="med3web-toolbar-2d-clear" data-tooltip="tooltip" data-placement="bottom" title="Clear all" data-tool-type="clear">
                         <a href="#" class="thumbnail" style="margin-bottom: 0;">
                           <img src="images/icon_tools2d_clear.png" alt="ico_clear">
@@ -326,7 +349,7 @@
 
               </div>
             </div>
-            
+
             <div id="med3web-container-2d" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center" style="display: none;">
             </div>
 
@@ -336,7 +359,7 @@
               <canvas id="med3web-canvas" style="border: 1px solid black" width="181" height="181">
               </canvas>
             </div>
-            
+
         </div>
       </div>
     <!-- containter end -->
@@ -449,6 +472,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
+            <button type="button" class="btn btn-deafult" data-dismiss="modal" data-btn-role="reset">Reset</button>
             <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="save">Save changes</button>
           </div>
         </div>
