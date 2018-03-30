@@ -37,6 +37,12 @@ const developerMode = true;
 export const renderModes = {
   VOLREND: 'volrend',
   ISOSURF: 'isosurf',
+};
+
+/** Possible fast 3d render modes */
+export const fastRenderModes = {
+  VOLRENDFAST: 'fast-volrend',
+  ISOSURFFAST: 'fast-isosurf',
   MIP: 'mip',
 };
 
@@ -105,7 +111,7 @@ export default class Menu {
     this.sliderQuality = null;
     /** 2d toolbar */
     this.toolbar2d = $('#med3web-toolbar-2d');
-    this.curModeSuffix = $('[data-toggle=mode].active').attr('data-value');
+    this.curModeSuffix = $('[data-toggle=mode].active').attr('data-mode');
     /** table that contains all dicom tags */
     this.dicomTagsTable = $('#med3web-table-dicom-tags');
     this.dicomTagsSliceSelector = $('#med3web-select-choose-slice');
@@ -399,6 +405,15 @@ export default class Menu {
       });
   }
 
+  moveSliders(panelBodyId, slidersIds) {
+    const curDiv = $(`#${panelBodyId}`).find('div')[0];
+    let slider = null;
+    for (const id of slidersIds) {
+      slider = $(`#${id}`).detach();
+      slider.appendTo(curDiv);
+    }
+  }
+
   /** Initialize navigation bar */
   initNavBar() {
     // Callback for open local file from computer
@@ -564,23 +579,27 @@ export default class Menu {
     // mode switching buttons
     $('[data-toggle=mode]').on('click', (e) => {
       // newModeSuffix is '2d' or '3d' depending on tab, pressed by user
-      const newModeSuffix = $(e.currentTarget).attr('data-value');
+      const newModeSuffix = $(e.currentTarget).attr('data-mode');
+      const rendererType = $(e.currentTarget).attr('data-renderer');
       if (newModeSuffix !== this.curModeSuffix) {
-        $(`#med3web-container-${this.curModeSuffix}`).hide();
-        $(`#med3web-container-${newModeSuffix}`).show();
         $(`#med3web-panel-menu-${this.curModeSuffix}`).hide();
         $(`#med3web-panel-menu-${newModeSuffix}`).show();
-        if ($(`#med3web-toolbar-${this.curModeSuffix}`)) {
-          $(`#med3web-toolbar-${this.curModeSuffix}`).hide();
-        }
-        if ($(`#med3web-toolbar-${newModeSuffix}`)) {
-          $(`#med3web-toolbar-${newModeSuffix}`).show();
-        }
         this.curModeSuffix = newModeSuffix;
-        if (newModeSuffix === '2d') {
+        if (rendererType === '2d') {
+          $('#med3web-container-3d').hide();
+          $('#med3web-container-2d').show();
           this.app.setRenderMode(RenderMode.RENDER_MODE_2D);
-        } else if (newModeSuffix === '3d') {
+        } else if (rendererType === '3d') {
+          $('#med3web-container-2d').hide();
+          $('#med3web-container-3d').show();
           this.app.setRenderMode(RenderMode.RENDER_MODE_3D);
+          // move sliders
+          if (newModeSuffix === '3d') {
+            $('#med3web-accordion-render-mode .panel-heading.active [data-toggle=collapse]').click();
+          } else if (newModeSuffix === '3d-fast') {
+            $('#med3web-accordion-fast-render-mode .panel-heading.active [data-toggle=collapse]').click();
+          }
+
         }
       }
     });
@@ -602,39 +621,66 @@ export default class Menu {
       // switch render mode
       if (this.engine3d.isVolumeLoaded()) {
         const mode = tgt.attr('data-value');
-        let slider = null;
-        let curDiv = null;
+        let panelBodyId = null;
+        let sliderIds = null;
         switch (mode) {
           case renderModes.VOLREND:
-            curDiv = $('#med3web-3d-volrend-body').find('div')[0];
-            slider = $('#med3web-setting-3d-brightness').detach();
-            slider.appendTo(curDiv);
-            slider = $('#med3web-setting-3d-contrast').detach();
-            slider.appendTo(curDiv);
-            slider = $('#med3web-setting-3d-z-cut').detach();
-            slider.appendTo(curDiv);
-            slider = $('#med3web-setting-3d-quality').detach();
-            slider.appendTo(curDiv);
+            panelBodyId = 'med3web-3d-volrend-body';
+            sliderIds = ['med3web-setting-3d-brightness', 'med3web-setting-3d-z-cut',
+              'med3web-setting-3d-quality'];
+            this.moveSliders(panelBodyId, sliderIds);
             this.engine3d.switchToVolumeRender();
             break;
           case renderModes.ISOSURF:
-            curDiv = $('#med3web-3d-isosurf-body').find('div')[0];
-            slider = $('#med3web-setting-3d-brightness').detach();
-            slider.appendTo(curDiv);
-            slider = $('#med3web-setting-3d-contrast').detach();
-            slider.appendTo(curDiv);
-            slider = $('#med3web-setting-3d-z-cut').detach();
-            slider.appendTo(curDiv);
-            slider = $('#med3web-setting-3d-quality').detach();
-            slider.appendTo(curDiv);
+            panelBodyId = 'med3web-3d-isosurf-body';
+            sliderIds = ['med3web-setting-3d-brightness', 'med3web-setting-3d-z-cut',
+              'med3web-setting-3d-quality'];
+            this.moveSliders(panelBodyId, sliderIds);
             this.engine3d.switchToIsosurfRender();
             break;
-          case renderModes.MIP:
-            curDiv = $('#med3web-3d-mip-body').find('div')[0];
-            slider = $('#med3web-setting-3d-z-cut').detach();
-            slider.appendTo(curDiv);
-            slider = $('#med3web-setting-3d-quality').detach();
-            slider.appendTo(curDiv);
+          default:
+            console.log('Unexpected 3d render mode');
+            break;
+        }
+      }
+    });
+
+    $('#med3web-accordion-fast-render-mode').find('[data-toggle=collapse]').on('click', (e) => {
+      const tgt = $(e.currentTarget);
+      // active tabs switching
+      $('#med3web-accordion-fast-render-mode').find('.panel-heading.active').removeClass('active');
+      tgt.parent().parent().addClass('active');
+
+      // do nothing when active tab is clicked
+      if (tgt.parents('.panel').children('.panel-collapse').hasClass('in')) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      // switch render mode
+      if (this.engine3d.isVolumeLoaded()) {
+        const mode = tgt.attr('data-value');
+        let panelBodyId = null;
+        let sliderIds = null;
+        switch (mode) {
+          case fastRenderModes.VOLRENDFAST:
+            panelBodyId = 'med3web-3d-fast-volrend-body';
+            sliderIds = ['med3web-setting-3d-brightness', 'med3web-setting-3d-z-cut',
+              'med3web-setting-3d-quality'];
+            this.moveSliders(panelBodyId, sliderIds);
+            this.engine3d.switchToVolumeRender();
+            break;
+          case fastRenderModes.ISOSURFFAST:
+            panelBodyId = 'med3web-3d-fast-isosurf-body';
+            sliderIds = ['med3web-setting-3d-brightness', 'med3web-setting-3d-z-cut',
+              'med3web-setting-3d-quality'];
+            this.moveSliders(panelBodyId, sliderIds);
+            this.engine3d.switchToIsosurfRender();
+            break;
+          case fastRenderModes.MIP:
+            panelBodyId = 'med3web-3d-mip-body';
+            sliderIds = ['med3web-setting-3d-z-cut', 'med3web-setting-3d-quality'];
+            this.moveSliders(panelBodyId, sliderIds);
             this.engine3d.switchToFLATRender();
             break;
           default:

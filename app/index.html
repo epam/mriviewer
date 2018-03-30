@@ -120,10 +120,13 @@
 
 
               <li class="btn-group" data-toggle="buttons">
-                <label class="navbar-btn btn btn-default" id="med3web-mode-2d" data-toggle="mode" data-value="2d" data-tooltip="tooltip" data-placement="bottom" title="2D viewer">
+                <label class="navbar-btn btn btn-default" id="med3web-mode-2d" data-toggle="mode" data-renderer="2d" data-mode="2d" data-tooltip="tooltip" data-placement="bottom" title="2D viewer">
                   <input type="radio" name="med3web-modes" autocomplete="off"> 2D
                 </label>
-                <label class="navbar-btn btn btn-default active" id="med3web-mode-3d" data-toggle="mode" data-value="3d" data-tooltip="tooltip" data-placement="bottom" title="3D viewer">
+                <label class="navbar-btn btn btn-default active" id="med3web-mode-3d-fast" data-toggle="mode" data-renderer="3d" data-mode="3d-fast" data-tooltip="tooltip" data-placement="bottom" title="3D fast viewer">
+                  <input type="radio" name="med3web-modes" autocomplete="off"> 3D<span class="fa fa-bolt"></span>
+                </label>
+                <label class="navbar-btn btn btn-default" id="med3web-mode-3d" data-toggle="mode" data-renderer="3d" data-mode="3d" data-tooltip="tooltip" data-placement="bottom" title="3D viewer">
                   <input type="radio" name="med3web-modes" autocomplete="off"> 3D
                 </label>
               </li>
@@ -134,16 +137,16 @@
 
       <div class="row" id="med3web-row-main">
         <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" id="med3web-panel-menu" style="padding: 0; margin: 0; height: 100%;">
-          <div class="panel" id="med3web-panel-menu-3d" style="border-color: #e7e7e7;">
+          <div class="panel" id="med3web-panel-menu-3d-fast" style="border-color: #e7e7e7;">
             <div class="panel-body">
-              <div class="panel-group" id="med3web-accordion-render-mode" role="tablist" aria-multiselectable="true">
+              <div class="panel-group" id="med3web-accordion-fast-render-mode" role="tablist" aria-multiselectable="true">
                 <div class="panel panel-default">
-                  <div class="panel-heading active" role="tab" id="med3web-3d-volrend-head">
+                  <div class="panel-heading active" role="tab" id="med3web-3d-fast-volrend-head">
                     <h4 class="panel-title" style="display: flex;">
                       <span class="fa fa-circle-o"></span>
                       <span class="fa fa-dot-circle-o"></span>
-                      <a role="button" data-toggle="collapse" data-value="volrend" data-parent="#med3web-accordion-render-mode" href="#med3web-3d-volrend-body" aria-expanded="true" aria-controls="med3web-3d-volrend-body">
-                        Volume rendering
+                      <a role="button" data-toggle="collapse" data-value="fast-volrend" data-parent="#med3web-accordion-fast-render-mode" href="#med3web-3d-fast-volrend-body" aria-expanded="true" aria-controls="med3web-3d-fast-volrend-body">
+                        Fast volume rendering
                       </a>
                       <div style="flex-grow: 1; align-items: flex-end; text-align: right;">
                         <label class="btn btn-active" role="button" data-type="reset-to-default" data-tooltip="tooltip" data-placement="bottom" title="Reset to default">
@@ -152,7 +155,7 @@
                       </div>
                     </h4>
                   </div>
-                  <div id="med3web-3d-volrend-body" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="med3web-3d-volrend-head">
+                  <div id="med3web-3d-fast-volrend-body" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="med3web-3d-fast-volrend-head">
                     <div class="panel-body">
                       <div id="med3web-setting-3d-hist">
                       </div>
@@ -191,6 +194,76 @@
                   </div>
                 </div>
                 <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="med3web-3d-fast-isosurf-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <span class="fa fa-circle-o"></span>
+                      <span class="fa fa-dot-circle-o"></span>
+                      <a class="collapsed" role="button" data-toggle="collapse" data-value="fast-isosurf" data-parent="#med3web-accordion-fast-render-mode" href="#med3web-3d-fast-isosurf-body" aria-expanded="false" aria-controls="med3web-3d-fast-isosurf-body">
+                        Fast isosurface
+                      </a>
+                      <div style="flex-grow: 1; align-items: flex-end; text-align: right;">
+                        <label class="btn btn-active" role="button" data-type="reset-to-default" data-tooltip="tooltip" data-placement="bottom" title="Reset to default">
+                          <span class="glyphicon glyphicon-refresh"></span>
+                        </label>
+                      </div>
+                    </h4>
+                  </div>
+                  <div id="med3web-3d-fast-isosurf-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="med3web-3d-fast-isosurf-head">
+                    <div class="panel-body">
+                      <label for="med3web-slider-threshold-isosurf"><h4>Isosurface threshold</h4></label>
+                      <div class="med3web-slider" id="med3web-slider-threshold-isosurf"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="med3web-3d-mip-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <span class="fa fa-circle-o"></span>
+                      <span class="fa fa-dot-circle-o"></span>
+                      <a class="collapsed" role="button" data-toggle="collapse" data-value="mip" data-parent="#med3web-accordion-fast-render-mode" href="#med3web-3d-mip-body" aria-expanded="false" aria-controls="med3web-3d-mip-body">
+                        MIP
+                      </a>
+                      <div style="flex-grow: 1; align-items: flex-end; text-align: right;">
+                        <label class="btn btn-active" role="button" data-type="reset-to-default" data-tooltip="tooltip" data-placement="bottom" title="Reset to default">
+                          <span class="glyphicon glyphicon-refresh"></span>
+                        </label>
+                      </div>
+                    </h4>
+                  </div>
+                  <div id="med3web-3d-mip-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="med3web-3d-mip-head">
+                    <div class="panel-body">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel" id="med3web-panel-menu-3d" style="border-color: #e7e7e7; display: none;">
+            <div class="panel-body">
+              <div class="panel-group" id="med3web-accordion-render-mode" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                  <div class="panel-heading active" role="tab" id="med3web-3d-volrend-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <span class="fa fa-circle-o"></span>
+                      <span class="fa fa-dot-circle-o"></span>
+                      <a role="button" data-toggle="collapse" data-value="volrend" data-parent="#med3web-accordion-render-mode" href="#med3web-3d-volrend-body" aria-expanded="true" aria-controls="med3web-3d-volrend-body">
+                        Volume rendering
+                      </a>
+                      <div style="flex-grow: 1; align-items: flex-end; text-align: right;">
+                        <label class="btn btn-active" role="button" data-type="reset-to-default" data-tooltip="tooltip" data-placement="bottom" title="Reset to default">
+                          <span class="glyphicon glyphicon-refresh"></span>
+                        </label>
+                      </div>
+                    </h4>
+                  </div>
+                  <div id="med3web-3d-volrend-body" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="med3web-3d-volrend-head">
+                    <div class="panel-body">
+                      <div id="med3web-setting-3d-transfer-func-2d">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default">
                   <div class="panel-heading" role="tab" id="med3web-3d-isosurf-head">
                     <h4 class="panel-title" style="display: flex;">
                       <span class="fa fa-circle-o"></span>
@@ -206,28 +279,6 @@
                     </h4>
                   </div>
                   <div id="med3web-3d-isosurf-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="med3web-3d-isosurf-head">
-                    <div class="panel-body">
-                      <label for="med3web-slider-threshold-isosurf"><h4>Isosurface threshold</h4></label>
-                      <div class="med3web-slider" id="med3web-slider-threshold-isosurf"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="panel panel-default">
-                  <div class="panel-heading" role="tab" id="med3web-3d-mip-head">
-                    <h4 class="panel-title" style="display: flex;">
-                      <span class="fa fa-circle-o"></span>
-                      <span class="fa fa-dot-circle-o"></span>
-                      <a class="collapsed" role="button" data-toggle="collapse" data-value="mip" data-parent="#med3web-accordion-render-mode" href="#med3web-3d-mip-body" aria-expanded="false" aria-controls="med3web-3d-mip-body">
-                        MIP
-                      </a>
-                      <div style="flex-grow: 1; align-items: flex-end; text-align: right;">
-                        <label class="btn btn-active" role="button" data-type="reset-to-default" data-tooltip="tooltip" data-placement="bottom" title="Reset to default">
-                          <span class="glyphicon glyphicon-refresh"></span>
-                        </label>
-                      </div>
-                    </h4>
-                  </div>
-                  <div id="med3web-3d-mip-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="med3web-3d-mip-head">
                     <div class="panel-body">
                     </div>
                   </div>
