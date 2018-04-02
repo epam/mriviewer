@@ -11,6 +11,7 @@ uniform int zDim;
 uniform sampler2D texBF;
 uniform sampler2D texFF;
 uniform sampler2D texVolume;
+uniform sampler2D texTF;
 uniform float opacityBarrier;
 uniform vec3 lightDir;
 uniform float isoThreshold;
@@ -111,6 +112,26 @@ vec3 Correction(vec3 left, vec3 right, float threshold) {
 }
 
 /**
+* Refinement of the coordinate of the isosurface  
+*/
+vec3 CorrectionZero(vec3 left, vec3 right) {
+    vec3 iterator;
+    float vol, valTF;
+    for (int i = 0; i < 7; i++)
+    {
+        iterator = 0.5*(left + right);
+        vol = tex3D(iterator).a;
+        valTF = texture2D(texTF, vec2(vol, 0.0), 0.0).a;
+        if (valTF > 0.0)
+            right = iterator;
+        else
+            left = iterator;
+    }
+    iterator = 0.5*(left + right);
+    return iterator;
+}
+
+/**
 * Direct volume render  
 */
 vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
@@ -168,6 +189,53 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
 }
 
 /**
+* Full direct volume render  
+*/
+vec4 FullVolumeRender(vec3 start, vec3 dir, vec3 back) {
+    const int MAX_I = 1000;
+    const float BRIGHTNESS_SCALE = 2.0;
+    const float OPACITY_SCALE = 5.0;
+    vec3 iterator = start;
+    vec4 acc = vec4(0.0, 0.0, 0.0, 1.0), vol, valTF = vec4(0.0, 0.0, 0.0, 1.0);
+    float StepSize = stepSize.r;
+    vec3 step = StepSize*dir, sumCol = vec3(0.0, 0.0, 0.0);
+    float sumAlpha = 0.0, lighting;
+    int count = int(floor(length(iterator - back) / StepSize));
+    float opacity = OPACITY_SCALE * opacityBarrier * StepSize;
+    // Calc volume integral
+    for (int i = 0; i < MAX_I; i++)
+    {
+        if (count <= 0 || sumAlpha > 0.97)
+            break;
+        iterator = iterator + step;
+        vol = tex3D(iterator);
+        valTF = texture2D(texTF, vec2(vol.a, 0.0), 0.0);
+        if (valTF.a > 0.0)
+        {
+            // If the transfer function is nonzero, the integration step is halved
+            // First step
+            vec4 vol1 = tex3D(iterator - 0.5 * step);
+            // Transfer function - isosceles triangle 
+            vec4 valTF1 = texture2D(texTF, vec2(vol1.a, 0.0), 0.0);
+            lighting = 0.5 * max(0.0, dot(normalize(vol1.rgb - vec3(0.5, 0.5, 0.5)), lightDir)) + 0.5;
+            // Volume integral on the interval StepSize
+            sumCol += (1. - sumAlpha) * opacity * valTF1.a * valTF1.rgb * lighting;
+//            sumCol += (1. - sumAlpha) * valTF1.rgb * lighting;
+            sumAlpha += (1. - sumAlpha) * opacity * valTF1.a;
+            // Second step
+            // Volume integral on the interval StepSize
+            lighting = 0.5 * max(0.0, dot(normalize(vol.rgb - vec3(0.5, 0.5, 0.5)), lightDir)) + 0.5;
+            sumCol += (1. - sumAlpha) * opacity * valTF.a * valTF.rgb * lighting;
+//            sumCol += (1. - sumAlpha) * valTF.rgb * lighting;
+            sumAlpha += (1. - sumAlpha) * opacity * valTF.a;
+        }
+        count--;
+    } // for i
+    acc.rgb = BRIGHTNESS_SCALE * brightness3D * sumCol;
+    return acc;
+}
+
+/**
 * Rendering the maximum intensity along the beam  
 */
 vec4 MipRender(vec3 start, vec3 dir, vec3 back) {
@@ -188,6 +256,36 @@ vec4 MipRender(vec3 start, vec3 dir, vec3 back) {
     return acc;
 }
 
+
+/**
+* Finding the point of intersection of a ray with an isosurface
+*/
+vec4 SkipZero(vec3 start, vec3 dir, vec3 back, float StepSize) {
+    const int MAX_I = 1000;
+    vec3 iterator = start;
+    vec4 acc = vec4(0.0, 0.0, 0.0, 2.0);
+    float vol, valTF;
+    vec3 left, right, step = StepSize*dir;
+    int count = int(floor(length(iterator - back) / StepSize));
+    if (count < 2)
+        return acc;
+    //Search isosurface
+    for (int i = 0; i < MAX_I; i++) {
+      iterator = iterator + step;
+      vol = tex3D(iterator).a; 
+      valTF = texture2D(texTF, vec2(vol, 0.0), 0.0).a;
+      if (count <= 0 || valTF > 0.0)
+        break;
+      count--;  
+    }
+    //Refinement of the coordinate of the isosurface 
+    if (count > 0){ 
+        left = iterator - step;
+        iterator = CorrectionZero(left, iterator);
+        acc = vec4(iterator, length(start - iterator));
+    }
+    return acc;
+  }
 
 /**
 * Finding the point of intersection of a ray with an isosurface
@@ -223,7 +321,7 @@ vec4 Isosurface(vec3 start, vec3 dir, vec3 back, float threshold, float StepSize
 
 
 void main() {
-  vec4 acc = vec4(0., 0., 0., 0.);
+  vec4 acc = vec4(0., 0., 0., 1.);
   // To increase the points of the beginning and end of the ray and its direction
   vec2 tc = screenpos.xy / screenpos.w * 0.5 + 0.5;
   vec4 backTexel = texture2D(texBF, tc, 0.0);
@@ -237,6 +335,7 @@ void main() {
   vec3 dir = normalize(back - start.xyz);
 //  const float ISO_VOLUME_STEP_SIZE = 0.0035;
   //Direct volume render  
+  
   #if isoRenderFlag == 0
   {
     float vol = tex3D(start.xyz).a;
@@ -252,9 +351,21 @@ void main() {
     return;
   }
   #endif
+
+  #if isoRenderFlag == 3
+  {
+    acc = SkipZero(start.xyz, dir, back, stepSize.b);
+    if (acc.a < 1.9)
+      acc.rgb = FullVolumeRender(acc.rgb, dir, back).rgb; 
+    gl_FragColor = acc;
+    return;
+  }
+  #endif
+  
   //Direct isosurface render  
   #if isoRenderFlag == 1
   {
+    float valTF = texture2D(texTF, vec2(0.5, 0.0), 0.0).a;
     acc = Isosurface(start.xyz, dir, back, isoThreshold, stepSize.b);
     if (acc.a < 1.9)
     {
@@ -278,4 +389,4 @@ void main() {
     return;
   }
   #endif
-}
+ }
