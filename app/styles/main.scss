@@ -1,6 +1,7 @@
 @import "../../node_modules/bootstrap/dist/css/bootstrap.min";
 @import "../../node_modules/font-awesome/css/font-awesome.min";
 @import "../../node_modules/nouislider/distribute/nouislider.min";
+@import "../../node_modules/c3/c3.min";
 //top navbar height
 $top-navbar-height: 55px;
 
@@ -315,7 +316,7 @@ html, body {
     }
   }
 
-  #med3web-setting-3d-hist>svg {
+  #med3web-setting-3d-hist>svg, #med3web-setting-3d-transfer-func-2d>svg {
     width: 100%;
   }
 
@@ -581,4 +582,12 @@ html, body {
 .modal-backdrop
 {
   opacity:0 !important;
+}
+
+.c3-chart-lines .c3-circles {
+  pointer-events: all !important;
+  .c3-circle {
+    stroke: black;
+    stroke-width: 1;
+  }
 }

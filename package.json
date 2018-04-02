@@ -72,6 +72,7 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "c3": "^0.4.17",
+    "d3": "^3.5.17",
     "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",
     "n3d-threejs": "^76.0.0",

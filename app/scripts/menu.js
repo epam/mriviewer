@@ -24,6 +24,10 @@ under the License.
 
 import noUiSlider from 'nouislider'; // eslint-disable-line no-unused-vars
 import c3 from 'c3'; // eslint-disable-line no-unused-vars
+// eslint-disable-next-line
+import * as d3 from 'd3'; // eslint-disable-line no-unused-vars
+// eslint-disable-next-line
+import { event as currentEvent } from 'd3'; // eslint-disable-line no-unused-vars
 import Spinner from 'spin'; // eslint-disable-line no-unused-vars
 import { loadFileType, RenderMode, LoadState } from '../../lib/scripts/med3web';
 import Graphics2d from '../../lib/scripts/graphics2d/graphics2d';
@@ -44,6 +48,19 @@ export const fastRenderModes = {
   VOLRENDFAST: 'fast-volrend',
   ISOSURFFAST: 'fast-isosurf',
   MIP: 'mip',
+};
+
+/** Initial values for transfer function 2d slider */
+const tf2dSlider = {
+  handleN: 10,
+  handleColor: ['#000000', '#ff8040', '#ff0000', '#804040', '#800000', '#404040', '#808080', '#c0c0c0', '#ffffff',
+    '#ffffff'],
+  xName: 'tfX',
+  // eslint-disable-next-line
+  x: ['tfX', 0, 25, 50, 75, 100, 125, 150, 175, 200, 255],
+  yName: 'tfValue',
+  // eslint-disable-next-line
+  y: ['tfValue', 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
 };
 
 /** Create HTML element */
@@ -146,6 +163,7 @@ export default class Menu {
     this.isHandleGreen = 0;
     /** loaded data histogram */
     this.hist = null;
+    this.transFunc2dSlider = null;
     this.progressBarContainer = $('#med3web-container-progressbar');
     this.progressBarContainerInner = $('#med3web-container-progressbar-inner');
     this.progressBarLabel = this.progressBarContainerInner.find('label');
@@ -213,7 +231,7 @@ export default class Menu {
   onFileLoaded(curDataType) {
     this.curDataType = curDataType;
     this.resetUserInterface();
-    this.resetHist();
+    this.resetTFPlots();
     if (this.dicomTagsTable.length === 1 && this.dicomTagsSliceSelector.length === 1 &&
       this.dicomTagsSliceSelector.find('option').length > 0) {
       this.showDicomTagsOnSliceIdx(0);
@@ -276,19 +294,34 @@ export default class Menu {
     this.sliderQuality.noUiSlider.set(VAL_400);
   }
 
-  resetHist() {
+  resetTFPlots() {
     // simple histogram for integer volume data in [0, 255]
     const binsN = 257;
     const data = ['data'];
+    const dataX = ['x1'];
 
     for (let i = 1; i < binsN; i++) {
       data[i] = 0;
+      dataX[i] =  i - 1;
     }
 
     for (let i = 0; i < this.engine2d.m_volumeData.length; i++) {
       data[this.engine2d.m_volumeData[i] + 1] += 1;
     }
     data[1] = 0; // some hack for better visualization
+    const norm = Math.max.apply(null, data.slice(1, binsN));
+    for (let i = 1; i < binsN; i++) {
+      data[i] /= norm;
+    }
+    data[1] = 1;
+
+    this.transFunc2dSlider.load({
+      unload: ['data', 'x1'],
+      columns: [
+        dataX,
+        data
+      ],
+    });
 
     this.hist.load({
       unload: 'data',
@@ -296,6 +329,14 @@ export default class Menu {
         data,
       ],
     });
+
+    const { internal } = this.transFunc2dSlider;
+    const tf2dValues = internal.data.targets.find(z => z.id === tf2dSlider.yName).values;
+    for (let i = 0; i < tf2dSlider.handleN; ++i) {
+      tf2dValues[i].x = tf2dSlider.x[i + 1];
+      tf2dValues[i].y = tf2dValues[i].value = tf2dSlider.y[i + 1];
+    }
+    this.transFunc2dSlider.flush();
   }
 
 
@@ -596,8 +637,10 @@ export default class Menu {
           // move sliders
           if (newModeSuffix === '3d') {
             $('#med3web-accordion-render-mode .panel-heading.active [data-toggle=collapse]').click();
+            this.transFunc2dSlider.flush();
           } else if (newModeSuffix === '3d-fast') {
             $('#med3web-accordion-fast-render-mode .panel-heading.active [data-toggle=collapse]').click();
+            this.hist.flush();
           }
 
         }
@@ -855,7 +898,7 @@ export default class Menu {
       },
       bar: {
         width: {
-          ratio: 1
+          ratio: 1.1
         }
       },
       legend: {
@@ -874,6 +917,61 @@ export default class Menu {
       },
       point: {
         show: false
+      },
+    });
+
+    this.transFunc2dSlider = c3.generate({
+      bindto: '#med3web-setting-3d-transfer-func-2d',
+      data: {
+        xs: {
+          'data': 'x1',
+          [tf2dSlider.yName]: tf2dSlider.xName,
+        },
+        columns: [
+          ['x1'],
+          tf2dSlider.x,
+          ['data'],
+          tf2dSlider.y,
+        ],
+        type: 'bar',
+        types: {
+          [tf2dSlider.yName]: 'line',
+        },
+        color: (color, d) => ((d.id === tf2dSlider.yName) ? tf2dSlider.handleColor[d.index] : color),
+        colors: {
+          'data': '#a4a4a4'
+        },
+      },
+      bar: {
+        width: {
+          ratio: 1.2,
+        }
+      },
+      legend: {
+        show: false
+      },
+      tooltip: {
+        show: false
+      },
+      axis: {
+        y: {
+          show: true
+        },
+        x: {
+          show: true
+        }
+      },
+      point: {
+        show: true,
+        r: 5,
+        select: {
+          r: 6,
+        },
+        focus: {
+          expand: {
+            r: 5,
+          },
+        },
       },
     });
 
@@ -922,6 +1020,39 @@ export default class Menu {
         this.engine3d.onMouseUp();
       });
     }
+
+    const circles = this.transFunc2dSlider.internal.getCircles();
+    const { internal } = this.transFunc2dSlider;
+    const tf2d = this.transFunc2dSlider;
+
+    circles.call(d3.behavior.drag()
+      .origin(d => d)
+      .on('drag', function(d) {
+        const yScale = internal.getYScale('y');
+
+        const cy = +d3.select(this).attr('cy');
+        const { dx, dy } = currentEvent;
+        const { value, x, index } = d;
+        // because yScale is linear the k will be the coefficient
+        const k = yScale(value + 1) - cy;
+
+        d.value = dy / k + value;
+
+        d.value = d.value > 1 ? 1 : d.value;
+        d.value = d.value < 0 ? 0 : d.value;
+
+        if (index > 0 && index < tf2dSlider.handleN - 1) {
+          const cx = +d3.select(this).attr('cx');
+          // because xScale is linear the k will be the coefficient
+          const kX = internal.x(x + 1) - cx;
+          d.x = dx / kX + x;
+          // get x values of other circles
+          const xValues = internal.data.targets.find(z => z.id === tf2dSlider.yName).values.map(z => z.x);
+          d.x = d.x > xValues[index + 1] ? xValues[index + 1] : d.x;
+          d.x = d.x < xValues[index - 1] ? xValues[index - 1] : d.x;
+        }
+        tf2d.flush();
+      }));
   }
 
   /** Initialize 2d menu panel */
