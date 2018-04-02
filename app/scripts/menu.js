@@ -629,7 +629,7 @@ export default class Menu {
             sliderIds = ['med3web-setting-3d-brightness', 'med3web-setting-3d-z-cut',
               'med3web-setting-3d-quality'];
             this.moveSliders(panelBodyId, sliderIds);
-            this.engine3d.switchToVolumeRender();
+            this.engine3d.switchToFullVolumeRender();
             break;
           case renderModes.ISOSURF:
             panelBodyId = 'med3web-3d-isosurf-body';
