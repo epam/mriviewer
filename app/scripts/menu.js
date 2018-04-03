@@ -60,7 +60,7 @@ const tf2dSlider = {
   x: ['tfX', 0, 25, 50, 75, 100, 125, 150, 175, 200, 255],
   yName: 'tfValue',
   // eslint-disable-next-line
-  y: ['tfValue', 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+  y: ['tfValue', 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0],
 };
 
 /** Create HTML element */
@@ -164,6 +164,8 @@ export default class Menu {
     /** loaded data histogram */
     this.hist = null;
     this.transFunc2dSlider = null;
+    const COLOR_N = 256;
+    this.colorBarColors = Array(COLOR_N);
     this.progressBarContainer = $('#med3web-container-progressbar');
     this.progressBarContainerInner = $('#med3web-container-progressbar-inner');
     this.progressBarLabel = this.progressBarContainerInner.find('label');
@@ -210,6 +212,18 @@ export default class Menu {
     this.app = app;
     this.engine2d = app.m_engine2d;
     this.engine3d = app.m_engine3d;
+  }
+
+  fillColorBarColorsFromRGBA(colors) {
+    const HEX_BASE = 16;
+    let r, g, b, a;
+    for (let i = 0; i < this.colorBarColors.length; ++i) {
+      r = colors[4 * i].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
+      g = colors[4 * i + 1].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
+      b = colors[4 * i + 2].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
+      a = colors[4 * i + 3].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
+      this.colorBarColors[i] = `#${r}${g}${b}${a}`;
+    }
   }
 
   startProgressBar() {
@@ -336,6 +350,9 @@ export default class Menu {
       tf2dValues[i].x = tf2dSlider.x[i + 1];
       tf2dValues[i].y = tf2dValues[i].value = tf2dSlider.y[i + 1];
     }
+    this.engine3d.setTransferFuncColors(tf2dSlider.handleColor);
+    const colors = this.engine3d.updateTransferFuncTexture(tf2dValues.map(z => z.x), tf2dValues.map(z => z.value));
+    this.fillColorBarColorsFromRGBA(colors);
     this.transFunc2dSlider.flush();
   }
 
@@ -888,6 +905,13 @@ export default class Menu {
       });
     }
 
+    const COLOR_N = 256;
+    const FILL_VAL = -0.1;
+    const colorBar = Array(COLOR_N + 1);
+    colorBar[0] = ['colorbar'];
+    colorBar.fill(FILL_VAL, 1, COLOR_N + 1);
+    const colorBarX = ['colorbarX'];
+    colorBarX.push(...[...Array(COLOR_N).keys()]);
     this.hist = c3.generate({
       bindto: '#med3web-setting-3d-hist',
       data: {
@@ -926,18 +950,29 @@ export default class Menu {
         xs: {
           'data': 'x1',
           [tf2dSlider.yName]: tf2dSlider.xName,
+          [colorBar[0]] : colorBarX[0],
         },
         columns: [
           ['x1'],
           tf2dSlider.x,
+          colorBarX,
           ['data'],
           tf2dSlider.y,
+          colorBar,
         ],
         type: 'bar',
         types: {
           [tf2dSlider.yName]: 'line',
         },
-        color: (color, d) => ((d.id === tf2dSlider.yName) ? tf2dSlider.handleColor[d.index] : color),
+        color: (color, d) => {
+          if (d.id === tf2dSlider.yName) {
+            return tf2dSlider.handleColor[d.index];
+          } else if (d.id === 'colorbar') {
+            return this.colorBarColors[d.index];
+          } else {
+            return color;
+          }
+        },
         colors: {
           'data': '#a4a4a4'
         },
@@ -1023,7 +1058,7 @@ export default class Menu {
 
     const circles = this.transFunc2dSlider.internal.getCircles();
     const { internal } = this.transFunc2dSlider;
-    const tf2d = this.transFunc2dSlider;
+    const self = this;
 
     circles.call(d3.behavior.drag()
       .origin(d => d)
@@ -1051,7 +1086,10 @@ export default class Menu {
           d.x = d.x > xValues[index + 1] ? xValues[index + 1] : d.x;
           d.x = d.x < xValues[index - 1] ? xValues[index - 1] : d.x;
         }
-        tf2d.flush();
+        const tfValues = internal.data.targets.find(z => z.id === tf2dSlider.yName).values;
+        const colors = self.engine3d.updateTransferFuncTexture(tfValues.map(z => z.x), tfValues.map(z => z.value));
+        self.fillColorBarColorsFromRGBA(colors);
+        self.transFunc2dSlider.flush();
       }));
   }
 
