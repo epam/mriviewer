@@ -189,6 +189,88 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
 }
 
 /**
+* Calculation of normal   
+*/
+vec3 CalcNormal(vec3 iter)
+{
+  float d = 1.0 / texSize;
+  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
+  // Culculate normal 
+  N.x = tex3D(iter + dx).a - tex3D(iter - dx).a;
+  N.y = tex3D(iter + dy).a - tex3D(iter - dy).a;
+  N.z = tex3D(iter + dz).a - tex3D(iter - dz).a;
+  N = normalize(N);
+  return N;
+}
+
+
+/**
+* ROI Direct volume render  
+*/
+vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
+    const int MAX_I = 1000;
+    const float BRIGHTNESS_SCALE = 1.0;
+    vec3 iterator = start;
+    vec4 acc = vec4(0.0, 0.0, 0.0, 2.0), vol;
+    float StepSize = stepSize.r, alpha;
+    vec3 step = StepSize*dir, sumCol = vec3(0.0, 0.0, 0.0), surfaceLighting = vec3(0.0, 0.0, 0.0);
+    vec3 color = vec3(1.0, 0.85, 0.7);
+    float sumAlpha = 0.0, t12 = 1.0 / (t_function1max.a - t_function1min.a), lighting;
+    bool inFlag = false, oldInFlag = false;
+    int count = int(floor(length(iterator - back) / StepSize));
+    // Calc volume integral
+    for (int i = 0; i < MAX_I; i++)
+    {
+        iterator = iterator + step;
+        vol = tex3D(iterator);
+        if (count <= 0 || sumAlpha > 0.97 || vol.a > t_function2min.a)
+            break;
+        // In/Out flag
+        oldInFlag = inFlag;
+        inFlag = vol.a > t_function1min.a && vol.a <  t_function1max.a;
+        if (inFlag || oldInFlag != inFlag)
+        {
+            // If the transfer function is nonzero, the integration step is halved
+            // First step
+            vec4 vol1 = tex3D(iterator - 0.5 * step);
+            // Transfer function - isosceles triangle 
+            alpha = min(vol1.a - t_function1min.a, t_function1max.a - vol1.a);
+            alpha = opacityBarrier * max(0.0, alpha) * t12;
+//            color = mix(t_function1min.rgb, t_function1max.rgb, (vol1.a - t_function1min.a) * t12);
+            lighting = 0.5 * max(0.0, dot(CalcNormal(iterator), -lightDir)) + 0.5;
+            // Volume integral on the interval StepSize
+            sumCol += (1. - sumAlpha)* alpha * StepSize * color * lighting;
+            sumAlpha += (1. - sumAlpha) * alpha * StepSize;
+            // Second step
+            // Transfer function - isosceles triangle 
+            alpha = min(vol.a - t_function1min.a, t_function1max.a - vol.a);
+            alpha = opacityBarrier*max(0.0, alpha) * t12;
+ //           color = mix(t_function1min.rgb, t_function1max.rgb, (vol.a - t_function1min.a) * t12);
+            // Volume integral on the interval StepSize
+            sumCol += (1. - sumAlpha) * alpha * StepSize * color * lighting;
+            sumAlpha += (1. - sumAlpha) * alpha * StepSize;
+        }
+        count--;
+    } // for i
+    // Calculate the color of the isosurface
+    if (count > 0) {
+        const float AMBIENT = 0.3;
+        const float DIFFUSE = 0.7;
+        const float SPEC = 0.1;
+        const float SPEC_POV = 90.0;
+        iterator = Correction(iterator - step, iterator, t_function2min.a);
+        vec3 N = CalcNormal(iterator);
+        float dif = max(0.0, dot(N, -lightDir));
+        float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
+        // The resulting color depends on the longevity of the material in the surface of the isosurface
+        surfaceLighting = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * vol.rgb;
+    }
+    acc.rgb = BRIGHTNESS_SCALE * brightness3D * sumCol + (1.0 - sumAlpha) * surfaceLighting;
+    return acc;
+}
+
+
+/**
 * Full direct volume render  
 */
 vec4 FullVolumeRender(vec3 start, vec3 dir, vec3 back) {
@@ -346,6 +428,22 @@ void main() {
       acc = Isosurface(start.xyz, dir, back, t_function1min.a, stepSize.b);
       if (acc.a < 1.9)
         acc.rgb = VolumeRender(acc.rgb, dir, back).rgb; 
+    } 
+    gl_FragColor = acc;
+    return;
+  }
+  #endif
+
+  #if isoRenderFlag == 4
+  {
+    float vol = tex3D(start.xyz).a;
+    if (vol > t_function2min.a)
+      acc.rgb = 0.75 * vol * t_function2min.rgb;
+    else
+    {
+      acc = Isosurface(start.xyz, dir, back, t_function1min.a, stepSize.b);
+      if (acc.a < 1.9)
+        acc.rgb = RoiVolumeRender(acc.rgb, dir, back).rgb; 
     } 
     gl_FragColor = acc;
     return;

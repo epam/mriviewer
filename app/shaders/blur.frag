@@ -80,6 +80,7 @@ vec4 filterROI(vec3 base)
   vec3 BackGroundColor = vec3(0.0, 0.0, 0.0);
   float norm_factor = 0.0;
   float seg_norm_factor = 0.0;
+  vec3  segColor;
   vec4 acc = vec4(0.0, 0.0, 0.0, 0.0);
   for (float i = -2.0; i < 2.5; i += 1.0)
     for (float j = -2.0; j < 2.5; j += 1.0)
@@ -89,11 +90,11 @@ vec4 filterROI(vec3 base)
         float gaussB = exp( -(i*i + j*j + k*k) / (2.0 * sigma2));
         //pick selected roi from 1d texture
         float segInUse = texture2D(texSegInUse, vec2(curVal.a, 0.0)).r;
-        vec3  segColor = texture2D(texSegColorPalette, vec2(curVal.a, 0.0)).rgb;
+        segColor = texture2D(texSegColorPalette, vec2(curVal.a, 0.0)).rgb;
         //acc.rgb += (segInUse * segColor + (1.0 - segInUse) * BackGroundColor) * gaussB;
         acc.rgb += mix(BackGroundColor, segColor, segInUse) * gaussB;
-        //float val = max(0.5 * curVal.r, segInUse);
-        float val = curVal.a *segInUse;
+        float val = max(0.5 * curVal.r, segInUse);
+//        float val = curVal.a *segInUse;
         acc.a += val * gaussB;
         seg_norm_factor += segInUse * gaussB;
         norm_factor += gaussB;
