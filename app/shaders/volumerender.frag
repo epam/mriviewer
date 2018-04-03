@@ -202,7 +202,7 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
     float sumAlpha = 0.0, t12 = 1.0 / (t_function1max.a - t_function1min.a), lighting;
     bool inFlag = false, oldInFlag = false;
     int count = int(floor(length(iterator - back) / StepSize));
-    vec3 color = vec3(1.0, 0.85, 0.7);
+    vec3 color = vec3(1.0, 0.9, 0.8);
 
     // Calc volume integral
     for (int i = 0; i < MAX_I; i++)
@@ -223,7 +223,12 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
             alpha = min(vol1.a - t_function1min.a, t_function1max.a - vol1.a);
             alpha = opacityBarrier * max(0.0, alpha) * t12;
 //            color = mix(t_function1min.rgb, t_function1max.rgb, (vol1.a - t_function1min.a) * t12);
-            lighting = 0.5 * max(0.0, dot(CalcNormal(iterator), -lightDir)) + 0.5;
+            vec3 N = CalcNormal(iterator);
+            lighting = 0.5 * max(0.0, dot(N, -lightDir)) + 0.5;
+            float t = 1.0 - max(0.0, dot(N, dir));
+//            float dif = (1.0 - brightness3D) + brightness3D * t * t;   
+            float dif = pow(t, 4.0 * brightness3D);   
+            alpha = dif * alpha; 
             // Volume integral on the interval StepSize
             sumCol += (1. - sumAlpha)* alpha * StepSize * color * lighting;
             sumAlpha += (1. - sumAlpha) * alpha * StepSize;
@@ -231,7 +236,8 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
             // Transfer function - isosceles triangle 
             alpha = min(vol.a - t_function1min.a, t_function1max.a - vol.a);
             alpha = opacityBarrier*max(0.0, alpha) * t12;
-//            color = mix(t_function1min.rgb, t_function1max.rgb, (vol.a - t_function1min.a) * t12);
+            alpha = dif * alpha; 
+ //           color = mix(t_function1min.rgb, t_function1max.rgb, (vol.a - t_function1min.a) * t12);
             // Volume integral on the interval StepSize
             sumCol += (1. - sumAlpha) * alpha * StepSize * color * lighting;
             sumAlpha += (1. - sumAlpha) * alpha * StepSize;
@@ -251,7 +257,8 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
         // The resulting color depends on the longevity of the material in the surface of the isosurface
         surfaceLighting = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * vol.rgb;
     }
-    acc.rgb = BRIGHTNESS_SCALE * brightness3D * sumCol + (1.0 - sumAlpha) * surfaceLighting;
+//    acc.rgb = BRIGHTNESS_SCALE * brightness3D * sumCol + (1.0 - sumAlpha) * surfaceLighting;
+    acc.rgb = BRIGHTNESS_SCALE * sumCol + (1.0 - sumAlpha) * surfaceLighting;
     return acc;
 }
 
