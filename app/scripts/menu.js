@@ -343,6 +343,7 @@ export default class Menu {
         data,
       ],
     });
+    this.transFunc2dSlider.groups([['data', 'colorbar']]);
 
     const { internal } = this.transFunc2dSlider;
     const tf2dValues = internal.data.targets.find(z => z.id === tf2dSlider.yName).values;
@@ -946,6 +947,9 @@ export default class Menu {
 
     this.transFunc2dSlider = c3.generate({
       bindto: '#med3web-setting-3d-transfer-func-2d',
+      padding: {
+        left: 45,
+      },
       data: {
         xs: {
           'data': 'x1',
@@ -976,24 +980,47 @@ export default class Menu {
         colors: {
           'data': '#a4a4a4'
         },
+        groups: [
+          ['data', 'colorbar'],
+        ],
       },
       bar: {
         width: {
-          ratio: 1.2,
-        }
+          ratio: 0.0625 * 1.2, // eslint-disable-line
+        },
+        zerobased: false,
       },
       legend: {
-        show: false
+        show: false,
       },
       tooltip: {
-        show: false
+        show: false,
       },
       axis: {
         y: {
-          show: true
+          show: true,
+          tick: {
+            values: [0, 0.2, 0.4, 0.6, 0.8, 1.0], // eslint-disable-line
+          },
+          min: 0,
+          max: 1.0,
+          label: {
+            text: 'Opacity',
+            position: 'outer-middle',
+          },
         },
         x: {
-          show: true
+          show: true,
+          tick: {
+            fit: true,
+            count: 16,
+          },
+          min: 0,
+          max: 255,
+          label: {
+            text: 'Intensity',
+            position: 'outer-center',
+          },
         }
       },
       point: {
