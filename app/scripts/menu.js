@@ -1117,7 +1117,9 @@ export default class Menu {
         const colors = self.engine3d.updateTransferFuncTexture(tfValues.map(z => z.x), tfValues.map(z => z.value));
         self.fillColorBarColorsFromRGBA(colors);
         self.transFunc2dSlider.flush();
-      }));
+      })
+      .on('dragstart', () => self.engine3d.onMouseDown())
+      .on('dragend', () => self.engine3d.onMouseUp()));
   }
 
   /** Initialize 2d menu panel */
