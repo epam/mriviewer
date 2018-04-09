@@ -686,7 +686,7 @@ export default class Menu {
         switch (mode) {
           case renderModes.VOLREND:
             panelBodyId = 'med3web-3d-volrend-body';
-            sliderIds = ['med3web-setting-3d-brightness', 'med3web-setting-3d-z-cut',
+            sliderIds = ['med3web-setting-opacity', 'med3web-setting-3d-brightness', 'med3web-setting-3d-z-cut',
               'med3web-setting-3d-quality'];
             this.moveSliders(panelBodyId, sliderIds);
             this.engine3d.switchToFullVolumeRender();
@@ -725,7 +725,7 @@ export default class Menu {
         switch (mode) {
           case fastRenderModes.VOLRENDFAST:
             panelBodyId = 'med3web-3d-fast-volrend-body';
-            sliderIds = ['med3web-setting-3d-brightness', 'med3web-setting-3d-z-cut',
+            sliderIds = ['med3web-setting-opacity', 'med3web-setting-3d-brightness', 'med3web-setting-3d-z-cut',
               'med3web-setting-3d-quality'];
             this.moveSliders(panelBodyId, sliderIds);
             this.engine3d.switchToVolumeRender();
