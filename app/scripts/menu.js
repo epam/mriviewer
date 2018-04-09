@@ -214,15 +214,14 @@ export default class Menu {
     this.engine3d = app.m_engine3d;
   }
 
-  fillColorBarColorsFromRGBA(colors) {
+  fillColorBarColorsFromRGB(colors) {
     const HEX_BASE = 16;
-    let r, g, b, a;
+    let r, g, b;
     for (let i = 0; i < this.colorBarColors.length; ++i) {
       r = colors[4 * i].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
       g = colors[4 * i + 1].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
       b = colors[4 * i + 2].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
-      a = colors[4 * i + 3].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
-      this.colorBarColors[i] = `#${r}${g}${b}${a}`;
+      this.colorBarColors[i] = `#${r}${g}${b}`;
     }
   }
 
@@ -353,7 +352,7 @@ export default class Menu {
     }
     this.engine3d.setTransferFuncColors(tf2dSlider.handleColor);
     const colors = this.engine3d.updateTransferFuncTexture(tf2dValues.map(z => z.x), tf2dValues.map(z => z.value));
-    this.fillColorBarColorsFromRGBA(colors);
+    this.fillColorBarColorsFromRGB(colors);
     this.transFunc2dSlider.flush();
   }
 
@@ -1115,7 +1114,7 @@ export default class Menu {
         }
         const tfValues = internal.data.targets.find(z => z.id === tf2dSlider.yName).values;
         const colors = self.engine3d.updateTransferFuncTexture(tfValues.map(z => z.x), tfValues.map(z => z.value));
-        self.fillColorBarColorsFromRGBA(colors);
+        self.fillColorBarColorsFromRGB(colors);
         self.transFunc2dSlider.flush();
       })
       .on('dragstart', () => self.engine3d.onMouseDown())
