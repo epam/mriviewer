@@ -119,7 +119,7 @@ export default class Menu {
     /** slider object for transfer function */
     this.sliderTransFunc = null;
     /** slider object for opacityTissue */
-    this.sliderOpacityTissue = null;
+    this.sliderOpacity = null;
     /** slider object for brightness */
     this.sliderBrightness = null;
     /** slider object for z cut */
@@ -298,7 +298,7 @@ export default class Menu {
     $('#med3web-3d-volrend-head').find('a').click();
 
     this.sliderThresholdIsoSurf.noUiSlider.set(this.curDataType.thresholdIsosurf);
-    this.sliderOpacityTissue.noUiSlider.set(this.curDataType.opacityTissue);
+    this.sliderOpacity.noUiSlider.set(this.curDataType.opacityTissue);
     this.sliderTransFunc.noUiSlider.set([this.curDataType.thresholdTissue1, this.curDataType.thresholdTissue2,
       this.curDataType.thresholdIsosurf]);
     this.sliderBrightness.noUiSlider.set(this.curDataType.brightness);
@@ -770,9 +770,9 @@ export default class Menu {
     }
 
     // slider opacity tissue
-    this.sliderOpacityTissue = $('#med3web-slider-opacity-tissue').get(0);
-    if (this.sliderOpacityTissue) {
-      noUiSlider.create(this.sliderOpacityTissue, {
+    this.sliderOpacity = $('#med3web-slider-opacity').get(0);
+    if (this.sliderOpacity) {
+      noUiSlider.create(this.sliderOpacity, {
         start: 0.5,
         // start: curFileDataType.opacityTissue,
         tooltips: true,
@@ -782,16 +782,16 @@ export default class Menu {
           max: 1,
         },
       });
-      this.sliderOpacityTissue.noUiSlider.on('slide', (sliderValue) => {
+      this.sliderOpacity.noUiSlider.on('slide', (sliderValue) => {
         // use 'sliderValue' as a float value [0; 1]
         this.engine3d.setOpacityBarrier(sliderValue);
       });
 
-      this.sliderOpacityTissue.noUiSlider.on('start', () => {
+      this.sliderOpacity.noUiSlider.on('start', () => {
         this.engine3d.onMouseDown();
       });
 
-      this.sliderOpacityTissue.noUiSlider.on('end', () => {
+      this.sliderOpacity.noUiSlider.on('end', () => {
         this.engine3d.onMouseUp();
       });
     }
@@ -1038,7 +1038,7 @@ export default class Menu {
 
     $('[data-type=reset-to-default]').on('click', () => {
       this.sliderThresholdIsoSurf.noUiSlider.set(this.curDataType.thresholdIsosurf);
-      this.sliderOpacityTissue.noUiSlider.set(this.curDataType.opacityTissue);
+      this.sliderOpacity.noUiSlider.set(this.curDataType.opacityTissue);
       this.sliderTransFunc.noUiSlider.set([this.curDataType.thresholdTissue1, this.curDataType.thresholdTissue2,
         this.curDataType.thresholdIsosurf]);
       this.sliderBrightness.noUiSlider.set(this.curDataType.brightness);
