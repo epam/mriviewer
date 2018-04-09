@@ -57,10 +57,10 @@ const tf2dSlider = {
     '#ffffff'],
   xName: 'tfX',
   // eslint-disable-next-line
-  x: ['tfX', 0, 25, 50, 75, 100, 125, 150, 175, 200, 255],
+  x: ['tfX', 0, 22, 40, 55, 61, 115, 118, 125, 160, 255],
   yName: 'tfValue',
   // eslint-disable-next-line
-  y: ['tfValue', 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0],
+  y: ['tfValue', 0, 0, 0.3, 0.12, 0, 0, 0.4, 0.8, 0.95, 1],
 };
 
 /** Create HTML element */
