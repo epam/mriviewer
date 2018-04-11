@@ -271,7 +271,7 @@ export default class Menu {
     ]);
 
     if (this.dicomTagsTable.length === 1) {
-      this.dicomTagsTable.find('tbody').get(0).append(row);
+      this.dicomTagsTable.find('tbody').append(row);
     }
     if (imageNumber !== -1) {
       const option = createElement('option', {}, [
