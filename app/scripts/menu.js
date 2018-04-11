@@ -354,6 +354,7 @@ export default class Menu {
     const colors = this.engine3d.updateTransferFuncTexture(tf2dValues.map(z => z.x), tf2dValues.map(z => z.value));
     this.fillColorBarColorsFromRGB(colors);
     this.transFunc2dSlider.flush();
+    this.hist.flush();
   }
 
 
