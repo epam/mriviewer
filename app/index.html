@@ -120,10 +120,10 @@
 
 
               <li class="btn-group" data-toggle="buttons">
-                <label class="navbar-btn btn btn-default" id="med3web-mode-2d" data-toggle="mode" data-renderer="2d" data-mode="2d" data-tooltip="tooltip" data-placement="bottom" title="2D viewer">
+                <label class="navbar-btn btn btn-default active" id="med3web-mode-2d" data-toggle="mode" data-renderer="2d" data-mode="2d" data-tooltip="tooltip" data-placement="bottom" title="2D viewer">
                   <input type="radio" name="med3web-modes" autocomplete="off"> 2D
                 </label>
-                <label class="navbar-btn btn btn-default active" id="med3web-mode-3d-fast" data-toggle="mode" data-renderer="3d" data-mode="3d-fast" data-tooltip="tooltip" data-placement="bottom" title="3D fast viewer">
+                <label class="navbar-btn btn btn-default" id="med3web-mode-3d-fast" data-toggle="mode" data-renderer="3d" data-mode="3d-fast" data-tooltip="tooltip" data-placement="bottom" title="3D fast viewer">
                   <input type="radio" name="med3web-modes" autocomplete="off"> 3D<span class="fa fa-bolt"></span>
                 </label>
                 <label class="navbar-btn btn btn-default" id="med3web-mode-3d" data-toggle="mode" data-renderer="3d" data-mode="3d" data-tooltip="tooltip" data-placement="bottom" title="3D viewer">
@@ -137,7 +137,7 @@
 
       <div class="row" id="med3web-row-main">
         <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" id="med3web-panel-menu" style="padding: 0; margin: 0; height: 100%;">
-          <div class="panel" id="med3web-panel-menu-3d-fast" style="border-color: #e7e7e7;">
+          <div class="panel" id="med3web-panel-menu-3d-fast" style="display: none; border-color: #e7e7e7;">
             <div class="panel-body">
               <div class="panel-group" id="med3web-accordion-fast-render-mode" role="tablist" aria-multiselectable="true">
                 <div class="panel panel-default">
@@ -286,7 +286,7 @@
               </div>
             </div>
           </div>
-          <div class="panel" id="med3web-panel-menu-2d" style="display: none; border-color: #e7e7e7;">
+          <div class="panel" id="med3web-panel-menu-2d" style="border-color: #e7e7e7;">
             <div class="panel-body">
               <div class="panel panel-default">
                 <div class="panel-heading">
@@ -396,13 +396,13 @@
 
         <div class="row col-xs-8 col-sm-8 col-md-8 col-lg-8" style="display: flex; padding: 0; margin: 0; height: 100%;">
 
-            <div id="med3web-container-3d" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center">
+            <div id="med3web-container-3d" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center" style="display: none;">
               <div id="med3web-info">
 
               </div>
             </div>
 
-            <div id="med3web-container-2d" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center" style="display: none;">
+            <div id="med3web-container-2d" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center">
             </div>
 
             <!-- This is a special debug canvas, required only for deep pixel-by-pixel debugging (avoid webgl use) -->

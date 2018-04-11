@@ -305,7 +305,9 @@ export default class Menu {
     this.sliderZCut.noUiSlider.set(1);
     const VAL_400 = 400;
     this.sliderQuality.noUiSlider.set(VAL_400);
+    $('#med3web-mode-2d').click();
   }
+
 
   resetTFPlots() {
     // simple histogram for integer volume data in [0, 255]
