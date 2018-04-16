@@ -57,10 +57,10 @@ const tf2dSlider = {
     '#ffffff'],
   xName: 'tfX',
   // eslint-disable-next-line
-  x: ['tfX', 0, 25, 50, 75, 100, 125, 150, 175, 200, 255],
+  x: ['tfX', 0, 22, 40, 55, 61, 115, 118, 125, 160, 255],
   yName: 'tfValue',
   // eslint-disable-next-line
-  y: ['tfValue', 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0],
+  y: ['tfValue', 0, 0, 0.3, 0.12, 0, 0, 0.4, 0.8, 0.95, 1],
 };
 
 /** Create HTML element */
@@ -119,7 +119,7 @@ export default class Menu {
     /** slider object for transfer function */
     this.sliderTransFunc = null;
     /** slider object for opacityTissue */
-    this.sliderOpacityTissue = null;
+    this.sliderOpacity = null;
     /** slider object for brightness */
     this.sliderBrightness = null;
     /** slider object for z cut */
@@ -214,15 +214,14 @@ export default class Menu {
     this.engine3d = app.m_engine3d;
   }
 
-  fillColorBarColorsFromRGBA(colors) {
+  fillColorBarColorsFromRGB(colors) {
     const HEX_BASE = 16;
-    let r, g, b, a;
+    let r, g, b;
     for (let i = 0; i < this.colorBarColors.length; ++i) {
       r = colors[4 * i].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
       g = colors[4 * i + 1].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
       b = colors[4 * i + 2].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
-      a = colors[4 * i + 3].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
-      this.colorBarColors[i] = `#${r}${g}${b}${a}`;
+      this.colorBarColors[i] = `#${r}${g}${b}`;
     }
   }
 
@@ -272,7 +271,7 @@ export default class Menu {
     ]);
 
     if (this.dicomTagsTable.length === 1) {
-      this.dicomTagsTable.find('tbody').get(0).append(row);
+      this.dicomTagsTable.find('tbody').append(row);
     }
     if (imageNumber !== -1) {
       const option = createElement('option', {}, [
@@ -299,14 +298,16 @@ export default class Menu {
     $('#med3web-3d-volrend-head').find('a').click();
 
     this.sliderThresholdIsoSurf.noUiSlider.set(this.curDataType.thresholdIsosurf);
-    this.sliderOpacityTissue.noUiSlider.set(this.curDataType.opacityTissue);
+    this.sliderOpacity.noUiSlider.set(this.curDataType.opacityTissue);
     this.sliderTransFunc.noUiSlider.set([this.curDataType.thresholdTissue1, this.curDataType.thresholdTissue2,
       this.curDataType.thresholdIsosurf]);
     this.sliderBrightness.noUiSlider.set(this.curDataType.brightness);
     this.sliderZCut.noUiSlider.set(1);
     const VAL_400 = 400;
     this.sliderQuality.noUiSlider.set(VAL_400);
+    $('#med3web-mode-2d').click();
   }
+
 
   resetTFPlots() {
     // simple histogram for integer volume data in [0, 255]
@@ -353,8 +354,9 @@ export default class Menu {
     }
     this.engine3d.setTransferFuncColors(tf2dSlider.handleColor);
     const colors = this.engine3d.updateTransferFuncTexture(tf2dValues.map(z => z.x), tf2dValues.map(z => z.value));
-    this.fillColorBarColorsFromRGBA(colors);
+    this.fillColorBarColorsFromRGB(colors);
     this.transFunc2dSlider.flush();
+    this.hist.flush();
   }
 
 
@@ -629,9 +631,19 @@ export default class Menu {
     const buttonScreenshot = $('#med3web-button-screenshot');
     if (buttonScreenshot.length === 1) {
       buttonScreenshot.on('click', () => {
-        const containter3d = $('#med3web-container-3d');
-        containter3d.click();
-        Screenshot.makeScreenshot(this.engine3d);
+        if (this.curModeSuffix === '2d') {
+          const SHOT_W = 800;
+          const SHOT_H = 600;
+          const containter2d = $('#med3web-container-2d');
+          containter2d.click();
+          Screenshot.makeScreenshot(this.engine2d, SHOT_W, SHOT_H);
+        } else {
+          const SHOT_W = 800;
+          const SHOT_H = 600;
+          const containter3d = $('#med3web-container-3d');
+          containter3d.click();
+          Screenshot.makeScreenshot(this.engine3d, SHOT_W, SHOT_H);
+        }
       });
     }
 
@@ -687,7 +699,7 @@ export default class Menu {
         switch (mode) {
           case renderModes.VOLREND:
             panelBodyId = 'med3web-3d-volrend-body';
-            sliderIds = ['med3web-setting-3d-brightness', 'med3web-setting-3d-z-cut',
+            sliderIds = ['med3web-setting-opacity', 'med3web-setting-3d-brightness', 'med3web-setting-3d-z-cut',
               'med3web-setting-3d-quality'];
             this.moveSliders(panelBodyId, sliderIds);
             this.engine3d.switchToFullVolumeRender();
@@ -726,7 +738,7 @@ export default class Menu {
         switch (mode) {
           case fastRenderModes.VOLRENDFAST:
             panelBodyId = 'med3web-3d-fast-volrend-body';
-            sliderIds = ['med3web-setting-3d-brightness', 'med3web-setting-3d-z-cut',
+            sliderIds = ['med3web-setting-opacity', 'med3web-setting-3d-brightness', 'med3web-setting-3d-z-cut',
               'med3web-setting-3d-quality'];
             this.moveSliders(panelBodyId, sliderIds);
             this.engine3d.switchToVolumeRender();
@@ -771,9 +783,9 @@ export default class Menu {
     }
 
     // slider opacity tissue
-    this.sliderOpacityTissue = $('#med3web-slider-opacity-tissue').get(0);
-    if (this.sliderOpacityTissue) {
-      noUiSlider.create(this.sliderOpacityTissue, {
+    this.sliderOpacity = $('#med3web-slider-opacity').get(0);
+    if (this.sliderOpacity) {
+      noUiSlider.create(this.sliderOpacity, {
         start: 0.5,
         // start: curFileDataType.opacityTissue,
         tooltips: true,
@@ -783,16 +795,16 @@ export default class Menu {
           max: 1,
         },
       });
-      this.sliderOpacityTissue.noUiSlider.on('slide', (sliderValue) => {
+      this.sliderOpacity.noUiSlider.on('slide', (sliderValue) => {
         // use 'sliderValue' as a float value [0; 1]
         this.engine3d.setOpacityBarrier(sliderValue);
       });
 
-      this.sliderOpacityTissue.noUiSlider.on('start', () => {
+      this.sliderOpacity.noUiSlider.on('start', () => {
         this.engine3d.onMouseDown();
       });
 
-      this.sliderOpacityTissue.noUiSlider.on('end', () => {
+      this.sliderOpacity.noUiSlider.on('end', () => {
         this.engine3d.onMouseUp();
       });
     }
@@ -1039,7 +1051,7 @@ export default class Menu {
 
     $('[data-type=reset-to-default]').on('click', () => {
       this.sliderThresholdIsoSurf.noUiSlider.set(this.curDataType.thresholdIsosurf);
-      this.sliderOpacityTissue.noUiSlider.set(this.curDataType.opacityTissue);
+      this.sliderOpacity.noUiSlider.set(this.curDataType.opacityTissue);
       this.sliderTransFunc.noUiSlider.set([this.curDataType.thresholdTissue1, this.curDataType.thresholdTissue2,
         this.curDataType.thresholdIsosurf]);
       this.sliderBrightness.noUiSlider.set(this.curDataType.brightness);
@@ -1115,7 +1127,7 @@ export default class Menu {
         }
         const tfValues = internal.data.targets.find(z => z.id === tf2dSlider.yName).values;
         const colors = self.engine3d.updateTransferFuncTexture(tfValues.map(z => z.x), tfValues.map(z => z.value));
-        self.fillColorBarColorsFromRGBA(colors);
+        self.fillColorBarColorsFromRGB(colors);
         self.transFunc2dSlider.flush();
       })
       .on('dragstart', () => self.engine3d.onMouseDown())

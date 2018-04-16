@@ -209,7 +209,7 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
     {
         iterator = iterator + step;
         vol = tex3D(iterator);
-        if (count <= 0 || sumAlpha > 0.97 || vol.a > t_function2min.a)
+        if (count <= 0 || sumAlpha > 0.97 || vol.a > 0.75)
             break;
         // In/Out flag
         oldInFlag = inFlag;
@@ -250,7 +250,7 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
         const float DIFFUSE = 0.7;
         const float SPEC = 0.1;
         const float SPEC_POV = 90.0;
-        iterator = Correction(iterator - step, iterator, t_function2min.a);
+        iterator = Correction(iterator - step, iterator, 0.75);
         vec3 N = CalcNormal(iterator);
         float dif = max(0.0, dot(N, -lightDir));
         float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
