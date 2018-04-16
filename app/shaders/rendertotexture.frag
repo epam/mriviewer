@@ -443,9 +443,9 @@ void main() {
 
   #if isoRenderFlag == 4
   {
-    float vol = tex3D(start.xyz).a;
-    if (vol > t_function2min.a)
-      acc.rgb = 0.75 * vol * t_function2min.rgb;
+    vec4 vol = tex3D(start.xyz);
+    if (vol.a > 0.75)
+      acc.rgb = 0.75 * vol.rgb;
     else
     {
       acc = Isosurface(start.xyz, dir, back, t_function1min.a, stepSize.b);

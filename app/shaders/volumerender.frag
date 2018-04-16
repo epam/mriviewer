@@ -434,9 +434,9 @@ void main() {
   #endif
 #if isoRenderFlag==4 
   {  
-     float vol = tex3D(start.xyz).a;
-     if (vol > t_function2min.a)
-        acc.rgb = 0.75*vol * t_function2min.rgb;
+     vec4 vol = tex3D(start.xyz);
+     if (vol.a > 0.75)
+        acc.rgb = 0.75*vol.rgb;
      else
         acc.rgb = RoiVolumeRender(start.xyz + max(0., minIso.a - 0. / 128.)*dir, dir, back).rgb;
      acc.a = 1.0;
