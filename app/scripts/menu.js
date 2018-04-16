@@ -631,9 +631,19 @@ export default class Menu {
     const buttonScreenshot = $('#med3web-button-screenshot');
     if (buttonScreenshot.length === 1) {
       buttonScreenshot.on('click', () => {
-        const containter3d = $('#med3web-container-3d');
-        containter3d.click();
-        Screenshot.makeScreenshot(this.engine3d);
+        if (this.curModeSuffix === '2d') {
+          const SHOT_W = 800;
+          const SHOT_H = 600;
+          const containter2d = $('#med3web-container-2d');
+          containter2d.click();
+          Screenshot.makeScreenshot(this.engine2d, SHOT_W, SHOT_H);
+        } else {
+          const SHOT_W = 800;
+          const SHOT_H = 600;
+          const containter3d = $('#med3web-container-3d');
+          containter3d.click();
+          Screenshot.makeScreenshot(this.engine3d, SHOT_W, SHOT_H);
+        }
       });
     }
 
