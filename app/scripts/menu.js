@@ -29,6 +29,8 @@ import * as d3 from 'd3'; // eslint-disable-line no-unused-vars
 // eslint-disable-next-line
 import { event as currentEvent } from 'd3'; // eslint-disable-line no-unused-vars
 import Spinner from 'spin'; // eslint-disable-line no-unused-vars
+import jsPDF from 'jspdf'; // eslint-disable-line no-unused-vars
+import 'jspdf-autotable'; // eslint-disable-line no-unused-vars
 import { loadFileType, RenderMode, LoadState } from '../../lib/scripts/med3web';
 import Graphics2d from '../../lib/scripts/graphics2d/graphics2d';
 import packageJson from '../../package.json';
@@ -624,6 +626,23 @@ export default class Menu {
         if (this.dicomTagsTable.length === 1) {
           this.showDicomTagsOnSliceIdx(this.dicomTagsSliceSelector.prop('selectedIndex'));
         }
+      });
+    }
+    const btnSaveSilceTags = $('#med3web-btn-save-slice-tags');
+    if (btnSaveSilceTags.length === 1) {
+      btnSaveSilceTags.on('click', () => {
+        const doc = new jsPDF(); // eslint-disable-line
+        const elem = this.dicomTagsTable.get(0);
+        const res = doc.autoTableHtmlToJson(elem, false);
+        doc.autoTable(res.columns, res.data,
+          {
+            startY: 20,
+            margin: { horizontal: 7 },
+            showHeader: 'everyPage',
+            styles: { overflow: 'linebreak', columnWidth: 'wrap' },
+            columnStyles: { text: { columnWidth: 'auto' } },
+          });
+        doc.save('dicom_tags.pdf');
       });
     }
 
