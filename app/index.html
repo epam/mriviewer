@@ -478,13 +478,15 @@
             <form class="form-horizontal">
               <div class="form-group">
                 <label for="med3web-select-choose-slice" class="control-label col-xs-2" style="text-align: left;">Choose slice</label>
-                <div class="col-xs-8" style="padding-left: 0;">
+                <div class="input-group col-xs-9" style="padding-left: 0;">
                   <select id="med3web-select-choose-slice" class="form-control">
                   </select>
+                  <span class="input-group-btn">
+                    <a href="" class="btn btn-default" id="med3web-btn-save-tags" data-toggle="modal" data-target="#med3web-modal-save-tags" data-tooltip="tooltip" data-placement="bottom" title="Save tags to pdf">
+                      <span class="fa fa-file-pdf-o"></span>
+                    </a>
+                  </span>
                 </div>
-                <label class="btn btn-default col-xs-2" id="med3web-btn-save-slice-tags">
-                  Save to pdf
-                </label>
               </div>
             </form>
             <table class="table table-hover" id="med3web-table-dicom-tags">
@@ -529,6 +531,40 @@
             <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
             <button type="button" class="btn btn-deafult" data-dismiss="modal" data-btn-role="reset">Reset</button>
             <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="save">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save tags to pdf modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="med3web-modal-save-tags">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Save tags to pdf</h4>
+          </div>
+          <div class="modal-body">
+            <div class="radio">
+              <label>
+                <input type="radio" name="saveTagsRadios" id="med3web-radio-save-tags-slice" value="slice" checked>
+                Save current slice tags to pdf
+              </label>
+            </div>
+            <div class="radio">
+              <label>
+                <input type="radio" name="saveTagsRadios" id="med3web-radio-save-tags-all" value="all">
+                Save current all tags to pdf
+              </label>
+            </div>
+
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="File name" aria-describedby="med3web-addon-pdf">
+              <span class="input-group-addon" id="med3web-addon-pdf">.pdf</span>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="save">Save</button>
           </div>
         </div>
       </div>

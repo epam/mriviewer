@@ -134,6 +134,7 @@ export default class Menu {
     /** table that contains all dicom tags */
     this.dicomTagsTable = $('#med3web-table-dicom-tags');
     this.dicomTagsSliceSelector = $('#med3web-select-choose-slice');
+    this.dicomLastLoadedFileName = null;
     this.curDataType = null;
     /** panel about */
     this.panelAboutVersion = $('#med3web-panel-about-version');
@@ -257,6 +258,26 @@ export default class Menu {
   /** add new tag to dicom tags viewer */
   onNewTag(group, elem, desc, value, imageNumber, fileName) {
     fileName = fileName.replace(/\s+/g, ''); // remove all spaces
+    if (this.dicomLastLoadedFileName !== fileName) {
+      this.dicomLastLoadedFileName = fileName;
+      const fileNameRow = createElement('tr', {
+        style: 'display: none;',
+      }, [
+        createElement('td', {
+          class: 'tag-table-col-tag',
+        }),
+        createElement('td', {
+          class: 'tag-table-col-name',
+        }, 'File name'),
+        createElement('td', {
+          class: 'tag-table-col-value',
+        }, fileName),
+      ]);
+
+      if (this.dicomTagsTable.length === 1) {
+        this.dicomTagsTable.find('tbody').append(fileNameRow);
+      }
+    }
     const row = createElement('tr', {
       'data-file-name': fileName,
     }, [
@@ -293,6 +314,25 @@ export default class Menu {
     if (this.dicomTagsSliceSelector.length === 1) {
       this.dicomTagsSliceSelector.empty();
     }
+    this.dicomLastLoadedFileName = null;
+  }
+  /** save dicom tags to pdf
+   * @param {String} fileName - file name with ".pdf" at the end
+   * @param {Boolean} saveOnlyCurSlice - if true save tags of current selected slice, save tags of all slices otherwise
+   */
+  saveDicomTagsToPdf(fileName, saveOnlyCurSlice) {
+    const doc = new jsPDF(); // eslint-disable-line
+    const elem = this.dicomTagsTable.get(0);
+    const res = doc.autoTableHtmlToJson(elem, !saveOnlyCurSlice);
+    doc.autoTable(res.columns, res.data,
+      {
+        startY: 20,
+        margin: { horizontal: 7 },
+        showHeader: 'everyPage',
+        styles: { overflow: 'linebreak', columnWidth: 'wrap' },
+        columnStyles: { text: { columnWidth: 'auto' } },
+      });
+    doc.save(fileName);
   }
 
   /** Reset sliders values */
@@ -628,21 +668,16 @@ export default class Menu {
         }
       });
     }
-    const btnSaveSilceTags = $('#med3web-btn-save-slice-tags');
-    if (btnSaveSilceTags.length === 1) {
-      btnSaveSilceTags.on('click', () => {
-        const doc = new jsPDF(); // eslint-disable-line
-        const elem = this.dicomTagsTable.get(0);
-        const res = doc.autoTableHtmlToJson(elem, false);
-        doc.autoTable(res.columns, res.data,
-          {
-            startY: 20,
-            margin: { horizontal: 7 },
-            showHeader: 'everyPage',
-            styles: { overflow: 'linebreak', columnWidth: 'wrap' },
-            columnStyles: { text: { columnWidth: 'auto' } },
-          });
-        doc.save('dicom_tags.pdf');
+    const modalSaveDicomTags = $('#med3web-modal-save-tags');
+    if (modalSaveDicomTags.length === 1) {
+      modalSaveDicomTags.find('[data-btn-role=save]').on('click', () => {
+        const checkedRadio = modalSaveDicomTags.find('input[type=radio][name=saveTagsRadios]:checked');
+        if (checkedRadio.length === 1) {
+          const saveOnlyCurSlice = checkedRadio.val() === 'slice';
+          const fileName = `${modalSaveDicomTags.find('input[type=text]').val()}.pdf`;
+          this.saveDicomTagsToPdf(fileName, saveOnlyCurSlice);
+          modalSaveDicomTags.find('input[type=text]').val('');
+        }
       });
     }
 
