@@ -698,6 +698,7 @@ export default class Menu {
           containter3d.click();
           Screenshot.makeScreenshot(this.engine3d, SHOT_W, SHOT_H);
         }
+        // TO DO: add mpr
       });
     }
 
@@ -711,10 +712,12 @@ export default class Menu {
         $(`#med3web-panel-menu-${newModeSuffix}`).show();
         this.curModeSuffix = newModeSuffix;
         if (rendererType === '2d') {
+          $('#med3web-panel-menu').show();
           $('#med3web-container-3d').hide();
           $('#med3web-container-2d').show();
           this.app.setRenderMode(RenderMode.RENDER_MODE_2D);
         } else if (rendererType === '3d') {
+          $('#med3web-panel-menu').show();
           $('#med3web-container-2d').hide();
           $('#med3web-container-3d').show();
           this.app.setRenderMode(RenderMode.RENDER_MODE_3D);
@@ -726,7 +729,8 @@ export default class Menu {
             $('#med3web-accordion-fast-render-mode .panel-heading.active [data-toggle=collapse]').click();
             this.hist.flush();
           }
-
+        } else if (rendererType === 'mpr') {
+          $('#med3web-panel-menu').hide();
         }
       }
     });

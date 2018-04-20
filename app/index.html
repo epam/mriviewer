@@ -120,6 +120,9 @@
 
 
               <li class="btn-group" data-toggle="buttons">
+                <label class="navbar-btn btn btn-default" id="med3web-mode-mpr" data-toggle="mode" data-renderer="mpr" data-mode="mpr" data-tooltip="tooltip" data-placement="bottom" title="Multiplanar reconstruction">
+                  <input type="radio" name="med3web-modes" autocomplete="off"> MPR
+                </label>
                 <label class="navbar-btn btn btn-default active" id="med3web-mode-2d" data-toggle="mode" data-renderer="2d" data-mode="2d" data-tooltip="tooltip" data-placement="bottom" title="2D viewer">
                   <input type="radio" name="med3web-modes" autocomplete="off"> 2D
                 </label>
@@ -403,6 +406,8 @@
             </div>
 
             <div id="med3web-container-2d" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center">
+            </div>
+            <div id="med3web-container-mpr" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center" style="display: none;">
             </div>
 
             <!-- This is a special debug canvas, required only for deep pixel-by-pixel debugging (avoid webgl use) -->
