@@ -1291,6 +1291,31 @@ export default class Menu {
         this.engine2d.saveFiltersChanges(true);
       });
     }
+    const container2d = $('#med3web-container-2d');
+    const inputText2dToolModal = $('#med3web-modal-2d-tool-input-text');
+    if (inputText2dToolModal.length === 1) {
+      if (container2d.length === 1) {
+        container2d.on('mouseup', () => {
+          if (this.engine2d !== null && this.engine2d.m_toolType === 'text') {
+            if (inputText2dToolModal.length === 1) {
+              inputText2dToolModal.modal('show');
+            }
+          }
+        });
+      }
+      const textArea = inputText2dToolModal.find('textarea');
+      inputText2dToolModal.on('shown.bs.modal', () => {
+        textArea.focus();
+      });
+      inputText2dToolModal.find('[data-btn-role=ok]').on('click', () => {
+        this.engine2d.m_textTool.setText(textArea.val());
+        textArea.val('');
+      });
+      inputText2dToolModal.find('[data-btn-role=cancel]').on('click', () => {
+        this.engine2d.m_textTool.cancelInput();
+        textArea.val('');
+      });
+    }
   }
 
   resetSliders() {

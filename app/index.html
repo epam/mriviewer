@@ -352,17 +352,22 @@
                           <img src="images/icon_tools2d_rect.png" alt="ico_rect">
                         </a>
                       </label>
-
-                      <label class="btn col-xs-2" data-tooltip="tooltip" data-placement="bottom" title="Delete" data-tool-type="delete">
-                        <input type="radio" name="options" id="med3web-toolbar-2d-delete" autocomplete="off">
+                      <label class="btn col-xs-2" data-tooltip="tooltip" data-placement="bottom" title="Text" data-tool-type="text">
+                        <input type="radio" name="options" id="med3web-toolbar-2d-text" autocomplete="off">
                         <a href="#" class="thumbnail" style="margin-bottom: 0;">
-                          <img src="images/icon_tools2d_delete.png" alt="ico_delete">
+                          <img src="images/icon_tools2d_text.png" alt="ico_text">
                         </a>
                       </label>
                       <label class="btn col-xs-2" data-tooltip="tooltip" data-placement="bottom" title="Edit" data-tool-type="edit">
                         <input type="radio" name="options" id="med3web-toolbar-2d-edit" autocomplete="off">
                         <a href="#" class="thumbnail" style="margin-bottom: 0;">
                           <img src="images/icon_tools2d_edit.png" alt="ico_edit">
+                        </a>
+                      </label>
+                      <label class="btn col-xs-2" data-tooltip="tooltip" data-placement="bottom" title="Delete" data-tool-type="delete">
+                        <input type="radio" name="options" id="med3web-toolbar-2d-delete" autocomplete="off">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_delete.png" alt="ico_delete">
                         </a>
                       </label>
                       <label class="btn col-xs-2"  id="med3web-toolbar-2d-clear" data-tooltip="tooltip" data-placement="bottom" title="Clear all" data-tool-type="clear">
@@ -511,7 +516,7 @@
       </div>
     </div>
 
-    <!-- Open model by URL modal -->
+    <!-- Filter data modal -->
     <div class="modal" tabindex="-1" role="dialog" id="med3web-modal-filter-data" data-backdrop="static">
       <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
@@ -536,6 +541,24 @@
             <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
             <button type="button" class="btn btn-deafult" data-dismiss="modal" data-btn-role="reset">Reset</button>
             <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="save">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input text 2d tool modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="med3web-modal-2d-tool-input-text" data-backdrop="static">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Input text</h4>
+          </div>
+          <div class="modal-body">
+            <textarea class="form-control" rows="3"></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="ok">OK</button>
           </div>
         </div>
       </div>
