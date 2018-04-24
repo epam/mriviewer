@@ -142,14 +142,11 @@ export default class Menu {
     this.panelAboutCopyright = $('#med3web-panel-about-copyright');
     this.panelMenuHide = $('#med3web-menu-panel-hide');
     const strVer = packageJson.version;
-    const strDate = new Date().toISOString()
-      .replace(/[-:]|\..+/gi, '')
-      .replace(/T/, '.');
     const strYear = new Date().getFullYear();
     const strDescr = packageJson.description;
     const strAuthor = packageJson.author;
     const strCopyright = `Copyright ${strYear} ${strAuthor}`;
-    this.panelAboutVersion.text(`version ${strVer}-${strDate}`);
+    this.panelAboutVersion.text(`version ${strVer}`);
     this.panelAboutDescription.text(strDescr);
     this.panelAboutCopyright.text(strCopyright);
     // console.log(`strCopyright = ${strCopyright}`);
