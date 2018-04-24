@@ -224,7 +224,6 @@ gulp.task('serve', () => {
     gulp.watch(config.data.src, ['data']);
     gulp.watch(config.images.src, ['images']);
     gulp.watch(config.shaders.src, ['shaders']);
-    gulp.watch('package.json', ['wiredep']);
   });
 });
 

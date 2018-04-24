@@ -12,7 +12,8 @@
     "build": "gulp build",
     "lint": "gulp lint:js",
     "start": "gulp serve",
-    "test": "gulp test"
+    "test": "gulp test",
+    "preversion": "gulp lint && gulp test"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
