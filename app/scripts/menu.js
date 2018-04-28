@@ -1290,27 +1290,52 @@ export default class Menu {
     }
     const container2d = $('#med3web-container-2d');
     const inputText2dToolModal = $('#med3web-modal-2d-tool-input-text');
+    const textArea = inputText2dToolModal.find('textarea');
+    let oldText = null;
+    let clicks = 0;
+    const DBL_CLICKS_N = 2;
+    const DELAY = 400;
+    let singleClickTimer = null;
     if (inputText2dToolModal.length === 1) {
       if (container2d.length === 1) {
         container2d.on('mouseup', () => {
-          if (this.engine2d !== null && this.engine2d.m_toolType === 'text') {
-            if (inputText2dToolModal.length === 1) {
-              inputText2dToolModal.modal('show');
+          clicks++;
+          if (clicks === 1) {
+            singleClickTimer = setTimeout(() => {
+              clicks = 0;
+              if (this.engine2d !== null && this.engine2d.m_toolType === 'text') {
+                inputText2dToolModal.modal('show');
+              }
+            }, DELAY);
+          } else if (clicks === DBL_CLICKS_N) {
+            clearTimeout(singleClickTimer);
+            clicks = 0;
+            if (this.engine2d !== null && this.engine2d.m_toolType === 'text') {
+              oldText = this.engine2d.m_textTool.removeCurTextByCoords();
+              if (oldText !== null) {
+                textArea.val(oldText);
+                inputText2dToolModal.modal('show');
+              }
             }
           }
         });
       }
-      const textArea = inputText2dToolModal.find('textarea');
       inputText2dToolModal.on('shown.bs.modal', () => {
         textArea.focus();
       });
       inputText2dToolModal.find('[data-btn-role=ok]').on('click', () => {
         this.engine2d.m_textTool.setText(textArea.val());
         textArea.val('');
+        oldText = null;
       });
       inputText2dToolModal.find('[data-btn-role=cancel]').on('click', () => {
-        this.engine2d.m_textTool.cancelInput();
+        if (oldText === null) {
+          this.engine2d.m_textTool.cancelInput();
+        } else {
+          this.engine2d.m_textTool.setText(oldText);
+        }
         textArea.val('');
+        oldText = null;
       });
     }
   }
