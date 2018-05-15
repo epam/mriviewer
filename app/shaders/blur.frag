@@ -18,7 +18,7 @@ uniform bool save_flag;
 /**
 * Reading from 3D texture
 */
-  vec4 tex3D(vec3 vecCur) {
+/*vec4 tex3D(vec3 vecCur) {
   float tCX = 1.0/tileCountX;
   vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   // check outside of texture volume
@@ -45,12 +45,47 @@ uniform bool save_flag;
   // ratio mix between slices
   float zRatio = mod(vecCur.z * (volumeSizeZ - 1.0), 1.0);
   return colorSlice1 * (1.0 - zRatio) + colorSlice2 * zRatio;
+}*/
+vec4 tex3D(vec3 vecCur) {
+  float tCX = 1.0 / tileCountX;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  // check outside of texture volume
+  if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
+    return vec4(0.0, 0.0, 0.0, 0.0);
+  float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ));
+  zSliceNumber1 = min(zSliceNumber1, volumeSizeZ - 1.0);
+  // As we use trilinear we go the next Z slice.
+  float zSliceNumber2 = min( zSliceNumber1 + 1.0, (volumeSizeZ - 1.0)); //Clamp to 255
+  vec2 texCoord = vecCur.xy;
+  vec2 texCoordSlice1, texCoordSlice2;
+  texCoordSlice1 = texCoordSlice2 = texCoord;
+
+  // Add an offset to the original UV coordinates depending on the row and column number.
+  texCoordSlice1.x += (mod(zSliceNumber1, tileCountX - 1.0 ));
+  texCoordSlice1.y += floor(zSliceNumber1 / (tileCountX - 1.0) );
+  // ratio mix between slices
+  float zRatio = mod(vecCur.z * (volumeSizeZ - 1.0), 1.0);
+  texCoordSlice2.x += (mod(zSliceNumber2, tileCountX - 1.0 ));
+  texCoordSlice2.y += floor(zSliceNumber2 / (tileCountX - 1.0));
+
+  // add 0.5 correction to texture coordinates
+  /*float xSize = float(xDim);
+  float ySize = float(yDim);
+  vec2 vAdd = vec2(0.5 / xSize, 0.5 / ySize);
+  texCoordSlice1 += vAdd;
+  texCoordSlice2 += vAdd;*/
+
+  // get colors from neighbour slices
+  vec4 colorSlice1 = texture2D(texVolume, texCoordSlice1 * tCX, 0.0);
+  vec4 colorSlice2 = texture2D(texVolume, texCoordSlice2 * tCX, 0.0);
+  return mix(colorSlice1, colorSlice2, zRatio);
 }
+
 
 /**
 * Calculate 3D texture coordinates
 */
-vec3 getTex3DCoord(vec2 base) {
+/*vec3 getTex3DCoord(vec2 base) {
   vec3 res;
   //extract z-component from the base
   float z = floor(base.x * tileCountX) + floor(base.y * tileCountX) * tileCountX;
@@ -60,6 +95,19 @@ vec3 getTex3DCoord(vec2 base) {
   res.y -= floor(z / tileCountX) / tileCountX;
   res.xy = res.xy * tileCountX;
   return res - vec3(0.5, 0.5, 0.5);
+}*/
+
+vec3 getTex3DCoord(vec2 base) {
+ vec3 res;
+ float lastTile = tileCountX - 1.0;
+ vec2 tileXYid = floor(base * tileCountX);
+ res.xy = base * tileCountX;
+ //extract z-component from the base
+ float z = floor(res.x) + floor(res.y) * lastTile;
+ res.z = z / (volumeSizeZ);
+ res.xy -= tileXYid;
+
+ return res - vec3(0.5, 0.5, 0.5);
 }
 
 vec4 filterROI(vec3 base)
