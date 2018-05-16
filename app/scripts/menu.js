@@ -31,6 +31,7 @@ import { event as currentEvent } from 'd3'; // eslint-disable-line no-unused-var
 import Spinner from 'spin'; // eslint-disable-line no-unused-vars
 import jsPDF from 'jspdf'; // eslint-disable-line no-unused-vars
 import 'jspdf-autotable'; // eslint-disable-line no-unused-vars
+import wNumb from 'wnumb'; // eslint-disable-line no-unused-vars
 import { loadFileType, RenderMode, LoadState } from '../../lib/scripts/med3web';
 import Graphics2d from '../../lib/scripts/graphics2d/graphics2d';
 import packageJson from '../../package.json';
@@ -128,6 +129,10 @@ export default class Menu {
     this.sliderZCut = null;
     /** slider object for quality */
     this.sliderQuality = null;
+    /** slider object for 3d eraser radius */
+    this.slider3dEraserRadius = null;
+    /** slider object for 3d eraser depth */
+    this.slider3dEraserDepth = null;
     /** 2d toolbar */
     this.toolbar2d = $('#med3web-toolbar-2d');
     this.curModeSuffix = $('[data-toggle=mode].active').attr('data-mode');
@@ -721,9 +726,13 @@ export default class Menu {
           // move sliders
           if (newModeSuffix === '3d') {
             $('#med3web-accordion-render-mode .panel-heading.active [data-toggle=collapse]').click();
+            const settings = $('#med3web-accordion-tools-3d').detach();
+            settings.prependTo($('#med3web-panel-menu-3d .panel-body')[0]);
             this.transFunc2dSlider.flush();
           } else if (newModeSuffix === '3d-fast') {
             $('#med3web-accordion-fast-render-mode .panel-heading.active [data-toggle=collapse]').click();
+            const settings = $('#med3web-accordion-tools-3d').detach();
+            settings.prependTo($('#med3web-panel-menu-3d-fast .panel-body')[0]);
             this.hist.flush();
           }
         } else if (rendererType === 'mpr') {
@@ -936,6 +945,55 @@ export default class Menu {
 
       this.sliderZCut.noUiSlider.on('end', () => {
         this.engine3d.onMouseUp();
+      });
+    }
+
+    // slider 3d eraser radius
+    this.slider3dEraserRadius = $('#med3web-slider-radius').get(0);
+    if (this.slider3dEraserRadius) {
+      noUiSlider.create(this.slider3dEraserRadius, {
+        start: 10,
+        tooltips: true,
+        step: 1,
+        range: {
+          min: 1,
+          max: 25,
+        },
+        format: wNumb({
+          decimals: 0,
+          suffix: ' vx',
+        }),
+      });
+
+      this.slider3dEraserRadius.noUiSlider.on('slide', (sliderValue) => { // eslint-disable-line no-unused-vars
+        // set 3d eraser radius value in voxels and remove "eslint-disable-line no-unused-vars" comment
+      });
+    }
+
+    // slider 3d eraser radius
+    this.slider3dEraserDepth = $('#med3web-slider-depth').get(0);
+    if (this.slider3dEraserDepth) {
+      noUiSlider.create(this.slider3dEraserDepth, {
+        start: 20,
+        tooltips: true,
+        step: 1,
+        range: {
+          min: 1,
+          max: 50,
+        },
+        format: wNumb({
+          decimals: 0,
+          suffix: ' vx',
+        }),
+      });
+      this.slider3dEraserDepth.noUiSlider.on('slide', (sliderValue) => { // eslint-disable-line no-unused-vars
+        // set 3d eraser depth value in voxels and remove "eslint-disable-line no-unused-vars" comment
+      });
+    }
+    const resetBtn = $('#med3web-accordion-tools-3d .btn [data-value=reset-data]');
+    if (resetBtn.length === 1) {
+      resetBtn.on('click', () => {
+        // reset 3d data
       });
     }
 

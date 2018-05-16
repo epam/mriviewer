@@ -257,7 +257,7 @@ html, body {
     }
   }
 
-  #med3web-accordion-fast-render-mode, #med3web-accordion-render-mode {
+  #med3web-accordion-fast-render-mode, #med3web-accordion-render-mode, #med3web-accordion-tools-3d {
     .panel-heading {
       padding: 0;
       .panel-title {
@@ -290,6 +290,11 @@ html, body {
       .fa-dot-circle-o {
         display: block;
       }
+    }
+  }
+  #med3web-accordion-tools-3d {
+    .panel-title {
+      justify-content: center;
     }
   }
 
