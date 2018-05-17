@@ -17,6 +17,7 @@ import mocha from 'gulp-mocha';
 import istanbul from 'gulp-babel-istanbul';
 import coveralls from 'gulp-coveralls';
 import util from 'gulp-util';
+import preprocessify from 'preprocessify';
 import version from './tools/version';
 import config from './tools/config';
 
@@ -51,7 +52,11 @@ gulp.task('scripts', () => {
     debug: true,
   });
 
-  return b.bundle()
+  return b.transform(preprocessify, {
+    includeExtensions: ['.js'],
+    context: { 'PACKAGE_VERSION': version.combined }
+  })
+    .bundle()
     .pipe(source('bundle.js'))
     .pipe($.plumber())
     .pipe(buffer())
