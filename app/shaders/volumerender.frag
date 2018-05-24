@@ -5,9 +5,9 @@
 precision mediump float;
 precision mediump int;
 
-uniform int xDim;
-uniform int yDim;
-uniform int zDim;
+uniform float xDim;
+uniform float yDim;
+uniform float zDim;
 
 uniform sampler2D texBF;
 uniform sampler2D texFF;
