@@ -169,6 +169,21 @@ vec3 CorrectionZero(vec3 left, vec3 right) {
 }
 
 /**
+* Calculation of normal
+*/
+vec3 CalcNormal(vec3 iter)
+{
+  float d = 1.0 / texSize;
+  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
+  // Culculate normal
+  N.x = tex3D(iter + dx).a - tex3D(iter - dx).a;
+  N.y = tex3D(iter + dy).a - tex3D(iter - dy).a;
+  N.z = tex3D(iter + dz).a - tex3D(iter - dz).a;
+  N = normalize(N);
+  return N;
+}
+
+/**
 * Direct volume render
 */
 vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
@@ -195,12 +210,14 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
         {
             // If the transfer function is nonzero, the integration step is halved
             // First step
+            vec3 tttt = CalcNormal(iterator);
             vec4 vol1 = tex3D(iterator - 0.5 * step);
             // Transfer function - isosceles triangle
             alpha = min(vol1.a - t_function1min.a, t_function1max.a - vol1.a);
             alpha = opacityBarrier * max(0.0, alpha) * t12;
             color = mix(t_function1min.rgb, t_function1max.rgb, (vol1.a - t_function1min.a) * t12);
-            lighting = 0.5 * max(0.0, dot(normalize(vol1.rgb - vec3(0.5, 0.5, 0.5)), -lightDir)) + 0.5;
+//            lighting = 0.5 * max(0.0, dot(normalize(vol1.rgb - vec3(0.5, 0.5, 0.5)), -lightDir)) + 0.5;
+            lighting = 0.5 * max(0.0, dot(tttt, -lightDir)) + 0.5;
             // Volume integral on the interval StepSize
             sumCol += (1. - sumAlpha)* alpha * StepSize * color * lighting;
             sumAlpha += (1. - sumAlpha) * alpha * StepSize;
@@ -209,7 +226,7 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
             alpha = min(vol.a - t_function1min.a, t_function1max.a - vol.a);
             alpha = opacityBarrier*max(0.0, alpha) * t12;
             color = mix(t_function1min.rgb, t_function1max.rgb, (vol.a - t_function1min.a) * t12);
-            lighting = 0.5 * max(0.0, dot(normalize(vol.rgb - vec3(0.5, 0.5, 0.5)), -lightDir)) + 0.5;
+//            lighting = 0.5 * max(0.0, dot(normalize(vol.rgb - vec3(0.5, 0.5, 0.5)), -lightDir)) + 0.5;
             // Volume integral on the interval StepSize
             sumCol += (1. - sumAlpha) * alpha * StepSize * color * lighting;
             sumAlpha += (1. - sumAlpha) * alpha * StepSize;
@@ -225,20 +242,6 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
     return acc;
 }
 
-/**
-* Calculation of normal
-*/
-vec3 CalcNormal(vec3 iter)
-{
-  float d = 1.0 / texSize;
-  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
-  // Culculate normal
-  N.x = tex3D(iter + dx).a - tex3D(iter - dx).a;
-  N.y = tex3D(iter + dy).a - tex3D(iter - dy).a;
-  N.z = tex3D(iter + dz).a - tex3D(iter - dz).a;
-  N = normalize(N);
-  return N;
-}
 
 
 /**
