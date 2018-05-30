@@ -83,19 +83,20 @@
             <ul class="nav navbar-nav navbar-center">
               <li class="dropdown navbar-btn" id="med3web-button-dropdown-open">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                  <span data-tooltip="tooltip" data-placement="bottom" title="Open">
-                    <span class="glyphicon glyphicon-folder-open"></span><span>Open</span>
+                  <span data-tooltip="tooltip" data-placement="bottom" title="File">
+                    <span class="fa fa-file-o"></span><span>File</span>
                   </span>
                 </a>
                 <ul class="dropdown-menu">
                   <li>
                     <a href="#" data-target="#med3web-input-open">
-                      <label class="input-file-label" for="med3web-input-file-open-local"><span class="fa fa-desktop"> Computer</span></label>
+                      <label class="input-file-label" for="med3web-input-file-open-local"><span class="fa fa-desktop"> Open from Computer</span></label>
                       <input type="file" class="form-control hidden" id="med3web-input-file-open-local" accept=".dcm,.ktx,.nii,.hdr,.h,.img" multiple>
                     </a>
                   </li>
-                  <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open" style="display: none;"><span class="fa fa-server"> Server</span></a></li>
-                  <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open-url"><span class="fa fa-globe"> URL</span></a></li>
+                  <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open" style="display: none;"><span class="fa fa-server"> Open from Server</span></a></li>
+                  <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open-url"><span class="fa fa-globe"> Open by URL</span></a></li>
+                  <li><a href="#" data-toggle="modal" data-target="#med3web-modal-save-as-nifti"><span class="fa fa-save"> Save as Nifti</span></a></li>
                 </ul>
               </li>
 
@@ -104,7 +105,7 @@
               <li class="dropdown navbar-btn" id="med3web-button-dropdown-report">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                   <span data-tooltip="tooltip" data-placement="bottom" title="Report">
-                    <span class="fa fa-file-text-o"></span><span>Report</span>
+                    <span class="fa fa-newspaper-o"></span><span>Report</span>
                   </span>
                 </a>
                 <ul class="dropdown-menu">
@@ -622,9 +623,32 @@
               <input type="text" class="form-control" placeholder="File name" aria-describedby="med3web-addon-pdf">
               <span class="input-group-addon" id="med3web-addon-pdf">.pdf</span>
             </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="save">Save</button>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="save">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save as Nifti modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="med3web-modal-save-as-nifti">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Save as Nifti</h4>
+          </div>
+          <div class="modal-body">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="File name" aria-describedby="med3web-addon-nii">
+              <span class="input-group-addon" id="med3web-addon-nii">.nii</span>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="save">Save</button>
+            </div>
           </div>
         </div>
       </div>

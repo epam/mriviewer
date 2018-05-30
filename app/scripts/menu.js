@@ -37,6 +37,7 @@ import Graphics2d from '../../lib/scripts/graphics2d/graphics2d';
 import packageJson from '../../package.json';
 import Screenshot from '../../lib/scripts/utils/screenshot';
 import config from '../../tools/config';
+import NiftiSaver from '../../lib/scripts/savers/niisaver';
 
 const VERSION = typeof '/* @echo PACKAGE_VERSION */' !== 'undefined' && '/* @echo PACKAGE_VERSION */' || '0.0.0-dev';
 
@@ -741,6 +742,34 @@ export default class Menu {
         }
       }
     });
+
+    const modalSaveAsNifti = $('#med3web-modal-save-as-nifti');
+    if (modalSaveAsNifti.length === 1) {
+      const textInput = modalSaveAsNifti.find('input[type=text]');
+      modalSaveAsNifti.find('[data-btn-role=save]').on('click', () => {
+        const niiArr = NiftiSaver.writeBuffer(this.engine2d.m_volumeHeader, this.engine2d.m_volumeData,
+          this.engine2d.m_volumeBox);
+        const textToSaveAsBlob = new Blob([niiArr], { type: 'application/octet-stream' });
+        const textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+        const fileName = `${textInput.val()}.nii`;
+
+        const downloadLink = document.createElement('a');
+        downloadLink.download = fileName;
+        downloadLink.innerHTML = 'Download File';
+        downloadLink.href = textToSaveAsURL;
+        downloadLink.onclick = event => document.body.removeChild(event.target);
+        downloadLink.style.display = 'none';
+        document.body.appendChild(downloadLink);
+
+        downloadLink.click();
+
+        modalSaveAsNifti.find('input[type=text]').val('');
+      });
+      modalSaveAsNifti.on('shown.bs.modal', () => {
+        textInput.val('');
+        textInput.focus();
+      });
+    }
   }
   /** Initialize 3d menu panel */
   init3DPanel() {
