@@ -39,6 +39,8 @@ import Screenshot from '../../lib/scripts/utils/screenshot';
 import config from '../../tools/config';
 import NiftiSaver from '../../lib/scripts/savers/niisaver';
 
+const VERSION = typeof '/* @echo PACKAGE_VERSION */' !== 'undefined' && '/* @echo PACKAGE_VERSION */' || '0.0.0-dev';
+
 const developerMode = true;
 
 /** Possible 3d render modes */
@@ -147,12 +149,11 @@ export default class Menu {
     this.panelAboutDescription = $('#med3web-panel-about-description');
     this.panelAboutCopyright = $('#med3web-panel-about-copyright');
     this.panelMenuHide = $('#med3web-menu-panel-hide');
-    const strVer = packageJson.version;
     const strYear = new Date().getFullYear();
     const strDescr = packageJson.description;
     const strAuthor = packageJson.author;
     const strCopyright = `Copyright ${strYear} ${strAuthor}`;
-    this.panelAboutVersion.text(`version ${strVer}`);
+    this.panelAboutVersion.text(`version ${VERSION}`);
     this.panelAboutDescription.text(strDescr);
     this.panelAboutCopyright.text(strCopyright);
     // console.log(`strCopyright = ${strCopyright}`);
