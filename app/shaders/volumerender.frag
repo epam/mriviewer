@@ -5,14 +5,15 @@
 precision mediump float;
 precision mediump int;
 
-uniform int xDim;
-uniform int yDim;
-uniform int zDim;
+uniform float xDim;
+uniform float yDim;
+uniform float zDim;
 
 uniform sampler2D texBF;
 uniform sampler2D texFF;
 uniform sampler2D texIsoSurface;
 uniform sampler2D texVolume;
+uniform sampler2D texVolumeMask;
 uniform sampler2D texTF;
 uniform sampler2D colorMap1D;
 uniform sampler2D heatMap1D;
@@ -68,44 +69,42 @@ vec4 tex3D(vec3 vecCur) {
   vec4 colorSlice2 = texture2D(texVolume, clamp(texCoordSlice2 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0);
   return mix(colorSlice1, colorSlice2, zRatio);
 }
-
-/**
-* Reading from 3D texture
-*/
-/*
-vec4 tex3D(vec3 vecCur) {
+vec4 tex3DMask(vec3 vecCur) {
   float tCX = 1.0 / tileCountX;
   vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   // check outside of texture volume
   if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
     return vec4(0.0, 0.0, 0.0, 0.0);
-  float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ - 1.0));
+  float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ));
+    float zRatio = (vecCur.z * (volumeSizeZ)) - zSliceNumber1;
+  //zSliceNumber1 = min(zSliceNumber1, volumeSizeZ - 1.0);
   // As we use trilinear we go the next Z slice.
   float zSliceNumber2 = min( zSliceNumber1 + 1.0, (volumeSizeZ - 1.0)); //Clamp to 255
-  vec2 texCoord = vecCur.xy * tCX;
+  vec2 texCoord = vecCur.xy;
   vec2 texCoordSlice1, texCoordSlice2;
   texCoordSlice1 = texCoordSlice2 = texCoord;
 
   // Add an offset to the original UV coordinates depending on the row and column number.
-  texCoordSlice1.x += (mod(zSliceNumber1, tileCountX )*tCX);
-  texCoordSlice1.y += floor(zSliceNumber1*tCX)*tCX;
+  texCoordSlice1.x += (mod(zSliceNumber1, tileCountX - 0.0 ));
+  texCoordSlice1.y += floor(zSliceNumber1 / (tileCountX - 0.0) );
   // ratio mix between slices
-  float zRatio = mod(vecCur.z * (volumeSizeZ - 1.0), 1.0);
-  texCoordSlice2.x += (mod(zSliceNumber2, tileCountX )*tCX);
-  texCoordSlice2.y += floor(zSliceNumber2*tCX)*tCX;
+  //float zRatio = mod(vecCur.z * (volumeSizeZ), 1.0);
+  texCoordSlice2.x += (mod(zSliceNumber2, tileCountX - 0.0 ));
+  texCoordSlice2.y += floor(zSliceNumber2 / (tileCountX - 0.0));
 
   // add 0.5 correction to texture coordinates
-  float xSize = float(xDim) * tileCountX;
-  float ySize = float(yDim) * tileCountX;
+  float xSize = float(xDim);
+  float ySize = float(yDim);
   vec2 vAdd = vec2(0.5 / xSize, 0.5 / ySize);
   texCoordSlice1 += vAdd;
   texCoordSlice2 += vAdd;
 
   // get colors from neighbour slices
-  vec4 colorSlice1 = texture2D(texVolume, texCoordSlice1, 0.0);
-  vec4 colorSlice2 = texture2D(texVolume, texCoordSlice2, 0.0);
+  vec4 colorSlice1 = texture2D(texVolumeMask, clamp(texCoordSlice1 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0);
+  vec4 colorSlice2 = texture2D(texVolumeMask, clamp(texCoordSlice2 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0);
   return mix(colorSlice1, colorSlice2, zRatio);
-}*/
+}
+
 
 /**
 * Isosurface color calculation
@@ -120,9 +119,34 @@ vec3 CalcLighting(vec3 iter, vec3 dir)
   float d = 1.0 / texSize;
   vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N, sumCol = vec3(0.0);
   // Culculate normal
-  N.x = tex3D(iter + dx).a - tex3D(iter - dx).a;
-  N.y = tex3D(iter + dy).a - tex3D(iter - dy).a;
-  N.z = tex3D(iter + dz).a - tex3D(iter - dz).a;
+  float l, r;
+  l = tex3D(iter - dx).a;
+  r = tex3D(iter + dx).a;
+  #if MaskFlag == 1
+  {
+    l = l * tex3DMask(iter - dx).a;
+    r = r * tex3DMask(iter + dx).a;
+  }
+  #endif
+  N.x = r - l;
+  l = tex3D(iter - dy).a;
+  r = tex3D(iter + dy).a;
+  #if MaskFlag == 1
+  {
+    l = l * tex3DMask(iter - dy).a;
+    r = r * tex3DMask(iter + dy).a;
+  }
+  #endif
+  N.y = r - l;
+  l = tex3D(iter - dz).a;
+  r = tex3D(iter + dz).a;
+  #if MaskFlag == 1
+  {
+    l = l * tex3DMask(iter - dz).a;
+    r = r * tex3DMask(iter + dz).a;
+  }
+  #endif
+  N.z = r - l;
   N = normalize(N);
   // Calculate the density of the material in the vicinity of the isosurface
   float dif = max(0.0, dot(N, -lightDir));
@@ -142,6 +166,11 @@ vec3 Correction(vec3 left, vec3 right, float threshold) {
     {
         iterator = 0.5*(left + right);
         vol = tex3D(iterator).a;
+        #if MaskFlag == 1
+        {
+          vol = vol * tex3DMask(iterator).a;
+        }
+        #endif
         if (vol > threshold)
             right = iterator;
         else
@@ -154,6 +183,20 @@ vec3 Correction(vec3 left, vec3 right, float threshold) {
 /**
 * Direct volume render
 */
+/**
+* Calculation of normal
+*/
+vec3 CalcNormal(vec3 iter)
+{
+  float d = 1.0 / texSize;
+  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
+  // Culculate normal
+  N.x = tex3D(iter + dx).a - tex3D(iter - dx).a;
+  N.y = tex3D(iter + dy).a - tex3D(iter - dy).a;
+  N.z = tex3D(iter + dz).a - tex3D(iter - dz).a;
+  N = normalize(N);
+  return N;
+}
 
 vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
     const int MAX_I = 1000;
@@ -172,6 +215,11 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
     {
         iterator = iterator + step;
         vol = tex3D(iterator);
+        #if MaskFlag == 1
+        {
+          vol.a = vol.a * tex3DMask(iterator).a;
+        }
+        #endif
         if (count <= 0 || sumAlpha > 0.97 || vol.a > t_function2min.a)
             break;
         // In/Out flag
@@ -182,6 +230,11 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
             // If the transfer function is nonzero, the integration step is halved
             // First step
             vec4 vol1 = tex3D(iterator - 0.5 * step);
+            #if MaskFlag == 1
+            {
+              vol1.a = vol1.a * tex3DMask(iterator - 0.5 * step).a;
+            }
+            #endif
             // Transfer function - isosceles triangle
             alpha = min(vol1.a - t_function1min.a, t_function1max.a - vol1.a);
             alpha = opacityBarrier * max(0.0, alpha) * t12;
@@ -209,21 +262,6 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
     }
     acc.rgb = BRIGHTNESS_SCALE * brightness3D * sumCol + (1.0 - sumAlpha) * surfaceLighting;
     return acc;
-}
-
-/**
-* Calculation of normal
-*/
-vec3 CalcNormal(vec3 iter)
-{
-  float d = 1.0 / texSize;
-  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
-  // Culculate normal
-  N.x = tex3D(iter + dx).a - tex3D(iter - dx).a;
-  N.y = tex3D(iter + dy).a - tex3D(iter - dy).a;
-  N.z = tex3D(iter + dz).a - tex3D(iter - dz).a;
-  N = normalize(N);
-  return N;
 }
 
 
@@ -321,12 +359,22 @@ vec4 FullVolumeRender(vec3 start, vec3 dir, vec3 back) {
             break;
         iterator = iterator + step;
         vol = tex3D(iterator);
+        #if MaskFlag == 1
+        {
+          vol.a = vol.a * tex3DMask(iterator).a;
+        }
+        #endif
         valTF = texture2D(texTF, vec2(vol.a, 0.0), 0.0);
         if (valTF.a > 0.0)
         {
             // If the transfer function is nonzero, the integration step is halved
             // First step
             vec4 vol1 = tex3D(iterator - 0.5 * step);
+            #if MaskFlag == 1
+            {
+              vol1.a = vol1.a * tex3DMask(iterator - 0.5 * step).a;
+            }
+            #endif
             // Transfer function - isosceles triangle
             vec4 valTF1 = texture2D(texTF, vec2(vol1.a, 0.0), 0.0);
             lighting = 0.5 * max(0.0, dot(normalize(vol1.rgb - vec3(0.5, 0.5, 0.5)), lightDir)) + 0.5;
@@ -358,6 +406,11 @@ vec4 MipRender(vec3 start, vec3 dir, vec3 back) {
     {
         iterator = iterator + step;
         vol = tex3D(iterator).a;
+        #if MaskFlag == 1
+        {
+          vol = vol * tex3DMask(iterator).a;
+        }
+        #endif
         finish = distance(iterator, back) - StepSize;
         if (finish < 0.0)
             break;
@@ -378,12 +431,17 @@ vec4 Isosurface(vec3 start, vec3 dir, vec3 back, float threshold) {
     vec3 left, right, step = StepSize*dir;
     int count = int(floor(length(iterator - back) / StepSize));
 
-    if (tex3D(iterator).a > threshold)
-        return vec4(iterator, 0.0);
+//    if (tex3D(iterator).a > threshold)
+//        return vec4(iterator, 0.0);
     //Search isosurface
     for (int i = 0; i < MAX_I; i++) {
       iterator = iterator + step;
       vol = tex3D(iterator).a;
+      #if MaskFlag == 1
+      {
+        vol = vol * tex3DMask(iterator).a;
+      }
+      #endif
       if (count <= 0 || vol > threshold)
         break;
       count--;

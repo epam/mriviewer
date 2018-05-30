@@ -39,8 +39,6 @@ import Screenshot from '../../lib/scripts/utils/screenshot';
 import config from '../../tools/config';
 import NiftiSaver from '../../lib/scripts/savers/niisaver';
 
-const VERSION = typeof '/* @echo PACKAGE_VERSION */' !== 'undefined' && '/* @echo PACKAGE_VERSION */' || '0.0.0-dev';
-
 const developerMode = true;
 
 /** Possible 3d render modes */
@@ -149,11 +147,12 @@ export default class Menu {
     this.panelAboutDescription = $('#med3web-panel-about-description');
     this.panelAboutCopyright = $('#med3web-panel-about-copyright');
     this.panelMenuHide = $('#med3web-menu-panel-hide');
+    const strVer = packageJson.version;
     const strYear = new Date().getFullYear();
     const strDescr = packageJson.description;
     const strAuthor = packageJson.author;
     const strCopyright = `Copyright ${strYear} ${strAuthor}`;
-    this.panelAboutVersion.text(`version ${VERSION}`);
+    this.panelAboutVersion.text(`version ${strVer}`);
     this.panelAboutDescription.text(strDescr);
     this.panelAboutCopyright.text(strCopyright);
     // console.log(`strCopyright = ${strCopyright}`);
@@ -978,6 +977,16 @@ export default class Menu {
       });
     }
 
+    const eraserToggleBtn = $('#med3web-accordion-tools-3d [data-value=eraser]');
+    if (eraserToggleBtn.length === 1) {
+      eraserToggleBtn.on('click', () => {
+        setTimeout((engine3d, domEl) => {
+          engine3d.setEraserMode(domEl.getAttribute('aria-expanded') === 'true');
+        }, 0, this.engine3d, eraserToggleBtn.get(0));
+      });
+    }
+
+
     // slider 3d eraser radius
     this.slider3dEraserRadius = $('#med3web-slider-radius').get(0);
     if (this.slider3dEraserRadius) {
@@ -995,12 +1004,13 @@ export default class Menu {
         }),
       });
 
-      this.slider3dEraserRadius.noUiSlider.on('slide', (sliderValue) => { // eslint-disable-line no-unused-vars
-        // set 3d eraser radius value in voxels and remove "eslint-disable-line no-unused-vars" comment
+      this.slider3dEraserRadius.noUiSlider.on('slide', (sliderValue) => {
+        // be careful - sliderValue is string, smth like "10 vx"
+        this.engine3d.setEraserRadius(parseInt(sliderValue, 10));
       });
     }
 
-    // slider 3d eraser radius
+    // slider 3d eraser depth
     this.slider3dEraserDepth = $('#med3web-slider-depth').get(0);
     if (this.slider3dEraserDepth) {
       noUiSlider.create(this.slider3dEraserDepth, {
@@ -1023,7 +1033,7 @@ export default class Menu {
     const resetBtn = $('#med3web-accordion-tools-3d .btn [data-value=reset-data]');
     if (resetBtn.length === 1) {
       resetBtn.on('click', () => {
-        // reset 3d data
+        this.engine3d.resetEraser();
       });
     }
 
