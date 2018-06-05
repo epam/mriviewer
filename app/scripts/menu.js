@@ -746,9 +746,33 @@ export default class Menu {
     const modalSaveAsNifti = $('#med3web-modal-save-as-nifti');
     if (modalSaveAsNifti.length === 1) {
       const textInput = modalSaveAsNifti.find('input[type=text]');
-      modalSaveAsNifti.find('[data-btn-role=save]').on('click', () => {
-        const niiArr = NiftiSaver.writeBuffer(this.engine2d.m_volumeHeader, this.engine2d.m_volumeData,
-          this.engine2d.m_volumeBox);
+      modalSaveAsNifti.find('[data-btn-role=save]').on('click', (e) => {
+        const COMPONENTS_N = 4;
+        const ALPHA_COMP_IDX = 3;
+        const volData = this.engine3d.volTexture.image.data;
+        const volSize = {
+          x: this.engine2d.m_volumeHeader.m_pixelWidth,
+          y: this.engine2d.m_volumeHeader.m_pixelHeight,
+          z: volData.length / COMPONENTS_N
+            / this.engine2d.m_volumeHeader.m_pixelWidth / this.engine2d.m_volumeHeader.m_pixelHeight,
+          pixdim1: this.engine2d.m_volumeBox.x / this.engine2d.m_volumeHeader.m_pixelWidth,
+          pixdim2: this.engine2d.m_volumeBox.y / this.engine2d.m_volumeHeader.m_pixelHeight,
+          pixdim3: this.engine2d.m_volumeBox.z / this.engine2d.m_volumeHeader.m_pixelDepth,
+        };
+        const sqrtZ = Math.sqrt(volSize.z);
+        const volDataPlain = new Uint8Array(volSize.x * volSize.y * volSize.z);
+        for (let z = 0; z < volSize.z; ++z) {
+          const newX = (z % sqrtZ);
+          const newY = (z - (z % sqrtZ)) / sqrtZ;
+          for (let y = 0; y < volSize.y; ++y) {
+            for (let x = 0; x < volSize.x; ++x) {
+              volDataPlain[volSize.y * volSize.x * z + volSize.x * y + x] = volData[
+                (newY * volSize.x * volSize.y * sqrtZ + y * sqrtZ * volSize.x + volSize.x * newX + x)
+                * COMPONENTS_N + ALPHA_COMP_IDX];
+            }
+          }
+        }
+        const niiArr = NiftiSaver.writeBuffer(volDataPlain, volSize);
         const textToSaveAsBlob = new Blob([niiArr], { type: 'application/octet-stream' });
         const textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
         const fileName = `${textInput.val()}.nii`;
@@ -764,6 +788,8 @@ export default class Menu {
         downloadLink.click();
 
         modalSaveAsNifti.find('input[type=text]').val('');
+        modalSaveAsNifti.modal('hide');
+        e.stopPropagation();
       });
       modalSaveAsNifti.on('shown.bs.modal', () => {
         textInput.val('');
