@@ -27,6 +27,7 @@ util.log(version.copyright);
 const browserSync = bs.create();
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
+const uglify = require('gulp-uglify-es').default;
 
 const dev = true;
 
@@ -129,7 +130,7 @@ const uglifyConfig = {
 gulp.task('html', ['styles', 'scripts'], () => {
   gulp.src('app/*.html')
     .pipe($.useref({ searchPath: ['.tmp', 'app', '.'] }))
-    .pipe($.if(/\.js$/, $.uglify(uglifyConfig)))
+    .pipe($.if(/\.js$/, uglify(uglifyConfig)))
     .pipe($.if(/\.css$/, $.cssnano({ safe: true, autoprefixer: false })))
     .pipe($.if(/\.html$/, $.htmlmin({
       collapseWhitespace: true,
