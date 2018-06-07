@@ -232,6 +232,24 @@ export default class Menu {
     }
   }
 
+  enableROIMode(enable) {
+    if (enable) {
+      $('#med3web-accordion-tools-3d').hide();
+      $('#med3web-3d-mip-head').parent().hide();
+      $('#med3web-setting-3d-hist').hide();
+      $('#med3web-setting-3d-transfer-func').hide();
+      $('#med3web-setting-3d-transfer-func-2d').hide();
+      $('#med3web-setting-3d-color').hide();
+    } else {
+      $('#med3web-accordion-tools-3d').show();
+      $('#med3web-3d-mip-head').parent().show();
+      $('#med3web-setting-3d-hist').show();
+      $('#med3web-setting-3d-transfer-func').show();
+      $('#med3web-setting-3d-transfer-func-2d').show();
+      $('#med3web-setting-3d-color').show();
+    }
+  }
+
   startProgressBar() {
     this.spinner.spin(this.progressBarContainerInner.get(0));
     this.progressBarLabel.text('0%');
@@ -256,6 +274,7 @@ export default class Menu {
       this.dicomTagsSliceSelector.find('option').length > 0) {
       this.showDicomTagsOnSliceIdx(0);
     }
+    this.enableROIMode(this.engine2d.m_isRoiVolume);
     this.panelMenuHide.hide();
   }
 
