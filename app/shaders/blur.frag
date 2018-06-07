@@ -157,7 +157,7 @@ vec4 filterROI(vec3 base)
         norm_factor += gaussB;
       }
   // color
-  if (seg_norm_factor > 0.0)
+  if (seg_norm_factor > 0.01)
     acc.rgb = acc.rgb / seg_norm_factor;
   // intencity
   acc.a = acc.a / norm_factor;
@@ -191,13 +191,15 @@ vec4 filterBlur(vec3 base)
         for (float k = -2.0; k < 2.5; k += 1.0)
         {
           float curVal = tex3D(base + vec3(texelSize.x * i, texelSize.y * j, texelSize.z * k)).r;
-          float gaussB = exp( -(i*i + j*j + k*k) / (2.0 * sigma2));// - (val - curVal)*(val - curVal) / (2.0 * sigmaB2) );
+//          float gaussB = exp( -(i*i + j*j + k*k) / (2.0 * sigma2));// - (val - curVal)*(val - curVal) / (2.0 * sigmaB2) );
           float gaussW = exp( -(i*i + j*j + k*k) / (2.0 * sigmaD2) ); // (2.0 * 3.1415 * sigmaD2);
           acc.r += curVal * gaussW * (-i / sigmaD2);
           acc.g += curVal * gaussW * (-j / sigmaD2);
           acc.b += curVal * gaussW * (-k / sigmaD2);
-          acc.a += curVal * gaussB;
-          norm_factorB += gaussB;
+          acc.a += curVal * gaussW;
+          norm_factorB += gaussW;
+//          acc.a += curVal * gaussB;
+//          norm_factorB += gaussB;
         }
    }
   // normal
