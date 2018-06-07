@@ -38,6 +38,7 @@ import packageJson from '../../package.json';
 import Screenshot from '../../lib/scripts/utils/screenshot';
 import config from '../../tools/config';
 import NiftiSaver from '../../lib/scripts/savers/niisaver';
+import RoiPalette from '../../lib/scripts/loaders/roipalette';
 
 const VERSION = typeof '/* @echo PACKAGE_VERSION */' !== 'undefined' && '/* @echo PACKAGE_VERSION */' || '0.0.0-dev';
 
@@ -240,6 +241,9 @@ export default class Menu {
       $('#med3web-setting-3d-transfer-func').hide();
       $('#med3web-setting-3d-transfer-func-2d').hide();
       $('#med3web-setting-3d-color').hide();
+
+      this.updateROIList();
+      $('#med3web-accordion-choose-roi').show();
     } else {
       $('#med3web-accordion-tools-3d').show();
       $('#med3web-3d-mip-head').parent().show();
@@ -247,6 +251,8 @@ export default class Menu {
       $('#med3web-setting-3d-transfer-func').show();
       $('#med3web-setting-3d-transfer-func-2d').show();
       $('#med3web-setting-3d-color').show();
+
+      $('#med3web-accordion-choose-roi').hide();
     }
   }
 
@@ -540,6 +546,47 @@ export default class Menu {
     }
   }
 
+  rgbaFloatStringToHex(str) {
+    const MAX_COLOR_COMP = 255;
+    const arrInt = str.split(' ').map(x => parseInt(parseFloat(x) * MAX_COLOR_COMP, 10));
+    const HEX_BASE = 16;
+    let r, g, b, a;
+    r = arrInt[0].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
+    g = arrInt[1].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
+    b = arrInt[2].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
+    a = arrInt[3].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
+    return `#${r}${g}${b}${a}`;
+  }
+
+  updateROIList() {
+    const btnGroup = $('#med3web-choose-roi-body .btn-group');
+    btnGroup.empty();
+    const palette = new RoiPalette().getPalette();
+    const length = palette.length;
+    for (let i = 0; i < length; ++i) {
+      const item = palette[i];
+      const elem = createElement('label', {
+        class: 'btn btn-default btn-roi',
+        'data-roi-id': item.roiId,
+      }, [
+        createElement('span', {
+          class: 'btn-roi-check-icon',
+          'style': `color: ${this.rgbaFloatStringToHex(item.roiColor)};`,
+        }, [
+          createElement('span', { class: 'fa fa-square', }),
+          createElement('span', { class: 'fa fa-check-square', }),
+        ]),
+        createElement('input', {
+          type: 'checkbox',
+          'autocomplete': 'off',
+        }),
+        item.name,
+      ]);
+
+      btnGroup.append(elem);
+    }
+  }
+
   /** Initialize navigation bar */
   initNavBar() {
     // Callback for open local file from computer
@@ -747,12 +794,16 @@ export default class Menu {
           // move sliders
           if (newModeSuffix === '3d') {
             $('#med3web-accordion-render-mode .panel-heading.active [data-toggle=collapse]').click();
-            const settings = $('#med3web-accordion-tools-3d').detach();
+            let settings = $('#med3web-accordion-tools-3d').detach();
+            settings.prependTo($('#med3web-panel-menu-3d .panel-body')[0]);
+            settings = $('#med3web-accordion-choose-roi').detach();
             settings.prependTo($('#med3web-panel-menu-3d .panel-body')[0]);
             this.transFunc2dSlider.flush();
           } else if (newModeSuffix === '3d-fast') {
             $('#med3web-accordion-fast-render-mode .panel-heading.active [data-toggle=collapse]').click();
-            const settings = $('#med3web-accordion-tools-3d').detach();
+            let settings = $('#med3web-accordion-tools-3d').detach();
+            settings.prependTo($('#med3web-panel-menu-3d-fast .panel-body')[0]);
+            settings = $('#med3web-accordion-choose-roi').detach();
             settings.prependTo($('#med3web-panel-menu-3d-fast .panel-body')[0]);
             this.hist.flush();
           }

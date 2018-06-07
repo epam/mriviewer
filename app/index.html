@@ -13,6 +13,7 @@
 
     <!-- build:css styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/main.scss">
     <!-- endbuild -->
   </head>
   <body>
@@ -143,6 +144,7 @@
         <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" id="med3web-panel-menu" style="padding: 0; margin: 0; height: 100%;">
           <div class="panel" id="med3web-panel-menu-3d-fast" style="display: none; border-color: #e7e7e7;">
             <div class="panel-body">
+
               <div class="panel-group" id="med3web-accordion-tools-3d" role="tablist" aria-multiselectable="true">
                 <div class="panel panel-default">
                   <div class="panel-heading" role="tab" id="med3web-tool-3d-eraser-head">
@@ -175,6 +177,26 @@
                   </div>
                 </div>
               </div>
+
+              <div class="panel-group" id="med3web-accordion-choose-roi" role="tablist" aria-multiselectable="true" style="display: none;">
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="med3web-choose-roi-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <a role="button" data-toggle="collapse" data-parent="#med3web-accordion-tools-3d" href="#med3web-choose-roi-body" aria-expanded="true" aria-controls="med3web-choose-roi-body">
+                        Choose ROI
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="med3web-choose-roi-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="med3web-tool-3d-eraser-head">
+                    <div class="panel-body">
+                      <div class="btn-group" data-toggle="buttons" style="width: 100%;">
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div class="panel-group" id="med3web-accordion-fast-render-mode" role="tablist" aria-multiselectable="true">
                 <div class="panel panel-default">
                   <div class="panel-heading active" role="tab" id="med3web-3d-fast-volrend-head">

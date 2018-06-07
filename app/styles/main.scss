@@ -257,7 +257,10 @@ html, body {
     }
   }
 
-  #med3web-accordion-fast-render-mode, #med3web-accordion-render-mode, #med3web-accordion-tools-3d {
+  #med3web-accordion-fast-render-mode,
+  #med3web-accordion-render-mode,
+  #med3web-accordion-tools-3d,
+  #med3web-accordion-choose-roi{
     .panel-heading {
       padding: 0;
       .panel-title {
@@ -292,9 +295,50 @@ html, body {
       }
     }
   }
-  #med3web-accordion-tools-3d {
+  #med3web-accordion-tools-3d, #med3web-accordion-choose-roi {
     .panel-title {
       justify-content: center;
+    }
+  }
+
+  #med3web-accordion-choose-roi {
+    .btn-roi {
+      width: 100%;
+      text-align: left;
+
+      .btn-roi-check-icon {
+        margin-right: 5px;
+      }
+      .fa-check-square {
+        display: none;
+      }
+      .fa-square {
+        display: inline;
+      }
+      input {
+        color: initial!important;
+      }
+    }
+    .btn-roi.active {
+      color: #333;
+      background-color: #e6e6e6;
+      border-color: #adadad;
+      .fa-check-square {
+        display: inline;
+      }
+      .fa-square {
+        display: none;
+      }
+    }
+    .btn-roi.focus, .btn-roi:hover, .btn-roi:focus {
+      color: #333;
+      background-color: #fff;
+      border-color: #ccc;
+    }
+    .btn-roi.active.focus, .btn-roi.active:hover, .btn-roi.active:focus {
+      color: #333;
+      background-color: #e6e6e6;
+      border-color: #adadad;
     }
   }
 
