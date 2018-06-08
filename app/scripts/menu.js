@@ -559,7 +559,7 @@ export default class Menu {
   }
 
   updateROIList() {
-    const btnGroup = $('#med3web-choose-roi-body .btn-group');
+    const btnGroup = $('#med3web-choose-roi-body .btn-roi-group');
     btnGroup.empty();
     const palette = new RoiPalette().getPalette();
     const length = palette.length;
@@ -583,7 +583,22 @@ export default class Menu {
         item.name,
       ]);
 
+      const input = $(elem).find('input');
+      input.on('change', (e) => {
+        this.engine3d.volumeUpdater.updateSelectedRoi(item.roiId, $(e.target).prop('checked'));
+        if (btnGroup.find('.btn-roi').length === btnGroup.find('.btn-roi.active').length) {
+          $('#med3web-btn-roi-check-all input').prop('checked', true);
+          $('#med3web-btn-roi-check-all').addClass('active');
+        } else {
+          $('#med3web-btn-roi-check-all input').prop('checked', false);
+          $('#med3web-btn-roi-check-all').removeClass('active');
+        }
+      });
+
       btnGroup.append(elem);
+      if (item.isBrain) {
+        $(elem).click();
+      }
     }
   }
 
@@ -1382,6 +1397,26 @@ export default class Menu {
       })
       .on('dragstart', () => self.engine3d.onMouseDown())
       .on('dragend', () => self.engine3d.onMouseUp()));
+
+    const input = $('#med3web-btn-roi-check-all input');
+    input.on('change', () => {
+      const btnGroup = $('#med3web-choose-roi-body .btn-roi-group');
+      const palette = new RoiPalette().getPalette();
+      const length = palette.length;
+      const buff = new Uint8Array(this.engine3d.volumeUpdater.numRois).fill(false);
+      if (input.prop('checked')) {
+        btnGroup.find('input').prop('checked', true);
+        btnGroup.find('.btn-roi').addClass('active');
+        for (let i = 0; i < length; ++i) {
+          const item = palette[i];
+          buff[item.roiId] = true;
+        }
+      } else {
+        btnGroup.find('input').prop('checked', false);
+        btnGroup.find('.btn-roi').removeClass('active');
+      }
+      this.engine3d.volumeUpdater.updateSelectedRoiMap(buff);
+    });
   }
 
   /** Initialize 2d menu panel */

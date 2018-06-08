@@ -320,9 +320,6 @@ html, body {
       }
     }
     .btn-roi.active {
-      color: #333;
-      background-color: #e6e6e6;
-      border-color: #adadad;
       .fa-check-square {
         display: inline;
       }
@@ -330,16 +327,27 @@ html, body {
         display: none;
       }
     }
-    .btn-roi.focus, .btn-roi:hover, .btn-roi:focus {
-      color: #333;
-      background-color: #fff;
-      border-color: #ccc;
-    }
-    .btn-roi.active.focus, .btn-roi.active:hover, .btn-roi.active:focus {
+
+    .btn-default.btn-roi.active {
       color: #333;
       background-color: #e6e6e6;
       border-color: #adadad;
     }
+    .btn-default.btn-roi.focus, .btn-default.btn-roi:hover, .btn-default.btn-roi:focus {
+      color: #333;
+      background-color: #fff;
+      border-color: #ccc;
+    }
+    .btn-default.btn-roi.active.focus, .btn-default.btn-roi.active:hover, .btn-default.btn-roi.active:focus {
+      color: #333;
+      background-color: #e6e6e6;
+      border-color: #adadad;
+    }
+  }
+
+  #med3web-choose-roi-body {
+    height: 385px;
+    overflow-y: auto;
   }
 
   #med3web-buttons-2d-axis {
