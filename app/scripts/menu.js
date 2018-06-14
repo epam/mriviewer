@@ -799,11 +799,13 @@ export default class Menu {
         if (rendererType === '2d') {
           $('#med3web-panel-menu').show();
           $('#med3web-container-3d').hide();
+          $('#med3web-container-mpr').hide();
           $('#med3web-container-2d').show();
           this.app.setRenderMode(RenderMode.RENDER_MODE_2D);
         } else if (rendererType === '3d') {
           $('#med3web-panel-menu').show();
           $('#med3web-container-2d').hide();
+          $('#med3web-container-mpr').hide();
           $('#med3web-container-3d').show();
           this.app.setRenderMode(RenderMode.RENDER_MODE_3D);
           // move sliders
@@ -823,7 +825,12 @@ export default class Menu {
             this.hist.flush();
           }
         } else if (rendererType === 'mpr') {
-          $('#med3web-panel-menu').hide();
+          $('#med3web-panel-menu').show();
+          $('#med3web-container-3d').hide();
+          $('#med3web-container-2d').hide();
+          $('#med3web-container-mpr').show();
+          this.app.setRenderMode(RenderMode.RENDER_MODE_MPR);
+          // console.log('MPR mode selected');
         }
       }
     });
