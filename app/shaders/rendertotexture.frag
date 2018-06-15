@@ -11,6 +11,9 @@ uniform float zDim;
 uniform sampler2D texBF;
 uniform sampler2D texFF;
 uniform sampler2D texVolume;
+uniform sampler2D texRoiId;
+uniform sampler2D texRoiColor;
+uniform sampler2D RoiVolumeTex;
 uniform sampler2D texVolumeMask;
 uniform sampler2D texTF;
 uniform float opacityBarrier;
@@ -98,6 +101,40 @@ float tex3DMask(vec3 vecCur) {
   float colorSlice1 = texture2D(texVolumeMask, clamp(texCoordSlice1 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
   float colorSlice2 = texture2D(texVolumeMask, clamp(texCoordSlice2 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
   return mix(colorSlice1, colorSlice2, zRatio);
+}
+float tex3DRoi(vec3 vecCur) {
+  float tCX = 1.0 / tileCountX;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  // check outside of texture volume
+  if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
+    return 0.0;
+  float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ));
+    float zRatio = (vecCur.z * (volumeSizeZ)) - zSliceNumber1;
+  //zSliceNumber1 = min(zSliceNumber1, volumeSizeZ - 1.0);
+  // As we use trilinear we go the next Z slice.
+  float zSliceNumber2 = min( zSliceNumber1 + 1.0, (volumeSizeZ - 1.0)); //Clamp to 255
+  vec2 texCoord = vecCur.xy;
+  vec2 texCoordSlice1, texCoordSlice2;
+  texCoordSlice1 = texCoordSlice2 = texCoord;
+
+  // Add an offset to the original UV coordinates depending on the row and column number.
+  texCoordSlice1.x += (mod(zSliceNumber1, tileCountX - 0.0 ));
+  texCoordSlice1.y += floor(zSliceNumber1 / (tileCountX - 0.0) );
+  // ratio mix between slices
+  //float zRatio = mod(vecCur.z * (volumeSizeZ), 1.0);
+  texCoordSlice2.x += (mod(zSliceNumber2, tileCountX - 0.0 ));
+  texCoordSlice2.y += floor(zSliceNumber2 / (tileCountX - 0.0));
+
+  // add 0.5 correction to texture coordinates
+  float xSize = float(xDim);
+  float ySize = float(yDim);
+  vec2 vAdd = vec2(0.5 / xSize, 0.5 / ySize);
+  texCoordSlice1 += vAdd;
+  texCoordSlice2 += vAdd;
+
+  // get colors from neighbour slices
+  float colorSlice1 = texture2D(RoiVolumeTex, clamp(texCoordSlice1 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
+  return colorSlice1;
 }
 
 /**
@@ -346,11 +383,41 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
         vec3 N = CalcNormal(iterator);
         float dif = max(0.0, dot(N, -lightDir));
         float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
+        
+        float sigma = 1.4;
+        float sigma2 = sigma*sigma;
+        vec3 BackGroundColor = vec3(0.0, 0.0, 0.0);
+        float seg_norm_factor = 0.0;
+        vec3 sumColor = vec3(0.0, 0.0, 0.0);
+        
+        for (float i = -1.0; i < 1.5; i += 1.0)
+        {
+          for (float j = -1.0; j < 1.5; j += 1.0)
+          {
+            for (float k = -1.0; k < 1.5; k += 1.0)
+            {
+              float curRoi = tex3DRoi(iterator + vec3(i / texSize, j / texSize, k / volumeSizeZ));
+              float gaussB = exp( -(i*i + j*j + k*k) / (2.0 * sigma2));
+              //pick selected roi from 1d texture
+              float segInUse = texture2D(texRoiId, vec2(curRoi, 0.0)).r;
+              vec3 segColor = texture2D(texRoiColor, vec2(curRoi, 0.0)).rgb;
+              sumColor += mix(BackGroundColor, segColor, segInUse) * gaussB;
+              seg_norm_factor += segInUse * gaussB;
+            }
+          }
+        }
+        // color
+        if (seg_norm_factor > 0.01)
+          sumColor = sumColor / seg_norm_factor;
+//          float Roi = tex3DRoi(iterator);
         // The resulting color depends on the longevity of the material in the surface of the isosurface
-        surfaceLighting = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * vec3(vol, vol, vol);
+        surfaceLighting = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumColor;
+//        surfaceLighting = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * vec3(Roi, Roi, Roi);
+//        surfaceLighting = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * vec3(255., 255., 255.);
     }
 //    acc.rgb = BRIGHTNESS_SCALE * brightness3D * sumCol + (1.0 - sumAlpha) * surfaceLighting;
     acc.rgb = BRIGHTNESS_SCALE * sumCol + (1.0 - sumAlpha) * surfaceLighting;
+    //float fff= texture2D(texRoiId, vec2(0.5, 0.0)).r
     return acc;
 }
 

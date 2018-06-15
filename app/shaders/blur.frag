@@ -85,8 +85,11 @@ float tex3DRoi(vec3 vecCur) {
 
   // get colors from neighbour slices
   float colorSlice1 = texture2D(texVolumeRoi, clamp(texCoordSlice1 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
-  float colorSlice2 = texture2D(texVolumeRoi, clamp(texCoordSlice2 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
-  return mix(colorSlice1, colorSlice2, zRatio);
+//  float colorSlice2 = texture2D(texVolumeRoi, clamp(texCoordSlice2 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
+//  return mix(colorSlice1, colorSlice2, zRatio);
+  
+  return colorSlice1;
+//  return colorSlice1;
 }
 
 
@@ -161,14 +164,18 @@ float filterROI(vec3 base)
         float curRoi = tex3DRoi(base + vec3(texelSize.x * i, texelSize.y * j, texelSize.z * k));
         float gaussB = exp( -(i*i + j*j + k*k) / (2.0 * sigma2));
         //pick selected roi from 1d texture
-        float segInUse = texture2D(texSegInUse, vec2(curRoi, 0.0)).a;
+        float segInUse = texture2D(texSegInUse, vec2(curRoi, 0.0)).r;
         float val = max(0.5 * curVal, segInUse);
         acc += val * gaussB;
         norm_factor += gaussB;
       }
   // intencity
   acc = acc / norm_factor;
-  //gl_FragColor = acc;
+//  acc = tex3DRoi(base);  //gl_FragColor = acc;
+//   float curRoi_ = tex3DRoi(base);
+//    acc = texture2D(texSegInUse, vec2(curRoi_, 0.0)).r;
+//    acc = tex3D(base);
+//    acc = curRoi_;
   return acc;
 }
 
