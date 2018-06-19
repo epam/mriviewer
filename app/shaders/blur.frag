@@ -61,37 +61,27 @@ float tex3DRoi(vec3 vecCur) {
   // check outside of texture volume
   if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
     return 0.0;
-  float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ));
-  float zRatio = (vecCur.z * (volumeSizeZ)) - zSliceNumber1;
-  //zSliceNumber1 = min(zSliceNumber1, volumeSizeZ - 1.0);
+  float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ) + 0.5);
   // As we use trilinear we go the next Z slice.
   float zSliceNumber2 = min( zSliceNumber1 + 1.0, (volumeSizeZ - 1.0)); //Clamp to 255
   vec2 texCoord = vecCur.xy;
-  vec2 texCoordSlice1, texCoordSlice2;
-  texCoordSlice1 = texCoordSlice2 = texCoord;
+  vec2 texCoordSlice1;
+  texCoordSlice1 = texCoord;
 
   // Add an offset to the original UV coordinates depending on the row and column number.
   texCoordSlice1.x += (mod(zSliceNumber1, tileCountX - 0.0 ));
   texCoordSlice1.y += floor(zSliceNumber1 / (tileCountX - 0.0) );
   // ratio mix between slices
-  
-  texCoordSlice2.x += (mod(zSliceNumber2, tileCountX - 0.0 ));
-  texCoordSlice2.y += floor(zSliceNumber2 / (tileCountX - 0.0));
-
   // add 0.5 correction to texture coordinates
-  vec2 vAdd = vec2(0.5 / xDim, 0.5 / yDim);
+  float xSize = float(xDim);
+  float ySize = float(yDim);
+  vec2 vAdd = vec2(0.5 / xSize, 0.5 / ySize);
   texCoordSlice1 += vAdd;
-  texCoordSlice2 += vAdd;
-
+  
   // get colors from neighbour slices
   float colorSlice1 = texture2D(texVolumeRoi, clamp(texCoordSlice1 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
-//  float colorSlice2 = texture2D(texVolumeRoi, clamp(texCoordSlice2 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
-//  return mix(colorSlice1, colorSlice2, zRatio);
-  
   return colorSlice1;
-//  return colorSlice1;
 }
-
 
 /**
 * Calculate 3D texture coordinates

@@ -113,35 +113,27 @@ float tex3DRoi(vec3 vecCur) {
   // check outside of texture volume
   if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
     return 0.0;
-  float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ));
-    float zRatio = (vecCur.z * (volumeSizeZ)) - zSliceNumber1;
-  //zSliceNumber1 = min(zSliceNumber1, volumeSizeZ - 1.0);
+  float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ) + 0.5);
   // As we use trilinear we go the next Z slice.
   float zSliceNumber2 = min( zSliceNumber1 + 1.0, (volumeSizeZ - 1.0)); //Clamp to 255
   vec2 texCoord = vecCur.xy;
-  vec2 texCoordSlice1, texCoordSlice2;
-  texCoordSlice1 = texCoordSlice2 = texCoord;
+  vec2 texCoordSlice1;
+  texCoordSlice1 = texCoord;
 
   // Add an offset to the original UV coordinates depending on the row and column number.
   texCoordSlice1.x += (mod(zSliceNumber1, tileCountX - 0.0 ));
   texCoordSlice1.y += floor(zSliceNumber1 / (tileCountX - 0.0) );
   // ratio mix between slices
-  //float zRatio = mod(vecCur.z * (volumeSizeZ), 1.0);
-  texCoordSlice2.x += (mod(zSliceNumber2, tileCountX - 0.0 ));
-  texCoordSlice2.y += floor(zSliceNumber2 / (tileCountX - 0.0));
-
   // add 0.5 correction to texture coordinates
   float xSize = float(xDim);
   float ySize = float(yDim);
   vec2 vAdd = vec2(0.5 / xSize, 0.5 / ySize);
   texCoordSlice1 += vAdd;
-  texCoordSlice2 += vAdd;
-
+  
   // get colors from neighbour slices
   float colorSlice1 = texture2D(RoiVolumeTex, clamp(texCoordSlice1 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
   return colorSlice1;
 }
-
 
 /**
 * Isosurface color calculation
@@ -366,7 +358,7 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
         vec3 N = CalcNormal(iterator);
         float dif = max(0.0, dot(N, -lightDir));
         float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
-        float sigma = 1.4;
+        float sigma = 0.8;
         float sigma2 = sigma*sigma;
         vec3 BackGroundColor = vec3(0.0, 0.0, 0.0);
         float seg_norm_factor = 0.0;
