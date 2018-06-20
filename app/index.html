@@ -13,6 +13,7 @@
 
     <!-- build:css styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/main.scss">
     <!-- endbuild -->
   </head>
   <body>
@@ -83,19 +84,20 @@
             <ul class="nav navbar-nav navbar-center">
               <li class="dropdown navbar-btn" id="med3web-button-dropdown-open">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                  <span data-tooltip="tooltip" data-placement="bottom" title="Open">
-                    <span class="glyphicon glyphicon-folder-open"></span><span>Open</span>
+                  <span data-tooltip="tooltip" data-placement="bottom" title="File">
+                    <span class="fa fa-file-o"></span><span>File</span>
                   </span>
                 </a>
                 <ul class="dropdown-menu">
                   <li>
                     <a href="#" data-target="#med3web-input-open">
-                      <label class="input-file-label" for="med3web-input-file-open-local"><span class="fa fa-desktop"> Computer</span></label>
+                      <label class="input-file-label" for="med3web-input-file-open-local"><span class="fa fa-desktop"> Open from Computer</span></label>
                       <input type="file" class="form-control hidden" id="med3web-input-file-open-local" accept=".dcm,.ktx,.nii,.hdr,.h,.img" multiple>
                     </a>
                   </li>
-                  <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open" style="display: none;"><span class="fa fa-server"> Server</span></a></li>
-                  <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open-url"><span class="fa fa-globe"> URL</span></a></li>
+                  <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open" style="display: none;"><span class="fa fa-server"> Open from Server</span></a></li>
+                  <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open-url"><span class="fa fa-globe"> Open by URL</span></a></li>
+                  <li><a href="#" data-toggle="modal" data-target="#med3web-modal-save-as-nifti"><span class="fa fa-save"> Save as Nifti</span></a></li>
                 </ul>
               </li>
 
@@ -104,7 +106,7 @@
               <li class="dropdown navbar-btn" id="med3web-button-dropdown-report">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                   <span data-tooltip="tooltip" data-placement="bottom" title="Report">
-                    <span class="fa fa-file-text-o"></span><span>Report</span>
+                    <span class="fa fa-newspaper-o"></span><span>Report</span>
                   </span>
                 </a>
                 <ul class="dropdown-menu">
@@ -142,6 +144,7 @@
         <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" id="med3web-panel-menu" style="padding: 0; margin: 0; height: 100%;">
           <div class="panel" id="med3web-panel-menu-3d-fast" style="display: none; border-color: #e7e7e7;">
             <div class="panel-body">
+
               <div class="panel-group" id="med3web-accordion-tools-3d" role="tablist" aria-multiselectable="true">
                 <div class="panel panel-default">
                   <div class="panel-heading" role="tab" id="med3web-tool-3d-eraser-head">
@@ -174,6 +177,35 @@
                   </div>
                 </div>
               </div>
+
+              <div class="panel-group" id="med3web-accordion-choose-roi" role="tablist" aria-multiselectable="true" style="display: none;">
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="med3web-choose-roi-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <a role="button" data-toggle="collapse" data-parent="#med3web-accordion-tools-3d" href="#med3web-choose-roi-body" aria-expanded="true" aria-controls="med3web-choose-roi-body">
+                        Choose ROI
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="med3web-choose-roi-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="med3web-tool-3d-eraser-head">
+                    <div class="panel-body">
+                      <div class="btn-group" data-toggle="buttons" style="width: 100%; margin-bottom: 5px;">
+                        <label id="med3web-btn-roi-check-all" class="btn btn-default btn-roi">
+                          <span class="btn-roi-check-icon">
+                            <span class="fa fa-square"></span>
+                            <span class="fa fa-check-square"></span>
+                          </span>
+                          <input type="checkbox" autocomplete="off"> <span><strong>Check all</strong></span>
+                        </label>
+                      </div>
+                      <div class="btn-group btn-roi-group" data-toggle="buttons" style="width: 100%;">
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div class="panel-group" id="med3web-accordion-fast-render-mode" role="tablist" aria-multiselectable="true">
                 <div class="panel panel-default">
                   <div class="panel-heading active" role="tab" id="med3web-3d-fast-volrend-head">
@@ -501,7 +533,8 @@
             <div class="alert alert-danger" role="alert" style="display: none; margin-top: 10px;">
               Incorrect URL! <br>
               It must contain file extension, for example 'http://example.com/example/example.ktx'.
-              In case of dicom files use URL with just folder name, like: 'http://example.com/example/'
+              In case of dicom files use URL with just folder name, like: 'http://example.com/example/
+              In case of HDR files use only .h file URL, split URLs by ';'
             </div>
           </div>
         </div>
@@ -622,9 +655,32 @@
               <input type="text" class="form-control" placeholder="File name" aria-describedby="med3web-addon-pdf">
               <span class="input-group-addon" id="med3web-addon-pdf">.pdf</span>
             </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
-            <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="save">Save</button>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="save">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save as Nifti modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="med3web-modal-save-as-nifti">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Save as Nifti</h4>
+          </div>
+          <div class="modal-body">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="File name" aria-describedby="med3web-addon-nii">
+              <span class="input-group-addon" id="med3web-addon-nii">.nii</span>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="save">Save</button>
+            </div>
           </div>
         </div>
       </div>

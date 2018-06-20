@@ -13,6 +13,10 @@ uniform sampler2D texBF;
 uniform sampler2D texFF;
 uniform sampler2D texIsoSurface;
 uniform sampler2D texVolume;
+uniform sampler2D texRoiId;
+uniform sampler2D texRoiColor;
+uniform sampler2D RoiVolumeTex;
+uniform sampler2D texVolumeMask;
 uniform sampler2D texTF;
 uniform sampler2D colorMap1D;
 uniform sampler2D heatMap1D;
@@ -33,12 +37,12 @@ uniform float volumeSizeZ;
 
 varying vec4 screenpos;
 
-vec4 tex3D(vec3 vecCur) {
+float tex3D(vec3 vecCur) {
   float tCX = 1.0 / tileCountX;
   vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   // check outside of texture volume
   if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
-    return vec4(0.0, 0.0, 0.0, 0.0);
+    return 0.0;
   float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ));
   float zRatio = (vecCur.z * (volumeSizeZ)) - zSliceNumber1;
   //zSliceNumber1 = min(zSliceNumber1, volumeSizeZ - 1.0);
@@ -64,48 +68,72 @@ vec4 tex3D(vec3 vecCur) {
   texCoordSlice2 += vAdd;
 
   // get colors from neighbour slices
-  vec4 colorSlice1 = texture2D(texVolume, clamp(texCoordSlice1 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0);
-  vec4 colorSlice2 = texture2D(texVolume, clamp(texCoordSlice2 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0);
+  float colorSlice1 = texture2D(texVolume, clamp(texCoordSlice1 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
+  float colorSlice2 = texture2D(texVolume, clamp(texCoordSlice2 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
   return mix(colorSlice1, colorSlice2, zRatio);
 }
-
-/**
-* Reading from 3D texture
-*/
-/*
-vec4 tex3D(vec3 vecCur) {
+float tex3DMask(vec3 vecCur) {
   float tCX = 1.0 / tileCountX;
   vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   // check outside of texture volume
   if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
-    return vec4(0.0, 0.0, 0.0, 0.0);
-  float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ - 1.0));
+    return 0.0;
+  float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ));
+    float zRatio = (vecCur.z * (volumeSizeZ)) - zSliceNumber1;
+  //zSliceNumber1 = min(zSliceNumber1, volumeSizeZ - 1.0);
   // As we use trilinear we go the next Z slice.
   float zSliceNumber2 = min( zSliceNumber1 + 1.0, (volumeSizeZ - 1.0)); //Clamp to 255
-  vec2 texCoord = vecCur.xy * tCX;
+  vec2 texCoord = vecCur.xy;
   vec2 texCoordSlice1, texCoordSlice2;
   texCoordSlice1 = texCoordSlice2 = texCoord;
 
   // Add an offset to the original UV coordinates depending on the row and column number.
-  texCoordSlice1.x += (mod(zSliceNumber1, tileCountX )*tCX);
-  texCoordSlice1.y += floor(zSliceNumber1*tCX)*tCX;
+  texCoordSlice1.x += (mod(zSliceNumber1, tileCountX - 0.0 ));
+  texCoordSlice1.y += floor(zSliceNumber1 / (tileCountX - 0.0) );
   // ratio mix between slices
-  float zRatio = mod(vecCur.z * (volumeSizeZ - 1.0), 1.0);
-  texCoordSlice2.x += (mod(zSliceNumber2, tileCountX )*tCX);
-  texCoordSlice2.y += floor(zSliceNumber2*tCX)*tCX;
+  //float zRatio = mod(vecCur.z * (volumeSizeZ), 1.0);
+  texCoordSlice2.x += (mod(zSliceNumber2, tileCountX - 0.0 ));
+  texCoordSlice2.y += floor(zSliceNumber2 / (tileCountX - 0.0));
 
   // add 0.5 correction to texture coordinates
-  float xSize = float(xDim) * tileCountX;
-  float ySize = float(yDim) * tileCountX;
+  float xSize = float(xDim);
+  float ySize = float(yDim);
   vec2 vAdd = vec2(0.5 / xSize, 0.5 / ySize);
   texCoordSlice1 += vAdd;
   texCoordSlice2 += vAdd;
 
   // get colors from neighbour slices
-  vec4 colorSlice1 = texture2D(texVolume, texCoordSlice1, 0.0);
-  vec4 colorSlice2 = texture2D(texVolume, texCoordSlice2, 0.0);
+  float colorSlice1 = texture2D(texVolumeMask, clamp(texCoordSlice1 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
+  float colorSlice2 = texture2D(texVolumeMask, clamp(texCoordSlice2 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
   return mix(colorSlice1, colorSlice2, zRatio);
-}*/
+}
+float tex3DRoi(vec3 vecCur) {
+  float tCX = 1.0 / tileCountX;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  // check outside of texture volume
+  if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
+    return 0.0;
+  float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ) + 0.5);
+  // As we use trilinear we go the next Z slice.
+  float zSliceNumber2 = min( zSliceNumber1 + 1.0, (volumeSizeZ - 1.0)); //Clamp to 255
+  vec2 texCoord = vecCur.xy;
+  vec2 texCoordSlice1;
+  texCoordSlice1 = texCoord;
+
+  // Add an offset to the original UV coordinates depending on the row and column number.
+  texCoordSlice1.x += (mod(zSliceNumber1, tileCountX - 0.0 ));
+  texCoordSlice1.y += floor(zSliceNumber1 / (tileCountX - 0.0) );
+  // ratio mix between slices
+  // add 0.5 correction to texture coordinates
+  float xSize = float(xDim);
+  float ySize = float(yDim);
+  vec2 vAdd = vec2(0.5 / xSize, 0.5 / ySize);
+  texCoordSlice1 += vAdd;
+  
+  // get colors from neighbour slices
+  float colorSlice1 = texture2D(RoiVolumeTex, clamp(texCoordSlice1 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
+  return colorSlice1;
+}
 
 /**
 * Isosurface color calculation
@@ -120,9 +148,34 @@ vec3 CalcLighting(vec3 iter, vec3 dir)
   float d = 1.0 / texSize;
   vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N, sumCol = vec3(0.0);
   // Culculate normal
-  N.x = tex3D(iter + dx).a - tex3D(iter - dx).a;
-  N.y = tex3D(iter + dy).a - tex3D(iter - dy).a;
-  N.z = tex3D(iter + dz).a - tex3D(iter - dz).a;
+  float l, r;
+  l = tex3D(iter - dx);
+  r = tex3D(iter + dx);
+  #if MaskFlag == 1
+  {
+    l = l * tex3DMask(iter - dx);
+    r = r * tex3DMask(iter + dx);
+  }
+  #endif
+  N.x = r - l;
+  l = tex3D(iter - dy);
+  r = tex3D(iter + dy);
+  #if MaskFlag == 1
+  {
+    l = l * tex3DMask(iter - dy);
+    r = r * tex3DMask(iter + dy);
+  }
+  #endif
+  N.y = r - l;
+  l = tex3D(iter - dz);
+  r = tex3D(iter + dz);
+  #if MaskFlag == 1
+  {
+    l = l * tex3DMask(iter - dz);
+    r = r * tex3DMask(iter + dz);
+  }
+  #endif
+  N.z = r - l;
   N = normalize(N);
   // Calculate the density of the material in the vicinity of the isosurface
   float dif = max(0.0, dot(N, -lightDir));
@@ -141,7 +194,12 @@ vec3 Correction(vec3 left, vec3 right, float threshold) {
     for (int i = 0; i < 5; i++)
     {
         iterator = 0.5*(left + right);
-        vol = tex3D(iterator).a;
+        vol = tex3D(iterator);
+        #if MaskFlag == 1
+        {
+          vol = vol * tex3DMask(iterator);
+        }
+        #endif
         if (vol > threshold)
             right = iterator;
         else
@@ -154,13 +212,27 @@ vec3 Correction(vec3 left, vec3 right, float threshold) {
 /**
 * Direct volume render
 */
+/**
+* Calculation of normal
+*/
+vec3 CalcNormal(vec3 iter)
+{
+  float d = 1.0 / texSize;
+  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
+  // Culculate normal
+  N.x = tex3D(iter + dx) - tex3D(iter - dx);
+  N.y = tex3D(iter + dy) - tex3D(iter - dy);
+  N.z = tex3D(iter + dz) - tex3D(iter - dz);
+  N = normalize(N);
+  return N;
+}
 
 vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
     const int MAX_I = 1000;
     const float BRIGHTNESS_SCALE = 5.0;
     vec3 iterator = start;
-    vec4 acc = vec4(0.0, 0.0, 0.0, 2.0), vol;
-    float StepSize = stepSize.g, alpha;
+    vec4 acc = vec4(0.0, 0.0, 0.0, 2.0);
+    float StepSize = stepSize.g, alpha, vol;
     vec3 step = StepSize*dir, color, sumCol = vec3(0.0, 0.0, 0.0), surfaceLighting = vec3(0.0, 0.0, 0.0);
     float sumAlpha = 0.0, t12 = 1.0 / (t_function1max.a - t_function1min.a), lighting;
     bool inFlag = false, oldInFlag = false;
@@ -172,30 +244,39 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
     {
         iterator = iterator + step;
         vol = tex3D(iterator);
-        if (count <= 0 || sumAlpha > 0.97 || vol.a > t_function2min.a)
+        #if MaskFlag == 1
+        {
+          vol = vol * tex3DMask(iterator);
+        }
+        #endif
+        if (count <= 0 || sumAlpha > 0.97 || vol > t_function2min.a)
             break;
         // In/Out flag
         oldInFlag = inFlag;
-        inFlag = vol.a > t_function1min.a && vol.a <  t_function1max.a;
+        inFlag = vol > t_function1min.a && vol <  t_function1max.a;
         if (inFlag || oldInFlag != inFlag)
         {
             // If the transfer function is nonzero, the integration step is halved
             // First step
-            vec4 vol1 = tex3D(iterator - 0.5 * step);
+            float vol1 = tex3D(iterator - 0.5 * step);
+            #if MaskFlag == 1
+            {
+              vol1 = vol1 * tex3DMask(iterator - 0.5 * step);
+            }
+            #endif
             // Transfer function - isosceles triangle
-            alpha = min(vol1.a - t_function1min.a, t_function1max.a - vol1.a);
+            alpha = min(vol1 - t_function1min.a, t_function1max.a - vol1);
             alpha = opacityBarrier * max(0.0, alpha) * t12;
-            color = mix(t_function1min.rgb, t_function1max.rgb, (vol1.a - t_function1min.a) * t12);
-            lighting = 0.5 * max(0.0, dot(normalize(vol1.rgb - vec3(0.5, 0.5, 0.5)), -lightDir)) + 0.5;
+            color = mix(t_function1min.rgb, t_function1max.rgb, (vol1 - t_function1min.a) * t12);
+            lighting = 0.5 * max(0.0, dot(CalcNormal(iterator), -lightDir)) + 0.5;
             // Volume integral on the interval StepSize
             sumCol += (1. - sumAlpha)* alpha * StepSize * color * lighting;
             sumAlpha += (1. - sumAlpha) * alpha * StepSize;
             // Second step
             // Transfer function - isosceles triangle
-            alpha = min(vol.a - t_function1min.a, t_function1max.a - vol.a);
+            alpha = min(vol - t_function1min.a, t_function1max.a - vol);
             alpha = opacityBarrier*max(0.0, alpha) * t12;
-            color = mix(t_function1min.rgb, t_function1max.rgb, (vol.a - t_function1min.a) * t12);
-            lighting = 0.5 * max(0.0, dot(normalize(vol.rgb - vec3(0.5, 0.5, 0.5)), -lightDir)) + 0.5;
+            color = mix(t_function1min.rgb, t_function1max.rgb, (vol - t_function1min.a) * t12);
             // Volume integral on the interval StepSize
             sumCol += (1. - sumAlpha) * alpha * StepSize * color * lighting;
             sumAlpha += (1. - sumAlpha) * alpha * StepSize;
@@ -211,21 +292,6 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
     return acc;
 }
 
-/**
-* Calculation of normal
-*/
-vec3 CalcNormal(vec3 iter)
-{
-  float d = 1.0 / texSize;
-  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
-  // Culculate normal
-  N.x = tex3D(iter + dx).a - tex3D(iter - dx).a;
-  N.y = tex3D(iter + dy).a - tex3D(iter - dy).a;
-  N.z = tex3D(iter + dz).a - tex3D(iter - dz).a;
-  N = normalize(N);
-  return N;
-}
-
 
 /**
 * ROI Direct volume render
@@ -234,8 +300,8 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
     const int MAX_I = 1000;
     const float BRIGHTNESS_SCALE = 1.0;
     vec3 iterator = start;
-    vec4 acc = vec4(0.0, 0.0, 0.0, 2.0), vol;
-    float StepSize = stepSize.r, alpha;
+    vec4 acc = vec4(0.0, 0.0, 0.0, 2.0);
+    float StepSize = stepSize.r, alpha, vol;
     vec3 step = StepSize*dir, sumCol = vec3(0.0, 0.0, 0.0), surfaceLighting = vec3(0.0, 0.0, 0.0);
     float sumAlpha = 0.0, t12 = 1.0 / (t_function1max.a - t_function1min.a), lighting;
     bool inFlag = false, oldInFlag = false;
@@ -247,18 +313,18 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
     {
         iterator = iterator + step;
         vol = tex3D(iterator);
-        if (count <= 0 || sumAlpha > 0.97 || vol.a > 0.75)
+        if (count <= 0 || sumAlpha > 0.97 || vol > 0.75)
             break;
         // In/Out flag
         oldInFlag = inFlag;
-        inFlag = vol.a > t_function1min.a && vol.a <  t_function1max.a;
+        inFlag = vol > t_function1min.a && vol <  t_function1max.a;
         if (inFlag || oldInFlag != inFlag)
         {
             // If the transfer function is nonzero, the integration step is halved
             // First step
-            vec4 vol1 = tex3D(iterator - 0.5 * step);
+            float vol1 = tex3D(iterator - 0.5 * step);
             // Transfer function - isosceles triangle
-            alpha = min(vol1.a - t_function1min.a, t_function1max.a - vol1.a);
+            alpha = min(vol1 - t_function1min.a, t_function1max.a - vol1);
             alpha = opacityBarrier * max(0.0, alpha) * t12;
 //            color = mix(t_function1min.rgb, t_function1max.rgb, (vol1.a - t_function1min.a) * t12);
             vec3 N = CalcNormal(iterator);
@@ -272,7 +338,7 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
             sumAlpha += (1. - sumAlpha) * alpha * StepSize;
             // Second step
             // Transfer function - isosceles triangle
-            alpha = min(vol.a - t_function1min.a, t_function1max.a - vol.a);
+            alpha = min(vol - t_function1min.a, t_function1max.a - vol);
             alpha = opacityBarrier*max(0.0, alpha) * t12;
             alpha = dif * alpha;
  //           color = mix(t_function1min.rgb, t_function1max.rgb, (vol.a - t_function1min.a) * t12);
@@ -292,8 +358,37 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
         vec3 N = CalcNormal(iterator);
         float dif = max(0.0, dot(N, -lightDir));
         float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
+        float sigma = 0.8;
+        float sigma2 = sigma*sigma;
+        vec3 BackGroundColor = vec3(0.0, 0.0, 0.0);
+        float seg_norm_factor = 0.0;
+        vec3 sumColor = vec3(0.0, 0.0, 0.0);
+        
+        for (float i = -1.0; i < 1.5; i += 1.0)
+        {
+          for (float j = -1.0; j < 1.5; j += 1.0)
+          {
+            for (float k = -1.0; k < 1.5; k += 1.0)
+            {
+              float curRoi = tex3DRoi(iterator + vec3(i / texSize, j / texSize, k / volumeSizeZ));
+              float gaussB = exp( -(i*i + j*j + k*k) / (2.0 * sigma2));
+              //pick selected roi from 1d texture
+              float segInUse = texture2D(texRoiId, vec2(curRoi, 0.0)).r;
+              vec3 segColor = texture2D(texRoiColor, vec2(curRoi, 0.0)).rgb;
+              sumColor += mix(BackGroundColor, segColor, segInUse) * gaussB;
+              seg_norm_factor += segInUse * gaussB;
+            }
+          }
+        }
+        // color
+        if (seg_norm_factor > 0.01)
+          sumColor = sumColor / seg_norm_factor;
+//          float Roi = tex3DRoi(iterator);
         // The resulting color depends on the longevity of the material in the surface of the isosurface
-        surfaceLighting = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * vol.rgb;
+        surfaceLighting = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumColor;
+
+        // The resulting color depends on the longevity of the material in the surface of the isosurface
+//        surfaceLighting = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * vec3(vol, vol, vol);
     }
 //    acc.rgb = BRIGHTNESS_SCALE * brightness3D * sumCol + (1.0 - sumAlpha) * surfaceLighting;
     acc.rgb = BRIGHTNESS_SCALE * sumCol + (1.0 - sumAlpha) * surfaceLighting;
@@ -308,8 +403,8 @@ vec4 FullVolumeRender(vec3 start, vec3 dir, vec3 back) {
     const float BRIGHTNESS_SCALE = 2.0;
     const float OPACITY_SCALE = 5.0;
     vec3 iterator = start;
-    vec4 acc = vec4(0.0, 0.0, 0.0, 1.0), vol, valTF = vec4(0.0, 0.0, 0.0, 1.0);
-    float StepSize = stepSize.r;
+    vec4 acc = vec4(0.0, 0.0, 0.0, 1.0), valTF = vec4(0.0, 0.0, 0.0, 1.0);
+    float StepSize = stepSize.r, vol;
     vec3 step = StepSize*dir, sumCol = vec3(0.0, 0.0, 0.0);
     float sumAlpha = 0.0, lighting;
     int count = int(floor(length(iterator - back) / StepSize));
@@ -321,22 +416,31 @@ vec4 FullVolumeRender(vec3 start, vec3 dir, vec3 back) {
             break;
         iterator = iterator + step;
         vol = tex3D(iterator);
-        valTF = texture2D(texTF, vec2(vol.a, 0.0), 0.0);
+        #if MaskFlag == 1
+        {
+          vol = vol * tex3DMask(iterator);
+        }
+        #endif
+        valTF = texture2D(texTF, vec2(vol, 0.0), 0.0);
         if (valTF.a > 0.0)
         {
             // If the transfer function is nonzero, the integration step is halved
             // First step
-            vec4 vol1 = tex3D(iterator - 0.5 * step);
+            float vol1 = tex3D(iterator - 0.5 * step);
+            #if MaskFlag == 1
+            {
+              vol1 = vol1 * tex3DMask(iterator - 0.5 * step);
+            }
+            #endif
             // Transfer function - isosceles triangle
-            vec4 valTF1 = texture2D(texTF, vec2(vol1.a, 0.0), 0.0);
-            lighting = 0.5 * max(0.0, dot(normalize(vol1.rgb - vec3(0.5, 0.5, 0.5)), lightDir)) + 0.5;
+            vec4 valTF1 = texture2D(texTF, vec2(vol1, 0.0), 0.0);
+            lighting = 0.5 * max(0.0, dot(CalcNormal(iterator), lightDir)) + 0.5;
             // Volume integral on the interval StepSize
             sumCol += (1. - sumAlpha) * opacity * valTF1.a * valTF1.rgb * lighting;
 //            sumCol += (1. - sumAlpha) * valTF1.rgb * lighting;
             sumAlpha += (1. - sumAlpha) * opacity * valTF1.a;
             // Second step
             // Volume integral on the interval StepSize
-            lighting = 0.5 * max(0.0, dot(normalize(vol.rgb - vec3(0.5, 0.5, 0.5)), lightDir)) + 0.5;
             sumCol += (1. - sumAlpha) * opacity * valTF.a * valTF.rgb * lighting;
 //            sumCol += (1. - sumAlpha) * valTF.rgb * lighting;
             sumAlpha += (1. - sumAlpha) * opacity * valTF.a;
@@ -357,7 +461,12 @@ vec4 MipRender(vec3 start, vec3 dir, vec3 back) {
     for (int i = 0; i < MAX_I; i++)
     {
         iterator = iterator + step;
-        vol = tex3D(iterator).a;
+        vol = tex3D(iterator);
+        #if MaskFlag == 1
+        {
+          vol = vol * tex3DMask(iterator);
+        }
+        #endif
         finish = distance(iterator, back) - StepSize;
         if (finish < 0.0)
             break;
@@ -378,12 +487,17 @@ vec4 Isosurface(vec3 start, vec3 dir, vec3 back, float threshold) {
     vec3 left, right, step = StepSize*dir;
     int count = int(floor(length(iterator - back) / StepSize));
 
-    if (tex3D(iterator).a > threshold)
-        return vec4(iterator, 0.0);
+//    if (tex3D(iterator).a > threshold)
+//        return vec4(iterator, 0.0);
     //Search isosurface
     for (int i = 0; i < MAX_I; i++) {
       iterator = iterator + step;
-      vol = tex3D(iterator).a;
+      vol = tex3D(iterator);
+      #if MaskFlag == 1
+      {
+        vol = vol * tex3DMask(iterator);
+      }
+      #endif
       if (count <= 0 || vol > threshold)
         break;
       count--;
@@ -462,7 +576,7 @@ void main() {
   // Direct volume render
  #if isoRenderFlag==0
   {
-     float vol = tex3D(start.xyz).a;
+     float vol = tex3D(start.xyz);
      if (vol > t_function2min.a)
         acc.rgb = 0.75*vol * t_function2min.rgb;
      else
@@ -474,9 +588,9 @@ void main() {
   #endif
 #if isoRenderFlag==4
   {
-     vec4 vol = tex3D(start.xyz);
-     if (vol.a > 0.75)
-        acc.rgb = 0.75*vol.rgb;
+     float vol = tex3D(start.xyz);
+     if (vol > 0.75)
+        acc.rgb = 0.75 * vec3(1., 0., 0.);
      else
         acc.rgb = RoiVolumeRender(start.xyz + max(0., minIso.a - 0. / 128.)*dir, dir, back).rgb;
      acc.a = 1.0;
@@ -501,7 +615,7 @@ void main() {
     acc = Isosurface(start.xyz + max(0., minIso.a - 1. / 128.)*dir, dir, back, isoThreshold);
     if (acc.a < 1.9)
     {
-        float vol = tex3D(start.xyz).a;
+        float vol = tex3D(start.xyz);
         if (vol > t_function2min.a)
         {
             acc.rgb = 0.75*vol*t_function2min.rgb;

@@ -12,7 +12,7 @@ varying vec4 screenpos;
 
 
 void main() {
-  const float DELTA1 = 0.1;
+  const float DELTA1 = 0.05;
   const float DELTA2 = 0.05;
   vec4 acc = vec4(0.0, 0.0, 1.0, 1.0);
   // To increase the points of the beginning and end of the ray and its direction

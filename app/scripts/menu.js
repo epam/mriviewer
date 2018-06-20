@@ -37,6 +37,8 @@ import Graphics2d from '../../lib/scripts/graphics2d/graphics2d';
 import packageJson from '../../package.json';
 import Screenshot from '../../lib/scripts/utils/screenshot';
 import config from '../../tools/config';
+import NiftiSaver from '../../lib/scripts/savers/niisaver';
+import RoiPalette from '../../lib/scripts/loaders/roipalette';
 
 const VERSION = typeof '/* @echo PACKAGE_VERSION */' !== 'undefined' && '/* @echo PACKAGE_VERSION */' || '0.0.0-dev';
 
@@ -231,6 +233,29 @@ export default class Menu {
     }
   }
 
+  enableROIMode(enable) {
+    if (enable) {
+      $('#med3web-accordion-tools-3d').hide();
+      $('#med3web-3d-mip-head').parent().hide();
+      $('#med3web-setting-3d-hist').hide();
+      $('#med3web-setting-3d-transfer-func').hide();
+      $('#med3web-setting-3d-transfer-func-2d').hide();
+      $('#med3web-setting-3d-color').hide();
+
+      this.updateROIList();
+      $('#med3web-accordion-choose-roi').show();
+    } else {
+      $('#med3web-accordion-tools-3d').show();
+      $('#med3web-3d-mip-head').parent().show();
+      $('#med3web-setting-3d-hist').show();
+      $('#med3web-setting-3d-transfer-func').show();
+      $('#med3web-setting-3d-transfer-func-2d').show();
+      $('#med3web-setting-3d-color').show();
+
+      $('#med3web-accordion-choose-roi').hide();
+    }
+  }
+
   startProgressBar() {
     this.spinner.spin(this.progressBarContainerInner.get(0));
     this.progressBarLabel.text('0%');
@@ -255,6 +280,7 @@ export default class Menu {
       this.dicomTagsSliceSelector.find('option').length > 0) {
       this.showDicomTagsOnSliceIdx(0);
     }
+    this.enableROIMode(this.engine2d.m_isRoiVolume);
     this.panelMenuHide.hide();
   }
 
@@ -520,6 +546,62 @@ export default class Menu {
     }
   }
 
+  rgbaFloatStringToHex(str) {
+    const MAX_COLOR_COMP = 255;
+    const arrInt = str.split(' ').map(x => parseInt(parseFloat(x) * MAX_COLOR_COMP, 10));
+    const HEX_BASE = 16;
+    let r, g, b, a;
+    r = arrInt[0].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
+    g = arrInt[1].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
+    b = arrInt[2].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
+    a = arrInt[3].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
+    return `#${r}${g}${b}${a}`;
+  }
+
+  updateROIList() {
+    const btnGroup = $('#med3web-choose-roi-body .btn-roi-group');
+    btnGroup.empty();
+    const palette = new RoiPalette().getPalette();
+    const length = palette.length;
+    for (let i = 0; i < length; ++i) {
+      const item = palette[i];
+      const elem = createElement('label', {
+        class: 'btn btn-default btn-roi',
+        'data-roi-id': item.roiId,
+      }, [
+        createElement('span', {
+          class: 'btn-roi-check-icon',
+          'style': `color: ${this.rgbaFloatStringToHex(item.roiColor)};`,
+        }, [
+          createElement('span', { class: 'fa fa-square', }),
+          createElement('span', { class: 'fa fa-check-square', }),
+        ]),
+        createElement('input', {
+          type: 'checkbox',
+          'autocomplete': 'off',
+        }),
+        item.name,
+      ]);
+
+      const input = $(elem).find('input');
+      input.on('change', (e) => {
+        this.engine3d.volumeUpdater.updateSelectedRoi(item.roiId, $(e.target).prop('checked'));
+        if (btnGroup.find('.btn-roi').length === btnGroup.find('.btn-roi.active').length) {
+          $('#med3web-btn-roi-check-all input').prop('checked', true);
+          $('#med3web-btn-roi-check-all').addClass('active');
+        } else {
+          $('#med3web-btn-roi-check-all input').prop('checked', false);
+          $('#med3web-btn-roi-check-all').removeClass('active');
+        }
+      });
+
+      btnGroup.append(elem);
+      if (item.isBrain) {
+        $(elem).click();
+      }
+    }
+  }
+
   /** Initialize navigation bar */
   initNavBar() {
     // Callback for open local file from computer
@@ -717,30 +799,95 @@ export default class Menu {
         if (rendererType === '2d') {
           $('#med3web-panel-menu').show();
           $('#med3web-container-3d').hide();
+          $('#med3web-container-mpr').hide();
           $('#med3web-container-2d').show();
           this.app.setRenderMode(RenderMode.RENDER_MODE_2D);
         } else if (rendererType === '3d') {
           $('#med3web-panel-menu').show();
           $('#med3web-container-2d').hide();
+          $('#med3web-container-mpr').hide();
           $('#med3web-container-3d').show();
           this.app.setRenderMode(RenderMode.RENDER_MODE_3D);
           // move sliders
           if (newModeSuffix === '3d') {
             $('#med3web-accordion-render-mode .panel-heading.active [data-toggle=collapse]').click();
-            const settings = $('#med3web-accordion-tools-3d').detach();
+            let settings = $('#med3web-accordion-tools-3d').detach();
+            settings.prependTo($('#med3web-panel-menu-3d .panel-body')[0]);
+            settings = $('#med3web-accordion-choose-roi').detach();
             settings.prependTo($('#med3web-panel-menu-3d .panel-body')[0]);
             this.transFunc2dSlider.flush();
           } else if (newModeSuffix === '3d-fast') {
             $('#med3web-accordion-fast-render-mode .panel-heading.active [data-toggle=collapse]').click();
-            const settings = $('#med3web-accordion-tools-3d').detach();
+            let settings = $('#med3web-accordion-tools-3d').detach();
+            settings.prependTo($('#med3web-panel-menu-3d-fast .panel-body')[0]);
+            settings = $('#med3web-accordion-choose-roi').detach();
             settings.prependTo($('#med3web-panel-menu-3d-fast .panel-body')[0]);
             this.hist.flush();
           }
         } else if (rendererType === 'mpr') {
-          $('#med3web-panel-menu').hide();
+          $('#med3web-panel-menu').show();
+          $('#med3web-container-3d').hide();
+          $('#med3web-container-2d').hide();
+          $('#med3web-container-mpr').show();
+          this.app.setRenderMode(RenderMode.RENDER_MODE_MPR);
+          // console.log('MPR mode selected');
         }
       }
     });
+
+    const modalSaveAsNifti = $('#med3web-modal-save-as-nifti');
+    if (modalSaveAsNifti.length === 1) {
+      const textInput = modalSaveAsNifti.find('input[type=text]');
+      modalSaveAsNifti.find('[data-btn-role=save]').on('click', (e) => {
+        const COMPONENTS_N = 4;
+        const ALPHA_COMP_IDX = 3;
+        const volData = this.engine3d.volTexture.image.data;
+        const volSize = {
+          x: this.engine2d.m_volumeHeader.m_pixelWidth,
+          y: this.engine2d.m_volumeHeader.m_pixelHeight,
+          z: volData.length / COMPONENTS_N
+            / this.engine2d.m_volumeHeader.m_pixelWidth / this.engine2d.m_volumeHeader.m_pixelHeight,
+          pixdim1: this.engine2d.m_volumeBox.x / this.engine2d.m_volumeHeader.m_pixelWidth,
+          pixdim2: this.engine2d.m_volumeBox.y / this.engine2d.m_volumeHeader.m_pixelHeight,
+          pixdim3: this.engine2d.m_volumeBox.z / this.engine2d.m_volumeHeader.m_pixelDepth,
+        };
+        const sqrtZ = Math.sqrt(volSize.z);
+        const volDataPlain = new Uint8Array(volSize.x * volSize.y * volSize.z);
+        for (let z = 0; z < volSize.z; ++z) {
+          const newX = (z % sqrtZ);
+          const newY = (z - (z % sqrtZ)) / sqrtZ;
+          for (let y = 0; y < volSize.y; ++y) {
+            for (let x = 0; x < volSize.x; ++x) {
+              volDataPlain[volSize.y * volSize.x * z + volSize.x * y + x] = volData[
+                (newY * volSize.x * volSize.y * sqrtZ + y * sqrtZ * volSize.x + volSize.x * newX + x)
+                * COMPONENTS_N + ALPHA_COMP_IDX];
+            }
+          }
+        }
+        const niiArr = NiftiSaver.writeBuffer(volDataPlain, volSize);
+        const textToSaveAsBlob = new Blob([niiArr], { type: 'application/octet-stream' });
+        const textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+        const fileName = `${textInput.val()}.nii`;
+
+        const downloadLink = document.createElement('a');
+        downloadLink.download = fileName;
+        downloadLink.innerHTML = 'Download File';
+        downloadLink.href = textToSaveAsURL;
+        downloadLink.onclick = event => document.body.removeChild(event.target);
+        downloadLink.style.display = 'none';
+        document.body.appendChild(downloadLink);
+
+        downloadLink.click();
+
+        modalSaveAsNifti.find('input[type=text]').val('');
+        modalSaveAsNifti.modal('hide');
+        e.stopPropagation();
+      });
+      modalSaveAsNifti.on('shown.bs.modal', () => {
+        textInput.val('');
+        textInput.focus();
+      });
+    }
   }
   /** Initialize 3d menu panel */
   init3DPanel() {
@@ -949,6 +1096,16 @@ export default class Menu {
       });
     }
 
+    const eraserToggleBtn = $('#med3web-accordion-tools-3d [data-value=eraser]');
+    if (eraserToggleBtn.length === 1) {
+      eraserToggleBtn.on('click', () => {
+        setTimeout((engine3d, domEl) => {
+          engine3d.setEraserMode(domEl.getAttribute('aria-expanded') === 'true');
+        }, 0, this.engine3d, eraserToggleBtn.get(0));
+      });
+    }
+
+
     // slider 3d eraser radius
     this.slider3dEraserRadius = $('#med3web-slider-radius').get(0);
     if (this.slider3dEraserRadius) {
@@ -966,12 +1123,13 @@ export default class Menu {
         }),
       });
 
-      this.slider3dEraserRadius.noUiSlider.on('slide', (sliderValue) => { // eslint-disable-line no-unused-vars
-        // set 3d eraser radius value in voxels and remove "eslint-disable-line no-unused-vars" comment
+      this.slider3dEraserRadius.noUiSlider.on('slide', (sliderValue) => {
+        // be careful - sliderValue is string, smth like "10 vx"
+        this.engine3d.setEraserRadius(parseInt(sliderValue, 10));
       });
     }
 
-    // slider 3d eraser radius
+    // slider 3d eraser depth
     this.slider3dEraserDepth = $('#med3web-slider-depth').get(0);
     if (this.slider3dEraserDepth) {
       noUiSlider.create(this.slider3dEraserDepth, {
@@ -994,7 +1152,7 @@ export default class Menu {
     const resetBtn = $('#med3web-accordion-tools-3d .btn [data-value=reset-data]');
     if (resetBtn.length === 1) {
       resetBtn.on('click', () => {
-        // reset 3d data
+        this.engine3d.resetEraser();
       });
     }
 
@@ -1246,6 +1404,26 @@ export default class Menu {
       })
       .on('dragstart', () => self.engine3d.onMouseDown())
       .on('dragend', () => self.engine3d.onMouseUp()));
+
+    const input = $('#med3web-btn-roi-check-all input');
+    input.on('change', () => {
+      const btnGroup = $('#med3web-choose-roi-body .btn-roi-group');
+      const palette = new RoiPalette().getPalette();
+      const length = palette.length;
+      const buff = new Uint8Array(this.engine3d.volumeUpdater.numRois).fill(false);
+      if (input.prop('checked')) {
+        btnGroup.find('input').prop('checked', true);
+        btnGroup.find('.btn-roi').addClass('active');
+        for (let i = 0; i < length; ++i) {
+          const item = palette[i];
+          buff[item.roiId] = true;
+        }
+      } else {
+        btnGroup.find('input').prop('checked', false);
+        btnGroup.find('.btn-roi').removeClass('active');
+      }
+      this.engine3d.volumeUpdater.updateSelectedRoiMap(buff);
+    });
   }
 
   /** Initialize 2d menu panel */

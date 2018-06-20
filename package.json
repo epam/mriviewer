@@ -1,6 +1,6 @@
 {
   "name": "med3web",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Med3web - Dicom 2D/3D Web viewer",
   "author": "EPAM Systems",
   "private": true,
@@ -54,7 +54,7 @@
     "gulp-size": "^2.1.0",
     "gulp-sourcemaps": "^2.2.0",
     "gulp-stylelint": "^3.9.0",
-    "gulp-uglify": "^2.0.0",
+    "gulp-uglify-es": "^1.0.4",
     "gulp-useref": "^3.0.0",
     "gulp-util": "^3.0.8",
     "jsdoc-babel": "^0.3.0",
