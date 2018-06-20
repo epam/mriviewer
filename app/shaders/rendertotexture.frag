@@ -453,7 +453,9 @@ void main() {
   vec4 backTexel = texture2D(texBF, tc, 0.0);
   vec3 back = backTexel.xyz;
   vec4 start = texture2D(texFF, tc, 0.0);
-  if (start.a < 0.5)
+  //gl_FragColor = start;
+  //  return;
+  if (backTexel.a < 0.5)
   {
     gl_FragColor = acc;
     return;
