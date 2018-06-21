@@ -4,6 +4,7 @@
 uniform sampler2D texVolume;
 uniform sampler2D texVolumeRoi;
 uniform sampler2D texSegInUse;
+uniform sampler2D texRoiColor;
 varying vec2 texCoord;
 uniform vec3 texelSize;
 
@@ -140,12 +141,16 @@ vec3 getTex3DCoord(vec2 base) {
   return acc;
 }
 */
-float filterROI(vec3 base)
+
+vec4 filterROI(vec3 base)
 {
   float sigma = blurSigma;//0.965;
   float sigma2 = sigma*sigma;
   float norm_factor = 0.0;
-  float acc = 0.0;
+  vec4 acc = vec4(0.0, 0.0, 0.0, 0.0);
+  vec3 BackGroundColor = vec3(0.0, 0.0, 0.0);
+  vec3  sumColor = vec3(0.0, 0.0, 0.0);
+  // intencity
   for (float i = -2.0; i < 2.5; i += 1.0)
     for (float j = -2.0; j < 2.5; j += 1.0)
       for (float k = -2.0; k < 2.5; k += 1.0)
@@ -156,16 +161,27 @@ float filterROI(vec3 base)
         //pick selected roi from 1d texture
         float segInUse = texture2D(texSegInUse, vec2(curRoi, 0.0)).r;
         float val = max(0.5 * curVal, segInUse);
-        acc += val * gaussB;
+        acc.a += val * gaussB;
         norm_factor += gaussB;
       }
-  // intencity
-  acc = acc / norm_factor;
-//  acc = tex3DRoi(base);  //gl_FragColor = acc;
-//   float curRoi_ = tex3DRoi(base);
-//    acc = texture2D(texSegInUse, vec2(curRoi_, 0.0)).r;
-//    acc = tex3D(base);
-//    acc = curRoi_;
+  acc.a = acc.a / norm_factor;
+  // color
+  norm_factor = 0.0;
+  for (float i = -1.0; i < 1.5; i += 1.0)
+    for (float j = -1.0; j < 1.5; j += 1.0)
+      for (float k = -1.0; k < 1.5; k += 1.0)
+      {
+        float curVal = tex3D(base + vec3(texelSize.x * i, texelSize.y * j, texelSize.z * k));
+        float curRoi = tex3DRoi(base + vec3(texelSize.x * i, texelSize.y * j, texelSize.z * k));
+        float gaussB = exp( -(i*i + j*j + k*k) / (2.0 * sigma2));
+        //pick selected roi from 1d texture
+        float segInUse = texture2D(texSegInUse, vec2(curRoi, 0.0)).r;
+        vec3 segColor = texture2D(texRoiColor, vec2(curRoi, 0.0)).rgb;
+        sumColor += mix(BackGroundColor, segColor, segInUse) * gaussB;
+        norm_factor += segInUse * gaussB;
+      }
+  if (norm_factor > 0.01)
+    acc.rgb = sumColor / norm_factor;
   return acc;
 }
 
@@ -208,14 +224,16 @@ float filterBlur(vec3 base)
 
 void main() {
   vec3 base = getTex3DCoord(texCoord);
-//  vec4 acc = vec4(0.0, 0.0, 0.0, 0.0);
-  float acc = 0.0;
+  vec4 acc = vec4(0.0, 0.0, 0.0, 1.0);
   #if renderRoiMap == 1
     acc = filterROI(base);
+ //   acc = vec4(1.0, 1.0, 0.0, 0.95);
   #else
-    acc = filterBlur(base);
+    float val = filterBlur(base);
+    acc = vec4(val, val, val, 1);
   #endif
   //Apply contrast/brightness adjustments
   //acc = contrast * (acc - 0.5) + 0.5 + brightness;
-  gl_FragColor = vec4(acc, acc, acc, 1);
+  
+  gl_FragColor = acc;
 }
