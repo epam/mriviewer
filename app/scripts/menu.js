@@ -825,7 +825,7 @@ export default class Menu {
             this.hist.flush();
           }
         } else if (rendererType === 'mpr') {
-          $('#med3web-panel-menu').show();
+          $('#med3web-panel-menu').hide();
           $('#med3web-container-3d').hide();
           $('#med3web-container-2d').hide();
           $('#med3web-container-mpr').show();

@@ -239,6 +239,12 @@ html, body {
     }
   }
 
+  .canvas-container {
+    padding: 0;
+    margin: 0;
+    height: calc(100% - #{$top-navbar-height - 2px});
+  }
+
   #med3web-panel-menu {
     height: calc(100% - #{$top-navbar-height - 2px});
     overflow-y: auto;
@@ -377,9 +383,12 @@ html, body {
     width: 100%;
   }
 
+  #med3web-container-2d {
+    height: 100%;
+  }
+
 
   #med3web-container-3d, #med3web-container-2d, #med3web-container-mpr {
-    height: 100%;
     padding: 0;
     margin: 0;
 
