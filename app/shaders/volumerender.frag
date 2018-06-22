@@ -512,6 +512,34 @@ vec4 Isosurface(vec3 start, vec3 dir, vec3 back, float threshold) {
     }
     return acc;
   }
+vec4 IsosurfaceRoi(vec3 start, vec3 dir, vec3 back, float threshold, float StepSize) {
+    const int MAX_I = 1000;
+    vec3 iterator = start;
+    vec4 acc = vec4(0.0, 0.0, 0.0, 2.0);
+    float vol;
+    vec3 left, right, step = StepSize*dir;
+    int count = int(floor(length(iterator - back) / StepSize));
+    if (count < 2)
+        return acc;
+//    if (tex3D(iterator).a > threshold)
+//        return vec4(iterator, 0.0);
+    //Search isosurface
+    for (int i = 0; i < MAX_I; i++) {
+      iterator = iterator + step;
+      vol = tex3DRoi(iterator).a;
+//      if (length(iterator - back) < StepSize || vol > threshold)
+      if (count <= 0 || vol > threshold)
+        break;
+      count--;
+    }
+    //Refinement of the coordinate of the isosurface
+    if (count > 0) {
+      left = iterator - step;
+      iterator = CorrectionRoi(left, iterator, threshold);
+      acc = vec4(iterator, length(start - iterator));
+    }
+    return acc;
+  }
 
 
 
@@ -588,9 +616,9 @@ void main() {
   #endif
 #if isoRenderFlag==4
   {
-     float vol = tex3DRoi(start.xyz).a;
-     if (vol > 0.75)
-        acc.rgb = 0.75 * vec3(1., 0., 0.);
+     vec4 vol = tex3DRoi(start.xyz);
+     if (vol.a > 0.75)
+        acc.rgb = 0.75 * vol.rgb;
      else
         acc.rgb = RoiVolumeRender(start.xyz + max(0., minIso.a - 0. / 128.)*dir, dir, back).rgb;
      acc.a = 1.0;
@@ -629,6 +657,32 @@ void main() {
     return;
   }
   #endif
+    //Direct isosurface render
+  #if isoRenderFlag == 5
+  {
+    acc = IsosurfaceRoi(start.xyz, dir, back, 0.5 * isoThreshold + 0.5, stepSize.b);
+    if (acc.a < 1.9)
+    {
+        vec4 vol = tex3DRoi(start.xyz);
+        if (vol.a > t_function2min.a)
+            acc.rgb = 0.75 * vol.rgb;
+        else
+        {
+          const float AMBIENT = 0.3;
+          const float DIFFUSE = 0.7;
+          const float SPEC = 0.1;
+          const float SPEC_POV = 90.0;
+          vec3 N = CalcNormalRoi(acc.rgb);
+          float dif = max(0.0, dot(N, -lightDir));
+          float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
+          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
+        }  
+    }
+    gl_FragColor = acc;
+    return;
+  }
+  #endif
+
   // Render of maximum intensity
   #if isoRenderFlag== 2
   {

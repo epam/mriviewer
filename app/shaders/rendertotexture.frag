@@ -666,15 +666,39 @@ void main() {
   //Direct isosurface render
   #if isoRenderFlag == 1
   {
-    float valTF = texture2D(texTF, vec2(0.5, 0.0), 0.0).a;
     acc = Isosurface(start.xyz, dir, back, isoThreshold, stepSize.b);
     if (acc.a < 1.9)
     {
         float vol = tex3D(start.xyz);
         if (vol > t_function2min.a)
-            acc.rgb = 0.75 * vol * t_function2min.rgb;
+          acc.rgb = 0.75*vol*t_function2min.rgb;
         else
-            acc.rgb = CalcLighting(acc.rgb, dir);
+          acc.rgb = CalcLightingRoi(acc.rgb, dir);
+    }
+    gl_FragColor = acc;
+    return;
+  }
+  #endif
+  //Direct isosurface render
+  #if isoRenderFlag == 5
+  {
+    acc = IsosurfaceRoi(start.xyz, dir, back, 0.5 * isoThreshold + 0.5, stepSize.b);
+    if (acc.a < 1.9)
+    {
+        vec4 vol = tex3DRoi(start.xyz);
+        if (vol.a > t_function2min.a)
+            acc.rgb = 0.75 * vol.rgb;
+        else
+        {
+          const float AMBIENT = 0.3;
+          const float DIFFUSE = 0.7;
+          const float SPEC = 0.1;
+          const float SPEC_POV = 90.0;
+          vec3 N = CalcNormalRoi(acc.rgb);
+          float dif = max(0.0, dot(N, -lightDir));
+          float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
+          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
+        }  
     }
     gl_FragColor = acc;
     return;
