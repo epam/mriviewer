@@ -660,7 +660,7 @@ void main() {
     //Direct isosurface render
   #if isoRenderFlag == 5
   {
-    acc = IsosurfaceRoi(start.xyz, dir, back, 0.5 * isoThreshold + 0.5, stepSize.b);
+    acc = IsosurfaceRoi(start.xyz, dir, back, 0.3 * isoThreshold + 0.5, stepSize.b);
     if (acc.a < 1.9)
     {
         vec4 vol = tex3DRoi(start.xyz);
