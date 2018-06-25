@@ -673,7 +673,7 @@ void main() {
         if (vol > t_function2min.a)
           acc.rgb = 0.75*vol*t_function2min.rgb;
         else
-          acc.rgb = CalcLightingRoi(acc.rgb, dir);
+          acc.rgb = CalcLighting(acc.rgb, dir);
     }
     gl_FragColor = acc;
     return;
