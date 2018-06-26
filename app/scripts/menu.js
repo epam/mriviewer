@@ -1149,10 +1149,16 @@ export default class Menu {
         // set 3d eraser depth value in voxels and remove "eslint-disable-line no-unused-vars" comment
       });
     }
-    const resetBtn = $('#med3web-accordion-tools-3d .btn [data-value=reset-data]');
+    const resetBtn = $('#med3web-accordion-tools-3d .btn[data-value=reset-data]');
     if (resetBtn.length === 1) {
       resetBtn.on('click', () => {
         this.engine3d.resetEraser();
+      });
+    }
+    const undoBtn = $('#med3web-accordion-tools-3d .btn[data-value=undo]');
+    if (undoBtn.length === 1) {
+      undoBtn.on('click', () => {
+        // undo last step
       });
     }
 
