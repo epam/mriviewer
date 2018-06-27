@@ -1145,8 +1145,9 @@ export default class Menu {
           suffix: ' vx',
         }),
       });
-      this.slider3dEraserDepth.noUiSlider.on('slide', (sliderValue) => { // eslint-disable-line no-unused-vars
-        // set 3d eraser depth value in voxels and remove "eslint-disable-line no-unused-vars" comment
+      this.slider3dEraserDepth.noUiSlider.on('slide', (sliderValue) => {
+        // be careful - sliderValue is string, smth like "10 vx"
+        this.engine3d.setEraserDepth(parseInt(sliderValue, 10));
       });
     }
     const resetBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=reset]');
