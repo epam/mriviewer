@@ -31,7 +31,9 @@ uniform vec4 stepSize;
 uniform float texSize;
 uniform float tileCountX;
 uniform float volumeSizeZ;
-
+const int nOffsets = 16;
+uniform vec3 ssaoOffsets[nOffsets];
+varying mat4 local2ScreenMatrix;
 varying vec4 screenpos;
 
 float tex3D(vec3 vecCur) {
@@ -141,6 +143,86 @@ vec4 tex3DRoi(vec3 vecCur) {
 }
 
 /**
+* Calculation of normal
+*/
+vec3 CalcNormal(vec3 iter)
+{
+  float d = 1.0 / texSize;
+  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
+  // Culculate normal
+  N.x = tex3D(iter + dx) - tex3D(iter - dx);
+  N.y = tex3D(iter + dy) - tex3D(iter - dy);
+  N.z = tex3D(iter + dz) - tex3D(iter - dz);
+  N = normalize(N);
+  return N;
+}
+vec3 CalcNormalRoi(vec3 iter)
+{
+  float d = 1.0 / texSize;
+  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
+  // Culculate normal
+  N.x = tex3DRoi(iter + dx).a - tex3DRoi(iter - dx).a;
+  N.y = tex3DRoi(iter + dy).a - tex3DRoi(iter - dy).a;
+  N.z = tex3DRoi(iter + dz).a - tex3DRoi(iter - dz).a;
+  N = normalize(N);
+  return N;
+}
+
+
+/*****************AMBIENT OCCLUSION*********************************/
+
+/**
+* Rotate sampling vector around the normal
+*/
+vec3 transform2TangentSpace(vec3 normal, vec3 dir)
+{
+  vec3 binormal = cross(normal, vec3(1.0, 0.0, 0.0));
+  vec3 tangent = cross(normal, binormal);
+  mat3 rotate = mat3(tangent, binormal, normal);
+  return rotate * dir;
+}
+
+/**
+* Check tex3d space point depth against the isosurface map
+*/
+bool isPointVisible(vec3 texel) {
+  // Transform from tex3D space to screen
+  vec4 screenSpacePos = (local2ScreenMatrix * vec4(-texel.x, texel.y, texel.z, 1.0));
+  vec2 tc = screenSpacePos.xy / screenSpacePos.w * 0.5 + 0.5;
+  // Take start ray point, end ray point and check ray length against 'texel' position
+
+  vec4 backTexel = texture2D(texBF, tc, 0.0);
+  vec3 back = backTexel.xyz;
+  vec4 start = texture2D(texFF, tc, 0.0);
+  if (backTexel.a < 0.5)
+  {
+    return true;
+  }
+  vec3 dir = normalize(back - start.xyz);
+  float isosurfDist = texture2D(texIsoSurface, tc, 0.0).a;
+
+  return isosurfDist > length(start.xyz - texel);
+}
+
+/**
+* Compute SSAO coverage for a single point
+*/
+float computeSsaoShadow(vec3 isosurfPoint) {
+  float texelSize = 1.0 / texSize;
+  float coverage = 0.0;
+  float deltaCov = 1.0 / float(nOffsets);
+  // Go through all offsets
+  vec3 norm = CalcNormal(isosurfPoint);
+  for (int i = 0; i < nOffsets; ++i) {
+    if (isPointVisible(isosurfPoint + transform2TangentSpace(norm, ssaoOffsets[i] * texelSize * 9.0)))
+      coverage += deltaCov;
+  }
+  return coverage;
+}
+
+/*******************************************************************/
+
+/**
 * Isosurface color calculation
 */
 vec3 CalcLighting(vec3 iter, vec3 dir)
@@ -232,32 +314,6 @@ vec3 CorrectionRoi(vec3 left, vec3 right, float threshold) {
 /**
 * Direct volume render
 */
-/**
-* Calculation of normal
-*/
-vec3 CalcNormal(vec3 iter)
-{
-  float d = 1.0 / texSize;
-  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
-  // Culculate normal
-  N.x = tex3D(iter + dx) - tex3D(iter - dx);
-  N.y = tex3D(iter + dy) - tex3D(iter - dy);
-  N.z = tex3D(iter + dz) - tex3D(iter - dz);
-  N = normalize(N);
-  return N;
-}
-vec3 CalcNormalRoi(vec3 iter)
-{
-  float d = 1.0 / texSize;
-  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
-  // Culculate normal
-  N.x = tex3DRoi(iter + dx).a - tex3DRoi(iter - dx).a;
-  N.y = tex3DRoi(iter + dy).a - tex3DRoi(iter - dy).a;
-  N.z = tex3DRoi(iter + dz).a - tex3DRoi(iter - dz).a;
-  N = normalize(N);
-  return N;
-}
-
 vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
     const int MAX_I = 1000;
     const float BRIGHTNESS_SCALE = 5.0;
@@ -675,7 +731,7 @@ void main() {
           vec3 N = CalcNormalRoi(acc.rgb);
           float dif = max(0.0, dot(N, -lightDir));
           float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
-          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
+          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT /* * computeSsaoShadow(acc.rgb) */) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
         }  
     }
     gl_FragColor = acc;
