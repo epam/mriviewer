@@ -36,7 +36,7 @@ void main() {
   }
   #endif
 
-  if (length(iso1.rgb - iso2.rgb) > delta || length(iso1.rgb - iso3.rgb) > delta || length(iso1.rgb - iso4.rgb) > delta)
+//  if (length(iso1.rgb - iso2.rgb) > delta || length(iso1.rgb - iso3.rgb) > delta || length(iso1.rgb - iso4.rgb) > delta)
   {
     // The neighboring texels do not contain an isosurface
     discard;

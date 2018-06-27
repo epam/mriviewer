@@ -26,7 +26,9 @@ uniform vec4 stepSize;
 uniform float texSize;
 uniform float tileCountX;
 uniform float volumeSizeZ;
-
+const int nOffsets = 64;
+uniform vec3 ssaoOffsets[nOffsets];
+varying mat4 local2ScreenMatrix;
 varying vec4 screenpos;
 
 float tex3D(vec3 vecCur) {
@@ -134,14 +136,80 @@ vec4 tex3DRoi(vec3 vecCur) {
   vec4 colorSlice2 = texture2D(texVolume, clamp(texCoordSlice2 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0);
   return mix(colorSlice1, colorSlice2, zRatio);
 }
+vec3 CalcNormalRoi(vec3 iter)
+{
+  float d = 1.0 / texSize;
+  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
+  // Culculate normal
+  N.x = tex3DRoi(iter + dx).a - tex3DRoi(iter - dx).a;
+  N.y = tex3DRoi(iter + dy).a - tex3DRoi(iter - dy).a;
+  N.z = tex3DRoi(iter + dz).a - tex3DRoi(iter - dz).a;
+  N = normalize(N);
+  return N;
+}
+
+/*****************AMBIENT OCCLUSION*********************************/
+
+/**
+* Rotate sampling vector around the normal
+*/
+vec3 transform2TangentSpace(vec3 normal, vec3 dir)
+{
+  vec3 binormal = cross(normal, vec3(1.0, 0.0, 0.0));
+  vec3 tangent = cross(normal, binormal);
+  mat3 rotate = mat3(tangent, binormal, normal);
+  return rotate * dir;
+}
+
+/**
+* Check tex3d space point depth against the isosurface map
+*/
+/*
+  bool isPointVisible(vec3 texel) {
+  // Transform from tex3D space to screen
+  vec4 screenSpacePos = (local2ScreenMatrix * vec4(-texel.x, texel.y, texel.z, 1.0));
+  vec2 tc = screenSpacePos.xy / screenSpacePos.w * 0.5 + 0.5;
+  // Take start ray point, end ray point and check ray length against 'texel' position
+
+  vec4 backTexel = texture2D(texBF, tc, 0.0);
+  vec3 back = backTexel.xyz;
+  vec4 start = texture2D(texFF, tc, 0.0);
+  if (backTexel.a < 0.5)
+  {
+    return true;
+  }
+  vec3 dir = normalize(back - start.xyz);
+  float isosurfDist = texture2D(texIsoSurface, tc, 0.0).a;
+
+  return isosurfDist > length(start.xyz - texel);
+}
+*/
+/**
+* Compute SSAO coverage for a single point
+*/
+float computeSsaoShadow(vec3 isosurfPoint, vec3 norm, float Threshold) {
+  float texelSize = 1.0 / texSize;
+  float coverage = 0.0;
+  float deltaCov = 1.0 / float(nOffsets);
+  // Go through all offsets
+//  vec3 norm = CalcNormalRoi(isosurfPoint);
+  for (int i = 0; i < nOffsets; ++i) {
+//    if (isPointVisible(isosurfPoint + transform2TangentSpace(norm, ssaoOffsets[i] * texelSize * 9.0)))
+    if (tex3DRoi(isosurfPoint + transform2TangentSpace(norm, ssaoOffsets[i] * texelSize * 9.0)).a < Threshold)
+      coverage += deltaCov;
+  }
+  return coverage;
+}
+
+/*******************************************************************/
 
 /**
 * Isosurface color calculation
 */
-vec3 CalcLighting(vec3 iter, vec3 dir)
+vec3 CalcLighting(vec3 iter, vec3 dir, float isoThreshold)
 {
-  const float AMBIENT = 0.3;
-  const float DIFFUSE = 0.7;
+  const float AMBIENT = 0.5;
+  const float DIFFUSE = 0.5;
   const float SPEC = 0.1;
   const float SPEC_POV = 90.0;
 
@@ -182,7 +250,7 @@ vec3 CalcLighting(vec3 iter, vec3 dir)
   sumCol = mix(t_function2min.rgb, t_function2max.rgb, 1.-dif);
   float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
   // The resulting color depends on the longevity of the material in the surface of the isosurface
-  return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumCol;
+  return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT * computeSsaoShadow(iter, N, isoThreshold)) + SPEC * specular) * sumCol;
 }
 
 /**
@@ -263,17 +331,6 @@ vec3 CalcNormal(vec3 iter)
   N = normalize(N);
   return N;
 }
-vec3 CalcNormalRoi(vec3 iter)
-{
-  float d = 1.0 / texSize;
-  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
-  // Culculate normal
-  N.x = tex3DRoi(iter + dx).a - tex3DRoi(iter - dx).a;
-  N.y = tex3DRoi(iter + dy).a - tex3DRoi(iter - dy).a;
-  N.z = tex3DRoi(iter + dz).a - tex3DRoi(iter - dz).a;
-  N = normalize(N);
-  return N;
-}
 
 /**
 * Direct volume render
@@ -335,7 +392,7 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
     // Calculate the color of the isosurface
     if (count > 0) {
         iterator = Correction(iterator - step, iterator, t_function2min.a);
-        surfaceLighting = CalcLighting(iterator, dir);
+        surfaceLighting = CalcLighting(iterator, dir, t_function2min.a);
     }
     acc.rgb = BRIGHTNESS_SCALE * brightness3D * sumCol + (1.0 - sumAlpha) * surfaceLighting;
     return acc;
@@ -673,7 +730,7 @@ void main() {
         if (vol > t_function2min.a)
           acc.rgb = 0.75*vol*t_function2min.rgb;
         else
-          acc.rgb = CalcLighting(acc.rgb, dir);
+          acc.rgb = CalcLighting(acc.rgb, dir, isoThreshold);
     }
     gl_FragColor = acc;
     return;
@@ -682,22 +739,26 @@ void main() {
   //Direct isosurface render
   #if isoRenderFlag == 5
   {
-    acc = IsosurfaceRoi(start.xyz, dir, back, 0.3 * isoThreshold + 0.5, stepSize.b);
+    float Threshold = 0.3 * isoThreshold + 0.5;
+    acc = IsosurfaceRoi(start.xyz, dir, back, Threshold, stepSize.b);
     if (acc.a < 1.9)
     {
         vec4 vol = tex3DRoi(start.xyz);
-        if (vol.a > t_function2min.a)
+        if (vol.a > Threshold)//t_function2min.a)
             acc.rgb = 0.75 * vol.rgb;
         else
         {
-          const float AMBIENT = 0.3;
-          const float DIFFUSE = 0.7;
+          const float AMBIENT = 0.5;
+          const float DIFFUSE = 0.5;
           const float SPEC = 0.1;
           const float SPEC_POV = 90.0;
           vec3 N = CalcNormalRoi(acc.rgb);
           float dif = max(0.0, dot(N, -lightDir));
           float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
-          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
+//          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
+          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT * computeSsaoShadow(acc.rgb, N, Threshold) ) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
+//          acc.rgb = computeSsaoShadow(acc.rgb, Threshold) * vec3(1.0, 1.0, 1.0);
+          
         }  
     }
     gl_FragColor = acc;

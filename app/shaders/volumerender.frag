@@ -31,7 +31,7 @@ uniform vec4 stepSize;
 uniform float texSize;
 uniform float tileCountX;
 uniform float volumeSizeZ;
-const int nOffsets = 16;
+const int nOffsets = 64;
 uniform vec3 ssaoOffsets[nOffsets];
 varying mat4 local2ScreenMatrix;
 varying vec4 screenpos;
@@ -207,14 +207,14 @@ bool isPointVisible(vec3 texel) {
 /**
 * Compute SSAO coverage for a single point
 */
-float computeSsaoShadow(vec3 isosurfPoint) {
+float computeSsaoShadow(vec3 isosurfPoint, vec3 norm, float Threshold) {
   float texelSize = 1.0 / texSize;
   float coverage = 0.0;
   float deltaCov = 1.0 / float(nOffsets);
   // Go through all offsets
-  vec3 norm = CalcNormal(isosurfPoint);
   for (int i = 0; i < nOffsets; ++i) {
-    if (isPointVisible(isosurfPoint + transform2TangentSpace(norm, ssaoOffsets[i] * texelSize * 9.0)))
+//    if (isPointVisible(isosurfPoint + transform2TangentSpace(norm, ssaoOffsets[i] * texelSize * 9.0)))
+    if (tex3DRoi(isosurfPoint + transform2TangentSpace(norm, ssaoOffsets[i] * texelSize * 9.0)).a < Threshold)
       coverage += deltaCov;
   }
   return coverage;
@@ -225,10 +225,10 @@ float computeSsaoShadow(vec3 isosurfPoint) {
 /**
 * Isosurface color calculation
 */
-vec3 CalcLighting(vec3 iter, vec3 dir)
+vec3 CalcLighting(vec3 iter, vec3 dir, float isoThreshold)
 {
-  const float AMBIENT = 0.3;
-  const float DIFFUSE = 0.7;
+  const float AMBIENT = 0.5;
+  const float DIFFUSE = 0.5;
   const float SPEC = 0.1;
   const float SPEC_POV = 90.0;
 
@@ -269,7 +269,8 @@ vec3 CalcLighting(vec3 iter, vec3 dir)
   sumCol = mix(t_function2min.rgb, t_function2max.rgb, 1.-dif);
   float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
   // The resulting color depends on the longevity of the material in the surface of the isosurface
-  return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumCol;
+  return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT * computeSsaoShadow(iter, N, isoThreshold)) + SPEC * specular) * sumCol;
+
 }
 
 /**
@@ -373,7 +374,7 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
     // Calculate the color of the isosurface
     if (count > 0) {
         iterator = Correction(iterator - step, iterator, t_function2min.a);
-        surfaceLighting = CalcLighting(iterator, dir);
+        surfaceLighting = CalcLighting(iterator, dir, t_function2min.a);
     }
     acc.rgb = BRIGHTNESS_SCALE * brightness3D * sumCol + (1.0 - sumAlpha) * surfaceLighting;
     return acc;
@@ -707,7 +708,7 @@ void main() {
             return;
         }
         else
-            acc.rgb = CalcLighting(acc.rgb, dir);
+            acc.rgb = CalcLighting(acc.rgb, dir, isoThreshold);
     }
     gl_FragColor = acc;
     return;
@@ -716,22 +717,24 @@ void main() {
     //Direct isosurface render
   #if isoRenderFlag == 5
   {
-    acc = IsosurfaceRoi(start.xyz, dir, back, 0.3 * isoThreshold + 0.5, stepSize.b);
+    float Threshold = 0.3 * isoThreshold + 0.5;
+    acc = IsosurfaceRoi(start.xyz + max(0., minIso.a - 1. / 128.)*dir, dir, back, Threshold, stepSize.b);
     if (acc.a < 1.9)
     {
         vec4 vol = tex3DRoi(start.xyz);
-        if (vol.a > t_function2min.a)
+        if (vol.a > Threshold)//t_function2min.a)
             acc.rgb = 0.75 * vol.rgb;
         else
         {
-          const float AMBIENT = 0.3;
-          const float DIFFUSE = 0.7;
+          const float AMBIENT = 0.5;
+          const float DIFFUSE = 0.5;
           const float SPEC = 0.1;
           const float SPEC_POV = 90.0;
           vec3 N = CalcNormalRoi(acc.rgb);
           float dif = max(0.0, dot(N, -lightDir));
           float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
-          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT /* * computeSsaoShadow(acc.rgb) */) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
+          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT * computeSsaoShadow(acc.rgb, N, Threshold) ) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
+//          acc.rgb = computeSsaoShadow(acc.rgb, Threshold) * vec3(1.0, 1.0, 1.0);
         }  
     }
     gl_FragColor = acc;
