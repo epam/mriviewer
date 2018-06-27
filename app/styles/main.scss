@@ -239,6 +239,12 @@ html, body {
     }
   }
 
+  .canvas-container {
+    padding: 0;
+    margin: 0;
+    height: calc(100% - #{$top-navbar-height - 2px});
+  }
+
   #med3web-panel-menu {
     height: calc(100% - #{$top-navbar-height - 2px});
     overflow-y: auto;
@@ -295,13 +301,55 @@ html, body {
       }
     }
   }
-  #med3web-accordion-tools-3d, #med3web-accordion-choose-roi {
+  #med3web-accordion-tools-3d {
+    .btn-group {
+      display: flex;
+      justify-content: flex-start;
+      align-content: space-around;
+      flex-wrap: wrap;
+      .btn {
+        border: 0;
+        padding: 5px;
+        margin: 0px;
+        box-shadow: none;
+        .thumbnail {
+          margin-bottom: 0;
+        }
+      }
+      .btn.focus {
+        outline: none;
+        box-shadow: none;
+      }
+      .btn.focus>.thumbnail {
+        border-color: #dddddd;
+        border-width: 1px;
+      }
+      .btn.focus>.thumbnail:hover {
+        border-color: #aaaaaa;
+        border-width: 2px;
+      }
+      .btn.active>.thumbnail {
+        border-color: #0275d8;
+        border-width: 2px;
+      }
+      .btn>.thumbnail:hover {
+        border-color: #aaaaaa;
+        border-width: 2px;
+      }
+      .btn.active>.thumbnail:hover {
+        border-color: #0070d0;
+        border-width: 2px;
+      }
+    }
     .panel-title {
       justify-content: center;
     }
   }
 
   #med3web-accordion-choose-roi {
+    .panel-title {
+      justify-content: center;
+    }
     .btn-roi {
       width: 100%;
       text-align: left;
@@ -377,9 +425,12 @@ html, body {
     width: 100%;
   }
 
+  #med3web-container-2d {
+    height: 100%;
+  }
+
 
   #med3web-container-3d, #med3web-container-2d, #med3web-container-mpr {
-    height: 100%;
     padding: 0;
     margin: 0;
 
