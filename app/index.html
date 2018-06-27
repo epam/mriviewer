@@ -164,19 +164,32 @@
                         <label for="med3web-slider-opacity"><h4>Depth</h4></label>
                         <div class="med3web-slider" id="med3web-slider-depth"></div>
                       </div>
+                      <div class="btn-group row" data-toggle="buttons" style="margin: 0; padding: 0; width: 100%;">
+                        <label class="btn active col-xs-1" data-tooltip="tooltip" data-placement="bottom" title="Tangential Direction" data-tool-type="tan">
+                          <input type="radio" name="options" id="med3web-tool-3d-eraser-tan" autocomplete="off" checked>
+                          <a href="#" class="thumbnail">
+                            <img src="images/icon_tools3d_eraser_tan.png" alt="ico_tan">
+                          </a>
+                        </label>
+                        <label class="btn col-xs-1" data-tooltip="tooltip" data-placement="bottom" title="Normal Direction" data-tool-type="norm">
+                          <input type="radio" name="options" id="med3web-tool-3d-eraser-norm" autocomplete="off">
+                          <a href="#" class="thumbnail">
+                            <img src="images/icon_tools3d_eraser_norm.png" alt="ico_norm">
+                          </a>
+                        </label>
+                        <label class="col-xs-8"></label>
+                        <label class="btn col-xs-1 col-xs-offset-4"  id="med3web-tool-3d-eraser-undo" data-tooltip="tooltip" data-placement="bottom" title="Undo" data-tool-type="undo">
+                          <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                            <img src="images/icon_tools3d_undo.png" alt="ico_undo">
+                          </a>
+                        </label>
+                        <label class="btn col-xs-1"  id="med3web-tool-3d-eraser-reset" data-tooltip="tooltip" data-placement="bottom" title="Reset data" data-tool-type="reset">
+                          <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                            <img src="images/icon_tools3d_reset.png" alt="ico_reset">
+                          </a>
+                        </label>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <div class="panel panel-default">
-                  <div class="panel-heading" role="tab" style="width: 100%; background-color: #fff;">
-                    <h4 class="panel-title" style="display: flex;  padding: 0;">
-                      <a role="button" class="btn btn-default col-xs-6" data-value="undo" data-parent="#med3web-accordion-tools-3d">
-                        Undo
-                      </a>
-                      <a role="button" class="btn btn-default col-xs-6" data-value="reset-data" data-parent="#med3web-accordion-tools-3d">
-                        Reset data
-                      </a>
-                    </h4>
                   </div>
                 </div>
               </div>

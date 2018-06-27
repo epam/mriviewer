@@ -1149,16 +1149,33 @@ export default class Menu {
         // set 3d eraser depth value in voxels and remove "eslint-disable-line no-unused-vars" comment
       });
     }
-    const resetBtn = $('#med3web-accordion-tools-3d .btn[data-value=reset-data]');
+    const resetBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=reset]');
     if (resetBtn.length === 1) {
       resetBtn.on('click', () => {
         this.engine3d.resetEraser();
       });
     }
-    const undoBtn = $('#med3web-accordion-tools-3d .btn[data-value=undo]');
+    const undoBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=undo]');
     if (undoBtn.length === 1) {
       undoBtn.on('click', () => {
         // undo last step
+      });
+    }
+
+    const tanBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=tan]');
+    if (tanBtn.length === 1) {
+      tanBtn.on('click', () => {
+        if (!tanBtn.hasClass('active')) {
+          // switch to tangential direction
+        }
+      });
+    }
+    const normBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=norm]');
+    if (normBtn.length === 1) {
+      normBtn.on('click', () => {
+        if (!normBtn.hasClass('active')) {
+          // switch to normal direction
+        }
       });
     }
 
