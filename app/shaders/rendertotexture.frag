@@ -26,7 +26,7 @@ uniform vec4 stepSize;
 uniform float texSize;
 uniform float tileCountX;
 uniform float volumeSizeZ;
-const int nOffsets = 64;
+const int nOffsets = 32;
 uniform vec3 ssaoOffsets[nOffsets];
 varying mat4 local2ScreenMatrix;
 varying vec4 screenpos;
@@ -66,6 +66,74 @@ float tex3D(vec3 vecCur) {
   float colorSlice2 = texture2D(texVolume, clamp(texCoordSlice2 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
   return mix(colorSlice1, colorSlice2, zRatio);
 }
+float tex3DAO(vec3 vecCur) {
+  float tCX = 1.0 / tileCountX;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  // check outside of texture volume
+  if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
+    return 0.0;
+  float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ) + 0.5);
+  //float zRatio = (vecCur.z * (volumeSizeZ)) - zSliceNumber1;
+  //zSliceNumber1 = min(zSliceNumber1, volumeSizeZ - 1.0);
+  // As we use trilinear we go the next Z slice.
+  vec2 texCoord = vecCur.xy;
+  vec2 texCoordSlice1;
+  texCoordSlice1 = texCoord;
+
+  // Add an offset to the original UV coordinates depending on the row and column number.
+  texCoordSlice1.x += (mod(zSliceNumber1, tileCountX - 0.0 ));
+  texCoordSlice1.y += floor(zSliceNumber1 / (tileCountX - 0.0) );
+
+  // add 0.5 correction to texture coordinates
+  float xSize = float(xDim);
+  float ySize = float(yDim);
+  vec2 vAdd = vec2(0.5 / xSize, 0.5 / ySize);
+  texCoordSlice1 += vAdd;
+
+  // get colors from neighbour slices
+  float colorSlice1 = texture2D(texVolume, clamp(texCoordSlice1 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
+//  float colorSlice2 = texture2D(texVolume, clamp(texCoordSlice2 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
+//  return mix(colorSlice1, colorSlice2, zRatio);
+  return colorSlice1;
+}
+/*
+float tex3DAO(vec3 vecCur) {
+  float tCX = 1.0 / tileCountX;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  // check outside of texture volume
+  if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
+    return 0.0;
+  float zSliceNumber1 = floor(vecCur.z  * (volumeSizeZ) + 0.5);
+  float zRatio = (vecCur.z * (volumeSizeZ)) - zSliceNumber1;
+  //zSliceNumber1 = min(zSliceNumber1, volumeSizeZ - 1.0);
+  // As we use trilinear we go the next Z slice.
+  float zSliceNumber2 = min( zSliceNumber1 + 1.0, (volumeSizeZ - 1.0)); //Clamp to 255
+  vec2 texCoord = vecCur.xy;
+  vec2 texCoordSlice1, texCoordSlice2;
+  texCoordSlice1 = texCoordSlice2 = texCoord;
+
+  // Add an offset to the original UV coordinates depending on the row and column number.
+  texCoordSlice1.x += (mod(zSliceNumber1, tileCountX - 0.0 ));
+  texCoordSlice1.y += floor(zSliceNumber1 / (tileCountX - 0.0) );
+  // ratio mix between slices
+  
+  texCoordSlice2.x += (mod(zSliceNumber2, tileCountX - 0.0 ));
+  texCoordSlice2.y += floor(zSliceNumber2 / (tileCountX - 0.0));
+
+  // add 0.5 correction to texture coordinates
+  float xSize = float(xDim);
+  float ySize = float(yDim);
+  vec2 vAdd = vec2(0.5 / xSize, 0.5 / ySize);
+  texCoordSlice1 += vAdd;
+  texCoordSlice2 += vAdd;
+
+  // get colors from neighbour slices
+  float colorSlice1 = texture2D(texVolume, clamp(texCoordSlice1 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
+//  float colorSlice2 = texture2D(texVolume, clamp(texCoordSlice2 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
+//  return mix(colorSlice1, colorSlice2, zRatio);
+  return colorSlice1;
+}
+*/
 float tex3DMask(vec3 vecCur) {
   float tCX = 1.0 / tileCountX;
   vecCur = vecCur + vec3(0.5, 0.5, 0.5);
@@ -195,7 +263,7 @@ float computeSsaoShadow(vec3 isosurfPoint, vec3 norm, float Threshold) {
 //  vec3 norm = CalcNormalRoi(isosurfPoint);
   for (int i = 0; i < nOffsets; ++i) {
 //    if (isPointVisible(isosurfPoint + transform2TangentSpace(norm, ssaoOffsets[i] * texelSize * 9.0)))
-    if (tex3DRoi(isosurfPoint + transform2TangentSpace(norm, ssaoOffsets[i] * texelSize * 9.0)).a < Threshold)
+    if (tex3DAO(isosurfPoint + transform2TangentSpace(norm, ssaoOffsets[i] * texelSize * 9.0)) < Threshold)
       coverage += deltaCov;
   }
   return coverage;
@@ -206,7 +274,7 @@ float computeSsaoShadow(vec3 isosurfPoint, vec3 norm, float Threshold) {
 /**
 * Isosurface color calculation
 */
-vec3 CalcLighting(vec3 iter, vec3 dir, float isoThreshold)
+vec3 CalcLighting(vec3 iter, vec3 dir)
 {
   const float AMBIENT = 0.5;
   const float DIFFUSE = 0.5;
@@ -243,6 +311,35 @@ vec3 CalcLighting(vec3 iter, vec3 dir, float isoThreshold)
     r = r * tex3DMask(iter + dz);
   }
   #endif
+  N.z = r - l;
+  N = normalize(N);
+  // Calculate the density of the material in the vicinity of the isosurface
+  float dif = max(0.0, dot(N, -lightDir));
+  sumCol = mix(t_function2min.rgb, t_function2max.rgb, 1.-dif);
+  float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
+  // The resulting color depends on the longevity of the material in the surface of the isosurface
+  return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumCol;
+}
+
+vec3 CalcLightingAO(vec3 iter, vec3 dir, float isoThreshold)
+{
+  const float AMBIENT = 0.5;
+  const float DIFFUSE = 0.5;
+  const float SPEC = 0.1;
+  const float SPEC_POV = 90.0;
+
+  float d = 1.0 / texSize;
+  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N, sumCol = vec3(0.0);
+  // Culculate normal
+  float l, r;
+  l = tex3D(iter - dx);
+  r = tex3D(iter + dx);
+  N.x = r - l;
+  l = tex3D(iter - dy);
+  r = tex3D(iter + dy);
+  N.y = r - l;
+  l = tex3D(iter - dz);
+  r = tex3D(iter + dz);
   N.z = r - l;
   N = normalize(N);
   // Calculate the density of the material in the vicinity of the isosurface
@@ -392,7 +489,7 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
     // Calculate the color of the isosurface
     if (count > 0) {
         iterator = Correction(iterator - step, iterator, t_function2min.a);
-        surfaceLighting = CalcLighting(iterator, dir, t_function2min.a);
+        surfaceLighting = CalcLighting(iterator, dir);
     }
     acc.rgb = BRIGHTNESS_SCALE * brightness3D * sumCol + (1.0 - sumAlpha) * surfaceLighting;
     return acc;
@@ -692,7 +789,34 @@ void main() {
     return;
   }
   #endif
-
+  
+  //Direct isosurface render
+  #if isoRenderFlag == 1
+  {
+    acc = Isosurface(start.xyz, dir, back, isoThreshold, stepSize.b);
+    if (acc.a < 1.9)
+    {
+        float vol = tex3D(start.xyz);
+        if (vol > t_function2min.a)
+          acc.rgb = 0.75*vol*t_function2min.rgb;
+        else
+          acc.rgb = CalcLightingAO(acc.rgb, dir, isoThreshold);
+    }
+    gl_FragColor = acc;
+    return;
+  }
+  #endif
+ // Direct full volume render
+  #if isoRenderFlag == 3
+  {
+    acc = SkipZero(start.xyz, dir, back, stepSize.b);
+    if (acc.a < 1.9)
+      acc.rgb = FullVolumeRender(acc.rgb, dir, back).rgb;
+    gl_FragColor = acc;
+    return;
+  }
+  #endif
+  // Direct volume render with ROI
   #if isoRenderFlag == 4
   {
     float vol = tex3DRoi(start.xyz).a;
@@ -710,32 +834,6 @@ void main() {
   }
   #endif
 
-  #if isoRenderFlag == 3
-  {
-    acc = SkipZero(start.xyz, dir, back, stepSize.b);
-    if (acc.a < 1.9)
-      acc.rgb = FullVolumeRender(acc.rgb, dir, back).rgb;
-    gl_FragColor = acc;
-    return;
-  }
-  #endif
-
-  //Direct isosurface render
-  #if isoRenderFlag == 1
-  {
-    acc = Isosurface(start.xyz, dir, back, isoThreshold, stepSize.b);
-    if (acc.a < 1.9)
-    {
-        float vol = tex3D(start.xyz);
-        if (vol > t_function2min.a)
-          acc.rgb = 0.75*vol*t_function2min.rgb;
-        else
-          acc.rgb = CalcLighting(acc.rgb, dir, isoThreshold);
-    }
-    gl_FragColor = acc;
-    return;
-  }
-  #endif
   //Direct isosurface render
   #if isoRenderFlag == 5
   {
