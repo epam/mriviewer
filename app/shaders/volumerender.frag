@@ -31,7 +31,7 @@ uniform vec4 stepSize;
 uniform float texSize;
 uniform float tileCountX;
 uniform float volumeSizeZ;
-const int nOffsets = 32;
+const int nOffsets = 64;
 uniform vec3 ssaoOffsets[nOffsets];
 varying mat4 local2ScreenMatrix;
 varying vec4 screenpos;
@@ -271,8 +271,8 @@ float computeSsaoShadow(vec3 isosurfPoint, vec3 norm, float Threshold) {
 */
 vec3 CalcLighting(vec3 iter, vec3 dir)
 {
-  const float AMBIENT = 0.5;
-  const float DIFFUSE = 0.5;
+  const float AMBIENT = 0.3;
+  const float DIFFUSE = 0.7;
   const float SPEC = 0.1;
   const float SPEC_POV = 90.0;
 
@@ -339,10 +339,11 @@ vec3 CalcLightingAO(vec3 iter, vec3 dir, float isoThreshold)
   N = normalize(N);
   // Calculate the density of the material in the vicinity of the isosurface
   float dif = max(0.0, dot(N, -lightDir));
-  sumCol = mix(t_function2min.rgb, t_function2max.rgb, 1.-dif);
+//  sumCol = mix(t_function2min.rgb, t_function2max.rgb, 1.-dif);
   float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
   // The resulting color depends on the longevity of the material in the surface of the isosurface
-  return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT * computeSsaoShadow(iter, N, isoThreshold)) + SPEC * specular) * sumCol;
+//  return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT * computeSsaoShadow(iter, N, isoThreshold)) + SPEC * specular) * vec3(1.0, 0.0, 0.0);//sumCol;
+  return  0.5*(brightness3D + 1.5)*(AMBIENT * computeSsaoShadow(iter, N, isoThreshold) * t_function2max.rgb + (DIFFUSE * dif + SPEC * specular) * t_function2min.rgb);//sumCol;
 }
 
 /**
@@ -392,7 +393,7 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
     const float BRIGHTNESS_SCALE = 5.0;
     vec3 iterator = start;
     vec4 acc = vec4(0.0, 0.0, 0.0, 2.0);
-    float StepSize = stepSize.g, alpha, vol;
+    float StepSize = 1.3*stepSize.g, alpha, vol;
     vec3 step = StepSize*dir, color, sumCol = vec3(0.0, 0.0, 0.0), surfaceLighting = vec3(0.0, 0.0, 0.0);
     float sumAlpha = 0.0, t12 = 1.0 / (t_function1max.a - t_function1min.a), lighting;
     bool inFlag = false, oldInFlag = false;
@@ -462,7 +463,7 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
     vec3 iterator = start;
     vec4 acc = vec4(0.0, 0.0, 0.0, 2.0);
     float StepSize = stepSize.r, alpha, vol;
-    vec3 step = StepSize*dir, sumCol = vec3(0.0, 0.0, 0.0), surfaceLighting = vec3(0.0, 0.0, 0.0);
+    vec3 step = 1.3*StepSize*dir, sumCol = vec3(0.0, 0.0, 0.0), surfaceLighting = vec3(0.0, 0.0, 0.0);
     float sumAlpha = 0.0, t12 = 1.0 / (t_function1max.a - t_function1min.a), lighting;
     bool inFlag = false, oldInFlag = false;
     int count = int(floor(length(iterator - back) / StepSize));
@@ -535,7 +536,7 @@ vec4 FullVolumeRender(vec3 start, vec3 dir, vec3 back) {
     const float OPACITY_SCALE = 5.0;
     vec3 iterator = start;
     vec4 acc = vec4(0.0, 0.0, 0.0, 1.0), valTF = vec4(0.0, 0.0, 0.0, 1.0);
-    float StepSize = stepSize.r, vol;
+    float StepSize = 1.3*stepSize.r, vol;
     vec3 step = StepSize*dir, sumCol = vec3(0.0, 0.0, 0.0);
     float sumAlpha = 0.0, lighting;
     int count = int(floor(length(iterator - back) / StepSize));
@@ -614,7 +615,7 @@ vec4 Isosurface(vec3 start, vec3 dir, vec3 back, float threshold) {
     const int MAX_I = 1000;
     vec3 iterator = start;
     vec4 acc = vec4(0.0, 0.0, 0.0, 2.0);
-    float StepSize = stepSize.b, vol;
+    float StepSize = 1.3*stepSize.b, vol;
     vec3 left, right, step = StepSize*dir;
     int count = int(floor(length(iterator - back) / StepSize));
 
@@ -646,7 +647,7 @@ vec4 IsosurfaceRoi(vec3 start, vec3 dir, vec3 back, float threshold, float StepS
     vec3 iterator = start;
     vec4 acc = vec4(0.0, 0.0, 0.0, 2.0);
     float vol;
-    vec3 left, right, step = StepSize*dir;
+    vec3 left, right, step = 1.3*StepSize*dir;
     int count = int(floor(length(iterator - back) / StepSize));
     if (count < 2)
         return acc;
