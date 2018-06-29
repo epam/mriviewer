@@ -171,6 +171,22 @@ vec3 CalcNormalRoi(vec3 iter)
 
 /*****************AMBIENT OCCLUSION*********************************/
 
+mat3 rotationMatrix(vec3 axis, float angle)
+{
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    
+    return mat3(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,
+                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,
+                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c);
+}
+
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
 /**
 * Rotate sampling vector around the normal
 */
@@ -178,8 +194,9 @@ vec3 transform2TangentSpace(vec3 normal, vec3 dir)
 {
   vec3 binormal = cross(normal, vec3(1.0, 0.0, 0.0));
   vec3 tangent = cross(normal, binormal);
+  mat3 randRotate = rotationMatrix(normal, rand(normal.xy));
   mat3 rotate = mat3(tangent, binormal, normal);
-  return rotate * dir;
+  return rotate * randRotate * dir;
 }
 
 /**
