@@ -50,7 +50,7 @@
     "gulp-load-plugins": "^1.2.4",
     "gulp-mocha": "5.0.0",
     "gulp-plumber": "^1.0.1",
-    "gulp-sass": "^2.0.0",
+    "gulp-sass": "^4.0.1",
     "gulp-size": "^2.1.0",
     "gulp-sourcemaps": "^2.2.0",
     "gulp-stylelint": "^3.9.0",
