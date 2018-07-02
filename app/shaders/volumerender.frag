@@ -2,8 +2,10 @@
 * Main pass pixel shader
 */
 
-precision mediump float;
-precision mediump int;
+//precision mediump float;
+//precision mediump int;
+precision highp float;
+precision highp int;
 
 uniform float xDim;
 uniform float yDim;
@@ -179,7 +181,7 @@ vec4 tex3DRoi(vec3 vecCur) {
 vec3 CalcNormal(vec3 iter)
 {
   float d = 1.0 / texSize;
-  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
+  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, 1.0 / volumeSizeZ), N;
   // Culculate normal
   N.x = tex3D(iter + dx) - tex3D(iter - dx);
   N.y = tex3D(iter + dy) - tex3D(iter - dy);
@@ -190,7 +192,7 @@ vec3 CalcNormal(vec3 iter)
 vec3 CalcNormalRoi(vec3 iter)
 {
   float d = 1.0 / texSize;
-  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
+  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, 1.0 / volumeSizeZ), N;
   // Culculate normal
   N.x = tex3DRoi(iter + dx).a - tex3DRoi(iter - dx).a;
   N.y = tex3DRoi(iter + dy).a - tex3DRoi(iter - dy).a;
@@ -205,8 +207,8 @@ vec3 CalcNormalRoi(vec3 iter)
 mat3 rotationMatrix(vec3 axis, float angle)
 {
     axis = normalize(axis);
-    float s = sin(angle);
-    float c = cos(angle);
+    float s = sin(0.1*angle);
+    float c = cos(0.1*angle);
     float oc = 1.0 - c;
     
     return mat3(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,
@@ -288,13 +290,13 @@ float computeSsaoShadow(vec3 isosurfPoint, vec3 norm, float Threshold) {
 */
 vec3 CalcLighting(vec3 iter, vec3 dir)
 {
-  const float AMBIENT = 0.3;
-  const float DIFFUSE = 0.7;
+  const float AMBIENT = 0.5;
+  const float DIFFUSE = 0.5;
   const float SPEC = 0.1;
   const float SPEC_POV = 90.0;
 
   float d = 1.0 / texSize;
-  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N, sumCol = vec3(0.0);
+  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, 1.0 / volumeSizeZ), N, sumCol = vec3(0.0);
   // Culculate normal
   float l, r;
   l = tex3D(iter - dx);
@@ -335,13 +337,13 @@ vec3 CalcLighting(vec3 iter, vec3 dir)
 
 vec3 CalcLightingAO(vec3 iter, vec3 dir, float isoThreshold)
 {
-  const float AMBIENT = 0.5;
+  const float AMBIENT = 0.3;
   const float DIFFUSE = 0.5;
   const float SPEC = 0.1;
   const float SPEC_POV = 90.0;
 
   float d = 1.0 / texSize;
-  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N, sumCol = vec3(0.0);
+  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, 1.0 / volumeSizeZ), N, sumCol = vec3(0.0);
   // Culculate normal
   float l, r;
   l = tex3D(iter - dx);
@@ -356,11 +358,13 @@ vec3 CalcLightingAO(vec3 iter, vec3 dir, float isoThreshold)
   N = normalize(N);
   // Calculate the density of the material in the vicinity of the isosurface
   float dif = max(0.0, dot(N, -lightDir));
-//  sumCol = mix(t_function2min.rgb, t_function2max.rgb, 1.-dif);
+  sumCol = mix(t_function2min.rgb, t_function2max.rgb, 1.-dif);
   float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
   // The resulting color depends on the longevity of the material in the surface of the isosurface
 //  return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT * computeSsaoShadow(iter, N, isoThreshold)) + SPEC * specular) * vec3(1.0, 0.0, 0.0);//sumCol;
-  return  0.5*(brightness3D + 1.5)*(AMBIENT * computeSsaoShadow(iter, N, isoThreshold) * t_function2max.rgb + (DIFFUSE * dif + SPEC * specular) * t_function2min.rgb);//sumCol;
+//  return  0.5*(brightness3D + 1.5)*(AMBIENT * computeSsaoShadow(iter, N, isoThreshold) * t_function2max.rgb + (DIFFUSE * dif + SPEC * specular) * t_function2min.rgb);//sumCol;
+//  return  0.5*(brightness3D + 1.5)*(AMBIENT * t_function2max.rgb + DIFFUSE * (dif + SPEC * specular)* computeSsaoShadow(iter, N, isoThreshold) * t_function2min.rgb);//sumCol;
+  return  0.5*(brightness3D + 1.5)*(AMBIENT + (DIFFUSE * dif + SPEC * specular)* computeSsaoShadow(iter, N, isoThreshold)) * sumCol;//sumCol;
 }
 
 /**
@@ -775,7 +779,8 @@ void main() {
             return;
         }
         else
-            acc.rgb = CalcLightingAO(acc.rgb, dir, isoThreshold);
+//            acc.rgb = CalcLightingAO(acc.rgb, dir, isoThreshold);
+            acc.rgb = CalcLighting(acc.rgb, dir);
     }
     gl_FragColor = acc;
     return;

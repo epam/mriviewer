@@ -1159,7 +1159,7 @@ export default class Menu {
     const undoBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=undo]');
     if (undoBtn.length === 1) {
       undoBtn.on('click', () => {
-        // undo last step
+        this.engine3d.undoEraser();
       });
     }
 
@@ -1167,7 +1167,7 @@ export default class Menu {
     if (tanBtn.length === 1) {
       tanBtn.on('click', () => {
         if (!tanBtn.hasClass('active')) {
-          // switch to tangential direction
+          this.engine3d.setEraserNormalMode(false);
         }
       });
     }
@@ -1175,7 +1175,7 @@ export default class Menu {
     if (normBtn.length === 1) {
       normBtn.on('click', () => {
         if (!normBtn.hasClass('active')) {
-          // switch to normal direction
+          this.engine3d.setEraserNormalMode(true);
         }
       });
     }
