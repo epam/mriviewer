@@ -495,6 +495,7 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
             alpha = min(vol1 - t_function1min.a, t_function1max.a - vol1);
             alpha = opacityBarrier * max(0.0, alpha) * t12;
             color = mix(t_function1min.rgb, t_function1max.rgb, (vol1 - t_function1min.a) * t12);
+//            color = t_function1min.rgb;
             lighting = 0.5 * max(0.0, dot(CalcNormal(iterator), -lightDir)) + 0.5;
             // Volume integral on the interval StepSize
             sumCol += (1. - sumAlpha)* alpha * StepSize * color * lighting;
@@ -504,6 +505,7 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
             alpha = min(vol - t_function1min.a, t_function1max.a - vol);
             alpha = opacityBarrier*max(0.0, alpha) * t12;
             color = mix(t_function1min.rgb, t_function1max.rgb, (vol - t_function1min.a) * t12);
+//            color = t_function1min.rgb;
             // Volume integral on the interval StepSize
             sumCol += (1. - sumAlpha) * alpha * StepSize * color * lighting;
             sumAlpha += (1. - sumAlpha) * alpha * StepSize;

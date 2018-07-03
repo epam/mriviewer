@@ -414,7 +414,7 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
     const float BRIGHTNESS_SCALE = 5.0;
     vec3 iterator = start;
     vec4 acc = vec4(0.0, 0.0, 0.0, 2.0);
-    float StepSize = 1.3*stepSize.g, alpha, vol;
+    float StepSize = stepSize.g, alpha, vol;
     vec3 step = StepSize*dir, color, sumCol = vec3(0.0, 0.0, 0.0), surfaceLighting = vec3(0.0, 0.0, 0.0);
     float sumAlpha = 0.0, t12 = 1.0 / (t_function1max.a - t_function1min.a), lighting;
     bool inFlag = false, oldInFlag = false;
@@ -450,6 +450,7 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
             alpha = min(vol1 - t_function1min.a, t_function1max.a - vol1);
             alpha = opacityBarrier * max(0.0, alpha) * t12;
             color = mix(t_function1min.rgb, t_function1max.rgb, (vol1 - t_function1min.a) * t12);
+//            color = t_function1min.rgb;
             lighting = 0.5 * max(0.0, dot(CalcNormal(iterator), -lightDir)) + 0.5;
             // Volume integral on the interval StepSize
             sumCol += (1. - sumAlpha)* alpha * StepSize * color * lighting;
@@ -459,6 +460,7 @@ vec4 VolumeRender(vec3 start, vec3 dir, vec3 back) {
             alpha = min(vol - t_function1min.a, t_function1max.a - vol);
             alpha = opacityBarrier*max(0.0, alpha) * t12;
             color = mix(t_function1min.rgb, t_function1max.rgb, (vol - t_function1min.a) * t12);
+//            color = t_function1min.rgb;
             // Volume integral on the interval StepSize
             sumCol += (1. - sumAlpha) * alpha * StepSize * color * lighting;
             sumAlpha += (1. - sumAlpha) * alpha * StepSize;
@@ -557,7 +559,7 @@ vec4 FullVolumeRender(vec3 start, vec3 dir, vec3 back) {
     const float OPACITY_SCALE = 5.0;
     vec3 iterator = start;
     vec4 acc = vec4(0.0, 0.0, 0.0, 1.0), valTF = vec4(0.0, 0.0, 0.0, 1.0);
-    float StepSize = 1.3*stepSize.r, vol;
+    float StepSize = stepSize.r, vol;
     vec3 step = StepSize*dir, sumCol = vec3(0.0, 0.0, 0.0);
     float sumAlpha = 0.0, lighting;
     int count = int(floor(length(iterator - back) / StepSize));
@@ -636,7 +638,7 @@ vec4 Isosurface(vec3 start, vec3 dir, vec3 back, float threshold) {
     const int MAX_I = 1000;
     vec3 iterator = start;
     vec4 acc = vec4(0.0, 0.0, 0.0, 2.0);
-    float StepSize = 1.3*stepSize.b, vol;
+    float StepSize = stepSize.b, vol;
     vec3 left, right, step = StepSize*dir;
     int count = int(floor(length(iterator - back) / StepSize));
 
@@ -668,7 +670,7 @@ vec4 IsosurfaceRoi(vec3 start, vec3 dir, vec3 back, float threshold, float StepS
     vec3 iterator = start;
     vec4 acc = vec4(0.0, 0.0, 0.0, 2.0);
     float vol;
-    vec3 left, right, step = 1.3*StepSize*dir;
+    vec3 left, right, step = StepSize*dir;
     int count = int(floor(length(iterator - back) / StepSize));
     if (count < 2)
         return acc;
