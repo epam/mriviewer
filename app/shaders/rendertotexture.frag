@@ -535,7 +535,6 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
     bool inFlag = false, oldInFlag = false;
     int count = int(floor(length(iterator - back) / StepSize));
     vec3 color = vec3(1.0, 0.9, 0.8);
-//    vec3 color = tex3DRoi(iterator).rgb;
 
     // Calc volume integral
     for (int i = 0; i < MAX_I; i++)
@@ -556,7 +555,7 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
             alpha = min(vol1 - t_function1min.a, t_function1max.a - vol1);
             alpha = opacityBarrier * max(0.0, alpha) * t12;
 //            color = mix(t_function1min.rgb, t_function1max.rgb, (vol1.a - t_function1min.a) * t12);
-            vec3 N = CalcNormal(iterator);
+            vec3 N = CalcNormalRoi(iterator);
             lighting = 0.5 * max(0.0, dot(N, -lightDir)) + 0.5;
             float t = 1.0 - max(0.0, dot(N, dir));
 //            float dif = (1.0 - brightness3D) + brightness3D * t * t;
@@ -594,7 +593,6 @@ vec4 RoiVolumeRender(vec3 start, vec3 dir, vec3 back) {
     acc.rgb = BRIGHTNESS_SCALE * sumCol + (1.0 - sumAlpha) * surfaceLighting;
     return acc;
 }
-
 
 /**
 * Full direct volume render
@@ -879,7 +877,8 @@ void main() {
           float dif = max(0.0, dot(N, -lightDir));
           float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
 //          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
-          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT * computeSsaoShadow(acc.rgb, N, Threshold) ) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
+//          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT * computeSsaoShadow(acc.rgb, N, Threshold) ) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
+          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
 //          acc.rgb = computeSsaoShadow(acc.rgb, Threshold) * vec3(1.0, 1.0, 1.0);
           
         }  
