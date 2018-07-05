@@ -792,12 +792,15 @@ export default class Menu {
     if (buttonBrainSegmentation.length === 1) {
       buttonBrainSegmentation.on('click', () => {
         const TIMEOUT = 100;
+        const label = $('#med3web-container-progressbar-inner label');
+        label.hide();
         this.startProgressBar();
         setTimeout(() => {
           if (this.app) {
             this.app.performSkullRemove();
           }
           this.stopProgressBar();
+          label.show();
         }, TIMEOUT);
       });
     }
