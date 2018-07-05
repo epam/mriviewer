@@ -857,14 +857,11 @@ export default class Menu {
     if (modalSaveAsNifti.length === 1) {
       const textInput = modalSaveAsNifti.find('input[type=text]');
       modalSaveAsNifti.find('[data-btn-role=save]').on('click', (e) => {
-        const COMPONENTS_N = 4;
-        const ALPHA_COMP_IDX = 3;
         const volData = this.engine3d.volTexture.image.data;
         const volSize = {
           x: this.engine2d.m_volumeHeader.m_pixelWidth,
           y: this.engine2d.m_volumeHeader.m_pixelHeight,
-          z: volData.length / COMPONENTS_N
-            / this.engine2d.m_volumeHeader.m_pixelWidth / this.engine2d.m_volumeHeader.m_pixelHeight,
+          z: volData.length / this.engine2d.m_volumeHeader.m_pixelWidth / this.engine2d.m_volumeHeader.m_pixelHeight,
           pixdim1: this.engine2d.m_volumeBox.x / this.engine2d.m_volumeHeader.m_pixelWidth,
           pixdim2: this.engine2d.m_volumeBox.y / this.engine2d.m_volumeHeader.m_pixelHeight,
           pixdim3: this.engine2d.m_volumeBox.z / this.engine2d.m_volumeHeader.m_pixelDepth,
@@ -877,8 +874,7 @@ export default class Menu {
           for (let y = 0; y < volSize.y; ++y) {
             for (let x = 0; x < volSize.x; ++x) {
               volDataPlain[volSize.y * volSize.x * z + volSize.x * y + x] = volData[
-                (newY * volSize.x * volSize.y * sqrtZ + y * sqrtZ * volSize.x + volSize.x * newX + x)
-                * COMPONENTS_N + ALPHA_COMP_IDX];
+                (newY * volSize.x * volSize.y * sqrtZ + y * sqrtZ * volSize.x + volSize.x * newX + x)];
             }
           }
         }
