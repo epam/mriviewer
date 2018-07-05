@@ -787,6 +787,21 @@ export default class Menu {
       });
     }
 
+    // handler for brain segmentation button click
+    const buttonBrainSegmentation = $('#med3web-button-segmentation-brain');
+    if (buttonBrainSegmentation.length === 1) {
+      buttonBrainSegmentation.on('click', () => {
+        const TIMEOUT = 100;
+        this.startProgressBar();
+        setTimeout(() => {
+          if (this.app) {
+            this.app.performSkullRemove();
+          }
+          this.stopProgressBar();
+        }, TIMEOUT);
+      });
+    }
+
     // mode switching buttons
     $('[data-toggle=mode]').on('click', (e) => {
       // newModeSuffix is '2d' or '3d' depending on tab, pressed by user
