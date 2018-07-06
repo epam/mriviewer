@@ -47,7 +47,6 @@ const developerMode = true;
 /** Possible 3d render modes */
 export const renderModes = {
   VOLREND: 'volrend',
-  ISOSURF: 'isosurf',
 };
 
 /** Possible fast 3d render modes */
@@ -929,13 +928,6 @@ export default class Menu {
               'med3web-setting-3d-quality'];
             this.moveSliders(panelBodyId, sliderIds);
             this.engine3d.switchToFullVolumeRender();
-            break;
-          case renderModes.ISOSURF:
-            panelBodyId = 'med3web-3d-isosurf-body';
-            sliderIds = ['med3web-setting-3d-brightness', 'med3web-setting-3d-z-cut',
-              'med3web-setting-3d-quality'];
-            this.moveSliders(panelBodyId, sliderIds);
-            this.engine3d.switchToIsosurfRender();
             break;
           default:
             console.log('Unexpected 3d render mode');
