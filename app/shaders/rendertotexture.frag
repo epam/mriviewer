@@ -635,7 +635,7 @@ vec4 FullVolumeRender(vec3 start, vec3 dir, vec3 back) {
             #endif
             // Transfer function - isosceles triangle
             vec4 valTF1 = texture2D(texTF, vec2(vol1, 0.0), 0.0);
-            lighting = 0.5 * max(0.0, dot(CalcNormal(iterator), lightDir)) + 0.5;
+            lighting = 0.5 * max(0.0, dot(CalcNormal(iterator), -lightDir)) + 0.5;
             // Volume integral on the interval StepSize
             sumCol += (1. - sumAlpha) * opacity * valTF1.a * valTF1.rgb * lighting;
 //            sumCol += (1. - sumAlpha) * valTF1.rgb * lighting;
