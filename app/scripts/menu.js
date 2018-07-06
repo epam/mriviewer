@@ -128,7 +128,7 @@ export default class Menu {
     /** slider object for opacityTissue */
     this.sliderOpacity = null;
     /** slider object for brightness */
-    this.sliderBrightness = null;
+    this.sliderBrightness3d = null;
     /** slider object for z cut */
     this.sliderZCut = null;
     /** slider object for quality */
@@ -366,13 +366,13 @@ export default class Menu {
 
   /** Reset sliders values */
   resetUserInterface() {
-    $('#med3web-3d-volrend-head').find('a').click();
+    $('#med3web-3d-fast-volrend-head').find('a').click();
 
     this.sliderThresholdIsoSurf.noUiSlider.set(this.curDataType.thresholdIsosurf);
     this.sliderOpacity.noUiSlider.set(this.curDataType.opacityTissue);
     this.sliderTransFunc.noUiSlider.set([this.curDataType.thresholdTissue1, this.curDataType.thresholdTissue2,
       this.curDataType.thresholdIsosurf]);
-    this.sliderBrightness.noUiSlider.set(this.curDataType.brightness);
+    this.sliderBrightness3d.noUiSlider.set(this.curDataType.brightness);
     this.sliderZCut.noUiSlider.set(1);
     const VAL_400 = 400;
     this.sliderQuality.noUiSlider.set(VAL_400);
@@ -1059,9 +1059,9 @@ export default class Menu {
     }
 
     // slider 3d x cut
-    this.sliderBrightness = $('#med3web-slider-3d-brightness').get(0);
-    if (this.sliderBrightness) {
-      noUiSlider.create(this.sliderBrightness, {
+    this.sliderBrightness3d = $('#med3web-slider-3d-brightness').get(0);
+    if (this.sliderBrightness3d) {
+      noUiSlider.create(this.sliderBrightness3d, {
         start: 1,
         tooltips: true,
         step: 0.01,
@@ -1070,16 +1070,16 @@ export default class Menu {
           max: 1,
         },
       });
-      this.sliderBrightness.noUiSlider.on('slide', (sliderValue) => {
+      this.sliderBrightness3d.noUiSlider.on('slide', (sliderValue) => {
         // use 'sliderValue' as a float value [0; 1]
         this.engine3d.updateBrightness(sliderValue);
       });
 
-      this.sliderBrightness.noUiSlider.on('start', () => {
+      this.sliderBrightness3d.noUiSlider.on('start', () => {
         this.engine3d.onMouseDown();
       });
 
-      this.sliderBrightness.noUiSlider.on('end', () => {
+      this.sliderBrightness3d.noUiSlider.on('end', () => {
         this.engine3d.onMouseUp();
       });
     }
@@ -1364,7 +1364,7 @@ export default class Menu {
       this.sliderOpacity.noUiSlider.set(this.curDataType.opacityTissue);
       this.sliderTransFunc.noUiSlider.set([this.curDataType.thresholdTissue1, this.curDataType.thresholdTissue2,
         this.curDataType.thresholdIsosurf]);
-      this.sliderBrightness.noUiSlider.set(this.curDataType.brightness);
+      this.sliderBrightness3d.noUiSlider.set(this.curDataType.brightness);
       this.sliderZCut.noUiSlider.set(1);
       this.isHandleGreen = 0;
       $('#med3web-3d-color-red').click();
@@ -1499,9 +1499,9 @@ export default class Menu {
       });
     }
 
-    this.sliderBrightness = $('#med3web-slider-2d-brightness').get(0);
-    if (this.sliderBrightness) {
-      noUiSlider.create(this.sliderBrightness, {
+    this.sliderBrightness2d = $('#med3web-slider-2d-brightness').get(0);
+    if (this.sliderBrightness2d) {
+      noUiSlider.create(this.sliderBrightness2d, {
         start: 0,
         tooltips: true,
         step: 0.01,
@@ -1510,7 +1510,7 @@ export default class Menu {
           max: 0.5,
         },
       });
-      this.sliderBrightness.noUiSlider.on('slide', (sliderValue) => {
+      this.sliderBrightness2d.noUiSlider.on('slide', (sliderValue) => {
         this.engine2d.updateBrightnessFromSliders(sliderValue);
       });
     }
@@ -1617,7 +1617,7 @@ export default class Menu {
 
   resetSliders() {
     this.sliderContrast.noUiSlider.reset();
-    this.sliderBrightness.noUiSlider.reset();
+    this.sliderBrightness2d.noUiSlider.reset();
     this.sliderSmoothing.noUiSlider.reset();
     this.engine2d.m_contrastBrightTool.clear();
     this.engine2d.m_materialsTex2d.m_uniforms.contrast.value = this.engine2d.m_contrastBrightTool.m_contrast;
