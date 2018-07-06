@@ -1,6 +1,6 @@
 {
   "name": "med3web",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Med3web - Dicom 2D/3D Web viewer",
   "author": "EPAM Systems",
   "private": true,
