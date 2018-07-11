@@ -603,6 +603,19 @@ export default class Menu {
 
   /** Initialize navigation bar */
   initNavBar() {
+    $('.nav.navbar-nav .dropdown-menu a').on('click', () => {
+      const toggle = $('.navbar-toggle').is(':visible');
+      if (toggle) {
+        $('.navbar-collapse').collapse('hide');
+      }
+    });
+    $('.nav.navbar-nav .btn-group .navbar-btn').on('click', () => {
+      const toggle = $('.navbar-toggle').is(':visible');
+      if (toggle) {
+        $('.navbar-collapse').collapse('hide');
+        $('.tooltip').tooltip('hide');
+      }
+    });
     // Callback for open local file from computer
     const localOpen = $('#med3web-input-file-open-local');
     if (localOpen.length === 1) {
