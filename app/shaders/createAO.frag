@@ -66,7 +66,7 @@ vec3 getTex3DCoord(vec2 base) {
 
   return res - vec3(0.5, 0.5, 0.5);
 }
-
+/*
 
 float filterBlur(vec3 base)
 {
@@ -82,10 +82,6 @@ float filterBlur(vec3 base)
   float norm_factorB = 0.0;
 
   bool skip = false;
-  /*if(save_flag == false){
-      return acc;
-  }
- */ //Bilateral Filtering
   if(skip == false)
   {
     for (float i = -2.0; i < 2.5; i += 1.0)
@@ -103,7 +99,7 @@ float filterBlur(vec3 base)
   acc = acc / norm_factorB;
   return acc;
 }
-
+*/
 void main() {
   vec3 base = getTex3DCoord(texCoord);
   vec4 acc = vec4(0.0, 0.0, 0.0, 1.0);
