@@ -138,6 +138,7 @@ export default class Menu {
     this.slider3dEraserDepth = null;
     /** 2d toolbar */
     this.toolbar2d = $('#med3web-toolbar-2d');
+    this.toolbar3d = $('#med3web-accordion-tools-3d');
     this.curModeSuffix = $('[data-toggle=mode].active').attr('data-mode');
     /** table that contains all dicom tags */
     this.dicomTagsTable = $('#med3web-table-dicom-tags');
@@ -1169,20 +1170,45 @@ export default class Menu {
         this.engine3d.setEraserDepth(parseInt(sliderValue, 10));
       });
     }
-    const resetBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=reset]');
-    if (resetBtn.length === 1) {
+    /*const resetBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=reset]');
+    const undoBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=undo]');
+    const tanBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=tan]');
+    const normBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=norm]');
+    const fillBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=fill]');*/
+    this.toolbar3d.find('label').on('click', (e) => {
+      const tgt = $(e.currentTarget);
+      if (!(tgt.hasClass('active'))) {
+        const toolType = tgt.attr('data-tool-type');
+        switch (toolType) {
+          case 'reset':
+            this.engine3d.resetEraser();
+            break;
+          case 'undo':
+            this.engine3d.undoEraser();
+            break;
+          case 'tan':
+            this.engine3d.setEraserNormalMode(false);
+            break;
+          case 'norm':
+            this.engine3d.setEraserNormalMode(true);
+            break;
+          default:
+            this.engine3d.setEraserFillMode(true);
+            break;
+        }
+      }
+    });
+
+    /*if (resetBtn.length === 1) {
       resetBtn.on('click', () => {
         this.engine3d.resetEraser();
       });
     }
-    const undoBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=undo]');
     if (undoBtn.length === 1) {
       undoBtn.on('click', () => {
         this.engine3d.undoEraser();
       });
     }
-
-    const tanBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=tan]');
     if (tanBtn.length === 1) {
       tanBtn.on('click', () => {
         if (!tanBtn.hasClass('active')) {
@@ -1190,7 +1216,6 @@ export default class Menu {
         }
       });
     }
-    const normBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=norm]');
     if (normBtn.length === 1) {
       normBtn.on('click', () => {
         if (!normBtn.hasClass('active')) {
@@ -1198,6 +1223,13 @@ export default class Menu {
         }
       });
     }
+    if (fillBtn.length === 1) {
+      fillBtn.on('click', () => {
+        if (!fillBtn.hasClass('active')) {
+          this.engine3d.setEraserFillMode(true);
+        }
+      });
+    }*/
 
     // slider transfer function
     this.sliderTransFunc = $('#med3web-slider-3d-transfer-func').get(0);
