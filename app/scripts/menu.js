@@ -69,6 +69,13 @@ const tf2dSlider = {
   y: ['tfValue', 0, 0, 0.3, 0.12, 0, 0, 0.4, 0.8, 0.95, 1],
 };
 
+export const tools3d = {
+  RESET: 'reset',
+  UNDO: 'undo',
+  TAN: 'tan',
+  NORM: 'norm',
+  FILL: 'fill'
+};
 /** Create HTML element */
 function createElement(tag, attrs, content) {
   const element = document.createElement(tag);
@@ -1170,66 +1177,33 @@ export default class Menu {
         this.engine3d.setEraserDepth(parseInt(sliderValue, 10));
       });
     }
-    /*const resetBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=reset]');
-    const undoBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=undo]');
-    const tanBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=tan]');
-    const normBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=norm]');
-    const fillBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=fill]');*/
+
     this.toolbar3d.find('label').on('click', (e) => {
       const tgt = $(e.currentTarget);
       if (!(tgt.hasClass('active'))) {
         const toolType = tgt.attr('data-tool-type');
         switch (toolType) {
-          case 'reset':
+          case tools3d.RESET:
             this.engine3d.resetEraser();
             break;
-          case 'undo':
+          case tools3d.UNDO:
             this.engine3d.undoEraser();
             break;
-          case 'tan':
+          case tools3d.TAN:
             this.engine3d.setEraserNormalMode(false);
             break;
-          case 'norm':
+          case tools3d.NORM:
             this.engine3d.setEraserNormalMode(true);
             break;
-          default:
+          case tools3d.FILL:
             this.engine3d.setEraserFillMode(true);
+            break;
+          default:
+            console.log('Unexpected 3d tool');
             break;
         }
       }
     });
-
-    /*if (resetBtn.length === 1) {
-      resetBtn.on('click', () => {
-        this.engine3d.resetEraser();
-      });
-    }
-    if (undoBtn.length === 1) {
-      undoBtn.on('click', () => {
-        this.engine3d.undoEraser();
-      });
-    }
-    if (tanBtn.length === 1) {
-      tanBtn.on('click', () => {
-        if (!tanBtn.hasClass('active')) {
-          this.engine3d.setEraserNormalMode(false);
-        }
-      });
-    }
-    if (normBtn.length === 1) {
-      normBtn.on('click', () => {
-        if (!normBtn.hasClass('active')) {
-          this.engine3d.setEraserNormalMode(true);
-        }
-      });
-    }
-    if (fillBtn.length === 1) {
-      fillBtn.on('click', () => {
-        if (!fillBtn.hasClass('active')) {
-          this.engine3d.setEraserFillMode(true);
-        }
-      });
-    }*/
 
     // slider transfer function
     this.sliderTransFunc = $('#med3web-slider-3d-transfer-func').get(0);
