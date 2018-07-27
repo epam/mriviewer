@@ -69,6 +69,13 @@ const tf2dSlider = {
   y: ['tfValue', 0, 0, 0.3, 0.12, 0, 0, 0.4, 0.8, 0.95, 1],
 };
 
+export const tools3d = {
+  RESET: 'reset',
+  UNDO: 'undo',
+  TAN: 'tan',
+  NORM: 'norm',
+  FILL: 'fill'
+};
 /** Create HTML element */
 function createElement(tag, attrs, content) {
   const element = document.createElement(tag);
@@ -138,6 +145,7 @@ export default class Menu {
     this.slider3dEraserDepth = null;
     /** 2d toolbar */
     this.toolbar2d = $('#med3web-toolbar-2d');
+    this.toolbar3d = $('#med3web-accordion-tools-3d');
     this.curModeSuffix = $('[data-toggle=mode].active').attr('data-mode');
     /** table that contains all dicom tags */
     this.dicomTagsTable = $('#med3web-table-dicom-tags');
@@ -1169,35 +1177,33 @@ export default class Menu {
         this.engine3d.setEraserDepth(parseInt(sliderValue, 10));
       });
     }
-    const resetBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=reset]');
-    if (resetBtn.length === 1) {
-      resetBtn.on('click', () => {
-        this.engine3d.resetEraser();
-      });
-    }
-    const undoBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=undo]');
-    if (undoBtn.length === 1) {
-      undoBtn.on('click', () => {
-        this.engine3d.undoEraser();
-      });
-    }
 
-    const tanBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=tan]');
-    if (tanBtn.length === 1) {
-      tanBtn.on('click', () => {
-        if (!tanBtn.hasClass('active')) {
-          this.engine3d.setEraserNormalMode(false);
+    this.toolbar3d.find('label').on('click', (e) => {
+      const tgt = $(e.currentTarget);
+      if (!(tgt.hasClass('active'))) {
+        const toolType = tgt.attr('data-tool-type');
+        switch (toolType) {
+          case tools3d.RESET:
+            this.engine3d.resetEraser();
+            break;
+          case tools3d.UNDO:
+            this.engine3d.undoEraser();
+            break;
+          case tools3d.TAN:
+            this.engine3d.setEraserNormalMode(false);
+            break;
+          case tools3d.NORM:
+            this.engine3d.setEraserNormalMode(true);
+            break;
+          case tools3d.FILL:
+            this.engine3d.setEraserFillMode(true);
+            break;
+          default:
+            console.log('Unexpected 3d tool');
+            break;
         }
-      });
-    }
-    const normBtn = $('#med3web-accordion-tools-3d .btn[data-tool-type=norm]');
-    if (normBtn.length === 1) {
-      normBtn.on('click', () => {
-        if (!normBtn.hasClass('active')) {
-          this.engine3d.setEraserNormalMode(true);
-        }
-      });
-    }
+      }
+    });
 
     // slider transfer function
     this.sliderTransFunc = $('#med3web-slider-3d-transfer-func').get(0);
