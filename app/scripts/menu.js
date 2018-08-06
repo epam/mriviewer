@@ -69,6 +69,7 @@ const leftMenuMode = {
   LEFTMENUMODE_3D: '3d',
   LEFTMENUMODE_3DFAST: '3d-fast',
   LEFTMENUMODE_MPR: 'mpr',
+  LEFTMENUMODE_LEVELSET: 'level-set',
 };
 
 /** Initial values for transfer function 2d slider */
@@ -165,6 +166,7 @@ export default class Menu {
     this.panelAboutDescription = $('#med3web-panel-about-description');
     this.panelAboutCopyright = $('#med3web-panel-about-copyright');
     this.panelMenuHide = $('#med3web-menu-panel-hide');
+    this.panelLevelSet = $('#med3web-panel-menu-level-set');
     const strYear = new Date().getFullYear();
     const strDescr = packageJson.description;
     const strAuthor = packageJson.author;
@@ -221,6 +223,7 @@ export default class Menu {
     this.init3DPanel();
     this.init2DPanel();
     this.init2DToolbar();
+    this.initLevelSetPanel();
 
     // tooltips initialization
     $(() => {
@@ -842,8 +845,24 @@ export default class Menu {
       });
     }
 
+    // handler for brain segmentation button click
+    const buttonLevelSetSegmentation = $('#med3web-button-segmentation-level-set');
+    if (buttonLevelSetSegmentation.length === 1) {
+      buttonLevelSetSegmentation.on('click', () => {
+        $(`#med3web-panel-menu-${this.leftMenuMode}`).hide();
+        $(`#med3web-panel-menu-${leftMenuMode.LEFTMENUMODE_LEVELSET}`).show();
+        this.leftMenuMode = leftMenuMode.LEFTMENUMODE_LEVELSET;
+        $('.nav.navbar-nav.navbar-center .navbar-btn').addClass('disabled');
+        $('.nav.navbar-nav.navbar-center .dropdown-toggle').prop('disabled', true);
+      });
+    }
+
     // mode switching buttons
     $('[data-toggle=mode]').on('click', (e) => {
+      if ($(e.currentTarget).hasClass('disabled')) {
+        e.stopPropagation();
+        return;
+      }
       // newModeSuffix is '2d' or '3d' depending on tab, pressed by user
       const newModeSuffix = $(e.currentTarget).attr('data-mode');
       const rendererType = $(e.currentTarget).attr('data-renderer');
@@ -1661,6 +1680,31 @@ export default class Menu {
         }
         textArea.val('');
         oldText = null;
+      });
+    }
+  }
+
+  /** Initialize level set menu panel */
+  initLevelSetPanel() {
+    const buttonSave = this.panelLevelSet.find('.btn[data-btn-role=save]');
+    if (buttonSave.length === 1) {
+      buttonSave.on('click', () => {
+        $(`#med3web-panel-menu-${this.leftMenuMode}`).hide();
+        $(`#med3web-panel-menu-${leftMenuMode.LEFTMENUMODE_2D}`).show();
+        this.leftMenuMode = leftMenuMode.LEFTMENUMODE_2D;
+        $('.nav.navbar-nav.navbar-center .navbar-btn').removeClass('disabled');
+        $('.nav.navbar-nav.navbar-center .dropdown-toggle').prop('disabled', false);
+      });
+    }
+
+    const buttonCancel = this.panelLevelSet.find('.btn[data-btn-role=cancel]');
+    if (buttonCancel.length === 1) {
+      buttonCancel.on('click', () => {
+        $(`#med3web-panel-menu-${this.leftMenuMode}`).hide();
+        $(`#med3web-panel-menu-${leftMenuMode.LEFTMENUMODE_2D}`).show();
+        this.leftMenuMode = leftMenuMode.LEFTMENUMODE_2D;
+        $('.nav.navbar-nav.navbar-center .navbar-btn').removeClass('disabled');
+        $('.nav.navbar-nav.navbar-center .dropdown-toggle').prop('disabled', false);
       });
     }
   }
