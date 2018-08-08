@@ -56,6 +56,22 @@ export const fastRenderModes = {
   MIP: 'mip',
 };
 
+/** Possible render types */
+const renderType = {
+  RENDERTYPE_2D: '2d',
+  RENDERTYPE_3D: '3d',
+  RENDERTYPE_MPR: 'mpr',
+};
+
+/** Possible left menu modes */
+const leftMenuMode = {
+  LEFTMENUMODE_2D: '2d',
+  LEFTMENUMODE_3D: '3d',
+  LEFTMENUMODE_3DFAST: '3d-fast',
+  LEFTMENUMODE_MPR: 'mpr',
+  LEFTMENUMODE_LEVELSET: 'level-set',
+};
+
 /** Initial values for transfer function 2d slider */
 const tf2dSlider = {
   handleN: 10,
@@ -145,8 +161,13 @@ export default class Menu {
     this.slider3dEraserDepth = null;
     /** 2d toolbar */
     this.toolbar2d = $('#med3web-toolbar-2d');
+<<<<<<< HEAD
     this.toolbar3d = $('#med3web-accordion-tools-3d');
     this.curModeSuffix = $('[data-toggle=mode].active').attr('data-mode');
+=======
+    this.leftMenuMode = $('[data-toggle=mode].active').attr('data-mode');
+    this.rendererType = $('[data-toggle=mode].active').attr('data-renderer');
+>>>>>>> upstream/master
     /** table that contains all dicom tags */
     this.dicomTagsTable = $('#med3web-table-dicom-tags');
     this.dicomTagsSliceSelector = $('#med3web-select-choose-slice');
@@ -157,6 +178,7 @@ export default class Menu {
     this.panelAboutDescription = $('#med3web-panel-about-description');
     this.panelAboutCopyright = $('#med3web-panel-about-copyright');
     this.panelMenuHide = $('#med3web-menu-panel-hide');
+    this.panelLevelSet = $('#med3web-panel-menu-level-set');
     const strYear = new Date().getFullYear();
     const strDescr = packageJson.description;
     const strAuthor = packageJson.author;
@@ -213,6 +235,7 @@ export default class Menu {
     this.init3DPanel();
     this.init2DPanel();
     this.init2DToolbar();
+    this.initLevelSetPanel();
 
     // tooltips initialization
     $(() => {
@@ -790,20 +813,29 @@ export default class Menu {
     const buttonScreenshot = $('#med3web-button-screenshot');
     if (buttonScreenshot.length === 1) {
       buttonScreenshot.on('click', () => {
-        if (this.curModeSuffix === '2d') {
-          const SHOT_W = 800;
-          const SHOT_H = 600;
-          const containter2d = $('#med3web-container-2d');
-          containter2d.click();
-          Screenshot.makeScreenshot(this.engine2d, SHOT_W, SHOT_H);
-        } else {
-          const SHOT_W = 800;
-          const SHOT_H = 600;
-          const containter3d = $('#med3web-container-3d');
-          containter3d.click();
-          Screenshot.makeScreenshot(this.engine3d, SHOT_W, SHOT_H);
+        switch (this.renderType) {
+          case renderType.RENDERTYPE_2D: {
+            const SHOT_W = 800;
+            const SHOT_H = 600;
+            const containter2d = $('#med3web-container-2d');
+            containter2d.click();
+            Screenshot.makeScreenshot(this.engine2d, SHOT_W, SHOT_H);
+            break;
+          }
+          case renderType.RENDERTYPE_3D: {
+            const SHOT_W = 800;
+            const SHOT_H = 600;
+            const containter3d = $('#med3web-container-3d');
+            containter3d.click();
+            Screenshot.makeScreenshot(this.engine3d, SHOT_W, SHOT_H);
+            break;
+          }
+          case renderType.RENDERTYPE_MPR:
+            // TO DO: add mpr
+            break;
+          default:
+            console.log('Unexpected render type');
         }
-        // TO DO: add mpr
       });
     }
 
@@ -825,50 +857,86 @@ export default class Menu {
       });
     }
 
+    // handler for brain segmentation button click
+    const buttonLevelSetSegmentation = $('#med3web-button-segmentation-level-set');
+    if (buttonLevelSetSegmentation.length === 1) {
+      buttonLevelSetSegmentation.on('click', () => {
+        $(`#med3web-panel-menu-${this.leftMenuMode}`).hide();
+        $(`#med3web-panel-menu-${leftMenuMode.LEFTMENUMODE_LEVELSET}`).show();
+        this.leftMenuMode = leftMenuMode.LEFTMENUMODE_LEVELSET;
+        $('.nav.navbar-nav.navbar-center .navbar-btn').addClass('disabled');
+        $('.nav.navbar-nav.navbar-center .dropdown-toggle').prop('disabled', true);
+      });
+    }
+
     // mode switching buttons
     $('[data-toggle=mode]').on('click', (e) => {
+      if ($(e.currentTarget).hasClass('disabled')) {
+        e.stopPropagation();
+        return;
+      }
       // newModeSuffix is '2d' or '3d' depending on tab, pressed by user
       const newModeSuffix = $(e.currentTarget).attr('data-mode');
       const rendererType = $(e.currentTarget).attr('data-renderer');
-      if (newModeSuffix !== this.curModeSuffix) {
-        $(`#med3web-panel-menu-${this.curModeSuffix}`).hide();
+      if (newModeSuffix !== this.leftMenuMode) {
+        this.rendererType = rendererType;
+        switch (rendererType) {
+          case renderType.RENDERTYPE_2D:
+            $('#med3web-container-3d').hide();
+            $('#med3web-container-mpr').hide();
+            $('#med3web-container-2d').show();
+            this.app.setRenderMode(RenderMode.RENDER_MODE_2D);
+            break;
+          case renderType.RENDERTYPE_3D:
+            $('#med3web-container-2d').hide();
+            $('#med3web-container-mpr').hide();
+            $('#med3web-container-3d').show();
+            this.app.setRenderMode(RenderMode.RENDER_MODE_3D);
+            break;
+          case renderType.RENDERTYPE_MPR:
+            $('#med3web-container-3d').hide();
+            $('#med3web-container-2d').hide();
+            $('#med3web-container-mpr').show();
+            this.app.setRenderMode(RenderMode.RENDER_MODE_MPR);
+            // console.log('MPR mode selected');
+            break;
+          default:
+            console.log('Unexpected render mode');
+        }
+        $(`#med3web-panel-menu-${this.leftMenuMode}`).hide();
         $(`#med3web-panel-menu-${newModeSuffix}`).show();
-        this.curModeSuffix = newModeSuffix;
-        if (rendererType === '2d') {
-          $('#med3web-panel-menu').show();
-          $('#med3web-container-3d').hide();
-          $('#med3web-container-mpr').hide();
-          $('#med3web-container-2d').show();
-          this.app.setRenderMode(RenderMode.RENDER_MODE_2D);
-        } else if (rendererType === '3d') {
-          $('#med3web-panel-menu').show();
-          $('#med3web-container-2d').hide();
-          $('#med3web-container-mpr').hide();
-          $('#med3web-container-3d').show();
-          this.app.setRenderMode(RenderMode.RENDER_MODE_3D);
-          // move sliders
-          if (newModeSuffix === '3d') {
+        this.leftMenuMode = newModeSuffix;
+        switch (this.leftMenuMode) {
+          case leftMenuMode.LEFTMENUMODE_2D:
+            $('#med3web-panel-menu').show();
+            break;
+          case leftMenuMode.LEFTMENUMODE_3D: {
+            $('#med3web-panel-menu').show();
+            // move sliders
             $('#med3web-accordion-render-mode .panel-heading.active [data-toggle=collapse]').click();
             let settings = $('#med3web-accordion-tools-3d').detach();
             settings.prependTo($('#med3web-panel-menu-3d .panel-body')[0]);
             settings = $('#med3web-accordion-choose-roi').detach();
             settings.prependTo($('#med3web-panel-menu-3d .panel-body')[0]);
             this.transFunc2dSlider.flush();
-          } else if (newModeSuffix === '3d-fast') {
+            break;
+          }
+          case leftMenuMode.LEFTMENUMODE_3DFAST: {
+            $('#med3web-panel-menu').show();
+            // move sliders
             $('#med3web-accordion-fast-render-mode .panel-heading.active [data-toggle=collapse]').click();
             let settings = $('#med3web-accordion-tools-3d').detach();
             settings.prependTo($('#med3web-panel-menu-3d-fast .panel-body')[0]);
             settings = $('#med3web-accordion-choose-roi').detach();
             settings.prependTo($('#med3web-panel-menu-3d-fast .panel-body')[0]);
             this.hist.flush();
+            break;
           }
-        } else if (rendererType === 'mpr') {
-          $('#med3web-panel-menu').hide();
-          $('#med3web-container-3d').hide();
-          $('#med3web-container-2d').hide();
-          $('#med3web-container-mpr').show();
-          this.app.setRenderMode(RenderMode.RENDER_MODE_MPR);
-          // console.log('MPR mode selected');
+          case leftMenuMode.LEFTMENUMODE_MPR:
+            $('#med3web-panel-menu').hide();
+            break;
+          default:
+            console.log('Unexpected left menu mode');
         }
       }
     });
@@ -1622,6 +1690,31 @@ export default class Menu {
         }
         textArea.val('');
         oldText = null;
+      });
+    }
+  }
+
+  /** Initialize level set menu panel */
+  initLevelSetPanel() {
+    const buttonSave = this.panelLevelSet.find('.btn[data-btn-role=save]');
+    if (buttonSave.length === 1) {
+      buttonSave.on('click', () => {
+        $(`#med3web-panel-menu-${this.leftMenuMode}`).hide();
+        $(`#med3web-panel-menu-${leftMenuMode.LEFTMENUMODE_2D}`).show();
+        this.leftMenuMode = leftMenuMode.LEFTMENUMODE_2D;
+        $('.nav.navbar-nav.navbar-center .navbar-btn').removeClass('disabled');
+        $('.nav.navbar-nav.navbar-center .dropdown-toggle').prop('disabled', false);
+      });
+    }
+
+    const buttonCancel = this.panelLevelSet.find('.btn[data-btn-role=cancel]');
+    if (buttonCancel.length === 1) {
+      buttonCancel.on('click', () => {
+        $(`#med3web-panel-menu-${this.leftMenuMode}`).hide();
+        $(`#med3web-panel-menu-${leftMenuMode.LEFTMENUMODE_2D}`).show();
+        this.leftMenuMode = leftMenuMode.LEFTMENUMODE_2D;
+        $('.nav.navbar-nav.navbar-center .navbar-btn').removeClass('disabled');
+        $('.nav.navbar-nav.navbar-center .dropdown-toggle').prop('disabled', false);
       });
     }
   }

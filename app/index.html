@@ -127,6 +127,7 @@
                 </a>
                 <ul class="dropdown-menu">
                   <li id="med3web-button-segmentation-brain"><a href="#">Brain segmentation</a></li>
+                  <li id="med3web-button-segmentation-level-set"><a href="#">Level set segmentation</a></li>
                 </ul>
               </li>
 
@@ -470,6 +471,66 @@
                       </label>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel" id="med3web-panel-menu-level-set" style="display: none;">
+            <div class="panel-body">
+              <div class="panel-group" id="med3web-accordion-level-set" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                  <div class="panel-heading active" role="tab" id="med3web-level-set-center-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <span style="margin-right: 10px;">1.</span>
+                      <a role="button" data-toggle="collapse" data-value="center" data-parent="#med3web-accordion-level-set" href="#med3web-level-set-center-body" aria-expanded="true" aria-controls="med3web-level-set-center-body">
+                        Select center
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="med3web-level-set-center-body" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="med3web-level-set-center-head">
+                    <div class="panel-body">
+
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="med3web-level-set-radius-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <span style="margin-right: 10px;">2.</span>
+                      <a role="button" data-toggle="collapse" data-value="radius" data-parent="#med3web-accordion-level-set" href="#med3web-level-set-radius-body" aria-expanded="true" aria-controls="med3web-level-set-radius-body">
+                        Choose radius
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="med3web-level-set-radius-body" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="med3web-level-set-radius-head">
+                    <div class="panel-body">
+
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="med3web-level-set-grow-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <span style="margin-right: 10px;">3.</span>
+                      <a role="button" data-toggle="collapse" data-value="radius" data-parent="#med3web-accordion-level-set" href="#med3web-level-set-grow-body" aria-expanded="true" aria-controls="med3web-level-set-grow-body">
+                        Choose grow iteration number
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="med3web-level-set-grow-body" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="med3web-level-set-grow-head">
+                    <div class="panel-body">
+
+                    </div>
+                  </div>
+                </div>
+                <div class="btn-group row" data-toggle="buttons" style="margin-left: 0; margin-right: 0; margin-top: 10px; padding: 0; width: 100%;">
+                  <label class="col-xs-6 col-sm-6 col-md-4" style="padding: 0;">
+                    <a class="btn btn-primary" href="#" role="button" data-btn-role="save" style="width: 100%;">Save changes</a>
+                  </label>
+                  <label class="col-xs-1 col-sm-1 col-md-6" style="padding: 0;"></label>
+                  <label class="col-xs-5 col-sm-5 col-md-2" style="padding: 0;">
+                    <a class="btn btn-default" href="#" role="button" data-btn-role="cancel" style="width: 100%;">Cancel</a>
+                  </label>
                 </div>
               </div>
             </div>
