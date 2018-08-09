@@ -161,9 +161,13 @@ export default class Menu {
     this.slider3dEraserDepth = null;
     /** 2d toolbar */
     this.toolbar2d = $('#med3web-toolbar-2d');
+<<<<<<< HEAD
     this.toolbar3d = $('#med3web-accordion-tools-3d');
+    this.curModeSuffix = $('[data-toggle=mode].active').attr('data-mode');
+=======
     this.leftMenuMode = $('[data-toggle=mode].active').attr('data-mode');
     this.rendererType = $('[data-toggle=mode].active').attr('data-renderer');
+>>>>>>> upstream/master
     /** table that contains all dicom tags */
     this.dicomTagsTable = $('#med3web-table-dicom-tags');
     this.dicomTagsSliceSelector = $('#med3web-select-choose-slice');
