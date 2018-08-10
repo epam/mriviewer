@@ -152,6 +152,10 @@ export default class Menu {
     this.slider3dEraserRadius = null;
     /** slider object for 3d eraser depth */
     this.slider3dEraserDepth = null;
+    /** slider object for level set initial sphere radius */
+    this.sliderLevelSetRadius = null;
+    /** slider object for level set number of iterations */
+    this.sliderLevelSetIterations = null;
     /** 2d toolbar */
     this.toolbar2d = $('#med3web-toolbar-2d');
     this.leftMenuMode = $('[data-toggle=mode].active').attr('data-mode');
@@ -854,6 +858,12 @@ export default class Menu {
         this.leftMenuMode = leftMenuMode.LEFTMENUMODE_LEVELSET;
         $('.nav.navbar-nav.navbar-center .navbar-btn').addClass('disabled');
         $('.nav.navbar-nav.navbar-center .dropdown-toggle').prop('disabled', true);
+        $('#med3web-container-2d').show();
+        $('#med3web-container-mpr').hide();
+        $('#med3web-container-3d').hide();
+        this.app.setRenderMode(RenderMode.RENDER_MODE_2D);
+        this.engine2d.enableLevelSetMode();
+        // toDo: toDoLevelSet init level set
       });
     }
 
@@ -1684,27 +1694,170 @@ export default class Menu {
     }
   }
 
+  onClickLevelSet() {
+    this.panelLevelSet.find('.btn[data-btn-role=next-1-2]').removeClass('disabled');
+  }
+
   /** Initialize level set menu panel */
   initLevelSetPanel() {
+    this.sliderLevelSetRadius = $('#med3web-slider-level-set-radius').get(0);
+    if (this.sliderLevelSetRadius) {
+      noUiSlider.create(this.sliderLevelSetRadius, {
+        start: 4,
+        tooltips: true,
+        step: 1,
+        range: {
+          min: 4,
+          max: 5,
+        },
+        format: wNumb({
+          decimals: 0,
+          suffix: ' vx',
+        }),
+      });
+      this.sliderLevelSetRadius.noUiSlider.on('slide', (sliderValue) => {
+        this.engine2d.clearLevelSetCircle();
+        this.engine2d.drawLevelSetCircle(sliderValue);
+      });
+    }
+
+    this.sliderLevelSetIterations = $('#med3web-slider-level-set-iterations').get(0);
+    if (this.sliderLevelSetIterations) {
+      noUiSlider.create(this.sliderLevelSetIterations, {
+        start: 1,
+        tooltips: true,
+        step: 1,
+        range: {
+          min: 1,
+          max: 170,
+        },
+        padding: 0,
+        format: wNumb({
+          decimals: 0,
+        }),
+      });
+    }
+
+    const closeLevelSetMenu = () => {
+      const isLastStep = this.panelLevelSet.find('.panel-heading.active').is('#med3web-level-set-grow-head');
+      this.sliderLevelSetRadius.noUiSlider.reset();
+      this.sliderLevelSetIterations.removeAttribute('disabled');
+      this.sliderLevelSetIterations.noUiSlider.reset();
+      this.sliderLevelSetIterations.noUiSlider.updateOptions({
+        padding: 0,
+      });
+      this.panelLevelSet.find('.panel-collapse.collapse.in').collapse('toggle');
+      this.panelLevelSet.find('.panel-heading.active').removeClass('active');
+      $('#med3web-level-set-center-head').addClass('active');
+      $('#med3web-level-set-center-body').collapse('toggle');
+      $('.nav.navbar-nav.navbar-center .navbar-btn').removeClass('disabled');
+      $('.nav.navbar-nav.navbar-center .dropdown-toggle').prop('disabled', false);
+      if (isLastStep) {
+        $('#med3web-mode-3d-fast').click();
+      } else {
+        $('#med3web-mode-2d').click();
+      }
+      this.panelLevelSet.find('.btn[data-btn-role=save]').addClass('disabled');
+      this.panelLevelSet.find('.btn[data-btn-role=next-1-2]').addClass('disabled');
+      this.engine2d.disableLevelSetMode();
+    };
     const buttonSave = this.panelLevelSet.find('.btn[data-btn-role=save]');
     if (buttonSave.length === 1) {
       buttonSave.on('click', () => {
-        $(`#med3web-panel-menu-${this.leftMenuMode}`).hide();
-        $(`#med3web-panel-menu-${leftMenuMode.LEFTMENUMODE_2D}`).show();
-        this.leftMenuMode = leftMenuMode.LEFTMENUMODE_2D;
-        $('.nav.navbar-nav.navbar-center .navbar-btn').removeClass('disabled');
-        $('.nav.navbar-nav.navbar-center .dropdown-toggle').prop('disabled', false);
+        // toDo: toDoLevelSet save level set mask as general mask?
+        closeLevelSetMenu();
       });
     }
 
     const buttonCancel = this.panelLevelSet.find('.btn[data-btn-role=cancel]');
     if (buttonCancel.length === 1) {
       buttonCancel.on('click', () => {
-        $(`#med3web-panel-menu-${this.leftMenuMode}`).hide();
-        $(`#med3web-panel-menu-${leftMenuMode.LEFTMENUMODE_2D}`).show();
-        this.leftMenuMode = leftMenuMode.LEFTMENUMODE_2D;
-        $('.nav.navbar-nav.navbar-center .navbar-btn').removeClass('disabled');
-        $('.nav.navbar-nav.navbar-center .dropdown-toggle').prop('disabled', false);
+        closeLevelSetMenu();
+      });
+    }
+
+    const buttonNext12 = this.panelLevelSet.find('.btn[data-btn-role=next-1-2]');
+    if (buttonNext12.length === 1) {
+      buttonNext12.on('click', () => {
+        if (buttonNext12.hasClass('disabled')) {
+          return;
+        }
+        this.panelLevelSet.find('#med3web-level-set-center-head').removeClass('active');
+        this.panelLevelSet.find('#med3web-level-set-radius-head').addClass('active');
+        this.panelLevelSet.find('#med3web-level-set-center-body').collapse('toggle');
+        this.panelLevelSet.find('#med3web-level-set-radius-body').collapse('toggle');
+        const sliderValue = parseInt(this.sliderLevelSetRadius.noUiSlider.get(), 10);
+        this.engine2d.drawLevelSetCircle(sliderValue);
+        const center = this.engine2d.getLevelSetCenterVoxelCoordinates();
+        const newMaxVal = Math.min(center.x, center.y, center.z, this.engine2d.m_volumeHeader.m_pixelWidth - center.x,
+          this.engine2d.m_volumeHeader.m_pixelHeight - center.y, this.engine2d.m_volumeHeader.m_pixelDepth - center.z);
+        const MIN_RADIUS = 4;
+        const MAX_RADIUS = 5;
+        this.sliderLevelSetRadius.noUiSlider.updateOptions({
+          range: {
+            'min': MIN_RADIUS,
+            'max': newMaxVal > MIN_RADIUS ? newMaxVal : MAX_RADIUS,
+          },
+        });
+        // toDo: toDoLevelSet set sphere center, use center.x, center.y, center.z
+      });
+    }
+
+    const buttonNext23 = this.panelLevelSet.find('.btn[data-btn-role=next-2-3]');
+    if (buttonNext23.length === 1) {
+      buttonNext23.on('click', () => {
+        this.panelLevelSet.find('#med3web-level-set-radius-head').removeClass('active');
+        this.panelLevelSet.find('#med3web-level-set-grow-head').addClass('active');
+        this.panelLevelSet.find('#med3web-level-set-radius-body').collapse('toggle');
+        this.panelLevelSet.find('#med3web-level-set-grow-body').collapse('toggle');
+        $('#med3web-container-2d').hide();
+        $('#med3web-container-mpr').hide();
+        $('#med3web-container-3d').show();
+        this.app.setRenderMode(RenderMode.RENDER_MODE_3D);
+        this.engine3d.switchToVolumeRender();
+        // const sliderRadiusValue = parseInt(this.sliderLevelSetRadius.noUiSlider.get(), 10);
+        // toDo: toDoLevelSet set sphere radius, use sliderRadiusValue
+        // toDo: toDoLevelSet call prepare for first iteration
+      });
+    }
+
+    const buttonResetIterations = this.panelLevelSet.find('.btn[data-btn-role=reset-growing]');
+    if (buttonResetIterations.length === 1) {
+      buttonResetIterations.on('click', () => {
+        this.sliderLevelSetIterations.noUiSlider.updateOptions({
+          padding: 0,
+        });
+        this.sliderLevelSetIterations.noUiSlider.reset();
+        this.panelLevelSet.find('.btn[data-btn-role=start-growing]').removeClass('disabled');
+        buttonSave.addClass('disabled');
+        this.sliderLevelSetIterations.removeAttribute('disabled');
+        // toDo: toDoLevelSet call prepare for first iteration
+      });
+    }
+
+    const buttonStartIterations = this.panelLevelSet.find('.btn[data-btn-role=start-growing]');
+    if (buttonStartIterations.length === 1) {
+      buttonStartIterations.on('click', () => {
+        if (buttonStartIterations.hasClass('disabled')) {
+          return;
+        }
+        let sliderValue = parseInt(this.sliderLevelSetIterations.noUiSlider.get(), 10);
+        let paddingValue = sliderValue;
+        // const nextIterN = sliderValue - this.sliderLevelSetIterations.noUiSlider.options.padding[0];
+        // toDo: toDoLevelSet call perform next n iterations, use nextIterN
+        const maxValue = this.sliderLevelSetIterations.noUiSlider.options.range.max;
+        if (sliderValue === maxValue) {
+          const TWO = 2;
+          paddingValue = sliderValue - TWO;
+          sliderValue -= 1;
+          buttonStartIterations.addClass('disabled');
+          this.sliderLevelSetIterations.setAttribute('disabled', true);
+        }
+        this.sliderLevelSetIterations.noUiSlider.set(sliderValue + 1);
+        this.sliderLevelSetIterations.noUiSlider.updateOptions({
+          padding: [paddingValue, 0],
+        });
+        buttonSave.removeClass('disabled');
       });
     }
   }

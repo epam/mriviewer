@@ -476,14 +476,17 @@
                   <div class="panel-heading active" role="tab" id="med3web-level-set-center-head">
                     <h4 class="panel-title" style="display: flex;">
                       <span style="margin-right: 10px;">1.</span>
-                      <a role="button" data-toggle="collapse" data-value="center" data-parent="#med3web-accordion-level-set" href="#med3web-level-set-center-body" aria-expanded="true" aria-controls="med3web-level-set-center-body">
-                        Select center
+                      <a role="button" data-toggle="collapse" data-value="center" data-parent="#med3web-accordion-level-set" aria-expanded="true" aria-controls="med3web-level-set-center-body">
+                        Set center
                       </a>
                     </h4>
                   </div>
                   <div id="med3web-level-set-center-body" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="med3web-level-set-center-head">
                     <div class="panel-body">
-
+                      <p style="width: 100%;">Set initial point of growing region on the slice. Then click on the "Next" button.</p>
+                      <label class="pull-right" style="">
+                        <a class="btn btn-primary disabled" href="#" role="button" data-btn-role="next-1-2" style="width: 100%;">Next</a>
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -491,14 +494,18 @@
                   <div class="panel-heading" role="tab" id="med3web-level-set-radius-head">
                     <h4 class="panel-title" style="display: flex;">
                       <span style="margin-right: 10px;">2.</span>
-                      <a role="button" data-toggle="collapse" data-value="radius" data-parent="#med3web-accordion-level-set" href="#med3web-level-set-radius-body" aria-expanded="true" aria-controls="med3web-level-set-radius-body">
-                        Choose radius
+                      <a role="button" data-toggle="collapse" data-value="radius" data-parent="#med3web-accordion-level-set" aria-expanded="true" aria-controls="med3web-level-set-radius-body">
+                        Set radius
                       </a>
                     </h4>
                   </div>
-                  <div id="med3web-level-set-radius-body" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="med3web-level-set-radius-head">
+                  <div id="med3web-level-set-radius-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="med3web-level-set-radius-head">
                     <div class="panel-body">
-
+                      <p style="width: 100%; margin-bottom: 25px;">Set initial radius of growing region using slider. Try to fet desired object. Then click on the "Next" button.</p>
+                      <div class="med3web-slider" id="med3web-slider-level-set-radius"></div>
+                      <label class="pull-right" style="">
+                        <a class="btn btn-primary" href="#" role="button" data-btn-role="next-2-3" style="width: 100%;">Next</a>
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -506,20 +513,29 @@
                   <div class="panel-heading" role="tab" id="med3web-level-set-grow-head">
                     <h4 class="panel-title" style="display: flex;">
                       <span style="margin-right: 10px;">3.</span>
-                      <a role="button" data-toggle="collapse" data-value="radius" data-parent="#med3web-accordion-level-set" href="#med3web-level-set-grow-body" aria-expanded="true" aria-controls="med3web-level-set-grow-body">
-                        Choose grow iteration number
+                      <a role="button" data-toggle="collapse" data-value="radius" data-parent="#med3web-accordion-level-set" aria-expanded="true" aria-controls="med3web-level-set-grow-body">
+                        Set grow iteration number
                       </a>
                     </h4>
                   </div>
-                  <div id="med3web-level-set-grow-body" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="med3web-level-set-grow-head">
+                  <div id="med3web-level-set-grow-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="med3web-level-set-grow-head">
                     <div class="panel-body">
-
+                      <p style="width: 100%; margin-bottom: 25px;">Tune selection shape by modifying number of iterations.
+                        Be noticed that after clicking on the "Start growing" button you won't be able to undo it.
+                        However you may always reset all growing iteration by clicking on the "Reset growing" button.</p>
+                      <div class="med3web-slider" id="med3web-slider-level-set-iterations"></div>
+                      <label class="pull-left" style="">
+                        <a class="btn btn-default" href="#" role="button" data-btn-role="reset-growing" style="width: 100%;">Reset growing</a>
+                      </label>
+                      <label class="pull-right" style="">
+                        <a class="btn btn-primary" href="#" role="button" data-btn-role="start-growing" style="width: 100%;">Start growing</a>
+                      </label>
                     </div>
                   </div>
                 </div>
                 <div class="btn-group row" data-toggle="buttons" style="margin-left: 0; margin-right: 0; margin-top: 10px; padding: 0; width: 100%;">
                   <label class="col-xs-6 col-sm-6 col-md-4" style="padding: 0;">
-                    <a class="btn btn-primary" href="#" role="button" data-btn-role="save" style="width: 100%;">Save changes</a>
+                    <a class="btn btn-primary disabled" href="#" role="button" data-btn-role="save" style="width: 100%;">Save changes</a>
                   </label>
                   <label class="col-xs-1 col-sm-1 col-md-6" style="padding: 0;"></label>
                   <label class="col-xs-5 col-sm-5 col-md-2" style="padding: 0;">
