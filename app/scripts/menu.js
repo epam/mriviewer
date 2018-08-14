@@ -39,6 +39,7 @@ import Screenshot from '../../lib/scripts/utils/screenshot';
 import config from '../../tools/config';
 import NiftiSaver from '../../lib/scripts/savers/niisaver';
 import RoiPalette from '../../lib/scripts/loaders/roipalette';
+import ActiveVolume from '../../lib/scripts/actvolume/actvol';
 
 const VERSION = typeof '/* @echo PACKAGE_VERSION */' !== 'undefined' && '/* @echo PACKAGE_VERSION */' || '0.0.0-dev';
 
@@ -179,6 +180,9 @@ export default class Menu {
     this.panelAboutDescription.text(strDescr);
     this.panelAboutCopyright.text(strCopyright);
     // console.log(`strCopyright = ${strCopyright}`);
+
+    /** Active volume */
+    this.activeVolume = null;
 
     /** HTML element with data title  (or file name) */
     this.title = $('#med3web-menu-scene-title');
@@ -863,7 +867,8 @@ export default class Menu {
         $('#med3web-container-3d').hide();
         this.app.setRenderMode(RenderMode.RENDER_MODE_2D);
         this.engine2d.enableLevelSetMode();
-        // toDo: toDoLevelSet init level set
+        // create active volume object
+        this.activeVolume = new ActiveVolume();
       });
     }
 
@@ -1772,6 +1777,7 @@ export default class Menu {
       buttonSave.on('click', () => {
         // toDo: toDoLevelSet save level set mask as general mask?
         closeLevelSetMenu();
+        this.activeVolume = null;
       });
     }
 
@@ -1806,6 +1812,8 @@ export default class Menu {
           },
         });
         // toDo: toDoLevelSet set sphere center, use center.x, center.y, center.z
+        // console.log(`levelSet.setSphereCenter = ${center.x},${center.y},${center.z} `);
+        this.activeVolume.setSphereCenter(center.x, center.y, center.z);
       });
     }
 
@@ -1821,9 +1829,18 @@ export default class Menu {
         $('#med3web-container-3d').show();
         this.app.setRenderMode(RenderMode.RENDER_MODE_3D);
         this.engine3d.switchToVolumeRender();
-        // const sliderRadiusValue = parseInt(this.sliderLevelSetRadius.noUiSlider.get(), 10);
         // toDo: toDoLevelSet set sphere radius, use sliderRadiusValue
+        const sliderRadiusValue = parseInt(this.sliderLevelSetRadius.noUiSlider.get(), 10);
+        // console.log(`levelSet.setSphereRadius = ${sliderRadiusValue} `);
+        this.activeVolume.setSphereRadius(sliderRadiusValue, sliderRadiusValue, sliderRadiusValue);
         // toDo: toDoLevelSet call prepare for first iteration
+        const header = this.engine2d.m_volumeHeader;
+        const xDim = header.m_pixelWidth;
+        const yDim = header.m_pixelHeight;
+        const zDim = header.m_pixelDepth;
+        const pixelsSrcByte = this.engine2d.m_volumeData;
+        console.log(`levelSet.prepareForFirstIteration. volDim = ${xDim}*${yDim}*${zDim} `);
+        this.activeVolume.create(xDim, yDim, zDim, pixelsSrcByte);
       });
     }
 
