@@ -1716,8 +1716,14 @@ export default class Menu {
         }),
       });
       this.sliderLevelSetRadius.noUiSlider.on('slide', (sliderValue) => {
+        // sliderValue is array with 1 element (string) in format 'XXX vx'
+        const strVal = sliderValue[0];
+        const SUFFIX_LEN = 3;
+        const strDig = strVal.substring(0, strVal.length - SUFFIX_LEN);
+        const DEC = 10;
+        const radVal = parseInt(strDig, DEC);
         this.engine2d.clearLevelSetCircle();
-        this.engine2d.drawLevelSetCircle(sliderValue);
+        this.engine2d.drawLevelSetCircle(radVal);
       });
     }
 
