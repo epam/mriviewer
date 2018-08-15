@@ -22,6 +22,8 @@ under the License.
  * @module app/scripts/menu
  */
 
+// global imports
+
 import noUiSlider from 'nouislider'; // eslint-disable-line no-unused-vars
 import c3 from 'c3'; // eslint-disable-line no-unused-vars
 // eslint-disable-next-line
@@ -32,6 +34,8 @@ import Spinner from 'spin'; // eslint-disable-line no-unused-vars
 import jsPDF from 'jspdf'; // eslint-disable-line no-unused-vars
 import 'jspdf-autotable'; // eslint-disable-line no-unused-vars
 import wNumb from 'wnumb'; // eslint-disable-line no-unused-vars
+
+// project imports
 import { loadFileType, RenderMode, LoadState } from '../../lib/scripts/med3web';
 import Graphics2d from '../../lib/scripts/graphics2d/graphics2d';
 import packageJson from '../../package.json';
@@ -1735,7 +1739,7 @@ export default class Menu {
     this.sliderLevelSetIterations = $('#med3web-slider-level-set-iterations').get(0);
     if (this.sliderLevelSetIterations) {
       noUiSlider.create(this.sliderLevelSetIterations, {
-        start: 1,
+        start: 5,
         tooltips: true,
         step: 1,
         range: {
@@ -1839,8 +1843,44 @@ export default class Menu {
         const yDim = header.m_pixelHeight;
         const zDim = header.m_pixelDepth;
         const pixelsSrcByte = this.engine2d.m_volumeData;
-        console.log(`levelSet.prepareForFirstIteration. volDim = ${xDim}*${yDim}*${zDim} `);
-        this.activeVolume.create(xDim, yDim, zDim, pixelsSrcByte);
+        // console.log(`levelSet.prepareForFirstIteration. volDim = ${xDim}*${yDim}*${zDim} `);
+        const okCreate = this.activeVolume.create(xDim, yDim, zDim, pixelsSrcByte);
+        if (okCreate !== 1) {
+          console.log('Error ActiveVolume.create');
+        }
+        // create thjree js sphere to render
+        const okCreateSphere = this.activeVolume.createGeoSphere();
+        if (okCreateSphere !== 1) {
+          console.log('Error ActiveVolume.createGeoSphere');
+        }
+
+        // add render sphere to 3d scene
+        const geoThreeJs = this.activeVolume.createThreeJsGeoFromSphere();
+        this.engine3d.addSphereToSphereScene(geoThreeJs);
+
+        // perform iteratiuons to build uniformity map
+        this.startProgressBar();
+
+        let iters = 0;
+        const MAX_ITERS = 20; // 10 for gauss smooth and 10 for uniformity
+        const TIMEOUT_MSEC = 50;
+        const timeRepeater = setInterval(() => {
+          const geoSrc = this.activeVolume.m_geoRender;
+          const FLAGS_ALL = 0xffffffff;
+          // console.log(`updateGeo [${iters}].`);
+          this.activeVolume.updateGeo(geoSrc, FLAGS_ALL);
+          const ratio = iters / MAX_ITERS;
+          this.updateProgressBar(ratio);
+          iters++;
+
+          const state = this.activeVolume.m_state;
+          const STATE_UPDATE_GEO = 3;
+          if (state === STATE_UPDATE_GEO) {
+            // console.log('updateGeo. Now go to geo');
+            this.stopProgressBar();
+            clearInterval(timeRepeater);
+          }
+        }, TIMEOUT_MSEC);
       });
     }
 
@@ -1855,6 +1895,13 @@ export default class Menu {
         buttonSave.addClass('disabled');
         this.sliderLevelSetIterations.removeAttribute('disabled');
         // toDo: toDoLevelSet call prepare for first iteration
+        console.log('activeVolume. reset ...');
+        this.activeVolume.createGeoSphere();
+        this.activeVolume.resetStateForGeoUpdates();
+        // remove old and add render sphere to 3d scene
+        this.engine3d.removeSphereFromSphereScene();
+        const geo = this.activeVolume.createThreeJsGeoFromSphere();
+        this.engine3d.addSphereToSphereScene(geo);
       });
     }
 
@@ -1868,6 +1915,43 @@ export default class Menu {
         let paddingValue = sliderValue;
         // const nextIterN = sliderValue - this.sliderLevelSetIterations.noUiSlider.options.padding[0];
         // toDo: toDoLevelSet call perform next n iterations, use nextIterN
+
+        // do geometry iterations with progress bar
+        this.startProgressBar();
+
+        const numIters = sliderValue;
+        console.log(`ActiveVolume. Do next ${numIters} iterations`);
+        const TIMEOUT_MSEC = 50;
+        let iters = 0;
+        const timeRepeater = setInterval(() => {
+          const geoSrc = this.activeVolume.m_geoRender;
+          const FLAGS_ALL = 0xffffffff;
+          this.activeVolume.updateGeo(geoSrc, FLAGS_ALL);
+          const ratio = iters / numIters;
+          this.updateProgressBar(ratio);
+          iters++;
+
+          console.log(`activeVolume. do geo iteration[${iters} / ${numIters}]`);
+
+          // remove old and add render sphere to 3d scene
+          this.engine3d.removeSphereFromSphereScene();
+          const geo = this.activeVolume.createThreeJsGeoFromSphere();
+          this.engine3d.addSphereToSphereScene(geo);
+
+          const state = this.activeVolume.m_state;
+          const STATE_UPDATE_FINISHED = 4;
+          const isFinishedByIters = (iters >= numIters);
+          const isFinishedByState = (state === STATE_UPDATE_FINISHED);
+          const isFinishedAny = isFinishedByIters || isFinishedByState;
+          if (isFinishedByState) {
+            buttonStartIterations.addClass('disabled');
+          }
+          if (isFinishedAny) {
+            this.stopProgressBar();
+            clearInterval(timeRepeater);
+          }
+        }, TIMEOUT_MSEC);
+
         const maxValue = this.sliderLevelSetIterations.noUiSlider.options.range.max;
         if (sliderValue === maxValue) {
           const TWO = 2;
@@ -1876,7 +1960,8 @@ export default class Menu {
           buttonStartIterations.addClass('disabled');
           this.sliderLevelSetIterations.setAttribute('disabled', true);
         }
-        this.sliderLevelSetIterations.noUiSlider.set(sliderValue + 1);
+        // this.sliderLevelSetIterations.noUiSlider.set(sliderValue + 1);
+        this.sliderLevelSetIterations.noUiSlider.set(sliderValue);
         this.sliderLevelSetIterations.noUiSlider.updateOptions({
           padding: [paddingValue, 0],
         });

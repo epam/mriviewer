@@ -39,7 +39,7 @@ function extractSlice(xDim, yDim, zDim, pixelsSrc, zIndex, pixelsDst) {
   }
 }
 
-function saveBitmap(pixelsSrc, xDim, yDim, fileName) {
+function saveBitmap(pixelsSrc, xDim, yDim) {
   const SIZE_HEADER = 14;
   const SIZE_INFO = 40;
   const COMPS_IN_COLOR = 3;
@@ -219,7 +219,7 @@ describe('Test: ActiveVolume', () => {
       const TWICE = 2;
       const Z_SLICE = ZDIM / TWICE;
       extractSlice(XDIM, YDIM, ZDIM, pixelsVol, Z_SLICE, pixelsSlice);
-      saveBitmap(pixelsSlice, XDIM, YDIM, 'dump_slice.bmp');
+      saveBitmap(pixelsSlice, XDIM, YDIM);
     }); // it
 
   }); // describe
