@@ -1911,17 +1911,13 @@ export default class Menu {
         if (buttonStartIterations.hasClass('disabled')) {
           return;
         }
-        let sliderValue = parseInt(this.sliderLevelSetIterations.noUiSlider.get(), 10);
-        let paddingValue = sliderValue;
-        // const nextIterN = sliderValue - this.sliderLevelSetIterations.noUiSlider.options.padding[0];
-        // toDo: toDoLevelSet call perform next n iterations, use nextIterN
+        const numIters = parseInt(this.sliderLevelSetIterations.noUiSlider.get(), 10);
 
         // do geometry iterations with progress bar
         this.startProgressBar();
 
-        const numIters = sliderValue;
-        console.log(`ActiveVolume. Do next ${numIters} iterations`);
-        const TIMEOUT_MSEC = 50;
+        // console.log(`ActiveVolume. Do next ${numIters} iterations`);
+        const TIMEOUT_MSEC = 30;
         let iters = 0;
         const timeRepeater = setInterval(() => {
           const geoSrc = this.activeVolume.m_geoRender;
@@ -1931,7 +1927,7 @@ export default class Menu {
           this.updateProgressBar(ratio);
           iters++;
 
-          console.log(`activeVolume. do geo iteration[${iters} / ${numIters}]`);
+          // console.log(`activeVolume. do geo iteration[${iters} / ${numIters}]`);
 
           // remove old and add render sphere to 3d scene
           this.engine3d.removeSphereFromSphereScene();
@@ -1952,6 +1948,7 @@ export default class Menu {
           }
         }, TIMEOUT_MSEC);
 
+        /*
         const maxValue = this.sliderLevelSetIterations.noUiSlider.options.range.max;
         if (sliderValue === maxValue) {
           const TWO = 2;
@@ -1965,6 +1962,7 @@ export default class Menu {
         this.sliderLevelSetIterations.noUiSlider.updateOptions({
           padding: [paddingValue, 0],
         });
+        */
         buttonSave.removeClass('disabled');
       });
     }
