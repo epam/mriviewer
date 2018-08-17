@@ -1,6 +1,5 @@
 {
   "presets": ["es2015", "env"],
-  "plugins": ["syntax-dynamic-import", "transform-class-properties"],
   "env": {
     "coverage": {
       "plugins": ["istanbul"]
