@@ -1858,25 +1858,37 @@ export default class Menu {
         const geoThreeJs = this.activeVolume.createThreeJsGeoFromSphere();
         this.engine3d.addSphereToSphereScene(geoThreeJs);
 
+        // setup state for start updates (uniformity map first)
+        this.activeVolume.resetStateToStartUpdates();
+
+        // ensure that window has focus
+        // window.focus();
+
+        // setup focus for 3d element
+        // $('#med3web-container-3d').focus();
+
         // perform iteratiuons to build uniformity map
         this.startProgressBar();
 
+        // console.log('Before start updateGeo');
+
         let iters = 0;
         const MAX_ITERS = 20; // 10 for gauss smooth and 10 for uniformity
-        const TIMEOUT_MSEC = 50;
+        const TIMEOUT_MSEC = 30;
         const timeRepeater = setInterval(() => {
+          // console.log(`updateGeo [${iters}].`);
           const geoSrc = this.activeVolume.m_geoRender;
           const FLAGS_ALL = 0xffffffff;
-          // console.log(`updateGeo [${iters}].`);
           this.activeVolume.updateGeo(geoSrc, FLAGS_ALL);
           const ratio = iters / MAX_ITERS;
           this.updateProgressBar(ratio);
+          this.progressBarContainer.show();
           iters++;
 
           const state = this.activeVolume.m_state;
           const STATE_UPDATE_GEO = 3;
           if (state === STATE_UPDATE_GEO) {
-            // console.log('updateGeo. Now go to geo');
+            // console.log('updateGeo. Finished uni map. Now go to geo updates');
             this.stopProgressBar();
             clearInterval(timeRepeater);
           }
