@@ -1876,7 +1876,7 @@ export default class Menu {
         const MAX_ITERS = 20; // 10 for gauss smooth and 10 for uniformity
         const TIMEOUT_MSEC = 30;
         const timeRepeater = setInterval(() => {
-          // console.log(`updateGeo [${iters}].`);
+          // console.log(`updateGeo (Uni map build) [${iters}]. State = ${this.activeVolume.m_state}`);
           const geoSrc = this.activeVolume.m_geoRender;
           const FLAGS_ALL = 0xffffffff;
           this.activeVolume.updateGeo(geoSrc, FLAGS_ALL);
