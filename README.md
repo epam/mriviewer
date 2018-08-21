@@ -142,8 +142,62 @@ gulp build
 
 Result folder will be in folder `dist`.
 
-## Contributing
+## Load data from URL
 
+Application can read Dicom files from specified URL location.
+There are some important notes to provide correct file naming, access, etc.
+
+### How to create your own Dicom files dataset
+
+1. Prepare folder with Dicom (*.dcm) files in some local folder on your workstation. 
+For example: D:/med3web/data/dicom/lungs
+It is important to have ONLY *.dcm files inside this folder
+
+2. Run command
+```
+dir *.dcm /b > file_list.txt
+```
+This command will add "file_list.txt" file with all *.dcm files listing inside.
+
+3. Create special file, named ".htaccess"  and write following content in it:
+```
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Headers "Content-Type"
+Header set Access-Control-Allow-Methods "GET"
+```
+
+4. Copy your local folder (containing *.dcm, .htaccess, file_lists.txt files) into
+your web server. For example on location: www.mysite.org/med3web/data/lungs
+
+5. Check correct URL and access possibility for just created folder.
+Enter in url line:
+```
+www.mysite.org/med3web/data/lungs/file_list.txt
+```
+You should see *.dcm file listing in browser window.
+
+6. Run Med3Web application, hosted on your server (dont use virtual server) and select "File -> Open by URL".
+Enter url
+```
+www.mysite.org/med3web/data/lungs
+```
+into Input URL text field and press "Load" button.
+It is important to remove trailing slash from your URL folder name.
+
+If everything fine (your server work correctly) you will see in console window (console window can be open by pressing F12 in Chrome browser)
+following messages:
+```
+Dicom folder os loaded
+Loaded file list. NNN files will be loaded. 1st file in list = XXXX.dcm
+Loading ratio = 0
+Loading ratio = 0.02
+Loading ratio = 0.04
+...
+
+```
+
+
+## Contributing
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## License
