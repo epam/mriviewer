@@ -1781,6 +1781,9 @@ export default class Menu {
       buttonSave.on('click', () => {
         // toDo: toDoLevelSet save level set mask as general mask?
         closeLevelSetMenu();
+        console.log('this.activeVolume.save()');
+        this.activeVolume.save();
+        this.engine2d.createTileMaps();
         this.activeVolume = null;
       });
     }
@@ -1789,6 +1792,7 @@ export default class Menu {
     if (buttonCancel.length === 1) {
       buttonCancel.on('click', () => {
         closeLevelSetMenu();
+        this.activeVolume = null;
       });
     }
 
@@ -1848,6 +1852,8 @@ export default class Menu {
         if (okCreate !== 1) {
           console.log('Error ActiveVolume.create');
         }
+        this.activeVolume.setupPhysDims(this.engine2d.m_volumeBox.x,
+          this.engine2d.m_volumeBox.y, this.engine2d.m_volumeBox.z);
         // create thjree js sphere to render
         const okCreateSphere = this.activeVolume.createGeoSphere();
         if (okCreateSphere !== 1) {
