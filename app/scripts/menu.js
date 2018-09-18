@@ -1739,7 +1739,7 @@ export default class Menu {
     this.sliderLevelSetIterations = $('#med3web-slider-level-set-iterations').get(0);
     if (this.sliderLevelSetIterations) {
       noUiSlider.create(this.sliderLevelSetIterations, {
-        start: 5,
+        start: 150,
         tooltips: true,
         step: 1,
         range: {
@@ -1781,9 +1781,15 @@ export default class Menu {
       buttonSave.on('click', () => {
         // toDo: toDoLevelSet save level set mask as general mask?
         closeLevelSetMenu();
-        console.log('this.activeVolume.save()');
+        // console.log('this.activeVolume.save()');
         this.activeVolume.save();
-        this.engine2d.createTileMaps();
+        // rebuild textures (2d and 3d)
+        const box = this.engine2d.m_volumeBox;
+        const nonEmptyBoxMin = this.engine3d.nonEmptyBoxMin;
+        const nonEmptyBoxMax = this.engine3d.nonEmptyBoxMax;
+        const isRoiVolume = this.engine3d.isRoiVolume;
+        this.engine3d.callbackCreateCubeVolumeBF(window, box, nonEmptyBoxMin, nonEmptyBoxMax, isRoiVolume);
+        this.engine2d.createTileMapsWithTexture(this.engine3d.volTexture);
         this.activeVolume = null;
       });
     }
@@ -1807,6 +1813,7 @@ export default class Menu {
         this.panelLevelSet.find('#med3web-level-set-center-body').collapse('toggle');
         this.panelLevelSet.find('#med3web-level-set-radius-body').collapse('toggle');
         const sliderValue = parseInt(this.sliderLevelSetRadius.noUiSlider.get(), 10);
+        this.engine2d.clearLevelSetCircle();
         this.engine2d.drawLevelSetCircle(sliderValue);
         const center = this.engine2d.getLevelSetCenterVoxelCoordinates();
         const newMaxVal = Math.min(center.x, center.y, center.z, this.engine2d.m_volumeHeader.m_pixelWidth - center.x,
@@ -1852,8 +1859,11 @@ export default class Menu {
         if (okCreate !== 1) {
           console.log('Error ActiveVolume.create');
         }
-        this.activeVolume.setupPhysDims(this.engine2d.m_volumeBox.x,
-          this.engine2d.m_volumeBox.y, this.engine2d.m_volumeBox.z);
+
+        // Need not setup phys dim here. Will be on render
+        // this.activeVolume.setupPhysDims(this.engine2d.m_volumeBox.x,
+        //  this.engine2d.m_volumeBox.y, this.engine2d.m_volumeBox.z);
+
         // create thjree js sphere to render
         const okCreateSphere = this.activeVolume.createGeoSphere();
         if (okCreateSphere !== 1) {
