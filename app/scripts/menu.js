@@ -255,6 +255,9 @@ export default class Menu {
   fillColorBarColorsFromRGB(colors) {
     const HEX_BASE = 16;
     let r, g, b;
+    if (colors === null) {
+      return;
+    }
     for (let i = 0; i < this.colorBarColors.length; ++i) {
       r = colors[4 * i].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
       g = colors[4 * i + 1].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
@@ -453,7 +456,9 @@ export default class Menu {
       tf2dValues[i].x = tf2dSlider.x[i + 1];
       tf2dValues[i].y = tf2dValues[i].value = tf2dSlider.y[i + 1];
     }
-    this.engine3d.setTransferFuncColors(tf2dSlider.handleColor);
+    if (tf2dSlider.handleColor !== null) {
+      this.engine3d.setTransferFuncColors(tf2dSlider.handleColor);
+    }
     const colors = this.engine3d.updateTransferFuncTexture(tf2dValues.map(z => z.x), tf2dValues.map(z => z.value));
     this.fillColorBarColorsFromRGB(colors);
     this.transFunc2dSlider.flush();
@@ -956,7 +961,8 @@ export default class Menu {
         const volSize = {
           x: this.engine2d.m_volumeHeader.m_pixelWidth,
           y: this.engine2d.m_volumeHeader.m_pixelHeight,
-          z: volData.length / this.engine2d.m_volumeHeader.m_pixelWidth / this.engine2d.m_volumeHeader.m_pixelHeight,
+          z: Math.floor(volData.length / this.engine2d.m_volumeHeader.m_pixelWidth /
+            this.engine2d.m_volumeHeader.m_pixelHeight),
           pixdim1: this.engine2d.m_volumeBox.x / this.engine2d.m_volumeHeader.m_pixelWidth,
           pixdim2: this.engine2d.m_volumeBox.y / this.engine2d.m_volumeHeader.m_pixelHeight,
           pixdim3: this.engine2d.m_volumeBox.z / this.engine2d.m_volumeHeader.m_pixelDepth,
