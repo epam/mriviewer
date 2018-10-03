@@ -17,6 +17,7 @@ uniform bool save_flag;
 
 uniform float xDim;
 uniform float yDim;
+uniform float curZ;
 
 /**
 * Reading from 3D texture
@@ -223,13 +224,18 @@ float filterBlur(vec3 base)
 }
 
 void main() {
-  vec3 base = getTex3DCoord(texCoord);
+//  vec3 base = getTex3DCoord(texCoord);
+  vec3 base;
+  base.xy = texCoord;
+  base.z = curZ;
+  base = base - vec3(0.5, 0.5, 0.5);
   vec4 acc = vec4(0.0, 0.0, 0.0, 1.0);
   #if renderRoiMap == 1
     acc = filterROI(base);
  //   acc = vec4(1.0, 1.0, 0.0, 0.95);
   #else
     float val = filterBlur(base);
+//  float val = curZ;
     acc = vec4(val, val, val, 1);
   #endif
   //Apply contrast/brightness adjustments
