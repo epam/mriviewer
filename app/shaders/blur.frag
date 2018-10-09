@@ -166,6 +166,7 @@ vec4 filterROI(vec3 base)
         norm_factor += gaussB;
       }
   acc.a = acc.a / norm_factor;
+  acc.a = tex3D(base);
   // color
   norm_factor = 0.0;
   for (float i = -1.0; i < 1.5; i += 1.0)
@@ -230,16 +231,16 @@ void main() {
   base.z = curZ;
   base = base - vec3(0.5, 0.5, 0.5);
   vec4 acc = vec4(0.0, 0.0, 0.0, 1.0);
+  float val; 
   #if renderRoiMap == 1
     acc = filterROI(base);
- //   acc = vec4(1.0, 1.0, 0.0, 0.95);
+    //val = tex3D(base);
   #else
-    float val = filterBlur(base);
-//  float val = curZ;
+    val = filterBlur(base);
     acc = vec4(val, val, val, 1);
   #endif
   //Apply contrast/brightness adjustments
-  //acc = contrast * (acc - 0.5) + 0.5 + brightness;
+  acc = contrast * (acc - 0.5) + 0.5 + brightness;
   
   gl_FragColor = acc;
 }
