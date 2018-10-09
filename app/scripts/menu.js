@@ -1789,6 +1789,18 @@ export default class Menu {
         closeLevelSetMenu();
         // console.log('this.activeVolume.save()');
         this.activeVolume.save();
+
+        // if volume was scaled down, restore original size
+        if (this.activeVolume.m_xScale !== 1) {
+          const header = this.engine2d.m_volumeHeader;
+          const xDim = header.m_pixelWidth;
+          const yDim = header.m_pixelHeight;
+          const zDim = header.m_pixelDepth;
+          const pixelsSrcByte = this.engine2d.m_volumeData;
+          this.activeVolume.copyScaleUp(pixelsSrcByte, xDim, yDim, zDim);
+        }
+
+
         // rebuild textures (2d and 3d)
         const box = this.engine2d.m_volumeBox;
         const nonEmptyBoxMin = this.engine3d.nonEmptyBoxMin;
