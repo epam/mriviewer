@@ -1913,7 +1913,11 @@ export default class Menu {
           // console.log(`updateGeo (Uni map build) [${iters}]. State = ${this.activeVolume.m_state}`);
           const geoSrc = this.activeVolume.m_geoRender;
           const FLAGS_ALL = 0xffffffff;
-          this.activeVolume.updateGeo(geoSrc, FLAGS_ALL);
+          try {
+            this.activeVolume.updateGeo(geoSrc, FLAGS_ALL);
+          } catch (err) {
+            console.log(`!!! Exception with err = ${err.message}`);
+          }
           const ratio = iters / MAX_ITERS;
           this.updateProgressBar(ratio);
           this.progressBarContainer.show();
