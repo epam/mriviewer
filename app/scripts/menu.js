@@ -22,6 +22,8 @@ under the License.
  * @module app/scripts/menu
  */
 
+// global imports
+
 import noUiSlider from 'nouislider'; // eslint-disable-line no-unused-vars
 import c3 from 'c3'; // eslint-disable-line no-unused-vars
 // eslint-disable-next-line
@@ -32,6 +34,8 @@ import Spinner from 'spin'; // eslint-disable-line no-unused-vars
 import jsPDF from 'jspdf'; // eslint-disable-line no-unused-vars
 import 'jspdf-autotable'; // eslint-disable-line no-unused-vars
 import wNumb from 'wnumb'; // eslint-disable-line no-unused-vars
+
+// project imports
 import { loadFileType, RenderMode, LoadState } from '../../lib/scripts/med3web';
 import Graphics2d from '../../lib/scripts/graphics2d/graphics2d';
 import packageJson from '../../package.json';
@@ -39,6 +43,7 @@ import Screenshot from '../../lib/scripts/utils/screenshot';
 import config from '../../tools/config';
 import NiftiSaver from '../../lib/scripts/savers/niisaver';
 import RoiPalette from '../../lib/scripts/loaders/roipalette';
+import ActiveVolume from '../../lib/scripts/actvolume/actvol';
 
 const VERSION = typeof '/* @echo PACKAGE_VERSION */' !== 'undefined' && '/* @echo PACKAGE_VERSION */' || '0.0.0-dev';
 
@@ -159,6 +164,10 @@ export default class Menu {
     this.slider3dEraserRadius = null;
     /** slider object for 3d eraser depth */
     this.slider3dEraserDepth = null;
+    /** slider object for level set initial sphere radius */
+    this.sliderLevelSetRadius = null;
+    /** slider object for level set number of iterations */
+    this.sliderLevelSetIterations = null;
     /** 2d toolbar */
     this.toolbar2d = $('#med3web-toolbar-2d');
     this.toolbar3d = $('#med3web-accordion-tools-3d');
@@ -183,6 +192,9 @@ export default class Menu {
     this.panelAboutDescription.text(strDescr);
     this.panelAboutCopyright.text(strCopyright);
     // console.log(`strCopyright = ${strCopyright}`);
+
+    /** Active volume */
+    this.activeVolume = null;
 
     /** HTML element with data title  (or file name) */
     this.title = $('#med3web-menu-scene-title');
@@ -251,6 +263,9 @@ export default class Menu {
   fillColorBarColorsFromRGB(colors) {
     const HEX_BASE = 16;
     let r, g, b;
+    if (colors === null) {
+      return;
+    }
     for (let i = 0; i < this.colorBarColors.length; ++i) {
       r = colors[4 * i].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
       g = colors[4 * i + 1].toString(HEX_BASE).padStart(2, '0'); // eslint-disable-line
@@ -449,7 +464,9 @@ export default class Menu {
       tf2dValues[i].x = tf2dSlider.x[i + 1];
       tf2dValues[i].y = tf2dValues[i].value = tf2dSlider.y[i + 1];
     }
-    this.engine3d.setTransferFuncColors(tf2dSlider.handleColor);
+    if (tf2dSlider.handleColor !== null) {
+      this.engine3d.setTransferFuncColors(tf2dSlider.handleColor);
+    }
     const colors = this.engine3d.updateTransferFuncTexture(tf2dValues.map(z => z.x), tf2dValues.map(z => z.value));
     this.fillColorBarColorsFromRGB(colors);
     this.transFunc2dSlider.flush();
@@ -862,6 +879,13 @@ export default class Menu {
         this.leftMenuMode = leftMenuMode.LEFTMENUMODE_LEVELSET;
         $('.nav.navbar-nav.navbar-center .navbar-btn').addClass('disabled');
         $('.nav.navbar-nav.navbar-center .dropdown-toggle').prop('disabled', true);
+        $('#med3web-container-2d').show();
+        $('#med3web-container-mpr').hide();
+        $('#med3web-container-3d').hide();
+        this.app.setRenderMode(RenderMode.RENDER_MODE_2D);
+        this.engine2d.enableLevelSetMode();
+        // create active volume object
+        this.activeVolume = new ActiveVolume();
       });
     }
 
@@ -945,7 +969,8 @@ export default class Menu {
         const volSize = {
           x: this.engine2d.m_volumeHeader.m_pixelWidth,
           y: this.engine2d.m_volumeHeader.m_pixelHeight,
-          z: volData.length / this.engine2d.m_volumeHeader.m_pixelWidth / this.engine2d.m_volumeHeader.m_pixelHeight,
+          z: Math.floor(volData.length / this.engine2d.m_volumeHeader.m_pixelWidth /
+            this.engine2d.m_volumeHeader.m_pixelHeight),
           pixdim1: this.engine2d.m_volumeBox.x / this.engine2d.m_volumeHeader.m_pixelWidth,
           pixdim2: this.engine2d.m_volumeBox.y / this.engine2d.m_volumeHeader.m_pixelHeight,
           pixdim3: this.engine2d.m_volumeBox.z / this.engine2d.m_volumeHeader.m_pixelDepth,
@@ -1690,27 +1715,313 @@ export default class Menu {
     }
   }
 
+  onClickLevelSet() {
+    this.panelLevelSet.find('.btn[data-btn-role=next-1-2]').removeClass('disabled');
+  }
+
   /** Initialize level set menu panel */
   initLevelSetPanel() {
+    this.sliderLevelSetRadius = $('#med3web-slider-level-set-radius').get(0);
+    if (this.sliderLevelSetRadius) {
+      noUiSlider.create(this.sliderLevelSetRadius, {
+        start: 4,
+        tooltips: true,
+        step: 1,
+        range: {
+          min: 4,
+          max: 5,
+        },
+        format: wNumb({
+          decimals: 0,
+          suffix: ' vx',
+        }),
+      });
+      this.sliderLevelSetRadius.noUiSlider.on('slide', (sliderValue) => {
+        // sliderValue is array with 1 element (string) in format 'XXX vx'
+        const strVal = sliderValue[0];
+        const SUFFIX_LEN = 3;
+        const strDig = strVal.substring(0, strVal.length - SUFFIX_LEN);
+        const DEC = 10;
+        const radVal = parseInt(strDig, DEC);
+        this.engine2d.clearLevelSetCircle();
+        this.engine2d.drawLevelSetCircle(radVal);
+      });
+    }
+
+    this.sliderLevelSetIterations = $('#med3web-slider-level-set-iterations').get(0);
+    if (this.sliderLevelSetIterations) {
+      noUiSlider.create(this.sliderLevelSetIterations, {
+        start: 150,
+        tooltips: true,
+        step: 1,
+        range: {
+          min: 1,
+          max: 170,
+        },
+        padding: 0,
+        format: wNumb({
+          decimals: 0,
+        }),
+      });
+    }
+
+    const closeLevelSetMenu = () => {
+      const isLastStep = this.panelLevelSet.find('.panel-heading.active').is('#med3web-level-set-grow-head');
+      this.sliderLevelSetRadius.noUiSlider.reset();
+      this.sliderLevelSetIterations.removeAttribute('disabled');
+      this.sliderLevelSetIterations.noUiSlider.reset();
+      this.sliderLevelSetIterations.noUiSlider.updateOptions({
+        padding: 0,
+      });
+      this.panelLevelSet.find('.panel-collapse.collapse.in').collapse('toggle');
+      this.panelLevelSet.find('.panel-heading.active').removeClass('active');
+      $('#med3web-level-set-center-head').addClass('active');
+      $('#med3web-level-set-center-body').collapse('toggle');
+      $('.nav.navbar-nav.navbar-center .navbar-btn').removeClass('disabled');
+      $('.nav.navbar-nav.navbar-center .dropdown-toggle').prop('disabled', false);
+      if (isLastStep) {
+        $('#med3web-mode-3d-fast').click();
+      } else {
+        $('#med3web-mode-2d').click();
+      }
+      this.panelLevelSet.find('.btn[data-btn-role=save]').addClass('disabled');
+      this.panelLevelSet.find('.btn[data-btn-role=next-1-2]').addClass('disabled');
+      this.engine2d.disableLevelSetMode();
+    };
     const buttonSave = this.panelLevelSet.find('.btn[data-btn-role=save]');
     if (buttonSave.length === 1) {
       buttonSave.on('click', () => {
-        $(`#med3web-panel-menu-${this.leftMenuMode}`).hide();
-        $(`#med3web-panel-menu-${leftMenuMode.LEFTMENUMODE_2D}`).show();
-        this.leftMenuMode = leftMenuMode.LEFTMENUMODE_2D;
-        $('.nav.navbar-nav.navbar-center .navbar-btn').removeClass('disabled');
-        $('.nav.navbar-nav.navbar-center .dropdown-toggle').prop('disabled', false);
+        // toDo: toDoLevelSet save level set mask as general mask?
+        closeLevelSetMenu();
+        // console.log('this.activeVolume.save()');
+        this.activeVolume.save();
+
+        // if volume was scaled down, restore original size
+        if (this.activeVolume.m_xScale !== 1) {
+          const header = this.engine2d.m_volumeHeader;
+          const xDim = header.m_pixelWidth;
+          const yDim = header.m_pixelHeight;
+          const zDim = header.m_pixelDepth;
+          const pixelsSrcByte = this.engine2d.m_volumeData;
+          this.activeVolume.copyScaleUp(pixelsSrcByte, xDim, yDim, zDim);
+        }
+
+
+        // rebuild textures (2d and 3d)
+        const box = this.engine2d.m_volumeBox;
+        const nonEmptyBoxMin = this.engine3d.nonEmptyBoxMin;
+        const nonEmptyBoxMax = this.engine3d.nonEmptyBoxMax;
+        const isRoiVolume = this.engine3d.isRoiVolume;
+        this.engine3d.callbackCreateCubeVolumeBF(window, box, nonEmptyBoxMin, nonEmptyBoxMax, isRoiVolume);
+        this.engine2d.createTileMapsWithTexture(this.engine3d.volTexture);
+        this.activeVolume = null;
       });
     }
 
     const buttonCancel = this.panelLevelSet.find('.btn[data-btn-role=cancel]');
     if (buttonCancel.length === 1) {
       buttonCancel.on('click', () => {
-        $(`#med3web-panel-menu-${this.leftMenuMode}`).hide();
-        $(`#med3web-panel-menu-${leftMenuMode.LEFTMENUMODE_2D}`).show();
-        this.leftMenuMode = leftMenuMode.LEFTMENUMODE_2D;
-        $('.nav.navbar-nav.navbar-center .navbar-btn').removeClass('disabled');
-        $('.nav.navbar-nav.navbar-center .dropdown-toggle').prop('disabled', false);
+        closeLevelSetMenu();
+        this.activeVolume = null;
+      });
+    }
+
+    const buttonNext12 = this.panelLevelSet.find('.btn[data-btn-role=next-1-2]');
+    if (buttonNext12.length === 1) {
+      buttonNext12.on('click', () => {
+        if (buttonNext12.hasClass('disabled')) {
+          return;
+        }
+        this.panelLevelSet.find('#med3web-level-set-center-head').removeClass('active');
+        this.panelLevelSet.find('#med3web-level-set-radius-head').addClass('active');
+        this.panelLevelSet.find('#med3web-level-set-center-body').collapse('toggle');
+        this.panelLevelSet.find('#med3web-level-set-radius-body').collapse('toggle');
+        const sliderValue = parseInt(this.sliderLevelSetRadius.noUiSlider.get(), 10);
+        this.engine2d.clearLevelSetCircle();
+        this.engine2d.drawLevelSetCircle(sliderValue);
+        const center = this.engine2d.getLevelSetCenterVoxelCoordinates();
+        const newMaxVal = Math.min(center.x, center.y, center.z, this.engine2d.m_volumeHeader.m_pixelWidth - center.x,
+          this.engine2d.m_volumeHeader.m_pixelHeight - center.y, this.engine2d.m_volumeHeader.m_pixelDepth - center.z);
+        const MIN_RADIUS = 4;
+        const MAX_RADIUS = 5;
+        this.sliderLevelSetRadius.noUiSlider.updateOptions({
+          range: {
+            'min': MIN_RADIUS,
+            'max': newMaxVal > MIN_RADIUS ? newMaxVal : MAX_RADIUS,
+          },
+        });
+        // toDo: toDoLevelSet set sphere center, use center.x, center.y, center.z
+        // console.log(`levelSet.setSphereCenter = ${center.x},${center.y},${center.z} `);
+        this.activeVolume.setSphereCenter(center.x, center.y, center.z);
+      });
+    }
+
+    const buttonNext23 = this.panelLevelSet.find('.btn[data-btn-role=next-2-3]');
+    if (buttonNext23.length === 1) {
+      buttonNext23.on('click', () => {
+        this.panelLevelSet.find('#med3web-level-set-radius-head').removeClass('active');
+        this.panelLevelSet.find('#med3web-level-set-grow-head').addClass('active');
+        this.panelLevelSet.find('#med3web-level-set-radius-body').collapse('toggle');
+        this.panelLevelSet.find('#med3web-level-set-grow-body').collapse('toggle');
+        $('#med3web-container-2d').hide();
+        $('#med3web-container-mpr').hide();
+        $('#med3web-container-3d').show();
+        this.app.setRenderMode(RenderMode.RENDER_MODE_3D);
+        this.engine3d.switchToVolumeRender();
+        // toDo: toDoLevelSet set sphere radius, use sliderRadiusValue
+        const sliderRadiusValue = parseInt(this.sliderLevelSetRadius.noUiSlider.get(), 10);
+        // console.log(`levelSet.setSphereRadius = ${sliderRadiusValue} `);
+        this.activeVolume.setSphereRadius(sliderRadiusValue, sliderRadiusValue, sliderRadiusValue);
+        // toDo: toDoLevelSet call prepare for first iteration
+        const header = this.engine2d.m_volumeHeader;
+        const xDim = header.m_pixelWidth;
+        const yDim = header.m_pixelHeight;
+        const zDim = header.m_pixelDepth;
+        const pixelsSrcByte = this.engine2d.m_volumeData;
+        // console.log(`levelSet.prepareForFirstIteration. volDim = ${xDim}*${yDim}*${zDim} `);
+        const okCreate = this.activeVolume.create(xDim, yDim, zDim, pixelsSrcByte);
+        if (okCreate !== 1) {
+          console.log('Error ActiveVolume.create');
+        }
+
+        // Need not setup phys dim here. Will be on render
+        // this.activeVolume.setupPhysDims(this.engine2d.m_volumeBox.x,
+        //  this.engine2d.m_volumeBox.y, this.engine2d.m_volumeBox.z);
+
+        // create thjree js sphere to render
+        const okCreateSphere = this.activeVolume.createGeoSphere();
+        if (okCreateSphere !== 1) {
+          console.log('Error ActiveVolume.createGeoSphere');
+        }
+
+        // add render sphere to 3d scene
+        const geoThreeJs = this.activeVolume.createThreeJsGeoFromSphere();
+        this.engine3d.addSphereToSphereScene(geoThreeJs);
+
+        // setup state for start updates (uniformity map first)
+        this.activeVolume.resetStateToStartUpdates();
+
+        // ensure that window has focus
+        // window.focus();
+
+        // setup focus for 3d element
+        // $('#med3web-container-3d').focus();
+
+        // perform iteratiuons to build uniformity map
+        this.startProgressBar();
+
+        // console.log('Before start updateGeo');
+
+        let iters = 0;
+        const TWO = 2;
+        // 64 for gauss smooth and 10 for uniformity
+        const MAX_ITERS = ActiveVolume.ACT_VOL_NUM_SMOOTH_STAGES * TWO;
+        const TIMEOUT_MSEC = 30;
+        const timeRepeater = setInterval(() => {
+          // console.log(`updateGeo (Uni map build) [${iters}]. State = ${this.activeVolume.m_state}`);
+          const geoSrc = this.activeVolume.m_geoRender;
+          const FLAGS_ALL = 0xffffffff;
+          try {
+            this.activeVolume.updateGeo(geoSrc, FLAGS_ALL);
+          } catch (err) {
+            console.log(`!!! Exception with err = ${err.message}`);
+          }
+          const ratio = iters / MAX_ITERS;
+          this.updateProgressBar(ratio);
+          this.progressBarContainer.show();
+          iters++;
+
+          const state = this.activeVolume.m_state;
+          const STATE_UPDATE_GEO = 3;
+          if (state === STATE_UPDATE_GEO) {
+            // console.log('updateGeo. Finished uni map. Now go to geo updates');
+            this.stopProgressBar();
+            clearInterval(timeRepeater);
+          }
+        }, TIMEOUT_MSEC);
+      });
+    }
+
+    const buttonResetIterations = this.panelLevelSet.find('.btn[data-btn-role=reset-growing]');
+    if (buttonResetIterations.length === 1) {
+      buttonResetIterations.on('click', () => {
+        this.sliderLevelSetIterations.noUiSlider.updateOptions({
+          padding: 0,
+        });
+        this.sliderLevelSetIterations.noUiSlider.reset();
+        this.panelLevelSet.find('.btn[data-btn-role=start-growing]').removeClass('disabled');
+        buttonSave.addClass('disabled');
+        this.sliderLevelSetIterations.removeAttribute('disabled');
+        // toDo: toDoLevelSet call prepare for first iteration
+        console.log('activeVolume. reset ...');
+        this.activeVolume.createGeoSphere();
+        this.activeVolume.resetStateForGeoUpdates();
+        // remove old and add render sphere to 3d scene
+        this.engine3d.removeSphereFromSphereScene();
+        const geo = this.activeVolume.createThreeJsGeoFromSphere();
+        this.engine3d.addSphereToSphereScene(geo);
+      });
+    }
+
+    const buttonStartIterations = this.panelLevelSet.find('.btn[data-btn-role=start-growing]');
+    if (buttonStartIterations.length === 1) {
+      buttonStartIterations.on('click', () => {
+        if (buttonStartIterations.hasClass('disabled')) {
+          return;
+        }
+        const numIters = parseInt(this.sliderLevelSetIterations.noUiSlider.get(), 10);
+
+        // do geometry iterations with progress bar
+        this.startProgressBar();
+
+        // console.log(`ActiveVolume. Do next ${numIters} iterations`);
+        const TIMEOUT_MSEC = 30;
+        let iters = 0;
+        const timeRepeater = setInterval(() => {
+          const geoSrc = this.activeVolume.m_geoRender;
+          const FLAGS_ALL = 0xffffffff;
+          this.activeVolume.updateGeo(geoSrc, FLAGS_ALL);
+          const ratio = iters / numIters;
+          this.updateProgressBar(ratio);
+          iters++;
+
+          // console.log(`activeVolume. do geo iteration[${iters} / ${numIters}]`);
+
+          // remove old and add render sphere to 3d scene
+          this.engine3d.removeSphereFromSphereScene();
+          const geo = this.activeVolume.createThreeJsGeoFromSphere();
+          this.engine3d.addSphereToSphereScene(geo);
+
+          const state = this.activeVolume.m_state;
+          const STATE_UPDATE_FINISHED = 4;
+          const isFinishedByIters = (iters >= numIters);
+          const isFinishedByState = (state === STATE_UPDATE_FINISHED);
+          const isFinishedAny = isFinishedByIters || isFinishedByState;
+          if (isFinishedByState) {
+            buttonStartIterations.addClass('disabled');
+          }
+          if (isFinishedAny) {
+            this.stopProgressBar();
+            clearInterval(timeRepeater);
+          }
+        }, TIMEOUT_MSEC);
+
+        /*
+        const maxValue = this.sliderLevelSetIterations.noUiSlider.options.range.max;
+        if (sliderValue === maxValue) {
+          const TWO = 2;
+          paddingValue = sliderValue - TWO;
+          sliderValue -= 1;
+          buttonStartIterations.addClass('disabled');
+          this.sliderLevelSetIterations.setAttribute('disabled', true);
+        }
+        // this.sliderLevelSetIterations.noUiSlider.set(sliderValue + 1);
+        this.sliderLevelSetIterations.noUiSlider.set(sliderValue);
+        this.sliderLevelSetIterations.noUiSlider.updateOptions({
+          padding: [paddingValue, 0],
+        });
+        */
+        buttonSave.removeClass('disabled');
       });
     }
   }

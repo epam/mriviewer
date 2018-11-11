@@ -402,6 +402,44 @@ describe('Test: VolumeTools', () => {
       const valCenterNex = pixelsDst[offCentral + 1];
       assert.equal(valCenterNex, 0);
     }); // end of it
+    it('check is power of two', () => {
+      const VAL_A = 0;
+      const VAL_B = 1;
+      const VAL_C = 8;
+      const VAL_D = 15;
+      const VAL_E = 4096;
+      const IS_A = VolumeTools.isPowerOfTwo(VAL_A);
+      assert.equal(IS_A, false);
+      const IS_B = VolumeTools.isPowerOfTwo(VAL_B);
+      assert.equal(IS_B, false);
+      const IS_C = VolumeTools.isPowerOfTwo(VAL_C);
+      assert.equal(IS_C, true);
+      const IS_D = VolumeTools.isPowerOfTwo(VAL_D);
+      assert.equal(IS_D, false);
+      const IS_E = VolumeTools.isPowerOfTwo(VAL_E);
+      assert.equal(IS_E, true);
+    }); // end of it
+    it('check find GE power of two', () => {
+      const VAL_A = 4;
+      const VAL_B = 9;
+      const VAL_B_PWR = 16;
+      const VAL_C = 31;
+      const VAL_C_PWR = 32;
+      const VAL_D = 500;
+      const VAL_D_PWR = 512;
+      const VAL_E = 4096;
+      const PWR_A = VolumeTools.getGreatOrEqualPowerOfTwo(VAL_A);
+      assert.equal(PWR_A, VAL_A);
+      const PWR_B = VolumeTools.getGreatOrEqualPowerOfTwo(VAL_B);
+      assert.equal(PWR_B, VAL_B_PWR);
+      const PWR_C = VolumeTools.getGreatOrEqualPowerOfTwo(VAL_C);
+      assert.equal(PWR_C, VAL_C_PWR);
+      const PWR_D = VolumeTools.getGreatOrEqualPowerOfTwo(VAL_D);
+      assert.equal(PWR_D, VAL_D_PWR);
+      const PWR_E = VolumeTools.getGreatOrEqualPowerOfTwo(VAL_E);
+      assert.equal(PWR_E, VAL_E);
+    }); // end of it
+
 
   }); // contrastEnchanceUnsharpMask tests
 }); // end of tests volume tools
