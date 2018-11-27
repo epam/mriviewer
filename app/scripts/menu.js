@@ -880,6 +880,13 @@ export default class Menu {
         this.activeVolume = new ActiveVolume();
       });
     }
+    // handle for radial evolution
+    const buttonRadialEvolve = $('#med3web-button-radial-evolve');
+    if (buttonRadialEvolve.length === 1) {
+      buttonRadialEvolve.on('click', () => {
+        this.app.performSphereEvolve();
+      });
+    }
 
     // mode switching buttons
     $('[data-toggle=mode]').on('click', (e) => {
@@ -1311,6 +1318,11 @@ export default class Menu {
       this.sliderTransFunc.noUiSlider.on('slide', (values) => {
         // use 'values[0]', 'values[1]' and 'values[2]' as a float value [0; 1]
         this.engine3d.setTransferFuncVec3(values, this.isHandleGreen);
+        const med3web = window.med3web;
+        const INDEX_BAR_VAL = 2;
+        // in [0..1]
+        const valBarrier = values[INDEX_BAR_VAL];
+        med3web.evolveSetBarrier(valBarrier);
       });
 
       this.sliderTransFunc.noUiSlider.on('start', () => {
