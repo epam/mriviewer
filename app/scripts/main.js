@@ -133,7 +133,8 @@ function animateMenu() {
 
 /** Get load type by file name */
 function _getLoadFileType(strFileName) {
-  let fileType = loadFileType.NA;
+  // as default we assume folder name with a lot of *.dcm (dicom) files inside
+  let fileType = loadFileType.DICOM;
   if (strFileName.endsWith('.ktx')) {
     fileType = loadFileType.KTX;
   }
