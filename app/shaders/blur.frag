@@ -1,8 +1,14 @@
 /**
 * Pixel shader for filtering source dates and nolmals calculation
 */
+#if useWebGL2 == 1
+precision highp sampler3D;
+uniform sampler3D texVolume;
+uniform sampler3D texVolumeRoi;
+#else
 uniform sampler2D texVolume;
 uniform sampler2D texVolumeRoi;
+#endif
 uniform sampler2D texSegInUse;
 uniform sampler2D texRoiColor;
 varying vec2 texCoord;
@@ -22,7 +28,26 @@ uniform float curZ;
 /**
 * Reading from 3D texture
 */
+#if useWebGL2 == 1
+float tex3D(vec3 vecCur) {
+  float tCX = 1.0 / tileCountX;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  // check outside of texture volume
+  if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
+    return 0.0;
+  return texture(texVolume, vecCur).r;
+}
 
+float tex3DRoi(vec3 vecCur) {
+  float tCX = 1.0 / tileCountX;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  // check outside of texture volume
+  if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
+    return 0.0;
+  return texture(texVolumeRoi, vecCur).r;
+}
+
+#else
 float tex3D(vec3 vecCur) {
   float tCX = 1.0 / tileCountX;
   vecCur = vecCur + vec3(0.5, 0.5, 0.5);
@@ -84,64 +109,7 @@ float tex3DRoi(vec3 vecCur) {
   float colorSlice1 = texture2D(texVolumeRoi, clamp(texCoordSlice1 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0).a;
   return colorSlice1;
 }
-
-/**
-* Calculate 3D texture coordinates
-*/
-
-vec3 getTex3DCoord(vec2 base) {
-  vec3 res;
-  //extract z-component from the base
-  vec2 vAdd = vec2(0.5 / (xDim * tileCountX), 0.5 / (yDim * tileCountX));
-  res.xy = base.xy - vAdd;
-  float z = floor(res.x * tileCountX) + floor(res.y * tileCountX) * tileCountX;
-  res.z = z / (volumeSizeZ - 1.0);
-  res.x -= mod(z, tileCountX ) / tileCountX;
-  res.y -= floor(z / tileCountX) / tileCountX;
-  res.xy = res.xy * tileCountX;
-
-  return res - vec3(0.5, 0.5, 0.5);
-}
-/*vec4 filterROI(vec3 base)
-{
-  float sigma = blurSigma;//0.965;
-  float sigma2 = sigma*sigma;
-  float sigmaD = blurSigma;//0.965;
-  float sigmaD2 = sigmaD*sigmaD;
-  float sigmaB = blurSigma;//0.9515;
-  float sigmaB2 = sigmaB*sigmaB;
-  vec3 BackGroundColor = vec3(0.0, 0.0, 0.0);
-  float norm_factor = 0.0;
-  float seg_norm_factor = 0.0;
-  vec3  segColor;
-  vec4 acc = vec4(0.0, 0.0, 0.0, 0.0);
-  for (float i = -2.0; i < 2.5; i += 1.0)
-    for (float j = -2.0; j < 2.5; j += 1.0)
-      for (float k = -2.0; k < 2.5; k += 1.0)
-      {
-        vec curVal = tex3D(base + vec3(texelSize.x * i, texelSize.y * j, texelSize.z * k));
-        vec curRoi = tex3D(base + vec3(texelSize.x * i, texelSize.y * j, texelSize.z * k));
-        float gaussB = exp( -(i*i + j*j + k*k) / (2.0 * sigma2));
-        //pick selected roi from 1d texture
-        float segInUse = texture2D(texSegInUse, vec2(curRoi, 0.0));
-        segColor = texture2D(texSegColorPalette, vec2(curRoi.a, 0.0)).rgb;
-        //acc.rgb += (segInUse * segColor + (1.0 - segInUse) * BackGroundColor) * gaussB;
-        acc.rgb += mix(BackGroundColor, segColor, segInUse) * gaussB;
-        float val = max(0.5 * curVal, segInUse);
-//        float val = curVal.a *segInUse;
-        acc.a += val * gaussB;
-        seg_norm_factor += segInUse * gaussB;
-        norm_factor += gaussB;
-      }
-  // color
-  if (seg_norm_factor > 0.01)
-    acc.rgb = acc.rgb / seg_norm_factor;
-  // intencity
-  acc.a = acc.a / norm_factor;
-  //gl_FragColor = acc;
-  return acc;
-}
-*/
+#endif
 
 vec4 filterROI(vec3 base)
 {
@@ -225,7 +193,6 @@ float filterBlur(vec3 base)
 }
 
 void main() {
-//  vec3 base = getTex3DCoord(texCoord);
   vec3 base;
   base.xy = texCoord;
   base.z = curZ;
@@ -234,14 +201,10 @@ void main() {
   float val; 
   #if renderRoiMap == 1
     acc = filterROI(base);
-//      val = tex3D(base);
-//      acc = vec4(val, 0.0, 0.0, val);
   #else
     val = filterBlur(base);
     acc = vec4(val, val, val, 1);
   #endif
-  //Apply contrast/brightness adjustments
-//  acc = contrast * (acc - 0.5) + 0.5 + brightness;
   
   gl_FragColor = acc;
 }
