@@ -4,7 +4,7 @@ Copyright (c) 2015–2018 [EPAM Systems, Inc.](https://www.epam.com/)
 
 Med3Web is a high performance web tool for advanced visualization (both in 2d and 3d modes)
 medical volumetric data, provided in popular file formats: Dicom, Nifti, Ktx, Hdr.
-Another popular formats will be planned for future improvements.
+Other popular formats will be planned for future improvements.
 Med3Web can read local data from files/folders and from predefined web locations.
 Demonstration project shows both (local data / remote data) usage types.
 It works as a standalone HTML5 web application. The latest version can be used with
@@ -15,12 +15,12 @@ with mobile browsers (Android Chrome).
 
 ## Market evaluation
 
-Med3Web can be used in medical center with diagnostic equipment.
-MRI and CT scanning results can be viewed in any computer (inside medical office and in the client home)
+Med3Web can be used in a medical center with diagnostic equipment.
+MRI and CT scanning results can be viewed in any computer (inside the medical office and in the client home)
 and qualified medical personnel can provide diagnosis or conclusion based on provided visualization.
-Unlike the range of standalone Dicom viewers executables, this app can be used as web
-application as a part of large web sites and services. Also it can be used by research institutes
-due to Nifti, Hdr, etc. file standards support (more popular for researchers rather then physicians).
+Unlike the range of standalone Dicom viewers executables, this app can be used as a web
+application as a part of large websites and services. Also, it can be used by research institutes
+due to Nifti, Hdr, etc. file standards support (more popular for researchers rather than physicians).
 Medical centers can create their clients database, based on this viewer.
 
 ## References
@@ -35,7 +35,7 @@ Some JavaScript libraries to work with Dicom file format:
 
 ## 3d volumetric rendering idea in a few words
 
-Three.js is used as some gateway to WebGL renderer. Current Three.js version is not supported 3d textures,
+Three.js is used as some gateway to WebGL renderer. The current Three.js version does not support 3d textures,
 so we use tricky way to build 2d texture from initial 3d texture by linking 2d slices all together
 as a large tile map. This idea (with source codes) can be seen in project [WebGL Volume Rendering](https://github.com/lebarba/WebGLVolumeRendering).
 
@@ -99,8 +99,8 @@ All gulp targets are listed in `gulpfile.babel.js`.
 For the virtual server create process, all source file are "merged" into single file bundle.js which can be found in `./.tmp/scripts`.
 
 ### Browser support
-Currently only Chrome, Firefox, Safari, Opera browsers are supported. Other browsers can be used with some performance slowdown and other
-rendering artefacts. Mobile browsers are not currently supported, but some of them can be used with performance/rendering problems and so on.
+Currently, only Chrome, Firefox, Safari, Opera browsers are supported. Other browsers can be used with some performance slowdown and other
+rendering artifacts. Mobile browsers are not currently supported, but some of them can be used with performance/rendering problems and so on.
 
 
 ### Important note concerning project running modes
@@ -109,7 +109,7 @@ App can be run in 3 modes:
 2. Run local web app under virtual server. Steps: run command "gulp server".
 3. Run local web app. Steps: Build app via command "gulp build" and open file `<LocalProjectLocation>/dist/index.html` in your browser.
 Important note: Local run mode (3) is not completely working under Google Chrome browser due to its strong security policy concerning local files opening.
-Other browsers has no such strong security restrictions and can be used. Local run (mode 3) is not recommended way to use this application.
+Other browsers have no such strong security restrictions and can be used. Local run (mode 3) is not the recommended way to use this application.
 
 
 ### Build and Run

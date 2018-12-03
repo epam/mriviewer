@@ -39,7 +39,23 @@ export default {
     src: 'app/data/*.*',
     tmpdst: '.tmp/data',
     distdst: 'dist/data',
-    onloadsrc: '', // 'data/lungs.ktx',
+    // Remote Dicom folder load by URL: need to write folder name
+    // Remote folder should contains 'file_list.txt' file with all
+    // *.dcm files inside. This file (file_list.txt) can be produced
+    // by command: dir *.dcm /w /b > file_list.txt
+    //
+    // onloadsrc: 'http://yoursite.com/folder1/folder2/folder3',
+    //
+    // Remote Ktx file load by URL
+    // You need to specify url, ended with ktx
+    // onloadsrc: 'http://yoursite.com/folder1/folder2/somevolume.ktx',
+    //
+    // Local Ktx file load by relative file path
+    // path is relative to index.html location
+    // onloadsrc: 'data/lungs.ktx',
+    //
+    // Start app without load volume on startup
+    onloadsrc: '',
   },
   jsdocConfig: {
     source: [

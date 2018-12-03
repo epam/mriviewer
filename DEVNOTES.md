@@ -1,3 +1,5 @@
+# Development notes
+
 ## Coding standard
 Please read [CODINGSTD.md](CODINGSTD.md) for details.
 
@@ -119,3 +121,38 @@ gulp build
 ```
 
 Result folder will be in folder 'dist'.
+
+## Loading volume on application startup
+
+There are 2 ways to load some volume on application startup:
+
+1) Load volume, placed in local application folder structure
+2) Load volume, referenced by URL from some remote location in Web.
+
+You need to write reference to loaded on stratup file in project/tools/config.js.
+Both ways with more details:
+
+1) You can place some file in ProjectFolder/app./data folder. 
+For example, 'lungs.ktx' is already placed here to illustrate loading posibilities.
+In this case you need to setup config.data.onloadsrc: 'data/lungs.ktx',
+Implementing this way, you can place some not-very-large files directly 
+inside web app build and this file will be acessed locally by application.
+Pros: loading can be quick. Cons: Application build will contains this file inside.
+
+2) You can place some files (single *.ktx file or folder with a lot of *dcm files) somewhere
+on your web site and Med3Web application will load this file(s) from specified URL on startup stage.
+If you need to load KTX file on startup, please put your somevolume.ktx file 
+to your location and specify URL like:
+config.data.onloadsrc: 'http://yoursite.com/folder1/folder2/somevolume.ktx'
+
+If you need to load folder with *.dcm files, you need to put all your dcm files in
+seperate folder (containing only these dcm files) and create special file
+'file_list.txt' with just list of all files. You can create file_list.txt by running command in dcm folder:
+```
+dir *.dcm /w /b > file_list.txt
+```
+After that yo need to specify URL in tools/config.js like:
+config.data.onloadsrc: 'http://yoursite.com/folder1/folder2/folder3',
+where folder3 is final folder, contained all dcm files.
+
+Also, you can read a lot of comments in tools/config.js : data description
