@@ -14,9 +14,15 @@ uniform float zDim;
 uniform sampler2D texBF;
 uniform sampler2D texFF;
 uniform sampler2D texIsoSurface;
+#if useWebGL2 == 0
 uniform sampler2D texVolume;
 uniform sampler2D texVolumeMask;
 uniform sampler2D texVolumeAO;
+#else
+uniform sampler3D texVolume;
+uniform sampler3D texVolumeMask;
+uniform sampler3D texVolumeAO;
+#endif
 uniform sampler2D texTF;
 uniform sampler2D colorMap1D;
 uniform sampler2D heatMap1D;
@@ -39,6 +45,7 @@ uniform vec3 ssaoOffsets[nOffsets];
 varying mat4 local2ScreenMatrix;
 varying vec4 screenpos;
 
+#if useWebGL2 == 0
 float tex3D(vec3 vecCur) {
   float tCX = 1.0 / tileCountX;
   vecCur = vecCur + vec3(0.5, 0.5, 0.5);
@@ -212,6 +219,32 @@ vec4 tex3DRoi(vec3 vecCur) {
   vec4 colorSlice2 = texture2D(texVolume, clamp(texCoordSlice2 * tCX, vec2(0.0, 0.0), vec2(1.0, 1.0)), 0.0);
   return mix(colorSlice1, colorSlice2, zRatio);
 }
+#else
+float tex3D(vec3 vecCur) {
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  return texture(texVolume, vecCur).a;
+}
+
+float tex3DAO(vec3 vecCur) {
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  return texture(texVolume, vecCur).a;
+}
+
+float tex3DvolAO(vec3 vecCur) {
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  return texture(texVolumeAO, vecCur).a;
+}
+
+vec4 tex3DRoi(vec3 vecCur) {
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  return texture(texVolume, vecCur);
+}
+
+float tex3DMask(vec3 vecCur) {
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  return texture(texVolumeMask, vecCur).a;
+}
+#endif
 
 /**
 * Calculation of normal
