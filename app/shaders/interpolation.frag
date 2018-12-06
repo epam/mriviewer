@@ -35,14 +35,14 @@ void main() {
     delta = DELTA2;
   }
   #endif
-
+/*
   if (length(iso1.rgb - iso2.rgb) > delta || length(iso1.rgb - iso3.rgb) > delta || length(iso1.rgb - iso4.rgb) > delta)
   {
     // The neighboring texels do not contain an isosurface
     discard;
     return;
   }
-
+*/
   gl_FragColor = vec4(mix(mix(iso1.xyz, iso2.xyz, uv_fract.x), mix(iso3.xyz, iso4.xyz, uv_fract.x), uv_fract.y), 1.0);
   return;
 

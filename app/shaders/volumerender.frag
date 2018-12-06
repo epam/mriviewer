@@ -415,7 +415,6 @@ vec3 CalcLighting(vec3 iter, vec3 dir)
 //  return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumCol * tex3DvolAO(iter);
   return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumCol;
 }
-
 vec3 CalcLightingAO(vec3 iter, vec3 dir, float isoThreshold)
 {
   const float AMBIENT = 0.3;
@@ -780,7 +779,7 @@ vec4 IsosurfaceRoi(vec3 start, vec3 dir, vec3 back, float threshold, float StepS
 void main() {
   const float DELTA1 = 0.1;
   const float DELTA2 = 0.05;
-  vec4 acc = vec4(0.0, 0.0, 0.0, 0.0);
+  vec4 acc = vec4(0.0, 0.0, 0.0, 1.0);
   // To increase the points of the beginning and end of the ray and its direction
   vec2 tc = screenpos.xy / screenpos.w * 0.5 + 0.5;
 //    gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
@@ -818,7 +817,7 @@ void main() {
     delta = DELTA2;
   }
   #endif
- /*
+
   if (minIso.a > 1.9)
   {
     // The neighboring texels do not contain an isosurface
@@ -830,10 +829,11 @@ void main() {
   {
     // The color of the pixel is calculated by bilinear interpolation of colors of neighboring texels
     acc = vec4(mix(mix(iso1.xyz, iso2.xyz, uv_fract.x), mix(iso3.xyz, iso4.xyz, uv_fract.x), uv_fract.y), 1.0);
+	//acc = vec4(0.0, 1.0, 0.0, 1.0);
     gl_FragColor = acc;
     return;
   }
- */
+ 
 
   // Direct volume render
  #if isoRenderFlag==0
@@ -865,6 +865,7 @@ void main() {
 //            acc.rgb = CalcLightingAO(acc.rgb, dir, isoThreshold);
             acc.rgb = CalcLighting(acc.rgb, dir);
     }
+	acc.a = 1.0;
     gl_FragColor = acc;
     return;
   }
