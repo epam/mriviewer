@@ -896,6 +896,14 @@ export default class Menu {
       });
     }
 
+    // handle for fcmeans segmentation
+    const buttonFcmeans = $('#med3web-button-fcmeans');
+    if (buttonFcmeans.length === 1) {
+      buttonFcmeans.on('click', () => {
+        this.app.performFCMeans();
+      });
+    }
+
     // mode switching buttons
     $('[data-toggle=mode]').on('click', (e) => {
       if ($(e.currentTarget).hasClass('disabled')) {
