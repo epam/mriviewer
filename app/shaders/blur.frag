@@ -31,7 +31,7 @@ uniform float curZ;
 #if useWebGL2 == 1
 float tex3D(vec3 vecCur) {
   float tCX = 1.0 / tileCountX;
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + texelSize;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + texelSize * 0.5;
   // check outside of texture volume
   if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
     return 0.0;
@@ -40,7 +40,7 @@ float tex3D(vec3 vecCur) {
 
 float tex3DRoi(vec3 vecCur) {
   float tCX = 1.0 / tileCountX;
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + texelSize;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + texelSize * 0.5;
   // check outside of texture volume
   if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
     return 0.0;

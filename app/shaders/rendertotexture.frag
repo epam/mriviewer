@@ -221,14 +221,22 @@ float tex3DMask(vec3 vecCur) {
 
 #else
 float tex3D(vec3 vecCur) {
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  float xSize = float(xDim);
+  float ySize = float(yDim);
+  float zSize = float(volumeSizeZ);
+  vec3 vAdd = vec3(0.5 / xSize, 0.5 / ySize, 0.5 / zSize);
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + vAdd;
   if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
     return 0.0;
   return texture(texVolume, vecCur).r;
 }
 
 float tex3DAO(vec3 vecCur) {
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  float xSize = float(xDim);
+  float ySize = float(yDim);
+  float zSize = float(volumeSizeZ);
+  vec3 vAdd = vec3(0.5 / xSize, 0.5 / ySize, 0.5 / zSize);
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + vAdd;
   return texture(texVolume, vecCur).r;
 }
 
@@ -238,7 +246,11 @@ float tex3DAO(vec3 vecCur) {
 }*/
 
 vec4 tex3DRoi(vec3 vecCur) {
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  float xSize = float(xDim);
+  float ySize = float(yDim);
+  float zSize = float(volumeSizeZ);
+  vec3 vAdd = vec3(0.5 / xSize, 0.5 / ySize, 0.5 / zSize);
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + vAdd;
   if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
     return vec4(0.0, 0.0, 0.0, 0.0);
   return texture(texVolume, vecCur);
@@ -246,7 +258,11 @@ vec4 tex3DRoi(vec3 vecCur) {
 
 
 float tex3DMask(vec3 vecCur) {
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
+  float xSize = float(xDim);
+  float ySize = float(yDim);
+  float zSize = float(volumeSizeZ);
+  vec3 vAdd = vec3(0.5 / xSize, 0.5 / ySize, 0.5 / zSize);
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + vAdd;
   return texture(texVolumeMask, vecCur).r;
 }
 
