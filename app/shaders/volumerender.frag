@@ -874,6 +874,7 @@ void main() {
         if (vol > t_function2min.a)
         {
             acc.rgb = 0.75*vol*t_function2min.rgb;
+			acc.a = 1.0;
             gl_FragColor = acc;
             return;
         }
