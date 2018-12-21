@@ -888,11 +888,21 @@ export default class Menu {
         this.activeVolume = new ActiveVolume();
       });
     }
-    // handle for radial evolution
-    const buttonRadialEvolve = $('#med3web-button-radial-evolve');
-    if (buttonRadialEvolve.length === 1) {
-      buttonRadialEvolve.on('click', () => {
-        this.app.performSphereEvolve();
+    // handle for radial evolution: clip volume
+    const buttonRadialEvolveClip = $('#med3web-button-radial-evolve-clip');
+    if (buttonRadialEvolveClip.length === 1) {
+      buttonRadialEvolveClip.on('click', () => {
+        const NEED_CLIP_VOL = true;
+        this.app.performSphereEvolve(NEED_CLIP_VOL);
+      });
+    }
+
+    // handle for radial evolution: modify sphere only
+    const buttonRadialEvolveSphere = $('#med3web-button-radial-evolve-sphere-modify');
+    if (buttonRadialEvolveSphere.length === 1) {
+      buttonRadialEvolveSphere.on('click', () => {
+        const NEED_CLIP_VOL = false;
+        this.app.performSphereEvolve(NEED_CLIP_VOL);
       });
     }
 
@@ -990,19 +1000,7 @@ export default class Menu {
           pixdim2: this.engine2d.m_volumeBox.y / this.engine2d.m_volumeHeader.m_pixelHeight,
           pixdim3: this.engine2d.m_volumeBox.z / this.engine2d.m_volumeHeader.m_pixelDepth,
         };
-        const sqrtZ = Math.sqrt(volSize.z);
-        const volDataPlain = new Uint8Array(volSize.x * volSize.y * volSize.z);
-        for (let z = 0; z < volSize.z; ++z) {
-          const newX = (z % sqrtZ);
-          const newY = (z - (z % sqrtZ)) / sqrtZ;
-          for (let y = 0; y < volSize.y; ++y) {
-            for (let x = 0; x < volSize.x; ++x) {
-              volDataPlain[volSize.y * volSize.x * z + volSize.x * y + x] = volData[
-                (newY * volSize.x * volSize.y * sqrtZ + y * sqrtZ * volSize.x + volSize.x * newX + x)];
-            }
-          }
-        }
-        const niiArr = NiftiSaver.writeBuffer(volDataPlain, volSize);
+        const niiArr = NiftiSaver.writeBuffer(volData, volSize);
         const textToSaveAsBlob = new Blob([niiArr], { type: 'application/octet-stream' });
         const textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
         const fileName = `${textInput.val()}.nii`;
