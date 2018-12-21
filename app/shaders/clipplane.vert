@@ -4,8 +4,11 @@
 
 uniform mat4 MVP;
 varying vec3 Pos;
+varying vec4 screenpos;
 attribute vec3 uvw;
+
 void main() {
   Pos = uvw;
-  gl_Position = vec4(position, 1.0);
+  screenpos = vec4(position, 1.0);
+  gl_Position = screenpos;
 }

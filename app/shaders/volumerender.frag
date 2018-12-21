@@ -193,10 +193,18 @@ float tex3D(vec3 vecCur) {
   float ySize = float(yDim);
   float zSize = float(volumeSizeZ);
   vec3 vAdd = vec3(0.5 / xSize, 0.5 / ySize, 0.5 / zSize);
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + vAdd;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
     return 0.0;
-  return texture(texVolume, vecCur).r;
+  if (all(lessThan(vecCur.xy, vec2(0.001))) ||
+      all(lessThan(vecCur.xz, vec2(0.001))) || 
+	  all(lessThan(vecCur.zy, vec2(0.001))) )
+	return 0.0;
+  if (all(greaterThan(vecCur.xy, vec2(0.999))) ||
+      all(greaterThan(vecCur.xz, vec2(0.999))) || 
+	  all(greaterThan(vecCur.zy, vec2(0.999))) )
+	return 0.0;
+  return texture(texVolume, vecCur + vAdd).r;
 }
 
 float tex3DAO(vec3 vecCur) {
@@ -795,7 +803,7 @@ vec4 IsosurfaceRoi(vec3 start, vec3 dir, vec3 back, float threshold, float StepS
 void main() {
   const float DELTA1 = 0.1;
   const float DELTA2 = 0.05;
-  vec4 acc = vec4(0.0, 0.0, 0.0, 1.0);
+  vec4 acc = vec4(0.0, 1.0, 0.0, 1.0);
   // To increase the points of the beginning and end of the ray and its direction
   vec2 tc = screenpos.xy / screenpos.w * 0.5 + 0.5;
 //    gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
@@ -803,11 +811,7 @@ void main() {
   vec4 backTexel = texture2D(texBF, tc, 0.0);
   vec3 back = backTexel.xyz;
   vec4 start = texture2D(texFF, tc, 0.0);
-  if (backTexel.a < 0.5)
-  {
-    gl_FragColor = acc;
-    return;
-  }
+  
   vec3 dir = normalize(back - start.xyz);
   //acc.rgb = VolumeRender(start.xyz, dir, back).rgb;
 //      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
