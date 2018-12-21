@@ -888,11 +888,21 @@ export default class Menu {
         this.activeVolume = new ActiveVolume();
       });
     }
-    // handle for radial evolution
-    const buttonRadialEvolve = $('#med3web-button-radial-evolve');
-    if (buttonRadialEvolve.length === 1) {
-      buttonRadialEvolve.on('click', () => {
-        this.app.performSphereEvolve();
+    // handle for radial evolution: clip volume
+    const buttonRadialEvolveClip = $('#med3web-button-radial-evolve-clip');
+    if (buttonRadialEvolveClip.length === 1) {
+      buttonRadialEvolveClip.on('click', () => {
+        const NEED_CLIP_VOL = true;
+        this.app.performSphereEvolve(NEED_CLIP_VOL);
+      });
+    }
+
+    // handle for radial evolution: modify sphere only
+    const buttonRadialEvolveSphere = $('#med3web-button-radial-evolve-sphere-modify');
+    if (buttonRadialEvolveSphere.length === 1) {
+      buttonRadialEvolveSphere.on('click', () => {
+        const NEED_CLIP_VOL = false;
+        this.app.performSphereEvolve(NEED_CLIP_VOL);
       });
     }
 
