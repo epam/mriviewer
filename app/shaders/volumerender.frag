@@ -196,14 +196,14 @@ float tex3D(vec3 vecCur) {
   vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
     return 0.0;
-  if (all(lessThan(vecCur.xy, vec2(0.001))) ||
+  /*if (all(lessThan(vecCur.xy, vec2(0.001))) ||
       all(lessThan(vecCur.xz, vec2(0.001))) || 
 	  all(lessThan(vecCur.zy, vec2(0.001))) )
 	return 0.0;
   if (all(greaterThan(vecCur.xy, vec2(0.999))) ||
       all(greaterThan(vecCur.xz, vec2(0.999))) || 
 	  all(greaterThan(vecCur.zy, vec2(0.999))) )
-	return 0.0;
+	return 0.0;*/
   return texture(texVolume, vecCur + vAdd).r;
 }
 
