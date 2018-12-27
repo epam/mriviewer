@@ -196,14 +196,14 @@ float tex3D(vec3 vecCur) {
   vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
     return 0.0;
-  /*if (all(lessThan(vecCur.xy, vec2(0.001))) ||
-      all(lessThan(vecCur.xz, vec2(0.001))) || 
-	  all(lessThan(vecCur.zy, vec2(0.001))) )
+  if (all(lessThan(vecCur.xy, vec2(0.003))) ||
+      all(lessThan(vecCur.xz, vec2(0.003))) || 
+	  all(lessThan(vecCur.zy, vec2(0.003))) )
 	return 0.0;
-  if (all(greaterThan(vecCur.xy, vec2(0.999))) ||
-      all(greaterThan(vecCur.xz, vec2(0.999))) || 
-	  all(greaterThan(vecCur.zy, vec2(0.999))) )
-	return 0.0;*/
+  if (all(greaterThan(vecCur.xy, vec2(0.997))) ||
+      all(greaterThan(vecCur.xz, vec2(0.997))) || 
+	  all(greaterThan(vecCur.zy, vec2(0.997))) )
+	return 0.0;
   return texture(texVolume, vecCur + vAdd).r;
 }
 
@@ -811,6 +811,9 @@ void main() {
   vec4 backTexel = texture2D(texBF, tc, 0.0);
   vec3 back = backTexel.xyz;
   vec4 start = texture2D(texFF, tc, 0.0);
+  
+  //gl_FragColor = vec4(vec3(length(back - start.xyz)), 1.0);
+  //return;
   
   vec3 dir = normalize(back - start.xyz);
   //acc.rgb = VolumeRender(start.xyz, dir, back).rgb;
