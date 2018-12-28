@@ -14,6 +14,7 @@ void main() {
   vec2 tc = screenpos.xy / screenpos.w * 0.5 + 0.5;
   vec4 backTexel = texture2D(texBF, tc, 0.0);
   if (backTexel.a < 0.5)
-    discard;
-  gl_FragColor = vec4(Pos, 0.5);
+    gl_FragColor = vec4(Pos, 0.0);
+  else
+    gl_FragColor = vec4(Pos, 0.5);
 }

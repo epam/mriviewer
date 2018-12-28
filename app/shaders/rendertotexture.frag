@@ -898,12 +898,18 @@ void main() {
   vec4 start = texture2D(texFF, tc, 0.0);
 
 
-  if (backTexel.a < 0.5)
+  if (backTexel.a < 0.5 || start.a < 0.5)
   {
-    gl_FragColor = acc;
+    gl_FragColor = vec4(0, 0, 0, 2.0);//acc;
     return;
   }
   vec3 dir = normalize(back - start.xyz);
+
+  if (length (back - start.xyz) < 0.03) {
+    gl_FragColor = vec4(0, 0, 0, 2.0);
+    return;
+  }
+
 //  const float ISO_VOLUME_STEP_SIZE = 0.0035;
   //Direct volume render
 

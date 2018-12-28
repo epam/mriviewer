@@ -803,7 +803,7 @@ vec4 IsosurfaceRoi(vec3 start, vec3 dir, vec3 back, float threshold, float StepS
 void main() {
   const float DELTA1 = 0.1;
   const float DELTA2 = 0.05;
-  vec4 acc = vec4(0.0, 1.0, 0.0, 1.0);
+  vec4 acc = vec4(0.0, 0.0, 0.0, 1.0);
   // To increase the points of the beginning and end of the ray and its direction
   vec2 tc = screenpos.xy / screenpos.w * 0.5 + 0.5;
 //    gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
@@ -811,11 +811,22 @@ void main() {
   vec4 backTexel = texture2D(texBF, tc, 0.0);
   vec3 back = backTexel.xyz;
   vec4 start = texture2D(texFF, tc, 0.0);
-  
+  if (length(back) < 0.001 || length(start.xyz) < 0.01) {
+    gl_FragColor = vec4(0, 0, 0, 1.0);
+	return;
+  }
   vec3 dir = normalize(back - start.xyz);
-  //acc.rgb = VolumeRender(start.xyz, dir, back).rgb;
-//      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-//    return;
+  
+  if (start.a < 0.3 || backTexel.a < 0.3) {
+    gl_FragColor = vec4(0, 0, 0, 1.0);
+	return;
+  }
+  
+  if (length (back - start.xyz) < 0.03) {
+    gl_FragColor = vec4(0.0, 0, 0, 1.0);
+    return;
+  }
+
 
   // Read texels adjacent to the pixel
   vec2 tc1 = tc.xy;
@@ -841,10 +852,11 @@ void main() {
   if (minIso.a > 1.9)
   {
     // The neighboring texels do not contain an isosurface
-    discard;
+    gl_FragColor = vec4(0.0, 0, 0, 1.0);
+    
     return;
   }
-
+  /*
   if (length(iso1.rgb - iso2.rgb) < delta && length(iso1.rgb - iso3.rgb) < delta && length(iso1.rgb - iso4.rgb) < delta)
   {
     // The color of the pixel is calculated by bilinear interpolation of colors of neighboring texels
@@ -852,7 +864,7 @@ void main() {
 	//acc = vec4(0.0, 1.0, 0.0, 1.0);
     gl_FragColor = acc;
     return;
-  }
+  }*/
  
 
   // Direct volume render
@@ -862,7 +874,7 @@ void main() {
      if (vol > t_function2min.a)
         acc.rgb = 0.75*vol * t_function2min.rgb;
      else
-        acc.rgb = VolumeRender(start.xyz + max(0., minIso.a - 0. / 128.)*dir, dir, back).rgb;
+        acc.rgb = VolumeRender(start.xyz /* + max(0., minIso.a - 0. / 128.)*dir */, dir, back).rgb;
      acc.a = 1.0;
      gl_FragColor = acc;
      return;
@@ -871,7 +883,7 @@ void main() {
   // Direct isosurface render
   #if isoRenderFlag==1
   {
-    acc = Isosurface(start.xyz + max(0., minIso.a - 1. / 128.)*dir, dir, back, isoThreshold);
+    acc = Isosurface(start.xyz /* + max(0., minIso.a - 1. / 128.)*dir */, dir, back, isoThreshold);
     if (acc.a < 1.9)
     {
         float vol = tex3D(start.xyz);
