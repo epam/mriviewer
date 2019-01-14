@@ -906,6 +906,14 @@ export default class Menu {
       });
     }
 
+    // handle lungs segmentation
+    const buttonLungsSegmentation = $('#med3web-button-lungsfill');
+    if (buttonLungsSegmentation.length === 1) {
+      buttonLungsSegmentation.on('click', () => {
+        this.app.performLungsSegmentation();
+      });
+    }
+
     // handle for fcmeans segmentation
     const buttonFcmeans = $('#med3web-button-fcmeans');
     if (buttonFcmeans.length === 1) {
