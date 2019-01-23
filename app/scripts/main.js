@@ -159,8 +159,31 @@ function onPageLoad() {
   curFileDataType = slider3dInitVal.undefined;
   menu = new Menu();
 
-  const fileNameOnLoad = config.data.onloadsrc;
+  // loaded file from static app config
+  let fileNameOnLoad = config.data.onloadsrc;
+
+  // read paraameters from url
+  // for dicom folder like:
+  // ?url=http://www.someplace.com/folder
+  //
+  const strSearch = window.location.search;
+  if (strSearch.length > 0) {
+    // console.log(`onPageLoad. app search = ${strSearch}`);
+    const strReg = /\\?url=(\S+)/;
+    const arr = strSearch.match(strReg);
+    fileNameOnLoad = arr[1];
+    // console.log(`fileNameOnLoad = ${fileNameOnLoad}`);
+    // check url valid
+    const reg = /^((ftp|http|https):\/\/)?www\.([\S]+)\.([A-z]{2,})\/[\S]+/;
+    const isValidArr = fileNameOnLoad.match(reg);
+    if (isValidArr === null) {
+      console.log(`Not valid URL = ${isValidArr}, f = ${fileNameOnLoad}`);
+      return;
+    }
+  }
+  // detect file type by file name extenstion
   const fileTypeOnLoad = _getLoadFileType(fileNameOnLoad);
+
   const opts = {
     container3d: root3dContainer,
     container2d: root2dContainer,
