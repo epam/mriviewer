@@ -189,30 +189,11 @@ float tex3DMask(vec3 vecCur) {
 
 #else
 float tex3D(vec3 vecCur) {
-  float xSize = float(xDim);
-  float ySize = float(yDim);
-  float zSize = float(volumeSizeZ);
-  vec3 vAdd = vec3(0.5 / xSize, 0.5 / ySize, 0.5 / zSize);
   vecCur = vecCur + vec3(0.5, 0.5, 0.5);
-  if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
-    return 0.0;
-  /*if (all(lessThan(vecCur.xy, vec2(0.001))) ||
-      all(lessThan(vecCur.xz, vec2(0.001))) || 
-	  all(lessThan(vecCur.zy, vec2(0.001))) )
-	return 0.0;
-  if (all(greaterThan(vecCur.xy, vec2(0.999))) ||
-      all(greaterThan(vecCur.xz, vec2(0.999))) || 
-	  all(greaterThan(vecCur.zy, vec2(0.999))) )
-	return 0.0;*/
-  return texture(texVolume, vecCur + vAdd).r;
+  return texture(texVolume, vecCur).r;
 }
-
 float tex3DAO(vec3 vecCur) {
-  float xSize = float(xDim);
-  float ySize = float(yDim);
-  float zSize = float(volumeSizeZ);
-  vec3 vAdd = vec3(0.5 / xSize, 0.5 / ySize, 0.5 / zSize);
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + vAdd;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   return texture(texVolume, vecCur).r;
 }
 
@@ -223,22 +204,12 @@ float tex3DvolAO(vec3 vecCur) {
 }*/
 
 vec4 tex3DRoi(vec3 vecCur) {
-  float xSize = float(xDim);
-  float ySize = float(yDim);
-  float zSize = float(volumeSizeZ);
-  vec3 vAdd = vec3(0.5 / xSize, 0.5 / ySize, 0.5 / zSize);
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + vAdd;
-  if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
-    return vec4(0.0, 0.0, 0.0, 0.0);
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   return texture(texVolume, vecCur);
 }
 
 float tex3DMask(vec3 vecCur) {
-  float xSize = float(xDim);
-  float ySize = float(yDim);
-  float zSize = float(volumeSizeZ);
-  vec3 vAdd = vec3(0.5 / xSize, 0.5 / ySize, 0.5 / zSize);
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + vAdd;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   return texture(texVolumeMask, vecCur).r;
 }
 #endif
