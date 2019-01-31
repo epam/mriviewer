@@ -683,6 +683,11 @@ export default class Menu {
         isHdr = (fileName.indexOf('.H') !== -1) ? true : isHdr;
         let isImg = (fileName.indexOf('.img') !== -1);
         isImg = (fileName.indexOf('.IMG') !== -1) ? true : isImg;
+        // fix file type if user selects img file first inside bulk files selection
+        if (isImg && !isHdr) {
+          isImg = false; isHdr = true;
+          // console.log('change file type from IMG to HDR\n');
+        }
 
         // read local file
         if (isKtx) {

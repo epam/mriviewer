@@ -226,60 +226,27 @@ float tex3DvolAO(vec3 vecCur) {
 
 #else
 float tex3D(vec3 vecCur) {
-  float xSize = float(xDim);
-  float ySize = float(yDim);
-  float zSize = float(volumeSizeZ);
-  vec3 vAdd = vec3(0.5 / xSize, 0.5 / ySize, 0.5 / zSize);
   vecCur = vecCur + vec3(0.5, 0.5, 0.5);
-  if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
-    return 0.0;
-  /*if (all(lessThan(vecCur.xy, vec2(0.001))) ||
-      all(lessThan(vecCur.xz, vec2(0.001))) || 
-	  all(lessThan(vecCur.zy, vec2(0.001))) )
-	return 0.0;
-  if (all(greaterThan(vecCur.xy, vec2(0.999))) ||
-      all(greaterThan(vecCur.xz, vec2(0.999))) || 
-	  all(greaterThan(vecCur.zy, vec2(0.999))) )
-	return 0.0;*/
-  return texture(texVolume, vecCur + vAdd).r;
+  return texture(texVolume, vecCur).r;
 }
-
 float tex3DAO(vec3 vecCur) {
-  float xSize = float(xDim);
-  float ySize = float(yDim);
-  float zSize = float(volumeSizeZ);
-  vec3 vAdd = vec3(0.5 / xSize, 0.5 / ySize, 0.5 / zSize);
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + vAdd;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   return texture(texVolume, vecCur).r;
 }
 
 
 float tex3DvolAO(vec3 vecCur) {
-  float xSize = float(xDim);
-  float ySize = float(yDim);
-  float zSize = float(volumeSizeZ);
-  vec3 vAdd = vec3(0.5 / xSize, 0.5 / ySize, 0.5 / zSize);
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + vAdd;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   return texture(texVolumeAO, vecCur).r;
 }
 
 vec4 tex3DRoi(vec3 vecCur) {
-  float xSize = float(xDim);
-  float ySize = float(yDim);
-  float zSize = float(volumeSizeZ);
-  vec3 vAdd = vec3(0.5 / xSize, 0.5 / ySize, 0.5 / zSize);
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + vAdd;
-  if ((vecCur.x < 0.0) || (vecCur.y < 0.0) || (vecCur.z < 0.0) || (vecCur.x > 1.0) ||  (vecCur.y > 1.0) || (vecCur.z > 1.0))
-    return vec4(0.0, 0.0, 0.0, 0.0);
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   return texture(texVolume, vecCur);
 }
 
 float tex3DMask(vec3 vecCur) {
-  float xSize = float(xDim);
-  float ySize = float(yDim);
-  float zSize = float(volumeSizeZ);
-  vec3 vAdd = vec3(0.5 / xSize, 0.5 / ySize, 0.5 / zSize);
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + vAdd;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);
   return texture(texVolumeMask, vecCur).r;
 }
 #endif
@@ -442,9 +409,14 @@ vec3 CalcLighting(vec3 iter, vec3 dir)
   sumCol = mix(t_function2min.rgb, t_function2max.rgb, 1.-dif);
   float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
   // The resulting color depends on the longevity of the material in the surface of the isosurface
-  return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumCol * tex3DvolAO(iter);
-  // return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumCol; //to test AO
-  // return vec3(tex3DvolAO(iter));
+//  return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumCol * tex3DvolAO(iter);
+  //return vec3(tex3DvolAO(iter));
+  vec3 col = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT * tex3DvolAO(iter)) + SPEC * specular) * sumCol;
+  float t = 0.05*max(0.0, dot(dir, normalize(iter))+1.0);
+  col = (1.0 - t)*col + t*vec3(0.0, 0.0, 1.0);
+  return col;
+
+//  return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumCol;
 }
 vec3 CalcLightingAO(vec3 iter, vec3 dir, float isoThreshold)
 {
@@ -957,6 +929,7 @@ void main() {
           acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
 //          acc.rgb = computeSsaoShadow(acc.rgb, Threshold) * vec3(1.0, 1.0, 1.0);
         }  
+		acc.a = 1.0;
     }
     gl_FragColor = acc;
     return;
