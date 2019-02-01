@@ -173,11 +173,18 @@ function onPageLoad() {
     const arr = strSearch.match(strReg);
     fileNameOnLoad = arr[1];
     // console.log(`fileNameOnLoad = ${fileNameOnLoad}`);
+
     // check url valid
-    const reg = /^((ftp|http|https):\/\/)?www\.([\S]+)\.([A-z]{2,})\/[\S]+/;
-    const isValidArr = fileNameOnLoad.match(reg);
-    if (isValidArr === null) {
-      console.log(`Not valid URL = ${isValidArr}, f = ${fileNameOnLoad}`);
+    // use both forms to chekc urls:
+    // www.XXX.YYY/....
+    // DDD.DDD.DDD.DDD:ddd/....
+    //
+    const regA = /^((ftp|http|https):\/\/)?www\.([\S]+)\.([A-z]{2,})\/[\S]+/;
+    const regB = /(ftp|http|https):\/\/([\d]+)\.([\d]+)\.([\d]+)\.([\d]+)(:([\d]+))?\/([\S]+)/;
+    const isValidA = fileNameOnLoad.match(regA);
+    const isValidB = fileNameOnLoad.match(regB);
+    if ((isValidA === null) && (isValidB === null)) {
+      console.log(`Not valid URL = ${fileNameOnLoad}`);
       return;
     }
   }
