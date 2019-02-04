@@ -171,6 +171,10 @@ function onPageLoad() {
     // console.log(`onPageLoad. app search = ${strSearch}`);
     const strReg = /\\?url=(\S+)/;
     const arr = strSearch.match(strReg);
+    if (arr === null) {
+      console.log('arguments should be in form: ?url=www.xxx.yy/zz/ww');
+      return;
+    }
     fileNameOnLoad = arr[1];
     // console.log(`fileNameOnLoad = ${fileNameOnLoad}`);
 
@@ -179,7 +183,7 @@ function onPageLoad() {
     // www.XXX.YYY/....
     // DDD.DDD.DDD.DDD:ddd/....
     //
-    const regA = /^((ftp|http|https):\/\/)?www\.([\S]+)\.([A-z]{2,})\/[\S]+/;
+    const regA = /^((ftp|http|https):\/\/)?([\S]+)\.([\S]+)\.([A-z]{2,})\/[\S]+/;
     const regB = /(ftp|http|https):\/\/([\d]+)\.([\d]+)\.([\d]+)\.([\d]+)(:([\d]+))?\/([\S]+)/;
     const isValidA = fileNameOnLoad.match(regA);
     const isValidB = fileNameOnLoad.match(regB);
