@@ -74,7 +74,8 @@ float tex3D(vec3 vecCur) {
       all(greaterThan(vecCur.xz, vec2(0.999))) || 
 	  all(greaterThan(vecCur.zy, vec2(0.999))) )
 	return 0.0;*/
-  return texture(texVolume, vecCur + vAdd).r;
+//  return texture(texVolume, vecCur + vAdd).r;
+  return texture(texVolume, vecCur).r;
 }
 #endif
 /**
@@ -100,50 +101,46 @@ vec3 getTex3DCoord(vec2 base) {
 */
 vec3 CalcNormal(vec3 iter)
 {
-  float d = 1.0 / float(vectorsSize); // / texSize;
-  vec3 dx = vec3(d, 0.0, 0.0), dy = vec3(0.0, d, 0.0), dz = vec3(0.0, 0.0, d), N;
+  vec3 dx = vec3(texelSize.x, 0.0, 0.0), dy = vec3(0.0, texelSize.x, 0.0), dz = vec3(0.0, 0.0, texelSize.x), N;
   // Culculate normal
   N.x = tex3D(iter + dx) - tex3D(iter - dx);
   N.y = tex3D(iter + dy) - tex3D(iter - dy);
   N.z = tex3D(iter + dz) - tex3D(iter - dz);
-  N = normalize(N);
   return N;
 }
 
 float ao(vec3 base){
-  const float CONTRAINT = 1000.0;
   const float TWICE = 2.0;
-  const float CONST = 5.0 / 256.0;
+  float STEPSIZE = 1.0 * texelSize.x;
+  const int STEPCOUNT = 16;
   float res = 1.0;
   float fVectorsSize = float(vectorsSize);
   float reverseVectorSize = 1.0 / fVectorsSize;
   vec3 normal = -CalcNormal(base);
-  float scalar = 0.0;
+  if (length(normal) < 1.0/256.0)
+    return 1.0;
+  normal = normalize(normal);
   vec3 currentVox;
   float tempBase = tex3D(base);
-  int road = 64; // count of steps on line for aos
-  for(float vec = 0.0; vec < CONTRAINT; vec += 4.0){ //the ray selection
-      if (vec >= fVectorsSize){break;}
-      float vectorF = vec;
-      vec3 currentVectorTex = texture2D(vectorsTex, vec2(reverseVectorSize * vectorF, 0.0), 0.0).rgb;
+  float t = 0.5 * reverseVectorSize;
+  for(int i = 0; i < vectorsSize; i++){ //the ray selection
+      vec3 currentVectorTex = texture2D(vectorsTex, vec2(t, 0.0), 0.0).rgb;
+	  t += reverseVectorSize;
       currentVectorTex -= vec3(0.5);
       normalize(currentVectorTex);
-      if(dot(normal, currentVectorTex) >= 0.0){ //we walk along the ray
-          for(int step = 1; step < 100; step++){
-              if(step >= road){break;}
-              float steper = float(step);
-              currentVox = base + CONST * steper * currentVectorTex;
-              if((tex3D(currentVox) > tempBase)){
-                float coeff = 1.0 - ((steper) / float(road));
-                res = res - TWICE * reverseVectorSize * coeff;
-                break;
-              }
-          }
+      if(dot(normal, currentVectorTex) > 0.0){ //we walk along the ray
+	    currentVox = base + STEPSIZE * currentVectorTex; 
+        for(int step = 0; step < STEPCOUNT; step++){
+            currentVox += STEPSIZE * currentVectorTex;
+            if((tex3D(currentVox) > tempBase)){
+			     res = res - TWICE * reverseVectorSize;
+                 break;
+            }
+        }
       }
   }
   return max(0.0, res);
 }
-
 
 
 void main() {

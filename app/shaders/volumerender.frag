@@ -411,9 +411,11 @@ vec3 CalcLighting(vec3 iter, vec3 dir)
   // The resulting color depends on the longevity of the material in the surface of the isosurface
 //  return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumCol * tex3DvolAO(iter);
   //return vec3(tex3DvolAO(iter));
-  vec3 col = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT * tex3DvolAO(iter)) + SPEC * specular) * sumCol;
-  float t = 0.05*max(0.0, dot(dir, normalize(iter))+1.0);
+//  vec3 col = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT * tex3DvolAO(iter)) + SPEC * specular) * sumCol;
+  vec3 col = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumCol;
+  float t = 0.1*max(0.0, dot(dir, normalize(iter)));
   col = (1.0 - t)*col + t*vec3(0.0, 0.0, 1.0);
+  //col = tex3DvolAO(iter) * vec3(1.0);
   return col;
 
 //  return  (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumCol;

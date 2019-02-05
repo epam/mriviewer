@@ -31,12 +31,12 @@ uniform float curZ;
 #if useWebGL2 == 1
 float tex3D(vec3 vecCur) {
   float tCX = 1.0 / tileCountX;
-  vecCur = vecCur + vec3(0.5, 0.5, 0.5) + texelSize * 0.5;
+  vecCur = vecCur + vec3(0.5, 0.5, 0.5);// + texelSize * 0.5;
   // check outside of texture volume
   //if ((vecCur.z < 0.5*texelSize.z) || (vecCur.z >= 1.0 - 0.5*texelSize.z))
     //return 0.0;
-  if (vecCur.z < 0.5*texelSize.z) vecCur.z = 0.5*texelSize.z;
-  if (vecCur.z > 1.0 - 0.5*texelSize.z) vecCur.z = 1.0 - 0.5*texelSize.z;
+  //if (vecCur.z < 0.5*texelSize.z) vecCur.z = 0.5*texelSize.z;
+  //if (vecCur.z > 1.0 - 0.5*texelSize.z) vecCur.z = 1.0 - 0.5*texelSize.z;
   return texture(texVolume, vecCur).r;
 }
 
