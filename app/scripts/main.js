@@ -183,7 +183,7 @@ function onPageLoad() {
     // www.XXX.YYY/....
     // DDD.DDD.DDD.DDD:ddd/....
     //
-    const regA = /^((ftp|http|https):\/\/)?([\S]+)\.([\S]+)\.([A-z]{2,})\/[\S]+/;
+    const regA = /^((ftp|http|https):\/\/)?(([\S]+)\.)?([\S]+)\.([A-z]{2,})(:\d{1,6})?\/[\S]+/;
     const regB = /(ftp|http|https):\/\/([\d]+)\.([\d]+)\.([\d]+)\.([\d]+)(:([\d]+))?\/([\S]+)/;
     const isValidA = fileNameOnLoad.match(regA);
     const isValidB = fileNameOnLoad.match(regB);
