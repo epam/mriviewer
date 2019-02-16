@@ -18,6 +18,7 @@ uniform float volumeSizeZ;
 uniform float xDim;
 uniform float yDim;
 uniform float curZ;
+uniform float isoThreshold;
 uniform int vectorsSize;
 
 /**
@@ -111,27 +112,28 @@ vec3 CalcNormal(vec3 iter)
 
 float ao(vec3 base){
   const float TWICE = 2.0;
-  float STEPSIZE = 1.0 * texelSize.x;
+  float STEPSIZE = texelSize.z;
   const int STEPCOUNT = 16;
   float res = 1.0;
   float fVectorsSize = float(vectorsSize);
   float reverseVectorSize = 1.0 / fVectorsSize;
   vec3 normal = -CalcNormal(base);
-  if (length(normal) < 1.0/256.0)
+  if (length(normal) < 1.0/256.0 || tex3D(base) < 0.75 * isoThreshold)
     return 1.0;
   normal = normalize(normal);
   vec3 currentVox;
-  float tempBase = tex3D(base);
-  float t = 0.5 * reverseVectorSize;
+  float tempBase = isoThreshold; //tex3D(base);
+//  float tempBase = tex3D(base);
+  float t = 0.0;
   for(int i = 0; i < vectorsSize; i++){ //the ray selection
       vec3 currentVectorTex = texture2D(vectorsTex, vec2(t, 0.0), 0.0).rgb;
 	  t += reverseVectorSize;
       currentVectorTex -= vec3(0.5);
       normalize(currentVectorTex);
       if(dot(normal, currentVectorTex) > 0.0){ //we walk along the ray
-	    currentVox = base + STEPSIZE * currentVectorTex; 
+	    currentVox = base + STEPSIZE * normal;//currentVectorTex; 
         for(int step = 0; step < STEPCOUNT; step++){
-            currentVox += STEPSIZE * currentVectorTex;
+            currentVox += 2.0*STEPSIZE * currentVectorTex;
             if((tex3D(currentVox) > tempBase)){
 			     res = res - TWICE * reverseVectorSize;
                  break;
