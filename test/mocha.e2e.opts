@@ -1,3 +1,0 @@
---recursive
---require babel-register
-test/**/*.e2e.js
