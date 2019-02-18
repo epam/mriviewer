@@ -1,0 +1,787 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>
+      Med3Web - Dicom 2d/3d web viewer
+    </title>
+
+    <link rel="apple-touch-icon" href="images/favicon.png">
+    <!-- Place favicon.ico in the root directory -->
+
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/main.scss">
+    <!-- endbuild -->
+  </head>
+  <body>
+    <!--[if IE]>
+      <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <div class="container-fluid" id="med3web-container-main">
+
+      <nav class="navbar navbar-default navbar-static-top">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#med3web-navbar" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          </div>
+
+
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="med3web-navbar">
+            <ul class="nav navbar-nav navbar-left">
+              <li class="dropdown navbar-btn" id="med3web-menu-panel-open">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" data-value="med3web-menu-panel-about">
+                    <span data-tooltip="tooltip" data-placement="bottom" title="About">
+                      <span class="glyphicon glyphicon-question-sign"></span>
+                      <span>
+                        About
+                      </span>
+                    </span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="#" data-target="#med3web-input-open">
+                      <div class="text-center" id="med3web-panel-about" style="margin:24px">
+                        <img src="images/med3web_logo.svg" height="400px">
+
+                        <h3 class="text-center" style="max-width:35ex;margin:20px auto 10px">
+                            <span style="white-space:nowrap;" id="med3web-panel-about-description">
+                            </span>
+                          <p>
+                            <small class="PACKAGE_VERSION" style="white-space:nowrap;" id="med3web-panel-about-version">
+                            </small>
+                          </p>
+                        </h3>
+
+                        <p id="med3web-panel-about-copyright">
+                        </p>
+                        <hr>
+
+                      </div>
+                    </a>
+
+                  </li>
+                </ul>
+              </li>
+
+              <li class="dropdown navbar-text">
+                <small id="med3web-menu-scene-title">
+                  Not loaded
+                </small>
+              </li>
+
+            </ul>
+            <ul class="nav navbar-nav navbar-center">
+              <li class="dropdown navbar-btn" id="med3web-button-dropdown-open">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                  <span data-tooltip="tooltip" data-placement="bottom" title="File">
+                    <span class="fa fa-file-o"></span><span>File</span>
+                  </span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="#" data-target="#med3web-input-open">
+                      <label class="input-file-label" for="med3web-input-file-open-local"><span class="fa fa-desktop"> Open from Computer</span></label>
+                      <input type="file" class="form-control hidden" id="med3web-input-file-open-local" accept=".dcm,.ktx,.nii,.hdr,.h,.img" multiple>
+                    </a>
+                  </li>
+                  <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open" style="display: none;"><span class="fa fa-server"> Open from Server</span></a></li>
+                  <li><a href="#" data-toggle="modal" data-target="#med3web-modal-open-url"><span class="fa fa-globe"> Open by URL</span></a></li>
+                  <li><a href="#" data-toggle="modal" data-target="#med3web-modal-save-as-nifti"><span class="fa fa-save"> Save as Nifti</span></a></li>
+                </ul>
+              </li>
+
+
+              <!-- drop down menu with tags and screen shot -->
+              <li class="dropdown navbar-btn" id="med3web-button-dropdown-report">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                  <span data-tooltip="tooltip" data-placement="bottom" title="Report">
+                    <span class="fa fa-newspaper-o"></span><span>Report</span>
+                  </span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li id="med3web-button-dicom-tags">
+                    <a href="#" data-toggle="modal" data-target="#med3web-modal-dicom-tags">
+                      <span class="fa fa-list-alt"> Show tags</span>
+                    </a>
+                  </li>
+                  <li id="med3web-button-screenshot"><a href="#"><span class="fa fa-camera"> Screenshot</span></a></li>
+                </ul>
+              </li>
+
+              <li class="dropdown navbar-btn" id="med3web-button-dropdown-filter">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                  <span data-tooltip="tooltip" data-placement="bottom" title="Filter">
+                    <span class="fa fa-filter"></span><span>Filter</span>
+                  </span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li id="med3web-button-segmentation-brain"><a href="#">Auto detect brain</a></li>
+                  <li id="med3web-button-segmentation-level-set"><a href="#">Active Volume enlarge (seed sphere)</a></li>
+                  <li id="med3web-button-radial-evolve-clip"><a href="#">Sphere evolve with clip</a></li>
+                  <li id="med3web-button-radial-evolve-sphere-modify"><a href="#">Sphere evolve no clipping</a></li>
+                  <li id="med3web-button-lungsfill"><a href="#">Lungs segmentation</a></li>
+                  <li id="med3web-button-fcmeans"><a href="#">FCMeans segmentation</a></li>
+                </ul>
+              </li>
+
+
+
+              <li class="btn-group" data-toggle="buttons">
+                <label class="navbar-btn btn btn-default" id="med3web-mode-mpr" data-toggle="mode" data-renderer="mpr" data-mode="mpr" data-tooltip="tooltip" data-placement="bottom" title="Multiplanar reconstruction">
+                  <input type="radio" name="med3web-modes" autocomplete="off"> MPR
+                </label>
+                <label class="navbar-btn btn btn-default active" id="med3web-mode-2d" data-toggle="mode" data-renderer="2d" data-mode="2d" data-tooltip="tooltip" data-placement="bottom" title="2D viewer">
+                  <input type="radio" name="med3web-modes" autocomplete="off"> 2D
+                </label>
+                <label class="navbar-btn btn btn-default" id="med3web-mode-3d-fast" data-toggle="mode" data-renderer="3d" data-mode="3d-fast" data-tooltip="tooltip" data-placement="bottom" title="3D fast viewer">
+                  <input type="radio" name="med3web-modes" autocomplete="off"> 3D<span class="fa fa-bolt"></span>
+                </label>
+                <label class="navbar-btn btn btn-default" id="med3web-mode-3d" data-toggle="mode" data-renderer="3d" data-mode="3d" data-tooltip="tooltip" data-placement="bottom" title="3D viewer">
+                  <input type="radio" name="med3web-modes" autocomplete="off"> 3D
+                </label>
+              </li>
+            </ul>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
+
+      <div class="row" id="med3web-row-main">
+        <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4" id="med3web-panel-menu" style="padding: 0; margin: 0; height: 100%;">
+          <div class="panel" id="med3web-panel-menu-3d-fast" style="display: none;">
+            <div class="panel-body">
+
+              <div class="panel-group" id="med3web-accordion-tools-3d" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="med3web-tool-3d-eraser-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <a role="button" data-toggle="collapse" data-value="eraser" data-parent="#med3web-accordion-tools-3d" href="#med3web-tool-3d-eraser-body" aria-expanded="true" aria-controls="med3web-tool-3d-eraser-body">
+                        Eraser settings
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="med3web-tool-3d-eraser-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="med3web-tool-3d-eraser-head">
+                    <div class="panel-body">
+                      <div id="med3web-eraser-setting-radius">
+                        <label for="med3web-slider-opacity"><h4>Radius</h4></label>
+                        <div class="med3web-slider" id="med3web-slider-radius"></div>
+                      </div>
+                      <div id="med3web-eraser-setting-depth">
+                        <label for="med3web-slider-opacity"><h4>Depth</h4></label>
+                        <div class="med3web-slider" id="med3web-slider-depth"></div>
+                      </div>
+                      <div class="btn-group row" data-toggle="buttons" style="margin: 0; padding: 0; width: 100%;">
+                        <label class="btn active col-xs-2 col-sm-2 col-md-1" data-tooltip="tooltip" data-placement="bottom" title="Tangential Direction" data-tool-type="tan">
+                          <input type="radio" name="options" id="med3web-tool-3d-eraser-tan" autocomplete="off" checked>
+                          <a href="#" class="thumbnail">
+                            <img src="images/icon_tools3d_eraser_tan.png" alt="ico_tan">
+                          </a>
+                        </label>
+                        <label class="btn col-xs-2 col-sm-2 col-md-1" data-tooltip="tooltip" data-placement="bottom" title="Normal Direction" data-tool-type="norm">
+                          <input type="radio" name="options" id="med3web-tool-3d-eraser-norm" autocomplete="off">
+                          <a href="#" class="thumbnail">
+                            <img src="images/icon_tools3d_eraser_norm.png" alt="ico_norm">
+                          </a>
+                        </label>
+                        <label class="btn col-xs-2 col-sm-2 col-md-1" data-tooltip="tooltip" data-placement="bottom" title="Fill Eraser" data-tool-type="fill">
+                          <input type="radio" name="options" id="med3web-tool-3d-eraser-fill" autocomplete="off">
+                          <a href="#" class="thumbnail">
+                            <img src="images/icon_tools3d_eraser_fill.png" alt="ico_norm">
+                          </a>
+                        </label>
+                        <label class="col-xs-2 col-sm-2 col-md-7"></label>
+                        <label class="btn col-xs-2 col-sm-2 col-md-1"  id="med3web-tool-3d-eraser-undo" data-tooltip="tooltip" data-placement="bottom" title="Undo" data-tool-type="undo">
+                          <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                            <img src="images/icon_tools3d_undo.png" alt="ico_undo">
+                          </a>
+                        </label>
+                        <label class="btn col-xs-2 col-sm-2 col-md-1"  id="med3web-tool-3d-eraser-reset" data-tooltip="tooltip" data-placement="bottom" title="Reset data" data-tool-type="reset">
+                          <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                            <img src="images/icon_tools3d_reset.png" alt="ico_reset">
+                          </a>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel-group" id="med3web-accordion-choose-roi" role="tablist" aria-multiselectable="true" style="display: none;">
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="med3web-choose-roi-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <a role="button" data-toggle="collapse" data-parent="#med3web-accordion-tools-3d" href="#med3web-choose-roi-body" aria-expanded="true" aria-controls="med3web-choose-roi-body">
+                        Choose ROI
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="med3web-choose-roi-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="med3web-tool-3d-eraser-head">
+                    <div class="panel-body">
+                      <div class="btn-group" data-toggle="buttons" style="width: 100%; margin-bottom: 5px;">
+                        <label id="med3web-btn-roi-check-all" class="btn btn-default btn-roi">
+                          <span class="btn-roi-check-icon">
+                            <span class="fa fa-square"></span>
+                            <span class="fa fa-check-square"></span>
+                          </span>
+                          <input type="checkbox" autocomplete="off"> <span><strong>Check all</strong></span>
+                        </label>
+                      </div>
+                      <div class="btn-group btn-roi-group" data-toggle="buttons" style="width: 100%;">
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel-group" id="med3web-accordion-fast-render-mode" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                  <div class="panel-heading active" role="tab" id="med3web-3d-fast-volrend-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <span class="fa fa-circle-o"></span>
+                      <span class="fa fa-dot-circle-o"></span>
+                      <a role="button" data-toggle="collapse" data-value="fast-volrend" data-parent="#med3web-accordion-fast-render-mode" href="#med3web-3d-fast-volrend-body" aria-expanded="true" aria-controls="med3web-3d-fast-volrend-body">
+                        Fast volume rendering
+                      </a>
+                      <div style="flex-grow: 1; align-items: flex-end; text-align: right;">
+                        <label class="btn btn-active" role="button" data-type="reset-to-default" data-tooltip="tooltip" data-placement="bottom" title="Reset to default">
+                          <span class="glyphicon glyphicon-refresh"></span>
+                        </label>
+                      </div>
+                    </h4>
+                  </div>
+                  <div id="med3web-3d-fast-volrend-body" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="med3web-3d-fast-volrend-head">
+                    <div class="panel-body">
+                      <div id="med3web-setting-3d-hist">
+                      </div>
+                      <div id="med3web-setting-3d-transfer-func">
+                        <label for="med3web-slider-3d-transfer-func"><h4>Transfer function</h4></label>
+                        <div class="med3web-slider" id="med3web-slider-3d-transfer-func"></div>
+                      </div>
+                      <div id="med3web-setting-3d-color">
+                        <label for="med3web-buttons-3d-color"><h4>TF second handle color</h4></label>
+                        <div class="btn-group" data-toggle="buttons" id="med3web-buttons-3d-color">
+                          <label class="btn btn-default col-xs-12 col-sm-6 active" id="med3web-3d-color-red">
+                            <input type="radio" name="med3web-3d-color" autocomplete="off"><label class="circle" style="background-color: #dc0000"></label> <small><strong>Red</strong></small>
+                          </label>
+                          <label class="btn btn-default col-xs-12 col-sm-6" id="med3web-3d-color-green">
+                            <input type="radio" name="med3web-3d-color" autocomplete="off"><label class="circle" style="background-color: #00dc00"></label> <small><strong>Green</strong></small>
+                          </label>
+                        </div>
+                      </div>
+                      <div id="med3web-setting-opacity">
+                        <label for="med3web-slider-opacity"><h4>Opacity</h4></label>
+                        <div class="med3web-slider" id="med3web-slider-opacity"></div>
+                      </div>
+                      <div id="med3web-setting-3d-brightness">
+                        <label for="med3web-slider-3d-brightness"><h4>Brightness</h4></label>
+                        <div class="med3web-slider" id="med3web-slider-3d-brightness"></div>
+                      </div>
+                      <div id="med3web-setting-3d-z-cut">
+                        <label for="med3web-slider-3d-z-cut"><h4>Z cut</h4></label>
+                        <div class="med3web-slider" id="med3web-slider-3d-z-cut"></div>
+                      </div>
+                      <div id="med3web-setting-3d-quality">
+                        <label for="med3web-slider-3d-quality"><h4>Quality</h4></label>
+                        <div class="med3web-slider" id="med3web-slider-3d-quality"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="med3web-3d-fast-isosurf-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <span class="fa fa-circle-o"></span>
+                      <span class="fa fa-dot-circle-o"></span>
+                      <a class="collapsed" role="button" data-toggle="collapse" data-value="fast-isosurf" data-parent="#med3web-accordion-fast-render-mode" href="#med3web-3d-fast-isosurf-body" aria-expanded="false" aria-controls="med3web-3d-fast-isosurf-body">
+                        Fast isosurface
+                      </a>
+                      <div style="flex-grow: 1; align-items: flex-end; text-align: right;">
+                        <label class="btn btn-active" role="button" data-type="reset-to-default" data-tooltip="tooltip" data-placement="bottom" title="Reset to default">
+                          <span class="glyphicon glyphicon-refresh"></span>
+                        </label>
+                      </div>
+                    </h4>
+                  </div>
+                  <div id="med3web-3d-fast-isosurf-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="med3web-3d-fast-isosurf-head">
+                    <div class="panel-body">
+                      <label for="med3web-slider-threshold-isosurf"><h4>Isosurface threshold</h4></label>
+                      <div class="med3web-slider" id="med3web-slider-threshold-isosurf"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="med3web-3d-mip-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <span class="fa fa-circle-o"></span>
+                      <span class="fa fa-dot-circle-o"></span>
+                      <a class="collapsed" role="button" data-toggle="collapse" data-value="mip" data-parent="#med3web-accordion-fast-render-mode" href="#med3web-3d-mip-body" aria-expanded="false" aria-controls="med3web-3d-mip-body">
+                        MIP
+                      </a>
+                      <div style="flex-grow: 1; align-items: flex-end; text-align: right;">
+                        <label class="btn btn-active" role="button" data-type="reset-to-default" data-tooltip="tooltip" data-placement="bottom" title="Reset to default">
+                          <span class="glyphicon glyphicon-refresh"></span>
+                        </label>
+                      </div>
+                    </h4>
+                  </div>
+                  <div id="med3web-3d-mip-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="med3web-3d-mip-head">
+                    <div class="panel-body">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel" id="med3web-panel-menu-3d" style="display: none;">
+            <div class="panel-body">
+              <div class="panel-group" id="med3web-accordion-render-mode" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                  <div class="panel-heading active" role="tab" id="med3web-3d-volrend-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <span class="fa fa-circle-o"></span>
+                      <span class="fa fa-dot-circle-o"></span>
+                      <a role="button" data-toggle="collapse" data-value="volrend" data-parent="#med3web-accordion-render-mode" href="#med3web-3d-volrend-body" aria-expanded="true" aria-controls="med3web-3d-volrend-body">
+                        Volume rendering
+                      </a>
+                      <div style="flex-grow: 1; align-items: flex-end; text-align: right;">
+                        <label class="btn btn-active" role="button" data-type="reset-to-default" data-tooltip="tooltip" data-placement="bottom" title="Reset to default">
+                          <span class="glyphicon glyphicon-refresh"></span>
+                        </label>
+                      </div>
+                    </h4>
+                  </div>
+                  <div id="med3web-3d-volrend-body" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="med3web-3d-volrend-head">
+                    <div class="panel-body">
+                      <div id="med3web-setting-3d-transfer-func-2d">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel" id="med3web-panel-menu-2d" style="">
+            <div class="panel-body">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Plane view</h3>
+                </div>
+                <div class="panel-body">
+                  <div style="margin-bottom: 25px;">
+                    <div class="btn-group" data-toggle="buttons" id="med3web-buttons-2d-axis">
+                      <label class="btn btn-default col-xs-12 col-sm-4" id="med3web-2d-axis-x">
+                        <input type="radio" name="med3web-2d-axis" autocomplete="off"> <small>Saggital</small>
+                      </label>
+                      <label class="btn btn-default col-xs-12 col-sm-4" id="med3web-2d-axis-y">
+                        <input type="radio" name="med3web-2d-axis" autocomplete="off"> <small>Coronal</small>
+                      </label>
+                      <label class="btn btn-default col-xs-12 col-sm-4 active" id="med3web-2d-axis-z">
+                        <input type="radio" name="med3web-2d-axis" autocomplete="off"> <small>Transverse</small>
+                      </label>
+                    </div>
+                  </div>
+                  <div id="med3web-setting-2d-slice">
+                    <div class="med3web-slider" id="med3web-slider-2d-slice"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Tools</h3>
+                </div>
+                <div class="panel-body">
+                  <div id="med3web-toolbar-2d">
+                    <div class="btn-group row" data-toggle="buttons" style="margin: 0; padding: 0; width: 100%;">
+                      <label class="btn active col-xs-3 col-sm-3 col-md-2" data-tooltip="tooltip" data-placement="bottom" title="Intensity Picker" data-tool-type="intensity">
+                        <input type="radio" name="options" id="med3web-toolbar-2d-intensity" autocomplete="off" checked>
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_intensity.png" alt="ico_intensity">
+                        </a>
+                      </label>
+                      <label class="btn col-xs-3 col-sm-3 col-md-2" data-tooltip="tooltip" data-placement="bottom" title="Measure Distance" data-tool-type="distance">
+                        <input type="radio" name="options" id="med3web-toolbar-2d-distance" autocomplete="off">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_distance.png" alt="ico_distance">
+                        </a>
+                      </label>
+                      <label class="btn col-xs-3 col-sm-3 col-md-2" data-tooltip="tooltip" data-placement="bottom" title="Measure Angle" data-tool-type="angle">
+                        <input type="radio" name="options" id="med3web-toolbar-2d-angle" autocomplete="off">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_angle.png" alt="ico_angle">
+                        </a>
+                      </label>
+                      <label class="btn col-xs-3 col-sm-3 col-md-2" data-tooltip="tooltip" data-placement="bottom" title="Area" data-tool-type="area">
+                        <input type="radio" name="options" id="med3web-toolbar-2d-area" autocomplete="off">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_area.png" alt="ico_area">
+                        </a>
+                      </label>
+                      <label class="btn col-xs-3 col-sm-3 col-md-2" data-tooltip="tooltip" data-placement="bottom" title="Rectangle area" data-tool-type="rect">
+                        <input type="radio" name="options" id="med3web-toolbar-2d-rect" autocomplete="off">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_rect.png" alt="ico_rect">
+                        </a>
+                      </label>
+                      <label class="btn col-xs-3 col-sm-3 col-md-2" data-tooltip="tooltip" data-placement="bottom" title="Text" data-tool-type="text">
+                        <input type="radio" name="options" id="med3web-toolbar-2d-text" autocomplete="off">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_text.png" alt="ico_text">
+                        </a>
+                      </label>
+                      <label class="btn col-xs-3 col-sm-3 col-md-2" data-tooltip="tooltip" data-placement="bottom" title="Edit" data-tool-type="edit">
+                        <input type="radio" name="options" id="med3web-toolbar-2d-edit" autocomplete="off">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_edit.png" alt="ico_edit">
+                        </a>
+                      </label>
+                      <label class="btn col-xs-3 col-sm-3 col-md-2" data-tooltip="tooltip" data-placement="bottom" title="Delete" data-tool-type="delete">
+                        <input type="radio" name="options" id="med3web-toolbar-2d-delete" autocomplete="off">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_delete.png" alt="ico_delete">
+                        </a>
+                      </label>
+                      <label class="btn col-xs-3 col-sm-3 col-md-2"  id="med3web-toolbar-2d-clear" data-tooltip="tooltip" data-placement="bottom" title="Clear all" data-tool-type="clear">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_clear.png" alt="ico_clear">
+                        </a>
+                      </label>
+                      <label class="btn col-xs-3 col-sm-3 col-md-2" data-tooltip="tooltip" data-placement="bottom" title="Zoom" data-tool-type="zoom">
+                        <input type="radio" name="options" id="med3web-toolbar-2d-zoom" autocomplete="off">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_zoom.png" alt="ico_zoom">
+                        </a>
+                      </label>
+                      <label class="btn col-xs-3 col-sm-3 col-md-2"  id="med3web-toolbar-2d-default" data-tooltip="tooltip" data-placement="bottom" title="Zoom 100%" data-tool-type="default">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;">
+                          <img src="images/icon_tools2d_default.png" alt="ico_default">
+                        </a>
+                      </label>
+                      <label class="btn col-xs-3 col-sm-3 col-md-2"  id="med3web-toolbar-2d-filter" data-tooltip="tooltip" data-placement="bottom" title="Filter data" data-tool-type="filter">
+                        <a href="#" class="thumbnail" style="margin-bottom: 0;" data-toggle="modal" data-target="#med3web-modal-filter-data">
+                          <img src="images/icon_tools2d_filter.png" alt="ico_filter">
+                        </a>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel" id="med3web-panel-menu-level-set" style="display: none;">
+            <div class="panel-body">
+              <div class="panel-group" id="med3web-accordion-level-set" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                  <div class="panel-heading active" role="tab" id="med3web-level-set-center-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <span style="margin-right: 10px;">1.</span>
+                      <a role="button" data-toggle="collapse" data-value="center" data-parent="#med3web-accordion-level-set" aria-expanded="true" aria-controls="med3web-level-set-center-body">
+                        Set center
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="med3web-level-set-center-body" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="med3web-level-set-center-head">
+                    <div class="panel-body">
+                      <p style="width: 100%;">Set initial point of growing region on the slice. Then click on the "Next" button.</p>
+                      <label class="pull-right" style="">
+                        <a class="btn btn-primary disabled" href="#" role="button" data-btn-role="next-1-2" style="width: 100%;">Next</a>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="med3web-level-set-radius-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <span style="margin-right: 10px;">2.</span>
+                      <a role="button" data-toggle="collapse" data-value="radius" data-parent="#med3web-accordion-level-set" aria-expanded="true" aria-controls="med3web-level-set-radius-body">
+                        Set radius
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="med3web-level-set-radius-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="med3web-level-set-radius-head">
+                    <div class="panel-body">
+                      <p style="width: 100%; margin-bottom: 25px;">Set initial radius of growing region using slider. Try to fet desired object. Then click on the "Next" button.</p>
+                      <div class="med3web-slider" id="med3web-slider-level-set-radius"></div>
+                      <label class="pull-right" style="">
+                        <a class="btn btn-primary" href="#" role="button" data-btn-role="next-2-3" style="width: 100%;">Next</a>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading" role="tab" id="med3web-level-set-grow-head">
+                    <h4 class="panel-title" style="display: flex;">
+                      <span style="margin-right: 10px;">3.</span>
+                      <a role="button" data-toggle="collapse" data-value="radius" data-parent="#med3web-accordion-level-set" aria-expanded="true" aria-controls="med3web-level-set-grow-body">
+                        Set grow iteration number
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="med3web-level-set-grow-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="med3web-level-set-grow-head">
+                    <div class="panel-body">
+                      <p style="width: 100%; margin-bottom: 25px;">Tune selection shape by modifying number of iterations.
+                        Be noticed that after clicking on the "Start growing" button you won't be able to undo it.
+                        However you may always reset all growing iteration by clicking on the "Reset growing" button.</p>
+                      <div class="med3web-slider" id="med3web-slider-level-set-iterations"></div>
+                      <label class="pull-left" style="">
+                        <a class="btn btn-default" href="#" role="button" data-btn-role="reset-growing" style="width: 100%;">Reset growing</a>
+                      </label>
+                      <label class="pull-right" style="">
+                        <a class="btn btn-primary" href="#" role="button" data-btn-role="start-growing" style="width: 100%;">Start growing</a>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="btn-group row" data-toggle="buttons" style="margin-left: 0; margin-right: 0; margin-top: 10px; padding: 0; width: 100%;">
+                  <label class="col-xs-6 col-sm-6 col-md-4" style="padding: 0;">
+                    <a class="btn btn-primary disabled" href="#" role="button" data-btn-role="save" style="width: 100%;">Save changes</a>
+                  </label>
+                  <label class="col-xs-1 col-sm-1 col-md-6" style="padding: 0;"></label>
+                  <label class="col-xs-5 col-sm-5 col-md-2" style="padding: 0;">
+                    <a class="btn btn-default" href="#" role="button" data-btn-role="cancel" style="width: 100%;">Cancel</a>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="med3web-menu-panel-hide">
+          </div>
+        </div>
+
+
+
+        <div id="med3web-container-3d" class="canvas-container col-xs-6 col-sm-6 col-md-8 col-lg-8" align="center" style="display: none;">
+          <div id="med3web-info">
+
+          </div>
+        </div>
+
+        <div id="med3web-container-2d" class="canvas-container col-xs-6 col-sm-6 col-md-8 col-lg-8" align="center">
+        </div>
+        <div id="med3web-container-mpr" class="canvas-container col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center" style="display: none;">
+        </div>
+
+        <!-- This is a special debug canvas, required only for deep pixel-by-pixel debugging (avoid webgl use) -->
+        <!-- Normally this element should be hidden and never appear in production mode -->
+        <div id="med3web-container-debug" class="canvas-container col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center" style="display: none;">
+          <canvas id="med3web-canvas" style="border: 1px solid black" width="181" height="181">
+          </canvas>
+        </div>
+
+      </div>
+    <!-- containter end -->
+    </div>
+    <div id="med3web-container-progressbar">
+      <div id="med3web-container-progressbar-inner">
+        <label>0%</label>
+      </div>
+    </div>
+
+    <!-- Open model modal -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="med3web-modal-open">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Select volume to open</h4>
+          </div>
+          <div class="modal-body">
+            <div class="btn-group row" data-toggle="buttons">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal" data-btn-role="open">Open</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Open model by URL modal -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="med3web-modal-open-url">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Input URL to open</h4>
+          </div>
+          <div class="modal-body">
+            <div class="input-group">
+              <input id="med3web-input-url-open" type="text" class="form-control" placeholder="Input URL...">
+              <span class="input-group-btn">
+                <button id="med3web-btn-load-url" class="btn btn-primary" type="button">Load</button>
+              </span>
+            </div><!-- /input-group -->
+            <div class="alert alert-danger" role="alert" style="display: none; margin-top: 10px;">
+              Incorrect URL! <br>
+              It must contain file extension, for example 'http://example.com/example/example.ktx'.
+              In case of dicom files use URL with just folder name, like: 'http://example.com/example/
+              In case of HDR files use only .h file URL, split URLs by ';'
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Show tags modal -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="med3web-modal-dicom-tags">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Dicom Information</h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal">
+              <div class="form-group">
+                <label for="med3web-select-choose-slice" class="control-label col-xs-2" style="text-align: left;">Choose slice</label>
+                <div class="input-group col-xs-9" style="padding-left: 0;">
+                  <select id="med3web-select-choose-slice" class="form-control">
+                  </select>
+                  <span class="input-group-btn">
+                    <a href="" class="btn btn-default" id="med3web-btn-save-tags" data-toggle="modal" data-target="#med3web-modal-save-tags" data-tooltip="tooltip" data-placement="bottom" title="Save tags to pdf">
+                      <span class="fa fa-file-pdf-o"></span>
+                    </a>
+                  </span>
+                </div>
+              </div>
+            </form>
+            <table class="table table-hover" id="med3web-table-dicom-tags">
+              <thead>
+                <tr>
+                  <th class="tag-table-col-tag">Tag</th>
+                  <th class="tag-table-col-name">Attribute Name</th>
+                  <th class="tag-table-col-value">Attribute Value</th>
+                </tr>
+              </thead>
+              <tbody>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter data modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="med3web-modal-filter-data" data-backdrop="static">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Filter data</h4>
+          </div>
+          <div class="modal-body">
+            <div id = "med3web-settings-2d-contrast">
+              <label for = "med3web-slider-2d-contrast"><h4>Contrast</h4></label>
+              <div class = "med3web-slider" id = "med3web-slider-2d-contrast"></div>
+            </div>
+            <div id = "med3web-settings-2d-brightness">
+              <label for = "med3web-slider-2d-brightness"><h4>Brightness</h4></label>
+              <div class = "med3web-slider" id = "med3web-slider-2d-brightness"></div>
+            </div>
+            <div id = "med3web-settings-2d-smoothing">
+              <label for = "med3web-slider-2d-smoothing"><h4>Smoothing</h4></label>
+              <div class = "med3web-slider" id = "med3web-slider-2d-smoothing"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
+            <button type="button" class="btn btn-deafult" data-dismiss="modal" data-btn-role="reset">Reset</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="save">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input text 2d tool modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="med3web-modal-2d-tool-input-text" data-backdrop="static">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Input text</h4>
+          </div>
+          <div class="modal-body">
+            <textarea class="form-control" rows="3"></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="ok">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save tags to pdf modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="med3web-modal-save-tags">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Save tags to pdf</h4>
+          </div>
+          <div class="modal-body">
+            <div class="radio">
+              <label>
+                <input type="radio" name="saveTagsRadios" id="med3web-radio-save-tags-slice" value="slice" checked>
+                Save current slice tags to pdf
+              </label>
+            </div>
+            <div class="radio">
+              <label>
+                <input type="radio" name="saveTagsRadios" id="med3web-radio-save-tags-all" value="all">
+                Save current all tags to pdf
+              </label>
+            </div>
+
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="File name" aria-describedby="med3web-addon-pdf">
+              <span class="input-group-addon" id="med3web-addon-pdf">.pdf</span>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="save">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save as Nifti modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="med3web-modal-save-as-nifti">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Save as Nifti</h4>
+          </div>
+          <div class="modal-body">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="File name" aria-describedby="med3web-addon-nii">
+              <span class="input-group-addon" id="med3web-addon-nii">.nii</span>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" data-btn-role="cancel">Cancel</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" data-btn-role="save">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--script src="/node_modules/jquery/dist/jquery.min.js"></script-->
+    <!-- build:js scripts/main.js -->
+    <script type="text/javascript" src="scripts/bundle.js"></script>
+    <!-- endbuild -->
+  </body>
+</html>
+

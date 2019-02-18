@@ -1,0 +1,22 @@
+{
+  "mode_3d": {
+    "title": "Working in 3d mode",
+    "children": ["3d_volumetric", "3d_isosurface"]
+  },
+  "3d_volumetric": {
+    "title": "3D volumetric visualization"
+  },
+  "3d_isosurface": {
+    "title": "3D isosurface visualization"
+  },
+  "mode_2d": {
+    "title": "Working in 2d mode",
+    "children": ["2d_tool_pick", "2d_tool_length"]
+  },
+  "2d_tool_pick": {
+    "title": "2D picking tool"
+  },
+  "2d_tool_length": {
+    "title": "2D line length measuring tool"
+  }
+}
