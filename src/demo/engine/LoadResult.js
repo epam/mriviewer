@@ -54,6 +54,8 @@ export default class LoadResult {
       return 'Wrong image dim x';
     case LoadResult.WRONG_IMAGE_DIM_Y:
       return 'Wrong image dim y';
+    case LoadResult.WRONG_IMAGE_DIM_Z:
+      return 'Wrong image dim z';
     case LoadResult.ERROR_PIXELS_TAG_NOT_FOUND:
       return 'Pixels tag is not found';
     case LoadResult.ERROR_NO_MEMORY:
