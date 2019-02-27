@@ -30,7 +30,7 @@ export default class UiReportMenu extends React.Component {
   }
   render() {
     const isLoaded = this.props.isLoaded;
-    const strClass = (isLoaded) ? 'btn dropdown-toggle' : 'btn dropdown-toggle disabled';
+    const strClass = (isLoaded) ? 'btn-sm dropdown-toggle' : 'btn-sm dropdown-toggle disabled';
 
     const jsxReportMenu =
       <div className="dropdown">

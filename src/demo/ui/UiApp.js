@@ -75,42 +75,39 @@ export default class UiApp extends React.Component {
     const strMessageOnMenu = (isLoaded) ? 'File: ' + fileName : 'Press Open button to load scene';
 
     const jsxNavBar =
-      <div className="containter">
+      <div className="container-fluid">
         <nav className="navbar navbar-expand-md navbar-fixed-top navbar-light bg-light main-nav">
-          <div className="container">
 
-            { /* Left part */ }
-            <div className="navbar-collapse collapse nav-content order-2 pull-left">
-              <ul className="nav navbar-nav">
+          { /* Left part */}
+          <div className="navbar-collapse collapse nav-content order-2 pull-left">
+            <ul className="nav navbar-nav">
+              <UiAbout />
+              { /* Status string */}
+              <li>
+                <p className="navbar-text">
+                  {strMessageOnMenu}
+                </p>
+              </li>
 
-                <UiAbout />
-                { /* Status string */ }
-                <li className="nav nav-item disabled">
-                  <p className="navbar-text">
-                    {strMessageOnMenu}
-                  </p>
-                </li>
-
-              </ul>
-            </div>
-
-            { /* Center part */ }
-            <ul className="nav navbar-nav text-nowrap flex-row mx-md-auto order-1 order-md-2">
-
-              { /* Open menu */}
-              <UiOpenMenu onNewFile={onNewFileFunc} />
-              <UiSaveMenu isLoaded={isLoaded}  />
-              <UiReportMenu isLoaded={isLoaded}  />
-              <UiFilterMenu isLoaded={isLoaded}  />
-
-              { /* button group */ }
-              {(isLoaded) ? <UiViewMode modeView={this.state.modeView} onMode={this.onMode} /> : <p></p>}
-
-            </ul>        
-
+            </ul>
           </div>
+
+          { /* Center part */}
+          <ul className="nav navbar-nav text-nowrap flex-row mx-md-auto order-1 order-md-2">
+
+            { /* Open menu */}
+            <UiOpenMenu onNewFile={onNewFileFunc} />
+            <UiSaveMenu isLoaded={isLoaded} />
+            <UiReportMenu isLoaded={isLoaded} />
+            <UiFilterMenu isLoaded={isLoaded} />
+
+            { /* button group */}
+            {(isLoaded) ? <UiViewMode modeView={this.state.modeView} onMode={this.onMode} /> : <p></p>}
+
+          </ul>
+
         </nav>
-        {(isLoaded) ? <UiMain modeView={this.state.modeView} volume={vol} texture3d={tex3d}  /> : <p></p>}
+        {(isLoaded) ? <UiMain modeView={this.state.modeView} volume={vol} texture3d={tex3d} /> : <p></p>}
       </div>
 
     return jsxNavBar;

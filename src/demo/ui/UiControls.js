@@ -47,6 +47,8 @@ export default class UiControls extends React.Component {
     const onMode2d = this.props.onMode2d;
     const modeViewIndex = this.props.modeView;
     const onSliderSlice = this.props.onSliderSlice;
+    const vol = this.props.volume;
+
 
     const mode3d = this.props.mode3d;
     const onMode3d = this.props.onMode3d;
@@ -61,9 +63,9 @@ export default class UiControls extends React.Component {
 
     const jsxMpr = <div> Not impl.mpr setings !!!</div>;
     const jsx2d = <UiCtrl2d mode2d={mode2d} onMode2d={onMode2d} sliderValue={valSlider} onSliderSlice={onSliderSlice} />;
-    const jsx3dLight = <UiCtrl3dLight mode3d={mode3d}  onMode3d={onMode3d}
+    const jsx3dLight = <UiCtrl3dLight mode3d={mode3d}  onMode3d={onMode3d} modeView={modeViewIndex}
       slider3dr={slider3dr} slider3dg={slider3dg} slider3db={slider3db}
-      onSlider3dr={onSlider3dr} onSlider3dg={onSlider3dg} onSlider3db={onSlider3db} />;
+      onSlider3dr={onSlider3dr} onSlider3dg={onSlider3dg} onSlider3db={onSlider3db} volume={vol}/>;
     const jsx3d = <div>Not impl 3d mode settings !!!</div>;
     const jsxArray = [jsxMpr, jsx2d, jsx3dLight, jsx3d];
     const jsxRet = jsxArray[modeViewIndex];

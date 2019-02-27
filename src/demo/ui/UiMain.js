@@ -13,7 +13,6 @@ import React from 'react';
 
 import UiControls from './UiControls';
 import UiRenderView from './UiRenderView';
-import UiHistogram from './UiHistogram';
 
 
 // ********************************************************
@@ -92,21 +91,19 @@ export default class UiMain extends React.Component {
     const vol = this.props.volume;
     const tex3d = this.props.texture3d;
     const jsxRenderMain =
-    <div className="row">
-      <div className="col-md-4">
+    <div className="row" Style="overflow-x: auto">
+      <div className="col-md-4" Style="overflow-y: auto">
         <UiControls
           onSliderSlice={this.onSliderSlice.bind(this)} sliderValue={sliceVal}
           onMode2d={this.onMode2d.bind(this)} mode2d={mode2d} modeView={modeViewIndex}
           onMode3d={this.onMode3d.bind(this)} mode3d={mode3d}
           onSlider3dr={this.onSliderSlice3dr.bind(this)}
           onSlider3dg={this.onSliderSlice3dg.bind(this)}
-          onSlider3db={this.onSliderSlice3db.bind(this)}
+          onSlider3db={this.onSliderSlice3db.bind(this)} volume={vol}
           slider3dr={slider3dr} slider3dg={slider3dg} slider3db={slider3db}
         />
-        <UiHistogram modeView={modeViewIndex} volume={vol} />
       </div>
-
-      <div className="col-md-8">
+      <div className="col-md-8" Style="overflow-y: auto">
         <UiRenderView modeView={modeViewIndex} mode2d={mode2d} sliderValue={sliceVal}
           volume={vol} texture3d={tex3d}
           mode3d={mode3d} slider3dr={slider3dr} slider3dg={slider3dg} slider3db={slider3db}/>

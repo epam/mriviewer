@@ -54,7 +54,7 @@ export default class UiViewMode extends React.Component {
     const viewMode = this.props.modeView;
     // console.log(`remnder. viewMode = ${viewMode}`);
 
-    const srtClass = 'btn btn-info';
+    const srtClass = 'btn btn-secondary';
     const strMpr = srtClass + ((viewMode === 0) ? ' active' : '');
     const str2d = srtClass + ((viewMode === 1) ? ' active' : '');
     const str3dlight = srtClass + ((viewMode === 2) ? ' active' : '');
