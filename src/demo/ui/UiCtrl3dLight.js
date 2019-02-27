@@ -16,6 +16,9 @@ import React from 'react';
 import Nouislider from 'react-nouislider';
 
 import { Modes3d } from './UiMain';
+import UiHistogram from './UiHistogram';
+import UiTF from './UiTF';
+
 
 // ********************************************************
 // Const
@@ -61,10 +64,10 @@ export default class UiCtrl3dLight extends React.Component {
     this.m_updateEnable = false;
     const arrStr = this.refs.slider3d.slider.get();
     const numSliders = arrStr.length;
-    if ((typeof(arrStr[0]) === 'string') && (numSliders === 3)) {
+    if ((typeof (arrStr[0]) === 'string') && (numSliders === 3)) {
       const rVal = Number.parseFloat(arrStr[0]);
       const gVal = Number.parseFloat(arrStr[1]);
-      const bVal = Number.parseFloat(arrStr[2]);
+      const bVal = newFunction(arrStr);
       // console.log(`onSlider. val = ${val}`);
       const onSlider3dr = this.props.onSlider3dr;
       const onSlider3dg = this.props.onSlider3dg;
@@ -73,6 +76,12 @@ export default class UiCtrl3dLight extends React.Component {
       onSlider3dg(gVal);
       onSlider3db(bVal);
     }
+  }
+  onChangeSliderBrightness() {
+  }
+  onChangeSliderCut() {
+  }
+  onChangeSliderQuality() {
   }
   shouldComponentUpdate() {
     return this.m_updateEnable;
@@ -85,10 +94,21 @@ export default class UiCtrl3dLight extends React.Component {
     const slider3dg = this.props.slider3dg;
     const slider3db = this.props.slider3db;
     const mode3d = this.props.mode3d;
+    const vol = this.props.volume;
+    const sliderBrightness = slider3dr;
+    const sliderCut = slider3dr;
+    const sliderQuality = slider3dr;
+    const modeViewIndex = this.props.modeView;
 
     const strSlider3d = 'slider3d';
+    const strSliderBrightness = 'sliderBrightness';
+    const strSliderCut = 'sliderCut';
+    const strSliderQuality = 'sliderQuality';
 
     const wArr = [slider3dr, slider3dg, slider3db];
+    const wArrBrightness = [sliderBrightness];
+    const wArrCut = [sliderCut];
+    const wArrQuality = [sliderQuality];
     const valToolTps = true;
 
     const strClass = 'btn btn-info';
@@ -101,36 +121,52 @@ export default class UiCtrl3dLight extends React.Component {
     // btn-default active
 
     const jsxRenderControls =
-      <div className="card">
-        <div className="card-header">
-          3d view settings
-        </div>
 
-        <div className="card-body mb-4">
-          <div className="d-inline-flex">
-
-            <div className="btn-group mx-3 my-4">
-              <button type="button" className={strA} onClick={this.onModeA} >
-                Mode Isosurface
-              </button>
-              <button type="button" className={strB} onClick={this.onModeB}  >
-                Mode Raycast
-              </button>
-              <button type="button" className={strC} onClick={this.onModeC} >
-                Mode Rayfix
-              </button>
-            </div>
-
+      <ul className="list-group list-group-flush" >
+        <li className="list-group-item">
+          <div className="btn-group btn-block">
+            <button type="button" className={strA} onClick={this.onModeA} >
+              Mode Isosurface
+            </button>
+            <button type="button" className={strB} onClick={this.onModeB}  >
+              Mode Raycast
+            </button>
+            <button type="button" className={strC} onClick={this.onModeC} >
+              Mode Rayfix
+            </button>
           </div>
+        </li>
+        <li className="list-group-item">
+          <UiHistogram volume={vol} />
+        </li>
+        <li className="list-group-item">
+          <UiTF mode3d = {mode3d} slider3dr={slider3dr} slider3dg={slider3dg} slider3db={slider3db} modeView={modeViewIndex} />
+        </li>
+        <li className="list-group-item">
+          <p> Brightness </p>
+          <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={strSliderBrightness}
+            range={{ min: 0.0, max: 1.0 }}
+            start={wArrBrightness} step={0.02} tooltips={valToolTps} />
+        </li>
+        <li className="list-group-item">
+          <p> Cut </p>
+          <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={strSliderCut}
+            range={{ min: 0.0, max: 1.0 }}
+            start={wArrCut} step={0.02} tooltips={valToolTps} />
+        </li>
+        <li className="list-group-item">
+          <p> Quality </p>
+          <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={strSliderQuality}
+            range={{ min: 0.0, max: 1.0 }}
+            start={wArrQuality} step={0.02} tooltips={valToolTps} />
+        </li>
+      </ul>
 
-          <Nouislider onSlide={this.onChangeSliderSlice.bind(this)} ref={strSlider3d}
-            pips={{ mode: 'range', density: 2 }} range={{ min: 0.0, max: 1.0 }}
-            start={wArr} step={0.02} tooltips={valToolTps} />
-
-        </div>
-
-      </div>
     return jsxRenderControls;
   }
+}
+
+function newFunction(arrStr) {
+  return Number.parseFloat(arrStr[2]);
 }
 

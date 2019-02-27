@@ -60,7 +60,7 @@ export default class UiCtrl2d extends React.Component {
     this.m_updateEnable = false;
     let val = 0.0;
     const aval = this.refs.slider1.slider.get();
-    if (typeof(aval) === 'string') {
+    if (typeof (aval) === 'string') {
       val = Number.parseFloat(aval);
       // console.log(`onSlider. val = ${val}`);
       const onSlider = this.props.onSliderSlice;
@@ -84,7 +84,7 @@ export default class UiCtrl2d extends React.Component {
     const wArr = [valSlider];
     const valToolTps = true;
 
-    const strClass = 'btn btn-info';
+    const strClass = 'btn btn-secondary';
     const strSag = strClass + ((mode2d === Modes2d.SAGGITAL) ? ' active' : '');
     const strCor = strClass + ((mode2d === Modes2d.CORONAL) ? ' active' : '');
     const strTra = strClass + ((mode2d === Modes2d.TRANSVERSE) ? ' active' : '');
@@ -98,30 +98,27 @@ export default class UiCtrl2d extends React.Component {
         <div className="card-header">
           Plane (slice) view
         </div>
-
-        <div className="card-body mb-4">
-          <div className="d-inline-flex">
-
-            <div className="btn-group mx-3 my-4">
-              <button type="button" className={strSag} onClick={this.onModeSaggital} >
-                Saggital
-              </button>
-              <button type="button" className={strCor} onClick={this.onModeCoronal}  >
-                Coronal
-              </button>
-              <button type="button" className={strTra} onClick={this.onModeTransverse} >
-                Transverse
-              </button>
-            </div>
-
+        <div className="card-body">
+          <div className="btn-group btn-block">
+            <button type="button" className={strSag} onClick={this.onModeSaggital} >
+              Saggital
+            </button>
+            <button type="button" className={strCor} onClick={this.onModeCoronal}  >
+              Coronal
+            </button>
+            <button type="button" className={strTra} onClick={this.onModeTransverse} >
+              Transverse
+            </button>
           </div>
-
-          <Nouislider onSlide={this.onChangeSliderSlice.bind(this)} ref={strSlider1}
-            pips={{ mode: 'range', density: 2 }} range={{ min: 0.0, max: 1.0 }}
-            start={wArr} step={0.02} tooltips={valToolTps} />
-
         </div>
-
+        <ul className="list-group list-group-flush">
+          <li className="list-group-item">
+            <p> Select </p>
+            <Nouislider onSlide={this.onChangeSliderSlice.bind(this)} ref={strSlider1}
+              range={{ min: 0.0, max: 1.0 }}
+              start={wArr} step={0.02} tooltips={valToolTps} />
+          </li>
+        </ul>
       </div>
     return jsxRenderControls;
   }
