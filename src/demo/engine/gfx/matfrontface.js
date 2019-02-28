@@ -28,9 +28,9 @@ under the License.
 
 // absoulte imports
 import * as THREE from 'three';
+import FRONT_FACE_VERTEX_SHADER from '../shaders/frontface.vert'
+import FRONT_FACE_FRAGMENT_SHADER from '../shaders/frontface.frag'
 
-const FRONT_FACE_VERTEX_SHADER = './shaders/frontface.vert';
-const FRONT_FACE_FRAGMENT_SHADER = './shaders/frontface.frag';
 
 /** Class @class MaterialFF for volume frontface rendering */
 export default class MaterialFF {
@@ -48,23 +48,20 @@ export default class MaterialFF {
       PlaneZ: { type: 'v4', value: THREE.Vector4(0.0, 0.0, -1.0, 0.5) },
     };
   }
-
   /** Frontface material constructor
   * @return {object} Three.js material with this shader
   */
   create(textureBF, callbackMat) {
-    // Init uniforms
+    // Init uniforms    
     this.m_uniforms.texBF.value = textureBF;
-
     // create shader loaders
     const vertexLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
     vertexLoader.setResponseType('text');
     const fragmentLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
     fragmentLoader.setResponseType('text');
-
     vertexLoader.load(FRONT_FACE_VERTEX_SHADER, (strVertexSh) => {
       this.m_strShaderVertex = strVertexSh;
-      // console.log(`Load callback success. text = : ${strVertexSh} ...`);
+      //console.log(`Load callback success. text = : ${strVertexSh} ...`);
       fragmentLoader.load(FRONT_FACE_FRAGMENT_SHADER, (strFragmentSh) => {
         this.m_strShaderFragment = strFragmentSh;
 
@@ -86,6 +83,10 @@ export default class MaterialFF {
         if (callbackMat) {
           callbackMat(material);
         }
+      },
+      (strFragmentSh) => {},
+      (e) => {
+        console.log("Shader load failed! because of error " + e.target.status + ", " + e.target.statusText);
       });
     });
   }

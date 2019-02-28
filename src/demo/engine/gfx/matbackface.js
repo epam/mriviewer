@@ -29,8 +29,8 @@ under the License.
 // absoulte imports
 import * as THREE from 'three';
 
-const BACK_FACE_VERTEX_SHADER = './shaders/backface.vert';
-const BACK_FACE_FRAGMENT_SHADER = './shaders/backface.frag';
+import BACK_FACE_VERTEX_SHADER from '../shaders/backface.vert';
+import BACK_FACE_FRAGMENT_SHADER from '../shaders/backface.frag';
 
 /** Class @class MaterialBF for volume backface rendering */
 export default class MaterialBF {
@@ -42,7 +42,6 @@ export default class MaterialBF {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
   }
-
   /** Backface material constructor
   * @return {object} Three.js material with this shader
   */

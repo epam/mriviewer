@@ -29,8 +29,8 @@ under the License.
 // absoulte imports
 import * as THREE from 'three';
 
-const RENDER_TEXTURE_VERTEX_SHADER = './shaders/rendertotexture.vert';
-const RENDER_TEXTURE_FRAGMENT_SHADER = './shaders/rendertotexture.frag';
+import RENDER_TEXTURE_VERTEX_SHADER from '../shaders/rendertotexture.vert';
+import RENDER_TEXTURE_FRAGMENT_SHADER from '../shaders/rendertotexture.frag';
 
 /** Class @class MaterialRenderToTexture for
 * rough isosurface computation: a ray-casting optimization
@@ -80,7 +80,6 @@ export default class MaterialRenderToTexture {
       useWebGL2: 1,
     };
   }
-
   /** Simple material constructor
   * @return {object} Three.js material with this shader
   */

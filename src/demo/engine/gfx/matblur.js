@@ -29,8 +29,8 @@ under the License.
 // absoulte imports
 import * as THREE from 'three';
 
-const BLUR_VERTEX_SHADER = './shaders/blur.vert';
-const BLUR_FRAGMENT_SHADER = './shaders/blur.frag';
+import BLUR_VERTEX_SHADER from '../shaders/blur.vert';
+import BLUR_FRAGMENT_SHADER from '../shaders/blur.frag';
 
 /** Class @class MaterialBlur for volume slice blurring */
 export default class MaterialBlur {
@@ -70,7 +70,6 @@ export default class MaterialBlur {
       useWebGL2: 1,
     };
   }
-
   /** Backface material constructor
   * @return {object} Three.js material with this shader
   */

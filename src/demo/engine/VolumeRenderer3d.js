@@ -88,8 +88,7 @@ export default class VolumeRenderer3d {
    * @return {Object} Instance of this class (singleton)
    */
   constructor(props) {
-    // this.curFileDataType = curFileDataType;
-    this.curFileDataType = null;
+    this.curFileDataType = props.curFileDataType;
     this.sceneReadyCounter = 0;
     this.renderCounter = 0;
     this.scene = new THREE.Scene();
@@ -769,8 +768,7 @@ export default class VolumeRenderer3d {
     this.vBoxVirt.x = box.x / sideMax;
     this.vBoxVirt.y = box.y / sideMax;
     this.vBoxVirt.z = box.z / sideMax;
-    //this.isoThreshold = this.curFileDataType.thresholdIsosurf;
-    this.isoThreshold = 0.3;
+    this.isoThreshold = this.curFileDataType.thresholdIsosurf;    
     this.volume = volume;
     this.nonEmptyBoxMin = nonEmptyBoxMin;
     this.nonEmptyBoxMax = nonEmptyBoxMax;
@@ -996,7 +994,7 @@ export default class VolumeRenderer3d {
             this.curFileDataType.thresholdIsosurf);
         mat.uniforms.stepSize.value =
           new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
-        mat.uniforms.texSize.value = this.engine2d.m_volumeHeader.m_pixelWidth;
+        mat.uniforms.texSize.value = xDim;//this.engine2d.m_volumeHeader.m_pixelWidth;
         mat.uniforms.isoThreshold.value = this.curFileDataType.thresholdIsosurf;
         mat.uniforms.brightness3D.value = this.curFileDataType.brightness;
         mat.uniforms.opacityBarrier.value = OPACITY_SCALE * this.curFileDataType.opacityTissue;
@@ -1046,7 +1044,7 @@ export default class VolumeRenderer3d {
             this.curFileDataType.thresholdIsosurf);
         mat.uniforms.stepSize.value =
           new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
-        mat.uniforms.texSize.value = this.engine2d.m_volumeHeader.m_pixelWidth;
+        mat.uniforms.texSize.value = xDim;
         mat.uniforms.isoThreshold.value = this.curFileDataType.thresholdIsosurf;
         mat.uniforms.brightness3D.value = this.curFileDataType.brightness;
         mat.uniforms.tileCountX.value = zDimSqrt;
@@ -1164,9 +1162,12 @@ export default class VolumeRenderer3d {
   }
   /** Render 3d scene */
   render() {
-    if (this.sceneReadyCounter !== SCENE_READY_COUNTER_OK) {
+    /*if (this.sceneReadyCounter !== SCENE_READY_COUNTER_OK) {
       // render empty scene to show "black" empty screen
       this.renderer.render(this.scene, this.camera);
+      return;
+    }*/
+    if (!this.isReadyToRender()) {
       return;
     }
     const matReady = (this.matVolumeRender !== null) && (this.matBF !== null) &&

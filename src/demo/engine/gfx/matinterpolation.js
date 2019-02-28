@@ -29,8 +29,8 @@ under the License.
 // absoulte imports
 import * as THREE from 'three';
 
-const VOL_RENDER_VERTEX_SHADER = './shaders/interpolation.vert';
-const VOL_RENDER_FRAGMENT_SHADER = './shaders/interpolation.frag';
+import INTERP_VERTEX_SHADER from '../shaders/interpolation.vert';
+import INTERP_FRAGMENT_SHADER from '../shaders/interpolation.frag';
 
 /** Class @class MaterialVolumeRender for create skull volume render shader material */
 export default class MaterialInterpolation {
@@ -49,7 +49,6 @@ export default class MaterialInterpolation {
       isoRenderFlag: 0,
     };
   }
-
   /** Simple material constructor
   * @return {object} Three.js material with this shader
   */
@@ -63,10 +62,10 @@ export default class MaterialInterpolation {
     const fragmentLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
     fragmentLoader.setResponseType('text');
 
-    vertexLoader.load(VOL_RENDER_VERTEX_SHADER, (strVertexSh) => {
+    vertexLoader.load(INTERP_VERTEX_SHADER, (strVertexSh) => {
       this.m_strShaderVertex = strVertexSh;
       // console.log(`Load callback success. text = : ${strVertexSh} ...`);
-      fragmentLoader.load(VOL_RENDER_FRAGMENT_SHADER, (strFragmentSh) => {
+      fragmentLoader.load(INTERP_FRAGMENT_SHADER, (strFragmentSh) => {
         this.m_strShaderFragment = strFragmentSh;
 
         // log

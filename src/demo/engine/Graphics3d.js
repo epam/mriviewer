@@ -34,6 +34,7 @@ export default class Graphics3d extends React.Component {
     this.m_width = props.wScreen;
     this.m_height = props.hScreen;
     this.isLoaded = false;
+    this.volume = null;
 
     this.animate = this.animate.bind(this);
 
@@ -46,6 +47,16 @@ export default class Graphics3d extends React.Component {
     this.m_slider3dr = 0.1;
     this.m_slider3dg = 0.5;
     this.m_slider3db = 0.8;
+    this.m_fileDataType = {
+      thresholdIsosurf: 0.46,
+      thresholdTissue1: 0.09,
+      thresholdTissue2: 0.30,
+      opacityTissue: 0.53,
+      startRotX: -Math.PI * 0.5,
+      startRotY: Math.PI,
+      lightDirComp: -0.5773,
+      brightness: 0.56,
+    };
   }
   start() {
     if (this.m_frameId === null) {
@@ -87,11 +98,18 @@ export default class Graphics3d extends React.Component {
     this.m_material = new THREE.MeshBasicMaterial({ color: '#ff1122' });
     this.m_mesh = new THREE.Mesh(this.m_geometry, this.m_material);
     this.m_scene.add(this.m_mesh);*/
-    this.m_volumeRenderer3D = new VolumeRenderer3d({
-      width: this.m_mount.clientWidth,
-      height: this.m_mount.clientHeight,
-      mount: this.m_mount
-    });
+    if (this.m_volumeRenderer3D === null) {
+      this.m_volumeRenderer3D = new VolumeRenderer3d({
+        curFileDataType: this.m_fileDataType,
+        width: this.m_mount.clientWidth,
+        height: this.m_mount.clientHeight,
+        mount: this.m_mount
+      });
+    }
+    if (this.volume !== null && this.isLoaded === false && this.m_volumeRenderer3D !== null) {      
+      this.m_volumeRenderer3D.initWithVolume(this.volume, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 });
+      this.isLoaded = true;
+    }
     this.start();
   }
   componentWillUnmount() {
@@ -107,11 +125,10 @@ export default class Graphics3d extends React.Component {
     const hScreen = this.props.hScreen;
     const vol = this.props.volume;
     // const tex3d = this.props.texture3d;
-    if (vol !== null && this.isLoaded === false && this.m_volumeRenderer3D !== null) {
-      
-      this.m_volumeRenderer3D.initWithVolume(vol, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 });
-      this.isLoaded = true;
+    if (vol !== null) {
+      this.volume = vol;
     }
+
     if (this.m_volumeRenderer3D !== null) {
       this.m_volumeRenderer3D.render();
     }

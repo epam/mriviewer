@@ -45,7 +45,6 @@ export default class MaterialScreenTexMap {
       texBuffer: { type: 't', value: null },
     };
   }
-
   /** material constructor
   * @return {object} Three.js material with this shader
   */

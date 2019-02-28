@@ -29,8 +29,8 @@ under the License.
 // absoulte imports
 import * as THREE from 'three';
 
-const CLIP_VERTEX_SHADER = './shaders/clipplane.vert';
-const CLIP_FRAGMENT_SHADER = './shaders/clipplane.frag';
+import CLIP_VERTEX_SHADER from '../shaders/clipplane.vert';
+import CLIP_FRAGMENT_SHADER from '../shaders/clipplane.frag';
 
 /** Class @class MaterialClipPlane for volume clip plane rendering */
 export default class MaterialClipPlane {
@@ -46,7 +46,6 @@ export default class MaterialClipPlane {
       texBF: { type: 't' },
     };
   }
-
   /** Frontface material constructor
   * @return {object} Three.js material with this shader
   */

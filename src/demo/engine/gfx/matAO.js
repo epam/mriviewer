@@ -29,8 +29,8 @@ under the License.
 // absoulte imports
 import * as THREE from 'three';
 
-const AO_VERTEX_SHADER = './shaders/createAO.vert';
-const AO_FRAGMENT_SHADER = './shaders/createAO.frag';
+import AO_VERTEX_SHADER from '../shaders/createAO.vert';
+import AO_FRAGMENT_SHADER from '../shaders/createAO.frag';
 
 /** Class @class MaterialBlur for volume slice blurring */
 export default class MaterialAO {
@@ -61,7 +61,6 @@ export default class MaterialAO {
       useWebGL2: 1,
     };
   }
-
   /** Backface material constructor
   * @return {object} Three.js material with this shader
   */

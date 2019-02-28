@@ -29,8 +29,8 @@ under the License.
 // absoulte imports
 import * as THREE from 'three';
 
-const RENDER_TEXTURE_VERTEX_SHADER = './shaders/ssao.vert';
-const RENDER_TEXTURE_FRAGMENT_SHADER = './shaders/ssao.frag';
+import RENDER_TEXTURE_VERTEX_SHADER from '../shaders/ssao.vert';
+import RENDER_TEXTURE_FRAGMENT_SHADER from '../shaders/ssao.frag';
 
 /** Class @class MaterialRenderSSAO for
 * ambient occlusion computation
@@ -59,7 +59,6 @@ export default class MaterialRenderSSAO {
       offsets: { type: 'v3v' },
     };
   }
-
   /** Simple material constructor
   * @return {object} Three.js material with this shader
   */

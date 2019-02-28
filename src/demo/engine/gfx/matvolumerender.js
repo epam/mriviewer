@@ -29,8 +29,8 @@ under the License.
 // absoulte imports
 import * as THREE from 'three';
 
-const VOL_RENDER_VERTEX_SHADER = './shaders/volumerender.vert';
-const VOL_RENDER_FRAGMENT_SHADER = './shaders/volumerender.frag';
+import VOL_RENDER_VERTEX_SHADER from '../shaders/volumerender.vert';
+import VOL_RENDER_FRAGMENT_SHADER from '../shaders/volumerender.frag';
 
 /** Class @class MaterialVolumeRender for create skull volume render shader material */
 export default class MaterialVolumeRender {
@@ -80,7 +80,6 @@ export default class MaterialVolumeRender {
       useWebGL2: 1,
     };
   }
-
   /** Simple material constructor
   * @return {object} Three.js material with this shader
   */
