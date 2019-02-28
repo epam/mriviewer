@@ -36,7 +36,6 @@ import RENDER_TEXTURE_FRAGMENT_SHADER from '../shaders/rendertotexture.frag';
 * rough isosurface computation: a ray-casting optimization
 */
 export default class MaterialRenderToTexture {
-
   /** Simple material constructor
   * @constructor
   */

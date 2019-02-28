@@ -74,7 +74,6 @@ export default class FloodFillTool {
   stack3dEIsEmpty() {
     return (this.m_indexStack3d <= 0);
   }
-
   detectSeedPoint3d(xDim, yDim, zDim, pixels, vaSeedPoints, maxSeedPoints) {
     const TWO = 2;
     const yDimHalf = Math.floor(yDim / TWO);
@@ -125,7 +124,6 @@ export default class FloodFillTool {
     } // for (zIter)
     return numSeedPointsDetected;
   }
-
   floodFill3d(xDim, yDim, zDim, pixels, vSeed) {
     const xyDim = xDim * yDim;
     const okCreate = this.createStack3d(xDim * yDim * zDim);

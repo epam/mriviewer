@@ -34,7 +34,6 @@ import BLUR_FRAGMENT_SHADER from '../shaders/blur.frag';
 
 /** Class @class MaterialBlur for volume slice blurring */
 export default class MaterialBlur {
-
   /** Backface material constructor
   * @constructor
   */

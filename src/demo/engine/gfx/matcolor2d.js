@@ -31,7 +31,6 @@ import * as THREE from 'three';
 
 /** Class @class MaterialColor2d for create 2d lines, etc */
 export default class MaterialColor2d {
-
   /** Simple material constructor
   * @constructor
   * @param (float) r - color component(red) in [0..1]

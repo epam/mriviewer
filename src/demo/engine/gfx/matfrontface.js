@@ -34,7 +34,6 @@ import FRONT_FACE_FRAGMENT_SHADER from '../shaders/frontface.frag'
 
 /** Class @class MaterialFF for volume frontface rendering */
 export default class MaterialFF {
-
   /** Frontface material constructor
   * @constructor
   */

@@ -85,7 +85,6 @@ export default class GeoRender {
     } // for (i) all triangles
     return GEO_ERROR_OK;
   } // create tetra
-
   fromBufferGeometry(geoBuffered) {
     const geo = new THREE.Geometry();
     geo.fromBufferGeometry(geoBuffered);
@@ -121,7 +120,6 @@ export default class GeoRender {
     } // for (i) all triangles
     return GEO_ERROR_OK;
   }
-
   createFromEllipse(vCenter, vRadius, numSegmentsHor, numSegmentsVert) {
     const INDICES_IN_TRI = 3;
     const COORDS_IN_VERTEX = 4;
@@ -180,7 +178,6 @@ export default class GeoRender {
       } // for (i)
     } // for (i)
   } // createFromEllipse
-
   getNumVertices() {
     return this.m_numVertices;
   }
@@ -258,7 +255,6 @@ export default class GeoRender {
     eventGen.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
     linkGen.dispatchEvent(eventGen);
   } // saveGeoToObjFile
-
   /**
   * Calculate vertices normals, based on triangle normals
   */

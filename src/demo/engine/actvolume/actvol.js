@@ -108,7 +108,6 @@ export default class ActiveVolume {
     this.m_yScale = 1;
     this.m_zScale = 1;
   }
-
   /**
   *
   * Set initial sphere center
@@ -118,7 +117,6 @@ export default class ActiveVolume {
     this.m_sphereCenter.set(xCenter, yCenter, zCenter);
     // console.log(`ActiveVolume. set sphere center = ${xCenter}, ${yCenter}, ${zCenter}`);
   }
-
   /**
   *
   * Set initial sphere radius
@@ -128,7 +126,6 @@ export default class ActiveVolume {
     this.m_sphereRadius.set(xRadius, yRadius, zRadius);
     // console.log(`ActiveVolume. set sphere radius = ${xRadius}, ${yRadius}, ${zRadius}`);
   }
-
   /**
   *
   * Get sphere center
@@ -136,7 +133,6 @@ export default class ActiveVolume {
   getSphereCenter() {
     return this.m_sphereCenter;
   }
-
   /**
   *
   * Get sphere radius
@@ -144,7 +140,6 @@ export default class ActiveVolume {
   getSphereRadius() {
     return this.m_sphereRadius;
   }
-
   /**
   *
   * Set physical volume dimensions
@@ -158,7 +153,6 @@ export default class ActiveVolume {
     this.m_zWorldBox = zWorldBox;
     // console.log(`setupPhysDims: ${xWorldBox} * ${yWorldBox} * ${zWorldBox}`);
   }
-
   copyScaleUp(pixelsDst, xDimDst, yDimDst, zDimDst) {
     console.log('perform scale up generated mask ...');
     if (this.m_xScale === 1) {
@@ -185,7 +179,6 @@ export default class ActiveVolume {
       }
     }
   }
-
   save() {
     const numPixels = this.m_xDim * this.m_yDim * this.m_zDim;
     let volTexDst = new Uint8Array(numPixels);
@@ -215,7 +208,6 @@ export default class ActiveVolume {
     }
     volTexDst = null;
   }
-
   /**
   *
   * Create internal structures: render sphere
@@ -294,7 +286,6 @@ export default class ActiveVolume {
     this.m_geoRender = geoRender;
     return 1;
   }
-
   /**
   *
   * Create THREE js geometry (can be rendered in 3d scene)
@@ -340,7 +331,6 @@ export default class ActiveVolume {
     geoDst.computeBoundingSphere();
     return geoDst;
   }
-
   /**
    *  Clip volume by geometry sphere
    *
@@ -406,7 +396,6 @@ export default class ActiveVolume {
       volTexDst[i] = (volMask[i] !== 0) ? volTexSrc[i] : 0;
     }
   } // clipVolumeBySphere
-
   /**
    *  Automatic sphere evolve
    *
@@ -669,7 +658,6 @@ export default class ActiveVolume {
     }
     return true;
   }
-
   /**
   * Remove skull
   * @param {number} xDim volume dimension on x
@@ -868,7 +856,6 @@ export default class ActiveVolume {
     }
     return +1;
   } // skullRemove
-
   static getBoundingBox(xDim, yDim, zDim, volTexSrc, vMin, vMax) {
     const MIN_VIS_COLOR = 50;
     let x, y, z;
@@ -894,7 +881,6 @@ export default class ActiveVolume {
       } // for (y)
     } // for (z)
   }
-
   /**
   * Save volume slice to BMP file. Only for deep debug
   * @param {array} pixelsSrc array of source voxels in volume
@@ -1013,7 +999,6 @@ export default class ActiveVolume {
     eventGen.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
     linkGen.dispatchEvent(eventGen);
   }
-
   getPredictedStepsForActiveVolumeUpdate() {
     const TWO = 2;
     const hx = this.m_xDim;
@@ -1027,7 +1012,6 @@ export default class ActiveVolume {
     const stepsAll = stepsByRad + (TWO * ActiveVolume.ACT_VOL_NUM_SMOOTH_STAGES) + SOME_ADD_STEPS;
     return stepsAll;
   }
-
   /**
   * Create members for iterations later
   * @return {number} 1, if success. <0 if failed
@@ -1080,7 +1064,6 @@ export default class ActiveVolume {
     }
     return 1;
   }
-
   /**
   * Make special unifoirmity image for whole volume
   */
@@ -1146,7 +1129,6 @@ export default class ActiveVolume {
     }             // for (cz)
     // console.log(`makeUniformityImage done for z = ${zs} to ${ze}`);
   }
-
   /**
   * Start image smoothimg by Gauss convolution
   */
@@ -1523,19 +1505,16 @@ export default class ActiveVolume {
     indDarkColorMax++;
     return 1;
   }
-
   resetStateForGeoUpdates() {
     this.m_geoStage = 0;
     this.m_state = AV_STATE_UPDATE_GEO;
     this.m_geoRender.createNormalsForGeometry();
   }
-
   resetStateToStartUpdates() {
     this.m_geoStage = 0;
     this.m_gaussStage = 0;
     this.m_state = AV_STATE_NOT_STARTED;
   }
-
   /**
   * Update render geo
   * @param {object} geo RederGeo to modify
@@ -1642,7 +1621,6 @@ export default class ActiveVolume {
     } // if state is update geo
     return 1;
   }
-
   getAveUniformityForGeoVertices(geo) {
     let i, i4;
     const numVertices = geo.getNumVertices();
@@ -1666,7 +1644,6 @@ export default class ActiveVolume {
     uniAve /= numVertices;
     return uniAve;
   }
-
   finalizeUpdatesGeo(geo, inDebugMode) {
     if (inDebugMode) {
       console.log(`geoUpdates are finished in ${this.m_updateCounter} steps`);
@@ -1674,7 +1651,6 @@ export default class ActiveVolume {
       geo.saveGeoToObjFile(FILE_NAME_GEO);
     }
   }
-
   /**
   * Update geometry with normals, uniformity map and colors distribution
   * @param {object} geo RederGeo to modify

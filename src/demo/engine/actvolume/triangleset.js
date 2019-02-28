@@ -40,7 +40,6 @@ export default class TriangleSet {
   constructor(numTriangles) {
     this.create(numTriangles);
   } // constructor
-
   create(numTriangles) {
     this.m_numTriangles = 0;
     this.m_numAllocatedTriangles = numTriangles;
@@ -50,7 +49,6 @@ export default class TriangleSet {
       this.m_triangles[i] = new TriangleIndices(STRANGE_VALUE, STRANGE_VALUE, STRANGE_VALUE);
     }
   } // create
-
   /**
   * Get number of triangles
   * @return {number}
@@ -58,7 +56,6 @@ export default class TriangleSet {
   getNumTriangles() {
     return this.m_numTriangles;
   }
-
   /**
   * Add triangle to set
   * @return 1, if success

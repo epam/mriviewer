@@ -10,8 +10,9 @@
 // ********************************************************
 
 import React from 'react';
+import { connect } from 'react-redux';
 
-import { Modes2d } from '../ui/UiMain';
+import Modes2d from '../store/Modes2d';
 
 // ********************************************************
 // Const
@@ -24,7 +25,7 @@ import { Modes2d } from '../ui/UiMain';
 /**
  * Class Graphics2d some text later...
  */
-export default class Graphics2d extends React.Component {
+class Graphics2d extends React.Component {
   /**
    * @param {object} props - props from up level object
    */
@@ -67,7 +68,7 @@ export default class Graphics2d extends React.Component {
     const h = this.refs.canvasGra2d.clientHeight;
     ctx.fillStyle = 'rgb(240, 240, 240)';
     ctx.fillRect(0,0, w, h);
-    console.log(`render scene 2d. screen = ${w} * ${h}`);
+    // console.log(`render scene 2d. screen = ${w} * ${h}`);
 
     // Test draw chessboard
     const NEED_TEST_RAINBOW = false;
@@ -89,7 +90,12 @@ export default class Graphics2d extends React.Component {
       ctx.putImageData(imgData, 0, 0); 
     }
 
-    const vol = this.props.volume;
+    const store = this.props.store;
+    const vol = store.volume;
+    const mode2d = store.mode2d;
+    const sliceRatio = store.slider2d;
+
+
     if (vol !== null) {
       const xDim = vol.m_xDim;
       const yDim = vol.m_yDim;
@@ -109,9 +115,9 @@ export default class Graphics2d extends React.Component {
       }
 
       
-      if (this.m_mode2d === Modes2d.TRANSVERSE) {
+      if (mode2d === Modes2d.TRANSVERSE) {
         // z slice
-        const zSlice = Math.floor(zDim * this.m_sliceRatio);
+        const zSlice = Math.floor(zDim * sliceRatio);
         const zOff = zSlice * xyDim;
         const xStep = xDim / w
         const yStep = yDim / h;
@@ -133,9 +139,9 @@ export default class Graphics2d extends React.Component {
             j += 4;
           } // for (x)
         } // for (y)
-      } else if (this.m_mode2d === Modes2d.SAGGITAL) {
+      } else if (mode2d === Modes2d.SAGGITAL) {
         // x slice
-        const xSlice = Math.floor(xDim * this.m_sliceRatio);
+        const xSlice = Math.floor(xDim * sliceRatio);
 
         const yStep = yDim / w
         const zStep = zDim / h;
@@ -158,9 +164,9 @@ export default class Graphics2d extends React.Component {
             j += 4;
           } // for (x)
         } // for (y)
-      } else if (this.m_mode2d === Modes2d.CORONAL) {
+      } else if (mode2d === Modes2d.CORONAL) {
         // y slice
-        const ySlice = Math.floor(yDim * this.m_sliceRatio);
+        const ySlice = Math.floor(yDim * sliceRatio);
         const yOff = ySlice * xDim;
 
         const xStep = xDim / w
@@ -208,5 +214,15 @@ export default class Graphics2d extends React.Component {
     return jsxGrap2d;
   }
 }
+
+const mapStateToProps = function(storeIn) {
+  const objProps = {
+    store: storeIn
+  };
+  return objProps;
+}
+
+export default connect(mapStateToProps)(Graphics2d);
+
 
  

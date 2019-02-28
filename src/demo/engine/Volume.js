@@ -25,7 +25,7 @@ import LoaderKtx from './loaders/LoaderKtx';
 /**
  * Class Volume  some text later...
  */
-export default class Volume extends React.Component {
+class Volume extends React.Component {
   /**
    * @param {object} props - props from up level object
    */
@@ -52,5 +52,10 @@ export default class Volume extends React.Component {
     const ret = loader.readFromUrl(this, strUrl, callbackProgress, callbackComplete);
     return ret;
   }
+  // do nothing. But we need to implement render() to run Volume tests
+  render() {
+    return <p>></p>;
+  }
 } // end class Volume
 
+export default Volume;

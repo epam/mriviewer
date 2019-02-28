@@ -1,9 +1,21 @@
+// Global imports
 import React from 'react';
+import { Provider } from 'react-redux'
 import ReactDOM from 'react-dom';
-import App from './App';
+import { createStore } from 'redux';
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
+// local imports
+import App from './App';
+import rootReducer from './store/Store';
+
+// tests
+describe('AppTests', () => {
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+    const store = createStore(rootReducer);
+    ReactDOM.render(<Provider store={store}>
+      <App />
+    </Provider>, div);
+    ReactDOM.unmountComponentAtNode(div);
+  });
 });

@@ -13,9 +13,12 @@
 import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
+import { connect } from 'react-redux';
+
 import Nouislider from 'react-nouislider';
 
-import { Modes2d } from './UiMain';
+import Modes2d from '../store/Modes2d';
+import StoreActionType from '../store/ActionTypes';
 
 // ********************************************************
 // Const
@@ -28,7 +31,7 @@ import { Modes2d } from './UiMain';
 /**
  * Class UiCtrl2d some text later...
  */
-export default class UiCtrl2d extends React.Component {
+class UiCtrl2d extends React.Component {
   /**
    * @param {object} props - props from up level object
    */
@@ -43,9 +46,8 @@ export default class UiCtrl2d extends React.Component {
   onMode(indexMode) {
     this.m_updateEnable = true;
     console.log(`2d controls. on new mode = ${indexMode}`);
-    // this.setState({mode2d: indexMode});
-    const onModeChange = this.props.onMode2d;
-    onModeChange(indexMode);
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_MODE_2D, mode2d: indexMode });
   }
   onModeSaggital() {
     this.onMode(Modes2d.SAGGITAL);
@@ -63,8 +65,8 @@ export default class UiCtrl2d extends React.Component {
     if (typeof (aval) === 'string') {
       val = Number.parseFloat(aval);
       // console.log(`onSlider. val = ${val}`);
-      const onSlider = this.props.onSliderSlice;
-      onSlider(val);
+      const store = this.props;
+      store.dispatch({ type: StoreActionType.SET_SLIDER_2D, slider2d: val });
     }
   }
   shouldComponentUpdate() {
@@ -76,8 +78,9 @@ export default class UiCtrl2d extends React.Component {
    * Main component render func callback
    */
   render() {
-    const valSlider = this.props.sliderValue;
-    const mode2d = this.props.mode2d;
+    const store = this.props.store;
+    const valSlider = store.slider2d;
+    const mode2d = store.mode2d;
 
     const strSlider1 = 'slider1';
 
@@ -123,4 +126,13 @@ export default class UiCtrl2d extends React.Component {
     return jsxRenderControls;
   }
 }
+
+const mapStateToProps = function(storeIn) {
+  const objProps = {
+    store: storeIn
+  };
+  return objProps;
+}
+
+export default connect(mapStateToProps)(UiCtrl2d);
 

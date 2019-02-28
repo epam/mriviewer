@@ -43,7 +43,6 @@ export default class PointSet {
   constructor(numPoints) {
     this.create(numPoints);
   }
-
   /**
   * create points set, not initialized
   * @param {number} numPoints Number of points in set estimated
@@ -62,7 +61,6 @@ export default class PointSet {
   getNumPoints() {
     return this.m_numPoints;
   }
-
   findPointSlow(x, y, z) {
     for (let i = 0; i < this.m_numPoints; i++) {
       const dx = x - this.m_points[i].m_point.x;
@@ -76,7 +74,6 @@ export default class PointSet {
     }
     return -1;
   }
-
   /**
   * Add point to set
   * @param {number} x coordinate x

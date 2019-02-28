@@ -34,7 +34,6 @@ import CLIP_FRAGMENT_SHADER from '../shaders/clipplane.frag';
 
 /** Class @class MaterialClipPlane for volume clip plane rendering */
 export default class MaterialClipPlane {
-
   /** ClipPlane material constructor
   * @constructor
   */

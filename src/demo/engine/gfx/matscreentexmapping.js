@@ -33,7 +33,6 @@ import * as THREE from 'three';
  *  frontface geometry to avoid z-fighting
  */
 export default class MaterialScreenTexMap {
-
   /** Wireframe material constructor
   * @constructor
   */
