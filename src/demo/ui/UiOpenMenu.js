@@ -11,8 +11,15 @@
 
 
 import React from 'react';
-import Volume from '../engine/Volume';
+import { connect } from 'react-redux';
 import { NavDropdown, Button, Modal, InputGroup, FormControl } from 'react-bootstrap';
+
+import Volume from '../engine/Volume';
+import Texture3D from '../engine/Texture3D';
+
+import UiModalDemo from './UiModalDemo';
+import StoreActionType from '../store/ActionTypes';
+
 
 // ********************************************************
 // Const
@@ -27,7 +34,7 @@ import { NavDropdown, Button, Modal, InputGroup, FormControl } from 'react-boots
 /**
  * Class UiOpenMenu some text later...
  */
-export default class UiOpenMenu extends React.Component {
+class UiOpenMenu extends React.Component {
   /**
    * @param {object} props - props from up level object
    */
@@ -44,12 +51,18 @@ export default class UiOpenMenu extends React.Component {
     this.onModalDropboxShow = this.onModalDropboxShow.bind(this);
     this.onModalDropboxHide = this.onModalDropboxHide.bind(this);
 
+    this.onModalDemoOpenShow = this.onModalDemoOpenShow.bind(this);
+    this.onModalDemoOpenHide = this.onModalDemoOpenHide.bind(this);
+
+    this.onDemoSelected = this.onDemoSelected.bind(this);
+
     this.m_fileName = '';
     this.m_fileReader = null;
     this.state = {
       strUrl: '',
       showModalUrl: false,
-      showModalDropbox: false
+      showModalDropbox: false,
+      showModalDemo: false
     };
   }
   handleFileRead() {
@@ -64,8 +77,14 @@ export default class UiOpenMenu extends React.Component {
     if (readOk) {
       console.log('handleFileRead finished OK');
       // invoke notification
-      const func = this.props.onNewFile;
-      func(this.m_fileName, vol);
+      const store = this.props;
+
+      store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
+      store.dispatch({ type: StoreActionType.SET_FILENAME, fileName: this.m_fileName });
+      store.dispatch({ type: StoreActionType.SET_VOLUME, volume: vol });
+      const tex3d = new Texture3D();
+      tex3d.createFromRawVolume(vol);
+      store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
     }
   }
   handleFileSelected(evt) {
@@ -123,8 +142,9 @@ export default class UiOpenMenu extends React.Component {
         if (readOk) {
           console.log('handleFileRead finished OK');
           // invoke notification
-          const func = this.props.onNewFile;
-          func(this.m_fileName, vol);
+          // const func = this.props.onNewFile;
+          // func(this.m_fileName, vol);
+
         } // if read ok
       } // if KTX
     } // if valid url
@@ -138,6 +158,53 @@ export default class UiOpenMenu extends React.Component {
     console.log(`onModalDropboxHide`);
     this.setState({ showModalDropbox: false });
   }
+  onModalDemoOpenShow() {
+    this.setState({ showModalDemo: true });
+  }
+  onModalDemoOpenHide() {
+    this.setState({ showModalDemo: false });
+  }
+  onDemoSelected(index) {
+    console.log(`TODO: selected demo = ${index}. Need open file...`);
+    let fileName = '';
+    if (index === 0) {
+      fileName = 'data/brain181.zip';
+    }
+    if (fileName.length > 0) {
+      /*
+      fs.open(fileName, 'r', (err, f) => {
+        if (err) {
+          console.log(`fie open ERR = ${err}`);
+          return err;
+        }
+        console.log('fie is OPENED');
+      });
+
+      const zip = new StreamZip({
+        file: fileName,
+        storeEntries: true
+      });
+      zip.on('error', err => {
+        console.log(`ZIP read error: ${err}`);
+      });
+      zip.on('ready', () => {
+        // Take a look at the files
+        console.log('Entries read: ' + zip.entriesCount);
+        for (const entry of Object.values(zip.entries())) {
+          const desc = entry.isDirectory ? 'directory' : `${entry.size} bytes`;
+          console.log(`Entry ${entry.name}: ${desc}`);
+        }
+        // Read a file in memory
+        let zipDotTxtContents = zip.entryDataSync('path/inside/zip.txt').toString('utf8');
+        console.log("The content of path/inside/zip.txt is: " + zipDotTxtContents);
+    
+        // Do not forget to close the file once you're done
+        zip.close()
+      });
+      */
+
+    } // if fileName not empty
+  } // end of onDemoSelected
   //
   shouldComponentUpdate() {
     return true;
@@ -161,6 +228,13 @@ export default class UiOpenMenu extends React.Component {
         <NavDropdown.Item href="#actionOpenDropbox" onClick={this.onModalDropboxShow} >
           <i className="fas fa-dropbox"></i>
           Dropbox
+        </NavDropdown.Item>
+
+        <NavDropdown.Divider />
+
+        <NavDropdown.Item href="#actionOpenDropbox" onClick={this.onModalDemoOpenShow} >
+          <i className="fas fa-brain"></i>
+          Demo models Open
         </NavDropdown.Item>
 
         <Modal show={this.state.showModalUrl} onHide={this.onModalUrlHide} >
@@ -204,9 +278,21 @@ export default class UiOpenMenu extends React.Component {
           </Modal.Header>
         </Modal>
 
+        <UiModalDemo stateVis={this.state.showModalDemo}
+          onHide={this.onModalDemoOpenHide} onSelectDemo={this.onDemoSelected}  />
+
       </NavDropdown>
 
     return jsxOpenMenu;
   }
 }
+
+const mapStateToProps = function(storeIn) {
+  const objProps = {
+    store: storeIn
+  };
+  return objProps;
+}
+
+export default connect(mapStateToProps)(UiOpenMenu);
  

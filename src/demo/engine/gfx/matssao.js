@@ -59,7 +59,6 @@ export default class MaterialRenderSSAO {
       offsets: { type: 'v3v' },
     };
   }
-
   /** Simple material constructor
   * @return {object} Three.js material with this shader
   */

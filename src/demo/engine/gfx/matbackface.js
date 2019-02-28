@@ -34,7 +34,6 @@ const BACK_FACE_FRAGMENT_SHADER = './shaders/backface.frag';
 
 /** Class @class MaterialBF for volume backface rendering */
 export default class MaterialBF {
-
   /** Backface material constructor
   * @constructor
   */
@@ -42,13 +41,11 @@ export default class MaterialBF {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
   }
-
   /** Backface material constructor
   * @return {object} Three.js material with this shader
   */
   create(callbackMat) {
     // Init uniforms
-
 
     // create shader loaders
     const vertexLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);

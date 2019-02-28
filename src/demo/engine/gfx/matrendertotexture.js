@@ -36,7 +36,6 @@ const RENDER_TEXTURE_FRAGMENT_SHADER = './shaders/rendertotexture.frag';
 * rough isosurface computation: a ray-casting optimization
 */
 export default class MaterialRenderToTexture {
-
   /** Simple material constructor
   * @constructor
   */
@@ -80,7 +79,6 @@ export default class MaterialRenderToTexture {
       useWebGL2: 1,
     };
   }
-
   /** Simple material constructor
   * @return {object} Three.js material with this shader
   */

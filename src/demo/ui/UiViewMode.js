@@ -11,7 +11,10 @@
 
 
 import React from 'react';
-import { ModeView } from  './UiApp';
+import { connect } from 'react-redux';
+
+import ModeView from '../store/ModeView';
+import StoreActionType from '../store/ActionTypes';
 
 // ********************************************************
 // Class
@@ -22,7 +25,7 @@ import { ModeView } from  './UiApp';
 /**
  * Class UiViewMode some text later...
  */
-export default class UiViewMode extends React.Component {
+class UiViewMode extends React.Component {
   /**
    * @param {object} props - props from up level object
    */
@@ -33,32 +36,43 @@ export default class UiViewMode extends React.Component {
     this.onMode3dLight = this.onMode3dLight.bind(this);
     this.onMode3d = this.onMode3d.bind(this);
   }
+  onMode(indexMode) {
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: indexMode });
+  }
   onModeMpr() {
-    const onMode = this.props.onMode;
-    onMode(ModeView.VIEW_MPR);
+    this.onMode(ModeView.VIEW_MPR);
   }
   onMode2d() {
-    const onMode = this.props.onMode;
-    onMode(ModeView.VIEW_2D);
+    this.onMode(ModeView.VIEW_2D);
   }
   onMode3dLight() {
-    const onMode = this.props.onMode;
-    onMode(ModeView.VIEW_3D_LIGHT);
+    this.onMode(ModeView.VIEW_3D_LIGHT);
   }
   onMode3d() {
-    const onMode = this.props.onMode;
-    onMode(ModeView.VIEW_3D);
+    this.onMode(ModeView.VIEW_3D);
+  }
+  logObject(strTitle, obj) {
+    let str = '';
+    for (let prp in obj) {
+      if (str.length > 0) {
+        str += '\n';
+      }
+      str += prp + ' = ' + obj[prp];
+    }
+    console.log(`${strTitle}\n${str}`);
   }
   //
   render() {
-    const viewMode = this.props.modeView;
-    // console.log(`remnder. viewMode = ${viewMode}`);
+    const store = this.props.store;
+    // this.logObject('UiViewMode this props: ', store);
+    const viewMode = store.modeView;
 
     const srtClass = 'btn btn-secondary';
-    const strMpr = srtClass + ((viewMode === 0) ? ' active' : '');
-    const str2d = srtClass + ((viewMode === 1) ? ' active' : '');
-    const str3dlight = srtClass + ((viewMode === 2) ? ' active' : '');
-    const str3d = srtClass + ((viewMode === 3) ? ' active' : '');
+    const strMpr = srtClass + ((viewMode === ModeView.VIEW_MPR) ? ' active' : '');
+    const str2d = srtClass + ((viewMode === ModeView.VIEW_2D) ? ' active' : '');
+    const str3dlight = srtClass + ((viewMode === ModeView.VIEW_3D_LIGHT) ? ' active' : '');
+    const str3d = srtClass + ((viewMode === ModeView.VIEW_3D) ? ' active' : '');
 
     const jsxOut = 
       <div className="btn-group mx-3">
@@ -80,3 +94,11 @@ export default class UiViewMode extends React.Component {
     return  jsxOut;
   }
 }
+const mapStateToProps = function(storeIn) {
+  const objProps = {
+    store: storeIn
+  };
+  return objProps;
+}
+
+export default connect(mapStateToProps)(UiViewMode);

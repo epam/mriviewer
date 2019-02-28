@@ -34,7 +34,6 @@ const CLIP_FRAGMENT_SHADER = './shaders/clipplane.frag';
 
 /** Class @class MaterialClipPlane for volume clip plane rendering */
 export default class MaterialClipPlane {
-
   /** ClipPlane material constructor
   * @constructor
   */
@@ -46,7 +45,6 @@ export default class MaterialClipPlane {
       texBF: { type: 't' },
     };
   }
-
   /** Frontface material constructor
   * @return {object} Three.js material with this shader
   */

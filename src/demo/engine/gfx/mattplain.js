@@ -69,7 +69,6 @@ export default class MaterialTexturePlain2d {
       }
     `;
   }
-
   /** Simple material constructor
   * @return {object} Three.js material with this shader
   */

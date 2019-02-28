@@ -34,7 +34,6 @@ const BLUR_FRAGMENT_SHADER = './shaders/blur.frag';
 
 /** Class @class MaterialBlur for volume slice blurring */
 export default class MaterialBlur {
-
   /** Backface material constructor
   * @constructor
   */
@@ -70,7 +69,6 @@ export default class MaterialBlur {
       useWebGL2: 1,
     };
   }
-
   /** Backface material constructor
   * @return {object} Three.js material with this shader
   */

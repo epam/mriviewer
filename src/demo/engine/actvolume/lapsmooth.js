@@ -133,7 +133,6 @@ export default class LaplasianSmoother {
     }
     return 1;
   }
-
   getVerticesNeighbours(numVertices, vertSrc4, numTriangles, triIndices) {
     const NUM_ELLEMS = LAPSMOOTH_NUM_NEIBS * numVertices;
     let i, j;

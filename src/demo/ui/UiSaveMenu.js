@@ -9,6 +9,7 @@
 // ********************************************************
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 // ********************************************************
 // Const
@@ -21,7 +22,7 @@ import React from 'react';
 /**
  * Class UiSaveMenu some text later...
  */
-export default class UiSaveMenu extends React.Component {
+class UiSaveMenu extends React.Component {
   /**
    * @param {object} props - props from up level object
    */
@@ -36,8 +37,9 @@ export default class UiSaveMenu extends React.Component {
 
   }
   render() {
-    const isLoaded = this.props.isLoaded;
-    const strClass = (isLoaded) ? 'btn-sm dropdown-toggle' : 'btn-sm dropdown-toggle disabled';
+    const store = this.props.store;
+    const isLoaded = store.isLoaded;
+    const strClass = (isLoaded) ? 'btn dropdown-toggle' : 'btn dropdown-toggle disabled';
 
     const jsxSaveMenu =
       <div className="dropdown">
@@ -56,3 +58,13 @@ export default class UiSaveMenu extends React.Component {
     return jsxSaveMenu;
   }
 }
+
+const mapStateToProps = function(storeIn) {
+  const objProps = {
+    store: storeIn
+  };
+  return objProps;
+}
+
+export default connect(mapStateToProps)(UiSaveMenu);
+

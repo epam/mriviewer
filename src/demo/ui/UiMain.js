@@ -10,28 +10,17 @@
 // ********************************************************
 
 import React from 'react';
+import { connect } from 'react-redux';
+
 
 import UiControls from './UiControls';
 import UiRenderView from './UiRenderView';
+import UiHistogram from './UiHistogram';
 
 
 // ********************************************************
 // Const
 // ********************************************************
-
-export const Modes2d = {
-  NA: -1,
-  SAGGITAL: 0,
-  CORONAL: 1,
-  TRANSVERSE: 2
-};
-
-export const Modes3d = {
-  NA: -1,
-  ISO: 0,
-  RAYCAST: 1,
-  RAYFAST: 2
-};
 
 // ********************************************************
 // Class
@@ -40,23 +29,7 @@ export const Modes3d = {
 /**
  * Class UiMain some text later...
  */
-export default class UiMain extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
-  constructor(props) {
-    super(props);
-    this.onMode2d = this.onMode2d.bind(this);
-    this.onSliderSlice = this.onSliderSlice.bind(this);
-    this.state = {
-      mode2d: Modes2d.TRANSVERSE,
-      slider2d: 0.5,
-      mode3d: Modes3d.RAYCAST,
-      slider3d_r: 0.1,
-      slider3d_g: 0.3,
-      slider3d_b: 0.8,
-    };
-  }
+class UiMain extends React.Component {
   onSliderSlice(val) {
     this.setState({ slider2d: val });
   }
@@ -79,37 +52,36 @@ export default class UiMain extends React.Component {
    * Main component render func callback
    */
   render() {
-    const modeViewIndex = this.props.modeView;
+    const store = this.props.store;
+    const modeViewIndex = store.modeView;
+    const vol = store.volume;
 
-    const sliceVal = this.state.slider2d;
-    const mode2d = this.state.mode2d;
-    const mode3d = this.state.mode3d;
-    const slider3dr = this.state.slider3d_r;
-    const slider3dg = this.state.slider3d_g;
-    const slider3db = this.state.slider3d_b;
+    const strStyleX = {
+      "overflowX": "auto"
+    };
+    const strStyleY = {
+      "overflowY": "auto"
+    };
 
-    const vol = this.props.volume;
-    const tex3d = this.props.texture3d;
     const jsxRenderMain =
-    <div className="row" Style="overflow-x: auto">
-      <div className="col-md-4" Style="overflow-y: auto">
-        <UiControls
-          onSliderSlice={this.onSliderSlice.bind(this)} sliderValue={sliceVal}
-          onMode2d={this.onMode2d.bind(this)} mode2d={mode2d} modeView={modeViewIndex}
-          onMode3d={this.onMode3d.bind(this)} mode3d={mode3d}
-          onSlider3dr={this.onSliderSlice3dr.bind(this)}
-          onSlider3dg={this.onSliderSlice3dg.bind(this)}
-          onSlider3db={this.onSliderSlice3db.bind(this)} volume={vol}
-          slider3dr={slider3dr} slider3dg={slider3dg} slider3db={slider3db}
-        />
+    <div className="row" style={strStyleX} >
+      <div className="col-md-4" style={strStyleY}>
+        <UiControls />
+        <UiHistogram modeView={modeViewIndex} volume={vol} />
       </div>
-      <div className="col-md-8" Style="overflow-y: auto">
-        <UiRenderView modeView={modeViewIndex} mode2d={mode2d} sliderValue={sliceVal}
-          volume={vol} texture3d={tex3d}
-          mode3d={mode3d} slider3dr={slider3dr} slider3dg={slider3dg} slider3db={slider3db}/>
+      <div className="col-md-8" style={strStyleY}>
+        <UiRenderView />
       </div>
     </div>
     return jsxRenderMain;
   };
 }
 
+const mapStateToProps = function(storeIn) {
+  const objProps = {
+    store: storeIn
+  };
+  return objProps;
+}
+
+export default connect(mapStateToProps)(UiMain);

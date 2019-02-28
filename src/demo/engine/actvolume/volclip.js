@@ -101,7 +101,6 @@ export default class VolumeClipper {
     triVoxelList[i + offList] = indTri;
     return 1;
   }
-
   /**
   *
   * Find intersection of ray (looking in x direction) and triangle
@@ -172,7 +171,6 @@ export default class VolumeClipper {
     }
     return null;
   }
-
   /**
   * Clip volumetric texture with given non-convex geometry (triangle mesh)
   * @param {array} volTexSrc source volume texture

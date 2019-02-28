@@ -9,6 +9,7 @@
 // ********************************************************
 
 import React from 'react';
+import { connect } from 'react-redux';
 
 // ********************************************************
 // Const
@@ -21,16 +22,14 @@ import React from 'react';
 /**
  * Class UiFilterMenu some text later...
  */
-export default class UiFilterMenu extends React.Component {
-  //constructor(props) {
-  //  super(props);
-  //}
+class UiFilterMenu extends React.Component {
   // invoked after render
   componentDidMount() {
   }
   render() {
-    const isLoaded = this.props.isLoaded;
-    const strClass = (isLoaded) ? 'btn-sm dropdown-toggle' : 'btn-sm dropdown-toggle disabled';
+    const store = this.props.store;
+    const isLoaded = store.isLoaded;
+    const strClass = (isLoaded) ? 'btn dropdown-toggle' : 'btn dropdown-toggle disabled';
 
     const jsxFilterMenu =
       <div className="dropdown">
@@ -73,3 +72,12 @@ export default class UiFilterMenu extends React.Component {
   }
 }
  
+const mapStateToProps = function(storeIn) {
+  const objProps = {
+    store: storeIn
+  };
+  return objProps;
+}
+
+export default connect(mapStateToProps)(UiFilterMenu);
+

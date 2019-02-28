@@ -34,7 +34,6 @@ const FRONT_FACE_FRAGMENT_SHADER = './shaders/frontface.frag';
 
 /** Class @class MaterialFF for volume frontface rendering */
 export default class MaterialFF {
-
   /** Frontface material constructor
   * @constructor
   */
@@ -48,7 +47,6 @@ export default class MaterialFF {
       PlaneZ: { type: 'v4', value: THREE.Vector4(0.0, 0.0, -1.0, 0.5) },
     };
   }
-
   /** Frontface material constructor
   * @return {object} Three.js material with this shader
   */

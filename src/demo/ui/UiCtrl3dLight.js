@@ -13,9 +13,13 @@
 import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
+import { connect } from 'react-redux';
+
 import Nouislider from 'react-nouislider';
 
-import { Modes3d } from './UiMain';
+import Modes3d from '../store/Modes3d';
+import StoreActionType from '../store/ActionTypes';
+
 import UiHistogram from './UiHistogram';
 import UiTF from './UiTF';
 
@@ -31,7 +35,7 @@ import UiTF from './UiTF';
 /**
  * Class UiCtrl3dLight some text later...
  */
-export default class UiCtrl3dLight extends React.Component {
+class UiCtrl3dLight extends React.Component {
   /**
    * @param {object} props - props from up level object
    */
@@ -45,11 +49,9 @@ export default class UiCtrl3dLight extends React.Component {
   }
   onMode(indexMode) {
     this.m_updateEnable = true;
-    console.log(`2d controls. mode = ${indexMode}`);
-    // this.setState({mode2d: indexMode});
-    const onModeChange = this.props.onMode3d;
-    onModeChange(indexMode);
-
+    console.log(`3d control slight . mode = ${indexMode}`);
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: indexMode });
   }
   onModeA() {
     this.onMode(Modes3d.ISO);
@@ -68,13 +70,10 @@ export default class UiCtrl3dLight extends React.Component {
       const rVal = Number.parseFloat(arrStr[0]);
       const gVal = Number.parseFloat(arrStr[1]);
       const bVal = newFunction(arrStr);
-      // console.log(`onSlider. val = ${val}`);
-      const onSlider3dr = this.props.onSlider3dr;
-      const onSlider3dg = this.props.onSlider3dg;
-      const onSlider3db = this.props.onSlider3db;
-      onSlider3dr(rVal);
-      onSlider3dg(gVal);
-      onSlider3db(bVal);
+      const store = this.props;
+      store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3dr: rVal });
+      store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3dg: gVal });
+      store.dispatch({ type: StoreActionType.SET_SLIDER_3DB, slider3db: bVal });
     }
   }
   onChangeSliderBrightness() {
@@ -90,22 +89,23 @@ export default class UiCtrl3dLight extends React.Component {
    * Main component render func callback
    */
   render() {
-    const slider3dr = this.props.slider3dr;
-    const slider3dg = this.props.slider3dg;
-    const slider3db = this.props.slider3db;
-    const mode3d = this.props.mode3d;
-    const vol = this.props.volume;
-    const sliderBrightness = slider3dr;
-    const sliderCut = slider3dr;
-    const sliderQuality = slider3dr;
-    const modeViewIndex = this.props.modeView;
+    const store = this.props.store;
 
-    const strSlider3d = 'slider3d';
+    const slider3dr = store.slider3d_r;
+    const slider3dg = store.slider3d_g;
+    const slider3db = store.slider3d_b;
+
+    const mode3d = store.mode3d;
+    const vol = store.volume;
+    const sliderBrightness = slider3dr;
+    const sliderCut = slider3dg;
+    const sliderQuality = slider3db;
+    // const modeViewIndex = store.modeView;
+
     const strSliderBrightness = 'sliderBrightness';
     const strSliderCut = 'sliderCut';
     const strSliderQuality = 'sliderQuality';
 
-    const wArr = [slider3dr, slider3dg, slider3db];
     const wArrBrightness = [sliderBrightness];
     const wArrCut = [sliderCut];
     const wArrQuality = [sliderQuality];
@@ -140,7 +140,7 @@ export default class UiCtrl3dLight extends React.Component {
           <UiHistogram volume={vol} />
         </li>
         <li className="list-group-item">
-          <UiTF mode3d = {mode3d} slider3dr={slider3dr} slider3dg={slider3dg} slider3db={slider3db} modeView={modeViewIndex} />
+          <UiTF />
         </li>
         <li className="list-group-item">
           <p> Brightness </p>
@@ -170,3 +170,11 @@ function newFunction(arrStr) {
   return Number.parseFloat(arrStr[2]);
 }
 
+const mapStateToProps = function(storeIn) {
+  const objProps = {
+    store: storeIn
+  };
+  return objProps;
+}
+
+export default connect(mapStateToProps)(UiCtrl3dLight);

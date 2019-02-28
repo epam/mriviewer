@@ -33,7 +33,6 @@ import * as THREE from 'three';
  *  frontface geometry to avoid z-fighting
  */
 export default class MaterialScreenTexMap {
-
   /** Wireframe material constructor
   * @constructor
   */
@@ -45,7 +44,6 @@ export default class MaterialScreenTexMap {
       texBuffer: { type: 't', value: null },
     };
   }
-
   /** material constructor
   * @return {object} Three.js material with this shader
   */

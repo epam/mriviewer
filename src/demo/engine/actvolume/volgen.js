@@ -170,7 +170,6 @@ export default class VolumeGenerator {
       vR.z += vRScale.z;
     }
   }
-
   /**
   *
   * return true, if success
