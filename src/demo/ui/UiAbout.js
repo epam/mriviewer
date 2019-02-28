@@ -45,7 +45,7 @@ export default class UiAbout extends React.Component {
               </button>
             </div>
             <div className="modal-body text-center">
-              <img src="images/app_icon.png" alt="app_icon" />
+              <img src="images/app_icon.svg" alt="app_icon" height="400px" />
               <p>
                 Med3web is unique 2d/3d medical volume data web viewer application. You can inspect data both in 2d and 3d modes.
               </p>
