@@ -11,9 +11,8 @@
 
 import React from 'react';
 
-import * as THREE from 'three';
-
 import { Modes3d } from '../ui/UiMain';
+import VolumeRenderer3d from './VolumeRenderer3d'
 
 // ********************************************************
 // Const
@@ -34,16 +33,12 @@ export default class Graphics3d extends React.Component {
     super(props);
     this.m_width = props.wScreen;
     this.m_height = props.hScreen;
+    this.isLoaded = false;
 
     this.animate = this.animate.bind(this);
 
     this.m_mount = null;
-    this.m_camera = null;
-    this.m_scene = null;
-    this.m_renderer = null;
-    this.m_geometry = null;
-    this.m_material = null;
-    this.m_mesh = null;
+    this.m_volumeRenderer3D = null;
     // animation
     this.m_frameId = null;
     // settings
@@ -62,19 +57,22 @@ export default class Graphics3d extends React.Component {
     this.m_frameId = null;
   }
   animate() {
-    this.m_mesh.rotation.x += 0.01;
+    /*this.m_mesh.rotation.x += 0.01;
     this.m_mesh.rotation.y += 0.01;
     this.m_material.color.setRGB(this.m_slider3dr, this.m_slider3dg, this.m_slider3db);
-    this.m_material.wireframe = (this.m_mode3d === Modes3d.ISO);
+    this.m_material.wireframe = (this.m_mode3d === Modes3d.ISO);*/
  
     this.renderScene();
     this.m_frameId = window.requestAnimationFrame(this.animate);
   }
   renderScene() {
-    this.m_renderer.render(this.m_scene, this.m_camera);
+    // this.m_renderer.render(this.m_scene, this.m_camera);
+    if (this.m_volumeRenderer3D !== null) {
+      this.m_volumeRenderer3D.render();
+    }
   }
   componentDidMount() {
-    const w = this.m_mount.clientWidth;
+    /*const w = this.m_mount.clientWidth;
     const h = this.m_mount.clientHeight;
     this.m_scene = new THREE.Scene();
     this.m_camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
@@ -88,12 +86,18 @@ export default class Graphics3d extends React.Component {
     this.m_geometry = new THREE.BoxGeometry(1, 1, 1);
     this.m_material = new THREE.MeshBasicMaterial({ color: '#ff1122' });
     this.m_mesh = new THREE.Mesh(this.m_geometry, this.m_material);
-    this.m_scene.add(this.m_mesh);
+    this.m_scene.add(this.m_mesh);*/
+    this.m_volumeRenderer3D = new VolumeRenderer3d({
+      width: this.m_mount.clientWidth,
+      height: this.m_mount.clientHeight,
+      mount: this.m_mount
+    });
     this.start();
   }
   componentWillUnmount() {
     this.stop()
     this.m_mount.removeChild(this.m_renderer.domElement);
+    this.m_volumeRenderer3D = null;
   }
   /**
    * Main component render func callback
@@ -103,8 +107,13 @@ export default class Graphics3d extends React.Component {
     const hScreen = this.props.hScreen;
     const vol = this.props.volume;
     // const tex3d = this.props.texture3d;
-    if (vol !== null) {
-      console.log(`Graphiucs2d render dim x = ${vol.m_xDim}*${vol.m_yDim}*${vol.m_zDim}`);
+    if (vol !== null && this.isLoaded === false && this.m_volumeRenderer3D !== null) {
+      
+      this.m_volumeRenderer3D.initWithVolume(vol, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 });
+      this.isLoaded = true;
+    }
+    if (this.m_volumeRenderer3D !== null) {
+      this.m_volumeRenderer3D.render();
     }
 
     const mode3d = this.props.mode3d;
