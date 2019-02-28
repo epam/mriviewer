@@ -68,7 +68,7 @@ class Graphics2d extends React.Component {
     const h = this.refs.canvasGra2d.clientHeight;
     ctx.fillStyle = 'rgb(240, 240, 240)';
     ctx.fillRect(0,0, w, h);
-    console.log(`render scene 2d. screen = ${w} * ${h}`);
+    // console.log(`render scene 2d. screen = ${w} * ${h}`);
 
     // Test draw chessboard
     const NEED_TEST_RAINBOW = false;
