@@ -37,7 +37,7 @@ class UiSaveMenu extends React.Component {
 
   }
   render() {
-    const store = this.props.store;
+    const store = this.props;
     const isLoaded = store.isLoaded;
     const strClass = (isLoaded) ? 'btn dropdown-toggle' : 'btn dropdown-toggle disabled';
 
@@ -59,12 +59,5 @@ class UiSaveMenu extends React.Component {
   }
 }
 
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
-
-export default connect(mapStateToProps)(UiSaveMenu);
+export default connect(store => store)(UiSaveMenu);
 

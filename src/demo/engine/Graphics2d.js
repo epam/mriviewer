@@ -90,7 +90,7 @@ class Graphics2d extends React.Component {
       ctx.putImageData(imgData, 0, 0); 
     }
 
-    const store = this.props.store;
+    const store = this.props;
     const vol = store.volume;
     const mode2d = store.mode2d;
     const sliceRatio = store.slider2d;
@@ -215,14 +215,4 @@ class Graphics2d extends React.Component {
   }
 }
 
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
-
-export default connect(mapStateToProps)(Graphics2d);
-
-
- 
+export default connect(store => store)(Graphics2d);

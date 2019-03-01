@@ -27,7 +27,7 @@ class UiReportMenu extends React.Component {
   componentDidMount() {
   }
   render() {
-    const store = this.props.store;
+    const store = this.props;
     const isLoaded = store.isLoaded;
     const strClass = (isLoaded) ? 'btn dropdown-toggle' : 'btn dropdown-toggle disabled';
 
@@ -56,11 +56,4 @@ class UiReportMenu extends React.Component {
   }
 }
 
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
-
-export default connect(mapStateToProps)(UiReportMenu);
+export default connect(store => store)(UiReportMenu);

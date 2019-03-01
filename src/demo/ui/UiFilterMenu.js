@@ -27,7 +27,7 @@ class UiFilterMenu extends React.Component {
   componentDidMount() {
   }
   render() {
-    const store = this.props.store;
+    const store = this.props;
     const isLoaded = store.isLoaded;
     const strClass = (isLoaded) ? 'btn dropdown-toggle' : 'btn dropdown-toggle disabled';
 
@@ -72,12 +72,5 @@ class UiFilterMenu extends React.Component {
   }
 }
  
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
-
-export default connect(mapStateToProps)(UiFilterMenu);
+export default connect(store => store)(UiFilterMenu);
 

@@ -64,7 +64,7 @@ class UiViewMode extends React.Component {
   }
   //
   render() {
-    const store = this.props.store;
+    const store = this.props;
     // this.logObject('UiViewMode this props: ', store);
     const viewMode = store.modeView;
 
@@ -94,11 +94,5 @@ class UiViewMode extends React.Component {
     return  jsxOut;
   }
 }
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
 
-export default connect(mapStateToProps)(UiViewMode);
+export default connect(store => store)(UiViewMode);

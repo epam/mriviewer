@@ -78,7 +78,7 @@ class UiCtrl2d extends React.Component {
    * Main component render func callback
    */
   render() {
-    const store = this.props.store;
+    const store = this.props;
     const valSlider = store.slider2d;
     const mode2d = store.mode2d;
 
@@ -127,12 +127,4 @@ class UiCtrl2d extends React.Component {
   }
 }
 
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
-
-export default connect(mapStateToProps)(UiCtrl2d);
-
+export default connect(store => store)(UiCtrl2d);

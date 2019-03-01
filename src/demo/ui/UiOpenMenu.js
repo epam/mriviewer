@@ -20,7 +20,6 @@ import Texture3D from '../engine/Texture3D';
 import UiModalDemo from './UiModalDemo';
 import StoreActionType from '../store/ActionTypes';
 
-
 // ********************************************************
 // Const
 // ********************************************************
@@ -42,7 +41,7 @@ class UiOpenMenu extends React.Component {
     super(props);
     this.onButtonLocalFile = this.onButtonLocalFile.bind(this);
     this.handleFileSelected = this.handleFileSelected.bind(this);
-    this.handleFileRead = this.handleFileRead.bind(this);
+    this.onFileContentRead = this.onFileContentRead.bind(this);
 
     this.onModalUrlShow = this.onModalUrlShow.bind(this);
     this.onModalUrlHide = this.onModalUrlHide.bind(this);
@@ -65,17 +64,23 @@ class UiOpenMenu extends React.Component {
       showModalDemo: false
     };
   }
-  handleFileRead() {
-    console.log('UiOpenMenu. handleFileRead ...');
+  onFileContentRead() {
+    console.log('UiOpenMenu. onFileContectRead ...');
     const strContent = this.m_fileReader.result;
     // console.log(`file content = ${strContent.substring(0, 64)}`);
-    // console.log(`handleFileRead. type = ${typeof strContent}`);
+    // console.log(`onFileContentRead. type = ${typeof strContent}`);
     const vol = new Volume();
     const callbackProgress = null;
     const callbackComplete = null;
-    const readOk = vol.readFromKtx(strContent, callbackProgress, callbackComplete);
+    let readOk = false;
+    if (this.m_fileName.endsWith('.ktx') || this.m_fileName.endsWith('.KTX')) {
+      // if read ktx
+      readOk = vol.readFromKtx(strContent, callbackProgress, callbackComplete);
+    } else {
+      console.log(`onFileContentRead: unknown file type: ${this.m_fileName}`);
+    }
     if (readOk) {
-      console.log('handleFileRead finished OK');
+      console.log('nFileContentRead finished OK');
       // invoke notification
       const store = this.props;
 
@@ -93,7 +98,7 @@ class UiOpenMenu extends React.Component {
       const file = evt.target.files[0];
       this.m_fileName = file.name;
       this.m_fileReader = new FileReader();
-      this.m_fileReader.onloadend = this.handleFileRead;
+      this.m_fileReader.onloadend = this.onFileContentRead;
       this.m_fileReader.readAsArrayBuffer(file);
     }
   }
@@ -140,7 +145,7 @@ class UiOpenMenu extends React.Component {
         const callbackComplete = null;
         const readOk = vol.readFromKtxUrl(strUrl, callbackProgress, callbackComplete);
         if (readOk) {
-          console.log('handleFileRead finished OK');
+          console.log('onFileContentRead finished OK');
           // invoke notification
           // const func = this.props.onNewFile;
           // func(this.m_fileName, vol);
@@ -287,12 +292,4 @@ class UiOpenMenu extends React.Component {
   }
 }
 
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
-
-export default connect(mapStateToProps)(UiOpenMenu);
- 
+export default connect(store => store)(UiOpenMenu);

@@ -93,11 +93,4 @@ class UiModalDemo extends React.Component {
   } // end render
 } // end class
 
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
-
-export default connect(mapStateToProps)(UiModalDemo);
+export default connect(store => store)(UiModalDemo);

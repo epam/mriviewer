@@ -30,7 +30,7 @@ class UiControls extends React.Component {
    * Main component render func callback
    */
   render() {
-    const store = this.props.store;
+    const store = this.props;
     const modeViewIndex = store.modeView;
 
     const jsxMpr = <div> Not impl.mpr setings !!!</div>;
@@ -43,12 +43,4 @@ class UiControls extends React.Component {
   }
 }
 
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
-
-export default connect(mapStateToProps)(UiControls);
-
+export default connect(store => store)(UiControls);

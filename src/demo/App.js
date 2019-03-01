@@ -39,12 +39,5 @@ class App extends React.Component {
   } // end render
 } // end class
 
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
-
 // export default App;
-export default connect(mapStateToProps)(App);
+export default connect(store => store)(App);

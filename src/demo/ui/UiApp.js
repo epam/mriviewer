@@ -33,7 +33,7 @@ class UiApp extends React.Component {
    * Main component render func callback
    */
   render() {
-    const store = this.props.store;
+    const store = this.props;
     const isLoaded = store.isLoaded;
     const fileName = store.fileName;
 
@@ -79,12 +79,4 @@ class UiApp extends React.Component {
   } // end render
 } // end class
 
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
-
-export default connect(mapStateToProps)(UiApp);
-
+export default connect(store => store)(UiApp);

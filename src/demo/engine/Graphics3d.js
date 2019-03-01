@@ -129,7 +129,7 @@ class Graphics3d extends React.Component {
   render() {
     const wScreen = this.props.wScreen;
     const hScreen = this.props.hScreen;
-    const store = this.props.store;
+    const store = this.props;
     const vol = store.volume;
     // const tex3d = this.props.texture3d;
     if (vol !== null) {
@@ -157,12 +157,5 @@ class Graphics3d extends React.Component {
   }
 }
 
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
-
-export default connect(mapStateToProps)(Graphics3d);
+export default connect(store => store)(Graphics3d);
  

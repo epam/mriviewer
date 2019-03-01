@@ -42,7 +42,7 @@ class UiTF extends React.Component {
    * Main component render func callback
    */
   render() {
-    const store = this.props.store;
+    const store = this.props;
 
     // const modeViewIndex = store.modeView;
     const mode3d = store.mode3d;
@@ -91,12 +91,5 @@ class UiTF extends React.Component {
     return jsxRet;
   }
 }
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
 
-export default connect(mapStateToProps)(UiTF);
-
+export default connect(store => store)(UiTF);

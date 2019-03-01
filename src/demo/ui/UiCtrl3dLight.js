@@ -89,7 +89,7 @@ class UiCtrl3dLight extends React.Component {
    * Main component render func callback
    */
   render() {
-    const store = this.props.store;
+    const store = this.props;
 
     const slider3dr = store.slider3d_r;
     const slider3dg = store.slider3d_g;
@@ -170,11 +170,4 @@ function newFunction(arrStr) {
   return Number.parseFloat(arrStr[2]);
 }
 
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
-
-export default connect(mapStateToProps)(UiCtrl3dLight);
+export default connect(store => store)(UiCtrl3dLight);

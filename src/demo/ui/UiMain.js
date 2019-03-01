@@ -52,7 +52,7 @@ class UiMain extends React.Component {
    * Main component render func callback
    */
   render() {
-    const store = this.props.store;
+    const store = this.props;
     const modeViewIndex = store.modeView;
     const vol = store.volume;
 
@@ -77,11 +77,4 @@ class UiMain extends React.Component {
   };
 }
 
-const mapStateToProps = function(storeIn) {
-  const objProps = {
-    store: storeIn
-  };
-  return objProps;
-}
-
-export default connect(mapStateToProps)(UiMain);
+export default connect(store => store)(UiMain);
