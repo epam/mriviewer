@@ -1150,6 +1150,7 @@ export default class VolumeRenderer3d {
     if (!matReady) {
       return false;
     }
+    /*
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return false;
     }
@@ -1157,7 +1158,7 @@ export default class VolumeRenderer3d {
     const MIN_FRAMES_TO_APPEAR_ON_SCREEN = 32;
     if (this.renderCounter < MIN_FRAMES_TO_APPEAR_ON_SCREEN) {
       return false;
-    }
+    }*/
     return true;
   }
   /** Render 3d scene */
