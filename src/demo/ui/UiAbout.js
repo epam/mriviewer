@@ -11,6 +11,7 @@
 
 
 import React from 'react';
+import packageJson from '../../../package.json';
 
 // ********************************************************
 // Class
@@ -26,6 +27,11 @@ export default class UiAbout extends React.Component {
   //  super(props);
   //}
   render() {
+
+    const strVer = packageJson.version;
+    const strName = packageJson.name;
+    const strDescription = packageJson.description;
+    const strAuthor = packageJson.author;
     
     const strAbout = 
     <li className="nav-item">
@@ -38,7 +44,7 @@ export default class UiAbout extends React.Component {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">
-                Title: some words about this app
+                {strName}
               </h5>
               <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
@@ -47,10 +53,13 @@ export default class UiAbout extends React.Component {
             <div className="modal-body text-center">
               <img src="images/app_icon.svg" alt="app_icon" height="400px" />
               <p>
-                Med3web is unique 2d/3d medical volume data web viewer application. You can inspect data both in 2d and 3d modes.
+                {strDescription}
               </p>
               <p>
-                <b>Version: </b> 1.0.0
+                <b>Version: </b> {strVer}
+              </p>
+              <p>
+                <b>Made by: </b> {strAuthor}
               </p>
             </div>
           </div>
