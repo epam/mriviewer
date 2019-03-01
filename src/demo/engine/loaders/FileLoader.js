@@ -84,5 +84,10 @@ export default class FileLoader {
     }, false);
 
     this.m_request.send();
+    const RES_FAIL_404 = 404;
+    if (this.m_request.status === RES_FAIL_404) {
+      const errMsg = `Cant access url =  ${this.m_url}`;
+      rejectCallback(errMsg);
+    }
   }
 } // end class FileLoader

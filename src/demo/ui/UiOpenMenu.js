@@ -12,13 +12,17 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { NavDropdown, Button, Modal, InputGroup, FormControl } from 'react-bootstrap';
+import { NavDropdown, Button, Modal, InputGroup, FormControl, } from 'react-bootstrap';
 
 import Volume from '../engine/Volume';
 import Texture3D from '../engine/Texture3D';
 
 import UiModalDemo from './UiModalDemo';
 import StoreActionType from '../store/ActionTypes';
+// import { timingSafeEqual } from 'crypto';
+import LoadResult from '../engine/LoadResult';
+import FileTools from '../engine/loaders/FileTools';
+
 
 // ********************************************************
 // Const
@@ -46,6 +50,7 @@ class UiOpenMenu extends React.Component {
     this.onModalUrlShow = this.onModalUrlShow.bind(this);
     this.onModalUrlHide = this.onModalUrlHide.bind(this);
     this.onClickLoadUrl = this.onClickLoadUrl.bind(this);
+    this.onCompleteFromUrlKtx = this.onCompleteFromUrlKtx.bind(this);
 
     this.onModalDropboxShow = this.onModalDropboxShow.bind(this);
     this.onModalDropboxHide = this.onModalDropboxHide.bind(this);
@@ -64,6 +69,16 @@ class UiOpenMenu extends React.Component {
       showModalDemo: false
     };
   }
+  finalizeSuccessLoadedVolume(vol, fileNameIn) {
+    // invoke notification
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
+    store.dispatch({ type: StoreActionType.SET_FILENAME, fileName: fileNameIn });
+    store.dispatch({ type: StoreActionType.SET_VOLUME, volume: vol });
+    const tex3d = new Texture3D();
+    tex3d.createFromRawVolume(vol);
+    store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
+  }
   onFileContentRead() {
     console.log('UiOpenMenu. onFileContectRead ...');
     const strContent = this.m_fileReader.result;
@@ -80,16 +95,8 @@ class UiOpenMenu extends React.Component {
       console.log(`onFileContentRead: unknown file type: ${this.m_fileName}`);
     }
     if (readOk) {
-      console.log('nFileContentRead finished OK');
-      // invoke notification
-      const store = this.props;
-
-      store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
-      store.dispatch({ type: StoreActionType.SET_FILENAME, fileName: this.m_fileName });
-      store.dispatch({ type: StoreActionType.SET_VOLUME, volume: vol });
-      const tex3d = new Texture3D();
-      tex3d.createFromRawVolume(vol);
-      store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
+      console.log('onFileContentRead finished OK');
+      this.finalizeSuccessLoadedVolume(vol, this.m_fileName);
     }
   }
   handleFileSelected(evt) {
@@ -133,26 +140,61 @@ class UiOpenMenu extends React.Component {
     this.setState({ strUrl: str }); 
     console.log(`onChangeUrlString. str = ${str}`)
   }
+  convertUrlToFileName(strUrl) {
+    const ind = strUrl.lastIndexOf('/');
+    if (ind > 0) {
+      const strRet = strUrl.substring(ind + 1);
+      return strRet;
+    } else {
+      console.log(`Strange URL: ${strUrl}`);
+      return '???';
+    }
+  }
+  onCompleteFromUrlKtx(codeResult, head, dataSize, dataArray) {
+    if (codeResult !== LoadResult.SUCCESS) {
+      console.log(`onCompleteFromUrlKtx. Bad result: ${codeResult}`);
+      return;
+    }
+    const vol = new Volume();
+    vol.m_dataSize = dataSize;
+    vol.m_dataArray = dataArray;
+    vol.m_xDim = head.m_pixelWidth;
+    vol.m_yDim = head.m_pixelHeight;
+    vol.m_zDim = head.m_pixelDepth;
+    this.m_fileName = this.convertUrlToFileName(this.m_url);
+    this.finalizeSuccessLoadedVolume(vol, this.m_fileName);
+  }
+  loadFromUrl(strUrl) {
+    const fileTools = new FileTools();
+    const isValid = fileTools.isValidUrl(strUrl);
+    if (isValid) {
+      this.m_url = strUrl;
+      if (strUrl.endsWith('.ktx')) {
+        // TODO: open KTX by url
+        const vol = new Volume();
+        const callbackProgress = null;
+        const readOk = vol.readFromKtxUrl(strUrl, callbackProgress, this.onCompleteFromUrlKtx);
+        if (readOk) {
+          // if read ok
+          // console.log('UiOpenMenu. onClickLoadUrl: read OK');
+        } else {
+          // bad read
+          console.log(`UiOpenMenu. onClickLoadUrl: failed loading url:${strUrl}`);
+        }
+        // if KTX
+      } else {
+        console.log(`UiOpenMenu. Unknow file type from URL = ${strUrl}`);
+      }
+      // if valid url
+    } else {
+      console.log(`UiOpenMenu. Bad URL = ${strUrl}`);
+    }
+  }
   onClickLoadUrl() {
     this.setState({ showModalUrl: false });
     const strUrl = this.state.strUrl;
     console.log(`onClickLoadUrl with strUrl = ${strUrl}`);
-    if (strUrl.startsWith('http')) {
-      if(strUrl.endsWith('.ktx')) {
-        // TODO: open KTX by url
-        const vol = new Volume();
-        const callbackProgress = null;
-        const callbackComplete = null;
-        const readOk = vol.readFromKtxUrl(strUrl, callbackProgress, callbackComplete);
-        if (readOk) {
-          console.log('onFileContentRead finished OK');
-          // invoke notification
-          // const func = this.props.onNewFile;
-          // func(this.m_fileName, vol);
-
-        } // if read ok
-      } // if KTX
-    } // if valid url
+    this.loadFromUrl(strUrl);
   }
   //
   onModalDropboxShow() {
@@ -173,41 +215,16 @@ class UiOpenMenu extends React.Component {
     console.log(`TODO: selected demo = ${index}. Need open file...`);
     let fileName = '';
     if (index === 0) {
-      fileName = 'data/brain181.zip';
+      const FN_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/31212219.luy';
+      const ft = new FileTools();
+      fileName = ft.decodeUrl(FN_ENCODED);
+    } else if (index === 1) {
+      const FN_ENCO = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/tfu11.luy';
+      const ft = new FileTools();
+      fileName = ft.decodeUrl(FN_ENCO);
     }
     if (fileName.length > 0) {
-      /*
-      fs.open(fileName, 'r', (err, f) => {
-        if (err) {
-          console.log(`fie open ERR = ${err}`);
-          return err;
-        }
-        console.log('fie is OPENED');
-      });
-
-      const zip = new StreamZip({
-        file: fileName,
-        storeEntries: true
-      });
-      zip.on('error', err => {
-        console.log(`ZIP read error: ${err}`);
-      });
-      zip.on('ready', () => {
-        // Take a look at the files
-        console.log('Entries read: ' + zip.entriesCount);
-        for (const entry of Object.values(zip.entries())) {
-          const desc = entry.isDirectory ? 'directory' : `${entry.size} bytes`;
-          console.log(`Entry ${entry.name}: ${desc}`);
-        }
-        // Read a file in memory
-        let zipDotTxtContents = zip.entryDataSync('path/inside/zip.txt').toString('utf8');
-        console.log("The content of path/inside/zip.txt is: " + zipDotTxtContents);
-    
-        // Do not forget to close the file once you're done
-        zip.close()
-      });
-      */
-
+      this.loadFromUrl(fileName);
     } // if fileName not empty
   } // end of onDemoSelected
   //
