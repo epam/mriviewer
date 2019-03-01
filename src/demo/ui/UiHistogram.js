@@ -76,13 +76,13 @@ export default class UiHistogram extends React.Component {
     const hist = this.m_histogram;
     const MIN_SCAN = 12;
     const MAX_SCAN = NUM_COLORS - 4;
-    let maxPekVal = 0;
+    let maxPeakVal = 0;
     for (i = MAX_SCAN; i > MIN_SCAN; i--) {
       if ((hist[i] > hist[i - 1]) && (hist[i] > hist[i + 1]) && 
         (hist[i] > hist[i - 2]) && (hist[i] > hist[i + 2])) {
         const peakVal = hist[i];
-        if (peakVal > maxPekVal) {
-          maxPekVal = peakVal;
+        if (peakVal > maxPeakVal) {
+          maxPeakVal = peakVal;
           this.m_peakIndex = i;
         }
         // console.log(`Local histogram peak in ${this.m_peakIndex}`);

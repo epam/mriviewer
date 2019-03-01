@@ -39,6 +39,21 @@ class Volume extends React.Component {
       x: 0.0, y: 0.0, z: 0.0
     };
   }
+  createEmptyBytesVolume(xDim, yDim, zDim) {
+    this.m_xDim = xDim;
+    this.m_yDim = yDim;
+    this.m_zDim = zDim;
+    const xyzDim = xDim * yDim * zDim;
+    this.m_bytesPerVoxel = 1;
+    this.m_dataArray = new Uint8Array(xyzDim);
+    this.m_dataSize = xyzDim;
+    this.m_boxSize = {
+      x: xDim, y: yDim, z: zDim
+    };
+    for (let i = 0; i < xyzDim; i++) {
+      this.m_dataArray[i] = 0;
+    }
+  }
   //
   // Read from KTX format
   readFromKtx(arrBuf, callbackProgress, callbackComplete) {
