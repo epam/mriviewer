@@ -116,7 +116,7 @@ class UiCtrl3dLight extends React.Component {
     const strB = strClass + ((mode3d === Modes3d.RAYCAST) ? ' active' : '');
     const strC = strClass + ((mode3d === Modes3d.RAYFAST) ? ' active' : '');
 
-    // console.log(`UiControls. render. flags = ${bCheckedSag}+${bCheckedCor}+${bCheckedTra}`);
+    // console.log(`UiCtr3dLight. render. flags = ${bCheckedSag}+${bCheckedCor}+${bCheckedTra}`);
 
     // btn-default active
 

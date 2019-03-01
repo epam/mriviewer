@@ -1,8 +1,8 @@
 {
-  "name": "rdxf",
+  "name": "med3web",
   "version": "1.0.2",
   "homepage": ".",
-  "private": true,
+  "private": false,
   "dependencies": {
     "bootstrap": "^4.2.1",
     "jquery": "^3.3.1",

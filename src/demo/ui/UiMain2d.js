@@ -1,5 +1,5 @@
 /**
- * @fileOverview UiControls
+ * @fileOverview UiMain2d
  * @author Epam
  * @version 1.0.0
  */
@@ -13,7 +13,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import UiCtrl2d from './UiCtrl2d';
-import UiCtrl3dLight from './UiCtrl3dLight';
+import {  W_RENDER, H_RENDER } from './UiRenderView';
+import Graphics2d from '../engine/Graphics2d';
+import UiHistogram from './UiHistogram';
 
 // ********************************************************
 // Const
@@ -22,25 +24,29 @@ import UiCtrl3dLight from './UiCtrl3dLight';
 // ********************************************************
 // Class
 // ********************************************************
+
 /**
- * Class UiControls some text later...
+ * Class UiMain2d some text later...
  */
-class UiControls extends React.Component {
+class UiMain2d extends React.Component {
   /**
    * Main component render func callback
    */
   render() {
     const store = this.props;
-    const modeViewIndex = store.modeView;
+    const vol = store.volume;
 
-    const jsxMpr = <div> Not impl.mpr setings !!!</div>;
-    const jsx2d = <UiCtrl2d  />;
-    const jsx3dLight = <UiCtrl3dLight />;
-    const jsx3d = <div>Not impl 3d mode settings !!!</div>;
-    const jsxArray = [jsxMpr, jsx2d, jsx3dLight, jsx3d];
-    const jsxRet = jsxArray[modeViewIndex];
-    return jsxRet;
-  }
+    const jsxMain2d = <div className="row">
+      <div className="col-md-4">
+        <UiCtrl2d />
+        <UiHistogram volume={vol}/>
+      </div>
+      <div className="col-md-8">
+        <Graphics2d wScreen={W_RENDER} hScreen={H_RENDER} />
+      </div>
+    </div>
+    return jsxMain2d;
+  };
 }
 
-export default connect(store => store)(UiControls);
+export default connect(store => store)(UiMain2d);

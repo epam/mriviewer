@@ -12,11 +12,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import UiMainMpr from './UiMainMpr';
+import UiMain2d from './UiMain2d';
+import UiMain3d from './UiMain3d';
+import UiMain3dLight from './UiMain3dLight';
 
-import UiControls from './UiControls';
-import UiRenderView from './UiRenderView';
-import UiHistogram from './UiHistogram';
-
+import ModeView from '../store/ModeView';
 
 // ********************************************************
 // Const
@@ -30,50 +31,24 @@ import UiHistogram from './UiHistogram';
  * Class UiMain some text later...
  */
 class UiMain extends React.Component {
-  onSliderSlice(val) {
-    this.setState({ slider2d: val });
-  }
-  onMode2d(ind) {
-    this.setState({ mode2d: ind });
-  }
-  onMode3d(ind) {
-    this.setState({ mode3d: ind });
-  }
-  onSliderSlice3dr(val) {
-    this.setState({ slider3d_r: val });
-  }
-  onSliderSlice3dg(val) {
-    this.setState({ slider3d_g: val });
-  }
-  onSliderSlice3db(val) {
-    this.setState({ slider3d_b: val });
-  }
   /**
    * Main component render func callback
    */
   render() {
     const store = this.props;
     const modeViewIndex = store.modeView;
-    const vol = store.volume;
+    const jsxMainMpr = <UiMainMpr></UiMainMpr>;
+    const jsxMain2d = <UiMain2d></UiMain2d>;
+    const jsxMain3dLight = <UiMain3dLight></UiMain3dLight>;
+    const jsxMain3d = <UiMain3d></UiMain3d>;
 
-    const strStyleX = {
-      "overflowX": "auto"
-    };
-    const strStyleY = {
-      "overflowY": "auto"
-    };
-
-    const jsxRenderMain =
-    <div className="row" style={strStyleX} >
-      <div className="col-md-4" style={strStyleY}>
-        <UiControls />
-        <UiHistogram modeView={modeViewIndex} volume={vol} />
-      </div>
-      <div className="col-md-8" style={strStyleY}>
-        <UiRenderView />
-      </div>
-    </div>
-    return jsxRenderMain;
+    const jsxArray = new Array(ModeView.VIEW_COUNT);
+    jsxArray[ModeView.VIEW_MPR] = jsxMainMpr;
+    jsxArray[ModeView.VIEW_2D] = jsxMain2d;
+    jsxArray[ModeView.VIEW_3D_LIGHT] = jsxMain3dLight ;
+    jsxArray[ModeView.VIEW_3D] = jsxMain3d;
+    const jsxRet = jsxArray[modeViewIndex];
+    return jsxRet;
   };
 }
 

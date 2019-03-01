@@ -121,6 +121,9 @@ export default class UiHistogram extends React.Component {
 
   } // smoothHistogram
   updateCanvas() {
+    if (this.refs.canvasHistogram === undefined) {
+      return;
+    }
     const ctx = this.refs.canvasHistogram.getContext('2d');
     const w = this.refs.canvasHistogram.clientWidth;
     const h = this.refs.canvasHistogram.clientHeight;
@@ -229,8 +232,10 @@ export default class UiHistogram extends React.Component {
    * Main component render func callback
    */
   render() {
-    // const modeViewIndex = this.props.modeView;
     const vol = this.props.volume;
+    if (vol === undefined) {
+      return <p>UiHistogram.props volume is not defined !!!</p>;
+    }
     let strMsg = 'Volume histogram';
     if (vol !== null) {
       const xDim = vol.m_xDim;
