@@ -19,7 +19,7 @@ export const initialState = {
   slider3d_r: 0.2,
   slider3d_g: 0.5,
   slider3d_b: 0.8,
-  mode3d: Modes3d.ISO,
+  mode3d: Modes3d.RAYCAST,
 };
 //
 // App reducer
@@ -43,11 +43,11 @@ const medReducer = (state = initialState, action) => {
   case StoreActionType.SET_MODE_3D:
     return Object.assign({}, state, { mode3d: action.mode3d });
   case StoreActionType.SET_SLIDER_3DR:
-    return Object.assign({}, state, { slider3d_r: action.slider3dr });
+    return Object.assign({}, state, { slider3d_r: action.slider3d_r });
   case StoreActionType.SET_SLIDER_3DG:
-    return Object.assign({}, state, { slider3d_g: action.slider3dg });
+    return Object.assign({}, state, { slider3d_g: action.slider3d_g });
   case StoreActionType.SET_SLIDER_3DB:
-    return Object.assign({}, state, { slider3d_b: action.slider3db });
+    return Object.assign({}, state, { slider3d_b: action.slider3d_b });
   default:
     return state;
   }

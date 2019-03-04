@@ -15,6 +15,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Nouislider from 'react-nouislider';
+import StoreActionType from '../store/ActionTypes';
+
 
 // ********************************************************
 // Const
@@ -32,12 +34,31 @@ class UiTF extends React.Component {
   //  return false;
   //}
   //
+  constructor(props) {
+    super(props);
+    this.m_updateEnable = true;
+  }
+  onChangeSliderTF() {
+    this.m_updateEnable = false;
+    let valr = 0.0;
+    let valg = 0.0;
+    let valb = 0.0;
+    const aval = this.refs.sliderTF.slider.get();
+    valr = Number.parseFloat(aval[0]);
+    valg = Number.parseFloat(aval[1]);
+    valb = Number.parseFloat(aval[2]);
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3d_r: valr });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: valg });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DB, slider3d_b: valb });
+  }
+  shouldComponentUpdate() {
+    return this.m_updateEnable;
+  }
   onChangeSliderOpacity() {
   }
   onChangeSliderIsosurface() {
   }
-  onChangeSliderTF() {
-  }  
   /**
    * Main component render func callback
    */

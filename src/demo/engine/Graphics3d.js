@@ -16,6 +16,7 @@ import Modes3d from '../store/Modes3d';
 
 import VolumeRenderer3d from './VolumeRenderer3d'
 
+
 // ********************************************************
 // Const
 // ********************************************************
@@ -82,6 +83,18 @@ class Graphics3d extends React.Component {
     this.renderScene();
     this.m_frameId = window.requestAnimationFrame(this.animate);
   }
+  /*
+  componentDidMount() {
+    // this.start();
+    this.renderScene();
+  }
+  componentWillUnmount() {
+    // this.stop()
+  }
+  componentDidUpdate() {
+    this.renderScene();
+  }
+  */
   renderScene() {
     // this.m_renderer.render(this.m_scene, this.m_camera);
     if (this.m_volumeRenderer3D !== null) {
@@ -104,6 +117,11 @@ class Graphics3d extends React.Component {
     this.m_material = new THREE.MeshBasicMaterial({ color: '#ff1122' });
     this.m_mesh = new THREE.Mesh(this.m_geometry, this.m_material);
     this.m_scene.add(this.m_mesh);*/
+    const store = this.props;
+    this.m_fileDataType.thresholdIsosurf = store.slider3d_b;
+    this.m_fileDataType.Tissue1 = store.slider3d_r;
+    this.m_fileDataType.Tissue2 = store.slider3d_g;
+
     if (this.m_volumeRenderer3D === null) {
       this.m_volumeRenderer3D = new VolumeRenderer3d({
         curFileDataType: this.m_fileDataType,
@@ -143,15 +161,9 @@ class Graphics3d extends React.Component {
     }
 
     const mode3d = store.mode3d;
-    const slider3dr = store.slider3d_r;
-    const slider3dg = store.slider3d_g;
-    const slider3db = store.slider3d_b;
-
-    this.m_mode3d = mode3d;
-    this.m_slider3dr = slider3dr;
-    this.m_slider3dg = slider3dg;
-    this.m_slider3db = slider3db;
-
+    if (this.m_volumeRenderer3D !== null) {
+      this.m_volumeRenderer3D.setTransferFuncVec3([store.slider3d_r, store.slider3d_g, store.slider3d_b], 0);
+    }
     const strW = wScreen.toString(10);
     const strH = hScreen.toString(10);
     const jsxCanvas = <div style={{ width: strW + 'px', height: strH + 'px' }} ref={ (mount) => {this.m_mount = mount} }/>
