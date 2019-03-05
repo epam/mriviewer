@@ -40,24 +40,26 @@ class UiTF extends React.Component {
   }
   onChangeSliderTF() {
     this.m_updateEnable = false;
-    let valr = 0.0;
-    let valg = 0.0;
-    let valb = 0.0;
     const aval = this.refs.sliderTF.slider.get();
-    valr = Number.parseFloat(aval[0]);
-    valg = Number.parseFloat(aval[1]);
-    valb = Number.parseFloat(aval[2]);
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3d_r: valr });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: valg });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_3DB, slider3d_b: valb });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3d_r: Number.parseFloat(aval[0]) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: Number.parseFloat(aval[1]) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DB, slider3d_b: Number.parseFloat(aval[2]) });
   }
   shouldComponentUpdate() {
     return this.m_updateEnable;
   }
   onChangeSliderOpacity() {
+    this.m_updateEnable = false;
+    const aval = this.refs.sliderOpacity.slider.get();
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, sliderOpacity: Number.parseFloat(aval) });
   }
   onChangeSliderIsosurface() {
+    this.m_updateEnable = false;
+    const aval = this.refs.sliderIsosurface.slider.get();
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, sliderIsosurface: Number.parseFloat(aval) });
   }
   /**
    * Main component render func callback
@@ -70,13 +72,11 @@ class UiTF extends React.Component {
     const slider3dr = store.slider3d_r;
     const slider3dg = store.slider3d_g;
     const slider3db = store.slider3d_b;
-    const strSliderTF = 'sliderTF';
-    const strSliderIsosurface = 'sliderIsosurface';
-    const strSliderOpacity = 'sliderOpacity';
-    const valToolTps = true;
+    const sliderOpacity = store.sliderOpacity;
+    const sliderIsosurface = store.Isosurface;
     const wArr = [slider3dr, slider3dg, slider3db];
-    const wArrOpacity = [slider3dr];
-    const wArrIsosurface = [slider3dr];
+    const wArrOpacity = [sliderOpacity];
+    const wArrIsosurface = [sliderIsosurface];
 
     const styleObj = {
       borderColor: 'red white', 
@@ -85,15 +85,15 @@ class UiTF extends React.Component {
     const jsxVolumeTF =
       <ul className="list-group" style={styleObj}>
         <li className="list-group-item">
-          <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={strSliderTF}
+          <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
             range={{ min: 0.0, max: 1.0 }}
-            start={wArr} connect={[false, true, false, true]} step={0.02} tooltips={valToolTps} />
+            start={wArr} connect={[false, true, false, true]} step={0.02} tooltips={true} />
         </li>
         <li className="list-group-item">
           <p> Opacity </p>
-          <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={strSliderOpacity}
+          <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
             range={{ min: 0.0, max: 1.0 }}
-            start={wArrOpacity} step={0.02} tooltips={valToolTps} />
+            start={wArrOpacity} step={0.02} tooltips={true} />
         </li>
       </ul>
 
@@ -101,9 +101,9 @@ class UiTF extends React.Component {
       <ul className="list-group">
         <li className="list-group-item">
           <p> Isosurface </p>
-          <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={strSliderIsosurface}
+          <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
             range={{ min: 0.0, max: 1.0 }}
-            start={wArrIsosurface} step={0.02} tooltips={valToolTps} />
+            start={wArrIsosurface} step={0.02} tooltips={true} />
         </li>
       </ul>
 

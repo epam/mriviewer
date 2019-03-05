@@ -13,5 +13,11 @@ const StoreActionType = {
   SET_SLIDER_3DR: 8,
   SET_SLIDER_3DG: 9,
   SET_SLIDER_3DB: 10,
+  SET_SLIDER_Opacity: 11,
+  SET_SLIDER_Isosurface: 12,
+  SET_SLIDER_Brightness: 13,
+  SET_SLIDER_Cut: 14,
+  SET_SLIDER_Quality: 15,
+
 };
 export default StoreActionType;

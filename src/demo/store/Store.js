@@ -20,6 +20,11 @@ export const initialState = {
   slider3d_g: 0.5,
   slider3d_b: 0.8,
   mode3d: Modes3d.RAYCAST,
+  sliderOpacity: 0.5,
+  sliderIsosurface: 0.5,
+  sliderBrightness: 0.5,
+  sliderCut: 1.0,
+  sliderQuality: 0.3,
 };
 //
 // App reducer
@@ -48,6 +53,16 @@ const medReducer = (state = initialState, action) => {
     return Object.assign({}, state, { slider3d_g: action.slider3d_g });
   case StoreActionType.SET_SLIDER_3DB:
     return Object.assign({}, state, { slider3d_b: action.slider3d_b });
+  case StoreActionType.SET_SLIDER_Opacity:
+    return Object.assign({}, state, { sliderOpacity: action.sliderOpacity });
+  case StoreActionType.SET_SLIDER_Isosurface:
+    return Object.assign({}, state, { sliderIsosurface: action.sliderIsosurface });
+  case StoreActionType.SET_SLIDER_Brightness:
+    return Object.assign({}, state, { sliderBrightness: action.sliderBrightness });
+  case StoreActionType.SET_SLIDER_Cut:
+    return Object.assign({}, state, { sliderCut: action.sliderCut });
+  case StoreActionType.SET_SLIDER_Quality:
+    return Object.assign({}, state, { sliderQuality: action.sliderQuality });
   default:
     return state;
   }

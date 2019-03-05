@@ -62,25 +62,23 @@ class UiCtrl3dLight extends React.Component {
   onModeC() {
     this.onMode(Modes3d.RAYFAST);
   }
-  onChangeSliderSlice() {
-    this.m_updateEnable = false;
-    const arrStr = this.refs.slider3d.slider.get();
-    const numSliders = arrStr.length;
-    if ((typeof (arrStr[0]) === 'string') && (numSliders === 3)) {
-      const rVal = Number.parseFloat(arrStr[0]);
-      const gVal = Number.parseFloat(arrStr[1]);
-      const bVal = newFunction(arrStr);
-      const store = this.props;
-      store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3dr: rVal });
-      store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3dg: gVal });
-      store.dispatch({ type: StoreActionType.SET_SLIDER_3DB, slider3db: bVal });
-    }
-  }
   onChangeSliderBrightness() {
+    this.m_updateEnable = false;
+    const aval = this.refs.sliderBrightness.slider.get();
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Brightness, sliderBrightness: Number.parseFloat(aval) });
   }
   onChangeSliderCut() {
+    this.m_updateEnable = false;
+    const aval = this.refs.sliderCut.slider.get();
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Cut, sliderCut: Number.parseFloat(aval) });
   }
   onChangeSliderQuality() {
+    this.m_updateEnable = false;
+    const aval = this.refs.sliderQuality.slider.get();
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Quality, sliderQuality: Number.parseFloat(aval) });    
   }
   shouldComponentUpdate() {
     return this.m_updateEnable;
@@ -91,25 +89,15 @@ class UiCtrl3dLight extends React.Component {
   render() {
     const store = this.props;
 
-    const slider3dr = store.slider3d_r;
-    const slider3dg = store.slider3d_g;
-    const slider3db = store.slider3d_b;
-
-    const mode3d = store.mode3d;
-    const vol = store.volume;
-    const sliderBrightness = slider3dr;
-    const sliderCut = slider3dg;
-    const sliderQuality = slider3db;
-    // const modeViewIndex = store.modeView;
-
-    const strSliderBrightness = 'sliderBrightness';
-    const strSliderCut = 'sliderCut';
-    const strSliderQuality = 'sliderQuality';
+    const sliderBrightness = store.sliderBrightness;
+    const sliderCut = store.sliderCut;
+    const sliderQuality = store.sliderQuality;
 
     const wArrBrightness = [sliderBrightness];
     const wArrCut = [sliderCut];
     const wArrQuality = [sliderQuality];
-    const valToolTps = true;
+    const mode3d = store.mode3d;
+    const vol = store.volume;
 
     const strClass = 'btn btn-info';
     const strA = strClass + ((mode3d === Modes3d.ISO) ? ' active' : '');
@@ -144,30 +132,26 @@ class UiCtrl3dLight extends React.Component {
         </li>
         <li className="list-group-item">
           <p> Brightness </p>
-          <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={strSliderBrightness}
+          <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={'sliderBrightness'}
             range={{ min: 0.0, max: 1.0 }}
-            start={wArrBrightness} step={0.02} tooltips={valToolTps} />
+            start={wArrBrightness} step={0.02} tooltips={true} />
         </li>
         <li className="list-group-item">
           <p> Cut </p>
-          <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={strSliderCut}
+          <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={'sliderCut'}
             range={{ min: 0.0, max: 1.0 }}
-            start={wArrCut} step={0.02} tooltips={valToolTps} />
+            start={wArrCut} step={0.02} tooltips={true} />
         </li>
         <li className="list-group-item">
           <p> Quality </p>
-          <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={strSliderQuality}
+          <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={'sliderQuality'}
             range={{ min: 0.0, max: 1.0 }}
-            start={wArrQuality} step={0.02} tooltips={valToolTps} />
+            start={wArrQuality} step={0.02} tooltips={true} />
         </li>
       </ul>
 
     return jsxRenderControls;
   }
-}
-
-function newFunction(arrStr) {
-  return Number.parseFloat(arrStr[2]);
 }
 
 export default connect(store => store)(UiCtrl3dLight);

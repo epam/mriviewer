@@ -1280,12 +1280,12 @@ export default class VolumeRenderer3d {
     }
   }
   setStepsize(sliderValue) {
-    const scaleY = 2.0;
-    this.matRenderToTexture.uniforms.stepSize.value = new THREE.Vector4(1.0 / sliderValue,
-      1.0 / sliderValue, scaleY / sliderValue, 1.0 / sliderValue);
+    const A = 100.0;
+    const B = 700.0;
+    const h = 1.0 / (A + B * sliderValue);
+    this.matRenderToTexture.uniforms.stepSize.value = new THREE.Vector4(h, h, h, h);
     this.matRenderToTexture.uniforms.needsUpdate = true;
-    this.matVolumeRender.uniforms.stepSize.value = new THREE.Vector4(1.0 / sliderValue,
-      1.0 / sliderValue, 1.0 / sliderValue, 1.0 / sliderValue);
+    this.matVolumeRender.uniforms.stepSize.value = new THREE.Vector4(h, h, h, h);
     this.matVolumeRender.uniforms.needsUpdate = true;
   }
   /**
