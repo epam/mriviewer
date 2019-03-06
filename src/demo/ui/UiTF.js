@@ -29,11 +29,6 @@ import StoreActionType from '../store/ActionTypes';
  * Class UiTF some text later...
  */
 class UiTF extends React.Component {
-  //
-  //shouldComponentUpdate() {
-  //  return false;
-  //}
-  //
   constructor(props) {
     super(props);
     this.m_updateEnable = true;
@@ -46,8 +41,14 @@ class UiTF extends React.Component {
     store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: Number.parseFloat(aval[1]) });
     store.dispatch({ type: StoreActionType.SET_SLIDER_3DB, slider3d_b: Number.parseFloat(aval[2]) });
   }
-  shouldComponentUpdate() {
-    return this.m_updateEnable;
+  shouldComponentUpdate(nextProps) {
+    //return this.m_updateEnable;
+    let flag = this.m_updateEnable;
+    if (this.props.mode3d !== nextProps.mode3d) {
+      flag = true;
+    }
+    return flag;
+    //return true;
   }
   onChangeSliderOpacity() {
     this.m_updateEnable = false;
@@ -73,7 +74,7 @@ class UiTF extends React.Component {
     const slider3dg = store.slider3d_g;
     const slider3db = store.slider3d_b;
     const sliderOpacity = store.sliderOpacity;
-    const sliderIsosurface = store.Isosurface;
+    const sliderIsosurface = store.sliderIsosurface;
     const wArr = [slider3dr, slider3dg, slider3db];
     const wArrOpacity = [sliderOpacity];
     const wArrIsosurface = [sliderIsosurface];
@@ -106,7 +107,7 @@ class UiTF extends React.Component {
             start={wArrIsosurface} step={0.02} tooltips={true} />
         </li>
       </ul>
-
+    console.log(`UiTF . mode = ${mode3d}`);
     const jsxArray = [jsxIsoTF, jsxVolumeTF, jsxIsoTF];
     const jsxRet = jsxArray[mode3d];
     return jsxRet;

@@ -187,12 +187,21 @@ class Graphics3d extends React.Component {
     const ZCUTSHIFT = 0.5;
     const mode3d = store.mode3d;
     if (this.m_volumeRenderer3D !== null) {
-      this.m_volumeRenderer3D.setTransferFuncVec3([store.slider3d_r, store.slider3d_g, store.slider3d_b], 0);
+      console.log(`Graphics3d . mode = ${mode3d}`);
+      if (mode3d === Modes3d.RAYCAST) {
+        this.m_volumeRenderer3D.setTransferFuncVec3([store.slider3d_r, store.slider3d_g, store.slider3d_b], 0);
+        this.m_volumeRenderer3D.switchToVolumeRender();      
+      }
+      if (mode3d === Modes3d.ISO) {
+        this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
+        this.m_volumeRenderer3D.switchToIsosurfRender();      
+      }
       this.m_volumeRenderer3D.setOpacityBarrier(store.sliderOpacity);
       this.m_volumeRenderer3D.updateBrightness(store.sliderBrightness);
       this.m_volumeRenderer3D.updateZCutPlane(store.sliderCut - ZCUTSHIFT);
       this.m_volumeRenderer3D.setStepsize(store.sliderQuality);
     }
+
     const strW = wScreen.toString(10);
     const strH = hScreen.toString(10);
     const jsxCanvas = <div style={{ width: strW + 'px', height: strH + 'px' }}

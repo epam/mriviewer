@@ -23,7 +23,6 @@ import StoreActionType from '../store/ActionTypes';
 import UiHistogram from './UiHistogram';
 import UiTF from './UiTF';
 
-
 // ********************************************************
 // Const
 // ********************************************************
@@ -55,9 +54,15 @@ class UiCtrl3dLight extends React.Component {
   }
   onModeA() {
     this.onMode(Modes3d.ISO);
+    //if (this.m_volumeRenderer3D !== null) {
+    //this.m_volumeRenderer3D.switchToIsosurfRender();
+    //}
   }
   onModeB() {
     this.onMode(Modes3d.RAYCAST);
+    //if (this.m_volumeRenderer3D !== null) {
+    //this.m_volumeRenderer3D.switchToVolumeRender();
+    //}
   }
   onModeC() {
     this.onMode(Modes3d.RAYFAST);
@@ -82,6 +87,7 @@ class UiCtrl3dLight extends React.Component {
   }
   shouldComponentUpdate() {
     return this.m_updateEnable;
+    //return true;
   }
   /**
    * Main component render func callback
@@ -127,9 +133,7 @@ class UiCtrl3dLight extends React.Component {
         <li className="list-group-item">
           <UiHistogram volume={vol} />
         </li>
-        <li className="list-group-item">
-          <UiTF />
-        </li>
+        <UiTF/>
         <li className="list-group-item">
           <p> Brightness </p>
           <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={'sliderBrightness'}
