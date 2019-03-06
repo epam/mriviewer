@@ -143,6 +143,24 @@ class Graphics3d extends React.Component {
     }
     this.m_volumeRenderer3D = null;
   }
+  _onMouseMove(e) {
+    // console.log(`${e.x}, ${e.y}\n`);
+    if (this.m_volumeRenderer3D !== null) {
+      this.m_volumeRenderer3D.onMouseMove(e.screenX, e.screenY);
+    }
+  }
+  _onMouseDown(e) {
+    //console.log(`${e.x}, ${e.y}\n`);
+    if (this.m_volumeRenderer3D !== null) {
+      this.m_volumeRenderer3D.onMouseDown(e.screenX, e.screenY);
+    }
+  }
+  _onMouseUp(e) {
+    //console.log(`${e.x}, ${e.y}\n`);
+    if (this.m_volumeRenderer3D !== null) {
+      this.m_volumeRenderer3D.onMouseUp();
+    }
+  }
   /**
    * Main component render func callback
    */
@@ -171,7 +189,11 @@ class Graphics3d extends React.Component {
     }
     const strW = wScreen.toString(10);
     const strH = hScreen.toString(10);
-    const jsxCanvas = <div style={{ width: strW + 'px', height: strH + 'px' }} ref={ (mount) => {this.m_mount = mount} }/>
+    const jsxCanvas = <div style={{ width: strW + 'px', height: strH + 'px' }}
+      ref={ (mount) => {this.m_mount = mount} }
+      onMouseMove={this._onMouseMove.bind(this)} 
+      onMouseDown={this._onMouseDown.bind(this)} 
+      onMouseUp={this._onMouseUp.bind(this)} />
     return jsxCanvas;
   }
 }

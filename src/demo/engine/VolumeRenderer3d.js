@@ -1484,6 +1484,7 @@ export default class VolumeRenderer3d {
     //console.log(`Eraser depth: ${this.eraserDepth}`);
   }
   onMouseDown(xx, yy, ctrlKey) {
+    this.orbitControl.onMouseDown(xx, yy);
     const x =  Math.round(xx);
     const y =  Math.round(yy);
     if (this.mouseupflag === true) {
@@ -1690,6 +1691,7 @@ export default class VolumeRenderer3d {
     }
   }
   onMouseMove(xx, yy, ctrlKey) {
+    this.orbitControl.onMouseMove(xx, yy);
     const x =  Math.round(xx);
     const y =  Math.round(yy);
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
@@ -1821,6 +1823,7 @@ export default class VolumeRenderer3d {
     }
   }
   onMouseUp() {
+    this.orbitControl.onMouseUp();
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return;
     }
