@@ -123,10 +123,10 @@ class UiCtrl3dLight extends React.Component {
               Mode Isosurface
             </button>
             <button type="button" className={strB} onClick={this.onModeB}  >
-              Mode Raycast
+              Mode VolumeRender
             </button>
             <button type="button" className={strC} onClick={this.onModeC} >
-              Mode Rayfix
+              Mode MaxProjection
             </button>
           </div>
         </li>

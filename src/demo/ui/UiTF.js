@@ -107,8 +107,15 @@ class UiTF extends React.Component {
             start={wArrIsosurface} step={0.02} tooltips={true} />
         </li>
       </ul>
+    const jsxRayfastTF =
+    <ul className="list-group">
+      <li className="list-group-item">
+        <p> </p>
+      </li>
+    </ul>
+
     console.log(`UiTF . mode = ${mode3d}`);
-    const jsxArray = [jsxIsoTF, jsxVolumeTF, jsxIsoTF];
+    const jsxArray = [jsxIsoTF, jsxVolumeTF, jsxRayfastTF];
     const jsxRet = jsxArray[mode3d];
     return jsxRet;
   }
