@@ -161,6 +161,12 @@ class Graphics3d extends React.Component {
       this.m_volumeRenderer3D.onMouseUp();
     }
   }
+  _onWheel(e) {
+    //console.log(`${e.x}, ${e.y}\n`);
+    if (this.m_volumeRenderer3D !== null) {
+      this.m_volumeRenderer3D.onMouseWheel(e);
+    }
+  }
   /**
    * Main component render func callback
    */
@@ -193,7 +199,8 @@ class Graphics3d extends React.Component {
       ref={ (mount) => {this.m_mount = mount} }
       onMouseMove={this._onMouseMove.bind(this)} 
       onMouseDown={this._onMouseDown.bind(this)} 
-      onMouseUp={this._onMouseUp.bind(this)} />
+      onMouseUp={this._onMouseUp.bind(this)} 
+      onWheel={this._onWheel.bind(this)} />
     return jsxCanvas;
   }
 }

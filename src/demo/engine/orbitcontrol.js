@@ -35,7 +35,7 @@ import * as THREE from 'three';
 const CONTROL_CAMERA_MIN_ZOOM = 0.3;
 const CONTROL_CAMERA_MAX_ZOOM = 2.5;
 const CONTROL_CAMERA_ROTATION_SPEED = 0.008;
-// const CONTROL_CAMERA_ZOOM_SPEED = 0.2;
+const CONTROL_CAMERA_ZOOM_SPEED = 0.2;
 
 // ******************************************************************
 // class
@@ -257,7 +257,7 @@ export default class OrbitControl {
       this.onZoom(delta);
     });
   } // addCallbacks
-
+  */
   onZoom(delta) {
     const step = delta * CONTROL_CAMERA_ZOOM_SPEED;
     let camPos = this.m_camera.position.length();
@@ -275,7 +275,7 @@ export default class OrbitControl {
     this.m_camera.position.set(camDir.x, camDir.y, camDir.z);
     this.m_camera.lookAt(this.m_target);
     this.m_camera.updateMatrixWorld();
-  }*/
+  }
 
 } // class
 

@@ -1840,6 +1840,10 @@ export default class VolumeRenderer3d {
     }
   }
   onMouseWheel(e) {
+    //const e = window.event || event; // old IE support
+    const delta = Math.max(-1, Math.min(1, (e.deltaY || -e.detail)));
+    // console.log(`mouse wheel event . delta = ${delta}`);
+    this.orbitControl.onZoom(delta);
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return;
     }
