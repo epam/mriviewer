@@ -19,6 +19,8 @@ import Texture3D from '../engine/Texture3D';
 
 import UiModalDemo from './UiModalDemo';
 import StoreActionType from '../store/ActionTypes';
+import ModeView from '../store/ModeView';
+
 // import { timingSafeEqual } from 'crypto';
 import LoadResult from '../engine/LoadResult';
 import FileTools from '../engine/loaders/FileTools';
@@ -78,6 +80,7 @@ class UiOpenMenu extends React.Component {
     const tex3d = new Texture3D();
     tex3d.createFromRawVolume(vol);
     store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
+    store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
   }
   onFileContentRead() {
     console.log('UiOpenMenu. onFileContectRead ...');

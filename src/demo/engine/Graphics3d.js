@@ -50,10 +50,6 @@ class Graphics3d extends React.Component {
     // animation
     this.m_frameId = null;
     // settings
-    this.m_mode3d = Modes3d.ISO;
-    this.m_slider3dr = 0.1;
-    this.m_slider3dg = 0.5;
-    this.m_slider3db = 0.8;
     this.m_fileDataType = {
       thresholdIsosurf: 0.46,
       thresholdTissue1: 0.09,
@@ -179,11 +175,6 @@ class Graphics3d extends React.Component {
     if (vol !== null) {
       this.volume = vol;
     }
-
-    if (this.m_volumeRenderer3D !== null) {
-      this.m_volumeRenderer3D.render();
-    }
-
     const ZCUTSHIFT = 0.5;
     const mode3d = store.mode3d;
     if (this.m_volumeRenderer3D !== null) {
@@ -203,6 +194,9 @@ class Graphics3d extends React.Component {
       this.m_volumeRenderer3D.updateBrightness(store.sliderBrightness);
       this.m_volumeRenderer3D.updateZCutPlane(store.sliderCut - ZCUTSHIFT);
       this.m_volumeRenderer3D.setStepsize(store.sliderQuality);
+    }
+    if (this.m_volumeRenderer3D !== null) {
+      this.m_volumeRenderer3D.render();
     }
 
     const strW = wScreen.toString(10);
