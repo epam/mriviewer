@@ -48,7 +48,7 @@ describe('UiHistogramTests', () => {
     const pixels = vol.m_dataArray;
     expect(pixels !== null).toBeTruthy();
     const DHALF = Math.floor(XDIM / 2);
-    const RAD = 5;
+    const RAD = 3;
     const NUM_COLORS = 256;
     for (let dz = -RAD; dz <= +RAD; dz++) {
       const z = DHALF + dz;
@@ -72,12 +72,14 @@ describe('UiHistogramTests', () => {
     const hist = new UiHistogram();
     hist.getVolumeHistogram(vol);
 
-    expect(hist.m_peakIndex > 200).toBeTruthy();
+    const peakInd = hist.m_peakIndex;
+    console.log(`peakInd = ${peakInd}`);
+    expect(peakInd < 32).toBeTruthy();
 
     const INDEX_START = 6;
     const VAL_BAR = 0.001;
     for (let i = INDEX_START; i < NUM_COLORS; i++) {
-      expect(hist.m_histogram[i] > 0.0).toBeTruthy();
+      expect(hist.m_histogram[i] >= 0.0).toBeTruthy();
       expect(hist.m_histogram[i] < VAL_BAR).toBeTruthy();
     }
   }); // indi test
@@ -151,6 +153,26 @@ describe('UiHistogramTests', () => {
     hist.getMaxPeak();
     expect(hist.m_peakIndex === INDEX_PEAK_2).toBeTruthy();
   }); // indi test
+
+  it('testHistogramGetLastMaxIndex', () => {
+    const NUM_COLORS = 386;
+    const histArr = new Array(NUM_COLORS);
+    let i;
+    for (i = 0; i < NUM_COLORS; i++) {
+      histArr[i] = 1;
+    }
+    const hist = new UiHistogram();
+    hist.assignArray(NUM_COLORS, histArr);
+    const indMax = hist.getLastMaxIndex();
+    expect(indMax === -1).toBeTruthy();
+
+    const IND_MAX = Math.floor(NUM_COLORS * 0.21);
+    histArr[IND_MAX] += 1;
+    hist.assignArray(NUM_COLORS, histArr);
+    const indFoundMax = hist.getLastMaxIndex();
+    expect(indFoundMax === IND_MAX).toBeTruthy();
+  });
+
 
 
 }); // all tests

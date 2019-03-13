@@ -82,6 +82,15 @@ class UiOpenMenu extends React.Component {
     store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
     store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
   }
+  readCallbackComplete(errCode, hedaer, dataSize, dataArray) {
+    if (errCode !== LoadResult.SUCCESS) {
+      const strErr = LoadResult.getResultString(errCode);
+      console.log(`readCallbackComplete. Bad result = ${errCode}: ${strErr}`);
+    }
+  }
+  // based on local file read
+  // read from string content in this.m_fileReader.result
+  //
   onFileContentRead() {
     console.log('UiOpenMenu. onFileContectRead ...');
     const strContent = this.m_fileReader.result;
@@ -94,12 +103,16 @@ class UiOpenMenu extends React.Component {
     if (this.m_fileName.endsWith('.ktx') || this.m_fileName.endsWith('.KTX')) {
       // if read ktx
       readOk = vol.readFromKtx(strContent, callbackProgress, callbackComplete);
+    } else if (this.m_fileName.endsWith('.nii') || this.m_fileName.endsWith('.NII')) {
+      readOk = vol.readFromNifti(strContent, callbackProgress, callbackComplete);
     } else {
       console.log(`onFileContentRead: unknown file type: ${this.m_fileName}`);
     }
     if (readOk) {
       console.log('onFileContentRead finished OK');
       this.finalizeSuccessLoadedVolume(vol, this.m_fileName);
+    } else {
+      console.log(`onFileContentRead failed! reading ${this.m_fileName} file`);
     }
   }
   handleFileSelected(evt) {
