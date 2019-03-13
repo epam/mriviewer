@@ -190,6 +190,10 @@ class Graphics3d extends React.Component {
       if (mode3d === Modes3d.RAYFAST) {
         this.m_volumeRenderer3D.switchToFLATRender();
       }
+      if (mode3d === Modes3d.EREASER) {
+        this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
+        this.m_volumeRenderer3D.switchToIsosurfRender();      
+      }
       this.m_volumeRenderer3D.setOpacityBarrier(store.sliderOpacity);
       this.m_volumeRenderer3D.updateBrightness(store.sliderBrightness);
       this.m_volumeRenderer3D.updateZCutPlane(store.sliderCut - ZCUTSHIFT);

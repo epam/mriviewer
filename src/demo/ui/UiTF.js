@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
+import UiHistogram from './UiHistogram';
 
 
 // ********************************************************
@@ -62,6 +63,18 @@ class UiTF extends React.Component {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, sliderIsosurface: Number.parseFloat(aval) });
   }
+  onChangeSliderErRadius() {
+    this.m_updateEnable = false;
+    const aval = this.refs.sliderErRadius.slider.get();
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_SLIDER_ErRadius, sliderErRadius: Number.parseFloat(aval) });
+  }
+  onChangeSliderErDepth() {
+    this.m_updateEnable = false;
+    const aval = this.refs.sliderErDepth.slider.get();
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_SLIDER_ErDepth, sliderErDepth: Number.parseFloat(aval) });
+  }
   /**
    * Main component render func callback
    */
@@ -75,16 +88,25 @@ class UiTF extends React.Component {
     const slider3db = store.slider3d_b;
     const sliderOpacity = store.sliderOpacity;
     const sliderIsosurface = store.sliderIsosurface;
+    const sliderErRadius = store.sliderErRadius;
+    const sliderErDepth = store.sliderErDepth;
     const wArr = [slider3dr, slider3dg, slider3db];
     const wArrOpacity = [sliderOpacity];
     const wArrIsosurface = [sliderIsosurface];
+    const wArrErRadius = [sliderErRadius];
+    const wArrErDepth = [sliderErDepth];
+    const vol = store.volume;
+
 
     const styleObj = {
-      borderColor: 'red white', 
-      borderStyle: 'solid' 
+      borderColor: 'red white',
+      borderStyle: 'solid'
     };
     const jsxVolumeTF =
       <ul className="list-group" style={styleObj}>
+        <li className="list-group-item">
+          <UiHistogram volume={vol} />
+        </li>
         <li className="list-group-item">
           <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
             range={{ min: 0.0, max: 1.0 }}
@@ -97,9 +119,11 @@ class UiTF extends React.Component {
             start={wArrOpacity} step={0.02} tooltips={true} />
         </li>
       </ul>
-
     const jsxIsoTF =
       <ul className="list-group">
+        <li className="list-group-item">
+          <UiHistogram volume={vol} />
+        </li>
         <li className="list-group-item">
           <p> Isosurface </p>
           <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
@@ -107,15 +131,42 @@ class UiTF extends React.Component {
             start={wArrIsosurface} step={0.02} tooltips={true} />
         </li>
       </ul>
+    const jsxEreaser =
+      <div className="card">
+        <div className="card-header">
+          Press Ctrl + Mouse Down [+ Mouse Move] for erease
+        </div>
+        <ul className="list-group list-group-flush">
+          <li className="list-group-item">
+            <p> Radius </p>
+            <Nouislider onSlide={this.onChangeSliderErRadius.bind(this)} ref={'sliderErRadius'}
+              range={{ min: 0.0, max: 1.0 }}
+              start={wArrErRadius} step={0.02} tooltips={true} />
+          </li>
+          <li className="list-group-item">
+            <p> Depth </p>
+            <Nouislider onSlide={this.onChangeSliderErDepth.bind(this)} ref={'sliderErDepth'}
+              range={{ min: 0.0, max: 1.0 }}
+              start={wArrErDepth} step={0.02} tooltips={true} />
+          </li>
+          <li className="list-group-item">
+            <p> Isosurface </p>
+            <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
+              range={{ min: 0.0, max: 1.0 }}
+              start={wArrIsosurface} step={0.02} tooltips={true} />
+          </li>
+        </ul>
+      </div>
+
     const jsxRayfastTF =
-    <ul className="list-group">
-      <li className="list-group-item">
-        <p> </p>
-      </li>
-    </ul>
+      <ul className="list-group">
+        <li className="list-group-item">
+          <p> </p>
+        </li>
+      </ul>
 
     console.log(`UiTF . mode = ${mode3d}`);
-    const jsxArray = [jsxIsoTF, jsxVolumeTF, jsxRayfastTF];
+    const jsxArray = [jsxIsoTF, jsxVolumeTF, jsxRayfastTF, jsxEreaser];
     const jsxRet = jsxArray[mode3d];
     return jsxRet;
   }

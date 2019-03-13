@@ -20,7 +20,6 @@ import Nouislider from 'react-nouislider';
 import Modes3d from '../store/Modes3d';
 import StoreActionType from '../store/ActionTypes';
 
-import UiHistogram from './UiHistogram';
 import UiTF from './UiTF';
 
 // ********************************************************
@@ -43,6 +42,7 @@ class UiCtrl3dLight extends React.Component {
     this.onModeA = this.onModeA.bind(this);
     this.onModeB = this.onModeB.bind(this);
     this.onModeC = this.onModeC.bind(this);
+    this.onModeD = this.onModeD.bind(this);
     this.onMode = this.onMode.bind(this);
     this.m_updateEnable = true;
   }
@@ -66,6 +66,9 @@ class UiCtrl3dLight extends React.Component {
   }
   onModeC() {
     this.onMode(Modes3d.RAYFAST);
+  }
+  onModeD() {
+    this.onMode(Modes3d.EREASER);
   }
   onChangeSliderBrightness() {
     this.m_updateEnable = false;
@@ -103,12 +106,12 @@ class UiCtrl3dLight extends React.Component {
     const wArrCut = [sliderCut];
     const wArrQuality = [sliderQuality];
     const mode3d = store.mode3d;
-    const vol = store.volume;
 
     const strClass = 'btn btn-info';
     const strA = strClass + ((mode3d === Modes3d.ISO) ? ' active' : '');
     const strB = strClass + ((mode3d === Modes3d.RAYCAST) ? ' active' : '');
     const strC = strClass + ((mode3d === Modes3d.RAYFAST) ? ' active' : '');
+    const strD = strClass + ((mode3d === Modes3d.EREASER) ? ' active' : '');
 
     // console.log(`UiCtr3dLight. render. flags = ${bCheckedSag}+${bCheckedCor}+${bCheckedTra}`);
 
@@ -120,18 +123,18 @@ class UiCtrl3dLight extends React.Component {
         <li className="list-group-item">
           <div className="btn-group btn-block">
             <button type="button" className={strA} onClick={this.onModeA} >
-              Mode Isosurface
+              Isosurface
             </button>
             <button type="button" className={strB} onClick={this.onModeB}  >
-              Mode VolumeRender
+              VolumeRender
             </button>
             <button type="button" className={strC} onClick={this.onModeC} >
-              Mode MaxProjection
+              MaxProjection
+            </button>
+            <button type="button" className={strD} onClick={this.onModeD} >
+              Ereaser
             </button>
           </div>
-        </li>
-        <li className="list-group-item">
-          <UiHistogram volume={vol} />
         </li>
         <UiTF/>
         <li className="list-group-item">

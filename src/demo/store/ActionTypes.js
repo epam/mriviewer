@@ -18,6 +18,7 @@ const StoreActionType = {
   SET_SLIDER_Brightness: 13,
   SET_SLIDER_Cut: 14,
   SET_SLIDER_Quality: 15,
-
+  SET_SLIDER_ErRadius: 16,
+  SET_SLIDER_ErDepth: 17,
 };
 export default StoreActionType;
