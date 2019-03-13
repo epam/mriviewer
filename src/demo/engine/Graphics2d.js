@@ -97,6 +97,10 @@ class Graphics2d extends React.Component {
 
 
     if (vol !== null) {
+      if (vol.m_dataArray === null) {
+        console.log('Graphics2d. Volume has no data array');
+        return;
+      }
       const xDim = vol.m_xDim;
       const yDim = vol.m_yDim;
       const zDim = vol.m_zDim;

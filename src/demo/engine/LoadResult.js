@@ -70,6 +70,10 @@ export default class LoadResult {
       return 'Error scaling 16 bit data into 8 bit';
     case LoadResult.ERROR_INVALID_SLICE_INDEX:
       return 'Invalid slice index. Possible reason: incomplete dicom folder';
+    case LoadResult.ERROR_TOO_SMALL_DATA_SIZE:
+      return 'Too small input data size';
+    case LoadResult.ERROR_TOO_LARGE_DATA_SIZE:
+      return 'Too large input data size';
     default:
       return 'Unknown error code';
     } // switch
@@ -95,3 +99,5 @@ LoadResult.ERROR_WRONG_NUM_SLICES = 16;
 LoadResult.ERROR_HISTOGRAM_DETECT_RIDGES = 17;
 LoadResult.ERROR_SCALING = 18;
 LoadResult.ERROR_INVALID_SLICE_INDEX = 19;
+LoadResult.ERROR_TOO_SMALL_DATA_SIZE = 20;
+LoadResult.ERROR_TOO_LARGE_DATA_SIZE = 21;

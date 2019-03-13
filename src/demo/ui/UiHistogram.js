@@ -10,6 +10,7 @@
 // ********************************************************
 
 import React from 'react';
+// import { timingSafeEqual } from 'crypto';
 
 // ********************************************************
 // Const
@@ -29,6 +30,7 @@ export default class UiHistogram extends React.Component {
   constructor(props) {
     super(props);
     this.m_histogram = [];
+    this.m_numColors = 0;
   }
   componentDidMount() {
     this.updateCanvas();
@@ -43,9 +45,10 @@ export default class UiHistogram extends React.Component {
     const dataArray = vol.m_dataArray;
     const xyzDim = xDim * yDim * zDim;
     const NUM_COLORS = 256;
-    this.m_histogram = new Array(NUM_COLORS);
+    this.m_numColors = NUM_COLORS;
+    this.m_histogram = new Array(this.m_numColors);
     let i;
-    for (i = 0; i < NUM_COLORS; i++) {
+    for (i = 0; i < this.m_numColors; i++) {
       this.m_histogram[i] = 0;
     }
     for (i = 0; i < xyzDim; i++) {
@@ -54,28 +57,58 @@ export default class UiHistogram extends React.Component {
     }
     // calc max value in histogram
     let valMax = 0;
-    for (i = 0; i < NUM_COLORS; i++) {
+    for (i = 0; i < this.m_numColors; i++) {
       valMax = (this.m_histogram[i] > valMax) ? this.m_histogram[i] : valMax;
     }
     const SOME_SMALL_ADD = 0.001;
     valMax += SOME_SMALL_ADD;
     // scale values to [0..1]
     const scl = 1.0 / valMax;
-    for (i = 0; i < NUM_COLORS; i++) {
+    for (i = 0; i < this.m_numColors; i++) {
       this.m_histogram[i] *= scl;
     }
     this.smoothHistogram();
     this.getMaxPeak();
   }
+  assignArray(numColors, histogramArray) {
+    this.m_numColors = numColors;
+    this.m_histogram = histogramArray;
+  }
+  getLastMaxIndex() {
+    let maxVal = 0;
+    const IND_MIN = 4;
+    let i;
+    for (i = IND_MIN; i < this.m_numColors; i++) {
+      maxVal = (this.m_histogram[i] > maxVal) ? this.m_histogram[i] : maxVal;
+    } // for (i) all colors
+    // const MAX_V = maxVal * 0.3;
+
+    // for (i = 0; i < this.m_numColors; i++) {
+    //   console.log(`hist[ ${i} ] = ${this.m_histogram[i]}`);
+    // }
+
+    let found = false;
+    for (i = this.m_numColors - IND_MIN; i > IND_MIN; i--) {
+      if ((this.m_histogram[i] > this.m_histogram[i - 2]) && 
+        (this.m_histogram[i] > this.m_histogram[i + 2])) {
+        found = true; break;
+      }
+    } // for (i)
+    if (!found) {
+      console.log(`getLastMaxIndex. Not found!`);
+      return -1;
+    }
+    return i;
+
+  } // end get last max index
   //
   //
   getMaxPeak() {
     this.m_peakIndex = -1;
     let i;
-    const NUM_COLORS = 256;
     const hist = this.m_histogram;
     const MIN_SCAN = 12;
-    const MAX_SCAN = NUM_COLORS - 4;
+    const MAX_SCAN = this.m_numColors - 4;
     let maxPeakVal = 0;
     for (i = MAX_SCAN; i > MIN_SCAN; i--) {
       if ((hist[i] > hist[i - 1]) && (hist[i] > hist[i + 1]) && 
@@ -89,22 +122,28 @@ export default class UiHistogram extends React.Component {
       } // if (ha slocal peak)
     } // for (all colors to scan) 
   }
-  smoothHistogram() {
-    const RAD = 2;
-    const SIGMA = 1.2;
-    const KOEF = 1.0 / (2 * SIGMA * SIGMA);
-    const NUM_COLORS = 256;
-    const newHist = new Array(NUM_COLORS);
+  smoothHistogram(sigma = 1.2) {
+    const SIZE_DIV = 60;
+    let RAD = Math.floor(this.m_numColors / SIZE_DIV);
+    // avoid too large neighbourhood window size
+    const SIZE_LARGE = 32;
+    if (RAD > SIZE_LARGE) {
+      RAD = SIZE_LARGE;
+    }
+    // console.log(`smoothHistogram. RAD = ${RAD}`);
+
+    const KOEF = 1.0 / (2 * sigma * sigma);
+    const newHist = new Array(this.m_numColors);
     let i;
     let maxVal = 0;
-    for (i = 0; i < NUM_COLORS; i++) {
+    for (i = 0; i < this.m_numColors; i++) {
       let sum = 0;
       let sumW = 0;
       for (let di = -RAD; di <= RAD; di++) {
         const ii = i + di;
         const t = di / RAD;
         const w = Math.exp(-t * t * KOEF);
-        if ((ii >= 0) && (ii < NUM_COLORS)) {
+        if ((ii >= 0) && (ii < this.m_numColors)) {
           sum += this.m_histogram[ii] * w;
           sumW += w;
         }
@@ -115,7 +154,7 @@ export default class UiHistogram extends React.Component {
       newHist[i] = sum;
     } // for (i)
     // copy back to hist
-    for (i = 0; i < NUM_COLORS; i++) {
+    for (i = 0; i < this.m_numColors; i++) {
       this.m_histogram[i] = newHist[i] / maxVal;
     } // for (i)
 
@@ -134,7 +173,6 @@ export default class UiHistogram extends React.Component {
     if (vol !== null) {
       this.getVolumeHistogram(vol);
     }
-    const NUM_COLORS = 256;
 
     // rect inside
     const xMin = Math.floor(0.10 * w);
@@ -175,7 +213,7 @@ export default class UiHistogram extends React.Component {
       ctx.moveTo(x, yMax);
       ctx.lineTo(x, yMax + 6);
       ctx.stroke();
-      const valMark = Math.floor(0 + NUM_COLORS * i / NUM_X_MARKS);
+      const valMark = Math.floor(0 + this.m_numColors * i / NUM_X_MARKS);
       ctx.fillText(valMark.toString(), x, yMax + 4);
     }
     ctx.textBaseline = 'center';
@@ -199,8 +237,8 @@ export default class UiHistogram extends React.Component {
       ctx.moveTo(xMin, yMax);
       let i;
       let x, y;
-      for (i = 0; i < NUM_COLORS; i++) {
-        x = xMin + Math.floor(wRect * i / NUM_COLORS);
+      for (i = 0; i < this.m_numColors; i++) {
+        x = xMin + Math.floor(wRect * i / this.m_numColors);
         let v = this.m_histogram[i] / maxHistValue;
         v = (v >= 1.0) ? 1.0 : v;
         y = yMax - Math.floor(hRect * v);
@@ -215,7 +253,7 @@ export default class UiHistogram extends React.Component {
     if (this.m_peakIndex > 0) {
       ctx.lineWidth = 1;
       ctx.strokeStyle = '#eeeeee';
-      const x = xMin + Math.floor(wRect * this.m_peakIndex / NUM_COLORS);
+      const x = xMin + Math.floor(wRect * this.m_peakIndex / this.m_numColors);
       let v = this.m_histogram[this.m_peakIndex] / maxHistValue;
       v = (v >= 1.0) ? 1.0 : v;
       let y = yMax - Math.floor(hRect * v);

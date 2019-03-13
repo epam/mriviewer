@@ -13,6 +13,7 @@ import React from 'react';
 
 // import LoadResult from './LoadResult';
 import LoaderKtx from './loaders/LoaderKtx';
+import LoaderNifti from './loaders/LoaderNifti';
 
 // ********************************************************
 // Const
@@ -35,6 +36,8 @@ class Volume extends React.Component {
     this.m_yDim = 0;
     this.m_zDim = 0;
     this.m_bytesPerVoxel = 0;
+    this.m_dataArray = null;
+    this.m_dataSize = 0;
     this.m_boxSize = {
       x: 0.0, y: 0.0, z: 0.0
     };
@@ -56,15 +59,26 @@ class Volume extends React.Component {
   }
   //
   // Read from KTX format
+  //
   readFromKtx(arrBuf, callbackProgress, callbackComplete) {
     const loader = new LoaderKtx();
     const ret = loader.readFromBuffer(this, arrBuf, callbackProgress, callbackComplete);
     return ret;
   } // end readFromKtx
+  //
   // Read from KTX by URL
+  //
   readFromKtxUrl(strUrl, callbackProgress, callbackComplete) {
     const loader = new LoaderKtx();
     const ret = loader.readFromUrl(this, strUrl, callbackProgress, callbackComplete);
+    return ret;
+  }
+  //
+  // Read from lcal nifti
+  //
+  readFromNifti(arrBuf, callbackProgress, callbackComplete) {
+    const loader = new LoaderNifti();
+    const ret = loader.readFromBuffer(this, arrBuf, callbackProgress, callbackComplete);
     return ret;
   }
   // do nothing. But we need to implement render() to run Volume tests
