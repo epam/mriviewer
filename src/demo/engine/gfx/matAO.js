@@ -48,7 +48,7 @@ export default class MaterialAO {
     this.m_uniforms = {
       texVolume: { type: 't', value: null },
       vectorsTex: { type: 't', value: null },
-      texelSize: { type: 'v3', value: THREE.Vector3(TEXEL_SIZE_1_256, TEXEL_SIZE_1_256, TEXEL_SIZE_1_256) },
+      texelSize: { type: 'v3', value: new THREE.Vector3(TEXEL_SIZE_1_256, TEXEL_SIZE_1_256, TEXEL_SIZE_1_256) },
       tileCountX: { type: 'f', value: TILE_COUNT_X },
       volumeSizeZ: { type: 'f', value: VOL_SIZE_Z },
       xDim: { type: 'f', value: VOL_SIZE_Z },

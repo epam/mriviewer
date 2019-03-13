@@ -42,9 +42,9 @@ export default class MaterialFF {
     this.m_strShaderFragment = '';
     this.m_uniforms = {
       texBF: { type: 't', value: null },
-      PlaneX: { type: 'v4', value: THREE.Vector4(-1.0, 0.0, 0.0, 0.5) },
-      PlaneY: { type: 'v4', value: THREE.Vector4(0.0, -1.0, 0.0, 0.5) },
-      PlaneZ: { type: 'v4', value: THREE.Vector4(0.0, 0.0, -1.0, 0.5) },
+      PlaneX: { type: 'v4', value: new THREE.Vector4(-1.0, 0.0, 0.0, 0.5) },
+      PlaneY: { type: 'v4', value: new THREE.Vector4(0.0, -1.0, 0.0, 0.5) },
+      PlaneZ: { type: 'v4', value: new THREE.Vector4(0.0, 0.0, -1.0, 0.5) },
     };
   }
   /** Frontface material constructor

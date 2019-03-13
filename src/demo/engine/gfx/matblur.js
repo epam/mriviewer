@@ -40,8 +40,6 @@ export default class MaterialBlur {
   constructor() {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
-    const TEX_SIZE = 256.0;
-    const TEXEL_SIZE_1_256 = 1.0 / TEX_SIZE;
     const TILE_COUNT_X = 16.0;
     const VOL_SIZE_Z = 256.0;
     const BLUR_SIGMA = 0.8;
@@ -53,7 +51,7 @@ export default class MaterialBlur {
       texVolumeRoi: { type: 't', value: null },
       texRoiColor: { type: 't', value: null },
       texSegInUse: { type: 't', value: null },
-      texelSize: { type: 'v3', value: THREE.Vector3(TEXEL_SIZE_1_256, TEXEL_SIZE_1_256, TEXEL_SIZE_1_256) },
+      texelSize: { type: 'v3', value: null },
       tileCountX: { type: 'f', value: TILE_COUNT_X },
       volumeSizeZ: { type: 'f', value: VOL_SIZE_Z },
       xDim: { type: 'f', value: VOL_SIZE_Z },
@@ -74,6 +72,10 @@ export default class MaterialBlur {
   */
   create(texture, texRoi, texelSize, texRoiColor, texRoiId, callbackMat) {
     // Init uniforms
+    const TEX_SIZE = 256.0;
+    const TEXEL_SIZE_1_256 = 1.0 / TEX_SIZE;
+    this.m_uniforms.texelSize.value = new THREE.Vector3(TEXEL_SIZE_1_256, TEXEL_SIZE_1_256, TEXEL_SIZE_1_256);
+    this.m_uniforms.texVolume.value = texture;
     this.m_uniforms.texVolume.value = texture;
     this.m_uniforms.texVolumeRoi.value = texRoi;
     this.m_uniforms.texRoiColor.value = texRoiColor;

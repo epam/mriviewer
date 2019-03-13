@@ -49,7 +49,7 @@ export default class MaterialRenderSSAO {
       texVolume: { type: 't', value: null },
       texBF: { type: 't', value: null },
       texFF: { type: 't', value: null },
-      stepSize: { type: 'v4', value: THREE.Vector4(0.0, 0.0, 0.0, 0.0) },
+      stepSize: { type: 'v4', value: new THREE.Vector4(0.0, 0.0, 0.0, 0.0) },
       texSize: { type: 'f', value: 0.0 },
       tileCountX: { type: 'f', value: 0.0 },
       volumeSizeZ: { type: 'f', value: 0.0 },
