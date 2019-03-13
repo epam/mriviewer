@@ -32,7 +32,11 @@ import UiHistogram from './UiHistogram';
 class UiTF extends React.Component {
   constructor(props) {
     super(props);
+    //this.onUndo = this.onUndo.bind(this);
     this.m_updateEnable = true;
+  }
+  onUndo() {
+    console.log(`3d control`);
   }
   onChangeSliderTF() {
     this.m_updateEnable = false;
@@ -154,6 +158,11 @@ class UiTF extends React.Component {
             <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
               range={{ min: 0.0, max: 1.0 }}
               start={wArrIsosurface} step={0.02} tooltips={true} />
+          </li>
+          <li className="list-group-item">
+            <button type="button" className={'btn btn-outline-dark'} onClick={this.onUndo} >
+              Undo
+            </button>
           </li>
         </ul>
       </div>
