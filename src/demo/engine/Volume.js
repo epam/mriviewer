@@ -14,6 +14,7 @@ import React from 'react';
 // import LoadResult from './LoadResult';
 import LoaderKtx from './loaders/LoaderKtx';
 import LoaderNifti from './loaders/LoaderNifti';
+import LoaderDicom from './loaders/LoaderDicom';
 
 // ********************************************************
 // Const
@@ -74,10 +75,23 @@ class Volume extends React.Component {
     return ret;
   }
   //
-  // Read from lcal nifti
+  // Read from local nifti
   //
   readFromNifti(arrBuf, callbackProgress, callbackComplete) {
     const loader = new LoaderNifti();
+    const ret = loader.readFromBuffer(this, arrBuf, callbackProgress, callbackComplete);
+    return ret;
+  }
+  //
+  // Read from local dicom
+  //
+  readFromDicom(arrBuf, callbackProgress, callbackComplete) {
+    const loader = new LoaderDicom();
+    const ret = loader.readFromBuffer(this, arrBuf, callbackProgress, callbackComplete);
+    return ret;
+  }
+  readSingleSliceFromDicom(arrBuf, callbackProgress, callbackComplete) {
+    const loader = new LoaderDicom();
     const ret = loader.readFromBuffer(this, arrBuf, callbackProgress, callbackComplete);
     return ret;
   }

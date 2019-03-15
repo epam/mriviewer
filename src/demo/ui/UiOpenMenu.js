@@ -48,6 +48,7 @@ class UiOpenMenu extends React.Component {
     this.onButtonLocalFile = this.onButtonLocalFile.bind(this);
     this.handleFileSelected = this.handleFileSelected.bind(this);
     this.onFileContentRead = this.onFileContentRead.bind(this);
+    this.onFileContentReadMultiple = this.onFileContentReadMultiple.bind(this);
 
     this.onModalUrlShow = this.onModalUrlShow.bind(this);
     this.onModalUrlHide = this.onModalUrlHide.bind(this);
@@ -105,6 +106,8 @@ class UiOpenMenu extends React.Component {
       readOk = vol.readFromKtx(strContent, callbackProgress, callbackComplete);
     } else if (this.m_fileName.endsWith('.nii') || this.m_fileName.endsWith('.NII')) {
       readOk = vol.readFromNifti(strContent, callbackProgress, callbackComplete);
+    } else if (this.m_fileName.endsWith('.dcm') || this.m_fileName.endsWith('.DCM')) {
+      readOk = vol.readFromDicom(strContent, callbackProgress, callbackComplete);
     } else {
       console.log(`onFileContentRead: unknown file type: ${this.m_fileName}`);
     }
@@ -115,15 +118,59 @@ class UiOpenMenu extends React.Component {
       console.log(`onFileContentRead failed! reading ${this.m_fileName} file`);
     }
   }
-  handleFileSelected(evt) {
-    if (evt.target.files !== undefined) {
-      console.log(`UiOpenMenu. handleFileSelected. obj = ${evt.target.files[0].name}`);
-      const file = evt.target.files[0];
+  // read from string content in this.m_fileReader.result
+  //
+  onFileContentReadMultiple() {
+    console.log('UiOpenMenu. onFileContentReadMultiple ...');
+    const strContent = this.m_fileReader.result;
+    this.m_fileIndex++;
+    const ratioLoad = this.m_fileIndex / this.m_numFiles;
+    console.log(`onFileContentReadMultiple. r = ${ratioLoad}`);
+    const callbackProgress = null;
+    const callbackComplete = null;
+    const readOk = this.m_volume.readSingleSliceFromDicom(strContent, callbackProgress, callbackComplete);
+    if (!readOk) {
+      console.log('onFileContentReadMultiple. Error read individual file');
+    }
+    if (readOk && (this.m_fileIndex === this.m_numFiles)) {
+      console.log(`onFileContentReadMultiple read all ${this.m_numFiles} files`);
+    }
+    // read again new file
+    if (this.m_fileIndex < this.m_numFiles) {
+      this.m_fileReader.onloadend = this.onFileContentReadMultiple;
+      const file = this.m_files[this.m_fileIndex];
       this.m_fileName = file.name;
-      this.m_fileReader = new FileReader();
-      this.m_fileReader.onloadend = this.onFileContentRead;
       this.m_fileReader.readAsArrayBuffer(file);
     }
+  }
+  //
+  // Perform open file after it selected in dialog
+  handleFileSelected(evt) {
+    if (evt.target.files !== undefined) {
+      const numFiles = evt.target.files.length;
+      console.log(`UiOpenMenu. Trying to open ${numFiles} files`);
+      console.log(`UiOpenMenu. handleFileSelected. file[0] = ${evt.target.files[0].name}`);
+      if (numFiles === 1) {
+        const file = evt.target.files[0];
+        this.m_fileName = file.name;
+        this.m_fileReader = new FileReader();
+        this.m_fileReader.onloadend = this.onFileContentRead;
+        this.m_fileReader.readAsArrayBuffer(file);
+      } else {
+        // not single file was open
+        this.m_files = evt.target.files;
+        this.m_fileIndex = 0;
+        this.m_numFiles = numFiles;
+        this.m_fileReader = new FileReader();
+        this.m_fileReader.onloadend = this.onFileContentReadMultiple;
+        const vol = new Volume();
+        this.m_volume = vol;
+
+        const file = evt.target.files[0];
+        this.m_fileName = file.name;
+        this.m_fileReader.readAsArrayBuffer(file);
+      } // if num files > 1
+    } // if event is mnot empty
   }
   buildFileSelector() {
     const fileSelector = document.createElement('input');
