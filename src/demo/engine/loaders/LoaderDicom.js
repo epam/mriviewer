@@ -9,8 +9,8 @@
 // Imports
 // ********************************************************
 
-import LoadResult from '../LoadResult';
-import UiHistogram from '../../ui/UiHistogram';
+// import LoadResult from '../LoadResult';
+// import UiHistogram from '../../ui/UiHistogram';
 
 // ********************************************************
 // Const
