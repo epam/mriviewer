@@ -147,6 +147,13 @@ class UiOpenMenu extends React.Component {
     }
     // read again new file
     if (this.m_fileIndex < this.m_numFiles) {
+      // print console loading progress
+      const NUM_PARTS_REPORT = 16;
+      const STEP_PROGRESS = Math.floor(this.m_numFiles / NUM_PARTS_REPORT);
+      if ((this.m_fileIndex % STEP_PROGRESS) === 0) {
+        console.log(`onFileContentReadMultiple. Loading completed = ${ratioLoad}`);
+      }
+
       this.m_fileReader.onloadend = this.onFileContentReadMultiple;
       const file = this.m_files[this.m_fileIndex];
       this.m_fileName = file.name;
