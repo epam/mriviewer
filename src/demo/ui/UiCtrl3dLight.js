@@ -19,7 +19,6 @@ import Nouislider from 'react-nouislider';
 
 import Modes3d from '../store/Modes3d';
 import StoreActionType from '../store/ActionTypes';
-
 import UiTF from './UiTF';
 
 // ********************************************************
