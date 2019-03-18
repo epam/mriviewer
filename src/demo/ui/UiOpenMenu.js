@@ -24,11 +24,15 @@ import ModeView from '../store/ModeView';
 // import { timingSafeEqual } from 'crypto';
 import LoadResult from '../engine/LoadResult';
 import FileTools from '../engine/loaders/FileTools';
+import LoaderDicom from '../engine/loaders/LoaderDicom';
 
 
 // ********************************************************
 // Const
 // ********************************************************
+
+/** deep artificially fix volume texture size to 4 * N */
+const NEED_TEXTURE_SIZE_4X = true;
 
 // ********************************************************
 // Class
@@ -73,6 +77,9 @@ class UiOpenMenu extends React.Component {
     };
   }
   finalizeSuccessLoadedVolume(vol, fileNameIn) {
+    if (NEED_TEXTURE_SIZE_4X) {
+      vol.makeDimensions4x();
+    }
     // invoke notification
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
@@ -121,18 +128,21 @@ class UiOpenMenu extends React.Component {
   // read from string content in this.m_fileReader.result
   //
   onFileContentReadMultiple() {
-    console.log('UiOpenMenu. onFileContentReadMultiple ...');
+    // console.log('UiOpenMenu. onFileContentReadMultiple ...');
     const strContent = this.m_fileReader.result;
     this.m_fileIndex++;
     const ratioLoad = this.m_fileIndex / this.m_numFiles;
-    console.log(`onFileContentReadMultiple. r = ${ratioLoad}`);
+    // console.log(`onFileContentReadMultiple. r = ${ratioLoad}`);
     const callbackProgress = null;
     const callbackComplete = null;
-    const readOk = this.m_volume.readSingleSliceFromDicom(strContent, callbackProgress, callbackComplete);
+    const readOk = this.m_volume.readSingleSliceFromDicom(this.m_loader, this.m_fileIndex - 1, 
+      this.m_fileName, ratioLoad, strContent, callbackProgress, callbackComplete);
     if (!readOk) {
       console.log('onFileContentReadMultiple. Error read individual file');
     }
     if (readOk && (this.m_fileIndex === this.m_numFiles)) {
+      this.m_loader.createVolumeFromSlices(this.m_volume);
+      this.finalizeSuccessLoadedVolume(this.m_volume, this.m_fileName);
       console.log(`onFileContentReadMultiple read all ${this.m_numFiles} files`);
     }
     // read again new file
@@ -162,6 +172,11 @@ class UiOpenMenu extends React.Component {
         this.m_fileIndex = 0;
         this.m_numFiles = numFiles;
         this.m_fileReader = new FileReader();
+        // if multiple files, create Dicom loader
+        this.m_loader = null;
+        if (evt.target.files[0].name.endsWith(".dcm")) {
+          this.m_loader = new LoaderDicom(numFiles);
+        }
         this.m_fileReader.onloadend = this.onFileContentReadMultiple;
         const vol = new Volume();
         this.m_volume = vol;
