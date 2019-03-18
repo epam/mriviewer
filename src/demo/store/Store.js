@@ -25,6 +25,8 @@ export const initialState = {
   sliderBrightness: 0.56,
   sliderCut: 1.0,
   sliderQuality: 0.35,
+  sliderErRadius: 0.5,
+  sliderErDepth: 0.5,
 };
 //
 // App reducer
@@ -57,6 +59,10 @@ const medReducer = (state = initialState, action) => {
     return Object.assign({}, state, { sliderOpacity: action.sliderOpacity });
   case StoreActionType.SET_SLIDER_Isosurface:
     return Object.assign({}, state, { sliderIsosurface: action.sliderIsosurface });
+  case StoreActionType.SET_SLIDER_ErRadius:
+    return Object.assign({}, state, { sliderErRadius: action.sliderErRadius });
+  case StoreActionType.SET_SLIDER_ErDepth:
+    return Object.assign({}, state, { sliderErDepth: action.sliderErDepth });
   case StoreActionType.SET_SLIDER_Brightness:
     return Object.assign({}, state, { sliderBrightness: action.sliderBrightness });
   case StoreActionType.SET_SLIDER_Cut:
