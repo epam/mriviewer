@@ -861,7 +861,7 @@ export default class VolumeRenderer3d {
     if (this.texVolumeAO) {
       this.texVolumeAO.dispose();
     }
-    this.texVolumeAO = this.volumeUpdater.gettexVolumeAO();
+    //this.texVolumeAO = this.volumeUpdater.gettexVolumeAO();
 
     if (this.renderer.getContext().getExtension('EXT_color_buffer_float')) {
       if (this.bfTexture) {
