@@ -143,13 +143,19 @@ class Graphics3d extends React.Component {
   _onMouseMove(e) {
     // console.log(`${e.x}, ${e.y}\n`);
     if (this.m_volumeRenderer3D !== null) {
-      this.m_volumeRenderer3D.onMouseMove(e.screenX, e.screenY);
+      const box = this.m_mount.getBoundingClientRect();
+      const containerX = e.clientX - box.left;
+      const containerY = e.clientY - box.top;
+      this.m_volumeRenderer3D.onMouseMove(containerX, this.props.hScreen - containerY);
     }
   }
   _onMouseDown(e) {
     //console.log(`${e.x}, ${e.y}\n`);
     if (this.m_volumeRenderer3D !== null) {
-      this.m_volumeRenderer3D.onMouseDown(e.screenX, e.screenY, this.props.ereaseStart);
+      const box = this.m_mount.getBoundingClientRect();
+      const containerX = e.clientX - box.left;
+      const containerY = e.clientY - box.top;
+      this.m_volumeRenderer3D.onMouseDown(containerX, this.props.hScreen - containerY, this.props.ereaseStart);
     }
   }
   _onMouseUp(e) {
