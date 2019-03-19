@@ -519,8 +519,8 @@ export default class VolumeRenderer3d {
     if (this.texVolumeAO) {
       this.texVolumeAO.dispose();
     }
-    this.volumeUpdater.setAmbientTexture(isoThreshold);
-    this.texVolumeAO = this.volumeUpdater.gettexVolumeAO();
+    this.volumeUpdater.ambientTexture.set(isoThreshold);
+    this.texVolumeAO = this.volumeUpdater.ambientTexture.get();
     this.matRenderToTexture.defines.useAmbientTex = 1;
     this.matVolumeRender.defines.useAmbientTex = 1;
     this.matRenderToTexture.needsUpdate = true;
@@ -861,7 +861,7 @@ export default class VolumeRenderer3d {
     if (this.texVolumeAO) {
       this.texVolumeAO.dispose();
     }
-    this.texVolumeAO = this.volumeUpdater.gettexVolumeAO();
+    //this.texVolumeAO = this.volumeUpdater.gettexVolumeAO();
 
     if (this.renderer.getContext().getExtension('EXT_color_buffer_float')) {
       if (this.bfTexture) {
