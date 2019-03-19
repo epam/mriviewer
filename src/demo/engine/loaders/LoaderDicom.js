@@ -202,6 +202,31 @@ class LoaderDicom{
   * @return {LoadResult} LoadResult.SUCCESS if success
   */
  createVolumeFromSlices(volDst) {
+  const imagePosBox = {
+    x: this.m_imagePosMax.x - this.m_imagePosMin.x,
+    y: this.m_imagePosMax.y - this.m_imagePosMin.y,
+    z: this.m_imagePosMax.z - this.m_imagePosMin.z
+  };
+  const TOO_MIN = 0.00001;
+  let zBox;
+  if (Math.abs(this.m_pixelSpacing.z) > TOO_MIN) {
+    zBox = this.m_pixelSpacing.z * this.m_zDim;
+  } else {
+    zBox = imagePosBox.z;
+    if (Math.abs(zBox) < TOO_MIN) {
+      zBox = imagePosBox.x;
+      if (Math.abs(zBox) < TOO_MIN) {
+        zBox = imagePosBox.y;
+      }
+    }
+  } // if pixel spacing 0
+  this.m_pixelSpacing.z = zBox / this.m_zDim;
+  this.m_boxSize.z = this.m_zDim * this.m_pixelSpacing.z;
+  this.m_boxSize.x = this.m_xDim * this.m_pixelSpacing.x;
+  this.m_boxSize.y = this.m_yDim * this.m_pixelSpacing.y;
+  console.log(`createVolumeFromSlices. Volume local phys dim: ${this.m_boxSize.x} * ${this.m_boxSize.y} * ${this.m_boxSize.z}`);
+
+
   let i;
   let dataSize = 0;
   let dataArray = null;
@@ -240,7 +265,7 @@ class LoaderDicom{
   console.log(`Min slice number = ${this.m_slicesVolume.m_minSlice}`);
   console.log(`Max slice number = ${this.m_slicesVolume.m_maxSlice}`);
 
-  const histogram = new Int32Array(maxVal);
+  const histogram = new Float32Array(maxVal);
   for (i = 0; i < maxVal; i++) {
     histogram[i] = 0;
   }
@@ -252,14 +277,6 @@ class LoaderDicom{
       histogram[val16]++;
     }
   }
-
-  // const histSmooothed = new Int32Array(maxVal);
-  // const HIST_SMOOTH_SIGMA = 0.8;
-  // const okBuild = VolumeTools.buildSmoothedHistogram(histogram, histSmooothed, maxVal, HIST_SMOOTH_SIGMA);
-  // if (okBuild !== 1) {
-  //   console.log('Error build histogram');
-  //   return LoadResult.ERROR_PROCESS_HISTOGRAM;
-  // }
 
   const hist = new UiHistogram();
   hist.assignArray(maxVal, histogram);
@@ -958,7 +975,7 @@ class LoaderDicom{
   //   return false;
   // }
 
-  console.log(`LoaderDicom. readFromBuffer. file = ${fileName}, ratio = ${ratioLoaded}`);
+  // console.log(`LoaderDicom. readFromBuffer. file = ${fileName}, ratio = ${ratioLoaded}`);
 
   const dataView = new DataView(arrBuf);
   if (dataView === null) {
@@ -1369,7 +1386,7 @@ class LoaderDicom{
   }
   this.m_error = DICOM_ERROR_OK;
 
-  console.log(`Dicom read OK. Volume pixels = ${this.m_xDim} * ${this.m_yDim} * ${this.m_zDim}`);
+  // console.log(`Dicom read OK. Volume pixels = ${this.m_xDim} * ${this.m_yDim} * ${this.m_zDim}`);
   return true;
   } // end readFromBuffer
 

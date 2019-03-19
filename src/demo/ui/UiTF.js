@@ -34,9 +34,18 @@ class UiTF extends React.Component {
     super(props);
     //this.onUndo = this.onUndo.bind(this);
     this.m_updateEnable = true;
+    this.onStartEr = this.onStartEr.bind(this);
+  }
+  onStartEr() {
+    console.log(`onStart`);
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_EREASE_START, ereaseStart: true });
   }
   onUndo() {
-    console.log(`3d control`);
+    console.log(`onUndo`);
+  }
+  onSave() {
+    console.log(`onSave`);
   }
   onChangeSliderTF() {
     this.m_updateEnable = false;
@@ -138,7 +147,7 @@ class UiTF extends React.Component {
     const jsxEreaser =
       <div className="card">
         <div className="card-header">
-          Press Ctrl + Mouse Down [+ Mouse Move] for erease
+          Press Start + Mouse Down [+ Mouse Move] for erease
         </div>
         <ul className="list-group list-group-flush">
           <li className="list-group-item">
@@ -160,8 +169,14 @@ class UiTF extends React.Component {
               start={wArrIsosurface} step={0.02} tooltips={true} />
           </li>
           <li className="list-group-item">
+            <button type="button" className={'btn btn-outline-dark'} onClick={this.onStartEr} >
+              Start
+            </button>
             <button type="button" className={'btn btn-outline-dark'} onClick={this.onUndo} >
               Undo
+            </button>
+            <button type="button" className={'btn btn-outline-dark'} onClick={this.onSave} >
+              Save
             </button>
           </li>
         </ul>

@@ -49,6 +49,7 @@ class Graphics3d extends React.Component {
     this.m_renderer = null;
     // animation
     this.m_frameId = null;
+    this.m_prevMode = Modes3d.RAYCAST;
     // settings
     this.m_fileDataType = {
       thresholdIsosurf: 0.46,
@@ -148,7 +149,7 @@ class Graphics3d extends React.Component {
   _onMouseDown(e) {
     //console.log(`${e.x}, ${e.y}\n`);
     if (this.m_volumeRenderer3D !== null) {
-      this.m_volumeRenderer3D.onMouseDown(e.screenX, e.screenY);
+      this.m_volumeRenderer3D.onMouseDown(e.screenX, e.screenY, this.props.ereaseStart);
     }
   }
   _onMouseUp(e) {
@@ -180,17 +181,33 @@ class Graphics3d extends React.Component {
     if (this.m_volumeRenderer3D !== null) {
       console.log(`Graphics3d . mode = ${mode3d}`);
       if (mode3d === Modes3d.RAYCAST) {
+        if (this.m_prevMode === Modes3d.EREASER) {
+          this.m_volumeRenderer3D.setEraserMode(false);
+        }
+        this.m_prevMode = Modes3d.RAYCAST;
         this.m_volumeRenderer3D.setTransferFuncVec3([store.slider3d_r, store.slider3d_g, store.slider3d_b], 0);
         this.m_volumeRenderer3D.switchToVolumeRender();      
       }
       if (mode3d === Modes3d.ISO) {
+        if (this.m_prevMode === Modes3d.EREASER) {
+          this.m_volumeRenderer3D.setEraserMode(false);
+        }
+        this.m_prevMode = Modes3d.ISO;
         this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
         this.m_volumeRenderer3D.switchToIsosurfRender();      
       }
       if (mode3d === Modes3d.RAYFAST) {
+        if (this.m_prevMode === Modes3d.EREASER) {
+          this.m_volumeRenderer3D.setEraserMode(false);
+        }
+        this.m_prevMode = Modes3d.RAYFAST;
         this.m_volumeRenderer3D.switchToFLATRender();
       }
       if (mode3d === Modes3d.EREASER) {
+        if (this.m_prevMode !== Modes3d.EREASER) {
+          this.m_volumeRenderer3D.setEraserMode(true);
+        }
+        this.m_prevMode = Modes3d.RAYFAST;
         this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
         this.m_volumeRenderer3D.switchToIsosurfRender();      
       }
