@@ -92,7 +92,7 @@ class UiCtrl2d extends React.Component {
     const strCor = strClass + ((mode2d === Modes2d.CORONAL) ? ' active' : '');
     const strTra = strClass + ((mode2d === Modes2d.TRANSVERSE) ? ' active' : '');
 
-    console.log(`UiCtrl2d. render. mode2d = ${mode2d}`);
+    // console.log(`UiCtrl2d. render. mode2d = ${mode2d}`);
 
     // btn-default active
 
