@@ -38,6 +38,12 @@ class Graphics2d extends React.Component {
     // animation
     this.animate = this.animate.bind(this);
     this.m_frameId = null;
+    // actual render window dimenison
+    this.state = {
+      wRender: 0,
+      hRender: 0,
+    };
+
   }
   start() {
     if (this.m_frameId === null) {
@@ -55,6 +61,13 @@ class Graphics2d extends React.Component {
   componentDidMount() {
     // this.start();
     this.renderScene();
+    // detect actual render window dims
+    const w = this.m_mount.clientWidth;
+    const h = this.m_mount.clientHeight;
+    if (this.state.wRender === 0) {
+      this.setState({ wRender: w });
+      this.setState({ hRender: h });
+    }
   }
   componentWillUnmount() {
     // this.stop()
@@ -63,12 +76,12 @@ class Graphics2d extends React.Component {
     this.renderScene();
   }
   renderScene() {
-    const ctx = this.refs.canvasGra2d.getContext('2d');
-    const w = this.refs.canvasGra2d.clientWidth;
-    const h = this.refs.canvasGra2d.clientHeight;
+    const ctx = this.m_mount.getContext('2d');
+    const w = this.m_mount.clientWidth;
+    const h = this.m_mount.clientHeight;
     ctx.fillStyle = 'rgb(240, 240, 240)';
     ctx.fillRect(0,0, w, h);
-    // console.log(`render scene 2d. screen = ${w} * ${h}`);
+    console.log(`render scene 2d. screen = ${w} * ${h}`);
 
     // Test draw chessboard
     const NEED_TEST_RAINBOW = false;
@@ -203,9 +216,6 @@ class Graphics2d extends React.Component {
    * Main component render func callback
    */
   render() {
-    const wScreen = this.props.wScreen;
-    const hScreen = this.props.hScreen;
- 
     const vol = this.props.volume;
     if (vol !== null) {
       this.m_vol = vol;
@@ -213,9 +223,15 @@ class Graphics2d extends React.Component {
     this.m_sliceRatio = this.props.sliderValue;
     this.m_mode2d = this.props.mode2d;
 
-    const jsxGrap2d = 
-      <canvas ref="canvasGra2d" width={wScreen} height={hScreen}/>
-    return jsxGrap2d;
+    const styleObj = {
+      width: '100%',
+      height: '100%',
+    };
+
+    const jsxGrapNonSized = <canvas ref={ (mount) => {this.m_mount = mount} } style={styleObj} />
+    const jsxGrapSized = <canvas ref={ (mount) => {this.m_mount = mount} } width={this.state.wRender} height={this.state.hRender} />
+    const jsx = (this.state.wRender > 0) ? jsxGrapSized : jsxGrapNonSized;
+    return jsx;
   }
 }
 

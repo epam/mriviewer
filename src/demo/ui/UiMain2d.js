@@ -13,7 +13,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import UiCtrl2d from './UiCtrl2d';
-import {  W_RENDER, H_RENDER } from './UiRenderView';
 import Graphics2d from '../engine/Graphics2d';
 import UiHistogram from './UiHistogram';
 
@@ -42,7 +41,7 @@ class UiMain2d extends React.Component {
         <UiHistogram volume={vol}/>
       </div>
       <div className="col-md-8">
-        <Graphics2d wScreen={W_RENDER} hScreen={H_RENDER} />
+        <Graphics2d  />
       </div>
     </div>
     return jsxMain2d;

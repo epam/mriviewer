@@ -34,8 +34,6 @@ class Graphics3d extends React.Component {
    */
   constructor(props) {
     super(props);
-    this.m_width = props.wScreen;
-    this.m_height = props.hScreen;
     this.isLoaded = false;
     this.volume = null;
 
@@ -61,6 +59,11 @@ class Graphics3d extends React.Component {
       lightDirComp: -0.5773,
       brightness: 0.56,
     };
+    // actual render window dimenison
+    this.state = {
+      wRender: 0,
+      hRender: 0,
+    };
   }
   start() {
     if (this.m_frameId === null) {
@@ -80,18 +83,6 @@ class Graphics3d extends React.Component {
     this.renderScene();
     this.m_frameId = window.requestAnimationFrame(this.animate);
   }
-  /*
-  componentDidMount() {
-    // this.start();
-    this.renderScene();
-  }
-  componentWillUnmount() {
-    // this.stop()
-  }
-  componentDidUpdate() {
-    this.renderScene();
-  }
-  */
   renderScene() {
     // this.m_renderer.render(this.m_scene, this.m_camera);
     if (this.m_volumeRenderer3D !== null) {
@@ -99,6 +90,15 @@ class Graphics3d extends React.Component {
     }
   }
   componentDidMount() {
+    // detect actual render window dims
+    const MIN_DIM = 200;
+    const w = (this.m_mount.clientWidth > 0) ? this.m_mount.clientWidth : MIN_DIM;
+    const h = (this.m_mount.clientHeight > 0) ? this.m_mount.clientHeight : MIN_DIM;
+    if (this.state.wRender === 0) {
+      this.setState({ wRender: w });
+      this.setState({ hRender: h });
+    }
+
     /*const w = this.m_mount.clientWidth;
     const h = this.m_mount.clientHeight;
     this.m_scene = new THREE.Scene();
@@ -122,8 +122,8 @@ class Graphics3d extends React.Component {
     if (this.m_volumeRenderer3D === null) {
       this.m_volumeRenderer3D = new VolumeRenderer3d({
         curFileDataType: this.m_fileDataType,
-        width: this.m_mount.clientWidth,
-        height: this.m_mount.clientHeight,
+        width: w,
+        height: h,
         mount: this.m_mount
       });
     }
@@ -146,7 +146,7 @@ class Graphics3d extends React.Component {
       const box = this.m_mount.getBoundingClientRect();
       const containerX = e.clientX - box.left;
       const containerY = e.clientY - box.top;
-      this.m_volumeRenderer3D.onMouseMove(containerX, this.props.hScreen - containerY);
+      this.m_volumeRenderer3D.onMouseMove(containerX, this.state.hRender - containerY);
     }
   }
   _onMouseDown(e) {
@@ -155,7 +155,7 @@ class Graphics3d extends React.Component {
       const box = this.m_mount.getBoundingClientRect();
       const containerX = e.clientX - box.left;
       const containerY = e.clientY - box.top;
-      this.m_volumeRenderer3D.onMouseDown(containerX, this.props.hScreen - containerY, this.props.ereaseStart);
+      this.m_volumeRenderer3D.onMouseDown(containerX, this.state.hRender - containerY, this.props.ereaseStart);
     }
   }
   _onMouseUp(e) {
@@ -174,8 +174,6 @@ class Graphics3d extends React.Component {
    * Main component render func callback
    */
   render() {
-    const wScreen = this.props.wScreen;
-    const hScreen = this.props.hScreen;
     const store = this.props;
     const vol = store.volume;
     // const tex3d = this.props.texture3d;
@@ -226,15 +224,27 @@ class Graphics3d extends React.Component {
       this.m_volumeRenderer3D.render();
     }
 
-    const strW = wScreen.toString(10);
-    const strH = hScreen.toString(10);
-    const jsxCanvas = <div style={{ width: strW + 'px', height: strH + 'px' }}
+    const styleObj = {
+      width: '100%',
+      height: '100%',
+    };
+
+    const jsxCanvasNonSized = <div
+      style={styleObj}
       ref={ (mount) => {this.m_mount = mount} }
       onMouseMove={this._onMouseMove.bind(this)} 
       onMouseDown={this._onMouseDown.bind(this)} 
       onMouseUp={this._onMouseUp.bind(this)} 
       onWheel={this._onWheel.bind(this)} />
-    return jsxCanvas;
+    const jsxCanvasSized = <div
+      width={this.state.wRender} height={this.state.hRender}
+      ref={ (mount) => {this.m_mount = mount} }
+      onMouseMove={this._onMouseMove.bind(this)} 
+      onMouseDown={this._onMouseDown.bind(this)} 
+      onMouseUp={this._onMouseUp.bind(this)} 
+      onWheel={this._onWheel.bind(this)} />
+    const jsx = (this.state.wRender > 0) ? jsxCanvasSized : jsxCanvasNonSized;
+    return jsx;
   }
 }
 

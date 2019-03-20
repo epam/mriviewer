@@ -13,7 +13,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import UiCtrl3dLight from './UiCtrl3dLight';
-import {  W_RENDER, H_RENDER } from './UiRenderView';
 import Graphics3d from '../engine/Graphics3d';
 
 // ********************************************************
@@ -40,7 +39,7 @@ class UiMain3dLight extends React.Component {
         <UiCtrl3dLight />
       </div>
       <div className="col-md-8">
-        <Graphics3d wScreen={W_RENDER} hScreen={H_RENDER} />
+        <Graphics3d />
       </div>
     </div>
     return jsxMain3dLight;

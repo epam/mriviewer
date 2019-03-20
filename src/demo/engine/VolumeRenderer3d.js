@@ -151,7 +151,7 @@ export default class VolumeRenderer3d {
     // Assign current window to render area
     this.windowWidth = Math.floor(props.width);
     // eslint-disable-next-line
-    this.windowHeight = Math.floor(props.height - 5);
+    this.windowHeight = Math.floor(props.height);
     // console.log("Window: " + this.windowWidth + "x" + this.windowHeight);
     console.log(`Window: ${this.windowWidth} x ${this.windowHeight}`);
     const camAspect = this.windowWidth / this.windowHeight;
@@ -383,22 +383,24 @@ export default class VolumeRenderer3d {
    * Setting a variable for conditional compilation (Volume Render)
    */
   switchToVolumeRender() {
-    if (this.isRoiVolume > 0) {
-      this.matVolumeRender.defines.isoRenderFlag = 4;
-      this.matVolumeRender.needsUpdate = true;
-      this.matInterpolation.defines.isoRenderFlag = 4;
-      this.matInterpolation.needsUpdate = true;
-      this.matRenderToTexture.defines.isoRenderFlag = 4;
-      this.matRenderToTexture.needsUpdate = true;
-      this.renderState = this.RENDER_STATE.ONCE;
-    } else {
-      this.matVolumeRender.defines.isoRenderFlag = 0;
-      this.matVolumeRender.needsUpdate = true;
-      this.matInterpolation.defines.isoRenderFlag = 0;
-      this.matInterpolation.needsUpdate = true;
-      this.matRenderToTexture.defines.isoRenderFlag = 0;
-      this.matRenderToTexture.needsUpdate = true;
-      this.renderState = this.RENDER_STATE.ONCE;
+    if (this.matVolumeRender !== null) {
+      if (this.isRoiVolume > 0) {
+        this.matVolumeRender.defines.isoRenderFlag = 4;
+        this.matVolumeRender.needsUpdate = true;
+        this.matInterpolation.defines.isoRenderFlag = 4;
+        this.matInterpolation.needsUpdate = true;
+        this.matRenderToTexture.defines.isoRenderFlag = 4;
+        this.matRenderToTexture.needsUpdate = true;
+        this.renderState = this.RENDER_STATE.ONCE;
+      } else {
+        this.matVolumeRender.defines.isoRenderFlag = 0;
+        this.matVolumeRender.needsUpdate = true;
+        this.matInterpolation.defines.isoRenderFlag = 0;
+        this.matInterpolation.needsUpdate = true;
+        this.matRenderToTexture.defines.isoRenderFlag = 0;
+        this.matRenderToTexture.needsUpdate = true;
+        this.renderState = this.RENDER_STATE.ONCE;
+      }
     }
   }
   /**
@@ -489,21 +491,27 @@ export default class VolumeRenderer3d {
    * @param (number) sliderValue - slider ration in 0..1
    */
   setOpacityBarrier(sliderValue) {
-    this.matVolumeRender.uniforms.opacityBarrier.value = OPACITY_SCALE * sliderValue;
-    this.matVolumeRender.uniforms.opacityBarrier.needsUpdate = true;
-    this.matRenderToTexture.uniforms.opacityBarrier.value = OPACITY_SCALE * sliderValue;
-    this.matRenderToTexture.uniforms.opacityBarrier.needsUpdate = true;
+    if (this.matVolumeRender !== null) {
+      this.matVolumeRender.uniforms.opacityBarrier.value = OPACITY_SCALE * sliderValue;
+      this.matVolumeRender.uniforms.opacityBarrier.needsUpdate = true;
+      this.matRenderToTexture.uniforms.opacityBarrier.value = OPACITY_SCALE * sliderValue;
+      this.matRenderToTexture.uniforms.opacityBarrier.needsUpdate = true;
+    }
   }
   /**
    * Setting Brightness
    * @param (number) value - brightness of ???
    */
   updateBrightness(value) {
-    this.matRenderToTexture.uniforms.brightness3D.value = value;
-    this.matRenderToTexture.uniforms.brightness3D.needsUpdate = true;
-    this.matVolumeRender.uniforms.brightness3D.value = value;
-    this.matVolumeRender.uniforms.brightness3D.needsUpdate = true;
-    // this.volumeUpdater.updateVolumeTexture(0.1 + 1.5*value);
+    if (this.matRenderToTexture !== null) {
+      this.matRenderToTexture.uniforms.brightness3D.value = value;
+      this.matRenderToTexture.uniforms.brightness3D.needsUpdate = true;
+    }
+    if (this.matVolumeRender !== null) {
+      this.matVolumeRender.uniforms.brightness3D.value = value;
+      this.matVolumeRender.uniforms.brightness3D.needsUpdate = true;
+      // this.volumeUpdater.updateVolumeTexture(0.1 + 1.5*value);
+    }
   }
   /**
    * Setting Contrast
@@ -546,46 +554,48 @@ export default class VolumeRenderer3d {
    * @param (array) values - 3 threshold values for volumetric render
    */
   setTransferFuncVec3(values, colorFlag) {
-    if (colorFlag === 0) {
-      this.matRenderToTexture.uniforms.t_function1min.value =
-        new THREE.Vector4(VOLUME_COLOR1_MIN_R, VOLUME_COLOR1_MIN_G, VOLUME_COLOR1_MIN_B, values[0]);
-    } else {
-      this.matRenderToTexture.uniforms.t_function1min.value =
-        new THREE.Vector4(VOLUME_COLOR3_MIN_R, VOLUME_COLOR3_MIN_G, VOLUME_COLOR3_MIN_B, values[0]);
+    if (this.matRenderToTexture !== null) {
+      if (colorFlag === 0) {
+        this.matRenderToTexture.uniforms.t_function1min.value =
+          new THREE.Vector4(VOLUME_COLOR1_MIN_R, VOLUME_COLOR1_MIN_G, VOLUME_COLOR1_MIN_B, values[0]);
+      } else {
+        this.matRenderToTexture.uniforms.t_function1min.value =
+          new THREE.Vector4(VOLUME_COLOR3_MIN_R, VOLUME_COLOR3_MIN_G, VOLUME_COLOR3_MIN_B, values[0]);
+      }
+      this.matRenderToTexture.uniforms.t_function1min.needsUpdate = true;
+      this.matRenderToTexture.uniforms.t_function1max.value =
+        new THREE.Vector4(VOLUME_COLOR1_MAX_R, VOLUME_COLOR1_MAX_G, VOLUME_COLOR1_MAX_B, values[1]);
+      this.matRenderToTexture.uniforms.t_function1max.needsUpdate = true;
+      this.matRenderToTexture.uniforms.t_function2min.value =
+        new THREE.Vector4(VOLUME_COLOR2_MIN_R, VOLUME_COLOR2_MIN_G, VOLUME_COLOR2_MIN_B, values[2]);
+      this.matRenderToTexture.uniforms.t_function2min.needsUpdate = true;
+      this.matRenderToTexture.uniforms.t_function2max.value =
+        new THREE.Vector4(VOLUME_COLOR2_MAX_R, VOLUME_COLOR2_MAX_G, VOLUME_COLOR2_MAX_B, values[2]);
+      this.matRenderToTexture.uniforms.t_function2max.needsUpdate = true;
+      this.matRenderToTexture.uniforms.stepSize.value =
+        new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
+      this.matRenderToTexture.uniforms.stepSize.needsUpdate = true;
+      if (colorFlag === 0) {
+        this.matVolumeRender.uniforms.t_function1min.value =
+          new THREE.Vector4(VOLUME_COLOR1_MIN_R, VOLUME_COLOR1_MIN_G, VOLUME_COLOR1_MIN_B, values[0]);
+      } else {
+        this.matVolumeRender.uniforms.t_function1min.value =
+          new THREE.Vector4(VOLUME_COLOR3_MIN_R, VOLUME_COLOR3_MIN_G, VOLUME_COLOR3_MIN_B, values[0]);
+      }
+      this.matVolumeRender.uniforms.t_function1min.needsUpdate = true;
+      this.matVolumeRender.uniforms.t_function1max.value =
+        new THREE.Vector4(VOLUME_COLOR1_MAX_R, VOLUME_COLOR1_MAX_G, VOLUME_COLOR1_MAX_B, values[1]);
+      this.matVolumeRender.uniforms.t_function1max.needsUpdate = true;
+      this.matVolumeRender.uniforms.t_function2min.value =
+        new THREE.Vector4(VOLUME_COLOR2_MIN_R, VOLUME_COLOR2_MIN_G, VOLUME_COLOR2_MIN_B, values[2]);
+      this.matVolumeRender.uniforms.t_function2min.needsUpdate = true;
+      this.matVolumeRender.uniforms.t_function2max.value =
+        new THREE.Vector4(VOLUME_COLOR2_MAX_R, VOLUME_COLOR2_MAX_G, VOLUME_COLOR2_MAX_B, values[2]);
+      this.matVolumeRender.uniforms.t_function2max.needsUpdate = true;
+      this.matVolumeRender.uniforms.stepSize.value =
+        new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
+      this.matVolumeRender.uniforms.stepSize.needsUpdate = true;
     }
-    this.matRenderToTexture.uniforms.t_function1min.needsUpdate = true;
-    this.matRenderToTexture.uniforms.t_function1max.value =
-      new THREE.Vector4(VOLUME_COLOR1_MAX_R, VOLUME_COLOR1_MAX_G, VOLUME_COLOR1_MAX_B, values[1]);
-    this.matRenderToTexture.uniforms.t_function1max.needsUpdate = true;
-    this.matRenderToTexture.uniforms.t_function2min.value =
-      new THREE.Vector4(VOLUME_COLOR2_MIN_R, VOLUME_COLOR2_MIN_G, VOLUME_COLOR2_MIN_B, values[2]);
-    this.matRenderToTexture.uniforms.t_function2min.needsUpdate = true;
-    this.matRenderToTexture.uniforms.t_function2max.value =
-      new THREE.Vector4(VOLUME_COLOR2_MAX_R, VOLUME_COLOR2_MAX_G, VOLUME_COLOR2_MAX_B, values[2]);
-    this.matRenderToTexture.uniforms.t_function2max.needsUpdate = true;
-    this.matRenderToTexture.uniforms.stepSize.value =
-      new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
-    this.matRenderToTexture.uniforms.stepSize.needsUpdate = true;
-    if (colorFlag === 0) {
-      this.matVolumeRender.uniforms.t_function1min.value =
-        new THREE.Vector4(VOLUME_COLOR1_MIN_R, VOLUME_COLOR1_MIN_G, VOLUME_COLOR1_MIN_B, values[0]);
-    } else {
-      this.matVolumeRender.uniforms.t_function1min.value =
-        new THREE.Vector4(VOLUME_COLOR3_MIN_R, VOLUME_COLOR3_MIN_G, VOLUME_COLOR3_MIN_B, values[0]);
-    }
-    this.matVolumeRender.uniforms.t_function1min.needsUpdate = true;
-    this.matVolumeRender.uniforms.t_function1max.value =
-      new THREE.Vector4(VOLUME_COLOR1_MAX_R, VOLUME_COLOR1_MAX_G, VOLUME_COLOR1_MAX_B, values[1]);
-    this.matVolumeRender.uniforms.t_function1max.needsUpdate = true;
-    this.matVolumeRender.uniforms.t_function2min.value =
-      new THREE.Vector4(VOLUME_COLOR2_MIN_R, VOLUME_COLOR2_MIN_G, VOLUME_COLOR2_MIN_B, values[2]);
-    this.matVolumeRender.uniforms.t_function2min.needsUpdate = true;
-    this.matVolumeRender.uniforms.t_function2max.value =
-      new THREE.Vector4(VOLUME_COLOR2_MAX_R, VOLUME_COLOR2_MAX_G, VOLUME_COLOR2_MAX_B, values[2]);
-    this.matVolumeRender.uniforms.t_function2max.needsUpdate = true;
-    this.matVolumeRender.uniforms.stepSize.value =
-      new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
-    this.matVolumeRender.uniforms.stepSize.needsUpdate = true;
   }
   /**
    * Compute 3D texture coordinates on BBOX
@@ -1100,20 +1110,22 @@ export default class VolumeRenderer3d {
     xAxis.applyMatrix4(mtx);
     yAxis.applyMatrix4(mtx);
     zAxis.applyMatrix4(mtx);
-    this.matFF.uniforms.PlaneX.value.x = xAxis.x;
-    this.matFF.uniforms.PlaneX.value.y = xAxis.y;
-    this.matFF.uniforms.PlaneX.value.z = xAxis.z;
-    this.matFF.uniforms.PlaneX.value.w = -centerPt.dot(xAxis);
+    if (this.matFF !== null) {
+      this.matFF.uniforms.PlaneX.value.x = xAxis.x;
+      this.matFF.uniforms.PlaneX.value.y = xAxis.y;
+      this.matFF.uniforms.PlaneX.value.z = xAxis.z;
+      this.matFF.uniforms.PlaneX.value.w = -centerPt.dot(xAxis);
 
-    this.matFF.uniforms.PlaneY.value.x = yAxis.x;
-    this.matFF.uniforms.PlaneY.value.y = yAxis.y;
-    this.matFF.uniforms.PlaneY.value.z = yAxis.z;
-    this.matFF.uniforms.PlaneY.value.w = -centerPt.dot(yAxis);
+      this.matFF.uniforms.PlaneY.value.x = yAxis.x;
+      this.matFF.uniforms.PlaneY.value.y = yAxis.y;
+      this.matFF.uniforms.PlaneY.value.z = yAxis.z;
+      this.matFF.uniforms.PlaneY.value.w = -centerPt.dot(yAxis);
 
-    this.matFF.uniforms.PlaneZ.value.x = -zAxis.x;
-    this.matFF.uniforms.PlaneZ.value.y = zAxis.y;
-    this.matFF.uniforms.PlaneZ.value.z = zAxis.z;
-    this.matFF.uniforms.PlaneZ.value.w = -centerPt.dot(zAxis);
+      this.matFF.uniforms.PlaneZ.value.x = -zAxis.x;
+      this.matFF.uniforms.PlaneZ.value.y = zAxis.y;
+      this.matFF.uniforms.PlaneZ.value.z = zAxis.z;
+      this.matFF.uniforms.PlaneZ.value.w = -centerPt.dot(zAxis);
+    }
   }
   /**
    * Rotate light direction (Rotation is inverse to the object)
@@ -1283,10 +1295,14 @@ export default class VolumeRenderer3d {
     const A = 100.0;
     const B = 700.0;
     const h = 1.0 / (A + B * sliderValue);
-    this.matRenderToTexture.uniforms.stepSize.value = new THREE.Vector4(h, h, h, h);
-    this.matRenderToTexture.uniforms.needsUpdate = true;
-    this.matVolumeRender.uniforms.stepSize.value = new THREE.Vector4(h, h, h, h);
-    this.matVolumeRender.uniforms.needsUpdate = true;
+    if (this.matRenderToTexture !== null) {
+      this.matRenderToTexture.uniforms.stepSize.value = new THREE.Vector4(h, h, h, h);
+      this.matRenderToTexture.uniforms.needsUpdate = true;
+    }
+    if (this.matVolumeRender !== null) {
+      this.matVolumeRender.uniforms.stepSize.value = new THREE.Vector4(h, h, h, h);
+      this.matVolumeRender.uniforms.needsUpdate = true;
+    }
   }
   /**
   * Get object's vertex (3d) projection on screen, using current object transformation
