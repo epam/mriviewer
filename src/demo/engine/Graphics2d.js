@@ -76,12 +76,19 @@ class Graphics2d extends React.Component {
     this.renderScene();
   }
   renderScene() {
-    const ctx = this.m_mount.getContext('2d');
-    const w = this.m_mount.clientWidth;
-    const h = this.m_mount.clientHeight;
+    const objCanvas = this.m_mount;
+    if (objCanvas === null) {
+      return;
+    }
+    const ctx = objCanvas.getContext('2d');
+    const w = objCanvas.clientWidth;
+    const h = objCanvas.clientHeight;
+    if (w * h === 0) {
+      return;
+    }
     ctx.fillStyle = 'rgb(240, 240, 240)';
     ctx.fillRect(0,0, w, h);
-    console.log(`render scene 2d. screen = ${w} * ${h}`);
+    // console.log(`render scene 2d. screen = ${w} * ${h}`);
 
     // Test draw chessboard
     const NEED_TEST_RAINBOW = false;
