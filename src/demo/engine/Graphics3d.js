@@ -13,7 +13,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Modes3d from '../store/Modes3d';
-
+import StoreActionType from '../store/ActionTypes';
 import VolumeRenderer3d from './VolumeRenderer3d'
 
 
@@ -41,6 +41,7 @@ class Graphics3d extends React.Component {
     this.stop = this.stop.bind(this);
     this.animate = this.animate.bind(this);
     this.renderScene = this.renderScene.bind(this);
+    this.setVolRenderToStore = this.setVolRenderToStore.bind(this);
 
     this.m_mount = null;
     this.m_volumeRenderer3D = null;
@@ -64,6 +65,10 @@ class Graphics3d extends React.Component {
       wRender: 0,
       hRender: 0,
     };
+  }
+  setVolRenderToStore(VolRender) {
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_VOLUME_Renderer, volumeRenderer: VolRender });
   }
   start() {
     if (this.m_frameId === null) {
@@ -126,6 +131,7 @@ class Graphics3d extends React.Component {
         height: h,
         mount: this.m_mount
       });
+      this.setVolRenderToStore(this.m_volumeRenderer3D);
     }
     if (this.volume !== null && this.isLoaded === false && this.m_volumeRenderer3D !== null) {      
       this.m_volumeRenderer3D.initWithVolume(this.volume, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 });

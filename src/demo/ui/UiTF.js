@@ -36,6 +36,7 @@ class UiTF extends React.Component {
     this.m_updateEnable = true;
     this.onStartEr = this.onStartEr.bind(this);
     this.onStopEr = this.onStopEr.bind(this);
+    this.onUndo = this.onUndo.bind(this);
   }
   onStartEr() {
     const store = this.props;
@@ -46,7 +47,8 @@ class UiTF extends React.Component {
     store.dispatch({ type: StoreActionType.SET_EREASE_START, ereaseStart: false });
   }
   onUndo() {
-    console.log(`onUndo`);
+    const store = this.props;
+    store.volumeRenderer.undoEraser();
   }
   onSave() {
     console.log(`onSave`);
