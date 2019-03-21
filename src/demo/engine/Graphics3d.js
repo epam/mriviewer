@@ -146,7 +146,7 @@ class Graphics3d extends React.Component {
       const box = this.m_mount.getBoundingClientRect();
       const containerX = e.clientX - box.left;
       const containerY = e.clientY - box.top;
-      this.m_volumeRenderer3D.onMouseMove(containerX, this.state.hRender - containerY);
+      this.m_volumeRenderer3D.onMouseMove(containerX, this.state.hRender - containerY, this.props.ereaseStart);
     }
   }
   _onMouseDown(e) {
@@ -213,7 +213,9 @@ class Graphics3d extends React.Component {
         }
         this.m_prevMode = Modes3d.RAYFAST;
         this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
-        this.m_volumeRenderer3D.switchToIsosurfRender();      
+        this.m_volumeRenderer3D.switchToIsosurfRender();     
+        this.m_volumeRenderer3D.setEraserRadius(store.sliderErRadius);
+        this.m_volumeRenderer3D.setEraserDepth(store.sliderErDepth);
       }
       this.m_volumeRenderer3D.setOpacityBarrier(store.sliderOpacity);
       this.m_volumeRenderer3D.updateBrightness(store.sliderBrightness);

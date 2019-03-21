@@ -35,11 +35,15 @@ class UiTF extends React.Component {
     //this.onUndo = this.onUndo.bind(this);
     this.m_updateEnable = true;
     this.onStartEr = this.onStartEr.bind(this);
+    this.onStopEr = this.onStopEr.bind(this);
   }
   onStartEr() {
-    console.log(`onStart`);
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_EREASE_START, ereaseStart: true });
+  }
+  onStopEr() {
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_EREASE_START, ereaseStart: false });
   }
   onUndo() {
     console.log(`onUndo`);
@@ -153,13 +157,13 @@ class UiTF extends React.Component {
           <li className="list-group-item">
             <p> Radius </p>
             <Nouislider onSlide={this.onChangeSliderErRadius.bind(this)} ref={'sliderErRadius'}
-              range={{ min: 0.0, max: 1.0 }}
+              range={{ min: 1.0, max: 100.0 }}
               start={wArrErRadius} step={0.02} tooltips={true} />
           </li>
           <li className="list-group-item">
             <p> Depth </p>
             <Nouislider onSlide={this.onChangeSliderErDepth.bind(this)} ref={'sliderErDepth'}
-              range={{ min: 0.0, max: 1.0 }}
+              range={{ min: 1.0, max: 100.0 }}
               start={wArrErDepth} step={0.02} tooltips={true} />
           </li>
           <li className="list-group-item">
@@ -171,6 +175,9 @@ class UiTF extends React.Component {
           <li className="list-group-item">
             <button type="button" className={'btn btn-outline-dark'} onClick={this.onStartEr} >
               Start
+            </button>
+            <button type="button" className={'btn btn-outline-dark'} onClick={this.onStopEr} >
+              Stop
             </button>
             <button type="button" className={'btn btn-outline-dark'} onClick={this.onUndo} >
               Undo

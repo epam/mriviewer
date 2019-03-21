@@ -85,6 +85,7 @@ export default class OrbitControl {
     this.m_dampingFactor = 0.25;
     //console.log(`Mouse container: ${this.m_container.offsetLeft}, ${this.m_container.offsetTop}`);
     this.isEraserMode = false;
+    this.ctrlKey = false;
   }
   setEraserMode(isOn) {
     this.isEraserMode = isOn;
@@ -140,12 +141,13 @@ export default class OrbitControl {
     }
     this.m_callback();
   }
-  onMouseDown(xMouse, yMouse) {
+  onMouseDown(xMouse, yMouse, ctrlKey) {
     this.m_pressedLeft = true;
     this.m_prevMouse = { x: xMouse, y: yMouse };
     this.m_spherical.set(0, 0, 0);
     this.m_sphericalDelta.set(0, 0, 0);
     this.m_prevTime = new Date().getTime();// -1;
+    this.ctrlKey = ctrlKey;
   }
   onMouseUp() {
     this.m_pressedLeft = false;
@@ -164,7 +166,7 @@ export default class OrbitControl {
     this.m_prevMouse.x = x;
     this.m_prevMouse.y = y;
 
-    if (this.m_pressedLeft) {
+    if (this.m_pressedLeft && !this.ctrlKey) {
       this.updateTime(dx, dy);
     }
   }

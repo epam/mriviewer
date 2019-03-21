@@ -146,7 +146,7 @@ class UiCtrl3dLight extends React.Component {
           <p> Cut </p>
           <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={'sliderCut'}
             range={{ min: 0.0, max: 1.0 }}
-            start={wArrCut} step={0.02} tooltips={true} />
+            start={wArrCut} step={0.01} tooltips={true} />
         </li>
         <li className="list-group-item">
           <p> Quality </p>

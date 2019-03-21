@@ -1507,7 +1507,7 @@ export default class VolumeRenderer3d {
     //console.log(`Eraser depth: ${this.eraserDepth}`);
   }
   onMouseDown(xx, yy, ctrlKey) {
-    this.orbitControl.onMouseDown(xx, yy);
+    this.orbitControl.onMouseDown(xx, yy, ctrlKey);
     const x =  Math.round(xx);
     const y =  Math.round(yy);
     if (this.mouseupflag === true) {
