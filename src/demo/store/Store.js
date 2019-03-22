@@ -25,9 +25,9 @@ export const initialState = {
   sliderBrightness: 0.56,
   sliderCut: 1.0,
   sliderQuality: 0.35,
-  sliderErRadius: 0.5,
-  sliderErDepth: 0.5,
-  ereaseStart: false,
+  sliderErRadius: 50.0,
+  sliderErDepth: 50.0,
+  volumeRenderer: null,
   indexTools2d: 0,
 };
 //

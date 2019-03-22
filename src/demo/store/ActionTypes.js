@@ -20,7 +20,7 @@ const StoreActionType = {
   SET_SLIDER_Quality: 15,
   SET_SLIDER_ErRadius: 16,
   SET_SLIDER_ErDepth: 17,
-  SET_EREASE_START: 18,
+  SET_VOLUME_Renderer: 18,
   SET_2D_TOOLS_INDEX: 19,
 };
 export default StoreActionType;
