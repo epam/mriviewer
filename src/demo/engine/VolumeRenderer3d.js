@@ -215,6 +215,7 @@ export default class VolumeRenderer3d {
     this.isEraseMode = false;
     this.eraserRadius = 10;
     this.eraserDepth = 20;
+    this.eraserSrart = false;
     this.lockEraserBuffersUpdating = false;
     this.eraserMouseDown = false;
     this.mouseupflag = true;
@@ -1506,8 +1507,12 @@ export default class VolumeRenderer3d {
     this.eraserDepth = depth;
     //console.log(`Eraser depth: ${this.eraserDepth}`);
   }
-  onMouseDown(xx, yy, ctrlKey) {
-    this.orbitControl.onMouseDown(xx, yy, ctrlKey);
+  setEraserStart(isOn) {
+    this.eraserStart = isOn;
+    //console.log(`Eraser depth: ${this.eraserDepth}`);
+  }
+  onMouseDown(xx, yy) {
+    this.orbitControl.onMouseDown(xx, yy);
     const x =  Math.round(xx);
     const y =  Math.round(yy);
     if (this.mouseupflag === true) {
@@ -1519,7 +1524,7 @@ export default class VolumeRenderer3d {
 
     this.renderState = this.RENDER_STATE.ENABLED;
     this.eraserMouseDown = true;
-    if (this.isEraseMode && ctrlKey) {
+    if (this.isEraseMode && this.eraserStart) {
       if (this.renderScene === SCENE_TYPE_RAYCAST) {
         const OFF0 = 0;
         const OFF1 = 1;
@@ -1567,7 +1572,7 @@ export default class VolumeRenderer3d {
         }
       }
     }
-    if (this.isSculptingMode && ctrlKey) {
+    if (this.isSculptingMode && this.eraserStart) {
       /*
       const OFF0 = 0;
       const OFF1 = 1;
@@ -1713,8 +1718,7 @@ export default class VolumeRenderer3d {
       // console.log(`Captured mouse click coord = : ${x}, ${y}`);
     }
   }
-  onMouseMove(xx, yy, ctrlKey) {
-    this.orbitControl.onMouseMove(xx, yy);
+  onMouseMove(xx, yy) {
     const x =  Math.round(xx);
     const y =  Math.round(yy);
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
@@ -1722,7 +1726,11 @@ export default class VolumeRenderer3d {
     }
 
     this.renderState = this.RENDER_STATE.ENABLED;
-    if (this.isEraseMode && this.eraserMouseDown && ctrlKey) {
+    if (!(this.isEraseMode && this.eraserMouseDown && this.eraserStart)) {
+      this.orbitControl.onMouseMove(xx, yy);
+    }
+    else {
+
       if (this.renderScene === SCENE_TYPE_RAYCAST) {
         const OFF0 = 0;
         const OFF1 = 1;
@@ -1765,7 +1773,7 @@ export default class VolumeRenderer3d {
         }
       }
     }
-    if (this.isSculptingMode && ctrlKey && !this.mouseupflag) {
+    if (this.isSculptingMode && this.eraserStart && !this.mouseupflag) {
       if (this.sculptingCapturedIndeces.length === 0) {
         return;
       }

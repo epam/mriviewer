@@ -40,11 +40,11 @@ class UiTF extends React.Component {
   }
   onStartEr() {
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_EREASE_START, ereaseStart: true });
+    store.volumeRenderer.setEraserStart(true);
   }
   onStopEr() {
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_EREASE_START, ereaseStart: false });
+    store.volumeRenderer.setEraserStart(false);
   }
   onUndo() {
     const store = this.props;
