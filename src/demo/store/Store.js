@@ -25,9 +25,10 @@ export const initialState = {
   sliderBrightness: 0.56,
   sliderCut: 1.0,
   sliderQuality: 0.35,
-  sliderErRadius: 50.0,
-  sliderErDepth: 50.0,
-  volumeRenderer: null,
+  sliderErRadius: 0.5,
+  sliderErDepth: 0.5,
+  ereaseStart: false,
+  indexTools2d: 0,
 };
 //
 // App reducer
@@ -64,14 +65,18 @@ const medReducer = (state = initialState, action) => {
     return Object.assign({}, state, { sliderErRadius: action.sliderErRadius });
   case StoreActionType.SET_SLIDER_ErDepth:
     return Object.assign({}, state, { sliderErDepth: action.sliderErDepth });
+  case StoreActionType.SET_EREASE_START:
+    return Object.assign({}, state, { ereaseStart: action.ereaseStart });
   case StoreActionType.SET_SLIDER_Brightness:
     return Object.assign({}, state, { sliderBrightness: action.sliderBrightness });
   case StoreActionType.SET_SLIDER_Cut:
     return Object.assign({}, state, { sliderCut: action.sliderCut });
-  case StoreActionType.SET_VOLUME_Renderer:
-    return Object.assign({}, state, { volumeRenderer: action.volumeRenderer });
   case StoreActionType.SET_SLIDER_Quality:
     return Object.assign({}, state, { sliderQuality: action.sliderQuality });
+  case StoreActionType.SET_2D_TOOLS_INDEX:
+    return Object.assign({}, state, { indexTools2d: action.indexTools2d });
+
+    
   default:
     return state;
   }

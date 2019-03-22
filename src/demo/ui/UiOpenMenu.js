@@ -82,9 +82,9 @@ class UiOpenMenu extends React.Component {
     }
     // invoke notification
     const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_VOLUME, volume: vol });
     store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
     store.dispatch({ type: StoreActionType.SET_FILENAME, fileName: fileNameIn });
-    store.dispatch({ type: StoreActionType.SET_VOLUME, volume: vol });
     const tex3d = new Texture3D();
     tex3d.createFromRawVolume(vol);
     store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });

@@ -15,6 +15,7 @@ import { connect } from 'react-redux';
 import UiCtrl2d from './UiCtrl2d';
 import Graphics2d from '../engine/Graphics2d';
 import UiHistogram from './UiHistogram';
+import UiTools2d from './UiTools2d';
 
 // ********************************************************
 // Const
@@ -38,6 +39,7 @@ class UiMain2d extends React.Component {
     const jsxMain2d = <div className="row">
       <div className="col-md-4">
         <UiCtrl2d />
+        <UiTools2d />
         <UiHistogram volume={vol}/>
       </div>
       <div className="col-md-8">

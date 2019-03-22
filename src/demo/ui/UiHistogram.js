@@ -74,25 +74,18 @@ export default class UiHistogram extends React.Component {
     this.m_numColors = numColors;
     this.m_histogram = histogramArray;
   }
-  getLastMaxIndex() {
-    let maxVal = 0;
+  getLastMaxIndex(valMin = 0.0) {
     const IND_MIN = 4;
     let i;
-    for (i = IND_MIN; i < this.m_numColors; i++) {
-      maxVal = (this.m_histogram[i] > maxVal) ? this.m_histogram[i] : maxVal;
-    } // for (i) all colors
-    // const MAX_V = maxVal * 0.3;
-
-    // for (i = 0; i < this.m_numColors; i++) {
-    //   console.log(`hist[ ${i} ] = ${this.m_histogram[i]}`);
-    // }
 
     let found = false;
     for (i = this.m_numColors - IND_MIN; i > IND_MIN; i--) {
-      if ((this.m_histogram[i] > this.m_histogram[i - 2]) && 
-        (this.m_histogram[i] > this.m_histogram[i + 2])) {
-        found = true; break;
-      }
+      if (this.m_histogram[i] > valMin) {
+        if ((this.m_histogram[i] > this.m_histogram[i - 2]) && 
+          (this.m_histogram[i] > this.m_histogram[i + 2])) {
+          found = true; break;
+        } // if local maximum
+      } // if mor min
     } // for (i)
     if (!found) {
       console.log(`getLastMaxIndex. Not found!`);
@@ -122,7 +115,7 @@ export default class UiHistogram extends React.Component {
       } // if (ha slocal peak)
     } // for (all colors to scan) 
   }
-  smoothHistogram(sigma = 1.2) {
+  smoothHistogram(sigma = 1.2, needNormalize = true) {
     const SIZE_DIV = 60;
     let RAD = Math.floor(this.m_numColors / SIZE_DIV);
     // avoid too large neighbourhood window size
@@ -154,9 +147,15 @@ export default class UiHistogram extends React.Component {
       newHist[i] = sum;
     } // for (i)
     // copy back to hist
-    for (i = 0; i < this.m_numColors; i++) {
-      this.m_histogram[i] = newHist[i] / maxVal;
-    } // for (i)
+    if (needNormalize) {
+      for (i = 0; i < this.m_numColors; i++) {
+        this.m_histogram[i] = newHist[i] / maxVal;
+      } // for (i)
+    } else {
+      for (i = 0; i < this.m_numColors; i++) {
+        this.m_histogram[i] = newHist[i];
+      } // for (i)
+    }
 
   } // smoothHistogram
   updateCanvas() {

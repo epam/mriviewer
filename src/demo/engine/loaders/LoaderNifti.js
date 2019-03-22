@@ -175,9 +175,9 @@ class LoaderNifti {
     // read number of dimensions
     const numDimensions = LoaderNifti.readShortFromBuffer(bufBytes, bufOff);
     bufOff += SIZE_SHORT;
-    const NUM_DIMS = 3;
-    if (numDimensions !== NUM_DIMS) {
-      console.log(`Nifti header wrong num dimensions: ${numDimensions}, but should be 3`);
+    const MIN_NUM_DIMS = 3;
+    if (numDimensions < MIN_NUM_DIMS) {
+      console.log(`Nifti header wrong num dimensions: ${numDimensions}, but should be at least 3`);
       if (callbackComplete) {
         callbackComplete(LoadResult.WRONG_HEADER_DIMENSIONS, null, 0, null);
       }
@@ -206,17 +206,34 @@ class LoaderNifti {
     const bitPix = LoaderNifti.readShortFromBuffer(bufBytes, bufOff);
     bufOff += SIZE_SHORT;
 
-    const DATA_TYPE_SUPPORED = 4;
-    if (dataType !== DATA_TYPE_SUPPORED) {
-      console.log('Nifti header wrong data type');
+    const NIFTI_DATA_TYPE_UINT8 = 2;
+    const NIFTI_DATA_TYPE_INT16 = 4;
+    const NIFTI_DATA_TYPE_FLOAT32 = 16;
+    const NIFTI_DATA_TYPE_INT8 = 256;
+    const NIFTI_DATA_TYPE_UINT16 = 512;
+
+    let isDataTypeCorrect = 0;
+    isDataTypeCorrect |= (dataType === NIFTI_DATA_TYPE_UINT8);
+    isDataTypeCorrect |= (dataType === NIFTI_DATA_TYPE_INT16);
+    isDataTypeCorrect |= (dataType === NIFTI_DATA_TYPE_FLOAT32);
+    isDataTypeCorrect |= (dataType === NIFTI_DATA_TYPE_INT8);
+    isDataTypeCorrect |= (dataType === NIFTI_DATA_TYPE_UINT16);
+  
+
+    if (!isDataTypeCorrect) {
+      console.log(`Nifti header read. This data type (${dataType}) is not supported`);
       if (callbackComplete) {
         callbackComplete(LoadResult.WRONG_HEADER_DATA_TYPE, null, 0, null);
       }
       return false;
     }
-    const BIT_PIXELS_SUPPORTED = 16;
-    if (bitPix !== BIT_PIXELS_SUPPORTED) {
-      console.log(`Nifti wrong bitPix: ${bitPix}, but should be 16`);
+    const BIT_PIXELS_8 = 8;
+    const BIT_PIXELS_16 = 16;
+    const BIT_PIXELS_32 = 32;
+    const isSupported = (bitPix === BIT_PIXELS_8) | 
+      (bitPix === BIT_PIXELS_16) | (bitPix === BIT_PIXELS_32);
+    if (!isSupported) {
+      console.log(`Nifti wrong bitPix: ${bitPix}, but should be 8,16 or 32`);
       if (callbackComplete) {
         callbackComplete(LoadResult.WRONG_HEADER_BITS_PER_PIXEL, null, 0, null);
       }
@@ -327,73 +344,105 @@ class LoaderNifti {
     }
     const progressMask = (1 << pwr2) - 1;
 
-    let j;
+    let i, j;
     // scan min max in array
     let valMax = 0;
     j = 0;
-    for (let i = 0; i < numVoxels; i++) {
-      const val = LoaderNifti.readShortFromBuffer(bufBytes, dataOff + j);
-      // eslint-disable-next-line
-      j += 2;
-      if (val > valMax) {
-        valMax = val;
-      }
-      // progress update
-      if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
-        const ratio = 0.0 + 0.5 * (i / numVoxels);
-        callbackProgress(ratio);
-      }
-    } // for (i) al voxels
+    if ((dataType === NIFTI_DATA_TYPE_INT16) || (dataType === NIFTI_DATA_TYPE_UINT16)) {
+      for (i = 0; i < numVoxels; i++) {
+        const val = LoaderNifti.readShortFromBuffer(bufBytes, dataOff + j);
+        // eslint-disable-next-line
+        j += 2;
+        if (val > valMax) {
+          valMax = val;
+        }
+        // progress update
+        if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
+          const ratio = 0.0 + 0.5 * (i / numVoxels);
+          callbackProgress(ratio);
+        }
+      } // for (i) al voxels
+    }
+    if ((dataType === NIFTI_DATA_TYPE_INT8) || (dataType === NIFTI_DATA_TYPE_UINT8)) {
+      for (i = 0; i < numVoxels; i++) {
+        const val = bufBytes[dataOff + j];
+        // eslint-disable-next-line
+        j ++;
+        if (val > valMax) {
+          valMax = val;
+        }
+        // progress update
+        if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
+          const ratio = 0.0 + 0.5 * (i / numVoxels);
+          callbackProgress(ratio);
+        }
+      } // for (i) al voxels
+    }
+    if (dataType === NIFTI_DATA_TYPE_FLOAT32) {
+      for (i = 0; i < numVoxels; i++) {
+        const fval = LoaderNifti.readFloatFromBuffer(bufBytes, dataOff + j);
+        const val = Math.floor(fval) + 1;
+        // eslint-disable-next-line
+        j += 4;
+        if (val > valMax) {
+          valMax = val;
+        }
+        // progress update
+        if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
+          const ratio = 0.0 + 0.5 * (i / numVoxels);
+          callbackProgress(ratio);
+        }
+      } // for (i) al voxels
+    }
+
     // console.log(`Nifti 16 data max val: ${valMax}`);
 
     // create histogram
     // const histArray = new Int32Array(valMax);
-    const histArray = new Array(valMax);
-    for (let i = 0; i < valMax; i++) {
-      histArray[i] = 0;
+    const histArray = new Float32Array(valMax + 1);
+    for (i = 0; i < valMax + 1; i++) {
+      histArray[i] = 0.0;
     }
     j = 0;
-    for (let i = 0; i < numVoxels; i++) {
-      const val = LoaderNifti.readShortFromBuffer(bufBytes, dataOff + j);
-      // eslint-disable-next-line
-      j += 2;
-      histArray[val] += 1;
-    }
+    if ((dataType === NIFTI_DATA_TYPE_INT16) || (dataType === NIFTI_DATA_TYPE_UINT16)) {
+      for (i = 0; i < numVoxels; i++) {
+        const val = LoaderNifti.readShortFromBuffer(bufBytes, dataOff + j);
+        // eslint-disable-next-line
+        j += 2;
+        histArray[val] ++;
+      }
+    } // if
+    if (dataType === NIFTI_DATA_TYPE_FLOAT32) {
+      for (i = 0; i < numVoxels; i++) {
+        const val = Math.floor(LoaderNifti.readFloatFromBuffer(bufBytes, dataOff + j));
+        // eslint-disable-next-line
+        j += 4;
+        histArray[val] ++;
+      }
+    } // if
+    if ((dataType === NIFTI_DATA_TYPE_INT8) || (dataType === NIFTI_DATA_TYPE_UINT8)) {
+      for (i = 0; i < numVoxels; i++) {
+        const val = bufBytes[dataOff + j];
+        // eslint-disable-next-line
+        j ++;
+        histArray[val] ++;
+      }
+    } // if
 
     const histogram = new UiHistogram();
     histogram.assignArray(valMax, histArray);
 
-    //const indNonSmoothedMax = histogram.getLastMaxIndex();
-    //console.log(`LoaderNifti. get Last max peak: ${indNonSmoothedMax} / ${histogram.m_numColors}`);
-
-
-    /*
-    const histSmooothed = new Int32Array(valMax);
     const HIST_SMOOTH_SIGMA = 0.8;
-    const okBuild = VolumeTools.buildSmoothedHistogram(histogram, histSmooothed, valMax, HIST_SMOOTH_SIGMA);
-    if (okBuild !== 1) {
-      console.log('Error build histogram');
-      return false;
-    }
-    */
+    const NORMALIZATION_APPLY = false;
+    histogram.smoothHistogram(HIST_SMOOTH_SIGMA, NORMALIZATION_APPLY);
 
-    const HIST_SMOOTH_SIGMA = 0.8;
-    histogram.smoothHistogram(HIST_SMOOTH_SIGMA);
+    // print histogram values
+    // for (i = 0; i < histogram.m_numColors; i++) {
+    //   console.log(`hist[ ${i} ] = ${histogram.m_histogram[i]}`);
+    // }
 
-    /*
-    // find last max in smoothed histogram
-    const MAX_VALUE_IN_HISTOGRAM = 325;
-    let indMax;
-    const HIST_RANGE_CHECK = 4;
-    for (indMax = valMax - 1; indMax > HIST_RANGE_CHECK; indMax--) {
-      if (histSmooothed[indMax - 1] >= MAX_VALUE_IN_HISTOGRAM) {
-        break;
-      }
-    } // for (indMax)
-    // console.log(`Nifti smooth hist max peak: ${indMax}`);
-    */
-
-    const indMax = histogram.getLastMaxIndex();
+    const VAL_MIN = 4.0;
+    const indMax = histogram.getLastMaxIndex(VAL_MIN);
     console.log(`LoaderNifti. get Last max peak: ${indMax} / ${histogram.m_numColors}`);
 
     // replace val max to extracted maximum from histogram
@@ -414,21 +463,59 @@ class LoaderNifti {
       return false;
     }
     j = 0;
-    for (let i = 0; i < numVoxels; i++) {
-      let val = LoaderNifti.readShortFromBuffer(bufBytes, dataOff + j);
-      // eslint-disable-next-line
-      j += 2;
-      // scale down to [0..255]
-      val = (val * scale) >> ACC_DEGREE;
-      // check [0..255] range for some voxels out from histogram peak
-      val = (val <= MAX_BYTE) ? val : MAX_BYTE;
-      dataArray[i] = val;
-      // progress update
-      if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
-        const ratio = 0.5 + 0.5 * (i / numVoxels);
-        callbackProgress(ratio);
-      }
-    } // for (i) all voxels
+    if ((dataType === NIFTI_DATA_TYPE_INT16) || (dataType === NIFTI_DATA_TYPE_UINT16)) {
+      for (i = 0; i < numVoxels; i++) {
+        let val = LoaderNifti.readShortFromBuffer(bufBytes, dataOff + j);
+        // eslint-disable-next-line
+        j += 2;
+        // scale down to [0..255]
+        val = (val * scale) >> ACC_DEGREE;
+        // check [0..255] range for some voxels out from histogram peak
+        val = (val <= MAX_BYTE) ? val : MAX_BYTE;
+        dataArray[i] = val;
+        // progress update
+        if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
+          const ratio = 0.5 + 0.5 * (i / numVoxels);
+          callbackProgress(ratio);
+        }
+      } // for (i) all voxels
+    } // if 16 bit
+    if ((dataType === NIFTI_DATA_TYPE_INT8) || (dataType === NIFTI_DATA_TYPE_UINT8)) {
+      for (i = 0; i < numVoxels; i++) {
+        let val = bufBytes[dataOff + j];
+        // eslint-disable-next-line
+        j ++;
+        // scale down to [0..255]
+        val = (val * scale) >> ACC_DEGREE;
+        // check [0..255] range for some voxels out from histogram peak
+        val = (val <= MAX_BYTE) ? val : MAX_BYTE;
+        dataArray[i] = val;
+        // progress update
+        if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
+          const ratio = 0.5 + 0.5 * (i / numVoxels);
+          callbackProgress(ratio);
+        }
+      } // for (i) all voxels
+    } // if 8 bit
+    if (dataType === NIFTI_DATA_TYPE_FLOAT32) {
+      for (i = 0; i < numVoxels; i++) {
+        let val = Math.floor(LoaderNifti.readFloatFromBuffer(bufBytes, dataOff + j));
+        // eslint-disable-next-line
+        j += 4;
+        // scale down to [0..255]
+        val = (val * scale) >> ACC_DEGREE;
+        // check [0..255] range for some voxels out from histogram peak
+        val = (val <= MAX_BYTE) ? val : MAX_BYTE;
+        dataArray[i] = val;
+        // progress update
+        if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
+          const ratio = 0.5 + 0.5 * (i / numVoxels);
+          callbackProgress(ratio);
+        }
+      } // for (i) all voxels
+    } // if 16 bit
+
+
     let xyDim = this.m_xDim * this.m_yDim;
     /*
     // Scale down volume by slices

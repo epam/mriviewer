@@ -13,6 +13,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Modes2d from '../store/Modes2d';
+import ToolPick from './tools2d//ToolPick';
+import Tools2dType from './tools2d/ToolTypes';
+
+// import { timingSafeEqual } from 'crypto';
 
 // ********************************************************
 // Const
@@ -32,8 +36,15 @@ class Graphics2d extends React.Component {
   constructor(props) {
     super(props);
 
+    this.onMouseDown = this.onMouseDown.bind(this);
+
     this.m_sliceRatio = 0.5;
     this.m_mode2d = Modes2d.TRANSVERSE;
+
+    // scale
+    this.m_zoom = 1;
+    this.m_xPos = 0;
+    this.m_yPos = 0;
 
     // animation
     this.animate = this.animate.bind(this);
@@ -44,6 +55,8 @@ class Graphics2d extends React.Component {
       hRender: 0,
     };
 
+    // tools2d
+    this.m_toolPick = new ToolPick(this);
   }
   start() {
     if (this.m_frameId === null) {
@@ -67,6 +80,12 @@ class Graphics2d extends React.Component {
     if (this.state.wRender === 0) {
       this.setState({ wRender: w });
       this.setState({ hRender: h });
+
+      // tools 2d setup
+      const vol = this.props.volume;
+      console.log(`gra2d. vol = ${vol}`);
+      this.m_toolPick.setScreenDim(w, h);
+      this.m_toolPick.setVolume(vol);
     }
   }
   componentWillUnmount() {
@@ -216,9 +235,40 @@ class Graphics2d extends React.Component {
       }
 
       ctx.putImageData(imgData, 0, 0); 
+      // render all tools
+      this.m_toolPick.render(ctx);
 
     } // if not empty vol
   } // render scene
+  onMouseDown(evt) {
+    const box = this.m_mount.getBoundingClientRect();
+    const xContainer = evt.clientX - box.left;
+    const yContainer = evt.clientY - box.top;
+    const xScr = xContainer;
+    // const yScr = this.state.hRender - yContainer;
+    const yScr = yContainer;
+    console.log(`onMouseDown. down = ${xScr}, ${yScr}`);
+
+    const store = this.props;
+    const indexTools2d = store.indexTools2d;
+    console.log(`onMouseDown. tool index = ${indexTools2d}`);
+
+    const mode2d = store.mode2d;
+    const sliceRatio = store.slider2d;
+
+    switch (indexTools2d) {
+    case Tools2dType.INTENSITY:
+      this.m_toolPick.onMouseDown(xScr, yScr, mode2d, sliceRatio, this.m_zoom, this.m_xPos, this.m_yPos);
+      break;
+    default:
+      // not defined
+    } // switch
+    // force update
+    this.forceUpdate();
+  } // onMouseDown
+  forceUpdate() {
+    this.setState({ state: this.state });
+  }
   /**
    * Main component render func callback
    */
@@ -236,7 +286,7 @@ class Graphics2d extends React.Component {
     };
 
     const jsxGrapNonSized = <canvas ref={ (mount) => {this.m_mount = mount} } style={styleObj} />
-    const jsxGrapSized = <canvas ref={ (mount) => {this.m_mount = mount} } width={this.state.wRender} height={this.state.hRender} />
+    const jsxGrapSized = <canvas ref={ (mount) => {this.m_mount = mount} } width={this.state.wRender} height={this.state.hRender} onMouseDown={this.onMouseDown} />
     const jsx = (this.state.wRender > 0) ? jsxGrapSized : jsxGrapNonSized;
     return jsx;
   }
