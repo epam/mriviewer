@@ -22,5 +22,8 @@ const StoreActionType = {
   SET_SLIDER_ErDepth: 17,
   SET_VOLUME_Renderer: 18,
   SET_2D_TOOLS_INDEX: 19,
+  SET_2D_ZOOM: 20,
+  SET_2D_X_POS: 21,
+  SET_2D_Y_POS: 22,
 };
 export default StoreActionType;

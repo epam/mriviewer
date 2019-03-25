@@ -48,8 +48,14 @@ class UiTools2d extends React.Component {
       const store = this.props;
       store.dispatch({ type: StoreActionType.SET_2D_TOOLS_INDEX, indexTools2d: idx });
       // console.log(`UiTools2d. onClickButton index = ${idx}`);
-    }
-  }
+      if( idx === Tools2dType.DEFAULT) {
+        store.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: 1.0 });
+        store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: 0.0 });
+        store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: 0.0 });
+      }
+
+    } // if button index valid
+  } // end of onClickButtonTools
   render() {
     const strTitle = 'Tools';
 

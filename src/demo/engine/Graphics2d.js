@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 
 import Modes2d from '../store/Modes2d';
 import ToolPick from './tools2d//ToolPick';
+import ToolZoom from './tools2d//ToolZoom';
 import Tools2dType from './tools2d/ToolTypes';
 
 // import { timingSafeEqual } from 'crypto';
@@ -37,6 +38,9 @@ class Graphics2d extends React.Component {
     super(props);
 
     this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
+    this.onMouseWheel = this.onMouseWheel.bind(this);
 
     this.m_sliceRatio = 0.5;
     this.m_mode2d = Modes2d.TRANSVERSE;
@@ -53,10 +57,14 @@ class Graphics2d extends React.Component {
     this.state = {
       wRender: 0,
       hRender: 0,
+      stateMouseDown: false,
+      xMouse: -1,
+      yMouse: -1,
     };
 
     // tools2d
     this.m_toolPick = new ToolPick(this);
+    this.m_toolZoom = new ToolZoom(this);
   }
   start() {
     if (this.m_frameId === null) {
@@ -86,6 +94,8 @@ class Graphics2d extends React.Component {
       console.log(`gra2d. vol = ${vol}`);
       this.m_toolPick.setScreenDim(w, h);
       this.m_toolPick.setVolume(vol);
+      this.m_toolZoom.setScreenDim(w, h);
+      this.m_toolZoom.setVolume(vol);
     }
   }
   componentWillUnmount() {
@@ -157,19 +167,21 @@ class Graphics2d extends React.Component {
         console.log(`Bad dst data len = ${dataDst.length}, but expect ${w}*${h}*4`);
       }
 
-      
+      const xPos = store.render2dxPos;
+      const yPos = store.render2dyPos;
+      const zoom = store.render2dZoom;
       if (mode2d === Modes2d.TRANSVERSE) {
         // z slice
         const zSlice = Math.floor(zDim * sliceRatio);
         const zOff = zSlice * xyDim;
-        const xStep = xDim / w
-        const yStep = yDim / h;
+        const xStep = zoom * xDim / w
+        const yStep = zoom * yDim / h;
         let j = 0;
-        let ay = 0.0;
+        let ay = yPos;
         for (let y = 0; y < h; y++, ay += yStep) {
           const ySrc = Math.floor(ay);
           const yOff = ySrc * xDim;
-          let ax = 0.0;
+          let ax = xPos;
           for (let x = 0; x < w; x++, ax += xStep) {
             const xSrc = Math.floor(ax);
             const val = dataSrc[zOff + yOff + xSrc];
@@ -240,14 +252,40 @@ class Graphics2d extends React.Component {
 
     } // if not empty vol
   } // render scene
+  onMouseWheel(evt) {
+    const store = this.props;
+    const indexTools2d = store.indexTools2d;
+    if (indexTools2d === Tools2dType.ZOOM) {
+      this.m_toolZoom.onMouseWheel(store, evt);
+    }
+  }
+  onMouseUp(evt) {
+    const store = this.props;
+    const indexTools2d = store.indexTools2d;
+    if (indexTools2d === Tools2dType.ZOOM) {
+      this.m_toolZoom.onMouseUp();
+    }
+  }
+  onMouseMove(evt) {
+    const store = this.props;
+    const indexTools2d = store.indexTools2d;
+    const box = this.m_mount.getBoundingClientRect();
+    const xContainer = evt.clientX - box.left;
+    const yContainer = evt.clientY - box.top;
+    const xScr = xContainer;
+    const yScr = yContainer;
+
+    if (indexTools2d === Tools2dType.ZOOM) {
+      this.m_toolZoom.onMouseMove(store, xScr, yScr);
+    }
+  }
   onMouseDown(evt) {
     const box = this.m_mount.getBoundingClientRect();
     const xContainer = evt.clientX - box.left;
     const yContainer = evt.clientY - box.top;
     const xScr = xContainer;
-    // const yScr = this.state.hRender - yContainer;
     const yScr = yContainer;
-    console.log(`onMouseDown. down = ${xScr}, ${yScr}`);
+    // console.log(`onMouseDown. down = ${xScr}, ${yScr}`);
 
     const store = this.props;
     const indexTools2d = store.indexTools2d;
@@ -259,6 +297,9 @@ class Graphics2d extends React.Component {
     switch (indexTools2d) {
     case Tools2dType.INTENSITY:
       this.m_toolPick.onMouseDown(xScr, yScr, mode2d, sliceRatio, this.m_zoom, this.m_xPos, this.m_yPos);
+      break;
+    case Tools2dType.ZOOM:
+      this.m_toolZoom.onMouseDown(xScr, yScr);
       break;
     default:
       // not defined
@@ -286,7 +327,8 @@ class Graphics2d extends React.Component {
     };
 
     const jsxGrapNonSized = <canvas ref={ (mount) => {this.m_mount = mount} } style={styleObj} />
-    const jsxGrapSized = <canvas ref={ (mount) => {this.m_mount = mount} } width={this.state.wRender} height={this.state.hRender} onMouseDown={this.onMouseDown} />
+    const jsxGrapSized = <canvas ref={ (mount) => {this.m_mount = mount} } width={this.state.wRender} height={this.state.hRender}
+      onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onMouseMove={this.onMouseMove} onWheel={this.onMouseWheel} />
     const jsx = (this.state.wRender > 0) ? jsxGrapSized : jsxGrapNonSized;
     return jsx;
   }

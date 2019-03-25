@@ -11,6 +11,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import SaverNifti from '../engine/savers/SaverNifti';
+
 // ********************************************************
 // Const
 // ********************************************************
@@ -33,9 +35,44 @@ class UiSaveMenu extends React.Component {
   // invoked after render
   componentDidMount() {
   }
+  // invoked on save nifti file format
   onSaveNifti() {
+    const store = this.props;
+    const vol = store.volume;
+    const xDim = vol.m_xDim;
+    const yDim = vol.m_yDim;
+    const zDim = vol.m_zDim;
+    const xBox = vol.m_boxSize.x;
+    const yBox = vol.m_boxSize.y;
+    const zBox = vol.m_boxSize.z;
+    const volSize = {
+      x: xDim,
+      y: yDim,
+      z: zDim,
+      pixdim1: xBox / xDim,
+      pixdim2: yBox / yDim,
+      pixdim3: zBox / zDim,
+    };
+    const volData = vol.m_dataArray;
+    const niiArr = SaverNifti.writeBuffer(volData, volSize);
+    const textToSaveAsBlob = new Blob([niiArr], { type: 'application/octet-stream' });
+    const textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+    // TODO !!!!!!!
+    const fileName = `test_save.nii`;
 
-  }
+    const downloadLink = document.createElement('a');
+    downloadLink.download = fileName;
+    downloadLink.innerHTML = 'Download File';
+    downloadLink.href = textToSaveAsURL;
+    downloadLink.onclick = event => document.body.removeChild(event.target);
+    downloadLink.style.display = 'none';
+    document.body.appendChild(downloadLink);
+
+    downloadLink.click();
+
+
+
+  } // end on save nifti
   render() {
     const store = this.props;
     const isLoaded = store.isLoaded;
@@ -60,4 +97,5 @@ class UiSaveMenu extends React.Component {
 }
 
 export default connect(store => store)(UiSaveMenu);
+
 

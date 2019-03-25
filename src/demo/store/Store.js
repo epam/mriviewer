@@ -29,6 +29,9 @@ export const initialState = {
   sliderErDepth: 50.0,
   volumeRenderer: null,
   indexTools2d: 0,
+  render2dZoom: 1.0,
+  render2dxPos: 0.0,
+  render2dyPos: 0.0,
 };
 //
 // App reducer
@@ -75,8 +78,12 @@ const medReducer = (state = initialState, action) => {
     return Object.assign({}, state, { sliderQuality: action.sliderQuality });
   case StoreActionType.SET_2D_TOOLS_INDEX:
     return Object.assign({}, state, { indexTools2d: action.indexTools2d });
-
-    
+  case StoreActionType.SET_2D_ZOOM:
+    return Object.assign({}, state, { render2dZoom: action.render2dZoom });
+  case StoreActionType.SET_2D_X_POS:
+    return Object.assign({}, state, { render2dxPos: action.render2dxPos });
+  case StoreActionType.SET_2D_Y_POS:
+    return Object.assign({}, state, { render2dyPos: action.render2dyPos });
   default:
     return state;
   }
