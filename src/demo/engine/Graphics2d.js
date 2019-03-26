@@ -170,6 +170,7 @@ class Graphics2d extends React.Component {
       const xPos = store.render2dxPos;
       const yPos = store.render2dyPos;
       const zoom = store.render2dZoom;
+      // console.log(`Gra2d. RenderScene. zoom=${zoom}, xyPos=${xPos}, ${yPos}`);
       if (mode2d === Modes2d.TRANSVERSE) {
         // z slice
         const zSlice = Math.floor(zDim * sliceRatio);
@@ -177,11 +178,11 @@ class Graphics2d extends React.Component {
         const xStep = zoom * xDim / w
         const yStep = zoom * yDim / h;
         let j = 0;
-        let ay = yPos;
+        let ay = yPos * yDim;
         for (let y = 0; y < h; y++, ay += yStep) {
           const ySrc = Math.floor(ay);
           const yOff = ySrc * xDim;
-          let ax = xPos;
+          let ax = xPos * xDim;
           for (let x = 0; x < w; x++, ax += xStep) {
             const xSrc = Math.floor(ax);
             const val = dataSrc[zOff + yOff + xSrc];
@@ -289,7 +290,7 @@ class Graphics2d extends React.Component {
 
     const store = this.props;
     const indexTools2d = store.indexTools2d;
-    console.log(`onMouseDown. tool index = ${indexTools2d}`);
+    // console.log(`onMouseDown. tool index = ${indexTools2d}`);
 
     const mode2d = store.mode2d;
     const sliceRatio = store.slider2d;

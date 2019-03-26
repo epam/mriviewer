@@ -11,7 +11,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import SaverNifti from '../engine/savers/SaverNifti';
+import UiModalSaveNifti from './UiModalSaveNifti';
 
 // ********************************************************
 // Const
@@ -30,49 +30,27 @@ class UiSaveMenu extends React.Component {
    */
   constructor(props) {
     super(props);
-    this.onSaveNifti = this.onSaveNifti.bind(this);
+
+    this.onModalSaveNiftiShow = this.onModalSaveNiftiShow.bind(this);
+    this.onModalSaveNiftiHide = this.onModalSaveNiftiHide.bind(this);
+
+    this.state = {
+      showModalSaveNifti: false,
+    };
   }
   // invoked after render
   componentDidMount() {
   }
-  // invoked on save nifti file format
-  onSaveNifti() {
-    const store = this.props;
-    const vol = store.volume;
-    const xDim = vol.m_xDim;
-    const yDim = vol.m_yDim;
-    const zDim = vol.m_zDim;
-    const xBox = vol.m_boxSize.x;
-    const yBox = vol.m_boxSize.y;
-    const zBox = vol.m_boxSize.z;
-    const volSize = {
-      x: xDim,
-      y: yDim,
-      z: zDim,
-      pixdim1: xBox / xDim,
-      pixdim2: yBox / yDim,
-      pixdim3: zBox / zDim,
-    };
-    const volData = vol.m_dataArray;
-    const niiArr = SaverNifti.writeBuffer(volData, volSize);
-    const textToSaveAsBlob = new Blob([niiArr], { type: 'application/octet-stream' });
-    const textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-    // TODO !!!!!!!
-    const fileName = `test_save.nii`;
-
-    const downloadLink = document.createElement('a');
-    downloadLink.download = fileName;
-    downloadLink.innerHTML = 'Download File';
-    downloadLink.href = textToSaveAsURL;
-    downloadLink.onclick = event => document.body.removeChild(event.target);
-    downloadLink.style.display = 'none';
-    document.body.appendChild(downloadLink);
-
-    downloadLink.click();
-
-
-
-  } // end on save nifti
+  onModalSaveNiftiShow() {
+    this.setState({ showModalSaveNifti: true });
+  }
+  onModalSaveNiftiHide() {
+    this.setState({ showModalSaveNifti: false });
+    // console.log('onModalSaveNiftiHide...');
+  }
+  //
+  // render
+  //
   render() {
     const store = this.props;
     const isLoaded = store.isLoaded;
@@ -85,11 +63,12 @@ class UiSaveMenu extends React.Component {
           Save
         </button>
         <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <button className="dropdown-item" type="button" onClick={evt => this.onSaveNifti(evt)} >
+          <button className="dropdown-item" type="button" onClick={evt => this.onModalSaveNiftiShow(evt)} >
             <i className="fas fa-globe"></i>
             Save to Nifti
           </button>
         </div>
+        <UiModalSaveNifti stateVis={this.state.showModalSaveNifti} onHide={this.onModalSaveNiftiHide} />
       </div>
 
     return jsxSaveMenu;

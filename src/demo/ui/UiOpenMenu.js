@@ -73,7 +73,7 @@ class UiOpenMenu extends React.Component {
       strUrl: '',
       showModalUrl: false,
       showModalDropbox: false,
-      showModalDemo: false
+      showModalDemo: false,
     };
   }
   finalizeSuccessLoadedVolume(vol, fileNameIn) {
@@ -387,7 +387,6 @@ class UiOpenMenu extends React.Component {
 
         <UiModalDemo stateVis={this.state.showModalDemo}
           onHide={this.onModalDemoOpenHide} onSelectDemo={this.onDemoSelected}  />
-
       </NavDropdown>
 
     return jsxOpenMenu;
