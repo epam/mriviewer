@@ -84,7 +84,7 @@ export default class MaterialWC {
           discard;
       #endif
       #if backCullMode == 0
-        if (cullvalue > 0.0)
+        if (cullvalue > 0.001)
           discard;
       #endif
 
@@ -98,7 +98,7 @@ export default class MaterialWC {
       defines: this.m_defines,
       vertexShader: this.m_strShaderVertex,
       fragmentShader: this.m_strShaderFragment,
-      side: THREE.DoubleSide,
+      side: THREE.FrontSide,
       wireframe: true,
       depthTest: false,
       polygonOffset: false,

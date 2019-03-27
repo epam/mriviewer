@@ -27,6 +27,7 @@ import * as THREE from 'three';
 import MaterialBlur from './gfx/matblur';
 import GlSelector from './GlSelector';
 import AmbientTexture from './ambientTexture';
+import TransferTexture from './transferTexture'
 
 const tools3dEraser = {
   TAN: 'tan',
@@ -37,6 +38,7 @@ const tools3dEraser = {
 /** Class Graphics3d is used for 3d render */
 export default class VolumeFilter3d {
   constructor() {
+    this.transferFunc = null;
     this.texVolumeAO = null;
     this.sceneBlur = null;
     this.material = null;
@@ -72,7 +74,6 @@ export default class VolumeFilter3d {
    * @param roiColors Array of roi colors in RGBA format
    */
   initRenderer(isRoiVolume, roiColors) {
-    const c4 = 4;
     this.sceneBlur = new THREE.Scene();
     const blurSigma = 0.8;
     this.numRois = 256;
@@ -96,27 +97,14 @@ export default class VolumeFilter3d {
 
     console.log('rendererBlur done');
     const geometryBlur = new THREE.PlaneGeometry(1.0, 1.0);
-    // eslint-disable-next-line
-    this.selectedROIs = new Uint8Array(c4 * this.numRois);
-    this.numTfPixels = 256;
-    // eslint-disable-next-line
-    this.transferFuncRgba = new Uint8Array(c4 * this.numTfPixels);
     this.rendererBlur.setSize(this.xDim, this.yDim);
     //
-    //const gl = this.rendererBlur.getContext();
-    //this.webglTextureRT = gl.createTexture();
+    this.transferFunc = new TransferTexture();
+    this.transferFunc.init(isRoiVolume, roiColors);
     const texelSize = new THREE.Vector3(1.0 / this.xDim, 1.0 / this.yDim, 1.0 / this.zDim);
-    // remove old mesh
     const matBlur = new MaterialBlur();
-    this.texRoiColor = null;
-    // this.texRoiId = null;
-    // this.RoiVolumeTex = null;
-    if (isRoiVolume) {
-      this.texRoiId = this.createSelectedRoiMap();
-      this.texRoiColor = this.createRoiColorMap(roiColors);
-      console.log('roi volume textures done');
-    }
-    matBlur.create(this.origVolumeTex, this.RoiVolumeTex, texelSize, this.texRoiColor, this.texRoiId, (mat) => {
+
+    matBlur.create(this.origVolumeTex, this.RoiVolumeTex, texelSize, this.transferFunc.texRoiColor, this.transferFunc.texRoiId, (mat) => {
       const mesh = new THREE.Mesh(geometryBlur, mat);
       mat.uniforms.tileCountX.value = this.zDimSqrt;
       mat.uniforms.volumeSizeZ.value = this.zDim;
@@ -142,75 +130,14 @@ export default class VolumeFilter3d {
    * Create 2D texture containing transfer func colors
   */
   createTransferFuncTexture() {
-    let textureOut = null;
-    let alpha = 0;
-    const SCALE = 255;
-    const SCALE1 = 12.0;
-    const SCALE2 = 3.0;
-    const A1 = 0.09;
-    const A2 = 0.2;
-    const A3 = 0.3;
-    const A4 = 0.43;
-    const A5 = 0.53;
-    const a1 = A1 * SCALE;
-    const a2 = A2 * SCALE;
-    const a3 = A3 * SCALE;
-    const a4 = A4 * SCALE;
-    const a5 = A5 * SCALE;
-    const COLOR_R = 255;
-    const COLOR_G = 210;
-    const COLOR_B = 180;
-    const FOUR = 4;
-    for (let pix = 0; pix < this.numTfPixels; pix++) {
-      if (pix > a1 && pix < a2) {
-        alpha = (pix - a1) / (a2 - a1);
-      }
-      if (pix > a2 && pix < a3) {
-        alpha = (a3 - pix) / (a3 - a2);
-      }
-      if (pix > a4 && pix < a5) {
-        alpha = (pix - a4) / (a5 - a4);
-      }
-      if (pix > a5) {
-        alpha = 1;
-      }
-      // eslint-disable-next-line
-      this.transferFuncRgba[pix * FOUR + 0] = SCALE;
-      // eslint-disable-next-line
-      this.transferFuncRgba[pix * FOUR + 1] = 0;
-      // eslint-disable-next-line
-      this.transferFuncRgba[pix * FOUR + 1 + 1] = 0;
-      // eslint-disable-next-line
-      this.transferFuncRgba[pix * FOUR + 1 + 1 + 1] = SCALE * alpha / SCALE1;
-      if (pix > a4) {
-        this.transferFuncRgba[pix * FOUR + 0] = COLOR_R;
-        // eslint-disable-next-line
-        this.transferFuncRgba[pix * FOUR + 1] = COLOR_G;
-        // eslint-disable-next-line
-        this.transferFuncRgba[pix * FOUR + 1 + 1] = COLOR_B;
-        this.transferFuncRgba[pix * FOUR + 1 + 1 + 1] = SCALE * alpha / SCALE2;
-      }
-    }
-    textureOut = new THREE.DataTexture(this.transferFuncRgba, this.numTfPixels, 1, THREE.RGBAFormat);
-
-    textureOut.wrapS = THREE.ClampToEdgeWrapping;
-    textureOut.wrapT = THREE.ClampToEdgeWrapping;
-    textureOut.magFilter = THREE.NearestFilter;
-    textureOut.minFilter = THREE.NearestFilter;
-    textureOut.needsUpdate = true;
-    this.transferFuncTexture = textureOut;
-    return textureOut;
+    return this.transferFunc.createTransferFuncTexture();
   }
   /**
    * Creates transfer function color map
    * @param ctrlPts Array of control points of type HEX  = color value
    */
   setTransferFuncColors(ctrlPtsColorsHex) {
-    this.transferFuncCtrlPtsRgb = [];
-    for (let i = 0; i < ctrlPtsColorsHex.length; i++) {
-      const color = new THREE.Color(ctrlPtsColorsHex[i]);
-      this.transferFuncCtrlPtsRgb.push(new THREE.Vector3(color.r, color.g, color.b));
-    }
+    this.transferFunc.setTransferFuncColors(ctrlPtsColorsHex);
   }
   /**
    * Creates transfer function color map
@@ -218,29 +145,7 @@ export default class VolumeFilter3d {
    * //intensity [0,255] opacity [0,1]
    */
   updateTransferFuncTexture(intensities, opacities) {
-    if (this.transferFuncRgba === null) {
-      return null;
-    }
-    for (let curPt = 0; curPt < intensities.length - 1; curPt++) {
-      const pixStart = Math.floor(intensities[curPt]);
-      const pixEnd = Math.floor(intensities[curPt + 1]);
-      for (let pix = pixStart; pix < pixEnd; pix++) {
-        const lerpVal = (pix - pixStart) / (pixEnd - pixStart);
-        const color = new THREE.Vector3();
-        color.lerpVectors(this.transferFuncCtrlPtsRgb[curPt],
-          this.transferFuncCtrlPtsRgb[curPt + 1], lerpVal);
-        // eslint-disable-next-line
-        this.transferFuncRgba[pix * 4 + 0] = color.x * 255;
-        // eslint-disable-next-line
-        this.transferFuncRgba[pix * 4 + 1] = color.y * 255;
-        // eslint-disable-next-line
-        this.transferFuncRgba[pix * 4 + 2] = color.z * 255;
-        // eslint-disable-next-line
-        this.transferFuncRgba[pix * 4 + 3] = (opacities[curPt + 1] * lerpVal + (1.0 - lerpVal) * opacities[curPt]) * 255;
-      }
-    }
-    this.transferFuncTexture.needsUpdate = true;
-    return this.transferFuncRgba;
+    return this.transferFunc.updateTransferFuncTexture(intensities, opacities);
   }
   /**
    * Setting a variable for conditional compilation (Roi Render)
@@ -267,59 +172,11 @@ export default class VolumeFilter3d {
     }
     console.log('blur material NOT null');
     if (this.isWebGL2 === 0) {
-      this.setVolumeTextureWebGL1(blurSigma);
+      // this.setVolumeTextureWebGL1(blurSigma);
     } else {
       this.setVolumeTextureWebGL2(blurSigma);
     }
     this.updatableTexture.needsUpdate = true;
-  }
-  setVolumeTextureWebGL1(blurSigma) {
-    const VAL_1 = 1;
-    const VAL_2 = 2;
-    const VAL_3 = 3;
-    const VAL_4 = 4;
-    this.material.uniforms.blurSigma.value = blurSigma;
-    this.material.uniforms.blurSigma.needsUpdate = true;
-    const tmpRgba = new Uint8Array(VAL_4 * this.xDim * this.yDim);
-    let k = 0;
-    console.log('Blur WebGL1');
-    const w = this.xDim * this.zDimSqrt;
-    for (let j = 0; j < this.zDimSqrt; j++) {
-      for (let i = 0; i < this.zDimSqrt; i++) {
-        this.material.uniforms.curZ.value = k / this.zDim;
-        k++;
-        if (k > this.zDim) {
-          break;
-        }
-        this.material.uniforms.curZ.needsUpdate = true;
-        //console.log(`curZ: ${k}, ${this.zDimSqrt}, ${this.material.uniforms.curZ.value}, ${this.zDim}`);
-        this.rendererBlur.render(this.sceneBlur, this.cameraOrtho, this.bufferTexture);
-        const gl = this.rendererBlur.getContext();
-        gl.readPixels(0, 0, this.xDim, this.yDim, gl.RGBA, gl.UNSIGNED_BYTE, tmpRgba);
-        const start = i  * this.xDim + j * w * this.yDim;
-        for (let y = 0; y < this.yDim; y++) {
-          for (let x = 0; x < this.xDim; x++) {
-            if (this.isRoiVolume) {
-              const indxL = VAL_4 * (x + y * w  + start);
-              const indxR = VAL_4 * (x + y * this.xDim);
-              //const indxR = VAL_4 * (x + y * this.xDim);
-              //const t = 255.0 * indxR / (VAL_4 * this.xDim * this.yDim);
-
-              this.bufferTextureCPU[indxL] = tmpRgba[indxR];
-              //255.0 * k / this.zDim;//this.bufferR[indxR];//tmpRgba[indxR];
-              this.bufferTextureCPU[indxL + VAL_1] = tmpRgba[indxR + VAL_1];
-              //0.0;//255.0 * k / this.zDim;//this.bufferR[indxR];//tmpRgba[indxR + VAL_1];
-              this.bufferTextureCPU[indxL + VAL_2] = tmpRgba[indxR + VAL_2];
-              //0.0;//255.0 * k / this.zDim;//this.bufferR[indxR];//tmpRgba[indxR + VAL_2];
-              this.bufferTextureCPU[indxL + VAL_3] = tmpRgba[indxR + VAL_3];
-              //255.0 * k / this.zDim;//this.bufferR[indxR];//tmpRgba[indxR + VAL_3];
-            } else {
-              this.bufferTextureCPU[x + y * w  + start] = tmpRgba[VAL_4 * (x + y * this.xDim)]; //256.0 * k / this.zDim;
-            }
-          }
-        }
-      }
-    }
   }
   setVolumeTextureWebGL2(blurSigma) {
     this.material.uniforms.blurSigma.value = blurSigma;
@@ -908,86 +765,23 @@ export default class VolumeFilter3d {
    * @param colorArray 256 RGBA roi colors
    */
   createRoiColorMap(colorArray) {
-    let textureOut = null;
-    if (colorArray !== null) {
-      textureOut = new THREE.DataTexture(colorArray, this.numRois, 1, THREE.RGBAFormat);
-    } else {
-      console.log('No colors found for ROI');
-      // eslint-disable-next-line
-      const colorROIs = new Uint8Array(4 * this.numRois);
-      for (let pix = 0; pix < this.numRois; pix++) {
-        // eslint-disable-next-line
-        colorROIs[pix * 4 + 0] = 255;
-        // eslint-disable-next-line
-        colorROIs[pix * 4 + 1] = 0;
-        // eslint-disable-next-line
-        colorROIs[pix * 4 + 2] = 0;
-        // eslint-disable-next-line
-        colorROIs[pix * 4 + 3] = 255;
-      }
-      textureOut = new THREE.DataTexture(colorROIs, this.numRois, 1, THREE.RGBAFormat);
-    }
-    textureOut.wrapS = THREE.ClampToEdgeWrapping;
-    textureOut.wrapT = THREE.ClampToEdgeWrapping;
-    textureOut.magFilter = THREE.NearestFilter;
-    textureOut.minFilter = THREE.NearestFilter;
-    textureOut.needsUpdate = true;
-    return textureOut;
+    return this.transferFunc.createRoiColorMap(colorArray);
   }
   /**
    * Create 2D texture containing selected ROIs
    * @param colorArray 256 RGBA roi colors
    */
   createSelectedRoiMap() {
-    const a1 = 100;
-    const a2 = 240;
-    const c1 = 1;
-    const c2 = 2;
-    const c3 = 3;
-    const BYTES_IN_COLOR = 4;
-    for (let pix = 0; pix < this.numRois; pix++) {
-      if (pix < a1 || pix > a2) {
-        // eslint-disable-next-line
-        this.selectedROIs[pix * BYTES_IN_COLOR + 0] = 0;
-      } else {
-        // eslint-disable-next-line
-        this.selectedROIs[pix * BYTES_IN_COLOR + 0] = 255;
-      }
-      this.selectedROIs[pix * BYTES_IN_COLOR + c1] = 0;
-      this.selectedROIs[pix * BYTES_IN_COLOR + c2] = 0;
-      this.selectedROIs[pix * BYTES_IN_COLOR + c3] = 0;
-    }
-    const textureOut = new THREE.DataTexture(this.selectedROIs, this.numRois, 1, THREE.RGBAFormat);
-    textureOut.wrapS = THREE.ClampToEdgeWrapping;
-    textureOut.wrapT = THREE.ClampToEdgeWrapping;
-    textureOut.magFilter = THREE.NearestFilter;
-    textureOut.minFilter = THREE.NearestFilter;
-    textureOut.needsUpdate = true;
-    return textureOut;
+    return this.createSelectedRoiMap();
   }
   /**
    * Create 2D texture containing selected ROIs
    * @param selectedROIs 256 byte roi values
    */
   updateSelectedRoiMap(selectedROIs) {
-    const roiTexelBpp = 4;
-    const roiSelectedTrue = 255;
-    const roiSelectedFalse = 0;
-    for (let pix = 0; pix < this.numRois; pix++) {
-      if (selectedROIs[pix]) {
-        this.selectedROIs[pix * roiTexelBpp] = roiSelectedTrue;
-      } else {
-        this.selectedROIs[pix * roiTexelBpp] = roiSelectedFalse;
-      }
-    }
-    // this.material.uniforms.texSegInUse.needsUpdate = true;
-    this.texRoiId.needsUpdate = true;
+    this.transferFunc.updateSelectedRoiMap(selectedROIs);
     this.setVolumeTexture(1.0);
-
-    //this.rendererBlur.render(this.sceneBlur, this.cameraOrtho, this.bufferTexture);
-    //this.copyFrameToTexture();
   }
-
   /**
    * Update roi selection map
    * @param roiId ROI id from 0..255
@@ -995,23 +789,8 @@ export default class VolumeFilter3d {
    */
   // eslint-disable-next-line
   updateSelectedRoi(roiId, selectedState) {
-
-    const roiTexelBpp = 4;
-    const roiChecked = 255;
-    const roiUnchecked = 0;
-    if (selectedState) {
-      this.selectedROIs[roiTexelBpp * roiId] = roiChecked;
-    } else {
-      this.selectedROIs[roiTexelBpp * roiId] = roiUnchecked;
-    }
-    //this.material.uniforms.texSegInUse.needsUpdate = true;
-    console.log(`initMatBlure: ${this.initMatBlure}`);
-
-    this.texRoiId.needsUpdate = true;
+    this.transferFunc.updateSelectedRoi(roiId, selectedState);
     this.setVolumeTexture(1.0);
-
-    //this.rendererBlur.render(this.sceneBlur, this.cameraOrtho, this.bufferTexture);
-    //this.copyFrameToTexture();
   }
   /**
    * Create 3D texture containing filtered source data and calculated normal values
