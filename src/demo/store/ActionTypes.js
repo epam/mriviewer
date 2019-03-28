@@ -25,5 +25,6 @@ const StoreActionType = {
   SET_2D_ZOOM: 20,
   SET_2D_X_POS: 21,
   SET_2D_Y_POS: 22,
+  SET_GRAPHICS_2D: 23,
 };
 export default StoreActionType;

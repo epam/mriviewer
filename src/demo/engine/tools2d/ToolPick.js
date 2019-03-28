@@ -34,7 +34,48 @@ class ToolPick {
   setVolume(vol) {
     this.m_volume = vol;
   }
-  onMouseDown(xScr, yScr, mode2d, sliderPosition, zoom, posX, posY) {
+  /**
+  * @param {number} xScr - relative x screen position. In [0..1]
+  * @param {number} yScr - relative y screen position. In [0..1]
+  * @param {object} store - global parameters store
+  * @return object with props x,y,z - texture coordinates
+  */
+  screenToTexture(xScr, yScr, store) {
+    const vTex = {
+      x: 0.0,
+      y: 0.0,
+      z: 0.0,
+    };
+    const mode2d = store.mode2d;
+    const sliderPosition = store.slider2d;
+    const vol = store.volume;
+    const xDim = vol.m_xDim;
+    const yDim = vol.m_yDim;
+    const zDim = vol.m_zDim;
+    const zoom = store.render2dZoom;
+    const xPos = store.render2dxPos;
+    const yPos = store.render2dyPos;
+    if (mode2d === Modes2d.TRANSVERSE) {
+      // z: const
+      vTex.x = Math.floor((xPos + xScr * zoom) * xDim);
+      vTex.y = Math.floor((yPos + yScr * zoom) * yDim);
+      vTex.z = Math.floor(sliderPosition * zDim);
+    }
+    if (mode2d === Modes2d.SAGGITAL) {
+      // x: const
+      vTex.x = Math.floor(sliderPosition * xDim);
+      vTex.y = Math.floor((xPos + xScr * zoom) * yDim);
+      vTex.z = Math.floor((yPos + yScr * zoom) * zDim);
+    }
+    if (mode2d === Modes2d.CORONAL) {
+      // y: const
+      vTex.x = Math.floor((xPos + xScr * zoom) * xDim);
+      vTex.y = Math.floor(sliderPosition * yDim);
+      vTex.z = Math.floor((yPos + yScr * zoom) * zDim);
+    }
+    return vTex;
+  }
+  onMouseDown(xScr, yScr, store) {
     if ((this.m_wScreen === 0) || (this.m_hScreen === 0)) {
       console.log('ToolPick. onMouseDown. Bad screen size');
       return;
@@ -43,11 +84,14 @@ class ToolPick {
       console.log('ToolPick. onMouseDown. Volume not set');
       return;
     }
+
     const xRatioImage = xScr / this.m_wScreen;
     const yRatioImage = yScr / this.m_hScreen;
-    let xVol = 0;
-    let yVol = 0;
-    let zVol = 0;
+    const vTex = this.screenToTexture(xRatioImage, yRatioImage, store);
+
+    const xDim = store.volume.m_xDim;
+    const yDim = store.volume.m_yDim;
+    /*
     if (mode2d === Modes2d.SAGGITAL) {
       // x
       xVol = Math.floor(sliderPosition * (this.m_volume.m_xDim - 1));
@@ -57,7 +101,7 @@ class ToolPick {
       // y
       xVol = Math.floor(xRatioImage * (this.m_volume.m_xDim - 1));
       yVol = Math.floor(sliderPosition * (this.m_volume.m_yDim - 1));
-      zVol = Math.floor(yRatioImage * (this.m_volume.m_yDim - 1));
+      zVol = Math.floor(yRatioImage * (this.m_volume.m_zDim - 1));
     } else if (mode2d === Modes2d.TRANSVERSE) {
       // z
       xVol = Math.floor(xRatioImage * (this.m_volume.m_xDim - 1));
@@ -65,11 +109,13 @@ class ToolPick {
       zVol = Math.floor(sliderPosition * (this.m_volume.m_zDim - 1));
     }
     const off = xVol + (yVol * this.m_volume.m_xDim) + (zVol * this.m_volume.m_xDim * this.m_volume.m_yDim);
+    */
+    const off = vTex.x + (vTex.y * xDim) + (vTex.z * xDim * yDim);
     const val = this.m_volume.m_dataArray[off];
 
     this.m_xMessage = xScr;
     this.m_yMessage = yScr;
-    this.m_strMessage = 'x,y,z = ' + xVol.toString() + ', ' + yVol.toString() + ', ' + zVol.toString() + 
+    this.m_strMessage = 'x,y,z = ' + (vTex.x).toString() + ', ' + (vTex.y).toString() + ', ' + (vTex.z).toString() + 
       '. val = ' + val.toString();
     // console.log(`ToolPick. onMouseDown. ${this.m_strMessage}`);
     this.m_timeStart = Date.now();

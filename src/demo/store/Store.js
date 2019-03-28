@@ -32,6 +32,7 @@ export const initialState = {
   render2dZoom: 1.0,
   render2dxPos: 0.0,
   render2dyPos: 0.0,
+  graphics2d: null,
 };
 //
 // App reducer
@@ -84,6 +85,8 @@ const medReducer = (state = initialState, action) => {
     return Object.assign({}, state, { render2dxPos: action.render2dxPos });
   case StoreActionType.SET_2D_Y_POS:
     return Object.assign({}, state, { render2dyPos: action.render2dyPos });
+  case StoreActionType.SET_GRAPHICS_2D:
+    return Object.assign({}, state, { graphics2d: action.graphics2d });
   default:
     return state;
   }

@@ -13,8 +13,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Modes2d from '../store/Modes2d';
-import ToolPick from './tools2d//ToolPick';
-import ToolZoom from './tools2d//ToolZoom';
+import StoreActionType from '../store/ActionTypes';
+import ToolPick from './tools2d/ToolPick';
+import ToolZoom from './tools2d/ToolZoom';
+import ToolDistance from './tools2d/ToolDistance';
+import ToolClear from './tools2d/ToolClear';
+import ToolAngle from './tools2d/ToolAngle';
+
 import Tools2dType from './tools2d/ToolTypes';
 
 // import { timingSafeEqual } from 'crypto';
@@ -64,7 +69,15 @@ class Graphics2d extends React.Component {
 
     // tools2d
     this.m_toolPick = new ToolPick(this);
+    this.m_toolDistance = new ToolDistance(this);
     this.m_toolZoom = new ToolZoom(this);
+    this.m_toolClear = new ToolClear(this);
+    this.m_toolAngle = new ToolAngle(this);
+
+    // store
+    const store = props;
+    store.dispatch({ type: StoreActionType.SET_GRAPHICS_2D, graphics2d: this });
+
   }
   start() {
     if (this.m_frameId === null) {
@@ -90,12 +103,29 @@ class Graphics2d extends React.Component {
       this.setState({ hRender: h });
 
       // tools 2d setup
-      const vol = this.props.volume;
-      console.log(`gra2d. vol = ${vol}`);
+      const store = this.props;
+      const vol = store.volume;
+      // console.log(`gra2d. vol = ${vol}`);
+
+      const TWICE = 2;
+      const xPixelSize = vol.m_boxSize.x / (TWICE * w);
+      const yPixelSize = vol.m_boxSize.y / (TWICE * h);
+      // console.log(`xyPixelSize = ${xPixelSize} * ${yPixelSize}`);
+
       this.m_toolPick.setScreenDim(w, h);
       this.m_toolPick.setVolume(vol);
+
       this.m_toolZoom.setScreenDim(w, h);
       this.m_toolZoom.setVolume(vol);
+
+      this.m_toolDistance.setScreenDim(w, h);
+      this.m_toolDistance.setVolume(vol);
+      this.m_toolDistance.setPixelSize(xPixelSize, yPixelSize);
+
+      this.m_toolAngle.setScreenDim(w, h);
+      this.m_toolAngle.setVolume(vol);
+      this.m_toolAngle.setPixelSize(xPixelSize, yPixelSize);
+
     }
   }
   componentWillUnmount() {
@@ -199,14 +229,14 @@ class Graphics2d extends React.Component {
         // x slice
         const xSlice = Math.floor(xDim * sliceRatio);
 
-        const yStep = yDim / w
-        const zStep = zDim / h;
+        const yStep = zoom * yDim / w
+        const zStep = zoom * zDim / h;
         let j = 0;
-        let az = 0.0;
+        let az = yPos * zDim;
         for (let y = 0; y < h; y++, az += zStep) {
           const zSrc = Math.floor(az);
           const zOff = zSrc * xDim * yDim;
-          let ay = 0.0;
+          let ay = xPos * yDim;
           for (let x = 0; x < w; x++, ay += yStep) {
             const ySrc = Math.floor(ay);
             const yOff = ySrc * xDim;
@@ -225,14 +255,14 @@ class Graphics2d extends React.Component {
         const ySlice = Math.floor(yDim * sliceRatio);
         const yOff = ySlice * xDim;
 
-        const xStep = xDim / w
-        const zStep = zDim / h;
+        const xStep = zoom * xDim / w
+        const zStep = zoom * zDim / h;
         let j = 0;
-        let az = 0.0;
+        let az = yPos * zDim;
         for (let y = 0; y < h; y++, az += zStep) {
           const zSrc = Math.floor(az);
           const zOff = zSrc * xDim * yDim;
-          let ax = 0.0;
+          let ax = xPos * xDim;
           for (let x = 0; x < w; x++, ax += xStep) {
             const xSrc = Math.floor(ax);
             const val = dataSrc[zOff + yOff + xSrc];
@@ -250,6 +280,8 @@ class Graphics2d extends React.Component {
       ctx.putImageData(imgData, 0, 0); 
       // render all tools
       this.m_toolPick.render(ctx);
+      this.m_toolDistance.render(ctx, store);
+      this.m_toolAngle.render(ctx, store);
 
     } // if not empty vol
   } // render scene
@@ -266,6 +298,20 @@ class Graphics2d extends React.Component {
     if (indexTools2d === Tools2dType.ZOOM) {
       this.m_toolZoom.onMouseUp();
     }
+    if (indexTools2d === Tools2dType.DISTANCE) {
+      const store = this.props;
+      const box = this.m_mount.getBoundingClientRect();
+      const xScr = evt.clientX - box.left;
+      const yScr = evt.clientY - box.top;
+      this.m_toolDistance.onMouseUp(xScr, yScr, store);
+    }
+    if (indexTools2d === Tools2dType.ANGLE) {
+      const store = this.props;
+      const box = this.m_mount.getBoundingClientRect();
+      const xScr = evt.clientX - box.left;
+      const yScr = evt.clientY - box.top;
+      this.m_toolAngle.onMouseUp(xScr, yScr, store);
+    }
   }
   onMouseMove(evt) {
     const store = this.props;
@@ -278,6 +324,12 @@ class Graphics2d extends React.Component {
 
     if (indexTools2d === Tools2dType.ZOOM) {
       this.m_toolZoom.onMouseMove(store, xScr, yScr);
+    }
+    if (indexTools2d === Tools2dType.DISTANCE) {
+      this.m_toolDistance.onMouseMove(xScr, yScr, store);
+    }
+    if (indexTools2d === Tools2dType.ANGLE) {
+      this.m_toolAngle.onMouseMove(xScr, yScr, store);
     }
   }
   onMouseDown(evt) {
@@ -292,15 +344,19 @@ class Graphics2d extends React.Component {
     const indexTools2d = store.indexTools2d;
     // console.log(`onMouseDown. tool index = ${indexTools2d}`);
 
-    const mode2d = store.mode2d;
-    const sliceRatio = store.slider2d;
 
     switch (indexTools2d) {
     case Tools2dType.INTENSITY:
-      this.m_toolPick.onMouseDown(xScr, yScr, mode2d, sliceRatio, this.m_zoom, this.m_xPos, this.m_yPos);
+      this.m_toolPick.onMouseDown(xScr, yScr, store);
+      break;
+    case Tools2dType.DISTANCE:
+      this.m_toolDistance.onMouseDown(xScr, yScr, store);
       break;
     case Tools2dType.ZOOM:
       this.m_toolZoom.onMouseDown(xScr, yScr);
+      break;
+    case Tools2dType.ANGLE:
+      this.m_toolAngle.onMouseDown(xScr, yScr, store);
       break;
     default:
       // not defined
@@ -308,6 +364,16 @@ class Graphics2d extends React.Component {
     // force update
     this.forceUpdate();
   } // onMouseDown
+  /**
+   * Invoke clear all tools
+   */
+  clear() {
+    this.m_toolDistance.clear();
+    this.m_toolAngle.clear();
+  }
+  /**
+   * Invoke forced rendering, after some tool visual changes
+   */
   forceUpdate() {
     this.setState({ state: this.state });
   }

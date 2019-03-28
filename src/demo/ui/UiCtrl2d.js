@@ -48,6 +48,15 @@ class UiCtrl2d extends React.Component {
     console.log(`2d controls. on new mode = ${indexMode}`);
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_MODE_2D, mode2d: indexMode });
+    // clear all tools
+    const gra2d = store.graphics2d;
+    gra2d.clear();
+    // init zoom
+    store.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: 1.0 });
+    store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: 0.0 });
+    store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: 0.0 });
+    // re-render
+    gra2d.forceUpdate();
   }
   onModeSaggital() {
     this.onMode(Modes2d.SAGGITAL);
