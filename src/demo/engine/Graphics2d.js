@@ -19,6 +19,7 @@ import ToolZoom from './tools2d/ToolZoom';
 import ToolDistance from './tools2d/ToolDistance';
 import ToolClear from './tools2d/ToolClear';
 import ToolAngle from './tools2d/ToolAngle';
+import ToolArea from './tools2d/ToolArea';
 
 import Tools2dType from './tools2d/ToolTypes';
 
@@ -73,6 +74,7 @@ class Graphics2d extends React.Component {
     this.m_toolZoom = new ToolZoom(this);
     this.m_toolClear = new ToolClear(this);
     this.m_toolAngle = new ToolAngle(this);
+    this.m_toolArea = new ToolArea(this);
 
     // store
     const store = props;
@@ -125,6 +127,10 @@ class Graphics2d extends React.Component {
       this.m_toolAngle.setScreenDim(w, h);
       this.m_toolAngle.setVolume(vol);
       this.m_toolAngle.setPixelSize(xPixelSize, yPixelSize);
+
+      this.m_toolArea.setScreenDim(w, h);
+      this.m_toolArea.setVolume(vol);
+      this.m_toolArea.setPixelSize(xPixelSize, yPixelSize);
 
     }
   }
@@ -282,6 +288,8 @@ class Graphics2d extends React.Component {
       this.m_toolPick.render(ctx);
       this.m_toolDistance.render(ctx, store);
       this.m_toolAngle.render(ctx, store);
+      this.m_toolArea.render(ctx, store);
+
 
     } // if not empty vol
   } // render scene
@@ -312,6 +320,13 @@ class Graphics2d extends React.Component {
       const yScr = evt.clientY - box.top;
       this.m_toolAngle.onMouseUp(xScr, yScr, store);
     }
+    if (indexTools2d === Tools2dType.AREA) {
+      const store = this.props;
+      const box = this.m_mount.getBoundingClientRect();
+      const xScr = evt.clientX - box.left;
+      const yScr = evt.clientY - box.top;
+      this.m_toolArea.onMouseUp(xScr, yScr, store);
+    }
   }
   onMouseMove(evt) {
     const store = this.props;
@@ -330,6 +345,9 @@ class Graphics2d extends React.Component {
     }
     if (indexTools2d === Tools2dType.ANGLE) {
       this.m_toolAngle.onMouseMove(xScr, yScr, store);
+    }
+    if (indexTools2d === Tools2dType.AREA) {
+      this.m_toolArea.onMouseMove(xScr, yScr, store);
     }
   }
   onMouseDown(evt) {
@@ -358,6 +376,9 @@ class Graphics2d extends React.Component {
     case Tools2dType.ANGLE:
       this.m_toolAngle.onMouseDown(xScr, yScr, store);
       break;
+    case Tools2dType.AREA:
+      this.m_toolArea.onMouseDown(xScr, yScr, store);
+      break;
     default:
       // not defined
     } // switch
@@ -370,6 +391,7 @@ class Graphics2d extends React.Component {
   clear() {
     this.m_toolDistance.clear();
     this.m_toolAngle.clear();
+    this.m_toolArea.clear();
   }
   /**
    * Invoke forced rendering, after some tool visual changes

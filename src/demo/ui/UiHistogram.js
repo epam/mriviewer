@@ -280,7 +280,8 @@ export default class UiHistogram extends React.Component {
       const zDim = vol.m_zDim;
       const bpp = vol.m_bytesPerVoxel;
       const strDim = xDim.toString() + '*' + yDim.toString() + '*' + zDim.toString();
-      strMsg = 'Volume histogram. Dim = ' + strDim + ' bpp = ' + bpp.toString();
+      const strBox = vol.m_boxSize.x.toFixed(2) + '*' + vol.m_boxSize.y.toFixed(2) + '*' + vol.m_boxSize.z.toFixed(2);
+      strMsg = 'Volume histogram: Dim = ' + strDim + '; bpp = ' + bpp.toString() + '; box = ' + strBox;
     }
 
     const jsxHist = 
