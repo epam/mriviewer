@@ -219,6 +219,7 @@ export default class VolumeRenderer3d {
     this.lockEraserBuffersUpdating = false;
     this.eraserMouseDown = false;
     this.mouseupflag = true;
+    this.m_eraser = null;
 
     this.isSculptingMode = false;
     this.sculptingCapturedVertex = null;
@@ -1471,7 +1472,12 @@ export default class VolumeRenderer3d {
     const lastState = this.isEraseMode;
     this.isEraseMode = isOn;
     this.orbitControl.setEraserMode(isOn);
-    //console.log(`Erase mode: ${this.isEraseMode}`);
+    /*this.m_eraser = new Eraser({
+      bfTex: this.bufferBFTextureCPU,
+      ffTex: this.bufferFFTextureCPU,
+      renderToTex: this.bufferRenderToTextureCPU
+    });
+    */
     if (!lastState && isOn) {
       this.render();
     }
@@ -1493,7 +1499,6 @@ export default class VolumeRenderer3d {
     if (isNormalMode === false) {
       this.eraserFillMode = false;
     }
-    //console.log(`Normal mode: ${this.eraserNormalMode}`);
   }
   setEraserFillMode(isFillMode) {
     this.eraserFillMode = isFillMode;
@@ -1501,15 +1506,12 @@ export default class VolumeRenderer3d {
   }
   setEraserRadius(radius) {
     this.eraserRadius = radius;
-    //console.log(`Eraser radius: ${this.eraserRadius}`);
   }
   setEraserDepth(depth) {
     this.eraserDepth = depth;
-    //console.log(`Eraser depth: ${this.eraserDepth}`);
   }
   setEraserStart(isOn) {
     this.eraserStart = isOn;
-    //console.log(`Eraser depth: ${this.eraserDepth}`);
   }
   onMouseDown(xx, yy) {
     this.orbitControl.onMouseDown(xx, yy);
