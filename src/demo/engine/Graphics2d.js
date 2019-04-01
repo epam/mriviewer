@@ -21,6 +21,7 @@ import ToolClear from './tools2d/ToolClear';
 import ToolAngle from './tools2d/ToolAngle';
 import ToolArea from './tools2d/ToolArea';
 import ToolRect from './tools2d/ToolRect';
+import ToolText from './tools2d/ToolText';
 
 import Tools2dType from './tools2d/ToolTypes';
 
@@ -77,6 +78,7 @@ class Graphics2d extends React.Component {
     this.m_toolAngle = new ToolAngle(this);
     this.m_toolArea = new ToolArea(this);
     this.m_toolRect = new ToolRect(this);
+    this.m_toolText = new ToolText(this);
 
     // store
     const store = props;
@@ -137,6 +139,10 @@ class Graphics2d extends React.Component {
       this.m_toolRect.setScreenDim(w, h);
       this.m_toolRect.setVolume(vol);
       this.m_toolRect.setPixelSize(xPixelSize, yPixelSize);
+
+      this.m_toolText.setScreenDim(w, h);
+      this.m_toolText.setVolume(vol);
+      this.m_toolText.setPixelSize(xPixelSize, yPixelSize);
 
     }
   }
@@ -296,6 +302,7 @@ class Graphics2d extends React.Component {
       this.m_toolAngle.render(ctx, store);
       this.m_toolArea.render(ctx, store);
       this.m_toolRect.render(ctx, store);
+      this.m_toolText.render(ctx, store);
 
 
     } // if not empty vol
@@ -399,6 +406,9 @@ class Graphics2d extends React.Component {
     case Tools2dType.RECT:
       this.m_toolRect.onMouseDown(xScr, yScr, store);
       break;
+    case Tools2dType.TEXT:
+      this.m_toolText.onMouseDown(xScr, yScr, store);
+      break;
     default:
       // not defined
     } // switch
@@ -413,6 +423,7 @@ class Graphics2d extends React.Component {
     this.m_toolAngle.clear();
     this.m_toolArea.clear();
     this.m_toolRect.clear();
+    this.m_toolText.clear();
   }
   /**
    * Invoke forced rendering, after some tool visual changes
