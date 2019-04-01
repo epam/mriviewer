@@ -12,6 +12,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { Nav, Navbar, Container } from 'react-bootstrap';
+
 
 import UiMain from './UiMain';
 import UiOpenMenu from './UiOpenMenu';
@@ -39,43 +41,37 @@ class UiApp extends React.Component {
 
     const strMessageOnMenu = (isLoaded) ? 'File: ' + fileName : 'Press Open button to load scene';
 
-    const jsxNavBar =
-      <div className="container-fluid">
-        <nav className="navbar navbar-expand-md navbar-fixed-top navbar-light bg-light main-nav">
+    const jsxNavBarReact = 
+      <Container fluid="true">
+        <Navbar bg="light" >
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="mr-auto">
+              <Navbar>
+                <UiAbout />
+              </Navbar>
 
-          { /* Left part */}
-          <div className="navbar-collapse collapse nav-content order-2 pull-left">
-            <ul className="nav navbar-nav">
-              <UiAbout />
-              { /* Status string */}
-              <li>
-                <p className="navbar-text">
-                  {strMessageOnMenu}
-                </p>
-              </li>
+              <Navbar.Text className="d-none d-sm-block">
+                {strMessageOnMenu}
+              </Navbar.Text>
+            </Nav>
+            <Nav>
 
-            </ul>
-          </div>
+              <UiOpenMenu />
+              <UiSaveMenu />
+              <UiReportMenu />
+              <UiFilterMenu />
 
-          { /* Center part */}
-          <ul className="nav navbar-nav text-nowrap flex-row mx-md-auto order-1 order-md-2">
 
-            { /* Open menu */}
-            <UiOpenMenu />
-            <UiSaveMenu />
-            <UiReportMenu />
-            <UiFilterMenu />
+              {(isLoaded) ? <UiViewMode /> : <p></p>}
 
-            { /* button group */}
-            {(isLoaded) ? <UiViewMode /> : <p></p>}
 
-          </ul>
-
-        </nav>
+            </Nav>
+          </Navbar.Collapse>
+        </Navbar>
         {(isLoaded) ? <UiMain /> : <p></p>}
-      </div>
+      </Container>;
 
-    return jsxNavBar;
+    return jsxNavBarReact;
   } // end render
 } // end class
 
