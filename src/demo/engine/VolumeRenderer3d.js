@@ -1472,6 +1472,7 @@ export default class VolumeRenderer3d {
     const lastState = this.isEraseMode;
     this.isEraseMode = isOn;
     this.orbitControl.setEraserMode(isOn);
+    this.setEraserNormalMode(true);
     /*this.m_eraser = new Eraser({
       bfTex: this.bufferBFTextureCPU,
       ffTex: this.bufferFFTextureCPU,
