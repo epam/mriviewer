@@ -39,16 +39,6 @@ const tools3dEraser = {
 export default class VolumeFilter3d {
   constructor() {
     this.transferFunc = null;
-    this.texVolumeAO = null;
-    this.sceneBlur = null;
-    this.material = null;
-    this.cameraOrtho = null;
-    this.rendererBlur = null;
-    this.selectedROIs = null;
-    this.numTfPixels = 0;
-    this.transferFuncRgba = null;
-    this.texRoiColor = null;
-    this.texRoiId = null;
     this.lastSize = [];
     this.lastDepth = [];
     this.lastRotationVector = [];
@@ -56,17 +46,11 @@ export default class VolumeFilter3d {
     this.lastMode = [];
     this.lastBackDistance = [];
     this.resetflag = false;
-    this.sceneAO = null;
-    this.rendererAO = null;
-    this.vectors = null;
-    this.vectorsTex = null;
-    this.texVolumeAO = null;
     this.xDim = 0;
     this.yDim = 0;
     this.zDim = 0;
     this.zDimSqrt = 0;
     this.initMatBlure = 0;
-
   }
   /**
    * Filtering the source data and building the normals on the GPU
