@@ -12,6 +12,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { Nav, Navbar, Container } from 'react-bootstrap';
+
+
+import StoreActionType from '../store/ActionTypes';
 
 import UiMain from './UiMain';
 import UiOpenMenu from './UiOpenMenu';
@@ -20,6 +24,7 @@ import UiAbout from './UiAbout';
 import UiSaveMenu from './UiSaveMenu';
 import UiReportMenu from './UiReportMenu';
 import UiFilterMenu from './UiFilterMenu';
+import UiModalText from './UiModalText';
 
 // ********************************************************
 // Class
@@ -29,53 +34,76 @@ import UiFilterMenu from './UiFilterMenu';
  * Class UiApp implements all application functionality. This is root class.
  */
 class UiApp extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.onShowModalText = this.onShowModalText.bind(this);
+    this.onHideModalText = this.onHideModalText.bind(this);
+
+    this.m_modalText = null;
+    this.m_store = null;
+
+    this.state = {
+      showModalText: false,
+    };
+  }
+  componentDidMount() {
+    const store = this.m_store;
+    if (store === null) {
+      console.log('UiApp. componentDidMount. store is NULL');
+    }
+    store.dispatch({ type: StoreActionType.SET_UI_APP, uiApp: this });
+  }
+  onShowModalText() {
+    this.setState({ showModalText: true });
+  }
+  onHideModalText() {
+    this.setState({ showModalText: false });
+  }
   /**
    * Main component render func callback
    */
   render() {
     const store = this.props;
+    this.m_store = store;
     const isLoaded = store.isLoaded;
     const fileName = store.fileName;
 
     const strMessageOnMenu = (isLoaded) ? 'File: ' + fileName : 'Press Open button to load scene';
 
-    const jsxNavBar =
-      <div className="container-fluid">
-        <nav className="navbar navbar-expand-md navbar-fixed-top navbar-light bg-light main-nav">
+    const jsxNavBarReact = 
+      <Container fluid="true">
+        <Navbar bg="light" >
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="mr-auto">
+              <Navbar>
+                <UiAbout />
+              </Navbar>
 
-          { /* Left part */}
-          <div className="navbar-collapse collapse nav-content order-2 pull-left">
-            <ul className="nav navbar-nav">
-              <UiAbout />
-              { /* Status string */}
-              <li>
-                <p className="navbar-text">
-                  {strMessageOnMenu}
-                </p>
-              </li>
+              <Navbar.Text className="d-none d-sm-block">
+                {strMessageOnMenu}
+              </Navbar.Text>
+            </Nav>
+            <Nav>
 
-            </ul>
-          </div>
+              <UiOpenMenu />
+              <UiSaveMenu />
+              <UiReportMenu />
+              <UiFilterMenu />
 
-          { /* Center part */}
-          <ul className="nav navbar-nav text-nowrap flex-row mx-md-auto order-1 order-md-2">
 
-            { /* Open menu */}
-            <UiOpenMenu />
-            <UiSaveMenu />
-            <UiReportMenu />
-            <UiFilterMenu />
+              {(isLoaded) ? <UiViewMode /> : <p></p>}
 
-            { /* button group */}
-            {(isLoaded) ? <UiViewMode /> : <p></p>}
 
-          </ul>
-
-        </nav>
+            </Nav>
+          </Navbar.Collapse>
+        </Navbar>
         {(isLoaded) ? <UiMain /> : <p></p>}
-      </div>
+        <UiModalText stateVis={this.state.showModalText}
+          onHide={this.onHideModalText} onShow={this.onShowModalText} />
+      </Container>;
 
-    return jsxNavBar;
+    return jsxNavBarReact;
   } // end render
 } // end class
 

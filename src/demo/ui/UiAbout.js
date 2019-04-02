@@ -13,6 +13,8 @@
 import React from 'react';
 import packageJson from '../../../package.json';
 
+import UiSkelAni from './UiSkelAni';
+
 // ********************************************************
 // Class
 // ********************************************************
@@ -51,7 +53,8 @@ export default class UiAbout extends React.Component {
               </button>
             </div>
             <div className="modal-body text-center">
-              <img src="images/app_icon.svg" alt="app_icon" height="400px" />
+              { /* <img src="images/app_icon.svg" alt="app_icon" height="400px" /> */ }
+              <UiSkelAni />
               <p>
                 {strDescription}
               </p>
