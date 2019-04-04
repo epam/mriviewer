@@ -12,7 +12,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Nav, Navbar, Container } from 'react-bootstrap';
+import { Nav, Navbar, Container, ProgressBar, Row, Col } from 'react-bootstrap';
 
 
 import StoreActionType from '../store/ActionTypes';
@@ -40,11 +40,17 @@ class UiApp extends React.Component {
     this.onShowModalText = this.onShowModalText.bind(this);
     this.onHideModalText = this.onHideModalText.bind(this);
 
+    this.doShowProgressBar = this.doShowProgressBar.bind(this);
+    this.doHideProgressBar = this.doHideProgressBar.bind(this);
+    this.doSetProgressBarRatio = this.doSetProgressBarRatio.bind(this);
+
     this.m_modalText = null;
     this.m_store = null;
 
     this.state = {
       showModalText: false,
+      showProgressBar: false,
+      progressBarRatio: 55
     };
   }
   componentDidMount() {
@@ -60,6 +66,17 @@ class UiApp extends React.Component {
   onHideModalText() {
     this.setState({ showModalText: false });
   }
+  doShowProgressBar() {
+    this.setState({ showProgressBar: true });
+  }
+  doHideProgressBar() {
+    // console.log('doHideProgressBar');
+    this.setState({ showProgressBar: false });
+  }
+  doSetProgressBarRatio(ratio) {
+    // console.log(`doSetProgressBarRatio: ${ratio}`);
+    this.setState({ progressBarRatio: ratio });
+  }
   /**
    * Main component render func callback
    */
@@ -70,6 +87,16 @@ class UiApp extends React.Component {
     const fileName = store.fileName;
 
     const strMessageOnMenu = (isLoaded) ? 'File: ' + fileName : 'Press Open button to load scene';
+
+    const objPrgBarVis = 
+      <Row>
+        <Col>
+        Loading...
+          <ProgressBar animated variant="info"
+            now={this.state.progressBarRatio} label={`${this.state.progressBarRatio}%`}  />
+        </Col>
+      </Row>
+    const objProgressBar = (this.state.showProgressBar) ? objPrgBarVis : <p></p>;
 
     const jsxNavBarReact = 
       <Container fluid="true">
@@ -101,6 +128,7 @@ class UiApp extends React.Component {
         {(isLoaded) ? <UiMain /> : <p></p>}
         <UiModalText stateVis={this.state.showModalText}
           onHide={this.onHideModalText} onShow={this.onShowModalText} />
+        {objProgressBar}
       </Container>;
 
     return jsxNavBarReact;

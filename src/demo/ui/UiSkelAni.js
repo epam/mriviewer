@@ -49,11 +49,11 @@ class UiSkelAni extends React.Component {
     this.m_frameId = null;
   }
   componentDidMount() {
-    console.log('UiSkelAni. start animations');
+    // console.log('UiSkelAni. start animations');
     this.start();
   }
   componentWillUnmount() {
-    console.log('UiSkelAni. stop animations');
+    // console.log('UiSkelAni. stop animations');
     this.stop();
   }
   /**

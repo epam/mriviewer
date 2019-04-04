@@ -67,6 +67,9 @@ class UiOpenMenu extends React.Component {
 
     this.onDemoSelected = this.onDemoSelected.bind(this);
 
+    this.callbackReadProgress = this.callbackReadProgress.bind(this);
+    this.callbackReadComplete = this.callbackReadComplete.bind(this);
+
     this.m_fileName = '';
     this.m_fileReader = null;
     this.state = {
@@ -96,6 +99,27 @@ class UiOpenMenu extends React.Component {
       console.log(`readCallbackComplete. Bad result = ${errCode}: ${strErr}`);
     }
   }
+  callbackReadProgress(ratio01) {
+    // console.log(`callbackReadProgress = ${ratio01}`);
+    const ratioPrc = Math.floor(ratio01 * 100);
+    const store = this.props;
+    const uiapp = store.uiApp;
+    if (ratioPrc === 0) {
+      uiapp.doShowProgressBar();
+    }
+    if (ratioPrc >= 99) {
+      // console.log(`callbackReadProgress. hide on = ${ratio01}`);
+      uiapp.doHideProgressBar();
+    } else {
+      uiapp.doSetProgressBarRatio(ratioPrc);
+    }
+  } // callback progress
+  callbackReadComplete(loadErrorCode, obj0, val, obj1) {
+    const store = this.props;
+    const uiapp = store.uiApp;
+    // console.log(`callbackReadComplete wiyth err = ${loadErrorCode}`);
+    uiapp.doHideProgressBar();
+  }
   // based on local file read
   // read from string content in this.m_fileReader.result
   //
@@ -105,8 +129,8 @@ class UiOpenMenu extends React.Component {
     // console.log(`file content = ${strContent.substring(0, 64)}`);
     // console.log(`onFileContentRead. type = ${typeof strContent}`);
     const vol = new Volume();
-    const callbackProgress = null;
-    const callbackComplete = null;
+    const callbackProgress = this.callbackReadProgress;
+    const callbackComplete = this.callbackReadComplete;
     let readOk = false;
     if (this.m_fileName.endsWith('.ktx') || this.m_fileName.endsWith('.KTX')) {
       // if read ktx
@@ -135,6 +159,11 @@ class UiOpenMenu extends React.Component {
     // console.log(`onFileContentReadMultiple. r = ${ratioLoad}`);
     const callbackProgress = null;
     const callbackComplete = null;
+
+    if (this.m_fileIndex <= 1) {
+      this.callbackReadProgress(0.0);
+    }
+
     const readOk = this.m_volume.readSingleSliceFromDicom(this.m_loader, this.m_fileIndex - 1, 
       this.m_fileName, ratioLoad, strContent, callbackProgress, callbackComplete);
     if (!readOk) {
@@ -144,6 +173,9 @@ class UiOpenMenu extends React.Component {
       this.m_loader.createVolumeFromSlices(this.m_volume);
       this.finalizeSuccessLoadedVolume(this.m_volume, this.m_fileName);
       console.log(`onFileContentReadMultiple read all ${this.m_numFiles} files`);
+
+      this.callbackReadProgress(1.0);
+      this.callbackReadComplete(LoadResult.SUCCES, null, 0, null);
     }
     // read again new file
     if (this.m_fileIndex < this.m_numFiles) {
@@ -151,7 +183,8 @@ class UiOpenMenu extends React.Component {
       const NUM_PARTS_REPORT = 16;
       const STEP_PROGRESS = Math.floor(this.m_numFiles / NUM_PARTS_REPORT);
       if ((this.m_fileIndex % STEP_PROGRESS) === 0) {
-        console.log(`onFileContentReadMultiple. Loading completed = ${ratioLoad}`);
+        // console.log(`onFileContentReadMultiple. Loading completed = ${ratioLoad}`);
+        this.callbackReadProgress(ratioLoad);
       }
 
       this.m_fileReader.onloadend = this.onFileContentReadMultiple;
@@ -248,6 +281,8 @@ class UiOpenMenu extends React.Component {
     vol.m_zDim = head.m_pixelDepth;
     this.m_fileName = this.convertUrlToFileName(this.m_url);
     this.finalizeSuccessLoadedVolume(vol, this.m_fileName);
+
+    this.callbackReadComplete(LoadResult.SUCCESS, null, 0, null);
   }
   loadFromUrl(strUrl) {
     const fileTools = new FileTools();
@@ -255,9 +290,9 @@ class UiOpenMenu extends React.Component {
     if (isValid) {
       this.m_url = strUrl;
       if (strUrl.endsWith('.ktx')) {
-        // TODO: open KTX by url
         const vol = new Volume();
-        const callbackProgress = null;
+        const callbackProgress = this.callbackReadProgress;
+        this.callbackReadProgress(0.0);
         const readOk = vol.readFromKtxUrl(strUrl, callbackProgress, this.onCompleteFromUrlKtx);
         if (readOk) {
           // if read ok
