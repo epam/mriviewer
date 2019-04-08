@@ -29,6 +29,9 @@ class ToolRect {
     this.m_xPixelSize = 0;
     this.m_yPixelSize = 0;
 
+    this.m_store = null;
+    this.m_objEdit = null;
+
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -48,6 +51,52 @@ class ToolRect {
   clear() {
     this.m_rects = [];
     this.m_inCreateMode = false;
+  }
+  getDistMm(vs, ve) {
+    const dx = vs.x - ve.x;
+    const dy = vs.y - ve.y;
+    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize +
+      dy * dy * this.m_yPixelSize * this.m_yPixelSize);
+    return dist;
+  }
+  /**
+   * Determine intersection with points in rect set.
+   * Input - screen coordinates of pick point
+   * Output - volume coordinate
+   *  
+   * @param {object} vScr - screen coordinates of pick
+   * @param {object} store - global store
+   */
+  getEditPoint(vScr, store) {
+    const numRects = this.m_rects.length;
+    for (let i = 0; i < numRects; i++) {
+      const objRect = this.m_rects[i];
+      const vScrMin = ToolDistance.textureToScreen(objRect.vMin.x, objRect.vMin.y, this.m_wScreen, this.m_hScreen, store);
+      const vScrMax = ToolDistance.textureToScreen(objRect.vMax.x, objRect.vMax.y, this.m_wScreen, this.m_hScreen, store);
+
+      const MIN_DIST = 4.0;
+      if (this.getDistMm(vScr, vScrMin) <= MIN_DIST) {
+        this.m_objEdit = objRect;
+        return objRect.vMin;
+      }
+      if (this.getDistMm(vScr, vScrMax) <= MIN_DIST) {
+        this.m_objEdit = objRect;
+        return objRect.vMax;
+      }
+    }
+    return null;
+  }
+  /**
+   * Move edited point into new pos
+   * 
+   * @param {object} vVolOld 
+   * @param {object} vVolNew 
+   */
+  moveEditPoint(vVolOld, vVolNew) {
+    vVolOld.x = vVolNew.x;
+    vVolOld.y = vVolNew.y;
+    // update line len
+    this.getRectArea(this.m_objEdit, this.m_store);
   }
   getRectArea(objRect, store) {
     const vol = store.volume;
@@ -77,6 +126,7 @@ class ToolRect {
     objRect.area = xScale * yScale * dx * dy; 
   }
   onMouseDown(xScr, yScr, store) {
+    this.m_store = store;
     const vTex = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
     if (!this.m_inCreateMode)
     {

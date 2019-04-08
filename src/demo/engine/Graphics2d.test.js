@@ -87,6 +87,39 @@ describe('ToolArea. test line intersect', () => {
     const vInter = ToolArea.getLineIntersection(v0, v1, v2, v3);
     expect(vInter === null).toBeTruthy();
   });
+  it('ToolArea. hasSelfIntersectionsRect', () => {
+    const points = [
+      { x: 0.0, y: 0.0 },
+      { x: 1.0, y: 0.0 },
+      { x: 1.0, y: 1.0 },
+      { x: 0.0, y: 1.0 },
+    ];
+    const bHas = ToolArea.hasSelfIntersection(points);
+    expect(bHas === false).toBeTruthy();
+  });
+  it('ToolArea. hasSelfIntersectionsPentaHasClue', () => {
+    const points = [
+      { x: 0.0, y: 0.0 },
+      { x: 1.0, y: 0.0 },
+      { x: 1.0, y: 1.0 },
+      { x: 0.5, y: 0.0 },
+      { x: 0.0, y: 1.0 },
+    ];
+    const bHas = ToolArea.hasSelfIntersection(points);
+    expect(bHas === true).toBeTruthy();
+  });
+  it('ToolArea. hasSelfIntersectionsPentaHasInter', () => {
+    const points = [
+      { x: 0.0, y: 0.0 },
+      { x: 1.0, y: 0.0 },
+      { x: 1.0, y: 1.0 },
+      { x: 0.5, y: -3.0 },
+      { x: 0.0, y: 1.0 },
+    ];
+    const bHas = ToolArea.hasSelfIntersection(points);
+    expect(bHas === true).toBeTruthy();
+  });
+
   it('ToolArea. test check area', () => {
     const vol = {
       m_xDim: 100.0,

@@ -77,9 +77,9 @@ class UiModalText extends React.Component {
           Input text
         </Modal.Title>
 
-        <Form onSubmit={evt => this.handleFormSubmit(evt)}>
+        <Form onSubmit={evt => this.handleFormSubmit(evt)} >
           <Form.Control required type="text" placeholder=""
-            defaultValue={this.state.text} onChange={this.onTexChange} />
+            defaultValue={this.state.text} onChange={this.onTexChange} autoFocus={true}  />
         </Form>
         <Row>
           <Col lg xl="2">

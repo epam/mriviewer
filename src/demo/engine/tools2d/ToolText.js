@@ -26,6 +26,8 @@ class ToolText {
     this.m_texts = [];
     this.m_pointPressed = null;
 
+    this.m_objEdit = null;
+
     this.m_xPixelSize = 0;
     this.m_yPixelSize = 0;
 
@@ -45,6 +47,45 @@ class ToolText {
   setPixelSize(xs, ys) {
     this.m_xPixelSize = xs;
     this.m_yPixelSize = ys;
+  }
+  /**
+   * Determine intersection with points in all texts.
+   * Input - screen coordinates of pick point
+   * Output - volume coordinate
+   *  
+   * @param {object} vScr - screen coordinates of poick
+   * @param {object} store - global store
+   */
+  getEditPoint(vScr, store) {
+    const numTexts = this.m_texts.length;
+    for (let i = 0; i < numTexts; i++) {
+      const objText = this.m_texts[i];
+      const vScrProj = ToolDistance.textureToScreen(objText.point.x, objText.point.y, this.m_wScreen, this.m_hScreen, store);
+      const MIN_DIST = 4.0;
+      if (this.getDistMm(vScr, vScrProj) <= MIN_DIST) {
+        this.m_objEdit = objText;
+        return objText.point;
+      }
+    }
+    return null;
+  }
+  /**
+   * Move edited point into new pos
+   * 
+   * @param {object} vVolOld 
+   * @param {object} vVolNew 
+   */
+  moveEditPoint(vVolOld, vVolNew) {
+    vVolOld.x = vVolNew.x;
+    vVolOld.y = vVolNew.y;
+    // update info about text
+  }
+  getDistMm(vs, ve) {
+    const dx = vs.x - ve.x;
+    const dy = vs.y - ve.y;
+    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize +
+      dy * dy * this.m_yPixelSize * this.m_yPixelSize);
+    return dist;
   }
   setText(str) {
     this.m_text = str;

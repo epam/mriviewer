@@ -36,6 +36,8 @@ class ToolAngle {
     this.m_numClicks = 0;
     this.m_angles = [];
 
+    this.m_objEdit = null;
+
     this.m_xPixelSize = 0;
     this.m_yPixelSize = 0;
 
@@ -54,6 +56,58 @@ class ToolAngle {
   setPixelSize(xs, ys) {
     this.m_xPixelSize = xs;
     this.m_yPixelSize = ys;
+  }
+  /**
+   * Determine intersection with points in lines set.
+   * Input - screen coordinates of pick point
+   * Output - volume coordinate
+   *  
+   * @param {object} vScr - screen coordinates of poick
+   * @param {object} store - global store 
+   */
+  getEditPoint(vScr, store) {
+    const numObj = this.m_angles.length;
+    for (let i = 0; i < numObj; i++) {
+      const objAngle = this.m_angles[i];
+      const vScr0 = ToolDistance.textureToScreen(objAngle.points[0].x, objAngle.points[0].y, this.m_wScreen, this.m_hScreen, store);
+      const vScr1 = ToolDistance.textureToScreen(objAngle.points[1].x, objAngle.points[1].y, this.m_wScreen, this.m_hScreen, store);
+      const vScr2 = ToolDistance.textureToScreen(objAngle.points[2].x, objAngle.points[2].y, this.m_wScreen, this.m_hScreen, store);
+      const MIN_DIST = 4.0;
+      if (this.getDistMm(vScr, vScr0) <= MIN_DIST) {
+        this.m_objEdit = objAngle;
+        return objAngle.points[0];
+      }
+      if (this.getDistMm(vScr, vScr1) <= MIN_DIST) {
+        this.m_objEdit = objAngle;
+        return objAngle.points[1];
+      }
+      if (this.getDistMm(vScr, vScr2) <= MIN_DIST) {
+        this.m_objEdit = objAngle;
+        return objAngle.points[2];
+      }
+    }
+    return null;
+  }
+  moveEditPoint(vVolOld, vVolNew) {
+    vVolOld.x = vVolNew.x;
+    vVolOld.y = vVolNew.y;
+    // update angle dist
+    this.getAngleForObj(this.m_objEdit);
+  }    
+  getDistMm(vs, ve) {
+    const dx = vs.x - ve.x;
+    const dy = vs.y - ve.y;
+    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize +
+      dy * dy * this.m_yPixelSize * this.m_yPixelSize);
+    return dist;
+  }
+  getAngleForObj(objAngle) {
+    for (let i = 0; i < 3; i++) {
+      this.m_points[i].x = objAngle.points[i].x;
+      this.m_points[i].y = objAngle.points[i].y;
+    }
+    const ang = this.getAngle();
+    objAngle.angle = ang;
   }
   getAngle() {
     const v1x = this.m_points[1].x - this.m_points[0].x;

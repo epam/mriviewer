@@ -9,6 +9,9 @@
       "shallow": true
     },
     "rules": {
+        "linebreak-style": "off",
+        "no-unused-vars": ["off", {"argsIgnorePattern": "^_|Ignored$"}],
+        "react/prefer-es6-class" : ["always", "mode"],
         "indent": ["error", 2],
         "no-alert": "off",
         "no-underscore-dangle": "off",
@@ -31,7 +34,6 @@
         "comma-dangle": "off",
         "no-multi-spaces": "off",
         "no-prototype-builtins": "off",
-        "no-unused-vars": ["off", {"argsIgnorePattern": "^_|Ignored$"}],
         "wrap-iife": ["error", "any"],
         "no-use-before-define": ["error", "nofunc"],
         "object-property-newline": "off",
@@ -41,7 +43,6 @@
         "space-infix-ops": ["warn", {int32Hint: true}],
         "no-nested-ternary": "off",
         "global-require": "off",
-        "linebreak-style": "off",
         "no-continue": "off",
         "no-bitwise": "off",
         "no-plusplus": "off",

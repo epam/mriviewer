@@ -30,6 +30,9 @@ class ToolArea {
     this.m_xPixelSize = 0;
     this.m_yPixelSize = 0;
 
+    this.m_objEdit = null;
+    this.store = null;
+
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -50,6 +53,60 @@ class ToolArea {
     this.m_areas = [];
     this.m_inCreateMode = false;
     this.m_objSelfIntersect = null;
+  }
+  /**
+   * Determine intersection with points in areas set.
+   * Input - screen coordinates of pick point
+   * Output - volume coordinate
+   *  
+   * @param {object} vScr - screen coordinates of poick
+   * @param {object} store - global store
+   */
+  getEditPoint(vScr, store) {
+    this.store = store;
+    const numAreas = this.m_areas.length;
+    for(let i = 0 ; i < numAreas; i++) {
+      const objArea = this.m_areas[i];
+      for (let j = 0; j < objArea.m_points.length; j++) {
+        const vScrProj = ToolDistance.textureToScreen(objArea.m_points[j].x, objArea.m_points[j].y, this.m_wScreen, this.m_hScreen, store);
+        const MIN_DIST = 4.0;
+        if (this.getDistMm(vScr, vScrProj) <= MIN_DIST) {
+          this.m_objEdit = objArea;
+          return objArea.m_points[j];
+        } // if too close pick
+      } // for (j) all point in area
+    } // for (i) all areas
+    return null;
+  }
+  /**
+   * Move edited point into new pos
+   * 
+   * @param {object} vVolOld 
+   * @param {object} vVolNew 
+   */
+  moveEditPoint(vVolOld, vVolNew) {
+    const x = vVolOld.x;
+    const y = vVolOld.y;
+    vVolOld.x = vVolNew.x;
+    vVolOld.y = vVolNew.y;
+    //const vObjSelfInters = ToolArea.getSelfIntersectPoint(this.m_objEdit.m_points);
+    //if (vObjSelfInters !== null) {
+    const hasInters = ToolArea.hasSelfIntersection(this.m_objEdit.m_points);
+    if (hasInters) {
+      // console.log('ToolArea. self inters found');
+      vVolOld.x = x;
+      vVolOld.y = y;
+    }
+    // update line len
+    const store = this.store;
+    this.m_objEdit.m_area = this.getPolyArea(this.m_objEdit.m_points, store);
+  }
+  getDistMm(vs, ve) {
+    const dx = vs.x - ve.x;
+    const dy = vs.y - ve.y;
+    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize +
+      dy * dy * this.m_yPixelSize * this.m_yPixelSize);
+    return dist;
   }
   /**
    * Get lines intersection in 2d
@@ -110,6 +167,27 @@ class ToolArea {
       y: v0.y + v01.y * t01
     };
     return vIntersection;
+  }
+  static hasSelfIntersection(points) {
+    let i, j;
+    for (i = 0; i < points.length; i++) {
+      const iNext = (i + 1 < points.length) ? (i + 1) : 0;
+      const vA = points[i];
+      const vB = points[iNext];
+      for (j = 0; j < points.length; j++) {
+        const jNext = (j + 1 < points.length) ? (j + 1) : 0;
+        if ((i !== j) && (i !== jNext) && (iNext !== j) && (iNext !== jNext)) {
+          const vC = points[j];
+          const vD = points[jNext];
+          const vIntersect = ToolArea.getLineIntersection(vA, vB, vC, vD);
+          if (vIntersect !== null) {
+            return true;
+          }
+        } // if not same index
+        
+      } // for (j)
+    } // for (i)
+    return false;
   }
   static getSelfIntersectPoint(points) {
     const numPoints = points.length;

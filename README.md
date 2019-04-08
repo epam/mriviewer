@@ -10,11 +10,10 @@ Other popular formats will be planned for future improvements.
 Med3Web can read local data from files/folders and from predefined web locations.
 Demonstration project shows both (local data / remote data) usage types.
 It works as a standalone HTML5 web application. The latest version can be used with
-WebGL-enabled desktop browsers (Chrome, Firefox, Safari, Opera) and allow limited usage
-with mobile browsers (Android Chrome).
+WebGL-enabled desktop browsers (Chrome, Firefox, Opera) and allow limited usage
+with mobile browsers (Android Chrome). Version for Safari (macOS, iOS) is planned for future.
 
-![Background image](public/images/app_icon.png)
-
+![Background image](public/images/med3web_logo.png)
 
 ## Market evaluation
 
@@ -41,6 +40,12 @@ Some JavaScript libraries to work with Dicom file format:
 Three.js is used as some gateway to WebGL renderer. The current Three.js version does not support 3d textures,
 so we use tricky way to build 2d texture from initial 3d texture by linking 2d slices all together
 as a large tile map. This idea (with source codes) can be seen in project [WebGL Volume Rendering](https://github.com/lebarba/WebGLVolumeRendering).
+
+## Current version limitations
+
+Med3Web app has some important limitations, but we hope to impmelent them later:
+1. Dicom reader does not support compressed formats for pixels.
+2. Dicom reader does not support read folder with several series inside. Now we support only single serie reading from single folder.
 
 ## Project documentation
 
