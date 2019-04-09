@@ -3,7 +3,8 @@
   "fullName": "Med3web 2d/3d Dicom and other medical formats web viewer/editor",
   "description": "Med3web is unique 2d/3d medical volume data web viewer application. You can inspect data both in 2d and 3d modes.",
   "version": "1.0.2",
-  "author": "EPAM Systems, Inc.",
+  "author": "EPAM Systems",
+  "year": "2019",
   "homepage": ".",
   "private": false,
   "dependencies": {

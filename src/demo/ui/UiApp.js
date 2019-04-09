@@ -13,7 +13,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Nav, Navbar, Container, ProgressBar, Row, Col } from 'react-bootstrap';
-
+// import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+// import { Button } from 'react-bootstrap';
 
 import StoreActionType from '../store/ActionTypes';
 
@@ -104,7 +105,18 @@ class UiApp extends React.Component {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
               <Navbar>
+
                 <UiAbout />
+
+                
+                { /*
+                <Button>
+                  <i className="fa fa-question-circle"  ></i>
+                  AboutInlined
+                </Button>
+                */ }
+                
+
               </Navbar>
 
               <Navbar.Text className="d-none d-sm-block">
