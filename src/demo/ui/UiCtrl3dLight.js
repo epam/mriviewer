@@ -47,27 +47,23 @@ class UiCtrl3dLight extends React.Component {
   }
   onMode(indexMode) {
     this.m_updateEnable = true;
-    console.log(`3d control slight . mode = ${indexMode}`);
-    const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: indexMode });
+    this.props.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: indexMode });
   }
   onModeA() {
     this.onMode(Modes3d.ISO);
-    //if (this.m_volumeRenderer3D !== null) {
-    //this.m_volumeRenderer3D.switchToIsosurfRender();
-    //}
+    this.props.volumeRenderer.setEraserMode(false);
   }
   onModeB() {
     this.onMode(Modes3d.RAYCAST);
-    //if (this.m_volumeRenderer3D !== null) {
-    //this.m_volumeRenderer3D.switchToVolumeRender();
-    //}
+    this.props.volumeRenderer.setEraserMode(false);
   }
   onModeC() {
     this.onMode(Modes3d.RAYFAST);
+    this.props.volumeRenderer.setEraserMode(false);
   }
   onModeD() {
     this.onMode(Modes3d.EREASER);
+    this.props.volumeRenderer.setEraserMode(true);
   }
   onChangeSliderBrightness() {
     this.m_updateEnable = false;

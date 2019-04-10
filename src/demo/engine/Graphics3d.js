@@ -16,7 +16,6 @@ import Modes3d from '../store/Modes3d';
 import StoreActionType from '../store/ActionTypes';
 import VolumeRenderer3d from './VolumeRenderer3d'
 
-
 // ********************************************************
 // Const
 // ********************************************************
@@ -191,37 +190,37 @@ class Graphics3d extends React.Component {
     if (this.m_volumeRenderer3D !== null) {
       console.log(`Graphics3d . mode = ${mode3d}`);
       if (mode3d === Modes3d.RAYCAST) {
-        if (this.m_prevMode === Modes3d.EREASER) {
-          this.m_volumeRenderer3D.setEraserMode(false);
-        }
+        //if (this.m_prevMode === Modes3d.EREASER) {
+        //this.m_volumeRenderer3D.setEraserMode(false);
+        //}
         this.m_prevMode = Modes3d.RAYCAST;
         this.m_volumeRenderer3D.setTransferFuncVec3([store.slider3d_r, store.slider3d_g, store.slider3d_b], 0);
         this.m_volumeRenderer3D.switchToVolumeRender();      
       }
       if (mode3d === Modes3d.ISO) {
-        if (this.m_prevMode === Modes3d.EREASER) {
-          this.m_volumeRenderer3D.setEraserMode(false);
-        }
+        //if (this.m_prevMode === Modes3d.EREASER) {
+        //  this.m_volumeRenderer3D.setEraserMode(false);
+        //}
         this.m_prevMode = Modes3d.ISO;
         this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
         this.m_volumeRenderer3D.switchToIsosurfRender();      
       }
       if (mode3d === Modes3d.RAYFAST) {
-        if (this.m_prevMode === Modes3d.EREASER) {
-          this.m_volumeRenderer3D.setEraserMode(false);
-        }
+        //if (this.m_prevMode === Modes3d.EREASER) {
+        //  this.m_volumeRenderer3D.setEraserMode(false);
+        //}
         this.m_prevMode = Modes3d.RAYFAST;
         this.m_volumeRenderer3D.switchToFLATRender();
       }
       if (mode3d === Modes3d.EREASER) {
-        if (this.m_prevMode !== Modes3d.EREASER) {
-          this.m_volumeRenderer3D.setEraserMode(true);
-        }
+        //if (this.m_prevMode !== Modes3d.EREASER) {
+        //  this.m_volumeRenderer3D.setEraserMode(true);
+        //}
         this.m_prevMode = Modes3d.RAYFAST;
         this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
         this.m_volumeRenderer3D.switchToIsosurfRender();     
-        this.m_volumeRenderer3D.setEraserRadius(store.sliderErRadius);
-        this.m_volumeRenderer3D.setEraserDepth(store.sliderErDepth);
+        this.m_volumeRenderer3D.volumeUpdater.eraser.setEraserRadius(store.sliderErRadius);
+        this.m_volumeRenderer3D.volumeUpdater.eraser.setEraserDepth(store.sliderErDepth);
       }
       this.m_volumeRenderer3D.setOpacityBarrier(store.sliderOpacity);
       this.m_volumeRenderer3D.updateBrightness(store.sliderBrightness);

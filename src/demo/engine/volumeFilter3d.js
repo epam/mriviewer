@@ -28,13 +28,7 @@ import MaterialBlur from './gfx/matblur';
 import GlSelector from './GlSelector';
 import AmbientTexture from './ambientTexture';
 import TransferTexture from './transferTexture'
-
-const tools3dEraser = {
-  TAN: 'tan',
-  NORM: 'norm',
-  FILL: 'fill'
-};
-
+import Eraser from './Eraser';
 /** Class Graphics3d is used for 3d render */
 export default class VolumeFilter3d {
   constructor() {
@@ -51,6 +45,8 @@ export default class VolumeFilter3d {
     this.zDim = 0;
     this.zDimSqrt = 0;
     this.initMatBlure = 0;
+    this.bufferTextureCPU = null;
+    this.eraser = null;
   }
   /**
    * Filtering the source data and building the normals on the GPU
@@ -361,165 +357,6 @@ export default class VolumeFilter3d {
       return mainX + mainY * this.xTex + mainZ * this.xTex * this.yTex;
     }
   }
-  erasePixels(x_, y_, z_, size, depth, vDir, isothreshold, startflag, mouseup, normalmode, length) {
-    if (mouseup === true) {
-      this.resetflag = false;
-      this.prevDistance = null;
-      return;
-    }
-    const targetX = Math.floor(x_ * this.xDim);
-    const targetY = Math.floor(y_ * this.yDim);
-    const targetZ = Math.floor(z_ * this.zDim);
-
-    //console.log(`${Math.abs(this.prevPos - targetX - targetY - targetZ)}`);
-    //if ( Math.abs(this.prevPos - (targetX + targetY + targetZ)) <= radius) {
-    console.log(`Target erasePixels: ${targetX}, ${targetY}, ${targetZ}`);
-    const normal = new THREE.Vector3();
-    const normalGauss = new THREE.Vector3();
-    const GAUSS_R = 2;
-    const SIGMA = 1.4;
-    const SIGMA2 = SIGMA * SIGMA;
-    let nX = 0;
-    let nY = 0;
-    let nZ = 0;
-    let normFactor = 0;
-    let offDst = 0;
-    const VAL_2 = 2; // getting normal of surface
-    for (let k = -Math.min(GAUSS_R, targetZ); k <= Math.min(GAUSS_R, this.zDim - 1 - targetZ); k++) {
-      for (let j = -Math.min(GAUSS_R, targetY); j <= Math.min(GAUSS_R, this.yDim - 1 - targetY); j++) {
-        for (let i = -Math.min(GAUSS_R, targetX); i <= Math.min(GAUSS_R, this.xDim - 1 - targetX); i++) {
-          // handling voxel:
-          // (targetX + i; ,targetY+ j; targetZ + k);
-          const gX = targetX + i;
-          const gY = targetY + j;
-          const gZ = targetZ + k;
-          if (this.isWebGL2 === 0) {
-            const yTile = Math.floor(gZ / this.zDimSqrt);
-            const xTile = gZ - this.zDimSqrt * yTile;
-            const yTileOff = (yTile * this.yDim) * this.xTex;
-            const xTileOff = xTile * this.xDim;
-            offDst = yTileOff + (gY * this.xTex) + xTileOff + gX;
-          } else {
-            offDst = gX + gY * this.xDim + gZ * this.xDim * this.yDim;
-          }
-          const gauss = 1 - Math.exp(-(i * i + j * j + k * k) / (VAL_2 * SIGMA2));
-          normFactor += gauss;
-
-          const curVal = this.bufferTextureCPU[offDst];
-          nX += curVal * gauss * (-i / SIGMA2);
-          nY += curVal * gauss * (-j / SIGMA2);
-          nZ += curVal * gauss * (-k / SIGMA2);
-
-        }
-      }
-    }// end gauss summation
-    normalGauss.set(nX / normFactor, nY / normFactor, nZ / normFactor);
-    normal.copy(normalGauss);
-    if (normalmode === false) { //if tangetial mode - getting direction of view as normal of cylinder
-      normal.copy(vDir);
-      normal.multiplyScalar(-1.0);
-      this.lastMode.push(tools3dEraser.TAN);
-    } else {
-      this.lastMode.push(tools3dEraser.NORM);
-    }
-    normal.normalize();
-    console.log(`Normal: X: ${normal.x} Y: ${normal.y} Z: ${normal.z}`);
-
-    //const pidivide2 = 90; //pi/2 (just for console output)
-    const pi = 180;// pi (just for console output)
-    //const radius = 20; //distance between current position and prevPos in which we are allowed to delete
-
-    // Erase data in original texture
-
-    /*console.log(`${Math.abs(new THREE.Vector3(targetX, targetY, targetZ).normalize().x)}
-    ${Math.abs(new THREE.Vector3(targetX, targetY, targetZ).normalize().y)}
-    ${Math.abs(new THREE.Vector3(targetX, targetY, targetZ).normalize().z)}
-    ${Math.abs(pidivide2 - vDir.normalize().angleTo(normalGauss.normalize()) * pi / Math.PI)}`);*/
-    const radiusRatio = this.xDim / this.zDim;
-    const geometry = new THREE.CylinderGeometry(size, size, depth, pi, depth);
-    const mesh = new THREE.Mesh(geometry, null);
-    const axis = new THREE.Vector3(0, 0, 1);
-    mesh.quaternion.setFromUnitVectors(axis, normal.clone().normalize().multiplyScalar(-1));
-    mesh.position.copy(new THREE.Vector3(targetX, targetY, targetZ));
-
-    if (startflag === true) {
-      this.prevDistance = length;
-      this.resetflag = false;
-    }
-    this.radius = 0.05;
-    //console.log(`${Math.abs(this.prevDistance - length) * 1000}`);
-    //console.log(`${this.radius * 1000}`);
-    if (this.resetflag === false) {
-      if (Math.abs(this.prevDistance - length) < this.radius) {
-        this.prevDistance = length;
-        this.point = new THREE.Vector3(0, 0, 0);
-        this.queue = [];
-        this.queue.push(this.point);
-        const normalBack = -5;
-        let backZ = 0;
-        if (normalmode === false) { //some manipulatian with cylinder for tangential mode
-          backZ = 0 - Math.round(Math.abs(Math.tan(vDir.normalize().angleTo(normalGauss.normalize()))) * (size));
-        } else {
-          backZ = normalBack;
-        }
-        let deleteflag = false;
-        while (this.queue.length > 0) {
-          this.point = this.queue.pop();
-          const RotPoint = this.point.clone();
-          RotPoint.z *= radiusRatio;
-          RotPoint.applyAxisAngle(new THREE.Vector3(1, 0, 0), -mesh.rotation.x);
-          RotPoint.applyAxisAngle(new THREE.Vector3(0, 1, 0), -mesh.rotation.y);
-          RotPoint.applyAxisAngle(new THREE.Vector3(0, 0, 1), mesh.rotation.z);
-          if (Math.sqrt(RotPoint.x * RotPoint.x + RotPoint.y * RotPoint.y) > size ||
-            Math.abs(RotPoint.z) > depth || RotPoint.z < backZ) {
-            continue;
-          }
-          for (let x = this.point.x - 1; x <= this.point.x + 1; x++) {
-            for (let y = this.point.y - 1; y <= this.point.y + 1; y++) {
-              for (let z = this.point.z - 1; z <= this.point.z + 1; z++) {
-                const mainX = targetX + Math.round(x);
-                const mainY = targetY + Math.round(y);
-                const mainZ = targetZ + Math.round(z);
-                if (this.isWebGL2 === 0) {
-                  const yTile = Math.floor(mainZ / this.zDimSqrt);
-                  const xTile = mainZ - this.zDimSqrt * yTile;
-                  const yTileOff = (yTile * this.yDim) * this.xTex;
-                  const xTileOff = xTile * this.xDim;
-                  offDst = yTileOff + (mainY * this.xTex) + xTileOff + mainX;
-                } else {
-                  offDst = mainX + mainY * this.xDim + mainZ * this.xDim * this.yDim;
-                }
-                if (this.bufferMask[offDst] === 0) {
-                  continue;
-                }
-
-                const bitconst = 255.0;
-                const borderinclude = 0.01;
-                const isoSurfaceBorder = isothreshold * bitconst - borderinclude * bitconst;
-
-                if (this.bufferTextureCPU[offDst] >= isoSurfaceBorder) {
-                  deleteflag = true;
-                  this.bufferMask[offDst] = 0;
-                  this.queue.push(new THREE.Vector3(x, y, z));
-                }
-              }
-            }
-          }
-        }
-        if (deleteflag === true) {
-          this.lastSize.push(size);
-          this.lastDepth.push(depth);
-          this.lastRotationVector.push(new THREE.Vector3(-mesh.rotation.x, -mesh.rotation.y, mesh.rotation.z));
-          this.lastTarget.push(new THREE.Vector3(targetX, targetY, targetZ));
-          this.lastBackDistance.push(-Math.round(Math.abs(Math.tan(vDir.normalize().angleTo(normalGauss.normalize())))
-            * (size)));
-        }
-        this.updatableTextureMask.needsUpdate = true;
-      } else {
-        this.resetflag = true;
-      }
-    }
-  }
   getIntensity(pointX, pointY, pointZ, undoFlag) {
     const full = 255;
     let offDst = 0;
@@ -559,190 +396,6 @@ export default class VolumeFilter3d {
     } else {
       this.bufferMask[offDst] = 0;
     }
-  }
-  erasePixelsFloodFill(x_, y_, z_, startflag, mouseup, undoFlag) {
-    let targetX;
-    let targetY;
-    let targetZ;
-    if (!undoFlag) {
-      targetX = Math.floor(x_ * this.xDim);
-      targetY = Math.floor(y_ * this.yDim);
-      targetZ = Math.floor(z_ * this.zDim);
-      if (startflag === true) { // if we started drawing there are no previous position
-        this.prevPos = null;
-      }
-      if (mouseup === true) { //getting previous position as our mouse is not pressed
-        this.prevPos = targetX + targetY + targetZ;
-        return;
-      }
-      if (this.prevPos === null) {
-        this.prevPos = targetX + targetY + targetZ;
-      }
-      console.log(`Target: ${targetX}, ${targetY}, ${targetZ}`);
-      this.lastMode.push(tools3dEraser.FILL);
-    } else {
-      targetX = x_;
-      targetY = y_;
-      targetZ = z_;
-    }
-    const intensityTarget = this.getIntensity(targetX, targetY, targetZ, undoFlag);
-    const stack = [];
-    stack.push({ 'tX':targetX, 'tY':targetY, 'tZ':targetZ });
-
-    if (!undoFlag) {
-      this.lastTarget.push(new THREE.Vector3(targetX, targetY, targetZ));
-    }
-
-    while (stack.length !== 0) {
-      const point = stack.pop();
-      let openUp = false;
-      let openDown = false;
-      let openFar = false;
-      let openClose = false;
-      let xTmp = point.tX;
-      while (this.getIntensity(xTmp, point.tY, point.tZ, undoFlag) >= intensityTarget) {
-        xTmp--;
-      }
-      const leftBound = xTmp + 1;
-      xTmp = point.tX;
-      while (this.getIntensity(xTmp, point.tY, point.tZ, undoFlag) >= intensityTarget) {
-        xTmp++;
-      }
-      const rightBound = xTmp - 1;
-      for (xTmp = leftBound; xTmp <= rightBound; xTmp++) {
-        this.changeIntensity(xTmp, point.tY, point.tZ, undoFlag);
-        if (openUp === false) {
-          if (this.getIntensity(xTmp, point.tY + 1, point.tZ, undoFlag) >= intensityTarget) {
-            stack.push({ 'tX': xTmp, 'tY': (point.tY + 1), 'tZ': point.tZ });
-            openUp = true;
-          }
-        } else if (this.getIntensity(xTmp, point.tY + 1, point.tZ, undoFlag) < intensityTarget) {
-          openUp = false;
-        }
-
-        if (openDown === false) {
-          if (this.getIntensity(xTmp, point.tY - 1, point.tZ, undoFlag) >= intensityTarget) {
-            stack.push({ 'tX': xTmp, 'tY': (point.tY - 1), 'tZ': point.tZ });
-            openDown = true;
-          }
-        } else if (this.getIntensity(xTmp, point.tY - 1, point.tZ, undoFlag) < intensityTarget) {
-          openDown = false;
-        }
-
-        if (openFar === false) {
-          if (this.getIntensity(xTmp, point.tY, point.tZ + 1, undoFlag) >= intensityTarget) {
-            stack.push({ 'tX':xTmp, 'tY':point.tY, 'tZ':(point.tZ + 1) });
-            openFar = true;
-          }
-        } else if (this.getIntensity(xTmp, point.tY, point.tZ + 1, undoFlag) < intensityTarget) {
-          openFar = false;
-        }
-
-        if (openClose === false) {
-          if (this.getIntensity(xTmp, point.tY, point.tZ - 1, undoFlag) >= intensityTarget) {
-            stack.push({ 'tX':xTmp, 'tY':point.tY, 'tZ':(point.tZ - 1) });
-            openClose = true;
-          }
-        } else if (this.getIntensity(xTmp, point.tY, point.tZ - 1, undoFlag) < intensityTarget) {
-          openClose = false;
-        }
-      }
-    }
-    if (!undoFlag) {
-      this.updatableTextureMask.needsUpdate = true;
-    }
-  }
-  undoLastErasing() {
-    if (this.lastMode.pop() === tools3dEraser.FILL) {
-      const targetPoint = this.lastTarget.pop();
-      const targetX = targetPoint.x;
-      const targetY = targetPoint.y;
-      const targetZ = targetPoint.z;
-      this.erasePixelsFloodFill(targetX, targetY, targetZ, false, false, true);
-    } else {
-      if (this.lastSize.length === 0) {
-        return;
-      }
-      const radiusRatio = this.xDim / this.zDim;
-      const VAL_10 = 10;
-      if (this.undocount === VAL_10) {
-        this.lastSize = [];
-        this.lastDepth = [];
-        this.lastRotationVector = [];
-        this.lastTarget = [];
-        this.lastBackDistance = [];
-        this.undocount = 0;
-        //this.resetBufferTextureCPU();
-        return;
-      }
-      this.undocount++;
-      const targetLast = this.lastTarget.pop();
-      const lastRotation = this.lastRotationVector.pop();
-      const rxy = Math.round(this.lastSize.pop());
-      const lastDepth = this.lastDepth.pop();
-      const lastback = this.lastBackDistance.pop();
-      this.point = new THREE.Vector3(0, 0, 0);
-      this.queue = [];
-      this.queue.push(this.point);
-      while (this.queue.length > 0) {
-        this.point = this.queue.pop();
-        const RotPoint = this.point.clone();
-        RotPoint.z *= radiusRatio;
-        RotPoint.applyAxisAngle(new THREE.Vector3(1, 0, 0), lastRotation.x);
-        RotPoint.applyAxisAngle(new THREE.Vector3(0, 1, 0), lastRotation.y);
-        RotPoint.applyAxisAngle(new THREE.Vector3(0, 0, 1), lastRotation.z);
-        if (Math.sqrt(RotPoint.x * RotPoint.x + RotPoint.y * RotPoint.y) > rxy ||
-          RotPoint.z > lastDepth || RotPoint.z < lastback) {
-          continue;
-        }
-        let offDst = 0;
-        for (let x = this.point.x - 1; x <= this.point.x + 1; x++) {
-          for (let y = this.point.y - 1; y <= this.point.y + 1; y++) {
-            for (let z = this.point.z - 1; z <= this.point.z + 1; z++) {
-              const mainX = targetLast.x + Math.round(x);
-              const mainY = targetLast.y + Math.round(y);
-              const mainZ = targetLast.z + Math.round(z);
-              if (this.isWebGL2 === 0) {
-                const yTile = Math.floor(mainZ / this.zDimSqrt);
-                const xTile = mainZ - this.zDimSqrt * yTile;
-                const yTileOff = (yTile * this.yDim) * this.xTex;
-                const xTileOff = xTile * this.xDim;
-                offDst = yTileOff + (mainY * this.xTex) + xTileOff + mainX;
-              } else {
-                offDst = mainX + mainY * this.xDim + mainZ * this.xDim * this.xDim;
-              }
-              if (this.bufferMask[offDst] === 0) {
-                this.bufferMask[offDst] = 255.0;
-                this.queue.push(new THREE.Vector3(x, y, z));
-              }
-            }
-          }
-        }
-      }
-    }
-    this.updatableTextureMask.needsUpdate = true;
-  }
-  resetBufferTextureCPU() {
-    //this.rendererBlur.render(this.sceneBlur, this.cameraOrtho, this.bufferTexture);
-    //const gl = this.rendererBlur.getContext();
-    //gl.readPixels(0, 0, this.xTex, this.yTex, gl.RGBA, gl.UNSIGNED_BYTE, this.bufferTextureCPU);
-    //this.updatableTexture.needsUpdate = true; this.lastSize.push(size);
-    if (this.isWebGL2 === 0) {
-      for (let y = 0; y < this.yTex; y++) {
-        for (let x = 0; x < this.xTex; x++) {
-          this.bufferMask[x + y * this.xTex] = 255.0;
-        }
-      }
-    } else {
-      for (let z = 0; z < this.zDim; z++) {
-        for (let y = 0; y < this.yDim; y++) {
-          for (let x = 0; x < this.xDim; x++) {
-            this.bufferMask[x + y * this.xDim + z * this.xDim * this.yDim] = 255;
-          }
-        }
-      }
-    }
-    this.updatableTextureMask.needsUpdate = true;
   }
   /**
    * Create 2D texture containing roi color map
@@ -918,6 +571,7 @@ export default class VolumeFilter3d {
       this.initRenderer(isRoiVolume, roiColors);
     }
     this.updatableTexture.needsUpdate = true;
+    this.eraser = new Eraser();
     return this.updatableTexture;
   }
   /**
@@ -925,7 +579,10 @@ export default class VolumeFilter3d {
    * @param volume An object that contains all volume-related info
    * @return (object) Created texture
    */
-  createUpdatableVolumeMask(volume) {
+  createUpdatableVolumeMask(params) {
+    return this.eraser.createUpdatableVolumeMask(params, this.bufferTextureCPU);
+  }
+  createUpdatableVolumeMask1(volume) {
     const xDim = volume.m_xDim;
     const yDim = volume.m_yDim;
     if (this.isWebGL2 === 0) {

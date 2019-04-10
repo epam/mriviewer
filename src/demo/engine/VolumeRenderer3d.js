@@ -38,6 +38,7 @@ import MaterialVolumeRender from './gfx/matvolumerender';
 import VolumeFilter3D from './volumeFilter3d';
 import RoiPalette from './loaders/roipalette';
 import TetrahedronGenerator from './actvolume/tetra';
+
 // import GlCheck from './glcheck';
 // import GeoRender from '../actvolume/georender';
 
@@ -129,6 +130,9 @@ export default class VolumeRenderer3d {
     this.matVolumeRender = null;
     this.volumeUpdater = null;
     this.checkFrameBufferMode = CHECK_MODE_NOT_CHECKED;
+    this.eraserStarted = false;
+    this.lockEraserBuffersUpdating = false;
+
     // eslint-disable-next-line
     this.planeCenterPt = new THREE.Vector3(-0.5, -0.5, 0.5 * 1.4);
     // this.renderer = new THREE.WebGLRenderer({ antialias: false, logarithmicDepthBuffer: false });
@@ -175,7 +179,7 @@ export default class VolumeRenderer3d {
       if (this.checkFrameBufferMode === CHECK_MODE_RESULT_OK) {
         this.updateCutPlanes();
         this.updateLightDir();
-        this.updateMeshSphere();
+        //this.updateMeshSphere();
       }
     });
     //this.orbitControl.addCallbacks();
@@ -218,7 +222,6 @@ export default class VolumeRenderer3d {
     this.eraserSrart = false;
     this.lockEraserBuffersUpdating = false;
     this.eraserMouseDown = false;
-    this.mouseupflag = true;
     this.m_eraser = null;
 
     this.isSculptingMode = false;
@@ -427,21 +430,6 @@ export default class VolumeRenderer3d {
       this.renderState = this.RENDER_STATE.ONCE;
     }
   }
-  /**
-   * Setting a variable for conditional compilation (ROI Volume Render)
-   */
-  /*
-  switchToROIVolumeRender() {
-    this.matVolumeRender.defines.isoRenderFlag = 4;
-    this.matVolumeRender.needsUpdate = true;
-    this.matInterpolation.defines.isoRenderFlag = 4;
-    this.matInterpolation.needsUpdate = true;
-    this.matRenderToTexture.defines.isoRenderFlag = 4;
-    this.matRenderToTexture.needsUpdate = true;
-    this.renderState = this.RENDER_STATE.ONCE;
-    this.volumeUpdater.switchToRoiMapRender();
-  }
-  */
   /**
    * Setting a variable for conditional compilation (Isosurface render)
    */
@@ -684,44 +672,6 @@ export default class VolumeRenderer3d {
       this.geometrySphere.uvw = uvw;
     } // if need face uv
   }
-  /*
-  createTetraGeometry() {
-    const genTetra = new TetrahedronGenerator();
-    const SCALE = 0.25;
-    const vRadius = new THREE.Vector3(SCALE, SCALE, SCALE);
-    const NUM_SUBDIVIDES = 3;
-    const okCreateTetra = genTetra.create(vRadius, NUM_SUBDIVIDES);
-    if (okCreateTetra < 1) {
-      return;
-    }
-    const geoRender = new GeoRender();
-    const errGeo = geoRender.createFromTetrahedronGenerator(genTetra);
-    const GEO_OK = 1;
-    if (errGeo !== GEO_OK) {
-      console.log('TetraGeo create error');
-    }
-    geoRender.createNormalsForGeometry();
-    const geometry = new THREE.Geometry();
-    const v = geoRender.getVertices();
-    // eslint-disable-next-line
-    for (let i = 0; i < v.length / 4; i++) {
-      // eslint-disable-next-line
-      geometry.vertices.push(new THREE.Vector3(v[i * 4 + 0], v[i * 4 + 1], v[i * 4 + 2]));
-    }
-    const f = geoRender.getIndices();
-    // eslint-disable-next-line
-    for (let i = 0; i < f.length / 3; i++) {
-      // eslint-disable-next-line
-      geometry.faces.push(new THREE.Face3(f[i * 3 + 0], f[i * 3 + 1], f[i * 3 + 2]));
-    }
-    geometry.computeBoundingBox();
-    const material = new THREE.MeshBasicMaterial({ color: 0xFF0000FF, depthTest: false, wireframe: true });
-    material.side = THREE.DoubleSide;
-    const mesh = new THREE.Mesh(geometry, material);
-    this.sceneTetra.add(mesh);
-    console.log(`TetraGeo created v, i = ${geometry.vertices.length}, ${geometry.faces.length}`);
-  }
-  */
   createClipPlaneGeometry() {
     const matClipPlane = new MaterialClipPlane();
     matClipPlane.create(this.bfTexture, (mat) => {
@@ -798,9 +748,7 @@ export default class VolumeRenderer3d {
     this.renderCounter = 0;
     let matBfThreeGS = null;
     let matFfThreeGS = null;
-    let matRenderToTextureThreeGS = null;
     let matIntetpl = null;
-    let matSkullThreeGS = null;
     let matScreenTex = null;
     if (this.sceneClipPlane) {
       this.sceneClipPlane = new THREE.Scene();
@@ -843,6 +791,7 @@ export default class VolumeRenderer3d {
     if (this.volTexture) {
       this.volTexture.dispose();
     }
+    this.eraserStarted = false;
     this.isRoiVolume = isRoiVolume;
     this.roiPalette = null;
     if (isRoiVolume === true) {
@@ -868,7 +817,7 @@ export default class VolumeRenderer3d {
     this.volTexture = this.volumeUpdater.createUpdatableVolumeTex(props, isRoiVolume, this.roiPalette);
     this.origVolumeTex = this.volumeUpdater.origVolumeTex;
     this.texTF = this.volumeUpdater.createTransferFuncTexture();
-    this.volTextureMask = this.volumeUpdater.createUpdatableVolumeMask(this.volume);
+    //this.volTextureMask = this.volumeUpdater.createUpdatableVolumeMask(this.volume);
 
     if (this.texVolumeAO) {
       this.texVolumeAO.dispose();
@@ -962,12 +911,6 @@ export default class VolumeRenderer3d {
 
     // Create mesh
     this.mesh = new THREE.Mesh(this.geometry);
-    //this.mesh.rotation.y += this.curFileDataType.startRotY;
-    //this.mesh.rotation.x += this.curFileDataType.startRotX;
-
-    //this.meshSphere.rotation.y += this.curFileDataType.startRotY;
-    //this.meshSphere.rotation.x += this.curFileDataType.startRotX;
-
     //console.log(`startRot = ${this.curFileDataType.startRotX} ${this.curFileDataType.startRotY}`);
     this.orbitControl.setMesh(this.mesh);
     this.orbitControl.setWireMesh(this.meshSphere);
@@ -987,10 +930,11 @@ export default class VolumeRenderer3d {
       const z = -Math.random();
       offsets.push(new THREE.Vector3(x, y, z));
     }
-    matRenderToTextureThreeGS = new MaterialRenderToTexture();
-    matRenderToTextureThreeGS.m_uniforms.colorMap1D.value = this.colorMapTexture;
-    matRenderToTextureThreeGS.create(this.texTF, this.volTexture,
-      this.volTextureMask, this.texVolumeAO, this.bfTexture.texture, this.ffTexture.texture, offsets,
+    this.matRenderToTextureThreeGS = new MaterialRenderToTexture();
+    this.matRenderToTextureThreeGS.m_uniforms.colorMap1D.value = this.colorMapTexture;
+    this.matRenderToTextureThreeGS.create(this.texTF, this.volTexture,
+      null, this.texVolumeAO, this.bfTexture.texture, this.ffTexture.texture, offsets,
+      //this.volTextureMask, this.texVolumeAO, this.bfTexture.texture, this.ffTexture.texture, offsets,
       (mat) => {
         mat.uniforms.t_function1min.value =
           new THREE.Vector4(VOLUME_COLOR1_MIN_R, VOLUME_COLOR1_MIN_G, VOLUME_COLOR1_MIN_B,
@@ -1035,12 +979,13 @@ export default class VolumeRenderer3d {
     });
 
     // Create material for main pass of volume render
-    matSkullThreeGS = new MaterialVolumeRender();
-    matSkullThreeGS.m_uniforms.isoSurfTexel.value = new THREE.Vector2(VAL_3 / this.windowWidth,
+    this.matSkullThreeGS = new MaterialVolumeRender();
+    this.matSkullThreeGS.m_uniforms.isoSurfTexel.value = new THREE.Vector2(VAL_3 / this.windowWidth,
       VAL_3 / this.windowHeight);
-    matSkullThreeGS.m_uniforms.colorMap1D.value = this.colorMapTexture;
-    matSkullThreeGS.create(this.texTF, this.volTexture,
-      this.volTextureMask, this.texVolumeAO, this.bfTexture.texture, this.ffTexture.texture,
+    this.matSkullThreeGS.m_uniforms.colorMap1D.value = this.colorMapTexture;
+    this.matSkullThreeGS.create(this.texTF, this.volTexture,
+      null, this.texVolumeAO, this.bfTexture.texture, this.ffTexture.texture,
+      //this.volTextureMask, this.texVolumeAO, this.bfTexture.texture, this.ffTexture.texture,
       this.renderToTexture.texture, offsets, (mat) => {
         mat.uniforms.t_function1min.value =
           new THREE.Vector4(VOLUME_COLOR1_MIN_R, VOLUME_COLOR1_MIN_G, VOLUME_COLOR1_MIN_B,
@@ -1075,6 +1020,7 @@ export default class VolumeRenderer3d {
         this.meshSphere.material = this.matVolumeRender;
         this.sceneReadyCounter++;
       });
+    //matSkullThreeGS.m_uniforms.texVolumeMask.value = this.volTextureMask;
   } // callbackCreateCubeVolume
   /**
    * Creates transfer function color map
@@ -1164,15 +1110,6 @@ export default class VolumeRenderer3d {
     if (!matReady) {
       return false;
     }
-    /*
-    if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
-      return false;
-    }
-    // give some frames to render
-    const MIN_FRAMES_TO_APPEAR_ON_SCREEN = 32;
-    if (this.renderCounter < MIN_FRAMES_TO_APPEAR_ON_SCREEN) {
-      return false;
-    }*/
     return true;
   }
   /** Render 3d scene */
@@ -1194,19 +1131,6 @@ export default class VolumeRenderer3d {
       if (this.checkFrameBufferMode === CHECK_MODE_NOT_CHECKED) {
         // const isGood = true;// GlCheck.checkFrameBuffer(this.renderer, this.bfTexture);
         this.checkFrameBufferMode = CHECK_MODE_RESULT_OK;
-        /*
-        this.checkFrameBufferMode = (isGood) ? CHECK_MODE_RESULT_OK : CHECK_MODE_RESULT_BAD;
-        if (this.checkFrameBufferMode === CHECK_MODE_RESULT_BAD) {
-          const strTitle = 'Device video card problem';
-          const strLog = 'Cant setup render framebuffer. Application can not run in this browser/device';
-          swal({
-            title: strTitle,
-            text: strLog,
-            icon: 'error',
-            button: 'continue',
-          });
-        }
-        */
       }
 
       if (this.renderScene === SCENE_TYPE_RAYCAST) {
@@ -1254,49 +1178,6 @@ export default class VolumeRenderer3d {
         //this.renderer.render(this.sceneSphereWireFrame, this.camera);
         this.renderer.autoClearDepth = true;
       }
-
-      if (this.renderScene === SCENE_TYPE_SPHERE) {
-        this.updateClipPlaneGeometry();
-        this.updateCutPlanes();
-        // this.renderer.clearTarget(this.bfTexture);
-        this.renderer.setRenderTarget(this.bfTexture);
-        this.renderer.clear();
-        this.renderer.state.buffers.depth.setClear(0);
-        this.sceneSphere.overrideMaterial = this.matBF;
-        this.renderer.render(this.sceneSphere, this.camera, this.bfTexture);
-        const glC = this.renderer.getContext();
-        if (this.isEraseMode && !this.lockEraserBuffersUpdating) {
-          glC.readPixels(0, 0, this.windowWidth, this.windowHeight, glC.RGBA, glC.FLOAT, this.bufferBFTextureCPU);
-        }
-        // this.renderer.clearTarget(this.ffTexture);
-        this.renderer.setRenderTarget(this.ffTexture);
-        this.renderer.clear();
-        this.renderer.state.buffers.depth.setClear(1);
-        // render clip plane without depth test
-        this.renderer.render(this.sceneClipPlane, this.camera, this.ffTexture);
-        // enable test again
-        this.sceneSphere.overrideMaterial = this.matFF;
-        this.renderer.render(this.sceneSphere, this.camera, this.ffTexture);
-
-        glC.readPixels(0, 0, this.windowWidth, this.windowHeight, glC.RGBA, glC.FLOAT, this.bufferFFTextureCPU);
-
-        this.renderer.setRenderTarget();
-        this.renderer.clear();
-        this.renderer.state.buffers.depth.setClear(0);
-        this.sceneSphere.overrideMaterial = this.matRenderToTexture;
-        this.renderer.render(this.sceneSphere, this.camera, this.renderToTexture);
-
-        this.sceneSphere.overrideMaterial = null;
-        this.renderer.state.buffers.depth.setClear(0);
-        this.renderer.render(this.sceneSphere, this.camera);
-        this.renderer.autoClearDepth = false;
-        //this.matWireFrame
-        this.sceneSphere.overrideMaterial = this.matWireFrame;
-        this.renderer.render(this.sceneSphere, this.camera);
-        //this.renderer.render(this.sceneSphereWireFrame, this.camera);
-        this.renderer.autoClearDepth = true;
-      }
-
       this.renderCounter++;
     }
   }
@@ -1339,148 +1220,22 @@ export default class VolumeRenderer3d {
     // return vProj.z;
     return vPrj.z;
   }
-  /**
-   * Keyboard event handler
-   * @param (number) keyCode - keyboard code
-   * @param (Boolean) debug - true if debug false otherwise
-   */
-  /*  onKeyDown(keyCode, debug) {
-    const KEY_CODE_E = 69;
-    if (debug) {
-      if (keyCode === KEY_CODE_E) {
-        this.isEraseMode = !this.isEraseMode;
-        console.log(`Erase mode: ${this.isEraseMode}`);
-      } // if pressed 'E' key
-    }
-  }
-  */
-  /*eslint-disable no-unused-vars*/
-  onKeyDown(keyCode, debug) {
-    const KEY_CODE_C = 67;
-    const KEY_CODE_F = 70;
-    const KEY_CODE_A = 65;
-
-    const KEY_CODE_LEFT = 37;
-    const KEY_CODE_UP = 38;
-    const KEY_CODE_RIGHT = 39;
-    const KEY_CODE_DOWN = 40;
-    const KEY_CODE_PLUS = 187;
-    const KEY_CODE_MINUS = 189;
-    const KEY_CODE_DEPTH_DEC = 219;
-    const KEY_CODE_DEPTH_INC = 221;
-
-    const stepSize = 0.025;
-    const scaleVal = 0.025;
-    const ONE = 1.0;
-    // console.log(`key = ${keyCode}`);
-    if (debug) {
-      if (keyCode === KEY_CODE_A) {
-        this.setAmbientTextureMode(this.isoThreshold);
-      }
-      if (keyCode === KEY_CODE_F) {
-        // console.log('Graphics3d.onKeyDown: switch scene type');
-        if (this.renderScene === SCENE_TYPE_RAYCAST) {
-          this.renderScene = SCENE_TYPE_SPHERE;
-          this.isSculptingMode = true;
-          this.orbitControl.setScene(this.sceneSphere);
-          this.orbitControl.setEraserMode(true);
-        } else {
-          this.renderScene = SCENE_TYPE_RAYCAST;
-          this.isSculptingMode = false;
-          this.orbitControl.setScene(this.scene);
-          this.orbitControl.setEraserMode(false);
-        }
-      } // if key code
-      if (keyCode === KEY_CODE_LEFT) {
-        const vDelta = new THREE.Vector3(-stepSize, 0.0, 0.0);
-        const l2w = new THREE.Matrix4();
-        l2w.getInverse(this.meshSphere.matrix);
-        vDelta.applyMatrix4(l2w);
-        this.sculptingSphereCenter.add(vDelta);
-        this.geometrySphere.translate(vDelta.x, vDelta.y, vDelta.z);
-        this.computeGeometrySphereUVs();
-      }
-      if (keyCode === KEY_CODE_RIGHT) {
-        const vDelta = new THREE.Vector3(stepSize, 0.0, 0.0);
-        const l2w = new THREE.Matrix4();
-        l2w.getInverse(this.meshSphere.matrix);
-        vDelta.applyMatrix4(l2w);
-        this.sculptingSphereCenter.add(vDelta);
-        this.geometrySphere.translate(vDelta.x, vDelta.y, vDelta.z);
-        this.computeGeometrySphereUVs();
-      }
-      if (keyCode === KEY_CODE_UP) {
-        const vDelta = new THREE.Vector3(0.0, stepSize, 0.0);
-        const l2w = new THREE.Matrix4();
-        l2w.getInverse(this.meshSphere.matrix);
-        vDelta.applyMatrix4(l2w);
-        this.sculptingSphereCenter.add(vDelta);
-        this.geometrySphere.translate(vDelta.x, vDelta.y, vDelta.z);
-        this.sculptingSphereCenter.add(vDelta);
-        this.computeGeometrySphereUVs();
-      }
-      if (keyCode === KEY_CODE_DOWN) {
-        const vDelta = new THREE.Vector3(0.0, -stepSize, 0.0);
-        const l2w = new THREE.Matrix4();
-        l2w.getInverse(this.meshSphere.matrix);
-        vDelta.applyMatrix4(l2w);
-        this.sculptingSphereCenter.add(vDelta);
-        this.geometrySphere.translate(vDelta.x, vDelta.y, vDelta.z);
-        this.sculptingSphereCenter.add(vDelta);
-        this.computeGeometrySphereUVs();
-      }
-      if (keyCode === KEY_CODE_DEPTH_INC) {
-        const vDelta = new THREE.Vector3(0.0, 0.0, stepSize);
-        const l2w = new THREE.Matrix4();
-        l2w.getInverse(this.meshSphere.matrix);
-        vDelta.applyMatrix4(l2w);
-        this.sculptingSphereCenter.add(vDelta);
-        this.geometrySphere.translate(vDelta.x, vDelta.y, vDelta.z);
-        this.sculptingSphereCenter.add(vDelta);
-        this.geometrySphere.translate(0.0, 0.0, stepSize);
-        this.computeGeometrySphereUVs();
-      }
-      if (keyCode === KEY_CODE_DEPTH_DEC) {
-        const vDelta = new THREE.Vector3(0.0, 0.0, -stepSize);
-        const l2w = new THREE.Matrix4();
-        l2w.getInverse(this.meshSphere.matrix);
-        vDelta.applyMatrix4(l2w);
-        this.sculptingSphereCenter.add(vDelta);
-        this.geometrySphere.translate(vDelta.x, vDelta.y, vDelta.z);
-        this.sculptingSphereCenter.add(vDelta);
-        this.computeGeometrySphereUVs();
-      }
-      if (keyCode === KEY_CODE_PLUS) {
-        this.geometrySphere.translate(-this.sculptingSphereCenter.x,
-          -this.sculptingSphereCenter.y, -this.sculptingSphereCenter.z);
-        this.geometrySphere.scale(ONE + scaleVal, ONE + scaleVal, ONE + scaleVal);
-        this.geometrySphere.translate(this.sculptingSphereCenter.x,
-          this.sculptingSphereCenter.y, this.sculptingSphereCenter.z);
-        this.computeGeometrySphereUVs();
-      }
-      if (keyCode === KEY_CODE_MINUS) {
-        this.geometrySphere.translate(-this.sculptingSphereCenter.x,
-          -this.sculptingSphereCenter.y, -this.sculptingSphereCenter.z);
-        this.geometrySphere.scale(ONE - scaleVal, ONE - scaleVal, ONE - scaleVal);
-        this.geometrySphere.translate(this.sculptingSphereCenter.x,
-          this.sculptingSphereCenter.y, this.sculptingSphereCenter.z);
-        this.computeGeometrySphereUVs();
-      }
-    } // if debug
-  } // onKeyDown
   setEraserMode(isOn) {
-    const lastState = this.isEraseMode;
     this.isEraseMode = isOn;
     this.orbitControl.setEraserMode(isOn);
-    this.setEraserNormalMode(true);
-    /*this.m_eraser = new Eraser({
-      bfTex: this.bufferBFTextureCPU,
-      ffTex: this.bufferFFTextureCPU,
-      renderToTex: this.bufferRenderToTextureCPU
-    });
-    */
-    if (!lastState && isOn) {
-      this.render();
+    if (!this.eraserStarted && isOn) {
+      this.eraserStarted = true;
+      const params = {
+        xDim: this.volume.m_xDim,
+        yDim: this.volume.m_yDim,
+        zDim: this.volume.m_zDim,
+        bufBF: this.bufferBFTextureCPU,
+        bufFF: this.bufferFFTextureCPU,
+        bufTex: this.bufferRenderToTextureCPU,
+      };
+      this.volTextureMask = this.volumeUpdater.createUpdatableVolumeMask(params);
+      this.matSkullThreeGS.m_uniforms.texVolumeMask.value = this.volTextureMask;
+      this.matRenderToTextureThreeGS.m_uniforms.texVolumeMask.value = this.volTextureMask;
     }
     if (isOn) {
       this.setMaskFlag(1);
@@ -1488,372 +1243,34 @@ export default class VolumeRenderer3d {
       this.setMaskFlag(0);
     }
   }
-  resetEraser() {
-    this.volumeUpdater.resetBufferTextureCPU();
-    this.render();
-  }
   undoEraser() {
-    this.volumeUpdater.undoLastErasing();
-  }
-  setEraserNormalMode(isNormalMode) {
-    this.eraserNormalMode = isNormalMode;
-    if (isNormalMode === false) {
-      this.eraserFillMode = false;
-    }
-  }
-  setEraserFillMode(isFillMode) {
-    this.eraserFillMode = isFillMode;
-    this.eraserNormalMode = false;
-  }
-  setEraserRadius(radius) {
-    this.eraserRadius = radius;
-  }
-  setEraserDepth(depth) {
-    this.eraserDepth = depth;
+    this.volumeUpdater.eraser.undoLastErasing();
   }
   setEraserStart(isOn) {
     this.eraserStart = isOn;
   }
   onMouseDown(xx, yy) {
     this.orbitControl.onMouseDown(xx, yy);
-    const x =  Math.round(xx);
-    const y =  Math.round(yy);
-    if (this.mouseupflag === true) {
-      this.mouseupflag = false;
-    }
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return;
     }
-
     this.renderState = this.RENDER_STATE.ENABLED;
     this.eraserMouseDown = true;
     if (this.isEraseMode && this.eraserStart) {
-      if (this.renderScene === SCENE_TYPE_RAYCAST) {
-        const OFF0 = 0;
-        const OFF1 = 1;
-        const OFF2 = 2;
-        const OFF3 = 3;
-        const GPU_CELL_SIZE = 4;
-
-        this.lockEraserBuffersUpdating = true;
-        //console.log(`Small Tex Size: ${this.xSmallTexSize} x ${this.ySmallTexSize}`);
-        //console.log(`Erasing! X: ${x} Y: ${y}`);
-
-        const cellInd = (y * this.windowWidth + x) * GPU_CELL_SIZE;
-        const THREE3 = 3;
-        const bigCellInd = (Math.floor(y / THREE3) * this.xSmallTexSize +
-          Math.floor(x / THREE3)) * GPU_CELL_SIZE;
-
-        //console.log("Dist: " + this.bufferRenderToTextureCPU[bigCellInd + OFF3]);
-        const NO_MATERIAL = 2;
-        if (this.bufferRenderToTextureCPU[bigCellInd + OFF3] === NO_MATERIAL) {
-          return;
-        }
-        let vX = this.bufferBFTextureCPU[cellInd + OFF0] - this.bufferFFTextureCPU[cellInd + OFF0];
-        let vY = this.bufferBFTextureCPU[cellInd + OFF1] - this.bufferFFTextureCPU[cellInd + OFF1];
-        let vZ = this.bufferBFTextureCPU[cellInd + OFF2] - this.bufferFFTextureCPU[cellInd + OFF2];
-        const vDir = new THREE.Vector3(vX, vY, vZ);
-        //console.log("Vec: " + vX + "; " + vY + "; " + vZ);
-        const length = Math.sqrt(vX * vX + vY * vY + vZ * vZ);
-        const COORD_SHIFT = 0.5;
-        vX = vX / length * this.bufferRenderToTextureCPU[bigCellInd + OFF3] + COORD_SHIFT +
-          this.bufferFFTextureCPU[cellInd + OFF0];
-        vY = vY / length * this.bufferRenderToTextureCPU[bigCellInd + OFF3] + COORD_SHIFT +
-          this.bufferFFTextureCPU[cellInd + OFF1];
-        vZ = vZ / length * this.bufferRenderToTextureCPU[bigCellInd + OFF3] + COORD_SHIFT +
-          this.bufferFFTextureCPU[cellInd + OFF2];
-        if (this.eraserNormalMode) {
-          this.volumeUpdater.erasePixels(vX, vY, vZ, this.eraserRadius, this.eraserDepth, vDir,
-            this.matVolumeRender.uniforms.isoThreshold.value, true, false, true,
-            this.bufferRenderToTextureCPU[bigCellInd + OFF3]);
-        } else if (this.eraserFillMode) {
-          this.volumeUpdater.erasePixelsFloodFill(vX, vY, vZ, true, false, false);
-        } else {
-          this.volumeUpdater.erasePixels(vX, vY, vZ, this.eraserRadius, this.eraserDepth, vDir,
-            this.matVolumeRender.uniforms.isoThreshold.value, true, false, false,
-            this.bufferRenderToTextureCPU[bigCellInd + OFF3]);
-        }
-      }
-    }
-    if (this.isSculptingMode && this.eraserStart) {
-      /*
-      const OFF0 = 0;
-      const OFF1 = 1;
-      const OFF2 = 2;
-      const OFF3 = 3;
-      const GPU_CELL_SIZE = 4;
-
-      const HALF = 0.5;
-      const vector = this.sculptingSphereCenter.clone();
-      this.meshSphereWireFrame.updateMatrixWorld();
-      vector.applyMatrix4(this.meshSphereWireFrame.matrixWorld);
-      vector.project(this.camera);
-
-      const sphereCx = this.windowWidth * HALF  + (vector.x * this.windowWidth * HALF);
-      const sphereCy = this.windowHeight * HALF + (vector.y * this.windowHeight * HALF);
-      console.log(`Sphere center screen coords X: ${sphereCx} Y: ${sphereCy}`);
-
-      this.rLast = Math.sqrt((x - sphereCx) * (x - sphereCx) +
-        (y - sphereCy) * (y - sphereCy));
-
-      const cellInd = (y * this.windowWidth + x) * GPU_CELL_SIZE;
-      const THREE3 = 3;
-      const vX = this.bufferFFTextureCPU[cellInd + OFF0];
-      const vY = this.bufferFFTextureCPU[cellInd + OFF1];
-      const vZ = this.bufferFFTextureCPU[cellInd + OFF2];
-      const vDir = new THREE.Vector3(vX, vY, vZ);
-      console.log(`vDir: vX: ${vX} vY: ${vY} vZ: ${vZ}`);
-
-      let minDistInd = 0;
-      const maxDistanceAbsolute = 2.0;
-      const maxDistance = maxDistanceAbsolute * this.sculptingSphereSize;
-      let minDist = maxDistance;
-      for (let i = 0; i < this.geometryWireFrameSphere.getAttribute('position').count; i++) {
-        const vVertexCur = new THREE.Vector3(this.geometryWireFrameSphere.getAttribute('position').getX(i),
-          this.geometryWireFrameSphere.getAttribute('position').getY(i),
-          this.geometryWireFrameSphere.getAttribute('position').getZ(i));
-        const dist = vDir.distanceTo(vVertexCur);
-        if (dist < minDist) {
-          minDist = dist;
-          minDistInd = i;
-        }
-      }
-
-      const vCapturedVertex = new THREE.Vector3(this.geometrySphere.getAttribute('position').getX(minDistInd),
-        this.geometrySphere.getAttribute('position').getY(minDistInd),
-        this.geometrySphere.getAttribute('position').getZ(minDistInd));
-
-      this.sculptingCapturedIndeces = [];
-      const SELECTION_THRESHOLD = 0.1;
-      if (minDist > SELECTION_THRESHOLD) {
-        return;
-      }
-
-      for (let i = 0; i < this.geometrySphere.getAttribute('position').count; i++) {
-        const vVertexCur = new THREE.Vector3(this.geometrySphere.getAttribute('position').getX(i),
-          this.geometrySphere.getAttribute('position').getY(i),
-          this.geometrySphere.getAttribute('position').getZ(i));
-        if (vVertexCur.equals(vCapturedVertex)) {
-          this.sculptingCapturedIndeces.push(i);
-        }
-      }
-      */
-
-      // detect closest geo vertex
-      const arrayVertices = this.geometrySphere.getAttribute('position');
-      const arrayNormals = this.geometrySphere.getAttribute('normal');
-      const numVertices = arrayVertices.count;
-      const vert3 = new THREE.Vector3();
-      const vert2 = new THREE.Vector2();
-      const FAIL = -1;
-      const TOO_MUCH = 1.0e14;
-      const MIN_DIST_PIXELS_1 = 5;
-      const MIN_DIST_PIXELS2 = (MIN_DIST_PIXELS_1 * MIN_DIST_PIXELS_1);
-      let iBest = FAIL;
-      let minDist = FAIL;
-      let vx, vy, vz;
-      // create array of indices: same vertex is duplicated in geometry
-      this.sculptingCapturedIndeces = [];
-      for (let i = 0; i < numVertices; i++) {
-        /*
-        vx = arrayNormals.getX(i);
-        vy = arrayNormals.getY(i);
-        vz = arrayNormals.getZ(i);
-        vert3.set(vx, vy, vz);
-        const zProj = this.getVertexProjectionToScreen(vert3, vert2);
-        if (zProj < 0.0) {
-          console.log(`Invisible vertex proj = ${zProj}`);
-          continue;
-        }
-        */
-        vx = arrayVertices.getX(i);
-        vy = arrayVertices.getY(i);
-        vz = arrayVertices.getZ(i);
-        vert3.set(vx, vy, vz);
-        this.getVertexProjectionToScreen(vert3, vert2);
-        const dx = x - vert2.x;
-        const dy = y - vert2.y;
-        const dist2 = dx * dx + dy * dy;
-        if (dist2 < MIN_DIST_PIXELS2) {
-          iBest = i;
-          this.sculptingCapturedIndeces.push(i);
-          minDist = dist2;
-        }
-      }
-      if (this.sculptingCapturedIndeces.length === 0) {
-        return;
-      }
-      vx = arrayVertices.getX(iBest);
-      vy = arrayVertices.getY(iBest);
-      vz = arrayVertices.getZ(iBest);
-      const vCapturedVertex = new THREE.Vector3(vx, vy, vz);
-
-      console.log(`Captured Vec: vX: ${vCapturedVertex.x} vY: ${vCapturedVertex.y} vZ: ${vCapturedVertex.z}`);
-      console.log(`Index: ${iBest}  Dist: ${minDist}`);
-      // store mouse coordinate during press down event
-      this.m_xMouseSculptureDown = x;
-      this.m_yMouseSculptureDown = y;
-      this.m_vertexSculptureCaptured = vCapturedVertex;
-
-      // get captured vertex normal
-      const vIndex = iBest;
-      const xN = arrayNormals.getX(vIndex);
-      const yN = arrayNormals.getY(vIndex);
-      const zN = arrayNormals.getZ(vIndex);
-      const MUL_NORMAL = 0.01;
-      const vNormal = new THREE.Vector3(xN * MUL_NORMAL, yN * MUL_NORMAL, zN * MUL_NORMAL);
-      // console.log(`Captured vertex normal = : ${xN}, ${yN}, ${zN}`);
-
-      // get captured vertex projection to screen
-      const vProjS = new THREE.Vector2();
-      const vProjE = new THREE.Vector2();
-      this.getVertexProjectionToScreen(vCapturedVertex, vProjS);
-      vNormal.add(vCapturedVertex);
-      this.getVertexProjectionToScreen(vNormal, vProjE);
-      // console.log(`Captured screen projection: ${vProjS.x}, ${vProjS.y} -> ${vProjE.x}, ${vProjE.y}`);
-      this.m_xProjSculptureDir = vProjE.x - vProjS.x;
-      this.m_yProjSculptureDir = vProjE.y - vProjS.y;
-      // normalize projection direction
-      const scl = 1.0 / Math.sqrt(this.m_xProjSculptureDir * this.m_xProjSculptureDir +
-        this.m_yProjSculptureDir * this.m_yProjSculptureDir);
-      this.m_xProjSculptureDir *= scl;
-      this.m_yProjSculptureDir *= scl;
-      // console.log(`Captured mouse click coord = : ${x}, ${y}`);
+      this.lockEraserBuffersUpdating = false;
+      this.volumeUpdater.eraser.eraseStart(xx, yy, this.windowWidth, this.matVolumeRender.uniforms.isoThreshold.value, true);
     }
   }
   onMouseMove(xx, yy) {
-    const x =  Math.round(xx);
-    const y =  Math.round(yy);
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return;
     }
-
     this.renderState = this.RENDER_STATE.ENABLED;
     if (!(this.isEraseMode && this.eraserMouseDown && this.eraserStart)) {
       this.orbitControl.onMouseMove(xx, yy);
     }
     else {
-
-      if (this.renderScene === SCENE_TYPE_RAYCAST) {
-        const OFF0 = 0;
-        const OFF1 = 1;
-        const OFF2 = 2;
-        const OFF3 = 3;
-        const GPU_CELL_SIZE = 4;
-
-        //console.log(`Small Tex Size: ${this.xSmallTexSize} x ${this.ySmallTexSize}`);
-        //console.log(`Erasing! X: ${x} Y: ${y}`);
-
-        const cellInd = (y * this.windowWidth + x) * GPU_CELL_SIZE;
-        const THREE3 = 3;
-        const bigCellInd = (Math.floor(y / THREE3) * this.xSmallTexSize +
-          Math.floor(x / THREE3)) * GPU_CELL_SIZE;
-        const NO_MATERIAL = 2;
-        if (this.bufferRenderToTextureCPU[bigCellInd + OFF3] === NO_MATERIAL) {
-          return;
-        }
-        let vX = this.bufferBFTextureCPU[cellInd + OFF0] - this.bufferFFTextureCPU[cellInd + OFF0];
-        let vY = this.bufferBFTextureCPU[cellInd + OFF1] - this.bufferFFTextureCPU[cellInd + OFF1];
-        let vZ = this.bufferBFTextureCPU[cellInd + OFF2] - this.bufferFFTextureCPU[cellInd + OFF2];
-        const vDir = new THREE.Vector3(vX, vY, vZ);
-
-        const length = Math.sqrt(vX * vX + vY * vY + vZ * vZ);
-        const COORD_SHIFT = 0.5;
-        vX = vX / length * this.bufferRenderToTextureCPU[bigCellInd + OFF3] + COORD_SHIFT +
-          this.bufferFFTextureCPU[cellInd + OFF0];
-        vY = vY / length * this.bufferRenderToTextureCPU[bigCellInd + OFF3] + COORD_SHIFT +
-          this.bufferFFTextureCPU[cellInd + OFF1];
-        vZ = vZ / length * this.bufferRenderToTextureCPU[bigCellInd + OFF3] + COORD_SHIFT +
-          this.bufferFFTextureCPU[cellInd + OFF2];
-        if (this.eraserNormalMode) {
-          this.volumeUpdater.erasePixels(vX, vY, vZ, this.eraserRadius, this.eraserDepth, vDir,
-            this.matVolumeRender.uniforms.isoThreshold.value, false, this.mouseupflag, true,
-            this.bufferRenderToTextureCPU[bigCellInd + OFF3]);
-        } else {
-          this.volumeUpdater.erasePixels(vX, vY, vZ, this.eraserRadius, this.eraserDepth, vDir,
-            this.matVolumeRender.uniforms.isoThreshold.value, false, this.mouseupflag, false,
-            this.bufferRenderToTextureCPU[bigCellInd + OFF3]);
-        }
-      }
-    }
-    if (this.isSculptingMode && this.eraserStart && !this.mouseupflag) {
-      if (this.sculptingCapturedIndeces.length === 0) {
-        return;
-      }
-
-      // const HALF = 0.5;
-      // const vector = this.sculptingSphereCenter.clone();
-      // this.meshSphereWireFrame.updateMatrixWorld();
-      // vector.applyMatrix4(this.meshSphereWireFrame.matrixWorld);
-      // vector.project(this.camera);
-
-      // const sphereCx = this.windowWidth * HALF  + (vector.x * this.windowWidth * HALF);
-      // const sphereCy = this.windowHeight * HALF + (vector.y * this.windowHeight * HALF);
-      // console.log(`Sphere center screen coords X: ${sphereCx} Y: ${sphereCy}`);
-
-      // const rCur = Math.sqrt((x - sphereCx) * (x - sphereCx) +
-      //  (y - sphereCy) * (y - sphereCy));
-      // const rDelta = rCur - this.rLast;
-      // this.rLast = rCur;
-      // const vCapturedVertex =
-      // new THREE.Vector3(this.geometrySphere.getAttribute('position').getX(this.sculptingCapturedIndeces[0]),
-      //   this.geometrySphere.getAttribute('position').getY(this.sculptingCapturedIndeces[0]),
-      //   this.geometrySphere.getAttribute('position').getZ(this.sculptingCapturedIndeces[0]));
-
-      // new behavior: instead of find direction from vertex to "sphere center", use vertex normalize
-
-      // get mouse delta according press position
-      const dx = x - this.m_xMouseSculptureDown;
-      const dy = y - this.m_yMouseSculptureDown;
-      // get projection to dir
-      const proj = this.m_xProjSculptureDir * dx + this.m_yProjSculptureDir * dy;
-      const rDelta = proj;
-
-      const vCapturedVertex = this.m_vertexSculptureCaptured;
-
-      const arrayNormals = this.geometrySphere.getAttribute('normal');
-      const vIndex = this.sculptingCapturedIndeces[0];
-      const xN = arrayNormals.getX(vIndex) - this.sculptingSphereCenter.x;
-      const yN = arrayNormals.getY(vIndex) - this.sculptingSphereCenter.y;
-      const zN = arrayNormals.getZ(vIndex) - this.sculptingSphereCenter.z;
-      // console.log(`vertex normal: ${xN}, ${yN},${zN}`);
-      const vVertexNormal = new THREE.Vector3(xN, yN, zN);
-      const MUL = 0.001;
-      vVertexNormal.normalize().multiplyScalar(rDelta * MUL);
-      const vNewVertex = vCapturedVertex.clone().add(vVertexNormal);
-
-      const arrayVertices = this.geometrySphere.getAttribute('position');
-      //const arrayWireVertices = this.geometryWireFrameSphere.getAttribute('position');
-
-      let numModifiedVertices = 0;
-      this.sculptingCapturedIndeces.forEach((index) => {
-        arrayVertices.setX(index, vNewVertex.x);
-        arrayVertices.setY(index, vNewVertex.y);
-        arrayVertices.setZ(index, vNewVertex.z);
-        //arrayWireVertices.setX(index, vNewVertex.x);
-        //arrayWireVertices.setY(index, vNewVertex.y);
-        //arrayWireVertices.setZ(index, vNewVertex.z);
-        numModifiedVertices++;
-      });
-
-      // get normal via direction to center
-      // const vE = vCapturedVertex.clone().sub(this.sculptingSphereCenter);
-      // vE.normalize().multiplyScalar(rDelta * MUL * this.sculptingSphereSize);
-      // const vNewVertex = vCapturedVertex.clone().add(vE);
-
-      // this.sculptingCapturedIndeces.forEach((item) => {
-      //   this.geometrySphere.getAttribute('position').setX(item, vNewVertex.x);
-      //   this.geometrySphere.getAttribute('position').setY(item, vNewVertex.y);
-      //   this.geometrySphere.getAttribute('position').setZ(item, vNewVertex.z);
-
-      //   this.geometryWireFrameSphere.getAttribute('position').setX(item, vNewVertex.x);
-      //   this.geometryWireFrameSphere.getAttribute('position').setY(item, vNewVertex.y);
-      //   this.geometryWireFrameSphere.getAttribute('position').setZ(item, vNewVertex.z);
-      // });
-
-      this.geometrySphere.getAttribute('position').needsUpdate = true;
-      //this.geometryWireFrameSphere.getAttribute('position').needsUpdate = true;
-      this.computeGeometrySphereUVs();
+      this.volumeUpdater.eraser.eraseStart(xx, yy, this.windowWidth, this.matVolumeRender.uniforms.isoThreshold.value, false);
     }
   }
   onMouseUp() {
@@ -1864,14 +1281,6 @@ export default class VolumeRenderer3d {
     this.lockEraserBuffersUpdating = false;
     this.eraserMouseDown = false;
     this.renderState = this.RENDER_STATE.ONCE;
-    this.mouseupflag = true;
-
-    if (this.isSculptingMode) {
-      // after vertex position change, need to recalculate vertices normals
-      this.geometrySphere.computeFaceNormals();
-      this.geometrySphere.computeVertexNormals();
-      // this.geometrySphere.normalizeNormals();
-    }
   }
   onMouseWheel(e) {
     //const e = window.event || event; // old IE support
