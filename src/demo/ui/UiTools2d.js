@@ -35,7 +35,8 @@ class UiTools2d extends React.Component {
         { img: 'images/icon_tools2d_clear.png', txt: 'clear', ke: Tools2dType.CLEAR },
         { img: 'images/icon_tools2d_zoom.png', txt: 'zoom', ke: Tools2dType.ZOOM },
         { img: 'images/icon_tools2d_default.png', txt: 'default', ke: Tools2dType.DEFAULT },
-        { img: 'images/icon_tools2d_filter.png', txt: 'filter', ke: Tools2dType.FILTER },
+        // { img: 'images/icon_tools2d_filter.png', txt: 'filter', ke: Tools2dType.FILTER },
+        { img: 'images/icon_tools2d_empty.png', txt: 'none', ke: Tools2dType.NONE },
       ],
     };
   }

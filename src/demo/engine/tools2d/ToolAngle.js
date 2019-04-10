@@ -94,6 +94,19 @@ class ToolAngle {
     // update angle dist
     this.getAngleForObj(this.m_objEdit);
   }    
+  /**
+   * Remove highlighted object
+   * 
+   * @param {object} vTex - volume coord of picked point
+   */
+  deleteObject(vTex) {
+    if (this.m_objEdit != null) {
+      const ind = this.m_angles.indexOf(this.m_objEdit);
+      if (ind >= 0) {
+        this.m_angles.splice(ind, 1);
+      }
+    }
+  }
   getDistMm(vs, ve) {
     const dx = vs.x - ve.x;
     const dy = vs.y - ve.y;

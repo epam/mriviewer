@@ -98,6 +98,19 @@ class ToolRect {
     // update line len
     this.getRectArea(this.m_objEdit, this.m_store);
   }
+  /**
+   * Remove highlighted object
+   * 
+   * @param {object} vTex - volume coord of picked point
+   */
+  deleteObject(vTex) {
+    if (this.m_objEdit != null) {
+      const ind = this.m_rects.indexOf(this.m_objEdit);
+      if (ind >= 0) {
+        this.m_rects.splice(ind, 1);
+      }
+    }
+  }
   getRectArea(objRect, store) {
     const vol = store.volume;
     const xSize = vol.m_boxSize.x;

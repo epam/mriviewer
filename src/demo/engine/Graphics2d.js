@@ -23,6 +23,7 @@ import ToolArea from './tools2d/ToolArea';
 import ToolRect from './tools2d/ToolRect';
 import ToolText from './tools2d/ToolText';
 import ToolEdit from './tools2d/ToolEdit';
+import ToolDelete from './tools2d/ToolDelete';
 
 import Tools2dType from './tools2d/ToolTypes';
 
@@ -81,6 +82,7 @@ class Graphics2d extends React.Component {
     this.m_toolRect = new ToolRect(this);
     this.m_toolText = new ToolText(this);
     this.m_toolEdit = new ToolEdit(this);
+    this.m_toolDelete = new ToolDelete(this);
 
     // store
     const store = props;
@@ -149,6 +151,10 @@ class Graphics2d extends React.Component {
       this.m_toolEdit.setScreenDim(w, h);
       this.m_toolEdit.setVolume(vol);
       this.m_toolEdit.setPixelSize(xPixelSize, yPixelSize);
+
+      this.m_toolDelete.setScreenDim(w, h);
+      this.m_toolDelete.setVolume(vol);
+      this.m_toolDelete.setPixelSize(xPixelSize, yPixelSize);
 
     }
   }
@@ -310,6 +316,7 @@ class Graphics2d extends React.Component {
       this.m_toolRect.render(ctx, store);
       this.m_toolText.render(ctx, store);
       this.m_toolEdit.render(ctx, store);
+      this.m_toolDelete.render(ctx, store);
     } // if not empty vol
   } // render scene
   onMouseWheel(evt) {
@@ -360,6 +367,13 @@ class Graphics2d extends React.Component {
       const yScr = evt.clientY - box.top;
       this.m_toolEdit.onMouseUp(xScr, yScr, store);
     }
+    if (indexTools2d === Tools2dType.DELETE) {
+      const store = this.props;
+      const box = this.m_mount.getBoundingClientRect();
+      const xScr = evt.clientX - box.left;
+      const yScr = evt.clientY - box.top;
+      this.m_toolDelete.onMouseUp(xScr, yScr, store);
+    }
   }
   onMouseMove(evt) {
     const store = this.props;
@@ -387,6 +401,9 @@ class Graphics2d extends React.Component {
     }
     if (indexTools2d === Tools2dType.EDIT) {
       this.m_toolEdit.onMouseMove(xScr, yScr, store);
+    }
+    if (indexTools2d === Tools2dType.DELETE) {
+      this.m_toolDelete.onMouseMove(xScr, yScr, store);
     }
   }
   onMouseDown(evt) {
@@ -427,6 +444,9 @@ class Graphics2d extends React.Component {
     case Tools2dType.EDIT:
       this.m_toolEdit.onMouseDown(xScr, yScr, store);
       break;
+    case Tools2dType.DELETE:
+      this.m_toolDelete.onMouseDown(xScr, yScr, store);
+      break;
     default:
       // not defined
     } // switch
@@ -443,6 +463,7 @@ class Graphics2d extends React.Component {
     this.m_toolRect.clear();
     this.m_toolText.clear();
     this.m_toolEdit.clear();
+    this.m_toolDelete.clear();
   }
   /**
    * Invoke forced rendering, after some tool visual changes

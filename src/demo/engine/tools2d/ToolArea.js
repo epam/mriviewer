@@ -101,6 +101,19 @@ class ToolArea {
     const store = this.store;
     this.m_objEdit.m_area = this.getPolyArea(this.m_objEdit.m_points, store);
   }
+  /**
+   * Remove highlighted object
+   * 
+   * @param {object} vTex - volume coord of picked point
+   */
+  deleteObject(vTex) {
+    if (this.m_objEdit != null) {
+      const ind = this.m_areas.indexOf(this.m_objEdit);
+      if (ind >= 0) {
+        this.m_areas.splice(ind, 1);
+      }
+    }
+  }
   getDistMm(vs, ve) {
     const dx = vs.x - ve.x;
     const dy = vs.y - ve.y;

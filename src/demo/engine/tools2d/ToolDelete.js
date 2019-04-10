@@ -1,5 +1,5 @@
 /**
- * @fileOverview ToolEdit
+ * @fileOverview ToolDelete
  * @author Epam
  * @version 1.0.0
  */
@@ -9,13 +9,13 @@
 // Imports
 // **********************************************
 
-import ToolDistance from "./ToolDistance";
+import ToolDistance from './ToolDistance';
 
 // **********************************************
 // Class
 // **********************************************
 
-class ToolEdit {
+class ToolDelete {
   constructor(objGra) {
     this.m_objGraphics2d = objGra;
     this.m_wScreen = 0;
@@ -59,11 +59,17 @@ class ToolEdit {
    */  
   onMouseDown(xScr, yScr, store) {
     this.m_mousePressed = true;
+
+    if (this.m_pointTracked !== null) {
+      this.m_toolTracked.deleteObject(this.m_pointTracked);
+      this.m_pointTracked = null;
+      // invoke forced 2d render
+      this.m_objGraphics2d.forceUpdate();
+    }
   }
   onMouseMove(xScr, yScr, store) {
     if (!this.m_mousePressed) {
       // fly mouse over objects on 2d screen
-      // const vTex = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
       const vScr = {
         x: xScr, y: yScr
       };
@@ -96,12 +102,14 @@ class ToolEdit {
       }
 
     } else {
+      /*
       if (this.m_pointTracked !== null) {
         const vTexNew = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
         this.m_toolTracked.moveEditPoint(this.m_pointTracked, vTexNew);
         // invoke forced 2d render
         this.m_objGraphics2d.forceUpdate();
       } // if we have tracked point
+      */
     }
   }
   onMouseUp(xScr, yScr, store) {
@@ -119,7 +127,7 @@ class ToolEdit {
       const RAD_CIRCLE_EDIT = 4;
       //ctx.lineWidth = 2;
       //ctx.strokeStyle = 'green';
-      ctx.fillStyle = 'rgb(120, 250, 120)';
+      ctx.fillStyle = 'rgb(250, 120, 120)';
       ctx.beginPath();
       ctx.arc(vScr.x, vScr.y, RAD_CIRCLE_EDIT, 0.0, 2 * 3.1415962, false);
       // ctx.stroke();
@@ -128,4 +136,4 @@ class ToolEdit {
   } // end render
 } // end class ToolText
 
-export default ToolEdit;
+export default ToolDelete;

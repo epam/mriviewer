@@ -17,5 +17,6 @@ const Tools2dType = {
   ZOOM: 9,
   DEFAULT: 10,
   FILTER: 11,
+  NONE: 12,
 };
 export default Tools2dType;

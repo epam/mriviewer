@@ -80,6 +80,19 @@ class ToolDistance {
     // update line len
     this.m_objEdit.distMm = this.getDistMm(this.m_objEdit.vs, this.m_objEdit.ve);
   }
+  /**
+   * Remove highlighted object
+   * 
+   * @param {object} vTex - volume coord of picked point
+   */
+  deleteObject(vTex) {
+    if (this.m_objEdit != null) {
+      const ind = this.m_lines.indexOf(this.m_objEdit);
+      if (ind >= 0) {
+        this.m_lines.splice(ind, 1);
+      }
+    }
+  }
   static screenToTexture(xScr, yScr, wScr, hScr, store) {
     const xRel = xScr / wScr;
     const yRel = yScr / hScr;
