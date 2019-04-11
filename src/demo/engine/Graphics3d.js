@@ -202,8 +202,8 @@ class Graphics3d extends React.Component {
         //  this.m_volumeRenderer3D.setEraserMode(false);
         //}
         this.m_prevMode = Modes3d.ISO;
-        this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
         this.m_volumeRenderer3D.switchToIsosurfRender();      
+        this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
       }
       if (mode3d === Modes3d.RAYFAST) {
         //if (this.m_prevMode === Modes3d.EREASER) {
@@ -217,8 +217,8 @@ class Graphics3d extends React.Component {
         //  this.m_volumeRenderer3D.setEraserMode(true);
         //}
         this.m_prevMode = Modes3d.RAYFAST;
-        this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
         this.m_volumeRenderer3D.switchToIsosurfRender();     
+        this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
         this.m_volumeRenderer3D.volumeUpdater.eraser.setEraserRadius(store.sliderErRadius);
         this.m_volumeRenderer3D.volumeUpdater.eraser.setEraserDepth(store.sliderErDepth);
       }

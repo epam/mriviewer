@@ -20,6 +20,7 @@ import Texture3D from '../engine/Texture3D';
 import UiModalDemo from './UiModalDemo';
 import StoreActionType from '../store/ActionTypes';
 import ModeView from '../store/ModeView';
+import Modes3d from '../store/Modes3d';
 
 // import { timingSafeEqual } from 'crypto';
 import LoadResult from '../engine/LoadResult';
@@ -92,6 +93,8 @@ class UiOpenMenu extends React.Component {
     tex3d.createFromRawVolume(vol);
     store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
     store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+    store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
+
   }
   readCallbackComplete(errCode, hedaer, dataSize, dataArray) {
     if (errCode !== LoadResult.SUCCESS) {
