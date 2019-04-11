@@ -101,41 +101,29 @@ class UiApp extends React.Component {
 
     const jsxNavBarReact = 
       <Container fluid="true">
-        <Navbar bg="light" >
+        <Navbar bg="light" variant="light" expand="lg" >
+          <Navbar.Brand>
+            <UiAbout />
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <Navbar>
-
-                <UiAbout />
-
-                
-                { /*
-                <Button>
-                  <i className="fa fa-question-circle"  ></i>
-                  AboutInlined
-                </Button>
-                */ }
-                
-
-              </Navbar>
 
               <Navbar.Text className="d-none d-sm-block">
                 {strMessageOnMenu}
               </Navbar.Text>
-            </Nav>
-            <Nav>
 
               <UiOpenMenu />
               <UiSaveMenu />
               <UiReportMenu />
               <UiFilterMenu />
 
-
               {(isLoaded) ? <UiViewMode /> : <p></p>}
 
 
             </Nav>
           </Navbar.Collapse>
+
         </Navbar>
         {(isLoaded) ? <UiMain /> : <p></p>}
         <UiModalText stateVis={this.state.showModalText}
@@ -146,5 +134,20 @@ class UiApp extends React.Component {
     return jsxNavBarReact;
   } // end render
 } // end class
+
+/*
+<Nav.Link href="#">
+MPR
+</Nav.Link>
+<Nav.Link href="#">
+  2D
+</Nav.Link>
+<Nav.Link href="#">
+  3DLight
+</Nav.Link>
+<Nav.Link href="#">
+  3D
+</Nav.Link>
+*/
 
 export default connect(store => store)(UiApp);

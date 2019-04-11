@@ -10,6 +10,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { NavDropdown } from 'react-bootstrap';
 
 // ********************************************************
 // Const
@@ -29,28 +30,28 @@ class UiReportMenu extends React.Component {
   render() {
     const store = this.props;
     const isLoaded = store.isLoaded;
-    const strClass = (isLoaded) ? 'btn dropdown-toggle' : 'btn dropdown-toggle disabled';
 
-    const jsxReportMenu =
-      <div className="dropdown">
-        <button className={strClass} type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i className="fas fa-book"></i>
-          Report
-        </button>
-        <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    const strDisabled = (isLoaded) ? false : true;
+    const jsxReportMenu = 
+      <NavDropdown id="save-nav-dropdown" 
+        disabled={strDisabled}
+        title={
+          <div style={{ display: 'inline-block' }}> 
+            <i className="fas fa-book"></i>
+            Report
+          </div>
+        } >
+        <NavDropdown.Item>
+          <i className="fas fa-clipboard-list"></i>
+          Show tags
+        </NavDropdown.Item>
 
-          <button className="dropdown-item" type="button"  >
-            <i className="fas fa-clipboard-list"></i>
-            Show tags
-          </button>
+        <NavDropdown.Item>
+          <i className="fas fa-camera"></i>
+          Screenshot
+        </NavDropdown.Item>
 
-          <button className="dropdown-item" type="button"  >
-            <i className="fas fa-camera"></i>
-            Screenshot
-          </button>
-
-        </div>
-      </div>
+      </NavDropdown>;    
 
     return jsxReportMenu;
   }

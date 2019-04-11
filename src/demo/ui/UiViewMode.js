@@ -12,6 +12,8 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { ButtonToolbar, Button, ButtonGroup } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import ModeView from '../store/ModeView';
 import StoreActionType from '../store/ActionTypes';
@@ -89,35 +91,63 @@ class UiViewMode extends React.Component {
       viewMode = ModeView.VIEW_3D;
     }
 
-    const srtClass = 'btn btn-secondary';
-    const strMpr = srtClass + ((viewMode === ModeView.VIEW_MPR) ? ' active' : '');
-    const str2d = srtClass + ((viewMode === ModeView.VIEW_2D) ? ' active' : '');
-    const str3dlight = srtClass + ((viewMode === ModeView.VIEW_3D_LIGHT) ? ' active' : '');
-    const str3d = srtClass + ((viewMode === ModeView.VIEW_3D) ? ' active' : '');
-
-    const jsxButtonMpr = <button type="button" className={strMpr} onClick={this.onModeMpr} >
-      MPR
-    </button>
-    const jsxButton2d = <button type="button" className={str2d} onClick={this.onMode2d} >
-      2D
-    </button>
-    const jsxButton3dLight = <button type="button" className={str3dlight} onClick={this.onMode3dLight} >
-      3D
-      <span className="fa fa-bolt"></span>
-    </button>
-    const jsxButton3d = <button type="button" className={str3d} onClick={this.onMode3d} >
-      3D
-    </button>
+    const strMpr = (viewMode === ModeView.VIEW_MPR) ? ' active' : '';
+    const str2d = (viewMode === ModeView.VIEW_2D) ? ' active' : '';
+    const str3dLight = (viewMode === ModeView.VIEW_3D_LIGHT) ? ' active' : '';
+    const str3d = (viewMode === ModeView.VIEW_3D) ? ' active' : '';
 
     const jsxOut = 
-      <div className="btn-group mx-3">
-        { (this.m_needModeMpr) ? jsxButtonMpr : '' }
-        { (this.m_needMode2d) ? jsxButton2d : '' }
-        { (this.m_needMode3dLight) ? jsxButton3dLight : '' }
-        { (this.m_needMode3d) ? jsxButton3d : '' }
-      </div>
+      <ButtonToolbar>
+        <ButtonGroup>
 
-    return  jsxOut;
+          <OverlayTrigger placement="bottom" overlay = {
+            <Tooltip>
+              Show volume in several projections on single screen
+            </Tooltip>
+          }>
+
+            <Button variant="secondary" className={strMpr} onClick={this.onModeMpr} >
+              MPR
+            </Button>
+          </OverlayTrigger>  
+
+          <OverlayTrigger placement="bottom" overlay = {
+            <Tooltip>
+              Show volume in 2d mode per slice on selected orientation
+            </Tooltip>
+          }>
+
+            <Button variant="secondary" className={str2d} onClick={this.onMode2d} >
+              2D
+            </Button>
+          </OverlayTrigger>  
+
+          <OverlayTrigger placement="bottom" overlay = {
+            <Tooltip>
+              Show volume in 3d mode with fast rendering
+            </Tooltip>
+          }>
+
+            <Button variant="secondary" className={str3dLight} onClick={this.onMode3dLight} >
+              3D
+              <span className="fa fa-bolt"></span>
+            </Button>
+          </OverlayTrigger>  
+
+          <OverlayTrigger placement="bottom" overlay = {
+            <Tooltip>
+              Show volume in 3d mode with old rendering
+            </Tooltip>
+          }>
+
+            <Button variant="secondary" className={str3d} onClick={this.onMode3d} >
+              3D
+            </Button>
+          </OverlayTrigger>  
+        </ButtonGroup>
+      </ButtonToolbar>;
+
+    return jsxOut;
   }
 }
 

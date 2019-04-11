@@ -10,6 +10,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { NavDropdown } from 'react-bootstrap';
 
 import UiModalSaveNifti from './UiModalSaveNifti';
 
@@ -54,22 +55,24 @@ class UiSaveMenu extends React.Component {
   render() {
     const store = this.props;
     const isLoaded = store.isLoaded;
-    const strClass = (isLoaded) ? 'btn dropdown-toggle' : 'btn dropdown-toggle disabled';
-
+    const strDisabled = (isLoaded) ? false : true;
+   
     const jsxSaveMenu =
-      <div className="dropdown">
-        <button className={strClass} type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i className="fas fa-save"></i>
-          Save
-        </button>
-        <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <button className="dropdown-item" type="button" onClick={evt => this.onModalSaveNiftiShow(evt)} >
-            <i className="fas fa-globe"></i>
-            Save to Nifti
-          </button>
-        </div>
+      <NavDropdown id="save-nav-dropdown" 
+        disabled={strDisabled}
+        title={
+          <div style={{ display: 'inline-block' }}> 
+            <i className="fas fa-save"></i>
+            Save
+          </div>
+        } >
+        <NavDropdown.Item onClick={evt => this.onModalSaveNiftiShow(evt)}  >
+          <i className="fas fa-globe"></i>
+          Save to Nifti
+        </NavDropdown.Item>
         <UiModalSaveNifti stateVis={this.state.showModalSaveNifti} onHide={this.onModalSaveNiftiHide} />
-      </div>
+      </NavDropdown>;
+
 
     return jsxSaveMenu;
   }
