@@ -582,49 +582,4 @@ export default class VolumeFilter3d {
   createUpdatableVolumeMask(params) {
     return this.eraser.createUpdatableVolumeMask(params, this.bufferTextureCPU);
   }
-  createUpdatableVolumeMask1(volume) {
-    const xDim = volume.m_xDim;
-    const yDim = volume.m_yDim;
-    if (this.isWebGL2 === 0) {
-      const xTex = xDim * this.zDimSqrt;
-      const yTex = yDim * this.zDimSqrt;
-      const numPixelsBuffer = xTex * yTex;
-      this.bufferMask = new Uint8Array(numPixelsBuffer);
-      for (let y = 0; y < yTex; y++) {
-        const yOff = y * xTex;
-        for (let x = 0; x < xTex; x++) {
-          this.bufferMask[x + yOff] = 255;
-        }
-      }
-    } else {
-      this.bufferMask = new Uint8Array(this.xDim * this.yDim * this.zDim);
-      for (let z = 0; z < this.zDim; z++) {
-        for (let y = 0; y < this.yDim; y++) {
-          for (let x = 0; x < this.xDim; x++) {
-            this.bufferMask[x + y * this.xDim + z * this.xDim * this.yDim] = 255;
-          }
-        }
-      }
-    }
-
-    if (this.updatableTextureMask) {
-      this.updatableTextureMask.dispose();
-    }
-    //this.updatableTextureMask = new THREE.DataTexture(this.bufferMask, this.xTex, this.yTex, THREE.AlphaFormat);
-    this.updatableTextureMask = new THREE.DataTexture3D(this.bufferMask, this.xDim, this.yDim, this.zDim);
-    this.updatableTextureMask.format = THREE.RedFormat;
-    this.updatableTextureMask.type = THREE.UnsignedByteType;
-    this.updatableTextureMask.wrapS = THREE.ClampToEdgeWrapping;
-    this.updatableTextureMask.wrapT = THREE.ClampToEdgeWrapping;
-    this.updatableTextureMask.magFilter = THREE.LinearFilter;
-    this.updatableTextureMask.minFilter = THREE.LinearFilter;
-    this.updatableTextureMask.needsUpdate = true;
-
-    const maskGaussingBufferSize = 131072;
-    this.maskGaussingBufferSize = maskGaussingBufferSize;
-    this.maskGaussingTempBuf = new Uint8Array(maskGaussingBufferSize);
-    return this.updatableTextureMask;
-    //this.initRenderer(isRoiVolume, roiColors);
-    //return this.bufferTexture.texture;
-  }
 } // class Graphics3d

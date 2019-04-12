@@ -411,8 +411,9 @@ vec3 CalcLighting(vec3 iter, vec3 dir)
   // The resulting color depends on the longevity of the material in the surface of the isosurface
 #if useAmbientTex == 1
   float tAO = tex3DvolAO(iter);
-//  vec3 col = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif * 0.5*(1.0 + tAO)  + AMBIENT * tAO) + SPEC * specular * tAO) * sumCol;
+  //  vec3 col = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif * 0.5*(1.0 + tAO)  + AMBIENT * tAO) + SPEC * specular * tAO) * sumCol;
   vec3 col = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumCol * tAO;
+  return col;
 #else
   vec3 col = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * sumCol;
 #endif
@@ -840,17 +841,14 @@ void main() {
     
     return;
   }
-  /*
   if (length(iso1.rgb - iso2.rgb) < delta && length(iso1.rgb - iso3.rgb) < delta && length(iso1.rgb - iso4.rgb) < delta)
   {
     // The color of the pixel is calculated by bilinear interpolation of colors of neighboring texels
     acc = vec4(mix(mix(iso1.xyz, iso2.xyz, uv_fract.x), mix(iso3.xyz, iso4.xyz, uv_fract.x), uv_fract.y), 1.0);
-	//acc = vec4(0.0, 1.0, 0.0, 1.0);
     gl_FragColor = acc;
     return;
-  }*/
+  }
  
-
   // Direct volume render
  #if isoRenderFlag==0
   {

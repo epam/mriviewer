@@ -517,18 +517,25 @@ export default class VolumeRenderer3d {
     if (this.texVolumeAO) {
       this.texVolumeAO.dispose();
     }
-    this.volumeUpdater.ambientTexture.set(isoThreshold);
+    this.volumeUpdater.ambientTexture.set(this.volTexture, isoThreshold);
     this.texVolumeAO = this.volumeUpdater.ambientTexture.get();
     this.matRenderToTexture.defines.useAmbientTex = 1;
     this.matVolumeRender.defines.useAmbientTex = 1;
     this.matRenderToTexture.needsUpdate = true;
     this.matVolumeRender.needsUpdate = true;
-    //this.render();
     this.matRenderToTexture.uniforms.texVolumeAO.value = this.texVolumeAO;
     this.matRenderToTexture.uniforms.texVolumeAO.needsUpdate = true;
     this.matVolumeRender.uniforms.texVolumeAO.value = this.texVolumeAO;
     this.matVolumeRender.uniforms.texVolumeAO.needsUpdate = true;
-    //this.render();
+  }
+  offAmbientTextureMode() {
+    if (this.texVolumeAO) {
+      this.texVolumeAO.dispose();
+    }
+    this.matRenderToTexture.defines.useAmbientTex = 0;
+    this.matVolumeRender.defines.useAmbientTex = 0;
+    this.matRenderToTexture.needsUpdate = true;
+    this.matVolumeRender.needsUpdate = true;
   }
   /**
    * Setting Cut Plane
@@ -819,6 +826,9 @@ export default class VolumeRenderer3d {
     this.texTF = this.volumeUpdater.createTransferFuncTexture();
     //this.volTextureMask = this.volumeUpdater.createUpdatableVolumeMask(this.volume);
 
+    if (this.volTextureMask) {
+      this.volTextureMask.dispose();
+    }
     if (this.texVolumeAO) {
       this.texVolumeAO.dispose();
     }

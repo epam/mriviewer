@@ -16,6 +16,7 @@ export default class AmbientTexture {
     this.yDim = inParams.yDim;
     this.zDim = inParams.zDim;
     this.texVolumeAO = null;
+    this.vectorsTex = null;
   }
   _setAOVectorTex() {
     const VAL_4 = 4;
@@ -46,7 +47,7 @@ export default class AmbientTexture {
     this.vectorsTex.minFilter = THREE.NearestFilter;
     this.vectorsTex.needsUpdate = true;
   }
-  set(isoThreshold) {
+  set(texVolume, isoThreshold) {
     if (this.vectorsTex === null) {
       this._setAOVectorTex();
     }
@@ -68,7 +69,7 @@ export default class AmbientTexture {
     } else {
       this.texVolumeAO = new THREE.DataTexture3D(this.ambientVolumeTexCPU, this.xDimAO, this.yDimAO, this.zDimAO);
       this.texVolumeAO.format = THREE.RedFormat;
-      this.texVolumeAO.type = THREE.UnsignedByteType;
+      //this.texVolumeAO.type = THREE.UnsignedByteType;
     }
     this.texVolumeAO.wrapS = THREE.ClampToEdgeWrapping;
     this.texVolumeAO.wrapT = THREE.ClampToEdgeWrapping;
@@ -79,7 +80,7 @@ export default class AmbientTexture {
 
     const texelSize = new THREE.Vector3(1.0 / this.xDim, 1.0 / this.yDim, 1.0 / this.zDim);
     const matAO = new MaterialAO();
-    matAO.create(this.updatableTexture, texelSize, this.vectorsTex, this.numAOVectors, isoThreshold, (mat) => {
+    matAO.create(texVolume, texelSize, this.vectorsTex, this.numAOVectors, isoThreshold, (mat) => {
       this.materialAO = mat;
       mat.uniforms.tileCountX.value = this.zTexDivSqrt;
       mat.uniforms.volumeSizeZ.value = this.zDim;
@@ -106,11 +107,12 @@ export default class AmbientTexture {
       const zOffs = z * this.xDimAO * this.yDimAO;
       for (let y = 0; y < this.yDimAO; y++) {
         for (let x = 0; x < this.xDimAO; x++) {
-          this.ambientVolumeTexCPU[x + y * this.xDimAO + zOffs] =
+          this.ambientVolumeTexCPU[x + y * this.xDimAO + zOffs] = 
             frameBuf[VAL_4 * (x + y * this.xDimAO)]; //256.0 * k / this.zDim;
         }
       }
     }
+    console.log('AO WebGL2 End');
   }
   get() {
     return this.texVolumeAO;

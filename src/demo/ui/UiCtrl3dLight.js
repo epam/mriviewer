@@ -48,6 +48,8 @@ class UiCtrl3dLight extends React.Component {
   onMode(indexMode) {
     this.m_updateEnable = true;
     this.props.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: indexMode });
+    const store = this.props;
+    store.volumeRenderer.offAmbientTextureMode();
   }
   onModeA() {
     this.onMode(Modes3d.ISO);

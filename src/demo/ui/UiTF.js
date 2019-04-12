@@ -34,9 +34,20 @@ class UiTF extends React.Component {
     super(props);
     //this.onUndo = this.onUndo.bind(this);
     this.m_updateEnable = true;
+    this.onAO = this.onAO.bind(this);
+    this.offAO = this.offAO.bind(this);
     this.onStartEr = this.onStartEr.bind(this);
     this.onStopEr = this.onStopEr.bind(this);
     this.onUndo = this.onUndo.bind(this);
+  }
+  onAO() {
+    const store = this.props;
+    const isoThreshold = store.sliderIsosurface;//this.refs.sliderIsosurface.slider.get();
+    store.volumeRenderer.setAmbientTextureMode(isoThreshold);
+  }
+  offAO() {
+    const store = this.props;
+    store.volumeRenderer.offAmbientTextureMode();
   }
   onStartEr() {
     const store = this.props;
@@ -148,6 +159,18 @@ class UiTF extends React.Component {
           <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
             range={{ min: 0.0, max: 1.0 }}
             start={wArrIsosurface} step={0.02} tooltips={true} />
+        </li>
+        <li className="list-group-item">
+          Ambient Oclusion -> 
+          <button type="button" className={'btn btn-outline-dark'} onClick={this.onAO} >
+            On
+          </button>
+          <button type="button" className={'btn btn-outline-dark'} onClick={this.offAO} >
+            Off
+          </button>
+          <button type="button" className={'btn btn-outline-dark'} onClick={this.onAO} >
+            Resert
+          </button>
         </li>
       </ul>
     const jsxEreaser =

@@ -113,12 +113,12 @@ vec3 CalcNormal(vec3 iter)
 float ao(vec3 base){
   const float TWICE = 2.0;
   float STEPSIZE = texelSize.z;
-  const int STEPCOUNT = 16;
+  const int STEPCOUNT = 8;
   float res = 1.0;
   float fVectorsSize = float(vectorsSize);
   float reverseVectorSize = 1.0 / fVectorsSize;
   vec3 normal = -CalcNormal(base);
-  if (length(normal) < 1.0/256.0 || tex3D(base) < 0.75 * isoThreshold)
+  if (length(normal) < 1.0/256.0 || tex3D(base) < 0.1 * isoThreshold)
     return 1.0;
   normal = normalize(normal);
   vec3 currentVox;
@@ -126,20 +126,20 @@ float ao(vec3 base){
 //  float tempBase = tex3D(base);
   float t = 0.0;
   for(int i = 0; i < vectorsSize; i++){ //the ray selection
-      vec3 currentVectorTex = texture2D(vectorsTex, vec2(t, 0.0), 0.0).rgb;
+    vec3 currentVectorTex = texture2D(vectorsTex, vec2(t, 0.0), 0.0).rgb;
 	  t += reverseVectorSize;
-      currentVectorTex -= vec3(0.5);
-      normalize(currentVectorTex);
-      if(dot(normal, currentVectorTex) > 0.0){ //we walk along the ray
+    currentVectorTex -= vec3(0.5);
+    normalize(currentVectorTex);
+    if(dot(normal, currentVectorTex) > 0.0){ //we walk along the ray
 	    currentVox = base + STEPSIZE * normal;//currentVectorTex; 
-        for(int step = 0; step < STEPCOUNT; step++){
-            currentVox += 2.0*STEPSIZE * currentVectorTex;
-            if((tex3D(currentVox) > tempBase)){
-			     res = res - TWICE * reverseVectorSize;
-                 break;
-            }
+      for(int step = 0; step < STEPCOUNT; step++){
+        currentVox += 2.0*STEPSIZE * currentVectorTex;
+        if((tex3D(currentVox) > tempBase)){
+			    res = res - TWICE * reverseVectorSize;
+          break;
         }
       }
+    }
   }
   return max(0.0, res);
 }
@@ -152,7 +152,7 @@ void main() {
   base.z = curZ;
   base = base - vec3(0.5, 0.5, 0.5);
   vec4 acc = vec4(0.0, 0.0, 0.0, 1.0);
-  float val = 0.99;
+  float val = isoThreshold;
   val = ao(base);
   acc = vec4(val, val, val, 1);
 
