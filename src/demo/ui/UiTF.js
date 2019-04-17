@@ -129,15 +129,16 @@ class UiTF extends React.Component {
 
 
     const styleObj = {
-      borderColor: 'red white',
-      borderStyle: 'solid'
+      //borderColor: 'red white',
+      //borderStyle: 'solid',
+      margin: '30px 0px 0px'
     };
     const jsxVolumeTF =
-      <ul className="list-group" style={styleObj}>
+      <ul className="list-group" >
         <li className="list-group-item">
           <UiHistogram volume={vol} />
         </li>
-        <li className="list-group-item">
+        <li className="list-group-item" style={styleObj}>
           <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
             range={{ min: 0.0, max: 1.0 }}
             start={wArr} connect={[false, true, false, true]} step={0.02} tooltips={true} />

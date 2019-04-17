@@ -437,7 +437,7 @@ export default class VolumeFilter3d {
    * @param roiColors Array of roi colors in RGBA format
    * @return (object) Created texture
    */
-  createUpdatableVolumeTex(props, isRoiVolume, roiColors) {
+  createUpdatableVolumeTex(volume, isRoiVolume, roiColors) {
     //
     // Some notes about tetxure layout.
     // Actually we have replaces3d texture with 2d texture (large size).
@@ -469,11 +469,11 @@ export default class VolumeFilter3d {
     // volumeSizeZ: number of slices in z directiion
     //
     // console.log(roiColors);
-    this.isWebGL2 = props.isWebGL2;
-    this.arrPixels = props.volume.m_dataArray;
-    const xDim = props.volume.m_xDim;
-    const yDim = props.volume.m_yDim;
-    const zDim = props.volume.m_zDim;
+    this.isWebGL2 = 1;
+    this.arrPixels = volume.m_dataArray;
+    const xDim = volume.m_xDim;
+    const yDim = volume.m_yDim;
+    const zDim = volume.m_zDim;
     const TWO = 2;
     const ONE = 1;
     const zDimSqrt = TWO ** (ONE + Math.floor(Math.log(Math.sqrt(zDim)) / Math.log(TWO)));

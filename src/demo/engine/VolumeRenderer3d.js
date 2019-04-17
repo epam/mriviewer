@@ -821,7 +821,7 @@ export default class VolumeRenderer3d {
       volume: this.volume,
       isWebGL2: this.isWebGL2
     };
-    this.volTexture = this.volumeUpdater.createUpdatableVolumeTex(props, isRoiVolume, this.roiPalette);
+    this.volTexture = this.volumeUpdater.createUpdatableVolumeTex(this.volume, isRoiVolume, this.roiPalette);
     this.origVolumeTex = this.volumeUpdater.origVolumeTex;
     this.texTF = this.volumeUpdater.createTransferFuncTexture();
     //this.volTextureMask = this.volumeUpdater.createUpdatableVolumeMask(this.volume);

@@ -26,6 +26,8 @@ import UiSaveMenu from './UiSaveMenu';
 import UiReportMenu from './UiReportMenu';
 import UiFilterMenu from './UiFilterMenu';
 import UiModalText from './UiModalText';
+import ModeView from '../store/ModeView';
+
 
 // ********************************************************
 // Class
@@ -116,11 +118,8 @@ class UiApp extends React.Component {
               <UiOpenMenu />
               <UiSaveMenu />
               <UiReportMenu />
-              <UiFilterMenu />
-
+              {(store.modeView === ModeView.VIEW_2D) ? <UiFilterMenu /> : <p></p>}
               {(isLoaded) ? <UiViewMode /> : <p></p>}
-
-
             </Nav>
           </Navbar.Collapse>
 
