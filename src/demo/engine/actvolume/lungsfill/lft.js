@@ -1,42 +1,12 @@
-/*
-Licensed to the Apache Software Foundation (ASF) under one
-or more contributor license agreements.  See the NOTICE file
-distributed with this work for additional information
-regarding copyright ownership.  The ASF licenses this file
-to you under the Apache License, Version 2.0 (the
-"License"); you may not use this file except in compliance
-with the License.  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied.  See the License for the
-specific language governing permissions and limitations
-under the License.
-*/
-
 /**
 * Lungs fill tool
 * @module lib/scripts/lungsfill/lft
 */
-
-// absolute imports
-// import * as THREE from 'three';
-
 // relative imports
 import FloodFillTool from './floodfill';
-
-// ****************************************************************************
-// Const
-// ****************************************************************************
+import SeedPoints from './seedPoints';
 
 const TOO_MIN_VAL = 40;
-
-// ****************************************************************************
-// Class
-// ****************************************************************************
 
 /**
 * Class LungsFillTool perform lungs selection (segmentation)
@@ -49,8 +19,6 @@ export default class LungsFillTool {
   */
   //constructor(xDim, yDim, zDim, volTexSrc, volTexMask, srcData) {
   constructor(volume) {
-    //this.VESSEL = false;
-    //super(props);
     this.VESSEL = true;
     this.m_xDim = volume.m_xDim;
     this.m_yDim = volume.m_yDim;
@@ -60,10 +28,7 @@ export default class LungsFillTool {
     this.xBorderMax = 0;
     this.yBorderMax = 0;
     this.m_volTexSrc = volume.m_dataArray;
-    console.log(`this.m_volTexSrc = ${this.m_volTexSrc[0]}`);
-
     this.m_volTexMask = new Uint8Array(this.m_xDim * this.m_yDim * this.m_zDim);
-    //this.m_srcData = srcData;
     this.m_volTexMask1 = new Uint8Array(this.m_xDim * this.m_yDim * this.m_zDim);
     this.m_volTexMask2 = new Uint8Array(this.m_xDim * this.m_yDim * this.m_zDim);
   }
@@ -75,7 +40,6 @@ export default class LungsFillTool {
     const yDimHalf = Math.floor(yDim / TWICE);
     let x, y, z;
     let isEmpty;
-
     const numBytesPerPixel = 1;
     if (numBytesPerPixel === 1) {
       isEmpty = true;
@@ -91,7 +55,6 @@ export default class LungsFillTool {
         } // for (y()
       } // for (x)
       this.xBorderMin = x - 1;
-
       isEmpty = true;
       for (x = xDim - 1; (x > xDimHalf) && (isEmpty); x--) {
         // check is empty plane
@@ -105,7 +68,6 @@ export default class LungsFillTool {
         } // for (y()
       } // for (x)
       this.xBorderMax = x + 1;
-
       isEmpty = true;
       for (y = 0; (y < yDimHalf) && (isEmpty); y++) {
         // check is empty plane
@@ -119,7 +81,6 @@ export default class LungsFillTool {
         } // for (y()
       } // for (x)
       this.yBorderMin = y - 1;
-
       isEmpty = true;
       for (y = yDim - 1; (y > yDimHalf) && (isEmpty); y--) {
         // check is empty plane
@@ -144,7 +105,6 @@ export default class LungsFillTool {
     let val = 0;
     const VIS = 255;
     const TWO = 2;
-
     for (z = 0; z < this.m_zDim; z++) {
       for (y = this.yBorderMin; y < this.yBorderMax; y++) {
         for (x = this.xBorderMin; x < this.xBorderMax; x++) {
@@ -203,248 +163,15 @@ export default class LungsFillTool {
       }
     }
   }
-  findSeedPointOnCentralSlice(vSeed) {
-    const TWO = 2;
-    const zCenter = Math.floor(this.m_zDim / TWO);
-    const yCenter = Math.floor(this.m_yDim / TWO);
-    let yMin = -1, yMax = -1;
-    const zOff = zCenter * this.m_xDim * this.m_yDim;
-    let yOff = -1;
-
-    // detect min, max y
-    let x, y;
-    const NUM_170 = 170.0;
-    const NUM_512 = 512.0;
-    const MIN_LINE_RATIO = NUM_170 / NUM_512;
-
-    for (y = 0; y < yCenter; y++) {
-      yOff = y * this.m_xDim;
-      let numWhitePixels = 0;
-      for (x = 0; x < this.m_xDim; x++) {
-        numWhitePixels += (this.m_volTexSrc[x + yOff + zOff] > TOO_MIN_VAL) ? 1 : 0;
-      }
-      // how much percents of non-black pixels can be in line
-      const isBlackLine = (numWhitePixels / this.m_xDim < MIN_LINE_RATIO) ? 1 : 0;
-      if (!isBlackLine) {
-        break;
-      }
-      yMin = y;
-    }
-
-    for (y = this.m_yDim - 1; y > yCenter; y--) {
-      yOff = y * this.m_xDim;
-      let numWhitePixels = 0;
-      for (x = 0; x < this.m_xDim; x++) {
-        numWhitePixels += (this.m_volTexSrc[x + yOff + zOff] > TOO_MIN_VAL) ? 1 : 0;
-      }
-      // how much percetns non-black pixels can be in line
-      const isBlackLine = (numWhitePixels / this.m_xDim < MIN_LINE_RATIO) ? 1 : 0;
-      if (!isBlackLine) {
-        break;
-      }
-      yMax = y;
-    }
-    // console.log(`yMin = ${yMin}, yMax = ${yMax}`);
-
-    // shift range [yMin .. yMax] to mire narrow search area
-    const NUM_45 = 45.0;
-    const NUM_60 = 60.0;
-    const NUM_339 = 339.0;
-    const ADD_RATIO_MIN = NUM_45 / NUM_339;
-    const ADD_RATIO_MAX = NUM_60 / NUM_339;
-
-    const yMinNew = Math.floor(yMin + (yMax - yMin) * ADD_RATIO_MIN);
-    const yMaxNew = Math.floor(yMax - (yMax - yMin) * ADD_RATIO_MAX);
-    yMin = yMinNew;
-    yMax = yMaxNew;
-
-    const NUM_COLORS = 8;
-    const histogram = new Float32Array(NUM_COLORS);
-    let goodHistogramDetected = false;
-    for (y = yMin; (y <= yMax) && !goodHistogramDetected; y++) {
-      // clear histogram
-      for (x = 0; x < NUM_COLORS; x++) {
-        histogram[x] = 0;
-      }
-      // collect histogram
-      yOff = y * this.m_xDim;
-
-      const SHIFT_5 = 5;
-      for (x = 0; x < this.m_xDim; x++) {
-        // get value in [0..7]
-        const val = this.m_volTexSrc[x + yOff + zOff] >> SHIFT_5;
-        histogram[val] += 1.0;
-      }
-      // get color probability
-      for (x = 0; x < NUM_COLORS; x++) {
-        histogram[x] /= this.m_xDim;
-      }
-      // black color should be largely presented
-      // but we should have enough whites
-      const BARRIER = 0.7;
-      if (histogram[0] < BARRIER) {
-        goodHistogramDetected = true;
-        break;
-      }
-    } // for (y) all possible hor lines
-    if (!goodHistogramDetected) {
-      return LungsFillTool.RESULT_BAD_HIST;
-    }
-    // console.log(`found y = ${y}`);
-
-    // search seed point in line: zCenter, y
-    let valThreshold = 0;
-    // search first white point on line
-    const xCenter = Math.floor(this.m_xDim / TWO);
-    for (x = 0; x < xCenter; x++) {
-      valThreshold = this.m_volTexSrc[x + yOff + zOff];
-      if (valThreshold > TOO_MIN_VAL) {
-        break;
-      }
-    }
-    // search first black point
-    const ADD_RANGE = 8;
-    x += ADD_RANGE;
-    for (; x < xCenter; x++) {
-      valThreshold = this.m_volTexSrc[x + yOff + zOff];
-      if (valThreshold < TOO_MIN_VAL) {
-        break;
-      }
-    }
-    if (x === xCenter) {
-      return LungsFillTool.RESULT_SEED_X_NOT_FOUND;
-    }
-
-    // check that next 8 pixels are black
-    for (let dx = 0; dx < ADD_RANGE; dx++) {
-      valThreshold = this.m_volTexSrc[x + yOff + zOff];
-      if (valThreshold > TOO_MIN_VAL) {
-        break;
-      }
-      x++;
-    }
-    if (valThreshold > TOO_MIN_VAL) {
-      return LungsFillTool.RESULT_SEED_X_NOT_FOUND;
-    }
-    vSeed.x = x;
-    vSeed.y = y;
-    vSeed.z = zCenter;
-    return LungsFillTool.RESULT_COMPLETED;
-  }
-  findSeedPointOnFirstSlice(vSeed) {
-    const pixelsSrc = this.m_volTexSrc;
-    const VAL_BLACK_BARRIER = 50;
-    let holeFound = false;
-
-    const NUM_7 = 7;
-    const NUM_512 = 512;
-    const sizeBlackAreaMin = Math.floor(this.m_xDim * NUM_7 / NUM_512);
-
-    // for each point scan in 4 directions to find white barrier
-
-    const MIN_RAT = 0.2;
-    const MAX_RAT = 0.8;
-    const yMin = Math.floor(this.m_yDim * MIN_RAT);
-    const yMax = Math.floor(this.m_yDim * MAX_RAT);
-    const xMin = Math.floor(this.m_xDim * MIN_RAT);
-    const xMax = Math.floor(this.m_xDim * MAX_RAT);
-
-    let cx, cy;
-    const offZ = 2 * this.m_xDim * this.m_yDim;
-    for (cy = yMin; (cy < yMax) && !holeFound; cy++) {
-      const cyOff = cy * this.m_xDim;
-      for (cx = xMin; (cx < xMax) && !holeFound; cx++) {
-        const val = pixelsSrc[cx + cyOff + offZ];
-        if (val >= VAL_BLACK_BARRIER) {
-          continue;
-        }
-        // we have black current pixel
-        let numWhiteBarriers = 0;
-
-        let x, y, len;
-        for (len = 0, y = cy - 1; y >= 0; y--, len++) {
-          const off = cx + y * this.m_xDim + offZ;
-          if (pixelsSrc[off] > VAL_BLACK_BARRIER) {
-            if (len > sizeBlackAreaMin) {
-              numWhiteBarriers++;
-              break;
-            }
-          }
-        } // for (y)
-        for (len = 0, y = cy + 1; y < this.m_yDim; y++, len++) {
-          const off = cx + y * this.m_xDim + offZ;
-          if (pixelsSrc[off] > VAL_BLACK_BARRIER) {
-            if (len > sizeBlackAreaMin) {
-              numWhiteBarriers++;
-            }
-            break;
-          }
-        } // for (y)
-        for (len = 0, x = cx - 1; x >= 0; x--, len++) {
-          const off = x + cy * this.m_xDim + offZ;
-          if (pixelsSrc[off] > VAL_BLACK_BARRIER) {
-            if (len > sizeBlackAreaMin) {
-              numWhiteBarriers++;
-            }
-            break;
-          }
-        } // for (x)
-        for (len = 0, x = cx + 1; x < this.m_xDim; x++, len++) {
-          const off = x + cy * this.m_xDim + offZ;
-          if (pixelsSrc[off] > VAL_BLACK_BARRIER) {
-            if (len > sizeBlackAreaMin) {
-              numWhiteBarriers++;
-            }
-            break;
-          }
-        } // for (x)
-        const MIN_BLACK_BARRIER = 17;
-        const FOUR = 4;
-        const TWO = 2;
-        if (numWhiteBarriers === FOUR) {
-          holeFound = true;
-          vSeed.x = cx;
-          vSeed.y = cy;
-          let sum = 0;
-          let minv = 255;
-          let col = 0;
-          for (let zz = 0; zz < TWO; zz++) {
-            const zzOff = (zz + TWO) * this.m_xDim * this.m_yDim;
-            for (let yy = -TWO; yy <= TWO; yy++) {
-              const yyOff = (yy + cy) * this.m_xDim;
-              for (let xx = -2; xx <= TWO; xx++) {
-                let val = pixelsSrc[xx + cx + yyOff + zzOff];
-                if (val < MIN_BLACK_BARRIER) {
-                  sum = sum + val;
-                  col++;
-                  if (val < minv) {
-                    minv = val;
-                    vSeed.x = xx + cx;
-                    vSeed.y = yy + cy;
-                  }
-                }
-              } //for xx
-            } //for yy
-          } //for zz
-          vSeed.z = Math.floor(sum / col);
-          break;
-        } // if 4 barriers
-      } // for (cx)
-    }  // for (cy)
-    if (!holeFound) {
-      return LungsFillTool.RESULT_SEED_X_NOT_FOUND;
-    }
-    return LungsFillTool.RESULT_COMPLETED;
-  }
   run() {
     let resFind = 0;
     const vSeed = { x: 0, y: 0, z: 0 };
-    resFind = this.findSeedPointOnCentralSlice(vSeed);
-    if (resFind !== LungsFillTool.RESULT_COMPLETED) {
+    const seedPoints = new SeedPoints(this.m_volTexSrc, this.m_xDim, this.m_yDim, this.m_zDim);
+    resFind = seedPoints.findSeedPointOnCentralSlice(vSeed);
+    if (resFind) {
       console.log('Lungs Central fill run: seed point not found');
       return resFind;
     }
-
     const xyzDim = this.m_xDim * this.m_yDim * this.m_zDim;
     // copy dst volume before fill
     for (let i = 0; i < xyzDim; i++) {
@@ -454,7 +181,6 @@ export default class LungsFillTool {
     const fillTool = new FloodFillTool();
     fillTool.floodFill3dThreshold(this.m_xDim, this.m_yDim, this.m_zDim, this.m_volTexMask, vSeed, valThreshold);
     //now this.m_volTexMask = 255, if lung, else = this.m_volTexSrc[i];  
-
     // copy only filled with 255 pixels back and scale them to [0.255]
     let x;
     const VIS = 255;
@@ -488,8 +214,8 @@ export default class LungsFillTool {
         this.m_volTexMask1[i] = this.m_volTexSrc[i];
       }
       // airway to this.m_volTexMask1  
-      resFind = this.findSeedPointOnFirstSlice(vSeed);
-      if (resFind !== LungsFillTool.RESULT_COMPLETED) {
+      resFind = seedPoints.findSeedPointOnFirstSlice(vSeed);
+      if (resFind) {
         console.log('Airway fill run: seed point not found');
         return resFind;
       }
@@ -512,7 +238,6 @@ export default class LungsFillTool {
     return LungsFillTool.RESULT_COMPLETED;
   }
 }
-
 // errors
 LungsFillTool.RESULT_NA = 0;
 LungsFillTool.RESULT_COMPLETED = 1;
