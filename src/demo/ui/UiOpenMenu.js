@@ -26,6 +26,7 @@ import Modes3d from '../store/Modes3d';
 import LoadResult from '../engine/LoadResult';
 import FileTools from '../engine/loaders/FileTools';
 import LoaderDicom from '../engine/loaders/LoaderDicom';
+import LoaderHdr from '../engine/loaders/LoaderHdr';
 
 
 // ********************************************************
@@ -40,7 +41,6 @@ const NEED_TEXTURE_SIZE_4X = true;
 // ********************************************************
 
 
-
 /**
  * Class UiOpenMenu some text later...
  */
@@ -53,7 +53,8 @@ class UiOpenMenu extends React.Component {
     this.onButtonLocalFile = this.onButtonLocalFile.bind(this);
     this.handleFileSelected = this.handleFileSelected.bind(this);
     this.onFileContentRead = this.onFileContentRead.bind(this);
-    this.onFileContentReadMultiple = this.onFileContentReadMultiple.bind(this);
+    this.onFileContentReadMultipleDicom = this.onFileContentReadMultipleDicom.bind(this);
+    this.onFileContentReadMultipleHdr = this.onFileContentReadMultipleHdr.bind(this);
 
     this.onModalUrlShow = this.onModalUrlShow.bind(this);
     this.onModalUrlHide = this.onModalUrlHide.bind(this);
@@ -79,6 +80,8 @@ class UiOpenMenu extends React.Component {
       showModalDropbox: false,
       showModalDemo: false,
     };
+    this.m_volume = null;
+    this.m_volumeRoi = null;
   }
   finalizeSuccessLoadedVolume(vol, fileNameIn) {
     if (NEED_TEXTURE_SIZE_4X) {
@@ -142,6 +145,14 @@ class UiOpenMenu extends React.Component {
       readOk = vol.readFromNifti(strContent, callbackProgress, callbackComplete);
     } else if (this.m_fileName.endsWith('.dcm') || this.m_fileName.endsWith('.DCM')) {
       readOk = vol.readFromDicom(strContent, callbackProgress, callbackComplete);
+    } else if (this.m_fileName.endsWith('.hdr') || this.m_fileName.endsWith('.HDR')) {
+      // readOk = vol.readFromHdrHeader(strContent, callbackProgress, callbackComplete);
+      console.log(`cant read single hdr file: ${this.m_fileName}`);
+      readOk = false;
+    } else if (this.m_fileName.endsWith('.img') || this.m_fileName.endsWith('.IMG')) {
+      // readOk = vol.readFromHdrImage(strContent, callbackProgress, callbackComplete);
+      console.log(`cant read single img file: ${this.m_fileName}`);
+      readOk = false;
     } else {
       console.log(`onFileContentRead: unknown file type: ${this.m_fileName}`);
     }
@@ -152,14 +163,87 @@ class UiOpenMenu extends React.Component {
       console.log(`onFileContentRead failed! reading ${this.m_fileName} file`);
     }
   }
+  //
+  // read hdr/img. content is in this.m_fileReader.result
+  //
+  onFileContentReadMultipleHdr() {
+    const VALID_NUM_FILES_2 = 2;
+    const VALID_NUM_FILES_4 = 4;
+    if ((this.m_numFiles !== VALID_NUM_FILES_2) && (this.m_numFiles !== VALID_NUM_FILES_4)) {
+      console.log(`onFileContentReadMultipleHdr: can read ${VALID_NUM_FILES_2} or ${VALID_NUM_FILES_4} files for multiple hdr loader`);  
+      return;
+    }
+
+    const isHdr = this.m_fileName.endsWith('hdr') || this.m_fileName.endsWith('HDR');
+    console.log(`onFileContentReadMultipleHdr: read file ${this.m_fileName}. Ratio=${this.m_fileIndex} / ${this.m_numFiles}`);
+    this.m_fileIndex++;
+    const ratioLoad = this.m_fileIndex / this.m_numFiles;
+    const strContent = this.m_fileReader.result;
+    // const lenContent = strContent.length;
+
+    if (this.m_fileIndex <= 1) {
+      this.callbackReadProgress(0.0);
+    }
+
+    if ((this.m_numFiles === VALID_NUM_FILES_4) && (this.m_volumeRoi === null)) {
+      this.m_volumeRoi = new Volume();
+    }
+
+    const callbackProgress = null;
+    const callbackComplete = null;
+
+    const volDst = (this.m_fileIndex <= VALID_NUM_FILES_2) ? this.m_volume : this.m_volumeRoi;
+
+    let readOk = false;
+    if (isHdr) {
+      readOk = this.m_loader.readFromBufferHeader(volDst, strContent, callbackProgress, callbackComplete);
+    } else {
+      readOk = this.m_loader.readFromBufferImage(volDst, strContent, callbackProgress, callbackComplete);
+    }
+
+    if (readOk && (this.m_fileIndex === this.m_numFiles)) {
+      let ok = false;
+      if (this.m_numFiles === VALID_NUM_FILES_2) {
+        ok = this.m_loader.createVolumeFromHeaderAndImage(this.m_volume);
+      } else if (this.m_numFiles === VALID_NUM_FILES_4) {
+        // intensity data 16 -> 8 bpp
+        ok = this.m_loader.createVolumeFromHeaderAndImage(this.m_volume);
+        if (ok) {
+          // mix 8 bpp intensity and roi pixels
+          ok = this.m_loader.createRoiVolumeFromHeaderAndImage(this.m_volume, this.m_volumeRoi);
+        }
+      }
+      if (!ok) {
+        this.callbackReadProgress(1.0);
+        this.callbackReadComplete(LoadResult.FAIL, null, 0, null);
+        return;
+      }
+      this.finalizeSuccessLoadedVolume(this.m_volume, this.m_fileName);
+      console.log(`onFileContentReadMultipleHdr read all ${this.m_numFiles} files`);
+
+      this.callbackReadProgress(1.0);
+      this.callbackReadComplete(LoadResult.SUCCES, null, 0, null);
+    }
+
+    // read again new file
+    if (this.m_fileIndex < this.m_numFiles) {
+      this.callbackReadProgress(ratioLoad);
+      this.m_fileReader.onloadend = this.onFileContentReadMultipleHdr;
+      const file = this.m_files[this.m_fileIndex];
+      this.m_fileName = file.name;
+      this.m_fileReader.readAsArrayBuffer(file);
+    }
+
+  }
+  //
   // read from string content in this.m_fileReader.result
   //
-  onFileContentReadMultiple() {
-    // console.log('UiOpenMenu. onFileContentReadMultiple ...');
+  onFileContentReadMultipleDicom() {
+    // console.log('UiOpenMenu. onFileContentReadMultipleDicom ...');
     const strContent = this.m_fileReader.result;
     this.m_fileIndex++;
     const ratioLoad = this.m_fileIndex / this.m_numFiles;
-    // console.log(`onFileContentReadMultiple. r = ${ratioLoad}`);
+    // console.log(`onFileContentReadMultipleDicom. r = ${ratioLoad}`);
     const callbackProgress = null;
     const callbackComplete = null;
 
@@ -170,12 +254,12 @@ class UiOpenMenu extends React.Component {
     const readOk = this.m_volume.readSingleSliceFromDicom(this.m_loader, this.m_fileIndex - 1, 
       this.m_fileName, ratioLoad, strContent, callbackProgress, callbackComplete);
     if (!readOk) {
-      console.log('onFileContentReadMultiple. Error read individual file');
+      console.log('onFileContentReadMultipleDicom. Error read individual file');
     }
     if (readOk && (this.m_fileIndex === this.m_numFiles)) {
       this.m_loader.createVolumeFromSlices(this.m_volume);
       this.finalizeSuccessLoadedVolume(this.m_volume, this.m_fileName);
-      console.log(`onFileContentReadMultiple read all ${this.m_numFiles} files`);
+      console.log(`onFileContentReadMultipleDicom read all ${this.m_numFiles} files`);
 
       this.callbackReadProgress(1.0);
       this.callbackReadComplete(LoadResult.SUCCES, null, 0, null);
@@ -186,11 +270,11 @@ class UiOpenMenu extends React.Component {
       const NUM_PARTS_REPORT = 16;
       const STEP_PROGRESS = Math.floor(this.m_numFiles / NUM_PARTS_REPORT);
       if ((this.m_fileIndex % STEP_PROGRESS) === 0) {
-        // console.log(`onFileContentReadMultiple. Loading completed = ${ratioLoad}`);
+        // console.log(`onFileContentReadMultipleDicom. Loading completed = ${ratioLoad}`);
         this.callbackReadProgress(ratioLoad);
       }
 
-      this.m_fileReader.onloadend = this.onFileContentReadMultiple;
+      this.m_fileReader.onloadend = this.onFileContentReadMultipleDicom;
       const file = this.m_files[this.m_fileIndex];
       this.m_fileName = file.name;
       this.m_fileReader.readAsArrayBuffer(file);
@@ -219,10 +303,15 @@ class UiOpenMenu extends React.Component {
         this.m_loader = null;
         if (evt.target.files[0].name.endsWith(".dcm")) {
           this.m_loader = new LoaderDicom(numFiles);
+          this.m_fileReader.onloadend = this.onFileContentReadMultipleDicom;
+        } else if ((evt.target.files[0].name.endsWith(".hdr")) || (evt.target.files[0].name.endsWith(".img"))) {
+          this.m_loader = new LoaderHdr(numFiles);
+          this.m_fileReader.onloadend = this.onFileContentReadMultipleHdr;
         }
-        this.m_fileReader.onloadend = this.onFileContentReadMultiple;
+        
         const vol = new Volume();
         this.m_volume = vol;
+        this.m_volumeRoi = null;
 
         const file = evt.target.files[0];
         this.m_fileName = file.name;

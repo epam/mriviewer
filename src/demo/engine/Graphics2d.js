@@ -27,6 +27,8 @@ import ToolDelete from './tools2d/ToolDelete';
 
 import Tools2dType from './tools2d/ToolTypes';
 
+import RoiPalette from './loaders/roipalette';
+
 // import { timingSafeEqual } from 'crypto';
 
 // ********************************************************
@@ -83,6 +85,9 @@ class Graphics2d extends React.Component {
     this.m_toolText = new ToolText(this);
     this.m_toolEdit = new ToolEdit(this);
     this.m_toolDelete = new ToolDelete(this);
+
+    // roi
+    this.m_roiPalette = new RoiPalette();
 
     // store
     const store = props;
@@ -214,8 +219,8 @@ class Graphics2d extends React.Component {
       const yDim = vol.m_yDim;
       const zDim = vol.m_zDim;
       const xyDim = xDim * yDim;
-      const dataSrc = vol.m_dataArray; // 8 byte array
-      if (dataSrc.length !== xDim * yDim * zDim) {
+      const dataSrc = vol.m_dataArray; // 1 or 4 bytes array of pixels
+      if (dataSrc.length !== xDim * yDim * zDim * vol.m_bytesPerVoxel) {
         console.log(`Bad src data len = ${dataSrc.length}, but expect ${xDim}*${yDim}*${zDim}`);
       }
 
@@ -226,6 +231,11 @@ class Graphics2d extends React.Component {
       if (dataDst.length !== w * h * 4) {
         console.log(`Bad dst data len = ${dataDst.length}, but expect ${w}*${h}*4`);
       }
+      const ONE = 1;
+      const FOUR = 4;
+      const OFF_3 = 3;
+
+      const roiPal256 = this.m_roiPalette.getPalette256();
 
       const xPos = store.render2dxPos;
       const yPos = store.render2dyPos;
@@ -239,22 +249,45 @@ class Graphics2d extends React.Component {
         const yStep = zoom * yDim / h;
         let j = 0;
         let ay = yPos * yDim;
-        for (let y = 0; y < h; y++, ay += yStep) {
-          const ySrc = Math.floor(ay);
-          const yOff = ySrc * xDim;
-          let ax = xPos * xDim;
-          for (let x = 0; x < w; x++, ax += xStep) {
-            const xSrc = Math.floor(ax);
-            const val = dataSrc[zOff + yOff + xSrc];
+        if (vol.m_bytesPerVoxel === ONE) {
+          for (let y = 0; y < h; y++, ay += yStep) {
+            const ySrc = Math.floor(ay);
+            const yOff = ySrc * xDim;
+            let ax = xPos * xDim;
+            for (let x = 0; x < w; x++, ax += xStep) {
+              const xSrc = Math.floor(ax);
+              const val = dataSrc[zOff + yOff + xSrc];
+              dataDst[j + 0] = val;
+              dataDst[j + 1] = val;
+              dataDst[j + 2] = val;
+              dataDst[j + 3] = 255; // opacity
+              j += 4;
+            } // for (x)
+          } // for (y)
 
-            dataDst[j + 0] = val;
-            dataDst[j + 1] = val;
-            dataDst[j + 2] = val;
-            dataDst[j + 3] = 255; // opacity
+        } else if (vol.m_bytesPerVoxel === FOUR) {
+          for (let y = 0; y < h; y++, ay += yStep) {
+            const ySrc = Math.floor(ay);
+            const yOff = ySrc * xDim;
+            let ax = xPos * xDim;
+            for (let x = 0; x < w; x++, ax += xStep) {
+              const xSrc = Math.floor(ax);
+              const val = dataSrc[(zOff + yOff + xSrc) * FOUR + OFF_3];
+              const val4 = val * FOUR;
+              const rCol = roiPal256[val4 + 0];
+              const gCol = roiPal256[val4 + 1];
+              const bCol = roiPal256[val4 + 2];
+  
+              dataDst[j + 0] = bCol;
+              dataDst[j + 1] = gCol;
+              dataDst[j + 2] = rCol;
+              dataDst[j + 3] = 255;
+              j += 4;
+            } // for (x)
+          } // for (y)
 
-            j += 4;
-          } // for (x)
-        } // for (y)
+        } // if 4 bpp
+
       } else if (mode2d === Modes2d.SAGGITAL) {
         // x slice
         const xSlice = Math.floor(xDim * sliceRatio);
@@ -263,23 +296,47 @@ class Graphics2d extends React.Component {
         const zStep = zoom * zDim / h;
         let j = 0;
         let az = yPos * zDim;
-        for (let y = 0; y < h; y++, az += zStep) {
-          const zSrc = Math.floor(az);
-          const zOff = zSrc * xDim * yDim;
-          let ay = xPos * yDim;
-          for (let x = 0; x < w; x++, ay += yStep) {
-            const ySrc = Math.floor(ay);
-            const yOff = ySrc * xDim;
-            const val = dataSrc[zOff + yOff + xSlice];
+        if (vol.m_bytesPerVoxel === ONE) {
+          for (let y = 0; y < h; y++, az += zStep) {
+            const zSrc = Math.floor(az);
+            const zOff = zSrc * xDim * yDim;
+            let ay = xPos * yDim;
+            for (let x = 0; x < w; x++, ay += yStep) {
+              const ySrc = Math.floor(ay);
+              const yOff = ySrc * xDim;
+              const val = dataSrc[zOff + yOff + xSlice];
 
-            dataDst[j + 0] = val;
-            dataDst[j + 1] = val;
-            dataDst[j + 2] = val;
-            dataDst[j + 3] = 255; // opacity
+              dataDst[j + 0] = val;
+              dataDst[j + 1] = val;
+              dataDst[j + 2] = val;
+              dataDst[j + 3] = 255; // opacity
 
-            j += 4;
-          } // for (x)
-        } // for (y)
+              j += 4;
+            } // for (x)
+          } // for (y)
+        } else if (vol.m_bytesPerVoxel === FOUR) {
+          for (let y = 0; y < h; y++, az += zStep) {
+            const zSrc = Math.floor(az);
+            const zOff = zSrc * xDim * yDim;
+            let ay = xPos * yDim;
+            for (let x = 0; x < w; x++, ay += yStep) {
+              const ySrc = Math.floor(ay);
+              const yOff = ySrc * xDim;
+              const val = dataSrc[(zOff + yOff + xSlice) * FOUR + OFF_3];
+              const val4 = val * FOUR;
+              const rCol = roiPal256[val4 + 0];
+              const gCol = roiPal256[val4 + 1];
+              const bCol = roiPal256[val4 + 2];
+
+              dataDst[j + 0] = bCol;
+              dataDst[j + 1] = gCol;
+              dataDst[j + 2] = rCol;
+              dataDst[j + 3] = 255; // opacity
+
+              j += 4;
+            } // for (x)
+          } // for (y)
+        } // if 4 bppp
       } else if (mode2d === Modes2d.CORONAL) {
         // y slice
         const ySlice = Math.floor(yDim * sliceRatio);
@@ -289,22 +346,45 @@ class Graphics2d extends React.Component {
         const zStep = zoom * zDim / h;
         let j = 0;
         let az = yPos * zDim;
-        for (let y = 0; y < h; y++, az += zStep) {
-          const zSrc = Math.floor(az);
-          const zOff = zSrc * xDim * yDim;
-          let ax = xPos * xDim;
-          for (let x = 0; x < w; x++, ax += xStep) {
-            const xSrc = Math.floor(ax);
-            const val = dataSrc[zOff + yOff + xSrc];
+        if (vol.m_bytesPerVoxel === ONE) {
+          for (let y = 0; y < h; y++, az += zStep) {
+            const zSrc = Math.floor(az);
+            const zOff = zSrc * xDim * yDim;
+            let ax = xPos * xDim;
+            for (let x = 0; x < w; x++, ax += xStep) {
+              const xSrc = Math.floor(ax);
+              const val = dataSrc[zOff + yOff + xSrc];
 
-            dataDst[j + 0] = val;
-            dataDst[j + 1] = val;
-            dataDst[j + 2] = val;
-            dataDst[j + 3] = 255; // opacity
+              dataDst[j + 0] = val;
+              dataDst[j + 1] = val;
+              dataDst[j + 2] = val;
+              dataDst[j + 3] = 255; // opacity
 
-            j += 4;
-          } // for (x)
-        } // for (y)
+              j += 4;
+            } // for (x)
+          } // for (y)
+        } else if (vol.m_bytesPerVoxel === FOUR) {
+          for (let y = 0; y < h; y++, az += zStep) {
+            const zSrc = Math.floor(az);
+            const zOff = zSrc * xDim * yDim;
+            let ax = xPos * xDim;
+            for (let x = 0; x < w; x++, ax += xStep) {
+              const xSrc = Math.floor(ax);
+              const val = dataSrc[(zOff + yOff + xSrc) * FOUR + OFF_3];
+              const val4 = val * FOUR;
+              const rCol = roiPal256[val4 + 0];
+              const gCol = roiPal256[val4 + 1];
+              const bCol = roiPal256[val4 + 2];
+
+              dataDst[j + 0] = bCol;
+              dataDst[j + 1] = gCol;
+              dataDst[j + 2] = rCol;
+              dataDst[j + 3] = 255; // opacity
+
+              j += 4;
+            } // for (x)
+          } // for (y)
+        } // end if 4 bpp
       }
 
       ctx.putImageData(imgData, 0, 0); 
