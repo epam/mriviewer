@@ -99,7 +99,7 @@ class UiOpenMenu extends React.Component {
     store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
 
   }
-  readCallbackComplete(errCode, hedaer, dataSize, dataArray) {
+  readCallbackComplete(errCode) {
     if (errCode !== LoadResult.SUCCESS) {
       const strErr = LoadResult.getResultString(errCode);
       console.log(`readCallbackComplete. Bad result = ${errCode}: ${strErr}`);
@@ -120,7 +120,7 @@ class UiOpenMenu extends React.Component {
       uiapp.doSetProgressBarRatio(ratioPrc);
     }
   } // callback progress
-  callbackReadComplete(loadErrorCode, obj0, val, obj1) {
+  callbackReadComplete() {
     const store = this.props;
     const uiapp = store.uiApp;
     // console.log(`callbackReadComplete wiyth err = ${loadErrorCode}`);
@@ -192,7 +192,35 @@ class UiOpenMenu extends React.Component {
     const callbackProgress = null;
     const callbackComplete = null;
 
-    const volDst = (this.m_fileIndex <= VALID_NUM_FILES_2) ? this.m_volume : this.m_volumeRoi;
+    const regExpFileName = /([\S]+)\.[\S]+/;
+    const fnameArr = regExpFileName.exec(this.m_fileName);
+    const numFN = fnameArr.length;
+    // console.log(`!!!!!!!!!!!!!!!!!!! FILE NAME = ${fnameArr[1]}, NUMFN = ${numFN}`);
+    let detectedMask  = false;
+    let detectedIntensity = false;
+    if (numFN === 2) {
+      const fname = fnameArr[1];
+      if (fname.endsWith('_mask')) {
+        detectedMask = true;
+      }
+      if (fname.endsWith('_intn')) {
+        detectedIntensity = true;
+      }
+    }
+    let volDst = (this.m_fileIndex <= VALID_NUM_FILES_2) ? this.m_volume : this.m_volumeRoi;
+    if (detectedIntensity) {
+      volDst = this.m_volume;
+      // console.log('intensity vol by name');
+    }
+    if (detectedMask) {
+      volDst = this.m_volumeRoi;
+      // console.log('mask vol by name');
+      if (this.m_numFiles !== VALID_NUM_FILES_4) {
+        console.log('You need to load 4 files, if one of them has _mask in name');
+        return;
+      }
+    }
+
 
     let readOk = false;
     if (isHdr) {
