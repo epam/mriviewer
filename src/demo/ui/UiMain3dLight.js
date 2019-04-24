@@ -11,6 +11,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { Row, Col } from 'react-bootstrap';
 
 import UiCtrl3dLight from './UiCtrl3dLight';
 import Graphics3d from '../engine/Graphics3d';
@@ -34,14 +35,16 @@ class UiMain3dLight extends React.Component {
     // const store = this.props;
     // const vol = store.volume;
 
-    const jsxMain3dLight = <div className="row">
-      <div className="col-md-4">
-        <UiCtrl3dLight />
-      </div>
-      <div className="col-md-8">
-        <Graphics3d />
-      </div>
-    </div>
+    const jsxMain3dLight = 
+      <Row>
+        <Col xs lg="4">
+          <UiCtrl3dLight />
+        </Col>
+        <Col xs lg="8">
+          <Graphics3d  />
+        </Col>
+      </Row>
+    
     return jsxMain3dLight;
   };
 }

@@ -10,11 +10,13 @@
 // ********************************************************
 
 import React from 'react';
-// import { timingSafeEqual } from 'crypto';
+import { Card } from 'react-bootstrap';
 
 // ********************************************************
 // Const
 // ********************************************************
+
+const DEFAULT_HEIGHT = 220;
 
 // ********************************************************
 // Class
@@ -31,12 +33,35 @@ export default class UiHistogram extends React.Component {
     super(props);
     this.m_histogram = [];
     this.m_numColors = 0;
+
+    this.setSize = this.setSize.bind(this);
+
+    this.state = {
+      width: 0,
+      height: DEFAULT_HEIGHT,
+    };
   }
   componentDidMount() {
     this.updateCanvas();
+    window.addEventListener('resize', this.handleResize, false);
+    this.setSize();    
   }
   componentDidUpdate() {
     this.updateCanvas();
+    window.removeEventListener('resize', this.handleResize, false);
+  }
+  handleResize() {
+    this.setSize();
+  }
+  setSize() {
+    const objOwner = this.m_canvasOwner;
+    if (objOwner !== null) {
+      const w = objOwner.clientWidth - 2;
+      const h = objOwner.clientHeight - 2;
+      // console.log(`UiHistogram. setSize. = ${w} * ${h}`);
+      this.setState({ width: w });
+      this.setState({ height: h });
+    }
   }
   getVolumeHistogram(vol) {
     const xDim = vol.m_xDim;
@@ -168,6 +193,9 @@ export default class UiHistogram extends React.Component {
     ctx.fillStyle = 'rgb(220, 220, 220)';
     ctx.fillRect(0,0, w, h);
 
+    // was 300 * 250
+    // console.log(`updateCanvas. canvas dim = ${w} * ${h}`); 
+
     const vol = this.props.volume;
     if (vol !== null) {
       this.getVolumeHistogram(vol);
@@ -283,17 +311,21 @@ export default class UiHistogram extends React.Component {
       const strBox = vol.m_boxSize.x.toFixed(2) + '*' + vol.m_boxSize.y.toFixed(2) + '*' + vol.m_boxSize.z.toFixed(2);
       strMsg = 'Volume histogram: Dim = ' + strDim + '; bpp = ' + bpp.toString() + '; box = ' + strBox;
     }
+    const cw = this.state.width;
+    const ch = this.state.height;
 
     const jsxHist = 
-    <div className="card" >
-      <div className="card-header">
-        {strMsg}
-      </div>
-      <div className="card-body">
-        <canvas ref="canvasHistogram" height="250px" />
-      </div>
-
-    </div>;
+      <Card>
+        <Card.Body>
+          <Card.Title>
+            {strMsg}
+          </Card.Title>
+          { /* <canvas ref="canvasHistogram" height="250px" /> */ }
+          <div ref={ (mount) => {this.m_canvasOwner = mount} }>
+            <canvas ref="canvasHistogram" width={cw} height={ch} />
+          </div>
+        </Card.Body>
+      </Card>
     return jsxHist;
   }
 }

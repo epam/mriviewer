@@ -14,6 +14,7 @@ import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { ListGroup, ButtonGroup, Button } from 'react-bootstrap';
 
 import Nouislider from 'react-nouislider';
 
@@ -115,44 +116,51 @@ class UiCtrl3dLight extends React.Component {
     // btn-default active
 
     const jsxRenderControls =
-
-      <ul className="list-group list-group-flush" >
-        <li className="list-group-item">
-          <div className="btn-group btn-block">
-            <button type="button" className={strA} onClick={this.onModeA} >
+      <ListGroup as="ul" variant="flush">
+        <ListGroup.Item as="li">
+          <ButtonGroup>
+            <Button variant="secondary" className={strA} onClick={this.onModeA} >
               Isosurface
-            </button>
-            <button type="button" className={strB} onClick={this.onModeB}  >
+            </Button>
+            <Button variant="secondary" className={strB} onClick={this.onModeB} >
               VolumeRender
-            </button>
-            <button type="button" className={strC} onClick={this.onModeC} >
+            </Button>
+            <Button variant="secondary" className={strC} onClick={this.onModeC} >
               MaxProjection
-            </button>
-            <button type="button" className={strD} onClick={this.onModeD} >
-              Ereaser
-            </button>
-          </div>
-        </li>
-        <UiTF/>
-        <li className="list-group-item">
+            </Button>
+            <Button variant="secondary" className={strD} onClick={this.onModeD} >
+              Eraser
+            </Button>
+
+          </ButtonGroup>          
+        </ListGroup.Item>
+
+        <ListGroup.Item>
+          <UiTF/>
+        </ListGroup.Item>
+
+        <ListGroup.Item>
           <p> Brightness </p>
           <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={'sliderBrightness'}
             range={{ min: 0.0, max: 1.0 }}
-            start={wArrBrightness} step={0.02} tooltips={true} />
-        </li>
-        <li className="list-group-item">
+            start={wArrBrightness} step={0.02} tooltips={true} />          
+        </ListGroup.Item>
+
+        <ListGroup.Item>
           <p> Cut </p>
           <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={'sliderCut'}
             range={{ min: 0.0, max: 1.0 }}
             start={wArrCut} step={0.01} tooltips={true} />
-        </li>
-        <li className="list-group-item">
+        </ListGroup.Item>
+
+        <ListGroup.Item>
           <p> Quality </p>
           <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={'sliderQuality'}
             range={{ min: 0.0, max: 1.0 }}
             start={wArrQuality} step={0.02} tooltips={true} />
-        </li>
-      </ul>
+        </ListGroup.Item>
+
+      </ListGroup>
 
     return jsxRenderControls;
   }

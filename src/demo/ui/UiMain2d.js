@@ -11,6 +11,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { Row, Col } from 'react-bootstrap';
 
 import UiCtrl2d from './UiCtrl2d';
 import Graphics2d from '../engine/Graphics2d';
@@ -36,16 +37,18 @@ class UiMain2d extends React.Component {
     const store = this.props;
     const vol = store.volume;
 
-    const jsxMain2d = <div className="row">
-      <div className="col-md-4">
-        <UiCtrl2d />
-        <UiTools2d />
-        <UiHistogram volume={vol}/>
-      </div>
-      <div className="col-md-8">
-        <Graphics2d  />
-      </div>
-    </div>
+    const jsxMain2d = 
+      <Row>
+        <Col xs lg="4">
+          <UiCtrl2d />
+          <UiTools2d />
+          <UiHistogram volume={vol}/>
+        </Col>
+        <Col xs lg="8">
+          <Graphics2d  />
+        </Col>
+      </Row>
+
     return jsxMain2d;
   };
 }
