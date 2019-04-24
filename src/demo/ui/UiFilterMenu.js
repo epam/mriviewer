@@ -12,7 +12,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { NavDropdown } from 'react-bootstrap';
 import LungsFillTool from '../engine/actvolume/lungsfill/lft';
-import ModeView from '../store/ModeView';
+// import ModeView from '../store/ModeView';
 
 
 // ********************************************************
@@ -32,7 +32,7 @@ class UiFilterMenu extends React.Component {
     super(props);
     this.onButtonLungsSeg = this.onButtonLungsSeg.bind(this);
   }
-  onButtonLungsSeg(evt) {
+  onButtonLungsSeg() {
     //evt.preventDefault();
     const store = this.props;
     const lungsFiller = new LungsFillTool(store.volume);
