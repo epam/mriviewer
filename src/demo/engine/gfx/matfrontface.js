@@ -83,7 +83,7 @@ export default class MaterialFF {
           callbackMat(material);
         }
       },
-      (strFragmentSh) => {},
+      /*(strFragmentSh) => {},*/
       (e) => {
         console.log("Shader load failed! because of error " + e.target.status + ", " + e.target.statusText);
       });

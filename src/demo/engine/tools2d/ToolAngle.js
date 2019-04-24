@@ -96,10 +96,8 @@ class ToolAngle {
   }    
   /**
    * Remove highlighted object
-   * 
-   * @param {object} vTex - volume coord of picked point
    */
-  deleteObject(vTex) {
+  deleteObject() {
     if (this.m_objEdit != null) {
       const ind = this.m_angles.indexOf(this.m_objEdit);
       if (ind >= 0) {
@@ -198,7 +196,7 @@ class ToolAngle {
     // invoke redraw
     this.m_objGraphics2d.forceUpdate();
   }
-  onMouseUp(xScr, yScr, store) {
+  onMouseUp() { // ommited args: xScr, yScr, store
   }
   clear() {
     this.m_angles = [];

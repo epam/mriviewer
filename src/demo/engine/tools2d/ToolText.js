@@ -83,9 +83,8 @@ class ToolText {
   /**
    * Remove highlighted object
    * 
-   * @param {object} vTex - volume coord of picked point
    */
-  deleteObject(vTex) {
+  deleteObject() {
     if (this.m_objEdit != null) {
       const ind = this.m_texts.indexOf(this.m_objEdit);
       if (ind >= 0) {
@@ -131,9 +130,9 @@ class ToolText {
     const uiApp = store.uiApp;
     uiApp.onShowModalText();
   }
-  onMouseMove(xScr, yScr, store) {
+  onMouseMove() { // args ommited: xScr, yScr, store
   }
-  onMouseUp(xScr, yScr, store) {
+  onMouseUp() { // args ommited: xScr, yScr, store
   }
   /**
    * Render all areas on screen in 2d mode

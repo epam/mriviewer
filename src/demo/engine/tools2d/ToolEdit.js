@@ -57,7 +57,7 @@ class ToolEdit {
    * @param {number} yScr - y coordinate of click on screen
    * @param {object} store - global storage
    */  
-  onMouseDown(xScr, yScr, store) {
+  onMouseDown() { // ommited args: xScr, yScr, store
     this.m_mousePressed = true;
   }
   onMouseMove(xScr, yScr, store) {
@@ -104,7 +104,7 @@ class ToolEdit {
       } // if we have tracked point
     }
   }
-  onMouseUp(xScr, yScr, store) {
+  onMouseUp() { // ommited args : xScr, yScr, store
     this.m_mousePressed = false;
   }
   /**

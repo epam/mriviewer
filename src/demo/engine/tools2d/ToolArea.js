@@ -103,10 +103,8 @@ class ToolArea {
   }
   /**
    * Remove highlighted object
-   * 
-   * @param {object} vTex - volume coord of picked point
    */
-  deleteObject(vTex) {
+  deleteObject() {
     if (this.m_objEdit != null) {
       const ind = this.m_areas.indexOf(this.m_objEdit);
       if (ind >= 0) {
@@ -391,7 +389,7 @@ class ToolArea {
     this.m_objSelfIntersect = pt;
     this.m_objGraphics2d.forceUpdate();
   }
-  onMouseUp(xScr, yScr, store) {
+  onMouseUp() { // ommited args: xScr, yScr, store
   }
   /**
    * Render all areas on screen in 2d mode

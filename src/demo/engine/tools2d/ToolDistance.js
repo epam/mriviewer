@@ -82,10 +82,8 @@ class ToolDistance {
   }
   /**
    * Remove highlighted object
-   * 
-   * @param {object} vTex - volume coord of picked point
    */
-  deleteObject(vTex) {
+  deleteObject() {
     if (this.m_objEdit != null) {
       const ind = this.m_lines.indexOf(this.m_objEdit);
       if (ind >= 0) {
@@ -208,7 +206,7 @@ class ToolDistance {
       } // if last line is long enough
     } // if num lines more 0
   }
-  onMouseUp(xScr, yScr, store) {
+  onMouseUp() { // omitted args: xScr, yScr, store
     this.m_mouseDown = false;
     const numLines = this.m_lines.length;
     if (numLines > 0) {

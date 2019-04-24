@@ -52,12 +52,8 @@ class ToolDelete {
   }
   /**
    * When mouse pressed down
-   * 
-   * @param {number} xScr - x coordinate of click on screen
-   * @param {number} yScr - y coordinate of click on screen
-   * @param {object} store - global storage
    */  
-  onMouseDown(xScr, yScr, store) {
+  onMouseDown() { // ommited args: xScr, yScr, store
     this.m_mousePressed = true;
 
     if (this.m_pointTracked !== null) {
@@ -112,7 +108,7 @@ class ToolDelete {
       */
     }
   }
-  onMouseUp(xScr, yScr, store) {
+  onMouseUp() { // ommited args: xScr, yScr, store
     this.m_mousePressed = false;
   }
   /**

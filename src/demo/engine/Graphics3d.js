@@ -163,7 +163,7 @@ class Graphics3d extends React.Component {
       this.m_volumeRenderer3D.onMouseDown(containerX, this.state.hRender - containerY, this.props.ereaseStart);
     }
   }
-  _onMouseUp(e) {
+  _onMouseUp() { // ommited args: evt
     //console.log(`${e.x}, ${e.y}\n`);
     if (this.m_volumeRenderer3D !== null) {
       this.m_volumeRenderer3D.onMouseUp();

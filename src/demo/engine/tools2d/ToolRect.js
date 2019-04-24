@@ -101,9 +101,8 @@ class ToolRect {
   /**
    * Remove highlighted object
    * 
-   * @param {object} vTex - volume coord of picked point
    */
-  deleteObject(vTex) {
+  deleteObject() {
     if (this.m_objEdit != null) {
       const ind = this.m_rects.indexOf(this.m_objEdit);
       if (ind >= 0) {
@@ -172,7 +171,7 @@ class ToolRect {
       this.m_objGraphics2d.forceUpdate();
     } // if in create rect mode
   }
-  onMouseUp(xScr, yScr, store) {
+  onMouseUp() { // ommitred args: xScr, yScr, store
   }
   /**
    * Render all areas on screen in 2d mode
