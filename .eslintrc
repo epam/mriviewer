@@ -1,5 +1,14 @@
 {
+    "plugins": ["react"],
     "parser": "babel-eslint",
+    "settings": {
+      "react": {
+        "createClass": "createReactClass",
+        "pragma": "React",
+        "version": "detect",
+        "flowVersion": "0.53"
+      }	
+    },
     "env": {
         "browser": true,
         "node": true,
@@ -9,9 +18,11 @@
       "shallow": true
     },
     "rules": {
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error",
+        "react/prefer-es6-class" : [2],
         "linebreak-style": "off",
-        "no-unused-vars": ["off", {"argsIgnorePattern": "^_|Ignored$"}],
-        "react/prefer-es6-class" : ["always", "mode"],
+        "no-unused-vars": ["error"],
         "indent": ["error", 2],
         "no-alert": "off",
         "no-underscore-dangle": "off",
