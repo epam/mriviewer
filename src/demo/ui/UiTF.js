@@ -105,6 +105,12 @@ class UiTF extends React.Component {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_ErDepth, sliderErDepth: Number.parseFloat(aval) });
   }
+  transferFuncCallback(transfFuncObj) {
+    const i = transfFuncObj.m_indexMoved;
+    const x = transfFuncObj.m_handleX[i];
+    const y = transfFuncObj.m_handleY[i];
+    console.log(`moved point[${i}] = ${x}, ${y}  `);
+  }
   /**
    * Main component render func callback
    */
@@ -127,6 +133,8 @@ class UiTF extends React.Component {
     const wArrErDepth = [sliderErDepth];
     const vol = store.volume;
 
+    const NEED_TANSF_FUNC = true;
+    const funcTra = (NEED_TANSF_FUNC) ? this.transferFuncCallback : undefined;
 
     const styleObj = {
       //borderColor: 'red white',
@@ -136,7 +144,7 @@ class UiTF extends React.Component {
     const jsxVolumeTF =
       <ul className="list-group" >
         <li className="list-group-item">
-          <UiHistogram volume={vol} />
+          <UiHistogram volume={vol}  transfFunc={funcTra} />
         </li>
         <li className="list-group-item" style={styleObj}>
           <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
@@ -153,7 +161,7 @@ class UiTF extends React.Component {
     const jsxIsoTF =
       <ul className="list-group">
         <li className="list-group-item">
-          <UiHistogram volume={vol} />
+          <UiHistogram volume={vol} transfFunc={funcTra}  />
         </li>
         <li className="list-group-item">
           <p> Isosurface </p>

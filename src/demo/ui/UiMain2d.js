@@ -30,19 +30,29 @@ import UiTools2d from './UiTools2d';
  * Class UiMain2d some text later...
  */
 class UiMain2d extends React.Component {
-  /**
+  transferFuncCallback(transfFuncObj) {
+    const i = transfFuncObj.m_indexMoved;
+    const x = transfFuncObj.m_handleX[i];
+    const y = transfFuncObj.m_handleY[i];
+    console.log(`moved point[${i}] = ${x}, ${y}  `);
+  }
+  /*
+   *
    * Main component render func callback
    */
   render() {
     const store = this.props;
     const vol = store.volume;
 
+    const NEED_TANSF_FUNC = false;
+    const funcTra = (NEED_TANSF_FUNC) ? this.transferFuncCallback : undefined;
+
     const jsxMain2d = 
       <Row>
         <Col xs lg="4">
           <UiCtrl2d />
           <UiTools2d />
-          <UiHistogram volume={vol}/>
+          <UiHistogram volume={vol} transfFunc={funcTra} />
         </Col>
         <Col xs lg="8">
           <Graphics2d  />

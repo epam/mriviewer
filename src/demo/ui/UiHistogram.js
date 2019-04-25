@@ -12,6 +12,8 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
 
+import TransfFunc from '../engine/TransFunc';
+
 // ********************************************************
 // Const
 // ********************************************************
@@ -34,7 +36,13 @@ export default class UiHistogram extends React.Component {
     this.m_histogram = [];
     this.m_numColors = 0;
 
+    this.m_transfFunc = new TransfFunc();
+    this.m_transfFuncCallback = undefined;
+
     this.setSize = this.setSize.bind(this);
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
 
     this.state = {
       width: 0,
@@ -181,8 +189,44 @@ export default class UiHistogram extends React.Component {
         this.m_histogram[i] = newHist[i];
       } // for (i)
     }
-
   } // smoothHistogram
+  onMouseDown(evt) {
+    if (this.m_transfFuncCallback === undefined) {
+      return;
+    }
+    const box = this.refs.canvasHistogram.getBoundingClientRect();
+    const xScr = evt.clientX - box.left;
+    const yScr = evt.clientY - box.top;
+    const needRender = this.m_transfFunc.onMouseDown(xScr, yScr);
+    if (needRender) {
+      this.forceRender();
+    }
+  }
+  onMouseUp(evt) {
+    if (this.m_transfFuncCallback === undefined) {
+      return;
+    }
+    const box = this.refs.canvasHistogram.getBoundingClientRect();
+    const xScr = evt.clientX - box.left;
+    const yScr = evt.clientY - box.top;
+    const needRender = this.m_transfFunc.onMouseUp(xScr, yScr);
+    if (needRender) {
+      this.forceRender();
+    }
+  }
+  onMouseMove(evt) {
+    if (this.m_transfFuncCallback === undefined) {
+      return;
+    }
+    const box = this.refs.canvasHistogram.getBoundingClientRect();
+    const xScr = evt.clientX - box.left;
+    const yScr = evt.clientY - box.top;
+    const needRender = this.m_transfFunc.onMouseMove(xScr, yScr);
+    if (needRender) {
+      this.forceRender();
+    }
+  }
+
   updateCanvas() {
     if (this.refs.canvasHistogram === undefined) {
       return;
@@ -292,7 +336,17 @@ export default class UiHistogram extends React.Component {
       ctx.stroke();
       ctx.setLineDash([]);
     }
+    if (this.m_transfFuncCallback !== undefined) {
+      this.m_transfFunc.render(ctx, xMin, yMin, wRect, hRect);
+    }
+  } // end update canvas
+  forceRender() {
+    this.setState({ state: this.state });
+    if (this.m_transfFuncCallback !== undefined) {
+      this.m_transfFuncCallback(this.m_transfFunc);
+    }
   }
+
   /**
    * Main component render func callback
    */
@@ -301,6 +355,8 @@ export default class UiHistogram extends React.Component {
     if (vol === undefined) {
       return <p>UiHistogram.props volume is not defined !!!</p>;
     }
+    this.m_transfFuncCallback = this.props.transfFunc;
+    
     let strMsg = 'Volume histogram';
     if (vol !== null) {
       const xDim = vol.m_xDim;
@@ -322,7 +378,8 @@ export default class UiHistogram extends React.Component {
           </Card.Title>
           { /* <canvas ref="canvasHistogram" height="250px" /> */ }
           <div ref={ (mount) => {this.m_canvasOwner = mount} }>
-            <canvas ref="canvasHistogram" width={cw} height={ch} />
+            <canvas ref="canvasHistogram" width={cw} height={ch} 
+            onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onMouseMove={this.onMouseMove} />
           </div>
         </Card.Body>
       </Card>
