@@ -26,7 +26,10 @@ import UiSaveMenu from './UiSaveMenu';
 import UiReportMenu from './UiReportMenu';
 import UiFilterMenu from './UiFilterMenu';
 import UiModalText from './UiModalText';
+import UiModalAlert from './UiModalAlert';
 import ModeView from '../store/ModeView';
+
+import BrowserDetector from '../engine/utils/BrowserDetector';
 
 
 // ********************************************************
@@ -43,6 +46,9 @@ class UiApp extends React.Component {
     this.onShowModalText = this.onShowModalText.bind(this);
     this.onHideModalText = this.onHideModalText.bind(this);
 
+    this.onShowModalAlert = this.onShowModalAlert.bind(this);
+    this.onHideModalAlert = this.onHideModalAlert.bind(this);
+
     this.doShowProgressBar = this.doShowProgressBar.bind(this);
     this.doHideProgressBar = this.doHideProgressBar.bind(this);
     this.doSetProgressBarRatio = this.doSetProgressBarRatio.bind(this);
@@ -53,7 +59,10 @@ class UiApp extends React.Component {
     this.state = {
       showModalText: false,
       showProgressBar: false,
-      progressBarRatio: 55
+      progressBarRatio: 55,
+      showModalAlert: false,
+      strAlertTitle: '???',
+      strAlertText: '???',
     };
   }
   componentDidMount() {
@@ -62,12 +71,34 @@ class UiApp extends React.Component {
       console.log('UiApp. componentDidMount. store is NULL');
     }
     store.dispatch({ type: StoreActionType.SET_UI_APP, uiApp: this });
+
+    // browser detector
+    const browserDetector = new BrowserDetector();
+    const isWebGl20supported = browserDetector.checkWebGlSupported();
+    if (!isWebGl20supported) {
+      this.setState({ strAlertTitle: 'Browser compatibility problem detected' });
+      this.setState({ strAlertText: 'This browser not supported WebGL 2.0. Application functinality is decreased and app can be unstable' });
+      this.onShowModalAlert();
+    } else {
+      const isValidBro = browserDetector.checkValidBrowser();
+      if (!isValidBro) {
+        this.setState({ strAlertTitle: 'Browser compatibility problem detected' });
+        this.setState({ strAlertText: 'App is specially designed for Chrome/Firefox/Opera/Safari browsers' });
+        this.onShowModalAlert();
+      } // if not valid browser
+    } // if webgl 2.0 supported
   }
   onShowModalText() {
     this.setState({ showModalText: true });
   }
   onHideModalText() {
     this.setState({ showModalText: false });
+  }
+  onShowModalAlert() {
+    this.setState({ showModalAlert: true });
+  }
+  onHideModalAlert() {
+    this.setState({ showModalAlert: false });
   }
   doShowProgressBar() {
     this.setState({ showProgressBar: true });
@@ -127,6 +158,10 @@ class UiApp extends React.Component {
         {(isLoaded) ? <UiMain /> : <p></p>}
         <UiModalText stateVis={this.state.showModalText}
           onHide={this.onHideModalText} onShow={this.onShowModalText} />
+        <UiModalAlert stateVis={this.state.showModalAlert}
+          onHide={this.onHideModalAlert} onShow={this.onShowModalAlert} 
+          title={this.state.strAlertTitle} text={this.state.strAlertText} />
+
         {objProgressBar}
       </Container>;
 

@@ -38,6 +38,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "canvas": "^2.4.1",
     "esdoc": "^1.1.0",
     "esdoc-ecmascript-proposal-plugin": "^1.0.0",
     "esdoc-react-plugin": "^1.0.1",
