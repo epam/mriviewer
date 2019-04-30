@@ -796,6 +796,7 @@ void main() {
   vec4 backTexel = texture2D(texBF, tc, 0.0);
   vec3 back = backTexel.xyz;
   vec4 start = texture2D(texFF, tc, 0.0);
+
   if (length(back) < 0.001 || length(start.xyz) < 0.01) {
     gl_FragColor = vec4(0, 0, 0, 1.0);
 	return;
@@ -848,7 +849,6 @@ void main() {
     gl_FragColor = acc;
     return;
   }
- 
   // Direct volume render
  #if isoRenderFlag==0
   {
@@ -902,7 +902,8 @@ void main() {
      if (vol.a > 0.75)
         acc.rgb = 0.75 * vol.rgb;
      else
-        acc.rgb = RoiVolumeRender(start.xyz + max(0., minIso.a - 0. / 128.)*dir, dir, back).rgb;
+      //  acc.rgb = RoiVolumeRender(start.xyz, dir, back).rgb;
+       acc.rgb = RoiVolumeRender(start.xyz + max(0., minIso.a - 0. / 128.)*dir, dir, back).rgb;
      acc.a = 1.0;
      gl_FragColor = acc;
      return;
@@ -912,6 +913,9 @@ void main() {
   //Direct isosurface render with ROI
   #if isoRenderFlag == 5
   {
+    //float v = tex3DRoi(start.xyz).a;
+    //gl_FragColor = vec4(v, v, v, 1.0);
+    //return;
     float Threshold = 0.3 * isoThreshold + 0.5;
     acc = IsosurfaceRoi(start.xyz + max(0., minIso.a - 1. / 128.)*dir, dir, back, Threshold, stepSize.b);
     if (acc.a < 1.9)
@@ -921,8 +925,8 @@ void main() {
             acc.rgb = 0.75 * vol.rgb;
         else
         {
-          const float AMBIENT = 0.5;
-          const float DIFFUSE = 0.5;
+          const float AMBIENT = 0.3;
+          const float DIFFUSE = 0.7;
           const float SPEC = 0.1;
           const float SPEC_POV = 90.0;
           vec3 N = CalcNormalRoi(acc.rgb);

@@ -947,7 +947,6 @@ void main() {
   {
     float vol = tex3DRoi(start.xyz).a;
     if (vol > 0.75)
-//      acc.rgb = 0.75 * vec3(1., 0., 0.);
       acc.rgb = 0.75 * tex3DRoi(start.xyz).rgb;
     else
     {
@@ -972,18 +971,14 @@ void main() {
             acc.rgb = 0.75 * vol.rgb;
         else
         {
-          const float AMBIENT = 0.5;
-          const float DIFFUSE = 0.5;
+          const float AMBIENT = 0.3;
+          const float DIFFUSE = 0.7;
           const float SPEC = 0.1;
           const float SPEC_POV = 90.0;
           vec3 N = CalcNormalRoi(acc.rgb);
           float dif = max(0.0, dot(N, -lightDir));
           float specular = pow(max(0.0, dot(normalize(reflect(lightDir, N)), dir)), SPEC_POV);
-//          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
-//          acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT * computeSsaoShadow(acc.rgb, N, Threshold) ) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
           acc.rgb = (0.5*(brightness3D + 1.5)*(DIFFUSE * dif + AMBIENT) + SPEC * specular) * tex3DRoi(acc.rgb).rgb;
-//          acc.rgb = computeSsaoShadow(acc.rgb, Threshold) * vec3(1.0, 1.0, 1.0);
-          
         }  
     }
     gl_FragColor = acc;

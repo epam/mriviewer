@@ -28,7 +28,6 @@ import FileTools from '../engine/loaders/FileTools';
 import LoaderDicom from '../engine/loaders/LoaderDicom';
 import LoaderHdr from '../engine/loaders/LoaderHdr';
 
-
 // ********************************************************
 // Const
 // ********************************************************
@@ -82,6 +81,8 @@ class UiOpenMenu extends React.Component {
     };
     this.m_volume = null;
     this.m_volumeRoi = null;
+    this.m_updateEnable = true;
+    this.roiMode = false;
   }
   finalizeSuccessLoadedVolume(vol, fileNameIn) {
     if (NEED_TEXTURE_SIZE_4X) {
@@ -97,7 +98,6 @@ class UiOpenMenu extends React.Component {
     store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
     store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
     store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
-
   }
   readCallbackComplete(errCode) {
     if (errCode !== LoadResult.SUCCESS) {
@@ -214,6 +214,7 @@ class UiOpenMenu extends React.Component {
     }
     if (detectedMask) {
       volDst = this.m_volumeRoi;
+      this.roiMode = true;
       // console.log('mask vol by name');
       if (this.m_numFiles !== VALID_NUM_FILES_4) {
         console.log('You need to load 4 files, if one of them has _mask in name');

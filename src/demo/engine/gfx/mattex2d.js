@@ -242,11 +242,6 @@ export default class MaterialTex2d {
     this.m_uniforms.yDim.value = yDim;
     this.m_uniforms.zDim.value = zDim;
     this.m_uniforms.isRoiVolume.value = (isRoiVolume) ? 1.0 : 0.0;
-    const TWO = 2;
-    const ONE = 1;
-    const zDimSqrt = TWO ** (ONE + Math.floor(Math.log(Math.sqrt(zDim)) / Math.log(TWO)));
-    this.m_uniforms.tilesHor.value = zDimSqrt;
-
     if (isRoiVolume) {
       const roiPalette = new RoiPalette();
       const palette = roiPalette.getPalette256();

@@ -126,7 +126,7 @@ export default class VolumeRenderer3d {
     this.matScreenTex = null;
     this.matWireFrame = null;
     this.matRenderToTexture = null;
-    this.matInterpolation = null;
+    //this.matInterpolation = null;
     this.matVolumeRender = null;
     this.volumeUpdater = null;
     this.checkFrameBufferMode = CHECK_MODE_NOT_CHECKED;
@@ -392,16 +392,16 @@ export default class VolumeRenderer3d {
       if (this.isRoiVolume > 0) {
         this.matVolumeRender.defines.isoRenderFlag = 4;
         this.matVolumeRender.needsUpdate = true;
-        this.matInterpolation.defines.isoRenderFlag = 4;
-        this.matInterpolation.needsUpdate = true;
+        //this.matInterpolation.defines.isoRenderFlag = 4;
+        //this.matInterpolation.needsUpdate = true;
         this.matRenderToTexture.defines.isoRenderFlag = 4;
         this.matRenderToTexture.needsUpdate = true;
         this.renderState = this.RENDER_STATE.ONCE;
       } else {
         this.matVolumeRender.defines.isoRenderFlag = 0;
         this.matVolumeRender.needsUpdate = true;
-        this.matInterpolation.defines.isoRenderFlag = 0;
-        this.matInterpolation.needsUpdate = true;
+        //this.matInterpolation.defines.isoRenderFlag = 0;
+        //this.matInterpolation.needsUpdate = true;
         this.matRenderToTexture.defines.isoRenderFlag = 0;
         this.matRenderToTexture.needsUpdate = true;
         this.renderState = this.RENDER_STATE.ONCE;
@@ -415,16 +415,16 @@ export default class VolumeRenderer3d {
     if (this.isRoiVolume > 0) {
       this.matVolumeRender.defines.isoRenderFlag = 4;
       this.matVolumeRender.needsUpdate = true;
-      this.matInterpolation.defines.isoRenderFlag = 4;
-      this.matInterpolation.needsUpdate = true;
+      //this.matInterpolation.defines.isoRenderFlag = 4;
+      //this.matInterpolation.needsUpdate = true;
       this.matRenderToTexture.defines.isoRenderFlag = 4;
       this.matRenderToTexture.needsUpdate = true;
       this.renderState = this.RENDER_STATE.ONCE;
     } else {
       this.matVolumeRender.defines.isoRenderFlag = 3;
       this.matVolumeRender.needsUpdate = true;
-      this.matInterpolation.defines.isoRenderFlag = 3;
-      this.matInterpolation.needsUpdate = true;
+      //this.matInterpolation.defines.isoRenderFlag = 3;
+      //this.matInterpolation.needsUpdate = true;
       this.matRenderToTexture.defines.isoRenderFlag = 3;
       this.matRenderToTexture.needsUpdate = true;
       this.renderState = this.RENDER_STATE.ONCE;
@@ -437,8 +437,8 @@ export default class VolumeRenderer3d {
     if (this.isRoiVolume > 0) {
       this.matVolumeRender.defines.isoRenderFlag = 5;
       this.matVolumeRender.needsUpdate = true;
-      this.matInterpolation.defines.isoRenderFlag = 5;
-      this.matInterpolation.needsUpdate = true;
+      //this.matInterpolation.defines.isoRenderFlag = 5;
+      //this.matInterpolation.needsUpdate = true;
       this.matRenderToTexture.defines.isoRenderFlag = 5;
       this.matRenderToTexture.needsUpdate = true;
       this.renderState = this.RENDER_STATE.ONCE;
@@ -446,8 +446,8 @@ export default class VolumeRenderer3d {
     } else {
       this.matVolumeRender.defines.isoRenderFlag = 1;
       this.matVolumeRender.needsUpdate = true;
-      this.matInterpolation.defines.isoRenderFlag = 1;
-      this.matInterpolation.needsUpdate = true;
+      //this.matInterpolation.defines.isoRenderFlag = 1;
+      //this.matInterpolation.needsUpdate = true;
       this.matRenderToTexture.defines.isoRenderFlag = 1;
       this.matRenderToTexture.needsUpdate = true;
       this.renderState = this.RENDER_STATE.ONCE;
@@ -459,8 +459,8 @@ export default class VolumeRenderer3d {
   switchToFLATRender() {
     this.matVolumeRender.defines.isoRenderFlag = 2;
     this.matVolumeRender.needsUpdate = true;
-    this.matInterpolation.defines.isoRenderFlag = 2;
-    this.matInterpolation.needsUpdate = true;
+    //this.matInterpolation.defines.isoRenderFlag = 2;
+    //this.matInterpolation.needsUpdate = true;
     this.matRenderToTexture.defines.isoRenderFlag = 2;
     this.matRenderToTexture.needsUpdate = true;
     this.renderState = this.RENDER_STATE.ONCE;
@@ -731,7 +731,7 @@ export default class VolumeRenderer3d {
    * @param (object) nonEmptyBoxMin - Min corner for non empty box in volume
    * @param (bool) isRoiVolume) - is roi volume
    */
-  initWithVolume(volume, box, nonEmptyBoxMin, nonEmptyBoxMax, isRoiVolume = false) {
+  initWithVolume(volume, box, nonEmptyBoxMin, nonEmptyBoxMax, isRoiVolume) {
     let sideMax = (box.x > box.y) ? box.x : box.y;
     sideMax = (box.z > sideMax) ? box.z : sideMax;
     this.vBoxVirt.x = box.x / sideMax;
@@ -792,9 +792,6 @@ export default class VolumeRenderer3d {
     const yDim = this.volume.m_yDim;
     const zDim = this.volume.m_zDim;
     console.log(`3D tex size = ${xDim} ${yDim} ${zDim}`);
-    const TWO = 2;
-    const ONE = 1;
-    const zDimSqrt = TWO ** (ONE + Math.floor(Math.log(Math.sqrt(zDim)) / Math.log(TWO)));
     if (this.volTexture) {
       this.volTexture.dispose();
     }
@@ -964,7 +961,6 @@ export default class VolumeRenderer3d {
         mat.uniforms.isoThreshold.value = this.curFileDataType.thresholdIsosurf;
         mat.uniforms.brightness3D.value = this.curFileDataType.brightness;
         mat.uniforms.opacityBarrier.value = OPACITY_SCALE * this.curFileDataType.opacityTissue;
-        mat.uniforms.tileCountX.value = zDimSqrt;
         mat.uniforms.volumeSizeZ.value = zDim;
 
         mat.uniforms.xDim.value = xDim;
@@ -984,7 +980,7 @@ export default class VolumeRenderer3d {
       VAL_3 / this.windowHeight);
     matIntetpl.create(this.renderToTexture.texture, (mat) => {
       mat.uniforms.needsUpdate = true;
-      this.matInterpolation = mat;
+      //this.matInterpolation = mat;
       this.sceneReadyCounter++;
     });
 
@@ -1014,7 +1010,6 @@ export default class VolumeRenderer3d {
         mat.uniforms.texSize.value = xDim;
         mat.uniforms.isoThreshold.value = this.curFileDataType.thresholdIsosurf;
         mat.uniforms.brightness3D.value = this.curFileDataType.brightness;
-        mat.uniforms.tileCountX.value = zDimSqrt;
         mat.uniforms.volumeSizeZ.value = zDim;
 
         mat.uniforms.xDim.value = xDim;
@@ -1026,9 +1021,11 @@ export default class VolumeRenderer3d {
         mat.uniforms.needsUpdate = true;
         this.scene.add(this.mesh);
         this.matVolumeRender = mat;
+        this.switchToVolumeRender();      
         this.mesh.material = this.matVolumeRender;
         this.meshSphere.material = this.matVolumeRender;
         this.sceneReadyCounter++;
+
       });
     //matSkullThreeGS.m_uniforms.texVolumeMask.value = this.volTextureMask;
   } // callbackCreateCubeVolume

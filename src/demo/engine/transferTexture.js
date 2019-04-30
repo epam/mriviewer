@@ -31,6 +31,7 @@ export default class TransferTexture {
     this.transferFuncTexture = null;
     this.texRoiColor = null;
     this.texRoiId = null;    
+    this.numRois = 256;
   }
   /**
    * Filtering the source data and building the normals on the GPU
@@ -159,7 +160,8 @@ export default class TransferTexture {
   createRoiColorMap(colorArray) {
     let textureOut = null;
     if (colorArray !== null) {
-      textureOut = new THREE.DataTexture(colorArray, this.numRois, 1, THREE.RGBAFormat);
+      //textureOut = new THREE.DataTexture(colorArray, this.numRois, 1, THREE.RGBAFormat);
+      textureOut = new THREE.DataTexture(colorArray, 256, 1, THREE.RGBAFormat);
     } else {
       // eslint-disable-next-line
       const colorROIs = new Uint8Array(4 * this.numRois);
@@ -186,7 +188,7 @@ export default class TransferTexture {
    * Create 2D texture containing selected ROIs
    */
   createSelectedRoiMap() {
-    const a1 = 100;
+    const a1 = 50;
     const a2 = 240;
     const c1 = 1;
     const c2 = 2;
@@ -202,7 +204,8 @@ export default class TransferTexture {
       this.selectedROIs[pix * BYTES_IN_COLOR + c2] = 0;
       this.selectedROIs[pix * BYTES_IN_COLOR + c3] = 0;
     }
-    const textureOut = new THREE.DataTexture(this.selectedROIs, this.numRois, 1, THREE.RGBAFormat);
+    //const textureOut = new THREE.DataTexture(this.selectedROIs, this.numRois, 1, THREE.RGBAFormat);
+    const textureOut = new THREE.DataTexture(this.selectedROIs, 256, 1, THREE.RGBAFormat);
     textureOut.wrapS = THREE.ClampToEdgeWrapping;
     textureOut.wrapT = THREE.ClampToEdgeWrapping;
     textureOut.magFilter = THREE.NearestFilter;

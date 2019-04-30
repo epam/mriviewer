@@ -155,7 +155,7 @@ class UiTF extends React.Component {
           <p> Opacity </p>
           <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
             range={{ min: 0.0, max: 1.0 }}
-            start={wArrOpacity} step={0.02} tooltips={true} />
+            start={wArrOpacity} connect={[false, true]} step={0.02} tooltips={true} />
         </li>
       </ul>
     const jsxIsoTF =
@@ -167,7 +167,7 @@ class UiTF extends React.Component {
           <p> Isosurface </p>
           <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
             range={{ min: 0.0, max: 1.0 }}
-            start={wArrIsosurface} step={0.02} tooltips={true} />
+            start={wArrIsosurface} connect={[false, true]} step={0.02} tooltips={true} />
         </li>
         <li className="list-group-item">
           Ambient Oclusion -> 
@@ -192,19 +192,19 @@ class UiTF extends React.Component {
             <p> Radius </p>
             <Nouislider onSlide={this.onChangeSliderErRadius.bind(this)} ref={'sliderErRadius'}
               range={{ min: 1.0, max: 100.0 }}
-              start={wArrErRadius} step={0.02} tooltips={true} />
+              start={wArrErRadius} connect={[false, true]} step={0.02} tooltips={true} />
           </li>
           <li className="list-group-item">
             <p> Depth </p>
             <Nouislider onSlide={this.onChangeSliderErDepth.bind(this)} ref={'sliderErDepth'}
               range={{ min: 1.0, max: 100.0 }}
-              start={wArrErDepth} step={0.02} tooltips={true} />
+              start={wArrErDepth} connect={[false, true]} step={0.02} tooltips={true} />
           </li>
           <li className="list-group-item">
             <p> Isosurface </p>
             <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
               range={{ min: 0.0, max: 1.0 }}
-              start={wArrIsosurface} step={0.02} tooltips={true} />
+              start={wArrIsosurface} connect={[false, true]} step={0.02} tooltips={true} />
           </li>
           <li className="list-group-item">
             <button type="button" className={'btn btn-outline-dark'} onClick={this.onStartEr} >

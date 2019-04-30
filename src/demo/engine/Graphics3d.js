@@ -132,8 +132,12 @@ class Graphics3d extends React.Component {
       });
       this.setVolRenderToStore(this.m_volumeRenderer3D);
     }
-    if (this.volume !== null && this.isLoaded === false && this.m_volumeRenderer3D !== null) {      
-      this.m_volumeRenderer3D.initWithVolume(this.volume, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 });
+    if (this.volume !== null && this.isLoaded === false && this.m_volumeRenderer3D !== null) { 
+      const store = this.props;
+      const vol = store.volume;
+      const FOUR = 4;
+      const isIso = (vol.m_bytesPerVoxel === FOUR) ? true : false;     
+      this.m_volumeRenderer3D.initWithVolume(this.volume, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso);
       this.isLoaded = true;
     }
     this.start();

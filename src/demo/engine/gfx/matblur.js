@@ -72,9 +72,6 @@ export default class MaterialBlur {
   */
   create(texture, texRoi, texelSize, texRoiColor, texRoiId, callbackMat) {
     // Init uniforms
-    const TEX_SIZE = 256.0;
-    const TEXEL_SIZE_1_256 = 1.0 / TEX_SIZE;
-    this.m_uniforms.texelSize.value = new THREE.Vector3(TEXEL_SIZE_1_256, TEXEL_SIZE_1_256, TEXEL_SIZE_1_256);
     this.m_uniforms.texVolume.value = texture;
     this.m_uniforms.texVolume.value = texture;
     this.m_uniforms.texVolumeRoi.value = texRoi;
