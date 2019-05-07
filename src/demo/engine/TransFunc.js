@@ -120,7 +120,13 @@ class TransfFunc {
     }
     return false;
   }
-  onMouseUp(xScr, yScr) {
+  /**
+   * on mouse up even t handler
+   * 
+   * @param {number} xScr - mouse x position on screen
+   * @param {number} yScr - mouse y position on screen
+   */
+  onMouseUp() {
     this.m_mouseDown = false;
     return false;
   }

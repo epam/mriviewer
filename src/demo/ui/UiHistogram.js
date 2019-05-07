@@ -226,7 +226,6 @@ export default class UiHistogram extends React.Component {
       this.forceRender();
     }
   }
-
   updateCanvas() {
     if (this.refs.canvasHistogram === undefined) {
       return;
@@ -346,7 +345,6 @@ export default class UiHistogram extends React.Component {
       this.m_transfFuncCallback(this.m_transfFunc);
     }
   }
-
   /**
    * Main component render func callback
    */
@@ -379,7 +377,7 @@ export default class UiHistogram extends React.Component {
           { /* <canvas ref="canvasHistogram" height="250px" /> */ }
           <div ref={ (mount) => {this.m_canvasOwner = mount} }>
             <canvas ref="canvasHistogram" width={cw} height={ch} 
-            onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onMouseMove={this.onMouseMove} />
+              onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onMouseMove={this.onMouseMove} />
           </div>
         </Card.Body>
       </Card>

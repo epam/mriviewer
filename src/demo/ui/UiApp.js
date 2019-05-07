@@ -29,7 +29,7 @@ import UiModalText from './UiModalText';
 import UiModalAlert from './UiModalAlert';
 import ModeView from '../store/ModeView';
 
-//import BrowserDetector from '../engine/utils/BrowserDetector';
+import BrowserDetector from '../engine/utils/BrowserDetector';
 
 
 // ********************************************************
@@ -73,14 +73,14 @@ class UiApp extends React.Component {
     store.dispatch({ type: StoreActionType.SET_UI_APP, uiApp: this });
 
     // browser detector
-    //const browserDetector = new BrowserDetector();
-    const isWebGl20supported = true; //browserDetector.checkWebGlSupported();
+    const browserDetector = new BrowserDetector();
+    const isWebGl20supported = browserDetector.checkWebGlSupported();
     if (!isWebGl20supported) {
       this.setState({ strAlertTitle: 'Browser compatibility problem detected' });
       this.setState({ strAlertText: 'This browser not supported WebGL 2.0. Application functinality is decreased and app can be unstable' });
       this.onShowModalAlert();
     } else {
-      const isValidBro = true; //browserDetector.checkValidBrowser();
+      const isValidBro = browserDetector.checkValidBrowser();
       if (!isValidBro) {
         this.setState({ strAlertTitle: 'Browser compatibility problem detected' });
         this.setState({ strAlertText: 'App is specially designed for Chrome/Firefox/Opera/Safari browsers' });

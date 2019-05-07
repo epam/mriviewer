@@ -22,6 +22,7 @@ import Modes3d from '../store/Modes3d';
 import StoreActionType from '../store/ActionTypes';
 import UiTF from './UiTF';
 import UiTFroi from './UiTFroi';
+import UiRoiSelect from './UiRoiSelect';
 
 // ********************************************************
 // Const
@@ -126,27 +127,11 @@ class UiCtrl3dLight extends React.Component {
             </Button>
           </ButtonGroup>
         </ListGroup.Item>
-        <li className="list-group-item">
-          <p> 111 </p> 
-        </li>
-        <li className="list-group-item">
-          <p> 111 </p> 
-        </li>
-        <li className="list-group-item">
-          <p> 111 </p> 
-        </li>
-        <li className="list-group-item">
-          <p> 111 </p> 
-        </li>
-        <li className="list-group-item">
-          <p> 111 </p> 
-        </li>
-        <li className="list-group-item">
-          <p> 111 </p> 
-        </li>
-        <li className="list-group-item">
-          <p> 111 </p> 
-        </li>
+
+        <ListGroup.Item as="li">
+          <UiRoiSelect/>
+        </ListGroup.Item>
+
         <UiTFroi/>
       </ListGroup>
     let indx = 0;
