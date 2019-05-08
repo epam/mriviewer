@@ -75,6 +75,23 @@ class UiCtrl3dLight extends React.Component {
     //return true;
   }
   /**
+   * Callback, invoked after any ROI setup array change
+   * 
+   * @param {object} arrayRoi - array of objects with props: id, name, selected, see (UiRoiSelect)
+   */
+  setRoi(arrayRoi) {
+    // TODO
+    // This is demo code:
+    // just print all states of all roi elements, according to the UI
+    const numElems = arrayRoi.length;
+    for (let i = 0; i < numElems; i++) {
+      const id = arrayRoi[i].id;
+      const name = arrayRoi[i].name;
+      const isSel = arrayRoi[i].selected;
+      console.log(`setRoi: [${i}]: name=${name} id= ${id} isSel=${isSel} `);
+    }
+  }
+  /**
    * Main component render func callback
    */
   render() {
@@ -129,7 +146,7 @@ class UiCtrl3dLight extends React.Component {
         </ListGroup.Item>
 
         <ListGroup.Item as="li">
-          <UiRoiSelect/>
+          <UiRoiSelect setRoiFunc={this.setRoi}/>
         </ListGroup.Item>
 
         <UiTFroi/>

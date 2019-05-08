@@ -13,6 +13,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Form, Card } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 
 import RoiPalette from '../engine/loaders/roipalette';
 
@@ -28,6 +29,11 @@ import RoiPalette from '../engine/loaders/roipalette';
 class UiRoiSelect extends React.Component {
   constructor(props) {
     super(props);
+
+    this.m_setRoiFunc = undefined;
+
+    this.onChangeSelectAll = this.onChangeSelectAll.bind(this);
+    this.onChangeRoiIndi = this.onChangeRoiIndi.bind(this);
 
     this.m_roiPalette = new RoiPalette();
     const arrPal = this.m_roiPalette.getPalette();
@@ -63,40 +69,90 @@ class UiRoiSelect extends React.Component {
       return obj;
     });
     this.state = {
+      allSelected: false,
       checkboxes: arrState,
     };
   }
+  /**
+   * On change individual
+   * 
+   * @param {object} evt - event
+   */
+  onChangeRoiIndi(evt) {
+    // obj is type: HTMLInputElement
+    const obj = evt.target;
+    const isCheck = obj.checked;
+    const id = Number.parseInt(obj.id);
+    const ind = this.state.checkboxes.findIndex( elem => {
+      const isEq = (elem.id === id);
+      return isEq;
+    });
+    // console.log(`id = ${id}`);
+    // console.log(`ind = ${ind}`);
+    // console.log(`isCheck = ${isCheck}`);
+
+    const arrStates = this.state.checkboxes;
+    if (ind >= 0) {
+      arrStates[ind].selected = isCheck;
+      this.setState({ checkboxes: arrStates });
+
+      if (this.m_setRoiFunc !== undefined) {
+        this.m_setRoiFunc(arrStates);
+      }
+    }
+  }
+  /**
+   * On select all chech box event handler
+   * 
+   * @param {object} evt  - event
+   */
+  onChangeSelectAll(evt) {
+    const isCheck = evt.target.checked;
+    // console.log(`isCheck = ${isCheck}`);
+    const arrStates = this.state.checkboxes;
+    const numElems = arrStates.length;
+    for (let i = 0; i < numElems; i++) {
+      arrStates[i].selected = isCheck;
+    }
+    this.setState({ checkboxes: arrStates });
+    this.setState({ allSelected: isCheck });
+    if (this.m_setRoiFunc !== undefined) {
+      this.m_setRoiFunc(arrStates);
+    }
+  }
   render() {
-
-    /*
-          {this.state.checkboxes.map(elem => {
-            const obj = <Form.Check type="checkbox" label={elem.name} />;
-            return obj;
-          })}
-    */          
-
-    //                   <i className="fa fa-question-circle">  </i>
-
-
-    const jsxRoiModal =
+    this.m_setRoiFunc = this.props.setRoiFunc;
+    const isAllSel = this.state.allSelected;
+    const strSel = (isAllSel) ? 'Select none' : 'Select all';
+    const jsxRoiCard =
       <Card style={{ height: '350px', 'overflowY': 'auto' }}>
         <Card.Body>
           <Card.Title>
             ROI Selector
           </Card.Title>
           <Form.Group controlId="ROI selector">
+            <Form.Check type="checkbox" key="selall" label={strSel} onChange={this.onChangeSelectAll}/>
             {this.state.checkboxes.map(elem => {
               const strCol = elem.strColor;
               const obj = 
-                  <Form.Check type="checkbox" label={elem.name} key={elem.id} style={{ 'background-color': strCol }} />
+                  <Row key={elem.id} id={elem.id} >
+                    <Col xs lg="11">
+                      <Form.Check type="checkbox" label={elem.name} key={elem.id}
+                        id={elem.id}
+                        checked={elem.selected}
+                        onChange={this.onChangeRoiIndi} />
+                    </Col>
+                    <Col xs lg="1">
+                      <i className="fa fa-square" style={{ 'color': strCol }}>  </i>
+                    </Col>
+                  </Row>
               return obj;
             })}
           </Form.Group>
         </Card.Body>
       </Card>;
 
-    //return jsxRoiSel;
-    return jsxRoiModal;
+    return jsxRoiCard;
   }
 }
 
