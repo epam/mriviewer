@@ -388,7 +388,7 @@ export default class VolumeRenderer3d {
    * Setting a variable for conditional compilation (Volume Render)
    */
   switchToVolumeRender() {
-    if (this.matVolumeRender !== null) {
+    if (this.matVolumeRender !== null && this.matRenderToTexture !== null) {
       if (this.isRoiVolume > 0) {
         this.matVolumeRender.defines.isoRenderFlag = 4;
         this.matVolumeRender.needsUpdate = true;
@@ -402,6 +402,10 @@ export default class VolumeRenderer3d {
         this.matVolumeRender.needsUpdate = true;
         //this.matInterpolation.defines.isoRenderFlag = 0;
         //this.matInterpolation.needsUpdate = true;
+        if (this.matRenderToTexture.defines === null) {
+          console.log(`matRenderToTexture.defines === null`);
+        }
+
         this.matRenderToTexture.defines.isoRenderFlag = 0;
         this.matRenderToTexture.needsUpdate = true;
         this.renderState = this.RENDER_STATE.ONCE;
@@ -412,76 +416,84 @@ export default class VolumeRenderer3d {
    * Setting a variable for conditional compilation (Full Volume Render)
    */
   switchToFullVolumeRender() {
-    if (this.isRoiVolume > 0) {
-      this.matVolumeRender.defines.isoRenderFlag = 4;
-      this.matVolumeRender.needsUpdate = true;
-      //this.matInterpolation.defines.isoRenderFlag = 4;
-      //this.matInterpolation.needsUpdate = true;
-      this.matRenderToTexture.defines.isoRenderFlag = 4;
-      this.matRenderToTexture.needsUpdate = true;
-      this.renderState = this.RENDER_STATE.ONCE;
-    } else {
-      this.matVolumeRender.defines.isoRenderFlag = 3;
-      this.matVolumeRender.needsUpdate = true;
-      //this.matInterpolation.defines.isoRenderFlag = 3;
-      //this.matInterpolation.needsUpdate = true;
-      this.matRenderToTexture.defines.isoRenderFlag = 3;
-      this.matRenderToTexture.needsUpdate = true;
-      this.renderState = this.RENDER_STATE.ONCE;
+    if (this.matVolumeRender !== null && this.matRenderToTexture !== null) {
+      if (this.isRoiVolume > 0) {
+        this.matVolumeRender.defines.isoRenderFlag = 4;
+        this.matVolumeRender.needsUpdate = true;
+        //this.matInterpolation.defines.isoRenderFlag = 4;
+        //this.matInterpolation.needsUpdate = true;
+        this.matRenderToTexture.defines.isoRenderFlag = 4;
+        this.matRenderToTexture.needsUpdate = true;
+        this.renderState = this.RENDER_STATE.ONCE;
+      } else {
+        this.matVolumeRender.defines.isoRenderFlag = 3;
+        this.matVolumeRender.needsUpdate = true;
+        //this.matInterpolation.defines.isoRenderFlag = 3;
+        //this.matInterpolation.needsUpdate = true;
+        this.matRenderToTexture.defines.isoRenderFlag = 3;
+        this.matRenderToTexture.needsUpdate = true;
+        this.renderState = this.RENDER_STATE.ONCE;
+      }
     }
   }
   /**
    * Setting a variable for conditional compilation (Isosurface render)
    */
   switchToIsosurfRender() {
-    if (this.isRoiVolume > 0) {
-      this.matVolumeRender.defines.isoRenderFlag = 5;
-      this.matVolumeRender.needsUpdate = true;
-      //this.matInterpolation.defines.isoRenderFlag = 5;
-      //this.matInterpolation.needsUpdate = true;
-      this.matRenderToTexture.defines.isoRenderFlag = 5;
-      this.matRenderToTexture.needsUpdate = true;
-      this.renderState = this.RENDER_STATE.ONCE;
-      this.volumeUpdater.switchToRoiMapRender();
-    } else {
-      this.matVolumeRender.defines.isoRenderFlag = 1;
-      this.matVolumeRender.needsUpdate = true;
-      //this.matInterpolation.defines.isoRenderFlag = 1;
-      //this.matInterpolation.needsUpdate = true;
-      this.matRenderToTexture.defines.isoRenderFlag = 1;
-      this.matRenderToTexture.needsUpdate = true;
-      this.renderState = this.RENDER_STATE.ONCE;
+    if (this.matVolumeRender !== null && this.matRenderToTexture !== null) {
+      if (this.isRoiVolume > 0) {
+        this.matVolumeRender.defines.isoRenderFlag = 5;
+        this.matVolumeRender.needsUpdate = true;
+        //this.matInterpolation.defines.isoRenderFlag = 5;
+        //this.matInterpolation.needsUpdate = true;
+        this.matRenderToTexture.defines.isoRenderFlag = 5;
+        this.matRenderToTexture.needsUpdate = true;
+        this.renderState = this.RENDER_STATE.ONCE;
+        this.volumeUpdater.switchToRoiMapRender();
+      } else {
+        this.matVolumeRender.defines.isoRenderFlag = 1;
+        this.matVolumeRender.needsUpdate = true;
+        //this.matInterpolation.defines.isoRenderFlag = 1;
+        //this.matInterpolation.needsUpdate = true;
+        this.matRenderToTexture.defines.isoRenderFlag = 1;
+        this.matRenderToTexture.needsUpdate = true;
+        this.renderState = this.RENDER_STATE.ONCE;
+      }
     }
   }
   /**
    * Setting a variable for conditional compilation (Max projection render)
    */
   switchToFLATRender() {
-    this.matVolumeRender.defines.isoRenderFlag = 2;
-    this.matVolumeRender.needsUpdate = true;
-    //this.matInterpolation.defines.isoRenderFlag = 2;
-    //this.matInterpolation.needsUpdate = true;
-    this.matRenderToTexture.defines.isoRenderFlag = 2;
-    this.matRenderToTexture.needsUpdate = true;
-    this.renderState = this.RENDER_STATE.ONCE;
+    if (this.matVolumeRender !== null && this.matRenderToTexture !== null) {
+      this.matVolumeRender.defines.isoRenderFlag = 2;
+      this.matVolumeRender.needsUpdate = true;
+      //this.matInterpolation.defines.isoRenderFlag = 2;
+      //this.matInterpolation.needsUpdate = true;
+      this.matRenderToTexture.defines.isoRenderFlag = 2;
+      this.matRenderToTexture.needsUpdate = true;
+      this.renderState = this.RENDER_STATE.ONCE;
+    }
   }
   /**
    * Setting isosurface threshold
    */
   setIsoThresholdValue(sliderValue) {
-    this.matRenderToTexture.uniforms.isoThreshold.value = sliderValue;
-    this.matRenderToTexture.uniforms.isoThreshold.needsUpdate = true;
-    this.matVolumeRender.uniforms.isoThreshold.value = sliderValue;
-    this.matVolumeRender.uniforms.isoThreshold.needsUpdate = true;
-    this.isoThreshold = sliderValue;
-    this.renderState = this.RENDER_STATE.ONCE;
+    if (this.matVolumeRender !== null && this.matRenderToTexture !== null) {
+      this.matRenderToTexture.uniforms.isoThreshold.value = sliderValue;
+      this.matRenderToTexture.uniforms.isoThreshold.needsUpdate = true;
+      this.matVolumeRender.uniforms.isoThreshold.value = sliderValue;
+      this.matVolumeRender.uniforms.isoThreshold.needsUpdate = true;
+      this.isoThreshold = sliderValue;
+      this.renderState = this.RENDER_STATE.ONCE;
+    }
   }
   /**
    * Setting volume opacity
    * @param (number) sliderValue - slider ration in 0..1
    */
   setOpacityBarrier(sliderValue) {
-    if (this.matVolumeRender !== null) {
+    if (this.matVolumeRender !== null && this.matRenderToTexture !== null) {
       this.matVolumeRender.uniforms.opacityBarrier.value = OPACITY_SCALE * sliderValue;
       this.matVolumeRender.uniforms.opacityBarrier.needsUpdate = true;
       this.matRenderToTexture.uniforms.opacityBarrier.value = OPACITY_SCALE * sliderValue;
@@ -508,10 +520,12 @@ export default class VolumeRenderer3d {
    * @param (number) value - constrast of ???
    */
   updateContrast(value) {
-    this.matRenderToTexture.uniforms.contrast3D.value = value;
-    this.matVolumeRender.uniforms.contrast3D.value = value;
-    this.matRenderToTexture.uniforms.contrast3D.needsUpdate = true;
-    this.matVolumeRender.uniforms.contrast3D.needsUpdate = true;
+    if (this.matVolumeRender !== null && this.matRenderToTexture !== null) {
+      this.matRenderToTexture.uniforms.contrast3D.value = value;
+      this.matVolumeRender.uniforms.contrast3D.value = value;
+      this.matRenderToTexture.uniforms.contrast3D.needsUpdate = true;
+      this.matVolumeRender.uniforms.contrast3D.needsUpdate = true;
+    }
   }
   setAmbientTextureMode(isoThreshold) {
     if (this.texVolumeAO) {

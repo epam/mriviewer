@@ -127,10 +127,7 @@ class UiCtrl3dLight extends React.Component {
 
           </ButtonGroup>          
         </ListGroup.Item>
-
-        <ListGroup.Item>
-          <UiTF/>
-        </ListGroup.Item>
+        <UiTF/>
       </ListGroup>
     const jsxROI =
       <ListGroup as="ul" variant="flush">

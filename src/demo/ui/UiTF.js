@@ -144,7 +144,8 @@ class UiTF extends React.Component {
         <li className="list-group-item">
           <UiHistogram volume={vol}  transfFunc={funcTra} transfFuncUpdate={null}/>
         </li>
-        <li className="list-group-item" style={styleObj}>
+        <li className="list-group-item">
+          <p> Set </p>
           <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
             range={{ min: 0.0, max: 1.0 }}
             start={wArr} connect={[false, true, false, true]} step={0.02} tooltips={true} />
