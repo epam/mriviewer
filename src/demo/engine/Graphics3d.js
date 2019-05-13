@@ -11,7 +11,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-
+import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
 import StoreActionType from '../store/ActionTypes';
 import VolumeRenderer3d from './VolumeRenderer3d'
@@ -136,8 +136,13 @@ class Graphics3d extends React.Component {
       const store = this.props;
       const vol = store.volume;
       const FOUR = 4;
-      const isIso = (vol.m_bytesPerVoxel === FOUR) ? true : false;     
-      this.m_volumeRenderer3D.initWithVolume(this.volume, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso);
+      const isIso = (vol.m_bytesPerVoxel === FOUR) ? true : false;    
+      const modeView = store.modeView; 
+      if (modeView === ModeView.VIEW_3D) {
+        this.m_volumeRenderer3D.initWithVolume(this.volume, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, true);
+      } else {
+        this.m_volumeRenderer3D.initWithVolume(this.volume, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, false);
+      }
       this.isLoaded = true;
     }
     this.start();
@@ -191,40 +196,45 @@ class Graphics3d extends React.Component {
     }
     const ZCUTSHIFT = 0.5;
     const mode3d = store.mode3d;
+    const modeView = store.modeView;
     if (this.m_volumeRenderer3D !== null) {
       console.log(`Graphics3d . mode = ${mode3d}`);
-      if (mode3d === Modes3d.RAYCAST) {
-        //if (this.m_prevMode === Modes3d.EREASER) {
-        //this.m_volumeRenderer3D.setEraserMode(false);
-        //}
-        this.m_prevMode = Modes3d.RAYCAST;
-        this.m_volumeRenderer3D.setTransferFuncVec3([store.slider3d_r, store.slider3d_g, store.slider3d_b], 0);
-        this.m_volumeRenderer3D.switchToVolumeRender();      
-      }
-      if (mode3d === Modes3d.ISO) {
-        //if (this.m_prevMode === Modes3d.EREASER) {
-        //  this.m_volumeRenderer3D.setEraserMode(false);
-        //}
-        this.m_prevMode = Modes3d.ISO;
-        this.m_volumeRenderer3D.switchToIsosurfRender();      
-        this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
-      }
-      if (mode3d === Modes3d.RAYFAST) {
-        //if (this.m_prevMode === Modes3d.EREASER) {
-        //  this.m_volumeRenderer3D.setEraserMode(false);
-        //}
-        this.m_prevMode = Modes3d.RAYFAST;
-        this.m_volumeRenderer3D.switchToFLATRender();
-      }
-      if (mode3d === Modes3d.EREASER) {
-        //if (this.m_prevMode !== Modes3d.EREASER) {
-        //  this.m_volumeRenderer3D.setEraserMode(true);
-        //}
-        this.m_prevMode = Modes3d.RAYFAST;
-        this.m_volumeRenderer3D.switchToIsosurfRender();     
-        this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
-        this.m_volumeRenderer3D.volumeUpdater.eraser.setEraserRadius(store.sliderErRadius);
-        this.m_volumeRenderer3D.volumeUpdater.eraser.setEraserDepth(store.sliderErDepth);
+      if (modeView !== ModeView.VIEW_3D) {
+        if (mode3d === Modes3d.RAYCAST) {
+          //if (this.m_prevMode === Modes3d.EREASER) {
+          //this.m_volumeRenderer3D.setEraserMode(false);
+          //}
+          this.m_prevMode = Modes3d.RAYCAST;
+          this.m_volumeRenderer3D.setTransferFuncVec3([store.slider3d_r, store.slider3d_g, store.slider3d_b], 0);
+          this.m_volumeRenderer3D.switchToVolumeRender();      
+        }
+        if (mode3d === Modes3d.ISO) {
+          //if (this.m_prevMode === Modes3d.EREASER) {
+          //  this.m_volumeRenderer3D.setEraserMode(false);
+          //}
+          this.m_prevMode = Modes3d.ISO;
+          this.m_volumeRenderer3D.switchToIsosurfRender();      
+          this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
+        }
+        if (mode3d === Modes3d.RAYFAST) {
+          //if (this.m_prevMode === Modes3d.EREASER) {
+          //  this.m_volumeRenderer3D.setEraserMode(false);
+          //}
+          this.m_prevMode = Modes3d.RAYFAST;
+          this.m_volumeRenderer3D.switchToFLATRender();
+        }
+        if (mode3d === Modes3d.EREASER) {
+          //if (this.m_prevMode !== Modes3d.EREASER) {
+          //  this.m_volumeRenderer3D.setEraserMode(true);
+          //}
+          this.m_prevMode = Modes3d.RAYFAST;
+          this.m_volumeRenderer3D.switchToIsosurfRender();     
+          this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
+          this.m_volumeRenderer3D.volumeUpdater.eraser.setEraserRadius(store.sliderErRadius);
+          this.m_volumeRenderer3D.volumeUpdater.eraser.setEraserDepth(store.sliderErDepth);
+        }
+      } else {
+        this.m_volumeRenderer3D.switchToFullVolumeRender() 
       }
       this.m_volumeRenderer3D.setOpacityBarrier(store.sliderOpacity);
       this.m_volumeRenderer3D.updateBrightness(store.sliderBrightness);

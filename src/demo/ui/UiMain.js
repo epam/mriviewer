@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
 
 import UiMainMpr from './UiMainMpr';
 import UiMain2d from './UiMain2d';
-import UiMain3d from './UiMain3d';
 import UiMain3dLight from './UiMain3dLight';
 
 import ModeView from '../store/ModeView';
@@ -40,13 +39,12 @@ class UiMain extends React.Component {
     const jsxMainMpr = <UiMainMpr></UiMainMpr>;
     const jsxMain2d = <UiMain2d></UiMain2d>;
     const jsxMain3dLight = <UiMain3dLight></UiMain3dLight>;
-    const jsxMain3d = <UiMain3d></UiMain3d>;
 
     const jsxArray = new Array(ModeView.VIEW_COUNT);
     jsxArray[ModeView.VIEW_MPR] = jsxMainMpr;
     jsxArray[ModeView.VIEW_2D] = jsxMain2d;
     jsxArray[ModeView.VIEW_3D_LIGHT] = jsxMain3dLight ;
-    jsxArray[ModeView.VIEW_3D] = jsxMain3d;
+    jsxArray[ModeView.VIEW_3D] = jsxMain3dLight;
     const jsxRet = jsxArray[modeViewIndex];
     return jsxRet;
   };

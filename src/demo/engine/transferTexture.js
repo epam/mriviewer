@@ -32,6 +32,18 @@ export default class TransferTexture {
     this.texRoiColor = null;
     this.texRoiId = null;    
     this.numRois = 256;
+    this.m_handleColors = [
+      { r: 0, g: 0, b: 0 },
+      { r: 255, g: 128, b: 64 },
+      { r: 255, g: 0, b: 0 },
+      { r: 128, g: 64, b: 64 },
+      { r: 128, g: 0, b: 0 },
+      { r: 64, g: 64, b: 64 },
+      { r: 128, g: 128, b: 128 },
+      { r: 192, g: 192, b: 192 },
+      { r: 255, g: 255, b: 255 },
+      { r: 255, g: 255, b: 255 },
+    ];
   }
   /**
    * Filtering the source data and building the normals on the GPU
@@ -117,11 +129,10 @@ export default class TransferTexture {
    * Creates transfer function color map
    * @param ctrlPts Array of control points of type HEX  = color value
    */
-  setTransferFuncColors(ctrlPtsColorsHex) {
+  setTransferFuncColors(colors) {
     this.transferFuncCtrlPtsRgb = [];
-    for (let i = 0; i < ctrlPtsColorsHex.length; i++) {
-      const color = new THREE.Color(ctrlPtsColorsHex[i]);
-      this.transferFuncCtrlPtsRgb.push(new THREE.Vector3(color.r, color.g, color.b));
+    for (let i = 0; i < colors.length; i++) {
+      this.transferFuncCtrlPtsRgb.push(new THREE.Vector3(colors[i].r, colors[i].g, colors[i].b));
     }
   }
   /**
@@ -137,15 +148,15 @@ export default class TransferTexture {
       const pixEnd = Math.floor(intensities[curPt + 1]);
       for (let pix = pixStart; pix < pixEnd; pix++) {
         const lerpVal = (pix - pixStart) / (pixEnd - pixStart);
-        const color = new THREE.Vector3();
-        color.lerpVectors(this.transferFuncCtrlPtsRgb[curPt],
-          this.transferFuncCtrlPtsRgb[curPt + 1], lerpVal);
+        const colorX = (1.0 - lerpVal) * this.m_handleColors[curPt].r + lerpVal * this.m_handleColors[curPt + 1].r
+        const colorY = (1.0 - lerpVal) * this.m_handleColors[curPt].g + lerpVal * this.m_handleColors[curPt + 1].g;
+        const colorZ = (1.0 - lerpVal) * this.m_handleColors[curPt].b + lerpVal * this.m_handleColors[curPt + 1].b;
         // eslint-disable-next-line
-        this.transferFuncRgba[pix * 4 + 0] = color.x * 255;
+        this.transferFuncRgba[pix * 4 + 0] = colorX;
         // eslint-disable-next-line
-        this.transferFuncRgba[pix * 4 + 1] = color.y * 255;
+        this.transferFuncRgba[pix * 4 + 1] = colorY;
         // eslint-disable-next-line
-        this.transferFuncRgba[pix * 4 + 2] = color.z * 255;
+        this.transferFuncRgba[pix * 4 + 2] = colorZ;
         // eslint-disable-next-line
         this.transferFuncRgba[pix * 4 + 3] = (opacities[curPt + 1] * lerpVal + (1.0 - lerpVal) * opacities[curPt]) * 255;
       }

@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import { Row, Col } from 'react-bootstrap';
 
 import UiCtrl3dLight from './UiCtrl3dLight';
+import UiCtrl3d from './UiCtrl3d';
 import Graphics3d from '../engine/Graphics3d';
 import 'nouislider/distribute/nouislider.css';
 
@@ -22,7 +23,10 @@ import { ListGroup } from 'react-bootstrap';
 import Nouislider from 'react-nouislider';
 
 //import Modes3d from '../store/Modes3d';
+
 import StoreActionType from '../store/ActionTypes';
+import ModeView from '../store/ModeView';
+
 
 // ********************************************************
 // Const
@@ -69,6 +73,7 @@ class UiMain3dLight extends React.Component {
     // const store = this.props;
     // const vol = store.volume;
     const store = this.props;
+    const modeViewIndex = store.modeView;
 
     const sliderBrightness = store.sliderBrightness;
     const sliderCut = store.sliderCut;
@@ -77,31 +82,38 @@ class UiMain3dLight extends React.Component {
     const wArrBrightness = [sliderBrightness];
     const wArrCut = [sliderCut];
     const wArrQuality = [sliderQuality];
+    const jsx3dLight = <UiCtrl3dLight></UiCtrl3dLight>;
+    const jsx3d = <UiCtrl3d></UiCtrl3d>;
+
+    const jsxArray = new Array(ModeView.VIEW_COUNT);
+    jsxArray[ModeView.VIEW_3D_LIGHT] = jsx3dLight ;
+    jsxArray[ModeView.VIEW_3D] = jsx3d;
+    const jsxRet = jsxArray[modeViewIndex];
 
     const jsxMain3dLight = 
       <Row>
         <Col xs lg="4">
-          <UiCtrl3dLight />
+          {jsxRet}
           <ListGroup as="ul" variant="flush">
             <ListGroup.Item>
               <p> Brightness </p>
               <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={'sliderBrightness'}
                 range={{ min: 0.0, max: 1.0 }}
-                start={wArrBrightness} connect={[false, true]} step={0.02} tooltips={true} />
+                start={wArrBrightness} connect={[true, false]} step={0.02} tooltips={true} />
             </ListGroup.Item>
 
             <ListGroup.Item>
               <p> Cut </p>
               <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={'sliderCut'}
                 range={{ min: 0.0, max: 1.0 }}
-                start={wArrCut} connect={[false, true]} step={0.01} tooltips={true} />
+                start={wArrCut} connect={[true, false]} step={0.01} tooltips={true} />
             </ListGroup.Item>
 
             <ListGroup.Item>
               <p> Quality </p>
               <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={'sliderQuality'}
                 range={{ min: 0.0, max: 1.0 }}
-                start={wArrQuality} connect={[false, true]} step={0.02} tooltips={true} />
+                start={wArrQuality} connect={[true, false]} step={0.02} tooltips={true} />
             </ListGroup.Item>
 
           </ListGroup>

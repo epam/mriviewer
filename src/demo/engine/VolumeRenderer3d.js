@@ -731,7 +731,7 @@ export default class VolumeRenderer3d {
    * @param (object) nonEmptyBoxMin - Min corner for non empty box in volume
    * @param (bool) isRoiVolume) - is roi volume
    */
-  initWithVolume(volume, box, nonEmptyBoxMin, nonEmptyBoxMax, isRoiVolume) {
+  initWithVolume(volume, box, nonEmptyBoxMin, nonEmptyBoxMax, isRoiVolume, isFULL3D) {
     let sideMax = (box.x > box.y) ? box.x : box.y;
     sideMax = (box.z > sideMax) ? box.z : sideMax;
     this.vBoxVirt.x = box.x / sideMax;
@@ -1021,11 +1021,14 @@ export default class VolumeRenderer3d {
         mat.uniforms.needsUpdate = true;
         this.scene.add(this.mesh);
         this.matVolumeRender = mat;
-        this.switchToVolumeRender();      
+        if (isFULL3D) {
+          this.switchToFullVolumeRender() 
+        } else {
+          this.switchToVolumeRender();      
+        }
         this.mesh.material = this.matVolumeRender;
         this.meshSphere.material = this.matVolumeRender;
         this.sceneReadyCounter++;
-
       });
     //matSkullThreeGS.m_uniforms.texVolumeMask.value = this.volTextureMask;
   } // callbackCreateCubeVolume

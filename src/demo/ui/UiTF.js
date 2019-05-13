@@ -116,8 +116,6 @@ class UiTF extends React.Component {
    */
   render() {
     const store = this.props;
-
-    // const modeViewIndex = store.modeView;
     const mode3d = store.mode3d;
     const slider3dr = store.slider3d_r;
     const slider3dg = store.slider3d_g;
@@ -135,7 +133,7 @@ class UiTF extends React.Component {
 
     const NEED_TANSF_FUNC = true;
     const funcTra = (NEED_TANSF_FUNC) ? this.transferFuncCallback : undefined;
-
+    //store.volumeRenderer.updateTransferFuncTexture(this.m_transfFunc.m_handleX, this.m_transfFunc.m_handleY);
     const styleObj = {
       //borderColor: 'red white',
       //borderStyle: 'solid',
@@ -144,7 +142,7 @@ class UiTF extends React.Component {
     const jsxVolumeTF =
       <ul className="list-group" >
         <li className="list-group-item">
-          <UiHistogram volume={vol}  transfFunc={funcTra} />
+          <UiHistogram volume={vol}  transfFunc={funcTra} transfFuncUpdate={null}/>
         </li>
         <li className="list-group-item" style={styleObj}>
           <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
@@ -155,7 +153,7 @@ class UiTF extends React.Component {
           <p> Opacity </p>
           <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
             range={{ min: 0.0, max: 1.0 }}
-            start={wArrOpacity} connect={[false, true]} step={0.02} tooltips={true} />
+            start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true} />
         </li>
       </ul>
     const jsxIsoTF =
@@ -167,7 +165,7 @@ class UiTF extends React.Component {
           <p> Isosurface </p>
           <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
             range={{ min: 0.0, max: 1.0 }}
-            start={wArrIsosurface} connect={[false, true]} step={0.02} tooltips={true} />
+            start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true} />
         </li>
         <li className="list-group-item">
           Ambient Oclusion -> 
@@ -192,19 +190,19 @@ class UiTF extends React.Component {
             <p> Radius </p>
             <Nouislider onSlide={this.onChangeSliderErRadius.bind(this)} ref={'sliderErRadius'}
               range={{ min: 1.0, max: 100.0 }}
-              start={wArrErRadius} connect={[false, true]} step={0.02} tooltips={true} />
+              start={wArrErRadius} connect={[true, false]} step={0.02} tooltips={true} />
           </li>
           <li className="list-group-item">
             <p> Depth </p>
             <Nouislider onSlide={this.onChangeSliderErDepth.bind(this)} ref={'sliderErDepth'}
               range={{ min: 1.0, max: 100.0 }}
-              start={wArrErDepth} connect={[false, true]} step={0.02} tooltips={true} />
+              start={wArrErDepth} connect={[true, false]} step={0.02} tooltips={true} />
           </li>
           <li className="list-group-item">
             <p> Isosurface </p>
             <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
               range={{ min: 0.0, max: 1.0 }}
-              start={wArrIsosurface} connect={[false, true]} step={0.02} tooltips={true} />
+              start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true} />
           </li>
           <li className="list-group-item">
             <button type="button" className={'btn btn-outline-dark'} onClick={this.onStartEr} >
