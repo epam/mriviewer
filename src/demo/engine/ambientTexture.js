@@ -84,11 +84,7 @@ export default class AmbientTexture {
       this.materialAO = mat;
       mat.uniforms.tileCountX.value = this.zTexDivSqrt;
       mat.uniforms.volumeSizeZ.value = this.zDim;
-      if (this.isWebGL2 === 0) {
-      // this.setVolumeTextureWebGL1(blurSigma);
-      } else {
-        this.setAmbientTextureWebGL2();
-      }
+      this.setAmbientTextureWebGL2();
       this.texVolumeAO.needsUpdate = true;
     });
   }

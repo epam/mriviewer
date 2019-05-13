@@ -228,19 +228,19 @@ export default class TransferTexture {
    * Create 2D texture containing selected ROIs
    * @param selectedROIs 256 byte roi values
    */
-  updateSelectedRoiMap(selectedROIs) {
+  updateSelectedRoiMap(selectedROI) {
     const roiTexelBpp = 4;
     const roiSelectedTrue = 255;
     const roiSelectedFalse = 0;
     for (let pix = 0; pix < this.numRois; pix++) {
-      if (selectedROIs[pix]) {
+      if (selectedROI[pix]) {
         this.selectedROIs[pix * roiTexelBpp] = roiSelectedTrue;
       } else {
         this.selectedROIs[pix * roiTexelBpp] = roiSelectedFalse;
       }
     }
     this.texRoiId.needsUpdate = true;
-    this.setVolumeTexture(1.0);
+    //this.setVolumeTexture(1.0);
   }
   /**
    * Update roi selection map
@@ -259,6 +259,6 @@ export default class TransferTexture {
     }
     console.log(`initMatBlure: ${this.initMatBlure}`);
     this.texRoiId.needsUpdate = true;
-    this.setVolumeTexture(1.0);
+    //this.setVolumeTexture(1.0);
   }
 } // class TransferTexture

@@ -402,10 +402,6 @@ export default class VolumeRenderer3d {
         this.matVolumeRender.needsUpdate = true;
         //this.matInterpolation.defines.isoRenderFlag = 0;
         //this.matInterpolation.needsUpdate = true;
-        if (this.matRenderToTexture.defines === null) {
-          console.log(`matRenderToTexture.defines === null`);
-        }
-
         this.matRenderToTexture.defines.isoRenderFlag = 0;
         this.matRenderToTexture.needsUpdate = true;
         this.renderState = this.RENDER_STATE.ONCE;
@@ -1062,6 +1058,12 @@ export default class VolumeRenderer3d {
     return this.volumeUpdater.updateTransferFuncTexture(intensities, opacities);
   }
   /**
+   * Create 2D texture containing selected ROIs
+   * @param selectedROIs 256 byte roi values
+   */
+  updateSelectedRoiMap(selectedROIs) {
+    this.volumeUpdater.updateSelectedRoiMap(selectedROIs);
+  }  /**
    * Rotate Cut Plane (Rotation is inverse to the object)
    */
   updateCutPlanes() {

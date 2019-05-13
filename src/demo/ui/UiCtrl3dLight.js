@@ -84,12 +84,21 @@ class UiCtrl3dLight extends React.Component {
     // This is demo code:
     // just print all states of all roi elements, according to the UI
     const numElems = arrayRoi.length;
+    const store = this.props;
+    const MAXELEM = 256;
+    const selectedROI = new Uint8Array(MAXELEM);
+    //const BYTES_IN_COLOR = 4;
+    for (let i = 0; i < MAXELEM; i++) {
+      selectedROI[i] = false;
+    }
     for (let i = 0; i < numElems; i++) {
       const id = arrayRoi[i].id;
       const name = arrayRoi[i].name;
       const isSel = arrayRoi[i].selected;
+      selectedROI[id] = isSel;
       console.log(`setRoi: [${i}]: name=${name} id= ${id} isSel=${isSel} `);
     }
+    store.volumeRenderer.updateSelectedRoiMap(selectedROI);
   }
   /**
    * Main component render func callback
