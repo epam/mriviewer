@@ -134,11 +134,11 @@ class UiTF extends React.Component {
     const NEED_TANSF_FUNC = true;
     const funcTra = (NEED_TANSF_FUNC) ? this.transferFuncCallback : undefined;
     //store.volumeRenderer.updateTransferFuncTexture(this.m_transfFunc.m_handleX, this.m_transfFunc.m_handleY);
+    /*
     const styleObj = {
-      //borderColor: 'red white',
-      //borderStyle: 'solid',
       margin: '30px 0px 0px'
     };
+    */
     const jsxVolumeTF =
       <ul className="list-group" >
         <li className="list-group-item">

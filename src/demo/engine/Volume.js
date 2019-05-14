@@ -85,6 +85,10 @@ class Volume extends React.Component {
     const OFF_0 = 0; const OFF_1 = 1;
     const OFF_2 = 2; const OFF_3 = 3;
 
+    console.log(`Volume info: xyzDim = ${this.m_xDim}*${this.m_yDim}*${this.m_zDim}`);
+    console.log(`Volume info: bpp = ${this.m_bytesPerVoxel}`);
+    console.log(`Volume info: dataSize = ${this.m_dataSize}`);
+
     const xyDim = this.m_xDim * this.m_yDim;
     if (this.m_bytesPerVoxel === ONE) {
       for (let z = 0; z < this.m_zDim; z++) {

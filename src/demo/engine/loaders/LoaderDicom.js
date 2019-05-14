@@ -606,12 +606,14 @@ class LoaderDicom{
   if (callbackRead) {
     callbackRead(LoadResult.SUCCESS, header, dataSize, dataArray);
   } // if callback ready
+  const ONE = 1;
 
   volDst.m_xDim = this.m_xDim;
   volDst.m_yDim = this.m_yDim;
   volDst.m_zDim = this.m_zDim;
   volDst.m_dataArray = dataArray;
   volDst.m_dataSize = dataSize;
+  volDst.m_bytesPerVoxel = ONE;
 
   return LoadResult.SUCCESS;
 } // createVolumeFromSlices

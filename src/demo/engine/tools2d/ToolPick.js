@@ -110,9 +110,19 @@ class ToolPick {
     }
     const off = xVol + (yVol * this.m_volume.m_xDim) + (zVol * this.m_volume.m_xDim * this.m_volume.m_yDim);
     */
-    const off = vTex.x + (vTex.y * xDim) + (vTex.z * xDim * yDim);
-    const val = this.m_volume.m_dataArray[off];
 
+    const ONE = 1;
+    const FOUR = 4;
+    const bpp = this.m_volume.m_bytesPerVoxel;
+    let off = vTex.x + (vTex.y * xDim) + (vTex.z * xDim * yDim);
+    let val = 0;
+    if (bpp === ONE) {
+      val = this.m_volume.m_dataArray[off];
+    } else if (bpp === FOUR) {
+      off = off * FOUR;
+      val = this.m_volume.m_dataArray[off];
+    }
+    
     this.m_xMessage = xScr;
     this.m_yMessage = yScr;
     this.m_strMessage = 'x,y,z = ' + (vTex.x).toString() + ', ' + (vTex.y).toString() + ', ' + (vTex.z).toString() + 

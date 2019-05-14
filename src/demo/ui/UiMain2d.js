@@ -11,12 +11,12 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Container } from 'react-bootstrap';
 
 import UiCtrl2d from './UiCtrl2d';
 import Graphics2d from '../engine/Graphics2d';
-import UiHistogram from './UiHistogram';
 import UiTools2d from './UiTools2d';
+// import UiHistCard from './UiHistCard';
 
 // ********************************************************
 // Const
@@ -41,23 +41,33 @@ class UiMain2d extends React.Component {
    * Main component render func callback
    */
   render() {
-    const store = this.props;
-    const vol = store.volume;
+    // const store = this.props;
+    // const vol = store.volume;
+    // const NEED_TANSF_FUNC = false;
+    // const funcTra = (NEED_TANSF_FUNC) ? this.transferFuncCallback : undefined;
 
-    const NEED_TANSF_FUNC = false;
-    const funcTra = (NEED_TANSF_FUNC) ? this.transferFuncCallback : undefined;
+    const MIN_HEIGHT = 800;
+    const strMinHeight = {
+      minHeight: MIN_HEIGHT.toString() + 'px'
+    };
 
     const jsxMain2d = 
-      <Row>
-        <Col xs lg="4">
-          <UiCtrl2d />
-          <UiTools2d />
-          <UiHistogram volume={vol} transfFunc={funcTra} />
-        </Col>
-        <Col xs lg="8">
-          <Graphics2d  />
-        </Col>
-      </Row>
+      <Container fluid="true" style={{ height: '100%', minHeight:'100%' }} >
+        <Row>
+          <Col xs md lg="4" style={{ height: '100%', position: 'relative' }} >
+            <UiCtrl2d />
+            <UiTools2d />
+
+            { /*            
+            <UiHistCard volume={vol} transfFunc={funcTra} />
+            */ }
+            
+          </Col>
+          <Col xs md lg="8" style={strMinHeight} >
+            <Graphics2d  />
+          </Col>
+        </Row>
+      </Container>
 
     return jsxMain2d;
   };

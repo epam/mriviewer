@@ -116,6 +116,7 @@ class Graphics2d extends React.Component {
     if (this.state.wRender === 0) {
       this.setState({ wRender: w });
       this.setState({ hRender: h });
+      // console.log(`gra2d. wRender*hRender = ${w}*${h}`);
 
       // tools 2d setup
       const store = this.props;

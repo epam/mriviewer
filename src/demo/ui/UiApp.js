@@ -133,7 +133,7 @@ class UiApp extends React.Component {
     const objProgressBar = (this.state.showProgressBar) ? objPrgBarVis : <p></p>;
 
     const jsxNavBarReact = 
-      <Container fluid="true">
+      <Container fluid="true" style={{ height:'100%', minHeight:'100%' }}  >
         <Navbar bg="light" variant="light" expand="lg" >
           <Navbar.Brand>
             <UiAbout />
@@ -168,20 +168,5 @@ class UiApp extends React.Component {
     return jsxNavBarReact;
   } // end render
 } // end class
-
-/*
-<Nav.Link href="#">
-MPR
-</Nav.Link>
-<Nav.Link href="#">
-  2D
-</Nav.Link>
-<Nav.Link href="#">
-  3DLight
-</Nav.Link>
-<Nav.Link href="#">
-  3D
-</Nav.Link>
-*/
 
 export default connect(store => store)(UiApp);
