@@ -31,11 +31,31 @@ class UiFilterMenu extends React.Component {
   constructor(props) {
     super(props);
     this.onButtonLungsSeg = this.onButtonLungsSeg.bind(this);
+    //this.callbackProgressFun = this.callbackProgressFun.bind(this);
   }
+  /*
+  callbackProgressFun(ratio01) {
+    // console.log(`callbackReadProgress = ${ratio01}`);
+    const store = this.props;
+    const uiapp = store.uiApp;
+    const ratioPrc = Math.floor(ratio01 * 100);
+    if (ratioPrc === 0) {
+      uiapp.doShowProgressBar();
+    }
+    if (ratioPrc >= 99) {
+      // console.log(`callbackReadProgress. hide on = ${ratio01}`);
+      uiapp.doHideProgressBar();
+    } else {
+      uiapp.doSetProgressBarRatio(ratioPrc);
+    }
+  } // callback progress
+  */
   onButtonLungsSeg() {
     //evt.preventDefault();
     const store = this.props;
     const lungsFiller = new LungsFillTool(store.volume);
+    //const callbackProgress = this.callbackProgressFun;
+    //lungsFiller.run(callbackProgress);
     lungsFiller.run();
     store.graphics2d.renderScene();
     //store.volumeRenderer.volumeUpdater.createUpdatableVolumeTex(store.volume, false, null);

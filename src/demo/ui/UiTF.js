@@ -142,7 +142,7 @@ class UiTF extends React.Component {
     const jsxVolumeTF =
       <ul className="list-group" >
         <li className="list-group-item">
-          <UiHistogram volume={vol}  transfFunc={funcTra} transfFuncUpdate={null}/>
+          <UiHistogram volume={vol}  transfFunc={funcTra}/>
         </li>
         <li className="list-group-item">
           <p> Set </p>

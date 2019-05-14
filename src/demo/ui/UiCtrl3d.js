@@ -27,6 +27,7 @@ class UiCtrl3d extends React.Component {
    */
   constructor(props) {
     super(props);
+    this.transferFuncCallback = this.transferFuncCallback.bind(this);
     this.m_updateEnable = true;
   }
   onChangeSliderOpacity() {
@@ -44,6 +45,8 @@ class UiCtrl3d extends React.Component {
     const x = transfFuncObj.m_handleX[i];
     const y = transfFuncObj.m_handleY[i];
     console.log(`moved point[${i}] = ${x}, ${y}  `);
+    const vr = this.props.volumeRenderer;
+    vr.updateTransferFuncTexture(transfFuncObj.m_handleX, transfFuncObj.m_handleY);
   }
   /**
    * Main component render func callback
