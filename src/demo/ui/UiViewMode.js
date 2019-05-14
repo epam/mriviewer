@@ -96,6 +96,29 @@ class UiViewMode extends React.Component {
     const str3dLight = (viewMode === ModeView.VIEW_3D_LIGHT) ? ' active' : '';
     const str3d = (viewMode === ModeView.VIEW_3D) ? ' active' : '';
 
+    const jsx3d = <OverlayTrigger placement="bottom" overlay = {
+      <Tooltip>
+        Show volume in 3d mode with old rendering
+      </Tooltip>
+    }>
+      <Button variant="secondary" className={str3d} onClick={this.onMode3d} >
+        3D
+      </Button>
+    </OverlayTrigger>  
+    const jsx3dNone = null;
+
+    let indx = 0;
+    const vol = store.volume;
+    const FOUR = 4;
+    if (vol.m_bytesPerVoxel === FOUR) {
+      indx = 1;
+    }
+    const jsxArray = new Array(2);
+    jsxArray[0] = jsx3d;
+    jsxArray[1] = jsx3dNone;
+    const jsxRet = jsxArray[indx];
+
+
     const jsxOut = 
       <ButtonToolbar>
         <ButtonGroup>
@@ -133,17 +156,7 @@ class UiViewMode extends React.Component {
               <span className="fa fa-bolt"></span>
             </Button>
           </OverlayTrigger>  
-
-          <OverlayTrigger placement="bottom" overlay = {
-            <Tooltip>
-              Show volume in 3d mode with old rendering
-            </Tooltip>
-          }>
-
-            <Button variant="secondary" className={str3d} onClick={this.onMode3d} >
-              3D
-            </Button>
-          </OverlayTrigger>  
+          {jsxRet}
         </ButtonGroup>
       </ButtonToolbar>;
 
