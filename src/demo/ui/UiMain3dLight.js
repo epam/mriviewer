@@ -90,9 +90,15 @@ class UiMain3dLight extends React.Component {
     jsxArray[ModeView.VIEW_3D] = jsx3d;
     const jsxRet = jsxArray[modeViewIndex];
 
+    const MIN_HEIGHT = 800;
+    const strMinHeight = {
+      minHeight: MIN_HEIGHT.toString() + 'px'
+    };
+
+
     const jsxMain3dLight = 
       <Row>
-        <Col xs lg="4">
+        <Col xs md lg="4">
           {jsxRet}
           <ListGroup as="ul" variant="flush">
             <ListGroup.Item>
@@ -119,7 +125,7 @@ class UiMain3dLight extends React.Component {
           </ListGroup>
 
         </Col>
-        <Col xs lg="8">
+        <Col xs md lg="8" style={strMinHeight} >
           <Graphics3d  />
         </Col>
       </Row>
