@@ -427,6 +427,11 @@ class ToolArea {
       const isClosed = objArea.m_isClosed;
       const numPoints = (isClosed) ? (objArea.m_points.length + 1) : (objArea.m_points.length);
       // console.log(`ToolArea. render ${numPoints} points in poly`);
+
+      // calc area centroid in screen
+      let xScrCenter = 0.0;
+      let yScrCenter = 0.0;
+
       ctx.beginPath();
       for (let i = 0; i < numPoints; i++) {
         const iPoly = (i < objArea.m_points.length) ? (i) : 0;
@@ -438,17 +443,27 @@ class ToolArea {
         } else {
           ctx.lineTo(vScr.x, vScr.y);
         }
+        xScrCenter += vScr.x;
+        yScrCenter += vScr.y;
       } // for (i) all points in poly
       ctx.stroke();
+
+      if (numPoints > 0) {
+        xScrCenter /= numPoints;
+        yScrCenter /= numPoints;
+      }
+
       // draw area
       if (isClosed) {
         const strMsg = objArea.m_area.toFixed(2) + ' mm^2';
-        const vTex0 = objArea.m_points[0];
-        const vs0 = ToolDistance.textureToScreen(vTex0.x, vTex0.y, this.m_wScreen, this.m_hScreen, store);
-        const SHIFT_UP = 8;
-        const xText = vs0.x;
-        const yText = vs0.y - SHIFT_UP;
-        ctx.fillText(strMsg, xText, yText);
+        // const SHIFT_UP = 8;
+        //const vTex0 = objArea.m_points[0];
+        //const vs0 = ToolDistance.textureToScreen(vTex0.x, vTex0.y, this.m_wScreen, this.m_hScreen, store);
+        //const xText = vs0.x;
+        //const yText = vs0.y - SHIFT_UP;
+        // ctx.fillText(strMsg, xText, yText);
+
+        ctx.fillText(strMsg, xScrCenter, yScrCenter);
       } // if this poly closed
     } // for (a) all polys
   }

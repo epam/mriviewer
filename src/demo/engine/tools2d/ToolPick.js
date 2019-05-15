@@ -87,6 +87,10 @@ class ToolPick {
 
     const xRatioImage = xScr / this.m_wScreen;
     const yRatioImage = yScr / this.m_hScreen;
+    if ((xRatioImage > 1.0) || (yRatioImage > 1.0)) {
+      // out if rendered image
+      return;
+    }
     const vTex = this.screenToTexture(xRatioImage, yRatioImage, store);
 
     const xDim = store.volume.m_xDim;

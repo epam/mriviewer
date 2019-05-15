@@ -38,6 +38,11 @@ class ToolDistance {
   setVolume(vol) {
     this.m_volume = vol;
   }
+  /**
+   * 
+   * @param {number} xs - world units hor / volume pixels (x)
+   * @param {number} ys - world units ver / volume pixels (y) 
+   */
   setPixelSize(xs, ys) {
     this.m_xPixelSize = xs;
     this.m_yPixelSize = ys;
