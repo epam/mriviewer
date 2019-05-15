@@ -140,23 +140,23 @@ class UiTF extends React.Component {
     };
     */
     const jsxVolumeTF =
-      <ul className="list-group" >
-        <li className="list-group-item">
-          <UiHistogram volume={vol}  transfFunc={funcTra}/>
-        </li>
-        <li className="list-group-item">
-          <p> Set </p>
-          <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
-            range={{ min: 0.0, max: 1.0 }}
-            start={wArr} connect={[false, true, false, true]} step={0.02} tooltips={true} />
-        </li>
-        <li className="list-group-item">
-          <p> Opacity </p>
-          <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
-            range={{ min: 0.0, max: 1.0 }}
-            start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true} />
-        </li>
-      </ul>
+          <div>
+            <li className="list-group-item">
+              <UiHistogram volume={vol} transfFunc={funcTra} />
+            </li>
+            <li className="list-group-item">
+              <p> Set </p>
+              <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
+                range={{ min: 0.0, max: 1.0 }}
+                start={wArr} connect={[false, true, false, true]} step={0.02} tooltips={true} />
+            </li>
+            <li className="list-group-item">
+              <p> Opacity </p>
+              <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
+                range={{ min: 0.0, max: 1.0 }}
+                start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true} />
+            </li>
+          </div>
     const jsxIsoTF =
       <ul className="list-group">
         <li className="list-group-item">
@@ -222,12 +222,7 @@ class UiTF extends React.Component {
         </ul>
       </div>
 
-    const jsxRayfastTF =
-      <ul className="list-group">
-        <li className="list-group-item">
-          <p> </p>
-        </li>
-      </ul>
+    const jsxRayfastTF = null
 
     console.log(`UiTF . mode = ${mode3d}`);
     const jsxArray = [jsxIsoTF, jsxVolumeTF, jsxRayfastTF, jsxEreaser];

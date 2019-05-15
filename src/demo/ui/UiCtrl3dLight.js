@@ -108,6 +108,7 @@ class UiCtrl3dLight extends React.Component {
     const mode3d = store.mode3d;
 
     const strClass = 'btn btn-info';
+    //const strClass = 'btn btn-secondary';
     const strA = strClass + ((mode3d === Modes3d.ISO) ? ' active' : '');
     const strB = strClass + ((mode3d === Modes3d.RAYCAST) ? ' active' : '');
     const strC = strClass + ((mode3d === Modes3d.RAYFAST) ? ' active' : '');
@@ -118,26 +119,27 @@ class UiCtrl3dLight extends React.Component {
     // btn-default active
 
     const jsxRenderControls =
-      <ListGroup as="ul" variant="flush">
-        <ListGroup.Item as="li">
-          <ButtonGroup>
-            <Button variant="secondary" className={strA} onClick={this.onModeA} >
-              Isosurface
-            </Button>
-            <Button variant="secondary" className={strB} onClick={this.onModeB} >
-              VolumeRender
-            </Button>
-            <Button variant="secondary" className={strC} onClick={this.onModeC} >
-              MaxProjection
-            </Button>
-            <Button variant="secondary" className={strD} onClick={this.onModeD} >
-              Eraser
-            </Button>
-
-          </ButtonGroup>          
-        </ListGroup.Item>
+      <div >
+        <div className="card">
+          <div className="card-body">
+            <div className="btn-group btn-block">
+              <button type="button" className={strA} onClick={this.onModeA} >
+                Isosurface
+              </button>
+              <button type="button" className={strB} onClick={this.onModeB}  >
+                VolumeRender
+              </button>
+              <button type="button" className={strC} onClick={this.onModeC} >
+                MaxProjection
+              </button>
+              <button type="button" className={strD} onClick={this.onModeD} >
+                Eraser
+              </button>
+            </div>
+          </div>
+        </div>
         <UiTF/>
-      </ListGroup>
+      </div>
     const jsxROI =
       <ListGroup as="ul" variant="flush">
         <ListGroup.Item as="li">

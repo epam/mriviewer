@@ -90,7 +90,7 @@ class UiMain3dLight extends React.Component {
     jsxArray[ModeView.VIEW_3D] = jsx3d;
     const jsxRet = jsxArray[modeViewIndex];
 
-    const MIN_HEIGHT = 800;
+    const MIN_HEIGHT = 882;
     const strMinHeight = {
       minHeight: MIN_HEIGHT.toString() + 'px'
     };
@@ -105,21 +105,21 @@ class UiMain3dLight extends React.Component {
               <p> Brightness </p>
               <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={'sliderBrightness'}
                 range={{ min: 0.0, max: 1.0 }}
-                start={wArrBrightness} connect={[true, false]} step={0.02} tooltips={true} />
+                start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true} />
             </ListGroup.Item>
 
             <ListGroup.Item>
               <p> Cut </p>
               <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={'sliderCut'}
                 range={{ min: 0.0, max: 1.0 }}
-                start={wArrCut} connect={[true, false]} step={0.01} tooltips={true} />
+                start={wArrCut} connect={[false, false]} step={0.01} tooltips={true} />
             </ListGroup.Item>
 
             <ListGroup.Item>
               <p> Quality </p>
               <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={'sliderQuality'}
                 range={{ min: 0.0, max: 1.0 }}
-                start={wArrQuality} connect={[true, false]} step={0.02} tooltips={true} />
+                start={wArrQuality} connect={[false, false]} step={0.02} tooltips={true} />
             </ListGroup.Item>
 
           </ListGroup>
