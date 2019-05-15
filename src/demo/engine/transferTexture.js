@@ -158,7 +158,9 @@ export default class TransferTexture {
         // eslint-disable-next-line
         this.transferFuncRgba[pix * 4 + 2] = colorZ;
         // eslint-disable-next-line
-        this.transferFuncRgba[pix * 4 + 3] = (opacities[curPt + 1] * lerpVal + (1.0 - lerpVal) * opacities[curPt]) * 255;
+        const op1 = (opacities[curPt] > 0.0) ? opacities[curPt] : 0.0;
+        const op2 = (opacities[curPt + 1] > 0.0) ? opacities[curPt + 1] : 0.0;
+        this.transferFuncRgba[pix * 4 + 3] = (op2 * lerpVal + (1.0 - lerpVal) * op1) * 255;
       }
     }
     this.transferFuncTexture.needsUpdate = true;
