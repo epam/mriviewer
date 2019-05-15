@@ -134,6 +134,7 @@ class TransfFunc {
     if (this.m_mouseDown) {
       const isBorderPoint = (this.m_indexMoved === 0) || (this.m_indexMoved === this.m_numHandles - 1);
       let xScrNew;
+      let yScrNew;
       if (isBorderPoint) {
         xScrNew = this.m_proj[this.m_indexMoved].x;
       } else {
@@ -141,13 +142,23 @@ class TransfFunc {
         xScrNew = (xScrNew < this.m_proj[this.m_indexMoved - 1].x) ? this.m_proj[this.m_indexMoved - 1].x : xScrNew;
         xScrNew = (xScrNew > this.m_proj[this.m_indexMoved + 1].x) ? this.m_proj[this.m_indexMoved + 1].x : xScrNew;
       }
+
+      yScrNew = yScr;
+      if (yScrNew < this.m_yMin) {
+        yScrNew = this.m_yMin;
+        // console.log('Clip by min y');
+      }
+      if (yScrNew > this.m_yMin + this.m_hScreen) {
+        yScrNew = this.m_yMin + this.m_hScreen;
+        // console.log('Clip by max y');
+      }
       this.m_proj[this.m_indexMoved].x = xScrNew;
-      this.m_proj[this.m_indexMoved].y = yScr;
+      this.m_proj[this.m_indexMoved].y = yScrNew;
 
       const X_MAX = 255;
       const Y_MAX = 1.0;
       const xFunc = (xScrNew - this.m_xMin) * X_MAX / this.m_wScreen;
-      const yFunc = (this.m_yMin + this.m_hScreen - 1 - yScr) * Y_MAX / this.m_hScreen;
+      const yFunc = (this.m_yMin + this.m_hScreen - 1 - yScrNew) * Y_MAX / this.m_hScreen;
       this.m_handleX[this.m_indexMoved] = xFunc;
       this.m_handleY[this.m_indexMoved] = yFunc;
       return true;
