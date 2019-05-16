@@ -614,6 +614,9 @@ class LoaderDicom{
   volDst.m_dataArray = dataArray;
   volDst.m_dataSize = dataSize;
   volDst.m_bytesPerVoxel = ONE;
+  volDst.m_boxSize.x = this.m_boxSize.x;
+  volDst.m_boxSize.y = this.m_boxSize.y;
+  volDst.m_boxSize.z = this.m_boxSize.z;
 
   return LoadResult.SUCCESS;
 } // createVolumeFromSlices

@@ -63,6 +63,7 @@ class UiApp extends React.Component {
       showModalAlert: false,
       strAlertTitle: '???',
       strAlertText: '???',
+      strProgressMessage: 'Loading...',
     };
   }
   componentDidMount() {
@@ -100,13 +101,22 @@ class UiApp extends React.Component {
   onHideModalAlert() {
     this.setState({ showModalAlert: false });
   }
-  doShowProgressBar() {
+  doShowProgressBar(strProgressMsg) {
+    if ((strProgressMsg === undefined) || (strProgressMsg === null)) {
+      console.log('doShowProgressBar: need argument - strProgressMsg');
+      return;
+    }
+    this.setState({ strProgressMessage: strProgressMsg });
     this.setState({ showProgressBar: true });
   }
   doHideProgressBar() {
     // console.log('doHideProgressBar');
     this.setState({ showProgressBar: false });
   }
+  /**
+   * 
+   * @param {number} ratio - in [0..99] range
+   */
   doSetProgressBarRatio(ratio) {
     // console.log(`doSetProgressBarRatio: ${ratio}`);
     this.setState({ progressBarRatio: ratio });
@@ -122,10 +132,12 @@ class UiApp extends React.Component {
 
     const strMessageOnMenu = (isLoaded) ? 'File: ' + fileName : 'Press Open button to load scene';
 
+    const strProgressMsg = this.state.strProgressMessage;
+
     const objPrgBarVis = 
       <Row>
         <Col>
-        Loading...
+          {strProgressMsg}
           <ProgressBar animated variant="info"
             now={this.state.progressBarRatio} label={`${this.state.progressBarRatio}%`}  />
         </Col>

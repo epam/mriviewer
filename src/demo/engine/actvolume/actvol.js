@@ -31,7 +31,7 @@ import GeoRender from './georender';
 import LaplasianSmoother from './lapsmooth';
 // import VolumeClipper from './volclip';
 import VolumeGenerator from './volgen';
-import KtxLoader from '../loaders/ktxloader';
+// import KtxLoader from '../loaders/ktxloader';
 import VolumeTools from '../loaders/voltools';
 
 // ****************************************************************************
@@ -204,7 +204,7 @@ export default class ActiveVolume {
         }
       }
     } else {
-      console.log(`generateFromFaces returned ${resFill} !`);
+      console.log(`generateFromFaces returned ${resBoolFill} !`);
     }
     volTexDst = null;
   }
@@ -659,6 +659,217 @@ export default class ActiveVolume {
     return true;
   }
   /**
+   * 
+   * @param {*} xDim 
+   * @param {*} yDim 
+   * @param {*} zDim 
+   * @param {*} volTexSrc 
+   * @param {*} volTexDst 
+   * @param {*} createType 
+   * @param {*} needLog 
+   */
+  skullRemoveStart(xDim, yDim, zDim, volTexSrc, volTexDst, createType, needLog) {
+    const TOO_MUCH_SIZE = 8192;
+    if ((createType !== ActiveVolume.REMOVE_SKULL) && (createType !== ActiveVolume.CREATE_MASK)) {
+      console.log('skullRemoveStart: wrong argument createType');
+    }
+    if ((xDim >= TOO_MUCH_SIZE) || (yDim >= TOO_MUCH_SIZE) || (zDim >= TOO_MUCH_SIZE)) {
+      console.log(`Too bad volume dimension: ${xDim} * ${yDim} * ${zDim}`);
+      return -1;
+    }
+    if ((xDim <= 1) || (yDim <= 1) || (zDim <= 1)) {
+      console.log(`Too bad volume dimension: ${xDim} * ${yDim} * ${zDim}`);
+      return -1;
+    }
+    const volSizeSrc = volTexSrc.length;
+    const numPixSrc = xDim * yDim * zDim;
+    if (volSizeSrc !== numPixSrc) {
+      console.log(`skullRemoveStart: bad vol size = ${volSizeSrc}, expected ${numPixSrc}`);
+      return -1;
+    }
+    const okCreate = this.create(xDim, yDim, zDim, volTexSrc);
+    if (okCreate !== 1) {
+      return okCreate;
+    }
+    const genTetra = new TetrahedronGenerator();
+    const vRadius = new THREE.Vector3(0.5, 0.5, 0.5);
+    const NUM_SUBDIVIDES = 3;
+    const okCreateTetra = genTetra.create(vRadius, NUM_SUBDIVIDES);
+    if (okCreateTetra < 1) {
+      return okCreateTetra;
+    }
+    const geoRender = new GeoRender();
+    const errGeo = geoRender.createFromTetrahedronGenerator(genTetra);
+    const GEO_OK = 1;
+    if (errGeo !== GEO_OK) {
+      const ERR_CREATE_GEO = -3;
+      return ERR_CREATE_GEO;
+    }
+
+    // get half from volume dimension
+    const xDim2 = Math.floor((this.m_xDim - 1) * 0.5);
+    const yDim2 = Math.floor((this.m_yDim - 1) * 0.5);
+    const zDim2 = Math.floor((this.m_zDim - 1) * 0.5);
+
+    // scale geo render vertices
+    const numVertices = geoRender.getNumVertices();
+    const vertices = geoRender.getVertices();
+    const COORDS_IN_VERTEX = 4;
+    const NUM_0 = 0;
+    const NUM_1 = 1;
+    const NUM_2 = 2;
+    for (let i = 0, i4 = 0; i < numVertices; i++, i4 += COORDS_IN_VERTEX) {
+      vertices[i4 + NUM_0] = xDim2 + xDim2 * vertices[i4 + NUM_0];
+      vertices[i4 + NUM_1] = yDim2 + yDim2 * vertices[i4 + NUM_1];
+      vertices[i4 + NUM_2] = zDim2 + zDim2 * vertices[i4 + NUM_2];
+    } // for (i) all vertices
+
+    // save render geo to obj file
+    const NEED_SAVE_INITIAL_GEO = false;
+    if (NEED_SAVE_INITIAL_GEO) {
+      const TEST_SAVE_INIT_GEO_FILE_NAME = 'geo_init.obj';
+      geoRender.saveGeoToObjFile(TEST_SAVE_INIT_GEO_FILE_NAME);
+    }
+
+    // Test save bounding sphere
+    const NEED_SAVE_BOUND_SPHERE = false;
+    if (NEED_SAVE_BOUND_SPHERE) {
+      const vMin = new THREE.Vector3();
+      const vMax = new THREE.Vector3();
+      ActiveVolume.getBoundingBox(this.m_xDim, this.m_yDim, this.m_zDim, this.m_pixelsSrc, vMin, vMax);
+      const geoSphere = new GeoRender();
+      const vCenter = new THREE.Vector3();
+      const vRad = new THREE.Vector3();
+      vCenter.x = (vMin.x + vMax.x) * 0.5;
+      vCenter.y = (vMin.y + vMax.y) * 0.5;
+      vCenter.z = (vMin.z + vMax.z) * 0.5;
+      vRad.x = (vMax.x - vMin.x) * 0.5;
+      vRad.y = (vMax.y - vMin.y) * 0.5;
+      vRad.z = (vMax.z - vMin.z) * 0.5;
+
+      const NUM_SEGM_HOR = 16;
+      const NUM_SEGM_VER = 8;
+      geoSphere.createFromEllipse(vCenter, vRad, NUM_SEGM_HOR, NUM_SEGM_VER);
+      const TEST_SAVE_BSPHERE_GEO_FILE_NAME = 'geo_bsph.obj';
+      geoSphere.saveGeoToObjFile(TEST_SAVE_BSPHERE_GEO_FILE_NAME);
+    }
+    let numPredSteps = this.getPredictedStepsForActiveVolumeUpdate();
+    const SOME_ADD_STEPS = 12;
+    numPredSteps += SOME_ADD_STEPS;
+
+    const strTypeArr = ['REMOVE_SKULL', 'CREATE_MASK'];
+    const strType = strTypeArr[createType];
+    console.log(`skullRemoveStart. Will be ${numPredSteps} updates approximately. In ${strType} mode `);
+
+    this.m_updateCounter = 0;
+    this.m_isFinished = false;
+    this.m_numPredSteps = numPredSteps;
+    this.m_createType = createType;
+    this.m_volTexSrc = volTexSrc;
+    this.m_volTexDst = volTexDst;
+    this.m_needLog = needLog;
+
+    return geoRender;
+  }
+  skullRemoveUpdate(geoRender) {
+    // for (this.m_updateCounter = 0; (this.m_updateCounter < numPredSteps) && !isFinished; this.m_updateCounter++) {
+    //   console.log(`skullRemove(${this.m_updateCounter})`);
+    //   this.updateGeo(geoRender, AV_METHOD_ALL);
+    //   isFinished = (this.m_state === AV_STATE_FINISHED);
+    // }
+    const isLoopComplete = (this.m_updateCounter >= this.m_numPredSteps) || this.m_isFinished;
+    if (isLoopComplete) {
+      return true;
+    }
+    this.updateGeo(geoRender, AV_METHOD_ALL);
+    this.m_isFinished = (this.m_state === AV_STATE_FINISHED);
+    this.m_updateCounter++;
+    return false;
+  }
+  skullRemoveStop(geoRender) {
+    // save geo render after all modification iterations
+    const NEED_SAVE_FINAL_GEO_RENDER = false;
+    if (NEED_SAVE_FINAL_GEO_RENDER) {
+      this.finalizeUpdatesGeo(geoRender, NEED_SAVE_FINAL_GEO_RENDER);
+    }
+    const NUM_2 = 2;
+
+    // Save smoothed image into file
+    const NEED_SAVE_NONCLIPPED_SLICE_BMP = false;
+    if (NEED_SAVE_NONCLIPPED_SLICE_BMP) {
+      const TEST_SAVE_VOL_FILE_NAME = 'test_nonclipped_slice.bmp';
+      const zSlice = Math.floor(this.m_zDim / NUM_2);
+      ActiveVolume.saveVolumeSliceToFile(this.m_pixelsSrc,
+        this.m_xDim, this.m_yDim, this.m_zDim, zSlice, TEST_SAVE_VOL_FILE_NAME);
+    }
+
+    // create clipped volume
+    // const resClip = VolumeClipper.clipVolumeByNonConvexGeo(this.m_pixelsSrc, this.m_xDim, this.m_yDim, this.m_zDim,
+    //   volTexDst, geoRender, createType);
+    // if (resClip < 0) {
+    //   console.log(`clipVolumeByNonConvexGeo returned ${resClip} !`);
+    // }
+
+    // let i;
+    // const numPixels = this.m_xDim * this.m_yDim * this.m_zDim;
+    // for (i = 0; i < numPixels; i++) {
+    //   volTexDst[i] = this.m_pixelsSrc[i];
+    // }
+
+    if (this.m_createType === ActiveVolume.REMOVE_SKULL) {
+      const numPixels = this.m_xDim * this.m_yDim * this.m_zDim;
+      const volMask = new Uint8Array(numPixels);
+
+      // create volume mask. 255: visible part, 0 - invisible
+      const WITH_FILL = 1;
+      const resFill = VolumeGenerator.generateFromFaces(this.m_xDim, this.m_yDim, this.m_zDim,
+        volMask,
+        geoRender,
+        WITH_FILL);
+      if (resFill < 0) {
+        console.log(`generateFromFaces returned ${resFill} !`);
+      }
+      // apply  volMask to volSrc
+      for (let i = 0; i < numPixels; i++) {
+        this.m_volTexDst[i] = (volMask[i] !== 0) ? this.m_volTexSrc[i] : 0;
+      }
+    } else if (this.m_createType === ActiveVolume.CREATE_MASK) {
+      // create volume mask. 255: visible part, 0 - invisible
+      const WITH_FILL = 1;
+      const resFill = VolumeGenerator.generateFromFaces(this.m_xDim, this.m_yDim, this.m_zDim,
+        this.m_volTexDst,
+        geoRender,
+        WITH_FILL);
+      if (resFill < 0) {
+        console.log(`generateFromFaces returned ${resFill} !`);
+      }
+    }
+
+    // save result for deep debug
+    const NEED_SAVE_CLIPPED_SLICE_BMP = false;
+    if (this.m_needLog && NEED_SAVE_CLIPPED_SLICE_BMP) {
+      const TEST_SLICE_SAVE_FILE_NAME = 'test_clipped_slice.bmp';
+      const zSlice = Math.floor(this.m_zDim / NUM_2);
+      ActiveVolume.saveVolumeSliceToFile(this.m_volTexDst,
+        this.m_xDim, this.m_yDim, this.m_zDim, zSlice, TEST_SLICE_SAVE_FILE_NAME);
+    }
+
+    /*
+    // Save clipped volume into KTX file
+    const NEED_SAVE_CLIPPED_VOLUME_KTX = false;
+    if (NEED_SAVE_CLIPPED_VOLUME_KTX) {
+      const ktxVol = new KtxLoader();
+      const xSize = this.m_xDim;
+      const ySize = this.m_yDim;
+      const zSize = this.m_zDim;
+      ktxVol.createFromMemory(this.m_xDim, this.m_yDim, this.m_zDim, volTexDst, xSize, ySize, zSize);
+      const TEST_CLIPPED_VOL_KTX_NAME = 'test_clipped.ktx';
+      ktxVol.writeFile(TEST_CLIPPED_VOL_KTX_NAME);
+    }
+    */
+    return +1;
+  }
+  /**
   * Remove skull
   * @param {number} xDim volume dimension on x
   * @param {number} yDim volume dimension on y
@@ -757,7 +968,6 @@ export default class ActiveVolume {
     }
 
     // perform itertaions: update geo
-    let isFinished = false;
     let numPredSteps = this.getPredictedStepsForActiveVolumeUpdate();
     const SOME_ADD_STEPS = 12;
     numPredSteps += SOME_ADD_STEPS;
@@ -766,6 +976,7 @@ export default class ActiveVolume {
     const strType = strTypeArr[createType];
     console.log(`skullRemove. Will be ${numPredSteps} updates approximately. In ${strType} mode `);
 
+    let isFinished = false;
     if (numPredSteps > 0) {
       for (this.m_updateCounter = 0; (this.m_updateCounter < numPredSteps) && !isFinished; this.m_updateCounter++) {
         //if (needLogPrintf) {
@@ -843,6 +1054,7 @@ export default class ActiveVolume {
         this.m_xDim, this.m_yDim, this.m_zDim, zSlice, TEST_SLICE_SAVE_FILE_NAME);
     }
 
+    /*
     // Save clipped volume into KTX file
     const NEED_SAVE_CLIPPED_VOLUME_KTX = false;
     if (NEED_SAVE_CLIPPED_VOLUME_KTX) {
@@ -854,6 +1066,7 @@ export default class ActiveVolume {
       const TEST_CLIPPED_VOL_KTX_NAME = 'test_clipped.ktx';
       ktxVol.writeFile(TEST_CLIPPED_VOL_KTX_NAME);
     }
+    */
     return +1;
   } // skullRemove
   static getBoundingBox(xDim, yDim, zDim, volTexSrc, vMin, vMax) {
@@ -1856,6 +2069,7 @@ export default class ActiveVolume {
 
     const DEEP_ERR_DEBUG = false;
     if (DEEP_ERR_DEBUG) {
+      const VERTICES_UNIFORMITY = 1024;
       console.log(`Iters errAve = ${errAve} < ${DIF_VERTICES_LIMIT}. aveUni = ${aveUni} < ${VERTICES_UNIFORMITY}`);
     }
     return false;

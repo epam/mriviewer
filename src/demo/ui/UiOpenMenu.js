@@ -111,7 +111,7 @@ class UiOpenMenu extends React.Component {
     const store = this.props;
     const uiapp = store.uiApp;
     if (ratioPrc === 0) {
-      uiapp.doShowProgressBar();
+      uiapp.doShowProgressBar('Loading...');
     }
     if (ratioPrc >= 99) {
       // console.log(`callbackReadProgress. hide on = ${ratio01}`);
