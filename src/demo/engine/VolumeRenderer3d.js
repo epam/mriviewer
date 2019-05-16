@@ -1175,7 +1175,7 @@ export default class VolumeRenderer3d {
         this.renderer.clear();
         this.renderer.state.buffers.depth.setClear(1);
         // render clip plane without depth test
-        //this.renderer.render(this.sceneClipPlane, this.camera, this.ffTexture);
+        this.renderer.render(this.sceneClipPlane, this.camera, this.ffTexture);
         // enable test again
         this.scene.overrideMaterial = this.matFF;
         this.renderer.render(this.scene, this.camera, this.ffTexture);
@@ -1199,8 +1199,8 @@ export default class VolumeRenderer3d {
         // Render wireframe mesh
         this.renderer.autoClearDepth = false;
         //this.matWireFrame
-        this.scene.overrideMaterial = this.matWireFrame;
-        this.renderer.render(this.scene, this.camera);
+        //this.scene.overrideMaterial = this.matWireFrame;
+        //this.renderer.render(this.scene, this.camera);
         //this.renderer.render(this.sceneSphereWireFrame, this.camera);
         this.renderer.autoClearDepth = true;
       }
