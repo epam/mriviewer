@@ -36,6 +36,7 @@ class UiFilterMenu extends React.Component {
   constructor(props) {
     super(props);
     this.onButtonLungsSeg = this.onButtonLungsSeg.bind(this);
+    this.onLungsFillerCallback = this.onLungsFillerCallback.bind(this);
     this.onButtonDetectBrain = this.onButtonDetectBrain.bind(this);
     this.onSkullRemoveCallback = this.onSkullRemoveCallback.bind(this);
     //this.callbackProgressFun = this.callbackProgressFun.bind(this);
@@ -60,12 +61,56 @@ class UiFilterMenu extends React.Component {
   onButtonLungsSeg() {
     //evt.preventDefault();
     const store = this.props;
-    const lungsFiller = new LungsFillTool(store.volume);
+    const vol = store.volume;
+    if ((vol === undefined) || (vol === null)) {
+      console.log('onButtonDetectBrain: no volume!');
+      return;
+    }
+    const xDim = vol.m_xDim;
+    const yDim = vol.m_yDim;
+    const zDim = vol.m_zDim;
+    if (xDim * yDim * zDim < 1) {
+      console.log(`onButtonDetectBrain: bad volume! dims = ${xDim}*${yDim}*${zDim}`);
+      return;
+    }
+    const ONE = 1;
+    if (vol.m_bytesPerVoxel !== ONE) {
+      console.log('onButtonDetectBrain: supported only 1bpp volumes');
+      return;
+    }
+    this.lungsFiller = new LungsFillTool(store.volume);
     //const callbackProgress = this.callbackProgressFun;
     //lungsFiller.run(callbackProgress);
-    lungsFiller.run();
-    store.graphics2d.renderScene();
+    const uiApp = store.uiApp;
+    uiApp.doShowProgressBar('lungsFiller...');
+    uiApp.doSetProgressBarRatio(0.0);
+    const SK_REM_DELAY_MSEC = 200;
+    this.m_timerId = setTimeout(this.onLungsFillerCallback, SK_REM_DELAY_MSEC);
     //store.volumeRenderer.volumeUpdater.createUpdatableVolumeTex(store.volume, false, null);
+  }
+  onLungsFillerCallback() {
+    const store = this.props;
+    const ratioUpdate = this.lungsFiller.m_ratioUpdate;
+    console.log(`onLungsFillerCallback: iter counter = ${ratioUpdate}`);
+    const uiApp = store.uiApp;
+    uiApp.doSetProgressBarRatio(ratioUpdate);
+
+    const isFinished = this.lungsFiller.run();
+ 
+    if (isFinished) {
+      console.log('`onSkullRemoveCallback: iters finished!');
+      uiApp.doHideProgressBar();
+      clearInterval(this.m_timerId);
+      this.m_timerId = 0;
+      store.graphics2d.renderScene();
+    }
+    // update render
+    store.graphics2d.forceUpdate();
+    // next update timer
+    if (!isFinished) {
+      const SK_REM_DELAY_MSEC = 200;
+      this.m_timerId = setTimeout(this.onLungsFillerCallback, SK_REM_DELAY_MSEC);
+    }
   }
   onButtonDetectBrain() {
     // get globals

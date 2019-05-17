@@ -31,6 +31,7 @@ export default class LungsFillTool {
     this.m_volTexMask = new Uint8Array(this.m_xDim * this.m_yDim * this.m_zDim);
     this.m_volTexMask1 = new Uint8Array(this.m_xDim * this.m_yDim * this.m_zDim);
     this.m_volTexMask2 = new Uint8Array(this.m_xDim * this.m_yDim * this.m_zDim);
+    this.m_ratioUpdate = 0;
   }
   detectNonEmptyBox(pixelsSrc, xDim, yDim, zDim) {
     const MIN_VAL_BARRIER = 8;
@@ -164,37 +165,61 @@ export default class LungsFillTool {
     }
   }
   run() {
-    let resFind = 0;
-    const vSeed = { x: 0, y: 0, z: 0 };
-    const seedPoints = new SeedPoints(this.m_volTexSrc, this.m_xDim, this.m_yDim, this.m_zDim);
-    resFind = seedPoints.findSeedPointOnCentralSlice(vSeed);
-    if (resFind) {
-      console.log('Lungs Central fill run: seed point not found');
-      return resFind;
-    }
     const xyzDim = this.m_xDim * this.m_yDim * this.m_zDim;
-    // copy dst volume before fill
-    for (let i = 0; i < xyzDim; i++) {
-      this.m_volTexMask[i] = this.m_volTexSrc[i];
+    const VIS = 255;
+    if (this.m_ratioUpdate === 0) {
+      this.vSeed = { x: 0, y: 0, z: 0 };
+      let resFind = 0;
+      this.seedPoints = new SeedPoints(this.m_volTexSrc, this.m_xDim, this.m_yDim, this.m_zDim);
+      resFind = this.seedPoints.findSeedPointOnCentralSlice(this.vSeed);
+      if (resFind) {
+        console.log('Lungs Central fill run: seed point not found');
+        return resFind;
+      }
+      // copy dst volume before fill
+      for (let i = 0; i < xyzDim; i++) {
+        this.m_volTexMask[i] = this.m_volTexSrc[i];
+      }
+      this.m_ratioUpdate = 20;
+      return false;
     }
-    const valThreshold = TOO_MIN_VAL;
-    const fillTool = new FloodFillTool();
-    fillTool.floodFill3dThreshold(this.m_xDim, this.m_yDim, this.m_zDim, this.m_volTexMask, vSeed, valThreshold);
+    if (this.m_ratioUpdate === 20) {
+      const valThreshold = TOO_MIN_VAL;
+      this.fillTool = new FloodFillTool();
+      this.fillTool.floodFill3dThreshold(this.m_xDim, this.m_yDim, this.m_zDim, this.m_volTexMask, this.vSeed, valThreshold);
+      this.m_ratioUpdate = 50;
+      return false;
+    }
     //now this.m_volTexMask = 255, if lung, else = this.m_volTexSrc[i];  
     // copy only filled with 255 pixels back and scale them to [0.255]
-    let x;
-    const VIS = 255;
-    const SCALE = VIS / TOO_MIN_VAL;
-    if (!this.VESSEL) {
-      // not detect blood vessels
-      for (x = 0; x < xyzDim; x++) {
-        let val = 0;
-        if (this.m_volTexMask[x] === VIS) {
-          val = Math.floor(this.m_volTexSrc[x] * SCALE);
+    if (this.m_ratioUpdate === 50) {
+      let x;
+      const VIS = 255;
+      const SCALE = VIS / TOO_MIN_VAL;
+      if (!this.VESSEL) {
+        // not detect blood vessels
+        for (x = 0; x < xyzDim; x++) {
+          let val = 0;
+          if (this.m_volTexMask[x] === VIS) {
+            val = Math.floor(this.m_volTexSrc[x] * SCALE);
+          }
+          this.m_volTexSrc[x] = val;
         }
-        this.m_volTexSrc[x] = val;
+      } else {
+        // additional detect blood vessels
+        for (x = 0; x < xyzDim; x++) {
+          let val = 0;
+          if (this.m_volTexMask[x] === VIS) {
+            val = VIS;
+          }
+          this.m_volTexMask[x] = val;
+        }
       }
-    } else {
+      this.m_ratioUpdate = 80;
+      return false;
+    }
+    if (this.m_ratioUpdate === 80) {
+      let x;
       // additional detect blood vessels
       for (x = 0; x < xyzDim; x++) {
         let val = 0;
@@ -214,17 +239,21 @@ export default class LungsFillTool {
         this.m_volTexMask1[i] = this.m_volTexSrc[i];
       }
       // airway to this.m_volTexMask1  
-      resFind = seedPoints.findSeedPointOnFirstSlice(vSeed);
+      const resFind = this.seedPoints.findSeedPointOnFirstSlice(this.vSeed);
       if (resFind) {
         console.log('Airway fill run: seed point not found');
         return resFind;
       }
-      let minv = vSeed.z;
-      vSeed.z = 2;
-      console.log(`Airway fill run: seed point: ${vSeed.x} ${vSeed.y} ${minv}`);
-      fillTool.floodFill3dThreshold(this.m_xDim, this.m_yDim, this.m_zDim, this.m_volTexMask1, vSeed, minv);
+      this.minv = this.vSeed.z;
+      this.vSeed.z = 2;
+      console.log(`Airway fill run: seed point: ${this.vSeed.x} ${this.vSeed.y} ${this.minv}`);
+      this.m_ratioUpdate = 90;
+      return false;
+    }
+    if (this.m_ratioUpdate === 90) {
+      this.fillTool.floodFill3dThreshold(this.m_xDim, this.m_yDim, this.m_zDim, this.m_volTexMask1, this.vSeed, this.minv);
       const HALF = 128.0;
-      for (x = 0; x < xyzDim; x++) {
+      for (let x = 0; x < xyzDim; x++) {
         let val = 0.5 * this.m_volTexMask[x];//0;
         if (this.m_volTexMask2[x] - this.m_volTexMask[x] === VIS) {
           val = HALF + this.m_volTexSrc[x];//0.5 + this.m_srcData;VIS; this.m_volTexSrc[x];this.m_srcData
@@ -235,7 +264,7 @@ export default class LungsFillTool {
         this.m_volTexSrc[x] = val;
       }
     }
-    return LungsFillTool.RESULT_COMPLETED;
+    return true;
   }
 }
 // errors
