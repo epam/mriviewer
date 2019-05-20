@@ -104,6 +104,12 @@ class BrowserDetector {
         this.m_isMobileBrowser = true;
       }
     } // for
+    // detect mobiu browser by window size
+    const MIN_W = 800;
+    const MIN_H = 600;
+    if ((window.innerWidth <= MIN_W) || (window.innerHeight <= MIN_H) ) {
+      this.m_isMobileBrowser = true;
+    }
     if (this.m_isMobileBrowser) {
       // console.log('Mobile browser detected! App can be slow');
       console.log(`MobileBrowserDetector. ${strTitleFinal}. App can be slow due to detected mobile browser`);
