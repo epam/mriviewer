@@ -15,6 +15,7 @@ import 'nouislider/distribute/nouislider.css';
 import React from 'react';
 import { connect } from 'react-redux';
 import { ListGroup, ButtonGroup, Button } from 'react-bootstrap';
+import { Container, Card, Row, Col } from 'react-bootstrap';
 
 //import Nouislider from 'react-nouislider';
 
@@ -107,39 +108,50 @@ class UiCtrl3dLight extends React.Component {
     const store = this.props;
     const mode3d = store.mode3d;
 
-    const strClass = 'btn btn-info';
-    //const strClass = 'btn btn-secondary';
-    const strA = strClass + ((mode3d === Modes3d.ISO) ? ' active' : '');
-    const strB = strClass + ((mode3d === Modes3d.RAYCAST) ? ' active' : '');
-    const strC = strClass + ((mode3d === Modes3d.RAYFAST) ? ' active' : '');
-    const strD = strClass + ((mode3d === Modes3d.EREASER) ? ' active' : '');
-
-    // console.log(`UiCtr3dLight. render. flags = ${bCheckedSag}+${bCheckedCor}+${bCheckedTra}`);
-
-    // btn-default active
+    const strA = (mode3d === Modes3d.ISO) ? 'active' : '';
+    const strB = (mode3d === Modes3d.RAYCAST) ? 'active' : '';
+    const strC = (mode3d === Modes3d.RAYFAST) ? 'active' : '';
+    const strD = (mode3d === Modes3d.ERASER) ? 'active' : '';
 
     const jsxRenderControls =
-      <div >
-        <div className="card">
-          <div className="card-body">
-            <div className="btn-group btn-block">
-              <button type="button" className={strA} onClick={this.onModeA} >
-                Isosurface
-              </button>
-              <button type="button" className={strB} onClick={this.onModeB}  >
-                VolumeRender
-              </button>
-              <button type="button" className={strC} onClick={this.onModeC} >
-                MaxProjection
-              </button>
-              <button type="button" className={strD} onClick={this.onModeD} >
-                Eraser
-              </button>
-            </div>
-          </div>
-        </div>
-        <UiTF/>
-      </div>
+      <Container>
+        <Card>
+          <Card.Body>
+            <Container>
+              <Row>
+
+                <Col>
+                  <Button variant="info" className={strA} onClick={this.onModeA}  >
+                    Isosurface
+                  </Button>
+                </Col>
+
+                <Col>
+                  <Button variant="info" className={strB} onClick={this.onModeB} >
+                    VolumeRender
+                  </Button>
+                </Col>
+
+                <Col>
+                  <Button variant="info" className={strC} onClick={this.onModeC} >
+                    MaxProjection
+                  </Button>
+                </Col>
+
+                <Col>
+                  <Button variant="info" className={strD} onClick={this.onModeD} >
+                    Eraser
+                  </Button>
+                </Col>
+
+              </Row>
+            </Container>
+
+          </Card.Body>
+        </Card>
+        <UiTF />
+      </Container>
+
     const jsxROI =
       <ListGroup as="ul" variant="flush">
         <ListGroup.Item as="li">
@@ -173,3 +185,4 @@ class UiCtrl3dLight extends React.Component {
 }
 
 export default connect(store => store)(UiCtrl3dLight);
+

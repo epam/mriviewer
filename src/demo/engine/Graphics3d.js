@@ -184,6 +184,54 @@ class Graphics3d extends React.Component {
       this.m_volumeRenderer3D.onMouseWheel(e);
     }
   }
+  onClick(evt) {
+    evt.stopPropagation();
+  }
+  onTouchStart(evt) {
+    if ((this.m_mount !== undefined) && (this.m_mount !== null)) {
+      // evt.preventDefault();
+      const touches = evt.changedTouches;
+      const numTouches = touches.length;
+      if (numTouches >= 2) {
+        console.log(`onTouchStart. numTouches == 2`);
+      }
+      if (numTouches >= 1) {
+        const box = this.m_mount.getBoundingClientRect();
+        // const containerX = evt.clientX - box.left;
+        // const containerY = evt.clientY - box.top;
+        const x = touches[numTouches - 1].pageX - box.left;
+        const y = touches[numTouches - 1].pageY - box.top;
+        // console.log(`onTouchStart. start at ${x}, ${y}`);
+        if (this.m_volumeRenderer3D !== null) {
+          this.m_volumeRenderer3D.onMouseDown(x, this.state.hRender - y, this.props.ereaseStart);
+        }
+      }
+    }
+  }
+  onTouchMove(evt) {
+    if ((this.m_mount !== undefined) && (this.m_mount !== null)) {
+      // evt.preventDefault();
+      const touches = evt.changedTouches;
+      const numTouches = touches.length;
+      if (numTouches >= 2) {
+        console.log(`onTouchStart. numTouches == 2`);
+      }
+      if (numTouches >= 1) {
+        const box = this.m_mount.getBoundingClientRect();
+        const x = touches[numTouches - 1].pageX - box.left;
+        const y = touches[numTouches - 1].pageY - box.top;
+        // console.log(`onTouchMove. move at ${x}, ${y}`);
+        if (this.m_volumeRenderer3D !== null) {
+          this.m_volumeRenderer3D.onMouseMove(x, this.state.hRender - y, this.props.ereaseStart);
+        }
+      }
+    }
+  }
+  onTouchEnd() {
+    if (this.m_volumeRenderer3D !== null) {
+      this.m_volumeRenderer3D.onMouseUp();
+    }
+  }
   /**
    * Main component render func callback
    */
@@ -256,6 +304,10 @@ class Graphics3d extends React.Component {
       onMouseMove={this._onMouseMove.bind(this)} 
       onMouseDown={this._onMouseDown.bind(this)} 
       onMouseUp={this._onMouseUp.bind(this)} 
+      onTouchStart={this.onTouchStart.bind(this)}
+      onTouchEnd={this.onTouchEnd.bind(this)}
+      onTouchMove={this.onTouchMove.bind(this)}
+      onClick={this.onClick.bind(this)}
       onWheel={this._onWheel.bind(this)} />
     const jsxCanvasSized = <div
       width={this.state.wRender} height={this.state.hRender}
@@ -263,6 +315,12 @@ class Graphics3d extends React.Component {
       onMouseMove={this._onMouseMove.bind(this)} 
       onMouseDown={this._onMouseDown.bind(this)} 
       onMouseUp={this._onMouseUp.bind(this)} 
+      onTouchStart={this.onTouchStart.bind(this)}
+      onTouchEnd={this.onTouchEnd.bind(this)}
+      onTouchMove={this.onTouchMove.bind(this)}
+      onClick={this.onClick.bind(this)}
+      overflow={'hidden'}
+      position={'fixed'}
       onWheel={this._onWheel.bind(this)} />
     const jsx = (this.state.wRender > 0) ? jsxCanvasSized : jsxCanvasNonSized;
     return jsx;

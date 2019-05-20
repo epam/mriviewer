@@ -13,6 +13,7 @@
 import 'nouislider/distribute/nouislider.css';
 import React from 'react';
 import { connect } from 'react-redux';
+import { ListGroup } from 'react-bootstrap';
 
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
@@ -140,23 +141,24 @@ class UiTF extends React.Component {
     };
     */
     const jsxVolumeTF =
-          <div>
-            <li className="list-group-item">
-              <UiHistogram volume={vol} transfFunc={funcTra} />
-            </li>
-            <li className="list-group-item">
-              <p> Set </p>
-              <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
-                range={{ min: 0.0, max: 1.0 }}
-                start={wArr} connect={[false, true, false, true]} step={0.02} tooltips={true} />
-            </li>
-            <li className="list-group-item">
-              <p> Opacity </p>
-              <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
-                range={{ min: 0.0, max: 1.0 }}
-                start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true} />
-            </li>
-          </div>
+    <ListGroup>
+      <ListGroup.Item>
+        <UiHistogram volume={vol} transfFunc={funcTra} />
+      </ListGroup.Item>
+      <ListGroup.Item>
+        <p> Set </p>
+        <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
+          range={{ min: 0.0, max: 1.0 }}
+          start={wArr} connect={[false, true, false, true]} step={0.02} tooltips={true} />
+      </ListGroup.Item>
+      <ListGroup.Item>
+        <p> Opacity </p>
+        <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
+          range={{ min: 0.0, max: 1.0 }}
+          start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true} />
+      </ListGroup.Item>
+    </ListGroup>;
+
     const jsxIsoTF =
       <ul className="list-group">
         <li className="list-group-item">

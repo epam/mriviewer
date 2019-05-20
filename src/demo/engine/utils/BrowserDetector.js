@@ -116,7 +116,10 @@ class BrowserDetector {
       });
       */
     }
-    return ((!this.m_isMobileBrowser) && isValidBrowserType);
+    if (!this.m_isMobileBrowser) {
+      return isValidBrowserType;
+    }
+    return true;
   } // check
 } // class BrowserDetector
 
