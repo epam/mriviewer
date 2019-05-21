@@ -11,7 +11,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 
 import UiCtrl3dLight from './UiCtrl3dLight';
 import UiCtrl3d from './UiCtrl3d';
@@ -97,43 +97,41 @@ class UiMain3dLight extends React.Component {
 
 
     const jsxMain3dLight = 
-      <Container>
-        <Row>
-          <Col xs={12} sm={12} md lg xl="4">
-            {jsxRet}
-            <ListGroup as="ul" variant="flush">
-              <ListGroup.Item>
-                <p> Brightness </p>
-                <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={'sliderBrightness'}
-                  range={{ min: 0.0, max: 1.0 }}
-                  overflow-scroll={'true'}
-                  start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true} />
-              </ListGroup.Item>
+      <Row>
+        <Col xs={12} sm md lg={4}  >
+          {jsxRet}
+          <ListGroup as="ul" variant="flush">
+            <ListGroup.Item>
+              <p> Brightness </p>
+              <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={'sliderBrightness'}
+                range={{ min: 0.0, max: 1.0 }}
+                overflow-scroll={'true'}
+                start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true} />
+            </ListGroup.Item>
 
-              <ListGroup.Item>
-                <p> Cut </p>
-                <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={'sliderCut'}
-                  range={{ min: 0.0, max: 1.0 }}
-                  overflow-scroll={'true'}
-                  start={wArrCut} connect={[false, false]} step={0.01} tooltips={true} />
-              </ListGroup.Item>
+            <ListGroup.Item>
+              <p> Cut </p>
+              <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={'sliderCut'}
+                range={{ min: 0.0, max: 1.0 }}
+                overflow-scroll={'true'}
+                start={wArrCut} connect={[false, false]} step={0.01} tooltips={true} />
+            </ListGroup.Item>
 
-              <ListGroup.Item>
-                <p> Quality </p>
-                <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={'sliderQuality'}
-                  range={{ min: 0.0, max: 1.0 }}
-                  overflow-scroll={'true'}
-                  start={wArrQuality} connect={[false, false]} step={0.02} tooltips={true} />
-              </ListGroup.Item>
+            <ListGroup.Item>
+              <p> Quality </p>
+              <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={'sliderQuality'}
+                range={{ min: 0.0, max: 1.0 }}
+                overflow-scroll={'true'}
+                start={wArrQuality} connect={[false, false]} step={0.02} tooltips={true} />
+            </ListGroup.Item>
 
-            </ListGroup>
+          </ListGroup>
 
-          </Col>
-          <Col xs={12} sm={12} md lg xl="8" style={strMinHeight} overflow={'hidden'} position={'fixed'} >
-            <Graphics3d  />
-          </Col>
-        </Row>
-      </Container>;
+        </Col>
+        <Col xs={12} sm md lg={8} style={strMinHeight}  >
+          <Graphics3d  />
+        </Col>
+      </Row> ; 
     
     return jsxMain3dLight;
   };
