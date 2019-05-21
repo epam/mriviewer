@@ -120,29 +120,21 @@ class UiCtrl3dLight extends React.Component {
             <Container>
               <Row>
 
-                <Col>
-                  <Button variant="info" className={strA} onClick={this.onModeA}  >
-                    Isosurface
-                  </Button>
-                </Col>
+                <Button variant="info" className={strA} onClick={this.onModeA}  >
+                  Isosurface
+                </Button>
 
-                <Col>
-                  <Button variant="info" className={strB} onClick={this.onModeB} >
-                    VolumeRender
-                  </Button>
-                </Col>
+                <Button variant="info" className={strB} onClick={this.onModeB} >
+                  VolumeRender
+                </Button>
 
-                <Col>
-                  <Button variant="info" className={strC} onClick={this.onModeC} >
-                    MaxProjection
-                  </Button>
-                </Col>
+                <Button variant="info" className={strC} onClick={this.onModeC} >
+                  MaxProjection
+                </Button>
 
-                <Col>
-                  <Button variant="info" className={strD} onClick={this.onModeD} >
-                    Eraser
-                  </Button>
-                </Col>
+                <Button variant="info" className={strD} onClick={this.onModeD} >
+                  VolumeEraser
+                </Button>
 
               </Row>
             </Container>

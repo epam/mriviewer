@@ -189,7 +189,7 @@ class UiTF extends React.Component {
     const jsxEreaser =
       <div className="card">
         <div className="card-header">
-          Press Start + Mouse Down [+ Mouse Move] for erease
+          Press Control + Mouse Down [+ Mouse Move] for erease
         </div>
         <ul className="list-group list-group-flush">
           <li className="list-group-item">
@@ -211,12 +211,6 @@ class UiTF extends React.Component {
               start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true} />
           </li>
           <li className="list-group-item">
-            <button type="button" className={'btn btn-outline-dark'} onClick={this.onStartEr} >
-              Start
-            </button>
-            <button type="button" className={'btn btn-outline-dark'} onClick={this.onStopEr} >
-              Stop
-            </button>
             <button type="button" className={'btn btn-outline-dark'} onClick={this.onUndo} >
               Undo
             </button>

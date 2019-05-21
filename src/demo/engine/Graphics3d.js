@@ -241,6 +241,9 @@ class Graphics3d extends React.Component {
     if (key === 'Control') {
       //console.log(`Pressed key = ${key}`);
       console.log('Ctrl key was pressed');
+      const store = this.props;
+      store.volumeRenderer.setEraserStart(true);
+  
     }
   }
   onKeyUp(evt) {
@@ -248,6 +251,8 @@ class Graphics3d extends React.Component {
     if (key === 'Control') {
       //console.log(`Pressed key = ${key}`);
       console.log('Ctrl key was released');
+      const store = this.props;
+      store.volumeRenderer.setEraserStart(false);
     }
   }
   /**
