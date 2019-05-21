@@ -319,8 +319,6 @@ class Graphics3d extends React.Component {
       onTouchEnd={this.onTouchEnd.bind(this)}
       onTouchMove={this.onTouchMove.bind(this)}
       onClick={this.onClick.bind(this)}
-      overflow={'hidden'}
-      position={'fixed'}
       onWheel={this._onWheel.bind(this)} />
     const jsx = (this.state.wRender > 0) ? jsxCanvasSized : jsxCanvasNonSized;
     return jsx;
