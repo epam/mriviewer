@@ -618,6 +618,10 @@ class LoaderDicom{
   volDst.m_boxSize.y = this.m_boxSize.y;
   volDst.m_boxSize.z = this.m_boxSize.z;
 
+  volDst.m_patientName = this.m_dicomInfo.m_patientName;
+  volDst.m_patientBirth = this.m_dicomInfo.m_patientDateOfBirth;
+  volDst.m_seriesDescription = this.m_dicomInfo.m_seriesDescription;
+
   return LoadResult.SUCCESS;
 } // createVolumeFromSlices
 
@@ -1236,6 +1240,14 @@ class LoaderDicom{
       }
     }
     // dicom info
+    if ((tag.m_group === TAG_SERIES_DESCRIPTION[0]) && (tag.m_element === TAG_SERIES_DESCRIPTION[1]) &&
+      (tag.m_value !== null)) {
+      const dataLen = tag.m_value.byteLength;
+      const dv = new DataView(tag.m_value);
+      const strDescr = LoaderDicom.getStringAt(dv, 0, dataLen);
+      // console.log(`DicomLoader. Series descr = ${strDescr}`);
+      this.m_dicomInfo.m_seriesDescription = strDescr;
+    }
     if ((tag.m_group === TAG_PATIENT_NAME[0]) && (tag.m_element === TAG_PATIENT_NAME[1]) &&
       (tag.m_value !== null)) {
       const dataLen = tag.m_value.byteLength;

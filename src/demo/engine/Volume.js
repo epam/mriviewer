@@ -43,6 +43,9 @@ class Volume extends React.Component {
     this.m_boxSize = {
       x: 0.0, y: 0.0, z: 0.0
     };
+    this.m_patientName = '';
+    this.m_patientBirth = '';
+    this.m_seriesDescription = '';
   }
   createEmptyBytesVolume(xDim, yDim, zDim) {
     this.m_xDim = xDim;

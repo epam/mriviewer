@@ -170,6 +170,25 @@ class Graphics2d extends React.Component {
       zSize.toString();
     ctx.fillText(strMsg, xText, yText);
     yText += FONT_SZ;
+
+    const patName = vol.m_patientName;
+    if (patName.length > 1) {
+      strMsg = 'patient name = ' + patName; 
+      ctx.fillText(strMsg, xText, yText);
+      yText += FONT_SZ;
+    }
+    const patBirth = vol.m_patientBirth;
+    if (patBirth.length > 1) {
+      strMsg = 'patient birth = ' + patBirth;
+      ctx.fillText(strMsg, xText, yText);
+      yText += FONT_SZ;
+    }
+    const seriesDescr = vol.m_seriesDescription;
+    if (seriesDescr.length > 1) {
+      strMsg = 'series descr = ' + seriesDescr;
+      ctx.fillText(strMsg, xText, yText);
+      yText += FONT_SZ;
+    }
       
   }
   renderScene() {

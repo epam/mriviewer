@@ -28,9 +28,10 @@ under the License.
 export default class DicomInfo {
   constructor() {
     this.m_patientName = '';
+    this.m_patientDateOfBirth = '';
+    this.m_seriesDescription = '';
     this.m_patientId = '';
     this.m_patientGender = '';
-    this.m_patientDateOfBirth = '';
     this.m_studyDate = '';
     this.m_acquisionTime = '';
     this.m_institutionName = '';
