@@ -39,7 +39,8 @@ class UiTF extends React.Component {
     this.offAO = this.offAO.bind(this);
     this.onStartEr = this.onStartEr.bind(this);
     this.onStopEr = this.onStopEr.bind(this);
-    this.onUndo = this.onUndo.bind(this);
+    this.onUndo = this.onUndo.bind(this); 
+    this.onSave = this.onSave.bind(this); 
   }
   onAO() {
     const store = this.props;
@@ -63,6 +64,8 @@ class UiTF extends React.Component {
     store.volumeRenderer.undoEraser();
   }
   onSave() {
+    const store = this.props;
+    store.volumeRenderer.volumeUpdater.updateVolumeTextureWithMask();
     console.log(`onSave`);
   }
   onChangeSliderTF() {

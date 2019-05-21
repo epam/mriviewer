@@ -78,7 +78,12 @@ class UiModalSaveNifti extends React.Component {
       pixdim2: yBox / yDim,
       pixdim3: zBox / zDim,
     };
-    const volData = vol.m_dataArray;
+    let volData = vol.m_dataArray;
+    const bufferR = store.volumeRenderer.volumeUpdater.bufferR; 
+    if ( bufferR !== null ) {
+      volData = bufferR;
+    };
+
     const niiArr = SaverNifti.writeBuffer(volData, volSize);
     const textToSaveAsBlob = new Blob([niiArr], { type: 'application/octet-stream' });
     const textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);

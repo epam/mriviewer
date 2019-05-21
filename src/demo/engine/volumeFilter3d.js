@@ -123,6 +123,30 @@ export default class VolumeFilter3d {
     this.setVolumeTextureWebGL2(blurSigma);
     this.updatableTexture.needsUpdate = true;
   }
+  updateVolumeTextureWithMask() {
+    if (this.eraser.bufferMask === null){
+      console.log('volTextureMask null');
+    }
+    for (let z = 0; z < this.zDim; z++) {
+      const zVolOff = z * this.xDim * this.yDim;
+      for (let y = 0; y < this.yDim; y++) {
+        const yVol = y;
+        const yVolOff = yVol * this.xDim;
+        for (let x = 0; x < this.xDim; x++) {
+          const xVol = x;
+          const offSrc = (xVol + yVolOff + zVolOff);
+          let valInt = this.arrPixels[offSrc];
+          const offDst = offSrc;
+          if (this.zDim > 5 && (z === 0 || z === this.zDim - 1) || this.eraser.bufferMask[offSrc] === 0) {
+            valInt = 0;
+          }
+          this.bufferR[offDst] = valInt;
+        }
+      }
+    }
+    this.origVolumeTex.needsUpdate = true;
+    this.setVolumeTexture(1.0);
+  }
   setVolumeTextureWebGL2(blurSigma) {
     this.material.uniforms.blurSigma.value = blurSigma;
     this.material.uniforms.blurSigma.needsUpdate = true;
