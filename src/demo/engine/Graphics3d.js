@@ -41,6 +41,8 @@ class Graphics3d extends React.Component {
     this.animate = this.animate.bind(this);
     this.renderScene = this.renderScene.bind(this);
     this.setVolRenderToStore = this.setVolRenderToStore.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
+    this.onKeyUp = this.onKeyUp.bind(this);
 
     this.m_mount = null;
     this.m_volumeRenderer3D = null;
@@ -146,6 +148,8 @@ class Graphics3d extends React.Component {
       this.isLoaded = true;
     }
     this.start();
+    // setup keyboard
+    this.m_mount.focus();
   }
   componentWillUnmount() {
     this.stop()
@@ -230,6 +234,20 @@ class Graphics3d extends React.Component {
   onTouchEnd() {
     if (this.m_volumeRenderer3D !== null) {
       this.m_volumeRenderer3D.onMouseUp();
+    }
+  }
+  onKeyDown(evt) {
+    const key = evt.key;
+    if (key === 'Control') {
+      //console.log(`Pressed key = ${key}`);
+      console.log('Ctrl key was pressed');
+    }
+  }
+  onKeyUp(evt) {
+    const key = evt.key;
+    if (key === 'Control') {
+      //console.log(`Pressed key = ${key}`);
+      console.log('Ctrl key was released');
     }
   }
   /**
@@ -319,6 +337,9 @@ class Graphics3d extends React.Component {
       onTouchEnd={this.onTouchEnd.bind(this)}
       onTouchMove={this.onTouchMove.bind(this)}
       onClick={this.onClick.bind(this)}
+      tabIndex="1"
+      onKeyDown={(evt) => this.onKeyDown(evt)}
+      onKeyUp={(evt) => this.onKeyUp(evt)}
       onWheel={this._onWheel.bind(this)} />
     const jsx = (this.state.wRender > 0) ? jsxCanvasSized : jsxCanvasNonSized;
     return jsx;
