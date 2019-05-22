@@ -1283,7 +1283,7 @@ export default class VolumeRenderer3d {
     this.renderState = this.RENDER_STATE.ENABLED;
     this.eraserMouseDown = true;
     if (this.isEraseMode && this.eraserStart) {
-      this.lockEraserBuffersUpdating = false;
+      this.lockEraserBuffersUpdating = true;
       this.volumeUpdater.eraser.eraseStart(xx, yy, this.windowWidth, this.matVolumeRender.uniforms.isoThreshold.value, true);
     }
   }

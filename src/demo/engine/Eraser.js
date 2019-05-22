@@ -197,9 +197,11 @@ export default class Eraser {
           this.lastTarget.push(new THREE.Vector3(targetX, targetY, targetZ));
           this.lastBackDistance.push(-Math.round(Math.abs(Math.tan(vDir.normalize().angleTo(normalGauss.normalize())))
             * (this.radius)));
-        } else {
-          this.resetflag = true;
-        }
+        } 
+        this.updatableTextureMask.needsUpdate = true;
+        
+      } else {
+        this.resetflag = false;
       }
     }
   }
