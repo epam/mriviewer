@@ -137,7 +137,7 @@ export default class VolumeFilter3d {
           const offSrc = (xVol + yVolOff + zVolOff);
           let valInt = this.arrPixels[offSrc];
           const offDst = offSrc;
-          if (this.zDim > 5 && (z === 0 || z === this.zDim - 1) || this.eraser.bufferMask[offSrc] === 0) {
+          if ((this.zDim > 5) && ((z === 0) || (z === this.zDim - 1) || (this.eraser.bufferMask[offSrc] === 0))) {
             valInt = 0;
           }
           this.bufferR[offDst] = valInt;

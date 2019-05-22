@@ -76,6 +76,9 @@ class UiCtrl2d extends React.Component {
       // console.log(`onSlider. val = ${val}`);
       const store = this.props;
       store.dispatch({ type: StoreActionType.SET_SLIDER_2D, slider2d: val });
+      // clear all 2d tools
+      const gra2d = store.graphics2d;
+      gra2d.clear();
     }
   }
   shouldComponentUpdate() {
