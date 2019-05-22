@@ -87,7 +87,12 @@ class UiModalSaveNifti extends React.Component {
     const niiArr = SaverNifti.writeBuffer(volData, volSize);
     const textToSaveAsBlob = new Blob([niiArr], { type: 'application/octet-stream' });
     const textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-    const fileName = this.state.text;
+    let fileName = this.state.text;
+    const goodSuffix = fileName.endsWith('.nii');
+    if (!goodSuffix) {
+      fileName = fileName.concat('.nii');
+    }
+    // console.log(`Save to file ${fileName}`);
 
     const downloadLink = document.createElement('a');
     downloadLink.download = fileName;
