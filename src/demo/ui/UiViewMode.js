@@ -102,7 +102,7 @@ class UiViewMode extends React.Component {
       viewMode = ModeView.VIEW_3D;
     }
 
-    const strMpr = (viewMode === ModeView.VIEW_MPR) ? ' active' : '';
+    // const strMpr = (viewMode === ModeView.VIEW_MPR) ? ' active' : '';
     const str2d = (viewMode === ModeView.VIEW_2D) ? ' active' : '';
     const str3dLight = (viewMode === ModeView.VIEW_3D_LIGHT) ? ' active' : '';
     const str3d = (viewMode === ModeView.VIEW_3D) ? ' active' : '';
