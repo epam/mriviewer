@@ -301,6 +301,12 @@ export default class LoaderKtx {
       console.log(`vBox = ${this.m_boxSize.x} * ${this.m_boxSize.y} * ${this.m_boxSize.z}`);
     }
 
+    volDst.m_bytesPerVoxel = bytesPerVoxel;
+    volDst.m_dataArray = this.m_dataArray;
+    volDst.m_dataSize = this.m_dataSize;
+    volDst.m_boxSize = this.m_boxSize;
+    console.log(`KTX Loaded successfully with dim = ${volDst.m_xDim}*${volDst.m_yDim}*${volDst.m_zDim}. bpp=${volDst.m_bytesPerVoxel}`);
+
     this.m_isLoadedSuccessfull = true;
     if (callbackProgress) {
       callbackProgress(1.0);
@@ -308,11 +314,7 @@ export default class LoaderKtx {
     if (callbackComplete) {
       callbackComplete(LoadResult.SUCCESS, this.m_header, this.m_dataSize, this.m_dataArray);
     }
-    volDst.m_bytesPerVoxel = bytesPerVoxel;
-    volDst.m_dataArray = this.m_dataArray;
-    volDst.m_dataSize = this.m_dataSize;
-    volDst.m_boxSize = this.m_boxSize;
-    console.log(`KTX Loaded successfully with dim = ${volDst.m_xDim}*${volDst.m_yDim}*${volDst.m_zDim}. bpp=${volDst.m_bytesPerVoxel}`);
+
     return true;
   } // end readFromBuffer
   /**

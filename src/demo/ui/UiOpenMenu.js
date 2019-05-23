@@ -58,10 +58,7 @@ class UiOpenMenu extends React.Component {
     this.onModalUrlShow = this.onModalUrlShow.bind(this);
     this.onModalUrlHide = this.onModalUrlHide.bind(this);
     this.onClickLoadUrl = this.onClickLoadUrl.bind(this);
-    this.onCompleteFromUrlKtx = this.onCompleteFromUrlKtx.bind(this);
-
-    this.onModalDropboxShow = this.onModalDropboxShow.bind(this);
-    this.onModalDropboxHide = this.onModalDropboxHide.bind(this);
+    this.callbackReadCompleteUrlKtx = this.callbackReadCompleteUrlKtx.bind(this);
 
     this.onModalDemoOpenShow = this.onModalDemoOpenShow.bind(this);
     this.onModalDemoOpenHide = this.onModalDemoOpenHide.bind(this);
@@ -76,7 +73,6 @@ class UiOpenMenu extends React.Component {
     this.state = {
       strUrl: '',
       showModalUrl: false,
-      showModalDropbox: false,
       showModalDemo: false,
     };
     this.m_volume = null;
@@ -98,12 +94,6 @@ class UiOpenMenu extends React.Component {
     store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
     store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
     store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
-  }
-  readCallbackComplete(errCode) {
-    if (errCode !== LoadResult.SUCCESS) {
-      const strErr = LoadResult.getResultString(errCode);
-      console.log(`readCallbackComplete. Bad result = ${errCode}: ${strErr}`);
-    }
   }
   callbackReadProgress(ratio01) {
     // console.log(`callbackReadProgress = ${ratio01}`);
@@ -379,30 +369,12 @@ class UiOpenMenu extends React.Component {
     this.setState({ strUrl: str }); 
     console.log(`onChangeUrlString. str = ${str}`)
   }
-  convertUrlToFileName(strUrl) {
-    const ind = strUrl.lastIndexOf('/');
-    if (ind > 0) {
-      const strRet = strUrl.substring(ind + 1);
-      return strRet;
-    } else {
-      console.log(`Strange URL: ${strUrl}`);
-      return '???';
-    }
-  }
-  onCompleteFromUrlKtx(codeResult, head, dataSize, dataArray) {
+  callbackReadCompleteUrlKtx(codeResult, head, dataSize, dataArray) {
     if (codeResult !== LoadResult.SUCCESS) {
       console.log(`onCompleteFromUrlKtx. Bad result: ${codeResult}`);
       return;
     }
-    const vol = new Volume();
-    vol.m_dataSize = dataSize;
-    vol.m_dataArray = dataArray;
-    vol.m_xDim = head.m_pixelWidth;
-    vol.m_yDim = head.m_pixelHeight;
-    vol.m_zDim = head.m_pixelDepth;
-    this.m_fileName = this.convertUrlToFileName(this.m_url);
-    this.finalizeSuccessLoadedVolume(vol, this.m_fileName);
-
+    this.finalizeSuccessLoadedVolume(this.m_vol, this.m_fileName);
     this.callbackReadComplete(LoadResult.SUCCESS, null, 0, null);
   }
   loadFromUrl(strUrl) {
@@ -410,17 +382,18 @@ class UiOpenMenu extends React.Component {
     const isValid = fileTools.isValidUrl(strUrl);
     if (isValid) {
       this.m_url = strUrl;
+
+      this.m_fileName = fileTools.getFileNameFromUrl(strUrl);
+
       if (strUrl.endsWith('.ktx')) {
-        const vol = new Volume();
+        this.m_vol = new Volume();
         const callbackProgress = this.callbackReadProgress;
+        const callbackComplete = this.callbackReadCompleteUrlKtx;
         this.callbackReadProgress(0.0);
-        const readOk = vol.readFromKtxUrl(strUrl, callbackProgress, this.onCompleteFromUrlKtx);
-        if (readOk) {
-          // if read ok
-          // console.log('UiOpenMenu. onClickLoadUrl: read OK');
-        } else {
-          // bad read
-          console.log(`UiOpenMenu. onClickLoadUrl: failed loading url:${strUrl}`);
+        const readOk = this.m_vol.readFromKtxUrl(strUrl, callbackProgress, callbackComplete);
+
+        if (!readOk) {
+          console.log(`loadFromUrl read returns failed! reading ${strUrl} file`);
         }
         // if KTX
       } else {
@@ -438,14 +411,6 @@ class UiOpenMenu extends React.Component {
     this.loadFromUrl(strUrl);
   }
   //
-  onModalDropboxShow() {
-    console.log(`onModalDropboxShow`);
-    this.setState({ showModalDropbox: true });
-  }
-  onModalDropboxHide() {
-    console.log(`onModalDropboxHide`);
-    this.setState({ showModalDropbox: false });
-  }
   onModalDemoOpenShow() {
     this.setState({ showModalDemo: true });
   }
@@ -453,7 +418,6 @@ class UiOpenMenu extends React.Component {
     this.setState({ showModalDemo: false });
   }
   onDemoSelected(index) {
-    console.log(`TODO: selected demo = ${index}. Need open file...`);
     let fileName = '';
     if (index === 0) {
       const FN_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/31212219.luy';
@@ -465,6 +429,7 @@ class UiOpenMenu extends React.Component {
       fileName = ft.decodeUrl(FN_ENCO);
     }
     if (fileName.length > 0) {
+      console.log(`onDemoSelected: load file ${fileName}, index = ${index}`);
       this.loadFromUrl(fileName);
     } // if fileName not empty
   } // end of onDemoSelected
@@ -488,14 +453,10 @@ class UiOpenMenu extends React.Component {
           <i className="fas fa-globe-americas"></i>
           Url
         </NavDropdown.Item>
-        <NavDropdown.Item href="#actionOpenDropbox" onClick={this.onModalDropboxShow} >
-          <i className="fas fa-dropbox"></i>
-          Dropbox
-        </NavDropdown.Item>
 
         <NavDropdown.Divider />
 
-        <NavDropdown.Item href="#actionOpenDropbox" onClick={this.onModalDemoOpenShow} >
+        <NavDropdown.Item href="#actionOpenDemo" onClick={this.onModalDemoOpenShow} >
           <i className="fas fa-brain"></i>
           Demo models Open
         </NavDropdown.Item>
@@ -526,17 +487,6 @@ class UiOpenMenu extends React.Component {
                 </InputGroup.Append>
               </InputGroup>
 
-            </Modal.Body>
-          </Modal.Header>
-        </Modal>
-
-        <Modal show={this.state.showModalDropbox} onHide={this.onModalDropboxHide} >
-          <Modal.Title>
-            Load data from dropbox storage
-          </Modal.Title>
-          <Modal.Header closeButton>
-            <Modal.Body>
-              TODO: later...
             </Modal.Body>
           </Modal.Header>
         </Modal>

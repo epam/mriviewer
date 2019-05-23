@@ -18,6 +18,15 @@ class FileTools {
     }
     return true;
   } // end isValidUrl
+  getFileNameFromUrl(strUrl) {
+    const reg = /(\w+\.+\w+)$/g;
+    const arrGroups = reg.exec(strUrl);
+    const numGrps = arrGroups.length;
+    if (numGrps >= 1) {
+      return arrGroups[0];
+    }
+    return '';
+  }
   isUrlExists(strUrl) {
     let request = null;
     if (window.XMLHttpRequest) {
