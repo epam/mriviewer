@@ -182,7 +182,7 @@ class UiTF extends React.Component {
             Off
           </button>
           <button type="button" className={'btn btn-outline-dark'} onClick={this.onAO} >
-            Resert
+            Reset
           </button>
         </li>
       </ul>

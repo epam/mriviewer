@@ -73,7 +73,18 @@ class UiViewMode extends React.Component {
     }
     console.log(`${strTitle}\n${str}`);
   }
-  //
+  /*
+  <OverlayTrigger placement="bottom" overlay = {
+    <Tooltip>
+      Show volume in several projections on single screen
+    </Tooltip>
+  }>
+
+    <Button variant="secondary" className={strMpr} onClick={this.onModeMpr} >
+      MPR
+    </Button>
+  </OverlayTrigger>  
+  */
   render() {
     const store = this.props;
     // this.logObject('UiViewMode this props: ', store);
@@ -122,17 +133,6 @@ class UiViewMode extends React.Component {
     const jsxOut = 
       <ButtonToolbar>
         <ButtonGroup>
-
-          <OverlayTrigger placement="bottom" overlay = {
-            <Tooltip>
-              Show volume in several projections on single screen
-            </Tooltip>
-          }>
-
-            <Button variant="secondary" className={strMpr} onClick={this.onModeMpr} >
-              MPR
-            </Button>
-          </OverlayTrigger>  
 
           <OverlayTrigger placement="bottom" overlay = {
             <Tooltip>

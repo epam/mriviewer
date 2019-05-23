@@ -79,9 +79,9 @@ class UiModalSaveNifti extends React.Component {
       pixdim3: zBox / zDim,
     };
     let volData = vol.m_dataArray;
-    const bufferR = store.volumeRenderer.volumeUpdater.bufferR; 
-    if ( bufferR !== null ) {
-      volData = bufferR;
+    const vR = store.volumeRenderer; 
+    if ( vR !== null ) {
+      volData = vR.volumeUpdater.bufferR;
     };
 
     const niiArr = SaverNifti.writeBuffer(volData, volSize);
