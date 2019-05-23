@@ -322,6 +322,13 @@ class UiOpenMenu extends React.Component {
         this.m_loader = null;
         if (evt.target.files[0].name.endsWith(".dcm")) {
           this.m_loader = new LoaderDicom(numFiles);
+          const dicomInfo = this.m_loader.m_dicomInfo;
+
+          // save dicomInfo to store
+          const store = this.props;
+          store.dispatch({ type: StoreActionType.SET_DICOM_INFO, dicomInfo: dicomInfo });
+
+
           this.m_fileReader.onloadend = this.onFileContentReadMultipleDicom;
         } else if ((evt.target.files[0].name.endsWith(".hdr")) || (evt.target.files[0].name.endsWith(".img"))) {
           this.m_loader = new LoaderHdr(numFiles);
@@ -369,7 +376,8 @@ class UiOpenMenu extends React.Component {
     this.setState({ strUrl: str }); 
     console.log(`onChangeUrlString. str = ${str}`)
   }
-  callbackReadCompleteUrlKtx(codeResult, head, dataSize, dataArray) {
+  // callbackReadCompleteUrlKtx(codeResult, head, dataSize, dataArray) {
+  callbackReadCompleteUrlKtx(codeResult) {
     if (codeResult !== LoadResult.SUCCESS) {
       console.log(`onCompleteFromUrlKtx. Bad result: ${codeResult}`);
       return;

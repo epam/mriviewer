@@ -18,28 +18,19 @@ under the License.
 */
 
 /**
-* Dicom info
-* @module lib/scripts/loaders/dicominfo
+* Dicom tag info
+* @module lib/scripts/loaders/dicomtaginfo
 */
 
 /**
-* Class @class DicomInfo for volume some important text data render
+* Class @class DicomTagInfo tag descr
 */
-class DicomInfo {
+class DicomTagInfo {
   constructor() {
-    this.m_patientName = '';
-    this.m_patientDateOfBirth = '';
-    this.m_seriesDescription = '';
-    this.m_patientId = '';
-    this.m_patientGender = '';
-    this.m_studyDate = '';
-    this.m_acquisionTime = '';
-    this.m_institutionName = '';
-    this.m_physicansName = '';
-    this.m_manufacturerName = '';
-    // tags info for each slice. Each entry is DicomSliceInfo
-    this.m_sliceInfo = [];
+    this.m_tag = '';
+    this.m_attrName = '';
+    this.m_attrValue = '';
   }
 }
 
-export default DicomInfo;
+export default DicomTagInfo;

@@ -166,6 +166,12 @@ class Volume extends React.Component {
   //
   readFromDicom(arrBuf, callbackProgress, callbackComplete) {
     const loader = new LoaderDicom();
+    /*
+    // save dicomInfo to store
+    const dcmInfo = loader.m_dicomInfo;
+    const store = props;
+    store.dispatch({ type: StoreActionType.SET_DICOM_INFO, dicomInfo: dcmInfo });
+    */
     const ret = loader.readFromBuffer(this, arrBuf, callbackProgress, callbackComplete);
     return ret;
   }

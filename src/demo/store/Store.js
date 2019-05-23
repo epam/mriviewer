@@ -34,6 +34,7 @@ export const initialState = {
   render2dyPos: 0.0,
   graphics2d: null,
   uiApp: null,
+  dicomInfo: null,
 };
 //
 // App reducer
@@ -90,6 +91,8 @@ const medReducer = (state = initialState, action) => {
     return Object.assign({}, state, { graphics2d: action.graphics2d });
   case StoreActionType.SET_UI_APP:
     return Object.assign({}, state, { uiApp: action.uiApp });
+  case StoreActionType.SET_DICOM_INFO:
+    return Object.assign({}, state, { dicomInfo: action.dicomInfo });
   default:
     return state;
   }

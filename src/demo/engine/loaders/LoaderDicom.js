@@ -17,6 +17,8 @@ import DicomDictionary from './dicomdict';
 import DicomInfo from './dicominfo';
 import DicomTag from './dicomtag';
 import DicomSlicesVolume from './dicomslicesvolume';
+import DicomSliceInfo from './dicomsliceinfo';
+import DicomTagInfo from './dicomtaginfo';
 import UiHistogram from '../../ui/UiHistogram';
 
 // ********************************************************
@@ -153,6 +155,7 @@ class LoaderDicom{
     });
     /** @property {Object} m_info - Patient name, patient gender, ... */
     this.m_dicomInfo = new DicomInfo();
+
     // physical dimension
     this.m_pixelSpacing = {
       x: 0.0,
@@ -965,6 +968,17 @@ class LoaderDicom{
   }
   return tag;
   } // getNextTag
+  static numberToHexString(val) {
+    const str = val.toString(16);
+    const len = str.length;
+    const numLeadZeros = 4 - len;
+    let strZeros = '';
+    for (let i = 0; i < numLeadZeros; i++) {
+      strZeros += '0';
+    }
+    const strRes = '0x' + strZeros + str;
+    return strRes;
+  }
   /**
   * Read from local file buffer
   * @param {number} indexFile - index
@@ -985,6 +999,15 @@ class LoaderDicom{
   // }
 
   // console.log(`LoaderDicom. readFromBuffer. file = ${fileName}, ratio = ${ratioLoaded}`);
+
+  // add info
+  const dicomInfo = this.m_dicomInfo;
+  const sliceInfo = new DicomSliceInfo();
+  const strSlice = 'Slice ' + indexFile.toString();
+  sliceInfo.m_sliceName = strSlice;
+  sliceInfo.m_fileName = fileName;
+  sliceInfo.m_tags = [];
+  dicomInfo.m_sliceInfo.push(sliceInfo);
 
   const dataView = new DataView(arrBuf);
   if (dataView === null) {
@@ -1043,6 +1066,26 @@ class LoaderDicom{
     if (tag === null) {
       break;
     }
+
+    // add to tag info
+    const dicomInfo = this.m_dicomInfo;
+    const numlices = dicomInfo.m_sliceInfo.length;
+    const sliceInfo = dicomInfo.m_sliceInfo[numlices - 1];
+    const tagInfo = new DicomTagInfo();
+    tagInfo.m_tag = '(' + 
+      LoaderDicom.numberToHexString(tag.m_group) + ',' + 
+      LoaderDicom.numberToHexString(tag.m_element) + ')';
+    const strTagName = this.m_dictionary.getTextDesc(tag.m_group, tag.m_element);
+    tagInfo.m_attrName = (strTagName.length > 1) ? strTagName : '';
+
+    let strVal = LoaderDicom.getAttrValueAsString(tag);
+    strVal = (strVal !== null) ? strVal : '';
+
+    tagInfo.m_attrValue = strVal;
+    sliceInfo.m_tags.push(tagInfo);
+
+    // console.log(`Add tag info. tag = ${tagInfo.m_tag} atNa = ${tagInfo.m_attrName} atVal = ${tagInfo.m_attrValue} `);
+
     // get important info from tag: image number
     if ((tag.m_group === TAG_IMAGE_INSTANCE_NUMBER[0]) && (tag.m_element === TAG_IMAGE_INSTANCE_NUMBER[1])) {
       const dataLen = tag.m_value.byteLength;

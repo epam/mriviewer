@@ -27,5 +27,6 @@ const StoreActionType = {
   SET_2D_Y_POS: 22,
   SET_GRAPHICS_2D: 23,
   SET_UI_APP: 24,
+  SET_DICOM_INFO: 25,
 };
 export default StoreActionType;
