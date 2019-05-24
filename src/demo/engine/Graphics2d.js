@@ -141,6 +141,21 @@ class Graphics2d extends React.Component {
     this.renderScene();
   }
   /**
+   * Get screenshot
+   * 
+   * @param {nuimber} wShot - x size of screenshot
+   * @param {nuimber} hShot - y size of screenshot
+   */
+  screenshot(wShot, hShot) {
+    console.log(`get screenshot from 2d canvas: ${wShot}*${hShot}`);
+    const objCanvas = this.m_mount;
+    //const ctx = objCanvas.getContext('2d');
+    //const imageData = ctx.getImageData(0, 0, wShot, hShot);
+    //console.log(`image data: ${imageData}`);
+    const dataUrl = objCanvas.toDataURL();
+    return dataUrl;
+  }
+  /**
    * Render text info about volume
    * 
    * @param {object} ctx - render context
