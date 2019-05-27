@@ -11,7 +11,7 @@
 
 import LoadResult from '../LoadResult';
 import UiHistogram from '../../ui/UiHistogram';
-// import FileLoader from './FileLoader';
+import FileLoader from './FileLoader';
 
 // ********************************************************
 // Const
@@ -591,6 +591,19 @@ class LoaderNifti {
       }
     }
 
+    // save to result volume
+    volDst.m_xDim = this.m_xDim;
+    volDst.m_yDim = this.m_yDim;
+    volDst.m_zDim = this.m_zDim;
+
+    const ONE = 1;
+    volDst.m_bytesPerVoxel = ONE;
+    volDst.m_dataArray = dataArray;
+    volDst.m_dataSize = numVoxels;
+    volDst.m_boxSize = this.m_boxSize;
+
+    console.log(`Nifti header read OK. Volume pixels = ${this.m_xDim} * ${this.m_yDim} * ${this.m_zDim}`);
+    
     // Finally invoke user callback after file was read
     const KTX_GL_RED = 0x1903;
     const KTX_UNSIGNED_BYTE = 0x1401;
@@ -611,20 +624,29 @@ class LoaderNifti {
       callbackComplete(LoadResult.SUCCESS, header, dataSize, dataArray);
     } // if callbackComplete ready
 
-    // save to result volume
-    volDst.m_xDim = this.m_xDim;
-    volDst.m_yDim = this.m_yDim;
-    volDst.m_zDim = this.m_zDim;
-
-    const ONE = 1;
-    volDst.m_bytesPerVoxel = ONE;
-    volDst.m_dataArray = dataArray;
-    volDst.m_dataSize = numVoxels;
-    volDst.m_boxSize = this.m_boxSize;
-
-    console.log(`Nifti header read OK. Volume pixels = ${this.m_xDim} * ${this.m_yDim} * ${this.m_zDim}`);
     return true;
   } // end of readFromBuffer
+  /**
+  *
+  * Read Nifti file from URL
+  * @param {object} volDst volume to read
+  * @param {string} strUrl from where
+  * @param {Function} callbackProgress invoke during loading
+  * @param {Function} callbackComplete invoke at the end with final success code
+  */
+  readFromUrl(volDst, strUrl, callbackProgress, callbackComplete) {
+    console.log(`LoadedNifti. staring read ${strUrl}`);
+    this.m_fileLoader = new FileLoader(strUrl);
+    this.m_fileLoader.readFile((arrBuf) => {
+      const okRead = this.readFromBuffer(volDst, arrBuf, callbackProgress, callbackComplete);
+      return okRead;
+    }, (errMsg) => {
+      console.log(`LoadedNifti. Error read file: ${errMsg}`);
+      callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
+    });
+    return true;
+  } // end of readFromUrl
+
 } // end class LoaderNifti
 
 export default LoaderNifti;

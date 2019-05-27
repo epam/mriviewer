@@ -19,13 +19,28 @@ class FileTools {
     return true;
   } // end isValidUrl
   getFileNameFromUrl(strUrl) {
-    const reg = /(\w+\.+\w+)$/g;
-    const arrGroups = reg.exec(strUrl);
-    const numGrps = arrGroups.length;
-    if (numGrps >= 1) {
-      return arrGroups[0];
+    let idx = strUrl.lastIndexOf('/');
+    if (idx < 0) {
+      idx = strUrl.lastIndexOf('\\');
     }
-    return '';
+    if (idx < 0) {
+      console.log('getFileNameFromUrl: wrong URL!');
+      return '';
+    }
+    const strFileName = strUrl.substring(idx + 1);
+    return strFileName;
+  }
+  getFolderNameFromUrl(strUrl) {
+    let idx = strUrl.lastIndexOf('/');
+    if (idx < 0) {
+      idx = strUrl.lastIndexOf('\\');
+    }
+    if (idx < 0) {
+      console.log('getFileNameFromUrl: wrong URL!');
+      return '';
+    }
+    const strFolder = strUrl.substring(0, idx);
+    return strFolder;
   }
   isUrlExists(strUrl) {
     let request = null;

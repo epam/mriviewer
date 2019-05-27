@@ -58,7 +58,7 @@ class UiOpenMenu extends React.Component {
     this.onModalUrlShow = this.onModalUrlShow.bind(this);
     this.onModalUrlHide = this.onModalUrlHide.bind(this);
     this.onClickLoadUrl = this.onClickLoadUrl.bind(this);
-    this.callbackReadCompleteUrlKtx = this.callbackReadCompleteUrlKtx.bind(this);
+    this.callbackReadCompleteUrlKtxNii = this.callbackReadCompleteUrlKtxNii.bind(this);
 
     this.onModalDemoOpenShow = this.onModalDemoOpenShow.bind(this);
     this.onModalDemoOpenHide = this.onModalDemoOpenHide.bind(this);
@@ -134,7 +134,8 @@ class UiOpenMenu extends React.Component {
     } else if (this.m_fileName.endsWith('.nii') || this.m_fileName.endsWith('.NII')) {
       readOk = vol.readFromNifti(strContent, callbackProgress, callbackComplete);
     } else if (this.m_fileName.endsWith('.dcm') || this.m_fileName.endsWith('.DCM')) {
-      readOk = vol.readFromDicom(strContent, callbackProgress, callbackComplete);
+      const status = vol.readFromDicom(strContent, callbackProgress, callbackComplete);
+      readOk = (status === LoadResult.SUCCESS) ? true : false;
     } else if (this.m_fileName.endsWith('.hdr') || this.m_fileName.endsWith('.HDR')) {
       // readOk = vol.readFromHdrHeader(strContent, callbackProgress, callbackComplete);
       console.log(`cant read single hdr file: ${this.m_fileName}`);
@@ -376,8 +377,7 @@ class UiOpenMenu extends React.Component {
     this.setState({ strUrl: str }); 
     console.log(`onChangeUrlString. str = ${str}`)
   }
-  // callbackReadCompleteUrlKtx(codeResult, head, dataSize, dataArray) {
-  callbackReadCompleteUrlKtx(codeResult) {
+  callbackReadCompleteUrlKtxNii(codeResult) {
     if (codeResult !== LoadResult.SUCCESS) {
       console.log(`onCompleteFromUrlKtx. Bad result: ${codeResult}`);
       return;
@@ -396,14 +396,33 @@ class UiOpenMenu extends React.Component {
       if (strUrl.endsWith('.ktx')) {
         this.m_vol = new Volume();
         const callbackProgress = this.callbackReadProgress;
-        const callbackComplete = this.callbackReadCompleteUrlKtx;
+        const callbackComplete = this.callbackReadCompleteUrlKtxNii;
         this.callbackReadProgress(0.0);
         const readOk = this.m_vol.readFromKtxUrl(strUrl, callbackProgress, callbackComplete);
-
         if (!readOk) {
           console.log(`loadFromUrl read returns failed! reading ${strUrl} file`);
         }
         // if KTX
+      } else if (strUrl.endsWith('.nii')) {
+        this.m_vol = new Volume();
+        const callbackProgress = this.callbackReadProgress;
+        const callbackComplete = this.callbackReadCompleteUrlKtxNii;
+        this.callbackReadProgress(0.0);
+        const readOk = this.m_vol.readFromNiiUrl(strUrl, callbackProgress, callbackComplete);
+        if (!readOk) {
+          console.log(`loadFromUrl read returns failed! reading ${strUrl} file`);
+        }
+        // if NII (Nifti format)
+      } else if (strUrl.endsWith('.dcm')) {
+        this.m_vol = new Volume();
+        const callbackProgress = this.callbackReadProgress;
+        const callbackComplete = this.callbackReadCompleteUrlKtxNii;
+        this.callbackReadProgress(0.0);
+        const readOk = this.m_vol.readFromDicomUrl(strUrl, callbackProgress, callbackComplete);
+        if (!readOk) {
+          console.log(`loadFromUrl read returns failed! reading ${strUrl} file`);
+        }
+        // if Dicom
       } else {
         console.log(`UiOpenMenu. Unknow file type from URL = ${strUrl}`);
       }
@@ -435,6 +454,43 @@ class UiOpenMenu extends React.Component {
       const FN_ENCO = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/tfu11.luy';
       const ft = new FileTools();
       fileName = ft.decodeUrl(FN_ENCO);
+    } else if (index === 2) {
+      // gm3 nii
+      const FN_GM_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ojguj/hn4_623_623_276.ojj';
+      const ft = new FileTools();
+      fileName = ft.decodeUrl(FN_GM_ENCODED);
+      // fileName = ft.encodeUrl(FN_GM_DECODED);
+      // console.log(`onDemoSelected. enc = ${fileName}`);
+    } else if (index === 3) {
+      // woman pelvis
+      const FN_WOMM_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ejdpn/xpnbo_qfmwjt/wig.:12.edn';
+      const ft = new FileTools();
+      fileName = ft.decodeUrl(FN_WOMM_ENCODED);
+      //fileName = ft.encodeUrl(FN_WOM_DECODED);
+      // console.log(`onDemoSelected. enc = ${fileName}`);
+    } else if (index === 4) {
+      // woman pelvis
+      const FN_OCB_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ejdpn/11dcb1:2gb5be73dd4311b768bfc:68f/145784245dcfg6fb26gg:f1d91:1611b.edn';
+      const ft = new FileTools();
+      fileName = ft.decodeUrl(FN_OCB_ENCODED);
+      //fileName = ft.encodeUrl(FN_OCB_DECODED);
+      //console.log(`onDemoSelected. enc = ${fileName}`);
+    } else if (index === 5) {
+      // ct_256
+      const FN_CT256_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/du_367_367_367.luy';
+      const ft = new FileTools();
+      fileName = ft.decodeUrl(FN_CT256_ENCODED);
+      //fileName = ft.encodeUrl(FN_CT256_DECODED);
+      //console.log(`onDemoSelected. enc = ${fileName}`);
+    } else if (index === 6) {
+      // lungs_256
+      const FN_LUNGS256_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/mvoht_367_367_367.luy';
+      const ft = new FileTools();
+      fileName = ft.decodeUrl(FN_LUNGS256_ENCODED);
+      //fileName = ft.encodeUrl(FN_LUNGS256_DECODED);
+      //console.log(`onDemoSelected. enc = ${fileName}`);
+    } else {
+      console.log(`onDemoSelected. not implemented for index = ${index}`);
     }
     if (fileName.length > 0) {
       console.log(`onDemoSelected: load file ${fileName}, index = ${index}`);

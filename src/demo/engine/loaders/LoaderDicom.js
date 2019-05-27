@@ -20,13 +20,15 @@ import DicomSlicesVolume from './dicomslicesvolume';
 import DicomSliceInfo from './dicomsliceinfo';
 import DicomTagInfo from './dicomtaginfo';
 import UiHistogram from '../../ui/UiHistogram';
+import FileTools from './FileTools';
+import FileLoader from './FileLoader';
 
 // ********************************************************
 // Const
 // ********************************************************
 
 const DEBUG_PRINT_TAGS_INFO = false;
-// const DEBUG_PRINT_INDI_SLICE_INFO = false;
+const DEBUG_PRINT_INDI_SLICE_INFO = false;
 const NEED_SCAN_EMPTY_BORDER = false;
 const NEED_APPLY_GAUSS_SMOOTHING = false;
 
@@ -605,9 +607,9 @@ class LoaderDicom{
     m_glInternalFormat: KTX_GL_RED,
     m_glBaseInternalFormat: KTX_GL_RED,
   };
-  const callbackRead = this.m_callbackRead;
-  if (callbackRead) {
-    callbackRead(LoadResult.SUCCESS, header, dataSize, dataArray);
+  const callbackComplete = this.m_callbackComplete;
+  if (callbackComplete) {
+    callbackComplete(LoadResult.SUCCESS, header, dataSize, dataArray);
   } // if callback ready
   const ONE = 1;
 
@@ -981,7 +983,7 @@ class LoaderDicom{
   }
   /**
   * Read from local file buffer
-  * @param {number} indexFile - index
+  * @param {number} indexFile - index of slice loaded
   * @param {string} fileName - Loaded file
   * @param {number} ratioLoaded - ratio from 0 to 1.0.
   * @param {object} volDst - Destination volume object to be fiiied
@@ -1029,7 +1031,7 @@ class LoaderDicom{
     const v = dataView.getUint8(OFF_MAGIC + i);
     if (v !== MAGIC_DICM[i]) {
       this.m_errors[indexFile] = DICOM_ERROR_WRONG_HEADER;
-      console.log('DICM header NOT found');
+      console.log(`Dicom readFromBuffer. Wrong header in file: ${fileName}`);
       return LoadResult.WRONG_HEADER_MAGIC;
     }
   }
@@ -1447,8 +1449,194 @@ class LoaderDicom{
   this.m_error = DICOM_ERROR_OK;
 
   // console.log(`Dicom read OK. Volume pixels = ${this.m_xDim} * ${this.m_yDim} * ${this.m_zDim}`);
-  return true;
+  return LoadResult.SUCCESS;
   } // end readFromBuffer
+
+  readFromUrl(volDst, strUrl, callbackProgress, callbackComplete) {
+    // replace file name to 'file_list.txt'
+    const ft = new FileTools();
+    const isValidUrl = ft.isValidUrl(strUrl);
+    if (!isValidUrl) {
+      console.log(`readFromUrl: not vaild URL = = ${strUrl} `);
+      return false;
+    }
+    this.m_folder = ft.getFolderNameFromUrl(strUrl);
+    const urlFileList = this.m_folder + '/file_list.txt';
+    console.log(`readFromUrl: load file = ${urlFileList} `);
+
+    const fileLoader = new FileLoader(urlFileList);
+    this.m_callbackComplete = callbackComplete;
+    this.m_callbackProgress = callbackProgress;
+    this.m_fileListCounter = 0;
+    fileLoader.readFile((arrBuf) => {
+      this.m_fileListCounter += 1;
+      if (this.m_fileListCounter === 1) {
+        const okRead = this.readReadyFileList(volDst, arrBuf, callbackProgress, callbackComplete);
+        return okRead;
+      }
+      return true;
+    }, (errMsg) => {
+      console.log(`Error read file: ${errMsg}`);
+      callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
+      return false;
+    }); // get file from server
+    return true;
+  }
+  readReadyFileList(volDst, arrBuf, callbackProgress, callbackComplete) {
+    const uint8Arr = new Uint8Array(arrBuf);
+    // const strFileContent = new TextDecoder('utf-8').decode(uint8Arr);
+    const strFileContent = String.fromCharCode.apply(null, uint8Arr);
+
+    const LEN_LOG = 64;
+    const strLog = strFileContent.substr(0, LEN_LOG);
+    console.log(`Loaded file list. Started with:  ${strLog}`);
+
+    const arrFileNames = strFileContent.split('\n');
+
+    let numFiles = arrFileNames.length;
+    // check last empty elements
+    const MIN_FILE_NAME_SIZE = 4;
+    for (let i = numFiles - 1; i >= 0; i--) {
+      if (arrFileNames[i].endsWith('\r')) {
+        arrFileNames[i] = arrFileNames[i].substring(0, arrFileNames[i].length - 1);
+      }
+      if (arrFileNames[i].length < MIN_FILE_NAME_SIZE) {
+        arrFileNames.pop();
+      }
+    }
+    numFiles = arrFileNames.length;
+
+    this.m_zDim = numFiles;
+    console.log(`Loaded file list. ${numFiles} files will be loaded. 1st file in list is = ${arrFileNames[0]}`);
+    console.log(`Loaded file list. Last file in list is = ${arrFileNames[numFiles - 1]}`);
+
+    // declare slices array
+    for (let i = 0; i < numFiles; i++) {
+      // this.m_slices[i] = null;
+      this.m_errors[i] = -1;
+      this.m_loaders[i] = null;
+    }
+
+    // physical dimension
+    this.m_pixelSpacing = {
+      x: 0.0,
+      y: 0.0,
+      z: 0.0,
+    };
+    this.m_filesLoadedCounter = 0;
+    this.m_numFailsLoad = 0;
+    this.m_numLoadedFiles = numFiles;
+
+    this.m_imagePosMin = {
+      // eslint-disable-next-line
+      x: +1.0e12,
+      // eslint-disable-next-line
+      y: +1.0e12,
+      // eslint-disable-next-line
+      z: +1.0e12
+    };
+    this.m_imagePosMax = {
+      // eslint-disable-next-line
+      x: -1.0e12,
+      // eslint-disable-next-line
+      y: -1.0e12,
+      // eslint-disable-next-line
+      z: -1.0e12
+    };
+
+    // eslint-disable-next-line
+    this.m_sliceLocMin = +1.0e12;
+    // eslint-disable-next-line
+    this.m_sliceLocMax = -1.0e12;
+
+    for (let i = 0; (i < this.m_numLoadedFiles) && (this.m_numFailsLoad < 1); i++) {
+      const urlFile = `${this.m_folder}/${arrFileNames[i]}`;
+      // console.log(`Loading (${i})-th url: ${urlFile}`);
+      this.m_loaders[i] = new FileLoader(urlFile);
+      const loader = this.m_loaders[i];
+      const okLoader = this.runLoader(volDst, arrFileNames[i], loader, i, callbackProgress, callbackComplete);
+      if (!okLoader) {
+        return false;
+      }
+    }  // for i all files-slices in folder
+    return true;
+  } // end readReadyFileList(arrBuf)
+  /**
+  * Run loader to read dicom file
+  * @param {string} fileName - File to read
+  * @param {object} loader - loader object with file inside
+  * @param {number} i - index of file in files array
+  */
+  runLoader(volDst, fileName, loader, i, callbackProgress, callbackComplete) {
+    // console.log(`Loading url: ${fileName}`);
+    loader.readFile((fileArrBu) => {
+      const ratioLoaded = this.m_filesLoadedCounter / this.m_numLoadedFiles;
+      const VAL_MASK = 7;
+      if ((callbackProgress !== undefined) && ((this.m_filesLoadedCounter & VAL_MASK) === 0)) {
+        callbackProgress(ratioLoaded);
+      }
+      if ((callbackProgress !== undefined) &&
+        (this.m_filesLoadedCounter + 1 === this.m_numLoadedFiles)) {
+        callbackProgress(1.0);
+      }
+      this.m_newTagEvent.detail.fileName = fileName;
+      const status = this.readFromBuffer(i, fileName, ratioLoaded, volDst, fileArrBu, callbackProgress, callbackComplete);
+      if ((status !== LoadResult.SUCCESS) && (this.m_numFailsLoad === 0)) {
+        this.m_numFailsLoad += 1;
+        if (callbackComplete !== null) {
+          callbackComplete(status, null, 0, null, fileName);
+          return false;
+        }
+      }
+      // update total files counter
+      this.m_filesLoadedCounter += 1;
+      if (DEBUG_PRINT_INDI_SLICE_INFO) {
+        console.log(`Loaded local indi slice: ${fileName}. Total loaded slices: ${this.m_filesLoadedCounter}`);
+      }
+      // console.log(`!!!!!!!!! m_filesLoadedCounter = ${this.m_filesLoadedCounter} / ${this.m_numLoadedFiles}`);
+
+      if (this.m_filesLoadedCounter === this.m_numLoadedFiles) {
+        // Finalize physic dimension
+        if (DEBUG_PRINT_TAGS_INFO) {
+          console.log(`slice location (min, max) = ${this.m_sliceLocMin}, ${this.m_sliceLocMax}`);
+        }
+        const imagePosBox = {
+          x: this.m_imagePosMax.x - this.m_imagePosMin.x,
+          y: this.m_imagePosMax.y - this.m_imagePosMin.y,
+          z: this.m_imagePosMax.z - this.m_imagePosMin.z
+        };
+        const TOO_MIN = 0.00001;
+        let zBox;
+        if (Math.abs(this.m_pixelSpacing.z) > TOO_MIN) {
+          zBox = this.m_pixelSpacing.z * this.m_zDim;
+        } else {
+          zBox = imagePosBox.z;
+          if (Math.abs(zBox) < TOO_MIN) {
+            zBox = imagePosBox.x;
+            if (Math.abs(zBox) < TOO_MIN) {
+              zBox = imagePosBox.y;
+            }
+          }
+        } // if pixel spacing 0
+        this.m_pixelSpacing.z = zBox / this.m_zDim;
+        this.m_boxSize.z = this.m_zDim * this.m_pixelSpacing.z;
+        this.m_boxSize.x = this.m_xDim * this.m_pixelSpacing.x;
+        this.m_boxSize.y = this.m_yDim * this.m_pixelSpacing.y;
+        console.log(`Volume local phys dim: ${this.m_boxSize.x} * ${this.m_boxSize.y} * ${this.m_boxSize.z}`);
+        const errStatus = this.createVolumeFromSlices(volDst);
+        if (callbackComplete !== null) {
+          callbackComplete(errStatus);
+          return true;
+        }
+      } // if last file was loaded
+      return true;
+    }, (errMsg) => {
+      console.log(`Error read file: ${errMsg}`);
+      return false;
+    }); // end of readfile
+    return true;
+  } // end runLoader
+
 
 
 } // end class LoaderDicom

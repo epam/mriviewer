@@ -154,6 +154,23 @@ class Volume extends React.Component {
     return ret;
   }
   //
+  // Read from NII by URL
+  //
+  readFromNiiUrl(strUrl, callbackProgress, callbackComplete) {
+    const loader = new LoaderNifti();
+    const ret = loader.readFromUrl(this, strUrl, callbackProgress, callbackComplete);
+    return ret;
+  }
+  //
+  // Read from Dicom by URL
+  //
+  readFromDicomUrl(strUrl, callbackProgress, callbackComplete) {
+    const NUM_FILES = 0; // will be filled later
+    const loader = new LoaderDicom(NUM_FILES);
+    const ret = loader.readFromUrl(this, strUrl, callbackProgress, callbackComplete);
+    return ret;
+  }
+  //
   // Read from local nifti
   //
   readFromNifti(arrBuf, callbackProgress, callbackComplete) {
