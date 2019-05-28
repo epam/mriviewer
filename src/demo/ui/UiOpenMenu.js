@@ -423,6 +423,16 @@ class UiOpenMenu extends React.Component {
           console.log(`loadFromUrl read returns failed! reading ${strUrl} file`);
         }
         // if Dicom
+      } else if (strUrl.endsWith('.h')) {
+        this.m_vol = new Volume();
+        const callbackProgress = this.callbackReadProgress;
+        const callbackComplete = this.callbackReadCompleteUrlKtxNii;
+        this.callbackReadProgress(0.0);
+        const readOk = this.m_vol.readFromHdrUrl(strUrl, callbackProgress, callbackComplete);
+        if (!readOk) {
+          console.log(`loadFromUrl read returns failed! reading ${strUrl} file`);
+        }
+        // if Hdr
       } else {
         console.log(`UiOpenMenu. Unknow file type from URL = ${strUrl}`);
       }
@@ -447,13 +457,17 @@ class UiOpenMenu extends React.Component {
   onDemoSelected(index) {
     let fileName = '';
     if (index === 0) {
+      // 20101108.ktx
       const FN_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/31212219.luy';
       const ft = new FileTools();
       fileName = ft.decodeUrl(FN_ENCODED);
+      // console.log(`onDemoSelected. enc = ${fileName}`);
     } else if (index === 1) {
+      // set00.ktx
       const FN_ENCO = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/tfu11.luy';
       const ft = new FileTools();
       fileName = ft.decodeUrl(FN_ENCO);
+      // console.log(`onDemoSelected. enc = ${fileName}`);
     } else if (index === 2) {
       // gm3 nii
       const FN_GM_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ojguj/hn4_623_623_276.ojj';
@@ -469,25 +483,33 @@ class UiOpenMenu extends React.Component {
       //fileName = ft.encodeUrl(FN_WOM_DECODED);
       // console.log(`onDemoSelected. enc = ${fileName}`);
     } else if (index === 4) {
-      // woman pelvis
+      // lungs dicom 00cba..957e.dcm
       const FN_OCB_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ejdpn/11dcb1:2gb5be73dd4311b768bfc:68f/145784245dcfg6fb26gg:f1d91:1611b.edn';
       const ft = new FileTools();
       fileName = ft.decodeUrl(FN_OCB_ENCODED);
-      //fileName = ft.encodeUrl(FN_OCB_DECODED);
-      //console.log(`onDemoSelected. enc = ${fileName}`);
+      // fileName = ft.encodeUrl(FN_OCB_DECODED);
+      // console.log(`onDemoSelected. enc = ${fileName}`);
     } else if (index === 5) {
-      // ct_256
+      // ct_256_256_256.ktx
       const FN_CT256_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/du_367_367_367.luy';
       const ft = new FileTools();
       fileName = ft.decodeUrl(FN_CT256_ENCODED);
-      //fileName = ft.encodeUrl(FN_CT256_DECODED);
-      //console.log(`onDemoSelected. enc = ${fileName}`);
+      // fileName = ft.encodeUrl(FN_CT256_DECODED);
+      // console.log(`onDemoSelected. enc = ${fileName}`);
     } else if (index === 6) {
-      // lungs_256
+      // lungs_256_256_256.ktx
       const FN_LUNGS256_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/mvoht_367_367_367.luy';
       const ft = new FileTools();
       fileName = ft.decodeUrl(FN_LUNGS256_ENCODED);
-      //fileName = ft.encodeUrl(FN_LUNGS256_DECODED);
+      // fileName = ft.encodeUrl(FN_LUNGS256_DECODED);
+      // console.log(`onDemoSelected. enc = ${fileName}`);
+    } else if (index === 7) {
+      // hdr set (roi)
+      //const FN_HDRSET_DECODED = 'http://www.d-inter.ru/private/med3web/data/hdr/set_intn.h';
+      const FN_HDRSET_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ies/tfu_jouo.i';
+      const ft = new FileTools();
+      fileName = ft.decodeUrl(FN_HDRSET_ENCODED);
+      //fileName = ft.encodeUrl(FN_HDRSET_DECODED);
       //console.log(`onDemoSelected. enc = ${fileName}`);
     } else {
       console.log(`onDemoSelected. not implemented for index = ${index}`);

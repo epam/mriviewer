@@ -9,8 +9,9 @@
 // ********************************************************
 
 import LoadResult from '../LoadResult';
-// import UiHistogram from '../../ui/UiHistogram';
-// import FileLoader from './FileLoader';
+import FileTools from './FileTools';
+import LoadFilePromise from './LoadPromise';
+import Volume from '../Volume';
 
 // ********************************************************
 // Const
@@ -115,7 +116,6 @@ class LoaderHdr {
       }
       return false;
     }
-
 
     const SIZE_DWORD = 4;
     const SIZE_SHORT = 2;
@@ -366,7 +366,7 @@ class LoaderHdr {
     // both volumes are in 1 byte format
     const ONE = 1;
     if (volDst.m_bytesPerVoxel !== ONE) {
-      console.log('createRoiVolumeFromHeaderAndImage: bad volDst');
+      console.log('createRoiVolumeFromHeaderAndImage: bad volDst. m_bytesPerVoxel should be 1');
       return false;
     }
     if (volRoi.m_bytesPerVoxel !== ONE) {
@@ -399,8 +399,162 @@ class LoaderHdr {
     volDst.m_bytesPerVoxel = FOUR;
     console.log('createRoiVolumeFromHeaderAndImage: success');
     return true;
-  }
+  } //
+  /**
+   * Read hdr (h + img) files from URL
+   * 
+   * @param {object} volDst - destination volume to fill
+   * @param {string} strUrl - url string
+   * @param {func} callbackProgress - callback during read progress
+   * @param {func} callbackComplete - callback after complete (good or bad)
+   * @return true, if success
+   */
+  readFromUrl(volDst, strUrl, callbackProgress, callbackComplete) {
+    console.log(`readFromUrl. going to read from ${strUrl} ...`);
 
+    const ft = new FileTools();
+    const isValidUrl = ft.isValidUrl(strUrl);
+    if (!isValidUrl) {
+      console.log(`readFromUrl: not vaild URL = = ${strUrl} `);
+      return false;
+    }
+    this.m_folder = ft.getFolderNameFromUrl(strUrl);
+    const fileName = ft.getFileNameFromUrl(strUrl);
+    // console.log(`readFromUrl: folder =  ${this.m_folder} filename = ${fileName}`);
+
+    const regExp = /(\w+)_intn.(h|hdr)/;
+    const arrGrp = regExp.exec(fileName);
+    if (arrGrp.length !== 3) {
+      console.log(`LoaderHdr.readFromUrl: bad URL name = ${strUrl}. Should be in template NNN_intn.h `);
+      return false;
+    }
+    const namePrefix = arrGrp[1];
+    //console.log(`readFromUrl: name prefix = ${namePrefix}, grpLen = ${arrGrp.length}`);
+
+    const fileNameIntensityHeader = this.m_folder + '/' + namePrefix + '_intn.h';
+    const fileNameIntensityImage = this.m_folder + '/' + namePrefix + '_intn.img';
+    const fileNameMaskHeader = this.m_folder + '/' + namePrefix + '_mask.h';
+    const fileNameMaskImage = this.m_folder + '/' + namePrefix + '_mask.img';
+
+
+    const arrUrls = [];
+    arrUrls.push(fileNameIntensityHeader);
+    arrUrls.push(fileNameIntensityImage);
+    arrUrls.push(fileNameMaskHeader);
+    arrUrls.push(fileNameMaskImage);
+    const ok = this.readFromUrls(arrUrls, volDst, callbackProgress, callbackComplete);
+
+    return ok;
+  } // end of readFromUrl
+  /**
+   * 
+   * @param {object} arrUrls  - array of strings urls
+   * @param {*} volDst  - dest volume
+   * @param {*} callbackProgress - callback during read
+   * @param {*} callbackComplete - callback after end fo read
+   */
+  readFromUrls(arrUrls, volDst, callbackProgress, callbackComplete) {
+    const numUrls = arrUrls.length;
+    const NUM_URLS_IN_SET = 2;
+    const NUM_FILES_VOL_INT_ROI = 4;
+    if (numUrls === NUM_URLS_IN_SET) {
+      let urlHdr = arrUrls[0];
+      let urlImg = arrUrls[1];
+      const loaderHdr = new LoadFilePromise();
+      const loaderImg = new LoadFilePromise();
+      let indPointH = urlHdr.indexOf('.h');
+      if (indPointH === -1) {
+        indPointH = urlHdr.indexOf('.hdr');
+      }
+      if (indPointH === -1) {
+        const strCopy = urlHdr;
+        urlHdr = urlImg;
+        urlImg = strCopy;
+      }
+
+      // this.m_volIntensity = new HdrVolume(this.m_needScaleDownTexture);
+
+      loaderHdr.readFromUrl(urlHdr).then((arrBufHdr) => {
+        this.readFromBufferHeader(volDst, arrBufHdr, callbackComplete, callbackProgress);
+        console.log(`Load success HDR file: ${urlHdr}`);
+        loaderImg.readFromUrl(urlImg).then((arrBufImg) => {
+          this.readFromBufferImage(volDst, arrBufImg, callbackComplete, callbackProgress);
+          console.log(`Load success IMG file: ${urlImg}`);
+
+          // complete 2 images
+          this.createVolumeFromHeaderAndImage(volDst);
+
+          // invoke callback for good loading end
+          callbackComplete(LoadResult.SUCCESS);
+
+        });
+      }, (error) => {
+        console.log('HDR File read error', error);
+        callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
+        return false;
+      });
+    } else if (numUrls === NUM_FILES_VOL_INT_ROI) {
+      // read 4 files
+      const urlHdrInt = arrUrls[0];
+      const urlImgInt = arrUrls[1];
+      const urlHdrRoi = arrUrls[2];
+      const urlImgRoi = arrUrls[3];
+
+      const loaderHdrInt = new LoadFilePromise();
+      const loaderImgInt = new LoadFilePromise();
+      const loaderHdrRoi = new LoadFilePromise();
+      const loaderImgRoi = new LoadFilePromise();
+
+      // this.m_volIntensity = new HdrVolume(this.m_needScaleDownTexture);
+      // this.m_volRoi = new HdrVolume(this.m_needScaleDownTexture);
+
+      const volRoi = new Volume();
+
+      loaderHdrInt.readFromUrl(urlHdrInt).then((arrBufHdr) => {
+        // this.m_volIntensity.readBufferHead(arrBufHdr, callbackComplete, callbackProgress);
+        // this.readBufferHead(arrBufHdr, callbackComplete, callbackProgress);
+        this.readFromBufferHeader(volDst, arrBufHdr, callbackComplete, callbackProgress);
+
+        console.log(`Load success HDR file: ${urlHdrInt}`);
+        loaderImgInt.readFromUrl(urlImgInt).then((arrBufImg) => {
+          // this.m_volIntensity.readBufferImg(arrBufImg, callbackComplete, callbackProgress);
+          // this.readBufferImg(arrBufImg, callbackComplete, callbackProgress);
+          this.readFromBufferImage(volDst, arrBufImg, callbackComplete, callbackProgress);
+          console.log(`Load success IMG file: ${urlImgInt}`);
+
+          loaderHdrRoi.readFromUrl(urlHdrRoi).then((arrBufferHdr) => {
+            //this.m_volRoi.readBufferHead(arrBufferHdr, callbackComplete, callbackProgress);
+            this.readFromBufferHeader(volRoi, arrBufferHdr, callbackComplete, callbackProgress);
+
+            loaderImgRoi.readFromUrl(urlImgRoi).then((arrBufferImg) => {
+
+              // this.m_volRoi.readBufferImg(arrBufferImg, callbackComplete, callbackProgress);
+              this.readFromBufferImage(volRoi, arrBufferImg, callbackComplete, callbackProgress);
+
+              // transform intensity data from 16 bpp -> 8 bpp
+              this.createVolumeFromHeaderAndImage(volDst);
+
+              // mix intensity + roi
+              this.createRoiVolumeFromHeaderAndImage(volDst, volRoi);
+
+              // invoke callback for good loading end
+              callbackComplete(LoadResult.SUCCESS);
+
+            }); // loaderImgRoi
+          }); // loaderHdrRoi
+
+        }); // loaderImgInt
+      }, (error) => {
+        console.log('HDR File read error', error);
+        return false;
+      }); // loaderHdrInt
+
+    } else {
+      console.log(`Error read hdr files. Should be ${NUM_URLS_IN_SET} files`);
+      return false;
+    }// if number of files equal to 2
+    return true;
+  } // end of readFromUrls
 } // end class LoaderHdr
 
 export default LoaderHdr;

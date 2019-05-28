@@ -15,7 +15,7 @@ import React from 'react';
 import LoaderKtx from './loaders/LoaderKtx';
 import LoaderNifti from './loaders/LoaderNifti';
 import LoaderDicom from './loaders/LoaderDicom';
-// import LoaderHdr from './loaders/LoaderHdr';
+import LoaderHdr from './loaders/LoaderHdr';
 
 // ********************************************************
 // Const
@@ -167,6 +167,14 @@ class Volume extends React.Component {
   readFromDicomUrl(strUrl, callbackProgress, callbackComplete) {
     const NUM_FILES = 0; // will be filled later
     const loader = new LoaderDicom(NUM_FILES);
+    const ret = loader.readFromUrl(this, strUrl, callbackProgress, callbackComplete);
+    return ret;
+  }
+  //
+  // Read from Hdr by URL
+  //
+  readFromHdrUrl(strUrl, callbackProgress, callbackComplete) {
+    const loader = new LoaderHdr();
     const ret = loader.readFromUrl(this, strUrl, callbackProgress, callbackComplete);
     return ret;
   }

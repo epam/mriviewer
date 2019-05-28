@@ -12,7 +12,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Container, Row, Col, Image } from 'react-bootstrap';
+import { Container, Row, Col, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Modal, Button } from 'react-bootstrap';
 
 // File list for demo
@@ -42,6 +42,8 @@ import { Modal, Button } from 'react-bootstrap';
 // http://www.d-inter.ru/private/med3web/data/ktx/ct_256_256_256.ktx
 // http://www.d-inter.ru/private/med3web/data/ktx/lungs_256_256_256.ktx
 // http://www.d-inter.ru/private/med3web/data/nifti/gm3_512_512_165.nii
+//
+// http://www.d-inter.ru/private/med3web/data/hdr/set_int.h
 //
 // http://www.d-inter.ru/private/med3web/data/dicom/00cba091fa4ad62cc3200a657aeb957e/034673134cbef5ea15ff9e0c8090500a.dcm
 // http://www.d-inter.ru/private/med3web/data/dicom/woman_pelvis/vhf.901.dcm
@@ -73,6 +75,7 @@ class UiModalDemo extends React.Component {
     this.onButton4 = this.onButton4.bind(this);
     this.onButton5 = this.onButton5.bind(this);
     this.onButton6 = this.onButton6.bind(this);
+    this.onButton7 = this.onButton7.bind(this);
     this.onDemo = this.onDemo.bind(this);
     this.state = {
       showModalDemo: false
@@ -111,9 +114,64 @@ class UiModalDemo extends React.Component {
   onButton6() {
     this.onDemo(6);
   }
+  onButton7() {
+    this.onDemo(7);
+  }
   render() {
     const stateVis = this.props.stateVis;
     const onHideFunc = this.props.onHide;
+
+    // icons description
+    const iconsSet = [
+      {
+        tooltip: 'Lungs 20101108 from ktx',
+        image: 'images/thumb_lungs.png',
+        alt: 'lungs',
+        func: this.onButton0,
+      },
+      {
+        tooltip: 'Brain set from ktx',
+        image: 'images/thumb_brain.png',
+        alt: 'lungs',
+        func: this.onButton1,
+      },
+      {
+        tooltip: 'Grandmother (gm3) from nifti',
+        image: 'images/thumb_gm3_512_512_165.png',
+        alt: 'gm3',
+        func: this.onButton2,
+      },
+      {
+        tooltip: 'Woman pelvis from dicom',
+        image: 'images/thumb_woman_pelvis.png',
+        alt: 'woman_pelvis',
+        func: this.onButton3,
+      },
+      {
+        tooltip: 'Lungs 00cba...957e from dicom',
+        image: 'images/thumb_ocb.png',
+        alt: 'lungs_ocb',
+        func: this.onButton4,
+      },
+      {
+        tooltip: 'CT 256^3 from ktx',
+        image: 'images/thumb_ct_256.png',
+        alt: 'ct_256',
+        func: this.onButton5,
+      },
+      {
+        tooltip: 'Lungs 256^3 from ktx',
+        image: 'images/thumb_lungs_256.png',
+        alt: 'lungs_256',
+        func: this.onButton6,
+      },
+      {
+        tooltip: 'Brain with ROI (colored) from Hdr+Img',
+        image: 'images/thumb_set.png',
+        alt: 'hdr_set_roi',
+        func: this.onButton7,
+      },
+    ];
 
     const jsxModalDemo = 
       <Modal show={stateVis} onHide={onHideFunc} >
@@ -126,47 +184,34 @@ class UiModalDemo extends React.Component {
 
           <Container>
             <Row>
-              <Col xs={6} md={4}>
-                <Button variant="light" onClick={this.onButton0} >
-                  <Image src="images/thumb_lungs.png" alt="lungs" thumbnail />
-                </Button>
-              </Col>
-              <Col xs={6} md={4}>
-                <Button variant="light" onClick={this.onButton1} >
-                  <Image src="images/thumb_brain.png" alt="brain" thumbnail />
-                </Button>
-              </Col>
-              <Col xs={6} md={4}>
-                <Button variant="light" onClick={this.onButton2} >
-                  <Image src="images/thumb_gm3_512_512_165.png" alt="gm3" thumbnail />
-                </Button>
-              </Col>
-              <Col xs={6} md={4}>
-                <Button variant="light" onClick={this.onButton3} >
-                  <Image src="images/thumb_woman_pelvis.png" alt="woman_pelvis" thumbnail />
-                </Button>
-              </Col>
-              <Col xs={6} md={4}>
-                <Button variant="light" onClick={this.onButton4} >
-                  <Image src="images/thumb_ocb.png" alt="woman_pelvis" thumbnail />
-                </Button>
-              </Col>
-              <Col xs={6} md={4}>
-                <Button variant="light" onClick={this.onButton5} >
-                  <Image src="images/thumb_ct_256.png" alt="ct_256" thumbnail />
-                </Button>
-              </Col>
-              <Col xs={6} md={4}>
-                <Button variant="light" onClick={this.onButton6} >
-                  <Image src="images/thumb_lungs_256.png" alt="lungs_256" thumbnail />
-                </Button>
-              </Col>
-
+              {iconsSet.map( (d, i) => {
+                const strId = `id_${i}`;
+                const strTooltip = d.tooltip;
+                const strImage = d.image;
+                const strAlt = d.alt;
+                const funcCallback = d.func;
+                return <Col xs={6} md={4} key={strId}>
+                  <OverlayTrigger
+                    placement="top"
+                    delay={{ show: 150, hide: 300 }}
+                    overlay={
+                      <Tooltip id={strId}>
+                        {strTooltip}
+                      </Tooltip>
+                    }
+                  >
+                    <Button variant="light" onClick={funcCallback} >
+                      <Image src={strImage} alt={strAlt} thumbnail />
+                    </Button>
+                  </OverlayTrigger>
+                </Col>
+              })}
             </Row>
-          </Container>
+          </Container>            
 
         </Modal.Body>
-      </Modal>
+      </Modal>;
+
     return jsxModalDemo;
   } // end render
 } // end class
