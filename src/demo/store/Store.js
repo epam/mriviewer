@@ -35,6 +35,8 @@ export const initialState = {
   graphics2d: null,
   uiApp: null,
   dicomInfo: null,
+  isTool3D: false,
+  sliderContrast3D: 0.0,
 };
 //
 // App reducer
@@ -93,6 +95,10 @@ const medReducer = (state = initialState, action) => {
     return Object.assign({}, state, { uiApp: action.uiApp });
   case StoreActionType.SET_DICOM_INFO:
     return Object.assign({}, state, { dicomInfo: action.dicomInfo });
+  case StoreActionType.SET_IS_TOOL3D:
+    return Object.assign({}, state, { isTool3D: action.isTool3D });
+  case StoreActionType.SET_SLIDER_Contrast3D:
+    return Object.assign({}, state, { sliderContrast3D: action.sliderContrast3D });
   default:
     return state;
   }

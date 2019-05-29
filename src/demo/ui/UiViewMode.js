@@ -46,10 +46,17 @@ class UiViewMode extends React.Component {
     this.onMode2d = this.onMode2d.bind(this);
     this.onMode3dLight = this.onMode3dLight.bind(this);
     this.onMode3d = this.onMode3d.bind(this);
+    this.onTool3d = this.onTool3d.bind(this);
+    this.onView3d = this.onView3d.bind(this);
   }
   onMode(indexMode) {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: indexMode });
+  }
+  onTool_View(isOn) {
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_IS_TOOL3D, isTool3D: isOn });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Contrast3D, sliderContrast3D: 0 });    
   }
   onModeMpr() {
     this.onMode(ModeView.VIEW_MPR);
@@ -63,6 +70,12 @@ class UiViewMode extends React.Component {
   onMode3d() {
     this.onMode(ModeView.VIEW_3D);
   }
+  onTool3d() {
+    this.onTool_View(true);
+  }
+  onView3d() {
+    this.onTool_View(false);
+  }
   logObject(strTitle, obj) {
     let str = '';
     for (let prp in obj) {
@@ -73,22 +86,11 @@ class UiViewMode extends React.Component {
     }
     console.log(`${strTitle}\n${str}`);
   }
-  /*
-  <OverlayTrigger placement="bottom" overlay = {
-    <Tooltip>
-      Show volume in several projections on single screen
-    </Tooltip>
-  }>
-
-    <Button variant="secondary" className={strMpr} onClick={this.onModeMpr} >
-      MPR
-    </Button>
-  </OverlayTrigger>  
-  */
   render() {
     const store = this.props;
     // this.logObject('UiViewMode this props: ', store);
     let viewMode = store.modeView;
+    //let isTool3D = store.isTool3D;
     if ((viewMode === ModeView.VIEW_MPR) && (!this.m_needModeMpr)) {
       viewMode = ModeView.VIEW_2D;
     }
@@ -106,8 +108,13 @@ class UiViewMode extends React.Component {
     const str2d = (viewMode === ModeView.VIEW_2D) ? ' active' : '';
     const str3dLight = (viewMode === ModeView.VIEW_3D_LIGHT) ? ' active' : '';
     const str3d = (viewMode === ModeView.VIEW_3D) ? ' active' : '';
+    //const strTool3Don = (viewMode === ModeView.VIEW_3D_LIGHT && isTool3D === true) ? ' active' : '';
+    //const strTool3Doff = (viewMode === ModeView.VIEW_3D_LIGHT && isTool3D === true) ? ' active' : '';
+    const strTool3Don = 'active';
+    const strTool3Doff = 'active';
 
-    const jsx3d = <OverlayTrigger placement="bottom" overlay = {
+    const jsx3d =
+    <OverlayTrigger placement="bottom" overlay = {
       <Tooltip>
         Show volume in 3d mode with old rendering
       </Tooltip>
@@ -115,25 +122,37 @@ class UiViewMode extends React.Component {
       <Button variant="secondary" className={str3d} onClick={this.onMode3d} >
         3D
       </Button>
-    </OverlayTrigger>  
-    const jsx3dNone = null;
+    </OverlayTrigger>
+      
+    const jsxViewTool =
+    <ButtonGroup className="mr-2" aria-label="First group">
+      <OverlayTrigger placement="bottom" overlay={
+        <Tooltip>
+          Show volume in 3d mode with fast rendering
+        </Tooltip>
+      }>
+        <Button variant="info" className={strTool3Doff} onClick={this.onView3d} >
+          View
+        </Button>
+      </OverlayTrigger>
+      <OverlayTrigger placement="bottom" overlay={
+        <Tooltip>
+          Show volume in 2d mode per slice on selected orientation
+        </Tooltip>
+      }>
+        <Button variant="info" className={strTool3Don} onClick={this.onTool3d} >
+          Tool
+        </Button>
+      </OverlayTrigger>
+    </ButtonGroup>
 
-    let indx = 0;
     const vol = store.volume;
     const FOUR = 4;
-    if (vol.m_bytesPerVoxel === FOUR) {
-      indx = 1;
-    }
-    const jsxArray = new Array(2);
-    jsxArray[0] = jsx3d;
-    jsxArray[1] = jsx3dNone;
-    const jsxRet = jsxArray[indx];
-
-
+    const test = false;
     const jsxOut = 
-      <ButtonToolbar>
-        <ButtonGroup>
-
+      <ButtonToolbar aria-label="Toolbar with button groups">
+        <ButtonGroup className="mr-2" aria-label="First group">
+ 
           <OverlayTrigger placement="bottom" overlay = {
             <Tooltip>
               Show volume in 2d mode per slice on selected orientation
@@ -155,8 +174,12 @@ class UiViewMode extends React.Component {
               3D
               <span className="fa fa-bolt"></span>
             </Button>
+
           </OverlayTrigger>  
-          {jsxRet}
+          {(vol.m_bytesPerVoxel !== FOUR) ? jsx3d : <p></p>}
+        </ButtonGroup>
+        <ButtonGroup className="mr-2" aria-label="Second group">
+          {(viewMode === ModeView.VIEW_3D_LIGHT && test) ? jsxViewTool : <p></p>}
         </ButtonGroup>
       </ButtonToolbar>;
 

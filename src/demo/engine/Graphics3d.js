@@ -140,11 +140,15 @@ class Graphics3d extends React.Component {
       const FOUR = 4;
       const isIso = (vol.m_bytesPerVoxel === FOUR) ? true : false;    
       const modeView = store.modeView; 
+      //let tst = 0;
       if (modeView === ModeView.VIEW_3D) {
         this.m_volumeRenderer3D.initWithVolume(this.volume, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, true);
       } else {
         this.m_volumeRenderer3D.initWithVolume(this.volume, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, false);
       }
+      //if (tst) {
+      //  return;
+      //}
       this.isLoaded = true;
     }
     this.start();
@@ -311,6 +315,7 @@ class Graphics3d extends React.Component {
       this.m_volumeRenderer3D.updateBrightness(store.sliderBrightness);
       this.m_volumeRenderer3D.updateZCutPlane(store.sliderCut - ZCUTSHIFT);
       this.m_volumeRenderer3D.setStepsize(store.sliderQuality);
+      this.m_volumeRenderer3D.updateContrast(store.sliderContrast3D);
     }
     if (this.m_volumeRenderer3D !== null) {
       this.m_volumeRenderer3D.render();

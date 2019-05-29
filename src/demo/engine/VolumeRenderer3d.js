@@ -176,7 +176,8 @@ export default class VolumeRenderer3d {
     // the cutting plane and the direction vector onto the light source
     // this.orbitControl = new OrbitControl(root3dContainer, this.camera, this.scene, this.meshSphere, () => {
     this.orbitControl = new OrbitControl(this.renderer.domElement, this.camera, this.scene, this.mesh, () => {
-      if (this.checkFrameBufferMode === CHECK_MODE_RESULT_OK) {
+      if (true) {
+      //  if (this.checkFrameBufferMode === CHECK_MODE_RESULT_OK) {
         this.updateCutPlanes();
         this.updateLightDir();
         //this.updateMeshSphere();
@@ -758,6 +759,13 @@ export default class VolumeRenderer3d {
     // create new sphere
     const matWCloader = new MaterialWC();
     this.matWireFrame = matWCloader.create(this.bfTexture, this.ffTexture);
+    /*
+    console.log(`this.bfTexture`);
+    if (this.bfTexture === null) {
+      console.log(`this.bfTexture === null`);
+      return 1;
+    }
+    */
     this.addSphereToSphereScene();
 
     this.renderScene = SCENE_TYPE_RAYCAST;
@@ -1160,6 +1168,7 @@ export default class VolumeRenderer3d {
       }
 
       if (this.renderScene === SCENE_TYPE_RAYCAST) {
+        this.updateLightDir();
         this.updateClipPlaneGeometry();
         this.updateCutPlanes();
         this.renderer.setRenderTarget(this.bfTexture);

@@ -28,5 +28,7 @@ const StoreActionType = {
   SET_GRAPHICS_2D: 23,
   SET_UI_APP: 24,
   SET_DICOM_INFO: 25,
+  SET_IS_TOOL3D: 26,
+  SET_SLIDER_Contrast3D: 27,
 };
 export default StoreActionType;

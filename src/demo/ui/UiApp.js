@@ -75,8 +75,8 @@ class UiApp extends React.Component {
 
     // browser detector
     const browserDetector = new BrowserDetector();
-    const isWebGl20supported = browserDetector.checkWebGlSupported();
-    if (!isWebGl20supported) {
+    this.isWebGl20supported = browserDetector.checkWebGlSupported();
+    if (!this.isWebGl20supported) {
       this.setState({ strAlertTitle: 'Browser compatibility problem detected' });
       this.setState({ strAlertText: 'This browser not supported WebGL 2.0. Application functinality is decreased and app can be unstable' });
       this.onShowModalAlert();
@@ -162,7 +162,7 @@ class UiApp extends React.Component {
               <UiSaveMenu />
               <UiReportMenu />
               {(store.modeView === ModeView.VIEW_2D) ? <UiFilterMenu /> : <p></p>}
-              {(isLoaded) ? <UiViewMode /> : <p></p>}
+              {(isLoaded && this.isWebGl20supported) ? <UiViewMode /> : <p></p>}
             </Nav>
           </Navbar.Collapse>
 
