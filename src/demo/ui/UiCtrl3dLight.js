@@ -14,8 +14,7 @@ import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { ListGroup, ButtonGroup, Button } from 'react-bootstrap';
-import { Container, Card, Row } from 'react-bootstrap';
+import { Card, ListGroup, ButtonGroup, Button } from 'react-bootstrap';
 
 //import Nouislider from 'react-nouislider';
 
