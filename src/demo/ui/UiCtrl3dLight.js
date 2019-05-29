@@ -114,35 +114,29 @@ class UiCtrl3dLight extends React.Component {
     const strD = (mode3d === Modes3d.ERASER) ? 'active' : '';
 
     const jsxRenderControls =
-      <Container>
+      <div>
         <Card>
           <Card.Body>
-            <Container>
-              <Row>
 
-                <Button variant="info" className={strA} onClick={this.onModeA}  >
-                  Isosurface
-                </Button>
+            <Button variant="info" className={strA} onClick={this.onModeA}  >
+              Isosurface
+            </Button>
+            <Button variant="info" className={strB} onClick={this.onModeB} >
+              VolumeRender
+            </Button>
 
-                <Button variant="info" className={strB} onClick={this.onModeB} >
-                  VolumeRender
-                </Button>
+            <Button variant="info" className={strC} onClick={this.onModeC} >
+              MaxProjection
+            </Button>
 
-                <Button variant="info" className={strC} onClick={this.onModeC} >
-                  MaxProjection
-                </Button>
-
-                <Button variant="info" className={strD} onClick={this.onModeD} >
-                  VolumeEraser
-                </Button>
-
-              </Row>
-            </Container>
+            <Button variant="info" className={strD} onClick={this.onModeD} >
+              VolumeEraser
+            </Button>
 
           </Card.Body>
         </Card>
         <UiTF />
-      </Container>
+      </div>
 
     const jsxROI =
       <ListGroup as="ul" variant="flush">
