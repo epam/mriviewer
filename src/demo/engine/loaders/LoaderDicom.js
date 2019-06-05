@@ -225,6 +225,9 @@ class LoaderDicom{
       }
     }
   } // if pixel spacing 0
+  if (zBox < TOO_MIN) {
+    zBox = 1.0;
+  }
   this.m_pixelSpacing.z = zBox / this.m_zDim;
   this.m_boxSize.z = this.m_zDim * this.m_pixelSpacing.z;
   this.m_boxSize.x = this.m_xDim * this.m_pixelSpacing.x;
@@ -987,12 +990,19 @@ class LoaderDicom{
   * @param {string} fileName - Loaded file
   * @param {number} ratioLoaded - ratio from 0 to 1.0.
   * @param {object} volDst - Destination volume object to be fiiied
-  * @param {object} arrBuf - source byte buffer
-  * @param {func} callbackProgress - function invoked during read
-  * @param {func} callbackComplete - function invoked after reading
-  * @return true, if success
+  * @param {object} arrBuf - source byte buffer, ArrayBuffer type
+  * @return LoadResult.XXX
   */
  readFromBuffer(indexFile, fileName, ratioLoaded, volDst, arrBuf, callbackProgress, callbackComplete) {
+  if (typeof indexFile !== 'number') {
+    console.log('LoaderDicom.readFromBuffer: bad indexFile argument');
+  }
+  if (typeof fileName !== 'string') {
+    console.log('LoaderDicom.readFromBuffer: bad fileName argument');
+  }
+  if (typeof arrBuf !== 'object') {
+    console.log('LoaderDicom.readFromBuffer: bad arrBuf argument');
+  }
   // const bufBytes = new Uint8Array(arrBuf);
   // const isUint8Arr = bufBytes instanceof Uint8Array;
   // if (!isUint8Arr) {
@@ -1022,6 +1032,9 @@ class LoaderDicom{
   if (fileSize < SIZE_HEAD) {
     // this.m_errors[indexFile] = DICOM_ERROR_TOO_SMALL_FILE;
     this.m_error = LoadResult.ERROR_TOO_SMALL_DATA_SIZE;
+    if (callbackComplete !== undefined) {
+      callbackComplete(LoadResult.ERROR_TOO_SMALL_DATA_SIZE);
+    }
     return LoadResult.ERROR_TOO_SMALL_DATA_SIZE;
   }
   const OFF_MAGIC = 128;
@@ -1032,6 +1045,9 @@ class LoaderDicom{
     if (v !== MAGIC_DICM[i]) {
       this.m_errors[indexFile] = DICOM_ERROR_WRONG_HEADER;
       console.log(`Dicom readFromBuffer. Wrong header in file: ${fileName}`);
+      if (callbackComplete !== undefined) {
+        callbackComplete(LoadResult.WRONG_HEADER_MAGIC);
+      }
       return LoadResult.WRONG_HEADER_MAGIC;
     }
   }
@@ -1111,6 +1127,9 @@ class LoaderDicom{
         this.m_yDim = yDim;
       } else if (this.m_yDim !== yDim) {
         console.log('Bad image size y');
+        if (callbackComplete !== undefined) {
+          callbackComplete(LoadResult.WRONG_IMAGE_DIM_Y);
+        }
         return LoadResult.WRONG_IMAGE_DIM_Y;
       }
     }
@@ -1127,6 +1146,9 @@ class LoaderDicom{
         this.m_xDim = xDim;
       } else if (this.m_xDim !== xDim) {
         console.log('Bad image size x');
+        if (callbackComplete !== undefined) {
+          callbackComplete(LoadResult.WRONG_IMAGE_DIM_X);
+        }
         return LoadResult.WRONG_IMAGE_DIM_X;
       }
     }
@@ -1372,6 +1394,9 @@ class LoaderDicom{
     }
   } // for all tags readed
   if (!pixelsTagReaded) {
+    if (callbackComplete !== undefined) {
+      callbackComplete(LoadResult.ERROR_PIXELS_TAG_NOT_FOUND);
+    }
     return LoadResult.ERROR_PIXELS_TAG_NOT_FOUND;
   }
 
@@ -1380,6 +1405,9 @@ class LoaderDicom{
   const imageSizeBytes = Math.floor(this.m_xDim * this.m_yDim * (this.m_bitsPerPixel / BITS_IN_BYTE));
   if ((imageSizeBytes !== tag.m_value.byteLength) || (pixelBitMask === 0)) {
     console.log(`Wrong image pixels size. Readed ${tag.m_value.byteLength}, but expected ${imageSizeBytes}`);
+    if (callbackComplete !== undefined) {
+      callbackComplete(LoadResult.WRONG_HEADER_DATA_SIZE);
+    }
     return LoadResult.WRONG_HEADER_DATA_SIZE;
   }
 
@@ -1449,6 +1477,9 @@ class LoaderDicom{
   this.m_error = DICOM_ERROR_OK;
 
   // console.log(`Dicom read OK. Volume pixels = ${this.m_xDim} * ${this.m_yDim} * ${this.m_zDim}`);
+  if (callbackComplete !== undefined) {
+    callbackComplete(LoadResult.SUCCESS);
+  }
   return LoadResult.SUCCESS;
   } // end readFromBuffer
 
@@ -1580,7 +1611,10 @@ class LoaderDicom{
         callbackProgress(1.0);
       }
       this.m_newTagEvent.detail.fileName = fileName;
-      const status = this.readFromBuffer(i, fileName, ratioLoaded, volDst, fileArrBu, callbackProgress, callbackComplete);
+
+      // const status = this.readFromBuffer(i, fileName, ratioLoaded, volDst, fileArrBu, callbackProgress, callbackComplete);
+      const status = this.readFromBuffer(i, fileName, ratioLoaded, volDst, fileArrBu, callbackProgress);
+
       if ((status !== LoadResult.SUCCESS) && (this.m_numFailsLoad === 0)) {
         this.m_numFailsLoad += 1;
         if (callbackComplete !== null) {
@@ -1618,6 +1652,10 @@ class LoaderDicom{
             }
           }
         } // if pixel spacing 0
+        if (zBox < TOO_MIN) {
+          zBox = 1.0;
+        }
+
         this.m_pixelSpacing.z = zBox / this.m_zDim;
         this.m_boxSize.z = this.m_zDim * this.m_pixelSpacing.z;
         this.m_boxSize.x = this.m_xDim * this.m_pixelSpacing.x;

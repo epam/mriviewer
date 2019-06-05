@@ -27,6 +27,7 @@ import UiReportMenu from './UiReportMenu';
 import UiFilterMenu from './UiFilterMenu';
 import UiModalText from './UiModalText';
 import UiModalAlert from './UiModalAlert';
+import UiErrConsole from './UiErrConsole';
 import ModeView from '../store/ModeView';
 
 import BrowserDetector from '../engine/utils/BrowserDetector';
@@ -129,6 +130,7 @@ class UiApp extends React.Component {
     this.m_store = store;
     const isLoaded = store.isLoaded;
     const fileName = store.fileName;
+    const arrErrorsLoadedd = store.arrErrors;
 
     const strMessageOnMenu = (isLoaded) ? 'File: ' + fileName : 'Press Open button to load scene';
 
@@ -168,6 +170,7 @@ class UiApp extends React.Component {
 
         </Navbar>
         {(isLoaded) ? <UiMain /> : <p></p>}
+        {(arrErrorsLoadedd.length > 0) ? <UiErrConsole /> : <p></p>}
         <UiModalText stateVis={this.state.showModalText}
           onHide={this.onHideModalText} onShow={this.onShowModalText} />
         <UiModalAlert stateVis={this.state.showModalAlert}

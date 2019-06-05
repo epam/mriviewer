@@ -37,7 +37,9 @@ import { Modal, Button } from 'react-bootstrap';
 // https://med3web.opensource.epam.com/data/ktx/brain_clipped.ktx
 
 //
-
+// http://www.d-inter.ru/private/med3web/data/ktx/bad.ktx
+// http://www.d-inter.ru/private/med3web/data/dicom/bad/_bad_00.dcm
+//
 //
 // http://www.d-inter.ru/private/med3web/data/ktx/ct_256_256_256.ktx
 // http://www.d-inter.ru/private/med3web/data/ktx/lungs_256_256_256.ktx

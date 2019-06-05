@@ -32,6 +32,8 @@ export default class LoadResult {
     switch (errorCode) {
     case LoadResult.SUCCESS:
       return 'Success';
+    case LoadResult.UNKNOWN:
+      return 'Unknown';
     case LoadResult.BAD_HEADER:
       return 'Bad header';
     case LoadResult.UNSUPPORTED_ENDIANNESS:
@@ -81,23 +83,24 @@ export default class LoadResult {
 } // class LoadResult
 
 LoadResult.SUCCESS = 1;
-LoadResult.BAD_HEADER = 2;
-LoadResult.UNSUPPORTED_ENDIANNESS = 3;
-LoadResult.UNSUPPORTED_COLOR_FORMAT = 4;
-LoadResult.WRONG_HEADER_DATA_SIZE = 5;
-LoadResult.WRONG_HEADER_DIMENSIONS = 6;
-LoadResult.WRONG_HEADER_DATA_TYPE = 7;
-LoadResult.WRONG_HEADER_BITS_PER_PIXEL = 8;
-LoadResult.WRONG_HEADER_MAGIC = 9;
-LoadResult.ERROR_PROCESS_HISTOGRAM = 10;
-LoadResult.WRONG_IMAGE_DIM_X = 11;
-LoadResult.WRONG_IMAGE_DIM_Y = 12;
-LoadResult.ERROR_PIXELS_TAG_NOT_FOUND = 13;
-LoadResult.ERROR_NO_MEMORY = 14;
-LoadResult.ERROR_CANT_OPEN_URL = 15;
-LoadResult.ERROR_WRONG_NUM_SLICES = 16;
-LoadResult.ERROR_HISTOGRAM_DETECT_RIDGES = 17;
-LoadResult.ERROR_SCALING = 18;
-LoadResult.ERROR_INVALID_SLICE_INDEX = 19;
-LoadResult.ERROR_TOO_SMALL_DATA_SIZE = 20;
-LoadResult.ERROR_TOO_LARGE_DATA_SIZE = 21;
+LoadResult.UNKNOWN = 2;
+LoadResult.BAD_HEADER = 3;
+LoadResult.UNSUPPORTED_ENDIANNESS = 4;
+LoadResult.UNSUPPORTED_COLOR_FORMAT = 5;
+LoadResult.WRONG_HEADER_DATA_SIZE = 6;
+LoadResult.WRONG_HEADER_DIMENSIONS = 7;
+LoadResult.WRONG_HEADER_DATA_TYPE = 8;
+LoadResult.WRONG_HEADER_BITS_PER_PIXEL = 9;
+LoadResult.WRONG_HEADER_MAGIC = 10;
+LoadResult.ERROR_PROCESS_HISTOGRAM = 11;
+LoadResult.WRONG_IMAGE_DIM_X = 12;
+LoadResult.WRONG_IMAGE_DIM_Y = 13;
+LoadResult.ERROR_PIXELS_TAG_NOT_FOUND = 14;
+LoadResult.ERROR_NO_MEMORY = 15;
+LoadResult.ERROR_CANT_OPEN_URL = 16;
+LoadResult.ERROR_WRONG_NUM_SLICES = 17;
+LoadResult.ERROR_HISTOGRAM_DETECT_RIDGES = 18;
+LoadResult.ERROR_SCALING = 19;
+LoadResult.ERROR_INVALID_SLICE_INDEX = 20;
+LoadResult.ERROR_TOO_SMALL_DATA_SIZE = 21;
+LoadResult.ERROR_TOO_LARGE_DATA_SIZE = 22;

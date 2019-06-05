@@ -97,10 +97,10 @@ export default class LoaderKtx {
       callbackProgress(0.0);
     }
     if (bufBytes.length === 0) {
-      if (callbackComplete) {
-        callbackComplete(LoadResult.BAD_HEADER, null, 0, null);
+      if (callbackComplete !== undefined) {
+        callbackComplete(LoadResult.BAD_HEADER);
       }
-      return false;
+      return LoadResult.BAD_HEADER;
     }
 
     // console.log(`readFromKtx. len = ${bufBytes.length}`);
@@ -124,10 +124,10 @@ export default class LoaderKtx {
     }
     if (!isHeaderSignCorrect) {
       console.log('KTX HEADER IS WRONG');
-      if (callbackComplete !== null) {
-        callbackComplete(LoadResult.BAD_HEADER, null, 0, null);
+      if (callbackComplete !== undefined) {
+        callbackComplete(LoadResult.BAD_HEADER);
       }
-      return false;
+      return LoadResult.BAD_HEADER;
     }
     const SIZE_DWORD = 4;
     const ENDIANNESS_16 = 16;
@@ -138,10 +138,10 @@ export default class LoaderKtx {
       const strFoundEndns = this.m_header.m_endianness.toString(ENDIANNESS_16);
       // eslint-disable-next-line
       console.log(`ENDIANNESS IS WRONG. Found = ${strFoundEndns} , but should be = ${ENDIAN_CONST.toString(16)}`);
-      if (callbackComplete) {
-        callbackComplete(LoadResult.UNSUPPORTED_ENDIANNESS, null, 0, null);
+      if (callbackComplete !== undefined) {
+        callbackComplete(LoadResult.UNSUPPORTED_ENDIANNESS);
       }
-      return false;
+      return LoadResult.UNSUPPORTED_ENDIANNESS;
     }
 
     // read
@@ -154,10 +154,10 @@ export default class LoaderKtx {
       (this.m_header.m_glFormat !== KtxHeader.KTX_GL_RGB) &&
       (this.m_header.m_glFormat !== KtxHeader.KTX_GL_RGBA)) {
       console.log('KTX header.m_glFormat is WRONG');
-      if (callbackComplete) {
-        callbackComplete(LoadResult.UNSUPPORTED_COLOR_FORMAT, null, 0, null);
+      if (callbackComplete !== undefined) {
+        callbackComplete(LoadResult.UNSUPPORTED_COLOR_FORMAT);
       }
-      return false;
+      return LoadResult.UNSUPPORTED_COLOR_FORMAT;
     }
     this.m_header.m_glInternalFormat = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
     this.m_header.m_glBaseInternalFormat = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
@@ -178,18 +178,18 @@ export default class LoaderKtx {
     if ((head.m_pixelWidth < MIN_DIM) || (head.m_pixelHeight < MIN_DIM) 
       || (head.m_pixelDepth < MIN_DIM)) {
       console.log(`KTX dims too small: ${head.m_pixelWidth} * ${head.m_pixelHeight} * ${head.m_pixelDepth}`);
-      if (callbackComplete) {
-        callbackComplete(LoadResult.WRONG_IMAGE_DIM_X, null, 0, null);
+      if (callbackComplete !== undefined) {
+        callbackComplete(LoadResult.WRONG_IMAGE_DIM_X);
       }
-      return false;
+      return LoadResult.WRONG_IMAGE_DIM_X;
     }
     if ((head.m_pixelWidth > MAX_DIM) || (head.m_pixelHeight > MAX_DIM) 
       || (head.m_pixelDepth > MAX_DIM)) {
       console.log(`KTX dims too large: ${head.m_pixelWidth} * ${head.m_pixelHeight} * ${head.m_pixelDepth}`);
-      if (callbackComplete) {
-        callbackComplete(LoadResult.WRONG_IMAGE_DIM_X, null, 0, null);
+      if (callbackComplete !== undefined) {
+        callbackComplete(LoadResult.WRONG_IMAGE_DIM_X);
       }
-      return false;
+      return LoadResult.WRONG_IMAGE_DIM_X;
     }
 
     this.m_header.m_numberOfArrayElements = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
@@ -256,10 +256,10 @@ export default class LoaderKtx {
       this.m_header.m_pixelDepth * bytesPerVoxel;
     if (this.m_dataSize !== dataSizeCalculated) {
       console.log('!!! TODO: not implemented yet');
-      if (callbackComplete) {
-        callbackComplete(LoadResult.WRONG_HEADER_DATA_SIZE, null, 0, null);
+      if (callbackComplete !== undefined) {
+        callbackComplete(LoadResult.WRONG_HEADER_DATA_SIZE);
       }
-      return false;
+      return LoadResult.WRONG_HEADER_DATA_SIZE;
     }
     this.m_dataArray = new Uint8Array(this.m_dataSize);
     // get power of 2 for data size
@@ -311,11 +311,10 @@ export default class LoaderKtx {
     if (callbackProgress) {
       callbackProgress(1.0);
     }
-    if (callbackComplete) {
-      callbackComplete(LoadResult.SUCCESS, this.m_header, this.m_dataSize, this.m_dataArray);
+    if (callbackComplete !== undefined) {
+      callbackComplete(LoadResult.SUCCESS);
     }
-
-    return true;
+    return LoadResult.SUCCESS;
   } // end readFromBuffer
   /**
   *
@@ -329,12 +328,12 @@ export default class LoaderKtx {
     console.log(`LoadedKtx. staring read ${strUrl}`);
     this.m_fileLoader = new FileLoader(strUrl);
     this.m_fileLoader.readFile((arrBuf) => {
-      const okRead = this.readFromBuffer(volDst, arrBuf, callbackProgress, callbackComplete);
-      return okRead;
+      this.readFromBuffer(volDst, arrBuf, callbackProgress, callbackComplete);
+      return;
     }, (errMsg) => {
       console.log(`LoaderKtx. Error read file: ${errMsg}`);
       callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
+      return;
     });
-    return true;
   } // end of readFromUrl
 } // end class

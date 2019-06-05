@@ -66,6 +66,9 @@ class Volume extends React.Component {
   // Make each volume texture size equal to 4 * N
   //
   makeDimensions4x() {
+    if (this.m_zDim <= 1) {
+      return;
+    }
     const xDimNew = (this.m_xDim + 3) & (~3);
     const yDimNew = (this.m_yDim + 3) & (~3);
     const zDimNew = (this.m_zDim + 3) & (~3);
@@ -150,8 +153,7 @@ class Volume extends React.Component {
   //
   readFromKtxUrl(strUrl, callbackProgress, callbackComplete) {
     const loader = new LoaderKtx();
-    const ret = loader.readFromUrl(this, strUrl, callbackProgress, callbackComplete);
-    return ret;
+    loader.readFromUrl(this, strUrl, callbackProgress, callbackComplete);
   }
   //
   // Read from NII by URL
@@ -189,15 +191,18 @@ class Volume extends React.Component {
   //
   // Read from local dicom
   //
-  readFromDicom(arrBuf, callbackProgress, callbackComplete) {
-    const loader = new LoaderDicom();
+  readFromDicom(loader, arrBuf, callbackProgress, callbackComplete) {
     /*
     // save dicomInfo to store
     const dcmInfo = loader.m_dicomInfo;
     const store = props;
     store.dispatch({ type: StoreActionType.SET_DICOM_INFO, dicomInfo: dcmInfo });
     */
-    const ret = loader.readFromBuffer(this, arrBuf, callbackProgress, callbackComplete);
+    const indexFile = 0;
+    const fileName = 'file???';
+    const ratio = 0.0;
+
+    const ret = loader.readFromBuffer(indexFile, fileName, ratio, this, arrBuf, callbackProgress, callbackComplete);
     return ret;
   }
   readSingleSliceFromDicom(loader, indexFile, fileName, ratioLoaded, arrBuf, callbackProgress, callbackComplete) {
