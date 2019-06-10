@@ -76,6 +76,8 @@ export default class LoadResult {
       return 'Too small input data size';
     case LoadResult.ERROR_TOO_LARGE_DATA_SIZE:
       return 'Too large input data size';
+    case LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED:
+      return 'Compressed image formats read is not supported';
     default:
       return 'Unknown error code';
     } // switch
@@ -104,3 +106,5 @@ LoadResult.ERROR_SCALING = 19;
 LoadResult.ERROR_INVALID_SLICE_INDEX = 20;
 LoadResult.ERROR_TOO_SMALL_DATA_SIZE = 21;
 LoadResult.ERROR_TOO_LARGE_DATA_SIZE = 22;
+LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED = 23;
+

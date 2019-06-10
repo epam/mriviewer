@@ -1406,7 +1406,7 @@ class LoaderDicom{
   if ((imageSizeBytes !== tag.m_value.byteLength) || (pixelBitMask === 0)) {
     console.log(`Wrong image pixels size. Readed ${tag.m_value.byteLength}, but expected ${imageSizeBytes}`);
     if (callbackComplete !== undefined) {
-      callbackComplete(LoadResult.WRONG_HEADER_DATA_SIZE);
+      callbackComplete(LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED);
     }
     return LoadResult.WRONG_HEADER_DATA_SIZE;
   }
