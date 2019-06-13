@@ -301,16 +301,12 @@ class UiOpenMenu extends React.Component {
           ok = this.m_loader.createRoiVolumeFromHeaderAndImage(this.m_volume, this.m_volumeRoi);
         }
       }
-      if (!ok) {
-        this.callbackReadProgress(1.0);
-        this.callbackReadComplete(LoadResult.FAIL, null, 0, null);
-        return;
-      }
-      this.finalizeSuccessLoadedVolume(this.m_volume, this.m_fileName);
-      console.log(`onFileContentReadMultipleHdr read all ${this.m_numFiles} files`);
-
       this.callbackReadProgress(1.0);
-      this.callbackReadComplete(LoadResult.SUCCES, null, 0, null);
+      if (!ok) {
+        this.callbackReadComplete(LoadResult.FAIL);
+      } else {
+        this.callbackReadComplete(LoadResult.SUCCESS);
+      }
     }
 
     // read again new file
