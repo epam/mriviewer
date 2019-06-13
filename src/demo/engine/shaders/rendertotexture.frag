@@ -902,8 +902,12 @@ void main() {
   #if isoRenderFlag == 0
   {
     float vol = tex3D(start.xyz);
-    if (vol > t_function2min.a)
-      acc.rgb = 0.75 * vol * t_function2min.rgb;
+    if (vol > t_function2min.a) {
+      acc.rgb = vec3(vol);
+   		acc.a = 1.0;
+      gl_FragColor = acc;
+      return;
+    }
     else
     {
       acc = Isosurface(start.xyz, dir, back, t_function1min.a, stepSize.b);
@@ -918,18 +922,25 @@ void main() {
   //Direct isosurface render
   #if isoRenderFlag == 1
   {
-    acc = Isosurface(start.xyz, dir, back, isoThreshold, stepSize.b);
-    if (acc.a < 1.9)
+    float vol = tex3D(start.xyz);
+    if (vol > isoThreshold)
     {
-        float vol = tex3D(start.xyz);
-        if (vol > t_function2min.a)
-          acc.rgb = 0.75*vol*t_function2min.rgb;
-        else
-//          acc.rgb = CalcLightingAO(acc.rgb, dir, isoThreshold);
-          acc.rgb = CalcLighting(acc.rgb, dir);
+      acc.rgb = vec3(vol);
+   		acc.a = 0.0;
+      gl_FragColor = acc;
+      return;
     }
-    gl_FragColor = acc;
-    return;
+    else
+    {
+      acc = Isosurface(start.xyz, dir, back, isoThreshold, stepSize.b);
+      if (acc.a < 1.9)
+      {
+        acc.rgb = CalcLighting(acc.rgb, dir);
+        //acc.rgb = (1.0 - contrast3D)*acc.rgb + contrast3D*vec3(vol);
+      }
+      gl_FragColor = acc;
+      return;
+    }
   }
   #endif
  // Direct full volume render
