@@ -28,6 +28,10 @@ import FileTools from '../engine/loaders/FileTools';
 import LoaderDicom from '../engine/loaders/LoaderDicom';
 import LoaderHdr from '../engine/loaders/LoaderHdr';
 
+import LoaderUrlDicom from '../engine/loaders/LoaderUrlDicom';
+
+import config from '../config/config';
+
 // ********************************************************
 // Const
 // ********************************************************
@@ -515,6 +519,15 @@ class UiOpenMenu extends React.Component {
   onModalDemoOpenHide() {
     this.setState({ showModalDemo: false });
   }
+  arrNumToStr(arrNums) {
+    const numLet = arrNums.length;
+    let str = '';
+    for (let i = 0; i < numLet; i++) {
+      const n = arrNums[i];
+      str = str.concat( String.fromCharCode(n) );
+    }
+    return str;
+  }
   onDemoSelected(index) {
     let fileName = '';
     if (index === 0) {
@@ -537,19 +550,47 @@ class UiOpenMenu extends React.Component {
       // fileName = ft.encodeUrl(FN_GM_DECODED);
       // console.log(`onDemoSelected. enc = ${fileName}`);
     } else if (index === 3) {
-      // woman pelvis
-      const FN_WOMM_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ejdpn/xpnbo_qfmwjt/wig.:12.edn';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_WOMM_ENCODED);
-      //fileName = ft.encodeUrl(FN_WOM_DECODED);
-      // console.log(`onDemoSelected. enc = ${fileName}`);
+      const numUrls = config.demoWomanPelvisUrls.length;
+      if (numUrls === 0) {
+        // woman pelvis
+        const FN_WOMM_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ejdpn/xpnbo_qfmwjt/wig.:12.edn';
+        const ft = new FileTools();
+        fileName = ft.decodeUrl(FN_WOMM_ENCODED);
+      } else {
+        const strPrefix = config.demoWomanPelvisPrefix;
+        // console.log(`config. prefix = ${strPrefix}`);
+        const arrFileNames = [];
+        for (let i = 0; i < numUrls; i++) {
+          const strFn = config.demoWomanPelvisUrls[i];
+          const url = `${strPrefix}${strFn}`;
+          arrFileNames.push(url);
+        }
+        const store = this.props;
+        const loader = new LoaderUrlDicom(store);
+        loader.loadFromUrlArray(arrFileNames);
+        return;
+      }
     } else if (index === 4) {
-      // lungs dicom 00cba..957e.dcm
-      const FN_OCB_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ejdpn/11dcb1:2gb5be73dd4311b768bfc:68f/145784245dcfg6fb26gg:f1d91:1611b.edn';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_OCB_ENCODED);
-      // fileName = ft.encodeUrl(FN_OCB_DECODED);
-      // console.log(`onDemoSelected. enc = ${fileName}`);
+      const numUrls = config.demoLungsUrls.length;
+      if (numUrls === 0) {
+        // lungs dicom 00cba..957e.dcm
+        const FN_OCB_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ejdpn/11dcb1:2gb5be73dd4311b768bfc:68f/145784245dcfg6fb26gg:f1d91:1611b.edn';
+        const ft = new FileTools();
+        fileName = ft.decodeUrl(FN_OCB_ENCODED);
+      } else {
+        const strPrefix = config.demoLungsPrefix;
+        console.log(`config. Lungs prefix = ${strPrefix}`);
+        const arrFileNames = [];
+        for (let i = 0; i < numUrls; i++) {
+          const strFn = config.demoLungsUrls[i];
+          const url = `${strPrefix}${strFn}`;
+          arrFileNames.push(url);
+        }
+        const store = this.props;
+        const loader = new LoaderUrlDicom(store);
+        loader.loadFromUrlArray(arrFileNames);
+        return;
+      }
     } else if (index === 5) {
       // ct_256_256_256.ktx
       const FN_CT256_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/du_367_367_367.luy';
@@ -570,8 +611,6 @@ class UiOpenMenu extends React.Component {
       const FN_HDRSET_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ies/tfu_jouo.i';
       const ft = new FileTools();
       fileName = ft.decodeUrl(FN_HDRSET_ENCODED);
-      //fileName = ft.encodeUrl(FN_HDRSET_DECODED);
-      //console.log(`onDemoSelected. enc = ${fileName}`);
     } else {
       console.log(`onDemoSelected. not implemented for index = ${index}`);
     }

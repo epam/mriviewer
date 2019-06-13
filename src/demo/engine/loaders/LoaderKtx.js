@@ -93,7 +93,7 @@ export default class LoaderKtx {
     // prepare KTX header
     const bufBytes = new Uint8Array(arrBuf);
     let bufOff = 0;
-    if (callbackProgress !== null) {
+    if (callbackProgress !== undefined) {
       callbackProgress(0.0);
     }
     if (bufBytes.length === 0) {
@@ -285,7 +285,7 @@ export default class LoaderKtx {
       this.m_dataArray[i] = bufBytes[bufOff];
       bufOff += 1;
       // progress update
-      if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
+      if ((callbackProgress !== undefined) && ((i & progressMask) === 0) && (i > 0)) {
         const ratio = i / this.m_dataSize;
         callbackProgress(ratio);
       }
@@ -308,7 +308,7 @@ export default class LoaderKtx {
     console.log(`KTX Loaded successfully with dim = ${volDst.m_xDim}*${volDst.m_yDim}*${volDst.m_zDim}. bpp=${volDst.m_bytesPerVoxel}`);
 
     this.m_isLoadedSuccessfull = true;
-    if (callbackProgress) {
+    if (callbackProgress !== undefined) {
       callbackProgress(1.0);
     }
     if (callbackComplete !== undefined) {

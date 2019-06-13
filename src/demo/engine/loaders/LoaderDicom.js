@@ -188,6 +188,8 @@ class LoaderDicom{
     this.m_sliceLocMin = +1.0e12;
     // eslint-disable-next-line
     this.m_sliceLocMax = -1.0e12;
+
+    this.runLoader = this.runLoader.bind(this);
   }
   getBoxSize() {
     return this.m_boxSize;
@@ -1594,6 +1596,7 @@ class LoaderDicom{
   } // end readReadyFileList(arrBuf)
   /**
   * Run loader to read dicom file
+  * @param {object} volDst - destination volumee
   * @param {string} fileName - File to read
   * @param {object} loader - loader object with file inside
   * @param {number} i - index of file in files array

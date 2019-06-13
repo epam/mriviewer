@@ -5,6 +5,7 @@
 
 import Volume from './Volume';
 import { KtxHeader } from './loaders/LoaderKtx';
+import LoadResult from './LoadResult';
 
 // ********************************************************
 // Tests
@@ -58,8 +59,8 @@ describe('VolumeTests', () => {
     for (let i = 0; i < MAX_SIZE_TEST; i++) {
       bufTest[0] = 'a';
     }
-    const callbackProgress = null;
-    const callbackComplete = null;
+    const callbackProgress = undefined;
+    const callbackComplete = undefined;
     const vol = new Volume();
     const readOk = vol.readFromKtx(bufTest, callbackProgress, callbackComplete);
     expect(readOk === true).toBeFalsy();
@@ -80,8 +81,8 @@ describe('VolumeTests', () => {
     // write endianness
     iDst = _writeInt(bufTest, iDst, 5555);
 
-    const callbackProgress = null;
-    const callbackComplete = null;
+    const callbackProgress = undefined;
+    const callbackComplete = undefined;
     const vol = new Volume();
     const readOk = vol.readFromKtx(bufTest, callbackProgress, callbackComplete);
     expect(readOk === true).toBeFalsy();
@@ -110,8 +111,8 @@ describe('VolumeTests', () => {
     // write gl format
     iDst = _writeInt(bufTest, iDst, BAD);
 
-    const callbackProgress = null;
-    const callbackComplete = null;
+    const callbackProgress = undefined;
+    const callbackComplete = undefined;
     const vol = new Volume();
     const readOk = vol.readFromKtx(bufTest, callbackProgress, callbackComplete);
     expect(readOk === true).toBeFalsy();
@@ -148,8 +149,8 @@ describe('VolumeTests', () => {
     iDst = _writeInt(bufTest, iDst, TOO_SMALL);
     iDst = _writeInt(bufTest, iDst, TOO_SMALL);
 
-    const callbackProgress = null;
-    const callbackComplete = null;
+    const callbackProgress = undefined;
+    const callbackComplete = undefined;
     const vol = new Volume();
     const readOk = vol.readFromKtx(bufTest, callbackProgress, callbackComplete);
     // console.log(`Test. Vol dim = ${vol.m_xDim} * ${vol.m_yDim} * ${vol.m_zDim} `);
@@ -206,13 +207,12 @@ describe('VolumeTests', () => {
       bufTest[iDst++] = (i & 0xff);
     }
 
-
-    const callbackProgress = null;
-    const callbackComplete = null;
+    const callbackProgress = undefined;
+    const callbackComplete = undefined;
     const vol = new Volume();
     const readOk = vol.readFromKtx(bufTest, callbackProgress, callbackComplete);
     // console.log(`Test. Vol dim = ${vol.m_xDim} * ${vol.m_yDim} * ${vol.m_zDim} `);
-    expect(readOk === true).toBeTruthy();
+    expect(readOk === LoadResult.SUCCESS).toBeTruthy();
   });
 
 });
