@@ -19,6 +19,7 @@ import { Card, ListGroup, ButtonGroup, Button } from 'react-bootstrap';
 //import Nouislider from 'react-nouislider';
 
 import Modes3d from '../store/Modes3d';
+import Modes3droi from '../store/Modes3droi';
 import StoreActionType from '../store/ActionTypes';
 import UiTF from './UiTF';
 import UiTFroi from './UiTFroi';
@@ -46,6 +47,7 @@ class UiCtrl3dLight extends React.Component {
     this.onModeC = this.onModeC.bind(this);
     this.onModeD = this.onModeD.bind(this);
     this.onMode = this.onMode.bind(this);
+    this.onModeroi = this.onModeroi.bind(this);
     this.m_updateEnable = true;
   }
   onMode(indexMode) {
@@ -69,6 +71,16 @@ class UiCtrl3dLight extends React.Component {
   onModeD() {
     this.onMode(Modes3d.EREASER);
     this.props.volumeRenderer.setEraserMode(true);
+  }
+  onModeroi(indexMode) {
+    this.m_updateEnable = true;
+    this.props.dispatch({ type: StoreActionType.SET_MODE_3Droi, mode3droi: indexMode });
+  }
+  onModeAroi() {
+    this.onModeroi(Modes3droi.ISO);
+  }
+  onModeBroi() {
+    this.onModeroi(Modes3droi.RAYCAST);
   }
   shouldComponentUpdate() {
     return this.m_updateEnable;
@@ -106,11 +118,14 @@ class UiCtrl3dLight extends React.Component {
   render() {
     const store = this.props;
     const mode3d = store.mode3d;
+    const mode3droi = store.mode3droi;
 
     const strA = (mode3d === Modes3d.ISO) ? 'active' : '';
     const strB = (mode3d === Modes3d.RAYCAST) ? 'active' : '';
     const strC = (mode3d === Modes3d.RAYFAST) ? 'active' : '';
     const strD = (mode3d === Modes3d.ERASER) ? 'active' : '';
+    const strAroi = (mode3droi === Modes3droi.ISO) ? 'active' : '';
+    const strBroi = (mode3droi === Modes3droi.RAYCAST) ? 'active' : '';
 
     const jsxRenderControls =
       <div>

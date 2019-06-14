@@ -63,6 +63,7 @@ class UiTF extends React.Component {
   }
   /**
    * Main component render func callback
+    const jsxRet = jsxArray[mode3d];
    */
   render() {
     const store = this.props;
@@ -99,7 +100,7 @@ class UiTF extends React.Component {
         </li>
       </ul>
     const jsxArray = [jsxIsoTF, jsxVolumeTF];
-    const jsxRet = jsxArray[mode3d];
+    const jsxRet = jsxArray[0];
     return jsxRet;
   }
 }

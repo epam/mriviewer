@@ -38,6 +38,9 @@ import MaterialVolumeRender from './gfx/matvolumerender';
 import VolumeFilter3D from './volumeFilter3d';
 import RoiPalette from './loaders/roipalette';
 import TetrahedronGenerator from './actvolume/tetra';
+//import Graphics23d from './tools23d/graphics23d';
+import MaterialColor2d from './gfx/matcolor2d';
+
 
 // import GlCheck from './glcheck';
 // import GeoRender from '../actvolume/georender';
@@ -98,6 +101,8 @@ export default class VolumeRenderer3d {
     // tetra scene seems to be unused!
     // this.sceneTetra = new THREE.Scene();
 
+    this.scene23D = new THREE.Scene();
+    this.tools23d = null;
     this.sceneSphere = new THREE.Scene();
     this.meshSphere = null;
     this.newScene = new THREE.Scene();
@@ -759,6 +764,9 @@ export default class VolumeRenderer3d {
     // create new sphere
     const matWCloader = new MaterialWC();
     this.matWireFrame = matWCloader.create(this.bfTexture, this.ffTexture);
+    const matColor = new MaterialColor2d();
+    this.matColor23d = matColor.create();
+
     /*
     console.log(`this.bfTexture`);
     if (this.bfTexture === null) {
@@ -1048,6 +1056,8 @@ export default class VolumeRenderer3d {
         this.meshSphere.material = this.matVolumeRender;
         this.sceneReadyCounter++;
       });
+    //this.tools23d = new Graphics23d(this.scene23D, this.windowWidth, this.windowHeight);
+    //this.tools23d.set2dToolType(toolType);
     //matSkullThreeGS.m_uniforms.texVolumeMask.value = this.volTextureMask;
   } // callbackCreateCubeVolume
   /**
@@ -1171,6 +1181,7 @@ export default class VolumeRenderer3d {
         this.updateLightDir();
         this.updateClipPlaneGeometry();
         this.updateCutPlanes();
+        
         this.renderer.setRenderTarget(this.bfTexture);
         this.renderer.clear();
         this.renderer.state.buffers.depth.setClear(0);
@@ -1207,11 +1218,18 @@ export default class VolumeRenderer3d {
         this.renderer.render(this.scene, this.camera);
         // Render wireframe mesh
         this.renderer.autoClearDepth = false;
+        
         //this.matWireFrame
-        //this.scene.overrideMaterial = this.matWireFrame;
-        //this.renderer.render(this.scene, this.camera);
+        //this.renderer.clear();
+        //this.scene23D.overrideMaterial = this.matColor23d;//this.m_linesMaterial;//this.matWireFrame;
+        //this.renderer.render(this.scene23D, this.camera);
         //this.renderer.render(this.sceneSphereWireFrame, this.camera);
         this.renderer.autoClearDepth = true;
+        //this.renderer.clear();
+        /*
+        this.renderer.clear();
+        this.renderer.render(this.scene23D, this.camera);
+        */
       }
       this.renderCounter++;
     }
@@ -1286,6 +1304,7 @@ export default class VolumeRenderer3d {
   }
   onMouseDown(xx, yy) {
     this.orbitControl.onMouseDown(xx, yy);
+    //this.tools23d.onMouseDown(xx /this.windowWidth, yy / this.windowHeight);
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return;
     }
@@ -1297,6 +1316,7 @@ export default class VolumeRenderer3d {
     }
   }
   onMouseMove(xx, yy) {
+    //this.tools23d.onMouseMove(xx / this.windowWidth, yy / this.windowHeight);
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return;
     }
@@ -1308,7 +1328,8 @@ export default class VolumeRenderer3d {
       this.volumeUpdater.eraser.eraseStart(xx, yy, this.windowWidth, this.matVolumeRender.uniforms.isoThreshold.value, false);
     }
   }
-  onMouseUp() {
+  onMouseUp(xx, yy) {
+    //this.tools23d.onMouseUp(xx / this.windowWidth, yy / this.windowHeight);
     this.orbitControl.onMouseUp();
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return;
