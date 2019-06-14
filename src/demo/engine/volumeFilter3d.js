@@ -79,7 +79,10 @@ export default class VolumeFilter3d {
    * Create 2D texture containing transfer func colors
   */
   createTransferFuncTexture() {
-    return this.transferFunc.createTransferFuncTexture();
+    if (this.transferFunc !== null) {
+      return this.transferFunc.createTransferFuncTexture();
+    }
+    return null;
   }
   /**
    * Creates transfer function color map

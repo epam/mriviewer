@@ -138,8 +138,10 @@ See results in esdoc folder
 npm run build
 ```
 
-See results in dist folder
+See results in build folder
 
+## Development notes
 
+You can read more [technical notes here](./DEVNOTES.md) if wish to deep inside tech details of the project
 
 
