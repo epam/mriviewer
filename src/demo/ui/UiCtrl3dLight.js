@@ -118,14 +118,14 @@ class UiCtrl3dLight extends React.Component {
   render() {
     const store = this.props;
     const mode3d = store.mode3d;
-    const mode3droi = store.mode3droi;
+    // const mode3droi = store.mode3droi;
 
     const strA = (mode3d === Modes3d.ISO) ? 'active' : '';
     const strB = (mode3d === Modes3d.RAYCAST) ? 'active' : '';
     const strC = (mode3d === Modes3d.RAYFAST) ? 'active' : '';
     const strD = (mode3d === Modes3d.ERASER) ? 'active' : '';
-    const strAroi = (mode3droi === Modes3droi.ISO) ? 'active' : '';
-    const strBroi = (mode3droi === Modes3droi.RAYCAST) ? 'active' : '';
+    // const strAroi = (mode3droi === Modes3droi.ISO) ? 'active' : '';
+    // const strBroi = (mode3droi === Modes3droi.RAYCAST) ? 'active' : '';
 
     const jsxRenderControls =
       <div>

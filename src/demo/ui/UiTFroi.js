@@ -67,7 +67,7 @@ class UiTF extends React.Component {
    */
   render() {
     const store = this.props;
-    const mode3d = store.mode3d;
+    // const mode3d = store.mode3d;
     const slider3dr = store.slider3d_r;
     const slider3dg = store.slider3d_g;
     const wArr = [slider3dr, slider3dg];

@@ -38,8 +38,8 @@ import MaterialVolumeRender from './gfx/matvolumerender';
 import VolumeFilter3D from './volumeFilter3d';
 import RoiPalette from './loaders/roipalette';
 import TetrahedronGenerator from './actvolume/tetra';
-//import Graphics23d from './tools23d/graphics23d';
-import MaterialColor2d from './gfx/matcolor2d';
+// import Graphics23d from './tools23d/graphics23d';
+// import MaterialColor2d from './gfx/matcolor2d';
 
 
 // import GlCheck from './glcheck';
@@ -764,8 +764,8 @@ export default class VolumeRenderer3d {
     // create new sphere
     const matWCloader = new MaterialWC();
     this.matWireFrame = matWCloader.create(this.bfTexture, this.ffTexture);
-    const matColor = new MaterialColor2d();
-    this.matColor23d = matColor.create();
+    // const matColor = new MaterialColor2d();
+    // this.matColor23d = matColor.create();
 
     /*
     console.log(`this.bfTexture`);
@@ -1328,7 +1328,7 @@ export default class VolumeRenderer3d {
       this.volumeUpdater.eraser.eraseStart(xx, yy, this.windowWidth, this.matVolumeRender.uniforms.isoThreshold.value, false);
     }
   }
-  onMouseUp(xx, yy) {
+  onMouseUp( /* xx, yy */ ) {
     //this.tools23d.onMouseUp(xx / this.windowWidth, yy / this.windowHeight);
     this.orbitControl.onMouseUp();
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
