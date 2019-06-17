@@ -18,6 +18,7 @@ import Volume from '../engine/Volume';
 import Texture3D from '../engine/Texture3D';
 
 import UiModalDemo from './UiModalDemo';
+import UiModalGoogle from './UiModalGoogle';
 import StoreActionType from '../store/ActionTypes';
 import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
@@ -41,6 +42,9 @@ const NEED_TEXTURE_SIZE_4X = true;
 
 /** special demo development mode to read data from google cloud */
 const GOOGLE_CARE_DEMO = false;
+
+/** menu for google demo loading */
+const MENU_GOOGLE_CLOUD_LOADING = false;
 
 // ********************************************************
 // Class
@@ -70,8 +74,11 @@ class UiOpenMenu extends React.Component {
 
     this.onModalDemoOpenShow = this.onModalDemoOpenShow.bind(this);
     this.onModalDemoOpenHide = this.onModalDemoOpenHide.bind(this);
-
     this.onDemoSelected = this.onDemoSelected.bind(this);
+
+    this.onModalGoogleShow = this.onModalGoogleShow.bind(this);
+    this.onModalGoogleHide = this.onModalGoogleHide.bind(this);
+    this.onGoogleSelected = this.onGoogleSelected.bind(this);
 
     this.callbackReadProgress = this.callbackReadProgress.bind(this);
     this.callbackReadComplete = this.callbackReadComplete.bind(this);
@@ -84,6 +91,7 @@ class UiOpenMenu extends React.Component {
       strUrl: '',
       showModalUrl: false,
       showModalDemo: false,
+      showModalGoogle: false,
     };
     this.m_volume = null;
     this.m_volumeRoi = null;
@@ -527,6 +535,16 @@ class UiOpenMenu extends React.Component {
     }
     return str;
   }
+  onModalGoogleShow() {
+    this.setState({ showModalGoogle: true });
+  }
+  onModalGoogleHide() {
+    this.setState({ showModalGoogle: false });
+  }
+  onGoogleSelected(index) {
+    // TODO: perform action on click i-th item in Google cloud menu
+    console.log(`TODO: onGoogleSelected(${index}) ... `);
+  }
   onDemoSelected(index) {
     let fileName = '';
     if (index === 0) {
@@ -642,6 +660,29 @@ class UiOpenMenu extends React.Component {
     return true;
   }
   render() {
+
+    const jsGoo = (MENU_GOOGLE_CLOUD_LOADING) ? 
+      <NavDropdown.Item onClick={this.onModalGoogleShow} >
+        <i className="fas fa-brain"></i>
+        Google cloud models
+      </NavDropdown.Item> : 
+      <p></p>;
+
+    const arrMenuGoogle = [
+      {
+        text: 'Demo lungs AA',
+        tooltip: 'Load some lungs model',
+      },
+      {
+        text: 'Demo head BB',
+        tooltip: 'Load some strange head',
+      },
+      {
+        text: 'Demo alien CC',
+        tooltip: 'Write here smth please',
+      },
+    ];
+
     const jsxOpenMenu =
       <NavDropdown id="basic-nav-dropdown" title={
         <div style={{ display: 'inline-block' }}> 
@@ -659,6 +700,8 @@ class UiOpenMenu extends React.Component {
         </NavDropdown.Item>
 
         <NavDropdown.Divider />
+
+        {jsGoo}
 
         <NavDropdown.Item href="#actionOpenDemo" onClick={this.onModalDemoOpenShow} >
           <i className="fas fa-brain"></i>
@@ -697,6 +740,10 @@ class UiOpenMenu extends React.Component {
 
         <UiModalDemo stateVis={this.state.showModalDemo}
           onHide={this.onModalDemoOpenHide} onSelectDemo={this.onDemoSelected}  />
+        <UiModalGoogle stateVis={this.state.showModalGoogle}
+          onHide={this.onModalGoogleHide} onSelectDemo={this.onGoogleSelected}  
+          arrMenu={arrMenuGoogle}/>
+
       </NavDropdown>
 
     return jsxOpenMenu;

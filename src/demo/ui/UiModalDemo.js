@@ -15,42 +15,6 @@ import { connect } from 'react-redux';
 import { Container, Row, Col, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Modal, Button } from 'react-bootstrap';
 
-// File list for demo
-
-//
-// OneDrive links
-//
-// ktx / ct_256..
-// https://epam-my.sharepoint.com/:u:/p/vladislav_shubnikov/EY01jASe0VBFgBAF8Y8Wb70BBnJMKnsR7Lttj-ikMLT25A?e=3PZffy
-// ktx / lungs_256....
-// https://epam-my.sharepoint.com/:u:/p/vladislav_shubnikov/EVvyy6uKRvxLnfOyWYSay-IBrKxDYmOm8b7OLPUzRkWY5g?e=T6i7YM
-// nifti / gm3_...
-// https://epam-my.sharepoint.com/:u:/p/vladislav_shubnikov/ERGfqrfwaONFo1GvgGdJkTwBypBudizNsKmYiQN5ucw-4A?e=rQtgJi
-//
-
-// Old refs
-//
-// https://med3web.opensource.epam.com/data/ktx/ct_256_256_256.ktx
-// https://med3web.opensource.epam.com/data/dicom/20121029/2_1.dcm
-// https://med3web.opensource.epam.com/data/hdr/set_mask.h
-// https://med3web.opensource.epam.com/data/ktx/brain.ktx
-// https://med3web.opensource.epam.com/data/ktx/brain_clipped.ktx
-
-//
-// http://www.d-inter.ru/private/med3web/data/ktx/bad.ktx
-// http://www.d-inter.ru/private/med3web/data/dicom/bad/_bad_00.dcm
-//
-//
-// http://www.d-inter.ru/private/med3web/data/ktx/ct_256_256_256.ktx
-// http://www.d-inter.ru/private/med3web/data/ktx/lungs_256_256_256.ktx
-// http://www.d-inter.ru/private/med3web/data/nifti/gm3_512_512_165.nii
-//
-// http://www.d-inter.ru/private/med3web/data/hdr/set_int.h
-//
-// http://www.d-inter.ru/private/med3web/data/dicom/00cba091fa4ad62cc3200a657aeb957e/034673134cbef5ea15ff9e0c8090500a.dcm
-// http://www.d-inter.ru/private/med3web/data/dicom/woman_pelvis/vhf.901.dcm
-//
-
 // ********************************************************
 // Const
 // ********************************************************
