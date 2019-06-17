@@ -39,6 +39,9 @@ import config from '../config/config';
 /** deep artificially fix volume texture size to 4 * N */
 const NEED_TEXTURE_SIZE_4X = true;
 
+/** special demo development mode to read data from google cloud */
+const GOOGLE_CARE_DEMO = false;
+
 // ********************************************************
 // Class
 // ********************************************************
@@ -369,9 +372,6 @@ class UiOpenMenu extends React.Component {
   handleFileSelected(evt) {
     if (evt.target.files !== undefined) {
       const numFiles = evt.target.files.length;
-      if (numFiles === 0) {
-        return;
-      }
       console.log(`UiOpenMenu. Trying to open ${numFiles} files`);
       console.log(`UiOpenMenu. handleFileSelected. file[0] = ${evt.target.files[0].name}`);
       if (numFiles === 1) {
@@ -530,11 +530,28 @@ class UiOpenMenu extends React.Component {
   onDemoSelected(index) {
     let fileName = '';
     if (index === 0) {
-      // 20101108.ktx
-      const FN_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/31212219.luy';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_ENCODED);
-      // console.log(`onDemoSelected. enc = ${fileName}`);
+
+      if (!GOOGLE_CARE_DEMO) {
+        // 20101108.ktx
+        const FN_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/31212219.luy';
+        const ft = new FileTools();
+        fileName = ft.decodeUrl(FN_ENCODED);
+        // console.log(`onDemoSelected. enc = ${fileName}`);
+      } else {
+
+        const ref0 = 'https://healthcare.googleapis.com/v1beta1/projects/wide-journey-237913/locations/europe-west2/datasets/TestDicom1/dicomStores/';
+        const ref1 = 'TestDicomStorage2/dicomWeb/studies/';
+        const ref2 = '1.3.6.1.4.1.25403.158515237678667.5060.20130807021436.4/series/1.3.6.1.4.1.25403.158515237678667.5060.20130807021436.5/instances/';
+        const ref3 = '1.3.6.1.4.1.25403.158515237678667.5060.20130807021436.10?access_token=ya29.'
+        const ref4 = 'Gl0qB9Yz8v2HFYXd7RC10eZNsPSDYkTqgItGtzAmIVRiBFvglXvebXDdsu1Vq1xLZ1hiKtyBL_-X9dm2V_RDC64PaylSckUryfVnJVRV7CW29-rzzDS03c-GWsl1Fvg';
+        const refTotal = ref0 + ref1 + ref2 + ref3 + ref4;
+        const arr = [];
+        arr.push(refTotal);
+        const store = this.props;
+        const loader = new LoaderUrlDicom(store);
+        const READ_FROM_GOOGLE = true;
+        loader.loadFromUrlArray(arr, READ_FROM_GOOGLE);
+      }
     } else if (index === 1) {
       // set00.ktx
       const FN_ENCO = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/tfu11.luy';
@@ -566,7 +583,8 @@ class UiOpenMenu extends React.Component {
         }
         const store = this.props;
         const loader = new LoaderUrlDicom(store);
-        loader.loadFromUrlArray(arrFileNames);
+        const GOOGLE_HEADER = false;
+        loader.loadFromUrlArray(arrFileNames, GOOGLE_HEADER);
         return;
       }
     } else if (index === 4) {
@@ -587,7 +605,8 @@ class UiOpenMenu extends React.Component {
         }
         const store = this.props;
         const loader = new LoaderUrlDicom(store);
-        loader.loadFromUrlArray(arrFileNames);
+        const GOOGLE_HEADER = false;
+        loader.loadFromUrlArray(arrFileNames, GOOGLE_HEADER);
         return;
       }
     } else if (index === 5) {

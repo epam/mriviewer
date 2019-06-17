@@ -124,8 +124,10 @@ class LoaderUrlDicom {
   /**
    * 
    * @param {object} arrFileNames - array of file names (with URL) 
+   * @param {bool} fromGoogle - true if use google headers
+   * 
    */
-  loadFromUrlArray(arrFileNames) {
+  loadFromUrlArray(arrFileNames, fromGoogle) {
     if (arrFileNames === undefined) {
       console.log('LoaderUrlDicom: no argument in constr');
     }
@@ -175,7 +177,8 @@ class LoaderUrlDicom {
       // create loader for cur file
       this.m_loaders[i] = new FileLoader(fileNameUrl);
       const loader = this.m_loaders[i];
-      const okLoader = this.m_loaderDicom.runLoader(this.m_volume, fileNameUrl, loader, i, callbackProgress, callbackComplete);
+      const okLoader = this.m_loaderDicom.runLoader(this.m_volume, fileNameUrl,
+        loader, i, callbackProgress, callbackComplete, fromGoogle);
       if (!okLoader) {
         return false;
       }

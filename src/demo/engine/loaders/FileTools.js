@@ -27,7 +27,9 @@ class FileTools {
       console.log('getFileNameFromUrl: wrong URL!');
       return '';
     }
-    const strFileName = strUrl.substring(idx + 1);
+    let strFileName = strUrl.substring(idx + 1);
+    const MAX_LEN = 40;
+    strFileName = (strFileName.length <= MAX_LEN) ? strFileName : strFileName.substring(0, MAX_LEN);
     return strFileName;
   }
   getFolderNameFromUrl(strUrl) {
@@ -36,7 +38,7 @@ class FileTools {
       idx = strUrl.lastIndexOf('\\');
     }
     if (idx < 0) {
-      console.log('getFileNameFromUrl: wrong URL!');
+      console.log('getFolderNameFromUrl: wrong URL!');
       return '';
     }
     const strFolder = strUrl.substring(0, idx);

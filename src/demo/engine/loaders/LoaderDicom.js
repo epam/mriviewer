@@ -663,7 +663,7 @@ class LoaderDicom{
     return -1;
   }
   /**
-  * Convert DaataView object into string
+  * Convert DataView object into string
   * @param {object} dataView - DataView object (created from ArrayBuffer)
   * @param {number} offset - current offset in buffer, when string started
   * @param {number} lengthBuf - number of bytes to convert to string
@@ -985,6 +985,33 @@ class LoaderDicom{
     }
     const strRes = '0x' + strZeros + str;
     return strRes;
+  }
+  readFromGoogleBuffer(i, fileName, ratioLoaded, volDst, arrBuf, callbackProgress, callbackComplete)
+  {
+    const dataView = new DataView(arrBuf);
+    let fileSize = dataView.byteLength;
+    // fileSize = (fileSize) & (~1);
+    // console.log(`readFromGoogleBuffer. fileSize = ${fileSize}`);
+    // fileSize = (fileSize <= 512) ? fileSize : 512;
+
+    // const strHeader = LoaderDicom.getStringAt(dataView, 0, 512);
+    // console.log(`readFromGoogleBuffer. header = ${strHeader}`);
+
+    const OFF_CONTENT_TYPE = 64;
+    const LEN_CONTENT_TYPE = 32;
+    const strCtx = LoaderDicom.getStringAt(dataView, OFF_CONTENT_TYPE, LEN_CONTENT_TYPE);
+    const STR_CTX_MATCH = 'Content-Type: application/dicom;';
+    const isEqCtxStr = (strCtx === STR_CTX_MATCH);
+    if (isEqCtxStr) {
+      const SIZE_GOOGLE_HEADER = 136;
+      const arrBufWoHead = arrBuf.slice(SIZE_GOOGLE_HEADER);
+      const dataViewWoGoogle = new DataView(arrBufWoHead);
+      const okRet = this.readFromBuffer(i, fileName, ratioLoaded, volDst, arrBufWoHead, callbackProgress, callbackComplete)
+      return okRet;
+    } else {
+      console.log(`readFromGoogleBuffer. bad content type = ${strCtx}`);
+      return LoadResult.BAD_HEADER;
+    }
   }
   /**
   * Read from local file buffer
@@ -1587,7 +1614,8 @@ class LoaderDicom{
       // console.log(`Loading (${i})-th url: ${urlFile}`);
       this.m_loaders[i] = new FileLoader(urlFile);
       const loader = this.m_loaders[i];
-      const okLoader = this.runLoader(volDst, arrFileNames[i], loader, i, callbackProgress, callbackComplete);
+      const NOT_FROM_GOOGLE = false;
+      const okLoader = this.runLoader(volDst, arrFileNames[i], loader, i, callbackProgress, callbackComplete, NOT_FROM_GOOGLE);
       if (!okLoader) {
         return false;
       }
@@ -1600,8 +1628,13 @@ class LoaderDicom{
   * @param {string} fileName - File to read
   * @param {object} loader - loader object with file inside
   * @param {number} i - index of file in files array
+  * @param {func} callbackProgress - callback for continiuos load reporting
+  * @param {func} callbackComplete - callback after load finish
+  * @param {bool} fromGoogle - true, if from google store
+  *
   */
-  runLoader(volDst, fileName, loader, i, callbackProgress, callbackComplete) {
+  runLoader(volDst, fileName, loader, i, callbackProgress, callbackComplete, fromGoogle) {
+    this.m_fromGoogle = fromGoogle;
     // console.log(`Loading url: ${fileName}`);
     loader.readFile((fileArrBu) => {
       const ratioLoaded = this.m_filesLoadedCounter / this.m_numLoadedFiles;
@@ -1615,8 +1648,12 @@ class LoaderDicom{
       }
       this.m_newTagEvent.detail.fileName = fileName;
 
-      // const status = this.readFromBuffer(i, fileName, ratioLoaded, volDst, fileArrBu, callbackProgress, callbackComplete);
-      const status = this.readFromBuffer(i, fileName, ratioLoaded, volDst, fileArrBu, callbackProgress);
+      let status;
+      if (this.m_fromGoogle) {
+        status = this.readFromGoogleBuffer(i, fileName, ratioLoaded, volDst, fileArrBu, callbackProgress, callbackComplete);
+      } else {
+        status = this.readFromBuffer(i, fileName, ratioLoaded, volDst, fileArrBu, callbackProgress, callbackComplete);
+      }
 
       if ((status !== LoadResult.SUCCESS) && (this.m_numFailsLoad === 0)) {
         this.m_numFailsLoad += 1;
