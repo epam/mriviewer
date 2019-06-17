@@ -369,6 +369,9 @@ class UiOpenMenu extends React.Component {
   handleFileSelected(evt) {
     if (evt.target.files !== undefined) {
       const numFiles = evt.target.files.length;
+      if (numFiles === 0) {
+        return;
+      }
       console.log(`UiOpenMenu. Trying to open ${numFiles} files`);
       console.log(`UiOpenMenu. handleFileSelected. file[0] = ${evt.target.files[0].name}`);
       if (numFiles === 1) {
