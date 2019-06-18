@@ -177,7 +177,7 @@ export default class VolumeFilter3d {
             this.bufferTextureCPU[indxL + VAL_3] = frameBuf[indxR + VAL_3];
           } else {
             this.bufferTextureCPU[x + y * this.xDim + zOffs] =
-              frameBuf[VAL_4 * (x + y * this.xDim)]; //256.0 * k / this.zDim;
+            frameBuf[VAL_4 * (x + y * this.xDim)]; //256.0 * k / this.zDim;
           }
         }
       }

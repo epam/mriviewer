@@ -28,7 +28,7 @@ import StoreActionType from '../store/ActionTypes';
 /**
  * Class UiTF some text later...
  */
-class UiTF extends React.Component {
+class UiTFroi extends React.Component {
   constructor(props) {
     super(props);
     this.m_updateEnable = true;
@@ -47,7 +47,6 @@ class UiTF extends React.Component {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3d_r: Number.parseFloat(aval[0]) });
     store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: Number.parseFloat(aval[1]) });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_3DB, slider3d_b: Number.parseFloat(aval[2]) });
   }
   onChangeSliderOpacity() {
     this.m_updateEnable = false;
@@ -67,7 +66,10 @@ class UiTF extends React.Component {
    */
   render() {
     const store = this.props;
-    // const mode3d = store.mode3d;
+    let mode3d = store.mode3d;
+    if (mode3d > 1) {
+      mode3d = 1;
+    }
     const slider3dr = store.slider3d_r;
     const slider3dg = store.slider3d_g;
     const wArr = [slider3dr, slider3dg];
@@ -100,9 +102,9 @@ class UiTF extends React.Component {
         </li>
       </ul>
     const jsxArray = [jsxIsoTF, jsxVolumeTF];
-    const jsxRet = jsxArray[0];
+    const jsxRet = jsxArray[1];
     return jsxRet;
   }
 }
 
-export default connect(store => store)(UiTF);
+export default connect(store => store)(UiTFroi);
