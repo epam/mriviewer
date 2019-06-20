@@ -93,20 +93,23 @@ class UiOpenMenu extends React.Component {
     this.roiMode = false;
   }
   finalizeSuccessLoadedVolume(vol, fileNameIn) {
-    if (NEED_TEXTURE_SIZE_4X) {
-      vol.makeDimensions4x();
+    if (vol.m_dataArray !== null) {
+      console.log(`success loaded volume from ${fileNameIn}`);
+      if (NEED_TEXTURE_SIZE_4X) {
+        vol.makeDimensions4x();
+      }
+      // invoke notification
+      const store = this.props;
+      store.dispatch({ type: StoreActionType.SET_VOLUME, volume: vol });
+      store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
+      store.dispatch({ type: StoreActionType.SET_FILENAME, fileName: fileNameIn });
+      store.dispatch({ type: StoreActionType.SET_ERR_ARRAY, arrErrors: [] });
+      const tex3d = new Texture3D();
+      tex3d.createFromRawVolume(vol);
+      store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     }
-    // invoke notification
-    const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_VOLUME, volume: vol });
-    store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
-    store.dispatch({ type: StoreActionType.SET_FILENAME, fileName: fileNameIn });
-    store.dispatch({ type: StoreActionType.SET_ERR_ARRAY, arrErrors: [] });
-    const tex3d = new Texture3D();
-    tex3d.createFromRawVolume(vol);
-    store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-    store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
-    store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
   }
   setErrorString(strErr) {
     const store = this.props;
@@ -157,7 +160,7 @@ class UiOpenMenu extends React.Component {
     uiapp.doHideProgressBar();
 
     if (errCode === LoadResult.SUCCESS) {
-      console.log('callbackReadComplete finished OK');
+      // console.log('callbackReadComplete finished OK');
       this.finalizeSuccessLoadedVolume(this.m_volume, this.m_fileName);
     } else {
       console.log(`callbackReadComplete failed! reading ${this.m_fileName} file`);
@@ -334,14 +337,15 @@ class UiOpenMenu extends React.Component {
     const ratioLoad = this.m_fileIndex / this.m_numFiles;
     // console.log(`onFileContentReadMultipleDicom. r = ${ratioLoad}`);
     const callbackProgress = null;
-    const callbackComplete = this.callbackReadMultipleComplete;
+    // const callbackComplete = this.callbackReadMultipleComplete;
 
     if (this.m_fileIndex <= 1) {
       this.callbackReadProgress(0.0);
     }
 
+    const callbackColmpleteVoid = undefined;
     const readStatus = this.m_volume.readSingleSliceFromDicom(this.m_loader, this.m_fileIndex - 1, 
-      this.m_fileName, ratioLoad, strContent, callbackProgress, callbackComplete);
+      this.m_fileName, ratioLoad, strContent, callbackProgress, callbackColmpleteVoid);
     if (readStatus !== LoadResult.SUCCESS) {
       console.log('onFileContentReadMultipleDicom. Error read individual file');
     }

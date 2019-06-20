@@ -106,20 +106,23 @@ class LoaderUrlDicom {
    * @param {string} fileNameIn - short file name for readed
    */
   finalizeSuccessLoadedVolume(vol, fileNameIn) {
-    if (NEED_TEXTURE_SIZE_4X) {
-      vol.makeDimensions4x();
+    if (vol.m_dataArray !== null)
+    {
+      if (NEED_TEXTURE_SIZE_4X) {
+        vol.makeDimensions4x();
+      }
+      // invoke notification
+      const store = this.m_store;
+      store.dispatch({ type: StoreActionType.SET_VOLUME, volume: vol });
+      store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
+      store.dispatch({ type: StoreActionType.SET_FILENAME, fileName: fileNameIn });
+      store.dispatch({ type: StoreActionType.SET_ERR_ARRAY, arrErrors: [] });
+      const tex3d = new Texture3D();
+      tex3d.createFromRawVolume(vol);
+      store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     }
-    // invoke notification
-    const store = this.m_store;
-    store.dispatch({ type: StoreActionType.SET_VOLUME, volume: vol });
-    store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
-    store.dispatch({ type: StoreActionType.SET_FILENAME, fileName: fileNameIn });
-    store.dispatch({ type: StoreActionType.SET_ERR_ARRAY, arrErrors: [] });
-    const tex3d = new Texture3D();
-    tex3d.createFromRawVolume(vol);
-    store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-    store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
-    store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
   }
   /**
    * 
