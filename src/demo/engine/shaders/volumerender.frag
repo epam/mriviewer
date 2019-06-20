@@ -865,6 +865,9 @@ void main() {
   // Direct isosurface render
   #if isoRenderFlag==1
   {
+    //float v = length(start.xyz - back);
+    //gl_FragColor = vec4(v, v, v, 1.0);
+    //return;
     float vol = tex3D(start.xyz);
     if (vol > isoThreshold)
     {

@@ -33,6 +33,7 @@ class Graphics3d extends React.Component {
    */
   constructor(props) {
     super(props);
+    this.onMode = this.onMode.bind(this);
     this.isLoaded = false;
     this.volume = null;
 
@@ -70,6 +71,14 @@ class Graphics3d extends React.Component {
   setVolRenderToStore(VolRender) {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_VOLUME_Renderer, volumeRenderer: VolRender });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3d_r: Number.parseFloat(0.09) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: Number.parseFloat(0.3) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DB, slider3d_b: Number.parseFloat(0.46) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, sliderOpacity: Number.parseFloat(0.53) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, sliderIsosurface: Number.parseFloat(0.46) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Brightness, sliderBrightness: Number.parseFloat(0.56) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Cut, sliderCut: Number.parseFloat(1.0) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Quality, sliderQuality: Number.parseFloat(0.35) });
   }
   start() {
     if (this.m_frameId === null) {
@@ -95,6 +104,10 @@ class Graphics3d extends React.Component {
       this.m_volumeRenderer3D.render();
     }
   }
+  onMode(indexMode) {
+    //this.m_updateEnable = true;
+    this.props.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: indexMode });
+  }
   componentDidMount() {
     // detect actual render window dims
     const MIN_DIM = 200;
@@ -119,12 +132,12 @@ class Graphics3d extends React.Component {
     this.m_geometry = new THREE.BoxGeometry(1, 1, 1);
     this.m_material = new THREE.MeshBasicMaterial({ color: '#ff1122' });
     this.m_mesh = new THREE.Mesh(this.m_geometry, this.m_material);
-    this.m_scene.add(this.m_mesh);*/
+    this.m_scene.add(this.m_mesh);
     const store = this.props;
     this.m_fileDataType.thresholdIsosurf = store.slider3d_b;
     this.m_fileDataType.Tissue1 = store.slider3d_r;
     this.m_fileDataType.Tissue2 = store.slider3d_g;
-
+    */
     if (this.m_volumeRenderer3D === null) {
       this.m_volumeRenderer3D = new VolumeRenderer3d({
         curFileDataType: this.m_fileDataType,
@@ -132,8 +145,8 @@ class Graphics3d extends React.Component {
         height: h,
         mount: this.m_mount
       });
-      this.setVolRenderToStore(this.m_volumeRenderer3D);
     }
+    this.setVolRenderToStore(this.m_volumeRenderer3D);
     if (this.volume !== null && this.isLoaded === false && this.m_volumeRenderer3D !== null) { 
       const store = this.props;
       const vol = store.volume;
@@ -141,10 +154,11 @@ class Graphics3d extends React.Component {
       const isIso = (vol.m_bytesPerVoxel === FOUR) ? true : false;    
       const modeView = store.modeView; 
       //let tst = 0;
+      //if (this.volume.m_zDim < 4)
       if (modeView === ModeView.VIEW_3D) {
-        this.m_volumeRenderer3D.initWithVolume(this.volume, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, true);
+        this.m_volumeRenderer3D.initWithVolume(this.volume, this.volume.m_boxSize, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, true);
       } else {
-        this.m_volumeRenderer3D.initWithVolume(this.volume, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, false);
+        this.m_volumeRenderer3D.initWithVolume(this.volume, this.volume.m_boxSize, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, false);
       }
       //if (tst) {
       //  return;

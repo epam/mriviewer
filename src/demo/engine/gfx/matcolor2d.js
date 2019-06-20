@@ -37,27 +37,29 @@ export default class MaterialColor2d {
   * @param (float) g - color component(green) in [0..1]
   * @param (float) b - color component(blue) in [0..1]
   */
-  constructor(r, g, b) {
-    this.m_uniforms = {
-      colAmb: { type: 'v3', value: null },
-    };
-    this.m_strShaderFragment = `
-      uniform vec3 colAmb;
-      void main() {
-      gl_FragColor = vec4(colAmb.xyz, 1.0);
-      }`;
+  constructor() {
+    this.m_strShaderVertex = '';
+    this.m_strShaderFragment = '';
+  }
+  create() {
     this.m_strShaderVertex = `
       void main() {
-      gl_Position = vec4(position, 1.0);
-      }`;
-    // Init uniforms
-    this.m_uniforms.colAmb.value = new THREE.Vector3(r, g, b);
-    // Create material
-    this.m_material = new THREE.ShaderMaterial({
-      uniforms: this.m_uniforms,
-      wireframe: false,
+        gl_Position = vec4(position, 1.0);
+      }
+    `;
+    this.m_strShaderFragment = `
+      void main() {
+        gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+      }
+    `;
+    const material = new THREE.ShaderMaterial({
       vertexShader: this.m_strShaderVertex,
-      fragmentShader: this.m_strShaderFragment
+      fragmentShader: this.m_strShaderFragment,
+      //side: THREE.FrontSide,
+      wireframe: true,
+      //depthTest: false
+      //clipping: false,
     });
-  } // constructor
+    return material;
+  }
 }

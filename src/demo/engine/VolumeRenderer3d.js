@@ -165,7 +165,7 @@ export default class VolumeRenderer3d {
     console.log(`Window: ${this.windowWidth} x ${this.windowHeight}`);
     const camAspect = this.windowWidth / this.windowHeight;
     // eslint-disable-next-line
-    this.camera = new THREE.PerspectiveCamera(60, camAspect, 0.01, 100);
+    this.camera = new THREE.PerspectiveCamera(60, camAspect, 0.01, 3);
     this.camera.position.z = 10;
     this.renderer.setSize(this.windowWidth, this.windowHeight);
 
