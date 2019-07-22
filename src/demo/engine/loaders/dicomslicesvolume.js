@@ -3,6 +3,7 @@
 // ********************************************************
 
 import DicomSlice from './dicomslice';
+import DicomSerieDescr from './dicomseriedescr'
 
 // ********************************************************
 // Const
@@ -35,6 +36,8 @@ class DicomSlicesVolume {
     // eslint-disable-next-line
     this.m_minSlice = +1000000;
     this.m_maxSlice = -1;
+
+    this.m_series = [];
   }
   /** Destroy volume and initialize values */
   destroy() {
@@ -60,6 +63,41 @@ class DicomSlicesVolume {
     this.m_minSlice = (sliceNumber < this.m_minSlice) ? sliceNumber : this.m_minSlice;
     this.m_maxSlice = (sliceNumber > this.m_maxSlice) ? sliceNumber : this.m_maxSlice;
   }
-}
+  buildSeriesInfo() {
+    this.m_series = [];
+    for (let i = 0; i < this.m_numSlices; i++) {
+      const slice = this.m_slices[i];
+      this.addSerie(slice);
+    } // for i all slices
+
+  } // end of bild series info
+  addSerie(slice) {
+    const numSeries = this.m_series.length;
+    for (let i = 0; i < numSeries; i++) {
+      if (this.m_series[i].m_hash === slice.m_hash) {
+        this.m_series[i].m_numSlices++;
+        return;
+      }
+    } // for
+    const serie = new DicomSerieDescr();
+    serie.m_numSlices = 1;
+    serie.m_hash = slice.m_hash;
+    serie.m_bodyPartExamined = slice.m_bodyPartExamined;
+    serie.m_patientName = slice.m_patientName;
+    serie.m_seriesDescr = slice.m_seriesDescr;
+    serie.m_seriesTime = slice.m_seriesTime;
+    serie.m_studyDate = slice.m_studyDate;
+    serie.m_studyDescr = slice.m_studyDescr;
+    this.m_series.push(serie);
+  } // end add series
+  // access to series
+  getNumSeries() {
+    return this.m_series.length;
+  }
+  getSeries() {
+    return this.m_series;
+  }
+} // class DicomSlicesVolume
+
 
 export default DicomSlicesVolume;

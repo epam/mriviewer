@@ -13,6 +13,7 @@
     "popper.js": "^1.14.7",
     "react": "^16.8.3",
     "react-bootstrap": "^1.0.0-beta.5",
+    "react-bootstrap-table-next": "^3.1.5",
     "react-dom": "^16.8.3",
     "react-nouislider": "^2.0.1",
     "react-redux": "^6.0.0",

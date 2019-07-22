@@ -19,6 +19,7 @@ import Texture3D from '../engine/Texture3D';
 
 import UiModalDemo from './UiModalDemo';
 import UiModalGoogle from './UiModalGoogle';
+import UiModalDicomSeries from './UiModalDicomSeries';
 import StoreActionType from '../store/ActionTypes';
 import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
@@ -73,6 +74,9 @@ class UiOpenMenu extends React.Component {
     this.onModalGoogleShow = this.onModalGoogleShow.bind(this);
     this.onModalGoogleHide = this.onModalGoogleHide.bind(this);
     this.onGoogleSelected = this.onGoogleSelected.bind(this);
+
+    this.onModalDicomSeriesHide = this.onModalDicomSeriesHide.bind(this);
+    this.onDicomSerieSelected = this.onDicomSerieSelected.bind(this);
 
     this.callbackReadProgress = this.callbackReadProgress.bind(this);
     this.callbackReadComplete = this.callbackReadComplete.bind(this);
@@ -172,6 +176,7 @@ class UiOpenMenu extends React.Component {
   }
   callbackReadSingleDicomComplete(errCode) {
     if (errCode === LoadResult.SUCCESS) {
+      // TODO
       this.m_loaderDicom.createVolumeFromSlices(this.m_volume);
     }
     this.callbackReadComplete(errCode);
@@ -350,10 +355,31 @@ class UiOpenMenu extends React.Component {
       console.log('onFileContentReadMultipleDicom. Error read individual file');
     }
     if ( (readStatus === LoadResult.SUCCESS) && (this.m_fileIndex === this.m_numFiles)) {
-      this.m_loader.createVolumeFromSlices(this.m_volume);
-      this.finalizeSuccessLoadedVolume(this.m_volume, this.m_fileName);
-      console.log(`onFileContentReadMultipleDicom read all ${this.m_numFiles} files`);
-
+      // TODO: insert here select series
+      this.m_loader.m_slicesVolume.buildSeriesInfo();
+      const numSeries = this.m_loader.m_slicesVolume.getNumSeries();
+      console.log(`num series = ${numSeries}`);
+      const series = this.m_loader.m_slicesVolume.getSeries();
+      /*
+      for (let i = 0; i < numSeries; i++) {
+        const ser = series[i];
+        console.log(`pn = ${ser.m_patientName}, studydesc = ${ser.m_studyDescr}`);
+        console.log(`studydate = ${ser.m_studyDate}  sertime = ${ser.m_seriesTime}`);
+        console.log(`seriesdescr = ${ser.m_seriesDescr}  bpart = ${ser.m_bodyPartExamined}`);
+        console.log(`num slices  = ${ser.m_numSlices} `);
+      }
+      */
+      // save loaded series description to store
+      if (numSeries === 1) {
+        const hash = series[0].m_hash;
+        this.m_loader.createVolumeFromSlices(this.m_volume, hash);
+        this.finalizeSuccessLoadedVolume(this.m_volume, this.m_fileName);
+        console.log(`onFileContentReadMultipleDicom read all ${this.m_numFiles} files`);
+      } else {
+        const store = this.props;
+        store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: series });
+      }
+      
       this.callbackReadProgress(1.0);
       this.callbackReadComplete(LoadResult.SUCCESS);
     }
@@ -379,6 +405,9 @@ class UiOpenMenu extends React.Component {
     if (evt.target.files !== undefined) {
       const numFiles = evt.target.files.length;
       console.log(`UiOpenMenu. Trying to open ${numFiles} files`);
+      if (numFiles <= 0) {
+        return;
+      }
       console.log(`UiOpenMenu. handleFileSelected. file[0] = ${evt.target.files[0].name}`);
       if (numFiles === 1) {
         const file = evt.target.files[0];
@@ -432,6 +461,7 @@ class UiOpenMenu extends React.Component {
     this.m_fileSelector = this.buildFileSelector();
   }
   onButtonLocalFile(evt) {
+    // console.log('onButtonLocalFile started');
     evt.preventDefault();
     this.m_fileSelector.click();
   }
@@ -544,6 +574,13 @@ class UiOpenMenu extends React.Component {
     console.log(`TODO: onGoogleSelected(${index}) ... `);
   }
   onDemoSelected(index) {
+    const arr = config.demoUrls;
+    if (arr.length >= 8) {
+      const fileName = arr[index];
+      console.log(`onDemoSelected: load file ${fileName}, config[ ${index} ]`);
+      this.loadFromUrl(fileName);
+      return;
+    }
     let fileName = '';
     if (index === 0) {
       // 20101108.ktx
@@ -624,7 +661,6 @@ class UiOpenMenu extends React.Component {
       // console.log(`onDemoSelected. enc = ${fileName}`);
     } else if (index === 7) {
       // hdr set (roi)
-      //const FN_HDRSET_DECODED = 'http://www.d-inter.ru/private/med3web/data/hdr/set_intn.h';
       const FN_HDRSET_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ies/tfu_jouo.i';
       const ft = new FileTools();
       fileName = ft.decodeUrl(FN_HDRSET_ENCODED);
@@ -640,6 +676,25 @@ class UiOpenMenu extends React.Component {
   shouldComponentUpdate() {
     return true;
   }
+  onModalDicomSeriesHide() {
+    const arrEmpty = [];
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: arrEmpty });
+  }
+  onDicomSerieSelected(indexSelected) {
+    const store = this.props;
+    const series = store.dicomSeries;
+    const serieSelected = series[indexSelected];
+    const hash = serieSelected.m_hash;
+    // TODO : finalize load series
+    this.m_loader.createVolumeFromSlices(this.m_volume, hash);
+    this.finalizeSuccessLoadedVolume(this.m_volume, this.m_fileName);
+    console.log(`onFileContentReadMultipleDicom read all ${this.m_numFiles} files`);
+
+    // clear modal
+    store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: [] });
+  }
+  // render
   render() {
     const isGoogle = config.googleCloudDemoActivce;
 
@@ -650,6 +705,8 @@ class UiOpenMenu extends React.Component {
       </NavDropdown.Item> : 
       <p></p>;
 
+    const store = this.props;
+    const isVisibleDicomSeries = (store.dicomSeries.length !== 0);
 
     const jsxOpenMenu =
       <NavDropdown id="basic-nav-dropdown" title={
@@ -705,6 +762,9 @@ class UiOpenMenu extends React.Component {
             </Modal.Body>
           </Modal.Header>
         </Modal>
+
+        <UiModalDicomSeries stateVis={isVisibleDicomSeries}
+          onHide={this.onModalDicomSeriesHide} onSelect={this.onDicomSerieSelected}  />
 
         <UiModalDemo stateVis={this.state.showModalDemo}
           onHide={this.onModalDemoOpenHide} onSelectDemo={this.onDemoSelected}  />

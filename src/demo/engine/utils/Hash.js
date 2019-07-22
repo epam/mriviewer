@@ -16,34 +16,31 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 */
-
 /**
-* Dicom info
-* @module lib/scripts/loaders/dicominfo
+* Get string hash
+* @module demo/engine/utils/hash
 */
-
+// absolute imports
 /**
-* Class @class DicomInfo for volume some important text data render
+* Class Hash to calc string hash
+* @class Hash
 */
-class DicomInfo {
-  constructor() {
-    this.m_patientName = '';
-    this.m_patientDateOfBirth = '';
-    this.m_studyDescr = '';
-    this.m_studyDate = '';
-    this.m_seriesTime = '';
-    this.m_seriesDescription = '';
-    this.m_bodyPartExamined = '';
+class Hash {
 
-    this.m_patientId = '';
-    this.m_patientGender = '';
-    this.m_acquisionTime = '';
-    this.m_institutionName = '';
-    this.m_physicansName = '';
-    this.m_manufacturerName = '';
-    // tags info for each slice. Each entry is DicomSliceInfo
-    this.m_sliceInfo = [];
+  static getHash(strInp) {
+    const ROT = 27;
+    const len = strInp.length;
+    let hash = len * 53;
+    for (let i = 0; i < len; i++) {
+      const val = strInp.charCodeAt(i);
+      hash = hash * (val ^ 137211941);
+      // bit rotate
+      hash = (hash << ROT) | (hash >> (32 - ROT));
+      // mask
+      hash &= 0x3fffffff;
+    }
+    return hash;
   }
 }
 
-export default DicomInfo;
+export default Hash;

@@ -202,11 +202,11 @@ class Volume extends React.Component {
     const fileName = 'file???';
     const ratio = 0.0;
 
-    const ret = loader.readFromBuffer(indexFile, fileName, ratio, this, arrBuf, callbackProgress, callbackComplete);
+    const ret = loader.readFromBuffer(indexFile, fileName, ratio, arrBuf, callbackProgress, callbackComplete);
     return ret;
   }
   readSingleSliceFromDicom(loader, indexFile, fileName, ratioLoaded, arrBuf, callbackProgress, callbackComplete) {
-    const ret = loader.readFromBuffer(indexFile, fileName, ratioLoaded, this, arrBuf, callbackProgress, callbackComplete);
+    const ret = loader.readFromBuffer(indexFile, fileName, ratioLoaded, arrBuf, callbackProgress, callbackComplete);
     return ret;
   }
   // do nothing. But we need to implement render() to run Volume tests

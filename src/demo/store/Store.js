@@ -40,6 +40,7 @@ export const initialState = {
   isTool3D: false,
   sliderContrast3D: 0.0,
   arrErrors: [],
+  dicomSeries: [],
 };
 //
 // App reducer
@@ -106,6 +107,8 @@ const medReducer = (state = initialState, action) => {
     return Object.assign({}, state, { sliderContrast3D: action.sliderContrast3D });
   case StoreActionType.SET_ERR_ARRAY:
     return Object.assign({}, state, { arrErrors: action.arrErrors });
+  case StoreActionType.SET_DICOM_SERIES:
+    return Object.assign({}, state, { dicomSeries: action.dicomSeries });
   default:
     return state;
   }

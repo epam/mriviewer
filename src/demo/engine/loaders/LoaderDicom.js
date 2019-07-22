@@ -22,6 +22,7 @@ import DicomTagInfo from './dicomtaginfo';
 import UiHistogram from '../../ui/UiHistogram';
 import FileTools from './FileTools';
 import FileLoader from './FileLoader';
+import Hash from '../utils/Hash';
 
 // ********************************************************
 // Const
@@ -59,10 +60,12 @@ const TAG_IMAGE_POSITION = [0x0020, 0x0032];
 const TAG_SLICE_LOCATION = [0x0020, 0x1041];
 const TAG_SAMPLES_PER_PIXEL = [0x0028, 0x0002];
 const TAG_SERIES_DESCRIPTION = [0x0008, 0x103E];
+const TAG_SERIES_TIME = [0x0008, 0x31];
 const TAG_END_OF_ITEMS = [0xFFFE, 0xE00D];
 const TAG_END_OF_SEQUENCE = [0xFFFE, 0xE0DD];
 const TAG_SERIES_NUMBER = [0x0020, 0x0011];
 const TAG_SLICE_THICKNESS = [0x0018, 0x0050];
+const TAG_BODY_PART_EXAMINED = [0x0018, 0x0015];
 
 const TRANSFER_SYNTAX_IMPLICIT_LITTLE = '1.2.840.10008.1.2';
 const TRANSFER_SYNTAX_EXPLICIT_BIG = '1.2.840.10008.1.2.2';
@@ -74,6 +77,7 @@ const TAG_PATIENT_ID = [0x0010, 0x0020];
 const TAG_PATIENT_BIRTH_DATE = [0x0010, 0x0030];
 const TAG_PATIENT_GENDER = [0x0010, 0x0040];
 const TAG_STUDY_DATE = [0x0008, 0x0020];
+const TAG_STUDY_DESCR = [0x0008, 0x1030];
 const TAG_ACQUISION_TIME = [0x0008, 0x0032];
 const TAG_INSTITUTION_NAME = [0x0008, 0x0080];
 const TAG_PHYSICANS_NAME = [0x0008, 0x0090];
@@ -205,10 +209,14 @@ class LoaderDicom{
     return this.m_dicomInfo;
   }
   /**
-  * Create volume data array from individual slices, loaded from different files
-  * @return {LoadResult} LoadResult.SUCCESS if success
-  */
- createVolumeFromSlices(volDst) {
+   * 
+   * Create volume data array from individual slices, loaded from different files
+   * @param {object} volDst  - destination volume, will be created
+   * @param {number} hashSelected  - desired serie hash
+   * @param {number} hashSelected - use only slices with this hash
+   * @return {LoadResult} LoadResult.SUCCESS if success
+   */
+ createVolumeFromSlices(volDst, hashSelected) {
   const imagePosBox = {
     x: this.m_imagePosMax.x - this.m_imagePosMin.x,
     y: this.m_imagePosMax.y - this.m_imagePosMin.y,
@@ -236,21 +244,10 @@ class LoaderDicom{
   this.m_boxSize.y = this.m_yDim * this.m_pixelSpacing.y;
   console.log(`createVolumeFromSlices. Volume local phys dim: ${this.m_boxSize.x} * ${this.m_boxSize.y} * ${this.m_boxSize.z}`);
 
-
   let i;
   let dataSize = 0;
   let dataArray = null;
 
-  // normal copy volume with transform 16 -> 8 bit
-  dataSize = this.m_xDim * this.m_yDim * this.m_zDim;
-  dataArray = new Uint8Array(dataSize);
-  if (dataArray === null) {
-    console.log('no memory');
-    return LoadResult.ERROR_NO_MEMORY;
-  }
-  for (i = 0; i < dataSize; i++) {
-    dataArray[i] = 0;
-  }
   let xyDim = this.m_xDim * this.m_yDim;
   let maxVal = 0;
 
@@ -262,11 +259,13 @@ class LoaderDicom{
   const numSlices = this.m_slicesVolume.m_numSlices;
   for (let s = 0; s < numSlices; s++) {
     const slice = this.m_slicesVolume.m_slices[s];
-    const sliceData16 = slice.m_image;
-    for (i = 0; i < xyDim; i++) {
-      const val16 = sliceData16[i];
-      maxVal = (val16 > maxVal) ? val16 : maxVal;
-    } // for (i) all slice pixels
+    if (slice.m_hash === hashSelected) {
+      const sliceData16 = slice.m_image;
+      for (i = 0; i < xyDim; i++) {
+        const val16 = sliceData16[i];
+        maxVal = (val16 > maxVal) ? val16 : maxVal;
+      } // for (i) all slice pixels
+    } // if hash correct
   }  // for (s) all slices
   // allocate one more entry for values
   maxVal++;
@@ -281,11 +280,13 @@ class LoaderDicom{
   }
   for (let s = 0; s < numSlices; s++) {
     const slice = this.m_slicesVolume.m_slices[s];
-    const sliceData16 = slice.m_image;
-    for (i = 0; i < xyDim; i++) {
-      const val16 = sliceData16[i];
-      histogram[val16]++;
-    }
+    if (slice.m_hash === hashSelected) {
+      const sliceData16 = slice.m_image;
+      for (i = 0; i < xyDim; i++) {
+        const val16 = sliceData16[i];
+        histogram[val16]++;
+      } // for all pixels
+    } // if hash
   }
 
   const hist = new UiHistogram();
@@ -367,10 +368,39 @@ class LoaderDicom{
       srcSlices[s].m_sliceNumber = s;
     }
   }
+  // reassign slice numbers according to hash 
+  let numSlicesActaullyBuild = 0;
+  for (let s = 0; s < numSlices; s++) {
+    const slice = srcSlices[s];
+    if (slice.m_hash === hashSelected) {
+      slice.m_sliceNumber = numSlicesActaullyBuild;
+      numSlicesActaullyBuild++;
+    } else {
+      slice.m_sliceNumber = -1;
+    }
+  }
+  // correct zDim according to actaul slice count
+  this.m_zDim = numSlicesActaullyBuild;
+
+  // create out volume data array
+  // normal copy volume with transform 16 -> 8 bit
+  dataSize = this.m_xDim * this.m_yDim * this.m_zDim;
+  dataArray = new Uint8Array(dataSize);
+  if (dataArray === null) {
+    console.log('no memory');
+    return LoadResult.ERROR_NO_MEMORY;
+  }
+  for (i = 0; i < dataSize; i++) {
+    dataArray[i] = 0;
+  }
+
 
   const MAX_BYTE = 255;
   for (let s = 0; s < numSlices; s++) {
     const slice = srcSlices[s];
+    if (slice.m_hash !== hashSelected) {
+      continue;
+    }
     const sliceData16 = slice.m_image;
     // console.log(`Slice[${s}] sliceNumber = ${slice.m_sliceNumber} sliceLocation = ${slice.m_sliceLocation}`);
 
@@ -986,7 +1016,7 @@ class LoaderDicom{
     const strRes = '0x' + strZeros + str;
     return strRes;
   }
-  readFromGoogleBuffer(i, fileName, ratioLoaded, volDst, arrBuf, callbackProgress, callbackComplete)
+  readFromGoogleBuffer(i, fileName, ratioLoaded, arrBuf, callbackProgress, callbackComplete)
   {
     const dataView = new DataView(arrBuf);
     let fileSize = dataView.byteLength;
@@ -1006,7 +1036,7 @@ class LoaderDicom{
       const SIZE_GOOGLE_HEADER = 136;
       const arrBufWoHead = arrBuf.slice(SIZE_GOOGLE_HEADER);
       const dataViewWoGoogle = new DataView(arrBufWoHead);
-      const okRet = this.readFromBuffer(i, fileName, ratioLoaded, volDst, arrBufWoHead, callbackProgress, callbackComplete)
+      const okRet = this.readFromBuffer(i, fileName, ratioLoaded, arrBufWoHead, callbackProgress, callbackComplete)
       return okRet;
     } else {
       console.log(`readFromGoogleBuffer. bad content type = ${strCtx}`);
@@ -1018,11 +1048,10 @@ class LoaderDicom{
   * @param {number} indexFile - index of slice loaded
   * @param {string} fileName - Loaded file
   * @param {number} ratioLoaded - ratio from 0 to 1.0.
-  * @param {object} volDst - Destination volume object to be fiiied
   * @param {object} arrBuf - source byte buffer, ArrayBuffer type
   * @return LoadResult.XXX
   */
- readFromBuffer(indexFile, fileName, ratioLoaded, volDst, arrBuf, callbackProgress, callbackComplete) {
+ readFromBuffer(indexFile, fileName, ratioLoaded, arrBuf, callbackProgress, callbackComplete) {
   if (typeof indexFile !== 'number') {
     console.log('LoaderDicom.readFromBuffer: bad indexFile argument');
   }
@@ -1215,7 +1244,6 @@ class LoaderDicom{
         console.log(`Series description = ${this.m_seriesDescription}`);
       }
     }
-
     // get important tag: hight bit
     if ((tag.m_group === TAG_IMAGE_HIGH_BIT[0]) && (tag.m_element === TAG_IMAGE_HIGH_BIT[1])) {
       const dataLen = tag.m_value.byteLength;
@@ -1341,8 +1369,26 @@ class LoaderDicom{
       const dataLen = tag.m_value.byteLength;
       const dv = new DataView(tag.m_value);
       const strDescr = LoaderDicom.getStringAt(dv, 0, dataLen);
-      // console.log(`DicomLoader. Series descr = ${strDescr}`);
+      // console.log(`DicomLoader. Series descr read = ${strDescr}`);
       this.m_dicomInfo.m_seriesDescription = strDescr;
+    }
+    if ((tag.m_group === TAG_SERIES_TIME[0]) && (tag.m_element === TAG_SERIES_TIME[1]) &&
+      (tag.m_value !== null)) {
+      const dataLen = tag.m_value.byteLength;
+      const dv = new DataView(tag.m_value);
+      const strTimeMerged = LoaderDicom.getStringAt(dv, 0, dataLen);
+      // eslint-disable-next-line
+      const strHour = strTimeMerged.substring(0, 2);
+      // eslint-disable-next-line
+      const strMinute = strTimeMerged.substring(2, 4);
+      // eslint-disable-next-line
+      const strSec = strTimeMerged.substring(4, strTimeMerged.length);
+      const strTimeBuild = `${strHour}:${strMinute}:${strSec}`;
+      // console.log(`Series time read = ${strTimeBuild}`);
+      this.m_dicomInfo.m_seriesTime = strTimeBuild;
+      if (DEBUG_PRINT_TAGS_INFO) {
+        console.log(`Series time = ${this.m_dicomInfo.m_seriesTime}`);
+      }
     }
     if ((tag.m_group === TAG_PATIENT_NAME[0]) && (tag.m_element === TAG_PATIENT_NAME[1]) &&
       (tag.m_value !== null)) {
@@ -1393,6 +1439,23 @@ class LoaderDicom{
       this.m_dicomInfo.m_studyDate = `${strD}/${strM}/${strY}`;
       // console.log(`m_studyDate = ${this.m_dicomInfo.m_studyDate}`);
     }
+    if ((tag.m_group === TAG_STUDY_DESCR[0]) && (tag.m_element === TAG_STUDY_DESCR[1]) &&
+      (tag.m_value !== null)) {
+      const dataLen = tag.m_value.byteLength;
+      const dv = new DataView(tag.m_value);
+      const strDescr = LoaderDicom.getStringAt(dv, 0, dataLen);
+      this.m_dicomInfo.m_studyDescr = strDescr;
+      // console.log(`m_studyDescr = ${this.m_dicomInfo.m_studyDescr}`);
+    }
+    if ((tag.m_group === TAG_BODY_PART_EXAMINED[0]) && (tag.m_element === TAG_BODY_PART_EXAMINED[1]) &&
+      (tag.m_value !== null)) {
+      const dataLen = tag.m_value.byteLength;
+      const dv = new DataView(tag.m_value);
+      this.m_dicomInfo.m_bodyPartExamined = LoaderDicom.getStringAt(dv, 0, dataLen);
+      // console.log(`m_patientName = ${this.m_dicomInfo.m_patientName}`);
+    }
+
+
     if ((tag.m_group === TAG_ACQUISION_TIME[0]) && (tag.m_element === TAG_ACQUISION_TIME[1]) &&
       (tag.m_value !== null)) {
       const dataLen = tag.m_value.byteLength;
@@ -1455,6 +1518,25 @@ class LoaderDicom{
   }
   volSlice.m_sliceNumber = this.m_imageNumber;
   volSlice.m_sliceLocation = this.m_sliceLocation;
+  volSlice.m_patientName = this.m_dicomInfo.m_patientName;
+  volSlice.m_studyDescr = this.m_dicomInfo.m_studyDescr;
+  volSlice.m_studyDate = this.m_dicomInfo.m_studyDate;
+  volSlice.m_seriesTime = this.m_dicomInfo.m_seriesTime;
+  volSlice.m_seriesDescr = this.m_dicomInfo.m_seriesDescription;
+  volSlice.m_bodyPartExamined = this.m_dicomInfo.m_bodyPartExamined;
+
+  // get hash from all slice text features
+  const strMix = volSlice.m_patientName + volSlice.m_studyDescr +
+    volSlice.m_studyDate + volSlice.m_seriesTime + 
+    volSlice.m_seriesDescr + volSlice.m_bodyPartExamined;
+  volSlice.m_hash = Hash.getHash(strMix);
+
+  // console.log(`patName = ${volSlice.m_patientName}`);
+  // console.log(`studyDescr = ${volSlice.m_studyDescr}`);
+  // console.log(`studyDate = ${volSlice.m_studyDate}`);
+  // console.log(`seriesTime = ${volSlice.m_seriesTime}`);
+  // console.log(`seriesDescr = ${volSlice.m_seriesDescr}`);
+  // console.log(`bodyPartExamined = ${volSlice.m_bodyPartExamined}`);
 
   this.m_slicesVolume.updateSliceNumber(this.m_imageNumber);
 
@@ -1650,9 +1732,9 @@ class LoaderDicom{
 
       let status;
       if (this.m_fromGoogle) {
-        status = this.readFromGoogleBuffer(i, fileName, ratioLoaded, volDst, fileArrBu, callbackProgress, callbackComplete);
+        status = this.readFromGoogleBuffer(i, fileName, ratioLoaded, fileArrBu, callbackProgress, callbackComplete);
       } else {
-        status = this.readFromBuffer(i, fileName, ratioLoaded, volDst, fileArrBu, callbackProgress, callbackComplete);
+        status = this.readFromBuffer(i, fileName, ratioLoaded, fileArrBu, callbackProgress, callbackComplete);
       }
 
       if ((status !== LoadResult.SUCCESS) && (this.m_numFailsLoad === 0)) {
@@ -1701,7 +1783,10 @@ class LoaderDicom{
         this.m_boxSize.x = this.m_xDim * this.m_pixelSpacing.x;
         this.m_boxSize.y = this.m_yDim * this.m_pixelSpacing.y;
         console.log(`Volume local phys dim: ${this.m_boxSize.x} * ${this.m_boxSize.y} * ${this.m_boxSize.z}`);
-        const errStatus = this.createVolumeFromSlices(volDst);
+        // TODO: add hash
+        const series = this.m_slicesVolume.getSeries();
+        const hash = series[0].m_hash;
+        const errStatus = this.createVolumeFromSlices(volDst, hash);
         if (callbackComplete !== null) {
           callbackComplete(errStatus);
           return true;
