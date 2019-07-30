@@ -6,7 +6,7 @@ class DicomSerieDescr {
     this.m_hash = 0;
     this.m_bodyPartExamined = '';
     this.m_patientName = '';
-    this.m_seriesDescription = '';
+    this.m_seriesDescr = '';
     this.m_seriesTime = '';
     this.m_studyDate = '';
     this.m_studyDescr = '';
