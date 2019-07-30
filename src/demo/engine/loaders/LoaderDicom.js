@@ -82,6 +82,7 @@ const TAG_ACQUISION_TIME = [0x0008, 0x0032];
 const TAG_INSTITUTION_NAME = [0x0008, 0x0080];
 const TAG_PHYSICANS_NAME = [0x0008, 0x0090];
 const TAG_MANUFACTURER_NAME = [0x0008, 0x0070];
+const TAG_OPERATORS_NAME = [0x0008, 0x1070];
 
 // const NEED_EVEN_TEXTURE_SIZE = false;
 
@@ -125,8 +126,8 @@ class LoaderDicom{
     this.m_bitsPerPixel = -1;
     /** @property {number} m_seriesNumber - Index of series to check the same image set in slices */
     this.m_seriesNumber = -1;
-    /** @property {string} m_seriesDescription - Description of series */
-    this.m_seriesDescription = '';
+    /** @property {string} m_seriesDescr - Description of series */
+    this.m_seriesDescr = '';
     /** @property {object} m_boxSize - vertex3f with physic volume dimension */
     this.m_boxSize = {
       x: 1.0,
@@ -694,7 +695,17 @@ class LoaderDicom{
 
   volDst.m_patientName = this.m_dicomInfo.m_patientName;
   volDst.m_patientBirth = this.m_dicomInfo.m_patientDateOfBirth;
-  volDst.m_seriesDescription = this.m_dicomInfo.m_seriesDescription;
+  volDst.m_seriesDescr = this.m_dicomInfo.m_seriesDescr;
+
+
+  volDst.m_studyDescr = this.m_dicomInfo.m_studyDescr;
+  volDst.m_studyDate = this.m_dicomInfo.m_studyDate;
+  volDst.m_seriesTime = this.m_dicomInfo.m_seriesTime;
+  volDst.m_bodyPartExamined = this.m_dicomInfo.m_bodyPartExamined;
+  volDst.m_institutionName = this.m_dicomInfo.m_institutionName;
+  volDst.m_operatorsName = this.m_dicomInfo.m_operatorsName;
+  volDst.m_physicansName = this.m_dicomInfo.m_physicansName;
+
 
   return LoadResult.SUCCESS;
 } // createVolumeFromSlices
@@ -741,6 +752,37 @@ class LoaderDicom{
         str += String.fromCharCode(ch);
       }
     }
+    return str;
+  }
+  static getUtf8StringAt(dataView, offset, lengthBuf) {
+    let str = '';
+    let i = 0;
+    while (i < lengthBuf) {
+      let c = dataView.getUint8(offset + i); i++;
+      if (c == 0x5e) {
+        c = 32;
+      }
+      switch (c >> 4) {
+        case 0: case 1:
+        case 2: case 3:
+        case 4: case 5:
+        case 6: case 7:
+          str += String.fromCharCode(c);
+          break;
+        case 12: case 13:
+          const char2 = dataView.getUint8(offset + i); i++;
+          str += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+          break;
+        case 14:
+          const ch2 = dataView.getUint8(offset + i); i++;
+          const ch3 = dataView.getUint8(offset + i); i++;
+          str += String.fromCharCode(((c & 0x0F) << 12) |
+                                     ((ch2 & 0x3F) << 6) |
+                                     ((ch3 & 0x3F) << 0));
+          break;          
+      } // switch
+ 
+    } // while not end string
     return str;
   }
   static getAttrValueAsString(tag) {
@@ -1273,9 +1315,9 @@ class LoaderDicom{
       (tag.m_value !== null)) {
       const dataLen = tag.m_value.byteLength;
       const dv = new DataView(tag.m_value);
-      this.m_seriesDescription = LoaderDicom.getStringAt(dv, 0, dataLen);
+      this.m_seriesDescr = LoaderDicom.getStringAt(dv, 0, dataLen);
       if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`Series description = ${this.m_seriesDescription}`);
+        console.log(`Series description = ${this.m_seriesDescr}`);
       }
     }
     // get important tag: hight bit
@@ -1404,7 +1446,7 @@ class LoaderDicom{
       const dv = new DataView(tag.m_value);
       const strDescr = LoaderDicom.getStringAt(dv, 0, dataLen);
       // console.log(`DicomLoader. Series descr read = ${strDescr}`);
-      this.m_dicomInfo.m_seriesDescription = strDescr;
+      this.m_dicomInfo.m_seriesDescr = strDescr;
     }
     if ((tag.m_group === TAG_SERIES_TIME[0]) && (tag.m_element === TAG_SERIES_TIME[1]) &&
       (tag.m_value !== null)) {
@@ -1428,8 +1470,9 @@ class LoaderDicom{
       (tag.m_value !== null)) {
       const dataLen = tag.m_value.byteLength;
       const dv = new DataView(tag.m_value);
-      this.m_dicomInfo.m_patientName = LoaderDicom.getStringAt(dv, 0, dataLen);
-      // console.log(`m_patientName = ${this.m_dicomInfo.m_patientName}`);
+      this.m_dicomInfo.m_patientName = LoaderDicom.getUtf8StringAt(dv, 0, dataLen);
+      this.m_dicomInfo.m_patientName = this.m_dicomInfo.m_patientName.trim();
+      //console.log(`m_patientName = ${this.m_dicomInfo.m_patientName}`);
     }
     if ((tag.m_group === TAG_PATIENT_ID[0]) && (tag.m_element === TAG_PATIENT_ID[1]) &&
       (tag.m_value !== null)) {
@@ -1479,6 +1522,7 @@ class LoaderDicom{
       const dv = new DataView(tag.m_value);
       const strDescr = LoaderDicom.getStringAt(dv, 0, dataLen);
       this.m_dicomInfo.m_studyDescr = strDescr;
+      this.m_dicomInfo.m_studyDescr = this.m_dicomInfo.m_studyDescr.trim();
       // console.log(`m_studyDescr = ${this.m_dicomInfo.m_studyDescr}`);
     }
     if ((tag.m_group === TAG_BODY_PART_EXAMINED[0]) && (tag.m_element === TAG_BODY_PART_EXAMINED[1]) &&
@@ -1501,14 +1545,25 @@ class LoaderDicom{
       (tag.m_value !== null)) {
       const dataLen = tag.m_value.byteLength;
       const dv = new DataView(tag.m_value);
-      this.m_dicomInfo.m_institutionName = LoaderDicom.getStringAt(dv, 0, dataLen);
+      this.m_dicomInfo.m_institutionName = LoaderDicom.getUtf8StringAt(dv, 0, dataLen);
+      this.m_dicomInfo.m_institutionName = this.m_dicomInfo.m_institutionName.trim();
       // console.log(`m_institutionName = ${this.m_dicomInfo.m_institutionName}`);
+    }
+
+    if ((tag.m_group === TAG_OPERATORS_NAME[0]) && (tag.m_element === TAG_OPERATORS_NAME[1]) &&
+    (tag.m_value !== null)) {
+      const dataLen = tag.m_value.byteLength;
+      const dv = new DataView(tag.m_value);
+      this.m_dicomInfo.m_operatorsName = LoaderDicom.getUtf8StringAt(dv, 0, dataLen);
+      this.m_dicomInfo.m_operatorsName = this.m_dicomInfo.m_operatorsName.trim();
+      // console.log(`m_operatorsName = ${this.m_dicomInfo.m_operatorsName}`);
     }
     if ((tag.m_group === TAG_PHYSICANS_NAME[0]) && (tag.m_element === TAG_PHYSICANS_NAME[1]) &&
       (tag.m_value !== null)) {
       const dataLen = tag.m_value.byteLength;
       const dv = new DataView(tag.m_value);
-      this.m_dicomInfo.m_physicansName = LoaderDicom.getStringAt(dv, 0, dataLen);
+      this.m_dicomInfo.m_physicansName = LoaderDicom.getUtf8StringAt(dv, 0, dataLen);
+      this.m_dicomInfo.m_physicansName = this.m_dicomInfo.m_physicansName.trim();
       // console.log(`m_physicansName = ${this.m_dicomInfo.m_physicansName}`);
     }
     if ((tag.m_group === TAG_MANUFACTURER_NAME[0]) && (tag.m_element === TAG_MANUFACTURER_NAME[1]) &&
@@ -1516,6 +1571,7 @@ class LoaderDicom{
       const dataLen = tag.m_value.byteLength;
       const dv = new DataView(tag.m_value);
       this.m_dicomInfo.m_manufacturerName = LoaderDicom.getStringAt(dv, 0, dataLen);
+      this.m_dicomInfo.m_manufacturerName = this.m_dicomInfo.m_manufacturerName.trim();
       // console.log(`m_manufacturerName = ${this.m_dicomInfo.m_manufacturerName}`);
     }
   } // for all tags readed
@@ -1556,8 +1612,11 @@ class LoaderDicom{
   volSlice.m_studyDescr = this.m_dicomInfo.m_studyDescr;
   volSlice.m_studyDate = this.m_dicomInfo.m_studyDate;
   volSlice.m_seriesTime = this.m_dicomInfo.m_seriesTime;
-  volSlice.m_seriesDescr = this.m_dicomInfo.m_seriesDescription;
+  volSlice.m_seriesDescr = this.m_dicomInfo.m_seriesDescr;
   volSlice.m_bodyPartExamined = this.m_dicomInfo.m_bodyPartExamined;
+  volSlice.m_institutionName = this.m_dicomInfo.m_institutionName;
+  volSlice.m_operatorsName = this.m_dicomInfo.m_operatorsName;
+  volSlice.m_physicansName = this.m_dicomInfo.m_physicansName;
 
   // get hash from all slice text features
   const strMix = volSlice.m_patientName + volSlice.m_studyDescr +

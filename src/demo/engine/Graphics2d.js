@@ -198,9 +198,27 @@ class Graphics2d extends React.Component {
       ctx.fillText(strMsg, xText, yText);
       yText += FONT_SZ;
     }
-    const seriesDescr = vol.m_seriesDescription;
+    const seriesDescr = vol.m_seriesDescr;
     if (seriesDescr.length > 1) {
       strMsg = 'series descr = ' + seriesDescr;
+      ctx.fillText(strMsg, xText, yText);
+      yText += FONT_SZ;
+    }
+    const institutionName = vol.m_institutionName;
+    if (institutionName.length > 1) {
+      strMsg = 'institution name = ' + institutionName;
+      ctx.fillText(strMsg, xText, yText);
+      yText += FONT_SZ;
+    }
+    const operatorsName = vol.m_operatorsName;
+    if (operatorsName.length > 1) {
+      strMsg = 'operators name = ' + operatorsName;
+      ctx.fillText(strMsg, xText, yText);
+      yText += FONT_SZ;
+    }
+    const physicansName = vol.m_physicansName;
+    if (physicansName.length > 1) {
+      strMsg = 'physicans name = ' + physicansName;
       ctx.fillText(strMsg, xText, yText);
       yText += FONT_SZ;
     }

@@ -287,7 +287,7 @@ class Graphics3d extends React.Component {
     const mode3d = store.mode3d;
     const modeView = store.modeView;
     if (this.m_volumeRenderer3D !== null) {
-      console.log(`Graphics3d . mode = ${mode3d}`);
+      // console.log(`Graphics3d . mode = ${mode3d}`);
       if (modeView !== ModeView.VIEW_3D) {
         if (mode3d === Modes3d.RAYCAST) {
           //if (this.m_prevMode === Modes3d.EREASER) {
