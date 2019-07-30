@@ -35,7 +35,7 @@ class DicomSlicesVolume {
     }
     // eslint-disable-next-line
     this.m_minSlice = +1000000;
-    this.m_maxSlice = -1;
+    this.m_maxSlice = -1000000;
 
     this.m_series = [];
   }

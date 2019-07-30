@@ -238,6 +238,11 @@ class LoaderDicom{
   if (zBox < TOO_MIN) {
     zBox = 1.0;
   }
+  // check empty pixel spacing
+  if (this.m_pixelSpacing.x * this.m_pixelSpacing.y < TOO_MIN) {
+    this.m_pixelSpacing.x = 1.0;
+    this.m_pixelSpacing.y = 1.0;
+  }
   this.m_pixelSpacing.z = zBox / this.m_zDim;
   this.m_boxSize.z = this.m_zDim * this.m_pixelSpacing.z;
   this.m_boxSize.x = this.m_xDim * this.m_pixelSpacing.x;
@@ -288,6 +293,15 @@ class LoaderDicom{
       } // for all pixels
     } // if hash
   }
+  //console.log(`histogram[0] = ${histogram[0]}`);
+  //console.log(`histogram[1] = ${histogram[1]}`);
+  //console.log(`histogram[maxVal - 2] = ${histogram[maxVal - 2]}`);
+  //console.log(`histogram[maxVal - 1] = ${histogram[maxVal - 1]}`);
+  let numDifHistValues = 0;
+  for (i = 0; i < maxVal; i++) {
+    numDifHistValues += (histogram[i] !== 0.0) ? 1: 0;
+  }
+  console.log(`num different histogram values = ${numDifHistValues}`);
 
   const hist = new UiHistogram();
   hist.assignArray(maxVal, histogram);
@@ -325,22 +339,24 @@ class LoaderDicom{
   const yAftMax = histSmooothed[idxSomeAfterMax];
   console.log(`Build Volume. idxLastLocalMax = ${idxLastLocalMax}, maxVal = ${maxVal}`);
 
-  if (yLocMax !== yAftMax) {
-    // linear approximation
-    const deltaIndex = idxSomeAfterMax - idxLastLocalMax;
-    if (deltaIndex === 0) {
-      console.log('Critical error build 8bit volume');
-      return LoadResult.ERROR_HISTOGRAM_DETECT_RIDGES;
+  if (idxLastLocalMax > 0) {
+    if (yLocMax !== yAftMax) {
+      // linear approximation
+      const deltaIndex = idxSomeAfterMax - idxLastLocalMax;
+      if (deltaIndex === 0) {
+        console.log('Critical error build 8bit volume');
+        return LoadResult.ERROR_HISTOGRAM_DETECT_RIDGES;
+      }
+      const koefA = (yAftMax - yLocMax) / deltaIndex;
+      const koefB = yAftMax - koefA * idxSomeAfterMax;
+      const xMax = koefB / (-koefA);
+      maxVal = Math.floor(xMax);
+    } else {
+      // same function level: just select minimum x
+      maxVal = idxLastLocalMax;
     }
-    const koefA = (yAftMax - yLocMax) / deltaIndex;
-    const koefB = yAftMax - koefA * idxSomeAfterMax;
-    const xMax = koefB / (-koefA);
-    maxVal = Math.floor(xMax);
-  } else {
-    // same function level: just select minimum x
-    maxVal = idxLastLocalMax;
   }
-  console.log(`Build Volume. max value after search last hill ${maxVal}`);
+  console.log(`Build Volume. max value after search last hill: ${maxVal}`);
 
   const BITS_ACCUR = 11;
   const BITS_IN_BYTE = 8;
@@ -358,16 +374,34 @@ class LoaderDicom{
   const numSlicesByTags = this.m_slicesVolume.m_maxSlice - this.m_slicesVolume.m_minSlice + 1;
   if (numSlicesByTags !== numSlices) {
     console.log(`Sort by location! N slices by tags = ${numSlicesByTags}, but N readed slices = ${numSlices}`);
-    // sort slices via slice location
+  }
+  // sort slices via slice location OR slice number
+  let minSliceNum = srcSlices[0].m_sliceNumber;
+  let maxSliceNum = srcSlices[0].m_sliceNumber;
+  for (let s = 0; s < numSlices; s++) {
+    const num = srcSlices[s].m_sliceNumber;
+    minSliceNum = (num < minSliceNum) ? num : minSliceNum;
+    maxSliceNum = (num > maxSliceNum) ? num : maxSliceNum;
+  }
+  const difSlceNum = maxSliceNum - minSliceNum;
+  if (difSlceNum > 0) {
+    // sort slices by slice number (read from dicom tag)
+    srcSlices.sort((a, b) => {
+      const zDif = a.m_sliceNumber - b.m_sliceNumber;
+      return zDif;
+    });
+  } else {
+    // sort slices by slice location (read from diocom tag)
     srcSlices.sort((a, b) => {
       const zDif = a.m_sliceLocation - b.m_sliceLocation;
       return zDif;
     });
-    // assign new slice numbers according accending location
-    for (let s = 0; s < numSlices; s++) {
-      srcSlices[s].m_sliceNumber = s;
-    }
   }
+  // assign new slice numbers according accending location
+  for (let s = 0; s < numSlices; s++) {
+    srcSlices[s].m_sliceNumber = s;
+  }
+
   // reassign slice numbers according to hash 
   let numSlicesActaullyBuild = 0;
   for (let s = 0; s < numSlices; s++) {
@@ -1349,7 +1383,7 @@ class LoaderDicom{
       this.m_sliceLocMin = (sliceLoc < this.m_sliceLocMin) ? sliceLoc : this.m_sliceLocMin;
       this.m_sliceLocMax = (sliceLoc > this.m_sliceLocMax) ? sliceLoc : this.m_sliceLocMax;
       if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`TAG. Slice location = ${strSliceLocation}`);
+        console.log(`TAG. Slice location = ${this.m_sliceLocation}`);
       }
     }
 
@@ -1784,7 +1818,11 @@ class LoaderDicom{
         this.m_boxSize.y = this.m_yDim * this.m_pixelSpacing.y;
         console.log(`Volume local phys dim: ${this.m_boxSize.x} * ${this.m_boxSize.y} * ${this.m_boxSize.z}`);
         // TODO: add hash
-        const series = this.m_slicesVolume.getSeries();
+        let series = this.m_slicesVolume.getSeries();
+        if (series.length === 0) {
+          this.m_slicesVolume.buildSeriesInfo();
+          series = this.m_slicesVolume.getSeries();
+        }
         const hash = series[0].m_hash;
         const errStatus = this.createVolumeFromSlices(volDst, hash);
         if (callbackComplete !== null) {

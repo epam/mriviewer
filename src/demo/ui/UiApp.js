@@ -56,6 +56,7 @@ class UiApp extends React.Component {
 
     this.m_modalText = null;
     this.m_store = null;
+    this.m_fileNameOnLoad = '';
 
     this.state = {
       showModalText: false,
@@ -67,7 +68,42 @@ class UiApp extends React.Component {
       strProgressMessage: 'Loading...',
     };
   }
+  componentWillMount() {
+    // read paraameters from url
+    // for dicom folder like:
+    // ?url=http://www.someplace.com/folder
+    //
+    let fileNameOnLoad = '';
+    const strSearch = window.location.search;
+    if (strSearch.length > 0) {
+      // console.log(`UiApp. componentDidMount. app search = ${strSearch}`);
+      const strReg = /\\?url=(\S+)/;
+      const arr = strSearch.match(strReg);
+      if (arr === null) {
+        console.log('arguments should be in form: ?url=www.xxx.yy/zz/ww');
+        return;
+      }
+      fileNameOnLoad = arr[1];
+      // console.log(`fileNameOnLoad = ${fileNameOnLoad}`);
+
+      // check url valid
+      // use both forms to check urls:
+      // www.XXX.YYY/....
+      // DDD.DDD.DDD.DDD:ddd/....
+      //
+      const regA = /^((ftp|http|https):\/\/)?(([\S]+)\.)?([\S]+)\.([A-z]{2,})(:\d{1,6})?\/[\S]+/;
+      const regB = /(ftp|http|https):\/\/([\d]+)\.([\d]+)\.([\d]+)\.([\d]+)(:([\d]+))?\/([\S]+)/;
+      const isValidA = fileNameOnLoad.match(regA);
+      const isValidB = fileNameOnLoad.match(regB);
+      if ((isValidA === null) && (isValidB === null)) {
+        console.log(`Not valid URL = ${fileNameOnLoad}`);
+        return;
+      }
+      this.m_fileNameOnLoad = fileNameOnLoad;
+    }
+  }
   componentDidMount() {
+    // setup self reference to store
     const store = this.m_store;
     if (store === null) {
       console.log('UiApp. componentDidMount. store is NULL');
@@ -160,7 +196,8 @@ class UiApp extends React.Component {
                 {strMessageOnMenu}
               </Navbar.Text>
 
-              <UiOpenMenu />
+              <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad} />
+
               <UiSaveMenu />
               <UiReportMenu />
               {(store.modeView === ModeView.VIEW_2D) ? <UiFilterMenu /> : <p></p>}

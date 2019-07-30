@@ -83,6 +83,7 @@ class UiOpenMenu extends React.Component {
     this.callbackReadSingleDicomComplete = this.callbackReadSingleDicomComplete.bind(this);
     this.callbackReadMultipleComplete = this.callbackReadMultipleComplete.bind(this);
 
+    this.m_fileNameOnLoad = '';
     this.m_fileName = '';
     this.m_fileReader = null;
     this.state = {
@@ -90,6 +91,7 @@ class UiOpenMenu extends React.Component {
       showModalUrl: false,
       showModalDemo: false,
       showModalGoogle: false,
+      onLoadCounter: 1,
     };
     this.m_volume = null;
     this.m_volumeRoi = null;
@@ -139,14 +141,16 @@ class UiOpenMenu extends React.Component {
     const ratioPrc = Math.floor(ratio01 * 100);
     const store = this.props;
     const uiapp = store.uiApp;
-    if (ratioPrc === 0) {
-      uiapp.doShowProgressBar('Loading...');
-    }
-    if (ratioPrc >= 99) {
-      // console.log(`callbackReadProgress. hide on = ${ratio01}`);
-      uiapp.doHideProgressBar();
-    } else {
-      uiapp.doSetProgressBarRatio(ratioPrc);
+    if (uiapp !== null) {
+      if (ratioPrc === 0) {
+        uiapp.doShowProgressBar('Loading...');
+      }
+      if (ratioPrc >= 99) {
+        // console.log(`callbackReadProgress. hide on = ${ratio01}`);
+        uiapp.doHideProgressBar();
+      } else {
+        uiapp.doSetProgressBarRatio(ratioPrc);
+      }
     }
   } // callback progress
   callbackReadComplete(errCode) {
@@ -176,8 +180,14 @@ class UiOpenMenu extends React.Component {
   }
   callbackReadSingleDicomComplete(errCode) {
     if (errCode === LoadResult.SUCCESS) {
-      // TODO
-      this.m_loaderDicom.createVolumeFromSlices(this.m_volume);
+      // select 1st slice and hash
+      let series = this.m_loaderDicom.m_slicesVolume.getSeries();
+      if (series.length === 0) {
+        this.m_loaderDicom.m_slicesVolume.buildSeriesInfo();
+        series = this.m_loaderDicom.m_slicesVolume.getSeries();
+      }
+      const hash = series[0].m_hash;
+      this.m_loaderDicom.createVolumeFromSlices(this.m_volume, hash);
     }
     this.callbackReadComplete(errCode);
   }
@@ -456,10 +466,6 @@ class UiOpenMenu extends React.Component {
     fileSelector.onchange = this.handleFileSelected;
     return fileSelector;
   }
-  // invoked after render
-  componentDidMount() {
-    this.m_fileSelector = this.buildFileSelector();
-  }
   onButtonLocalFile(evt) {
     // console.log('onButtonLocalFile started');
     evt.preventDefault();
@@ -694,9 +700,32 @@ class UiOpenMenu extends React.Component {
     // clear modal
     store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: [] });
   }
+  // invoked before render
+  componentWillMount() {
+  }
+  // invoked after render
+  componentDidMount() {
+    this.m_fileSelector = this.buildFileSelector();
+    const fileNameOnLoad = this.m_fileNameOnLoad;
+    // console.log(`UiOpenMenu. componentDidMount. fnonl = ${fileNameOnLoad}`);
+    if ((fileNameOnLoad.length > 0) && (this.state.onLoadCounter > 0)) {
+      this.setState({ onLoadCounter: 0 });
+      const TIMEOUT_MS = 50;
+      setTimeout( this.loadFromUrl(fileNameOnLoad), TIMEOUT_MS );
+    }
+  }
   // render
   render() {
     const isGoogle = config.googleCloudDemoActivce;
+
+    const fileNameOnLoad = this.props.fileNameOnLoad;
+    this.m_fileNameOnLoad = fileNameOnLoad;
+    // console.log(`UiOpenMenu. render. fnol = ${this.m_fileNameOnLoad}`);
+    let jsxOnLoad = '';
+    if (fileNameOnLoad.length > 2) {
+      jsxOnLoad = <p></p>;
+      return jsxOnLoad;
+    }
 
     const jsGoo = (isGoogle) ? 
       <NavDropdown.Item onClick={this.onModalGoogleShow} >
@@ -774,6 +803,7 @@ class UiOpenMenu extends React.Component {
 
       </NavDropdown>
 
+    // return (jsxOnLoad.length > 1) ? jsxOnLoad : jsxOpenMenu;
     return jsxOpenMenu;
   }
 }
