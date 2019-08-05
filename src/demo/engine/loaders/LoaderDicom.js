@@ -307,7 +307,8 @@ class LoaderDicom{
   const hist = new UiHistogram();
   hist.assignArray(maxVal, histogram);
   const HIST_SMOOTH_SIGMA = 0.8;
-  hist.smoothHistogram(HIST_SMOOTH_SIGMA );
+  const NEED_NORMALIZE = false;
+  hist.smoothHistogram(HIST_SMOOTH_SIGMA, NEED_NORMALIZE);
   const histSmooothed = hist.m_histogram;
 
   // Find val max in smoothed histogram
@@ -319,21 +320,39 @@ class LoaderDicom{
     }
   }
   // Find last local max in smoothed historgam
+  const HIST_MIN_VAL = Math.floor((xyDim * numSlices) / (9 * 15));
   let idxLastLocalMax = 0;
   for (i = maxVal - VAL_8; i > VAL_8; i--) {
-    let iL = i - 1;
-    let iR = i + 1;
-    while ((histSmooothed[i] === histSmooothed[iL]) && (iL >= VAL_8)) {
-      iL -= 1;
-    }
-    while ((histSmooothed[i] === histSmooothed[iR]) && (iR < maxVal - VAL_8)) {
-      iR += 1;
-    }
-    if ((histSmooothed[i] > histSmooothed[iL]) && (histSmooothed[i] > histSmooothed[iR])) {
-      idxLastLocalMax = i;
-      break;
-    } // if
+    if (histSmooothed[i] > HIST_MIN_VAL) {
+      let iL = i - 1;
+      let iR = i + 1;
+      while ((histSmooothed[i] === histSmooothed[iL]) && (iL >= VAL_8)) {
+        iL -= 1;
+      }
+      while ((histSmooothed[i] === histSmooothed[iR]) && (iR < maxVal - VAL_8)) {
+        iR += 1;
+      }
+      if ((histSmooothed[i] > histSmooothed[iL]) && (histSmooothed[i] > histSmooothed[iR])) {
+        idxLastLocalMax = i;
+        break;
+      } // if
+    } // if more min val
   } // for i
+
+  // if not found local max: find some more or less bright value ending
+  if (idxLastLocalMax === 0) {
+    const HIST_BARRIER_VAL = Math.floor((xyDim * numSlices) / (1024 * 10));
+    for (i = maxVal - 8; i > 8; i--)
+    {
+      if (histSmooothed[i] > HIST_BARRIER_VAL)
+      {
+        idxLastLocalMax = i;
+        maxVal = i;
+        break;
+      }
+    } // for
+  } // if not found loc max
+
   const TWICE = 2;
   const idxSomeAfterMax = Math.floor((idxLastLocalMax + maxVal) / TWICE);
   const yLocMax = histSmooothed[idxLastLocalMax];
