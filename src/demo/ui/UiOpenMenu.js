@@ -38,6 +38,9 @@ import config from '../config/config';
 // Const
 // ********************************************************
 
+/** Need to have demo menu */
+const NEED_DEMO_MENU = false;
+
 /** deep artificially fix volume texture size to 4 * N */
 const NEED_TEXTURE_SIZE_4X = true;
 
@@ -734,6 +737,17 @@ class UiOpenMenu extends React.Component {
       </NavDropdown.Item> : 
       <p></p>;
 
+    const jsDemo = (NEED_DEMO_MENU) ?
+      <NavDropdown.Item href="#actionOpenDemo" onClick={this.onModalDemoOpenShow} >
+        <i className="fas fa-brain"></i>
+        Demo models Open
+      </NavDropdown.Item> :
+      <p></p>;
+
+    const jsVidiver = (isGoogle || NEED_DEMO_MENU) ?
+      <NavDropdown.Divider /> :
+      <p></p>;
+
     const store = this.props;
     const isVisibleDicomSeries = (store.dicomSeries.length !== 0);
 
@@ -753,14 +767,11 @@ class UiOpenMenu extends React.Component {
           Url
         </NavDropdown.Item>
 
-        <NavDropdown.Divider />
+        {jsVidiver}
 
         {jsGoo}
 
-        <NavDropdown.Item href="#actionOpenDemo" onClick={this.onModalDemoOpenShow} >
-          <i className="fas fa-brain"></i>
-          Demo models Open
-        </NavDropdown.Item>
+        {jsDemo}
 
         <Modal show={this.state.showModalUrl} onHide={this.onModalUrlHide} >
           <Modal.Title>
