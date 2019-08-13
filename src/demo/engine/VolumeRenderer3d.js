@@ -38,8 +38,8 @@ import MaterialVolumeRender from './gfx/matvolumerender';
 import VolumeFilter3D from './volumeFilter3d';
 import RoiPalette from './loaders/roipalette';
 import TetrahedronGenerator from './actvolume/tetra';
-// import Graphics23d from './tools23d/graphics23d';
-// import MaterialColor2d from './gfx/matcolor2d';
+import Graphics23d from './tools23d/graphics23d';
+import MaterialColor2d from './gfx/matcolor2d';
 
 
 // import GlCheck from './glcheck';
@@ -102,7 +102,7 @@ export default class VolumeRenderer3d {
     // this.sceneTetra = new THREE.Scene();
 
     this.scene23D = new THREE.Scene();
-    this.tools23d = null;
+    this.graphics23d = null;
     this.sceneSphere = new THREE.Scene();
     this.meshSphere = null;
     this.newScene = new THREE.Scene();
@@ -393,6 +393,15 @@ export default class VolumeRenderer3d {
   /**
    * Setting a variable for conditional compilation (Volume Render)
    */
+  switchToTool23D(isTool23D) {
+    this.Tool23D = isTool23D;
+    if (this.Tool23D) {
+      this.graphics23d = new Graphics23d(this.scene23D, this.windowWidth, this.windowHeight);
+    }
+    else {
+      this.graphics23d = null;
+    }
+  }
   switchToVolumeRender() {
     if (this.matVolumeRender !== null && this.matRenderToTexture !== null) {
       if (this.isRoiVolume > 0) {
@@ -1056,7 +1065,6 @@ export default class VolumeRenderer3d {
         this.meshSphere.material = this.matVolumeRender;
         this.sceneReadyCounter++;
       });
-    //this.tools23d = new Graphics23d(this.scene23D, this.windowWidth, this.windowHeight);
     //this.tools23d.set2dToolType(toolType);
     //matSkullThreeGS.m_uniforms.texVolumeMask.value = this.volTextureMask;
   } // callbackCreateCubeVolume
@@ -1221,8 +1229,9 @@ export default class VolumeRenderer3d {
         
         //this.matWireFrame
         //this.renderer.clear();
-        //this.scene23D.overrideMaterial = this.matColor23d;//this.m_linesMaterial;//this.matWireFrame;
-        //this.renderer.render(this.scene23D, this.camera);
+        if (this.Tool23D) {
+          this.renderer.render(this.scene23D, this.camera);
+        }
         //this.renderer.render(this.sceneSphereWireFrame, this.camera);
         this.renderer.autoClearDepth = true;
         //this.renderer.clear();
@@ -1303,6 +1312,10 @@ export default class VolumeRenderer3d {
     this.eraserStart = isOn;
   }
   onMouseDown(xx, yy) {
+    if (this.Tool23D) {
+      this.graphics23d.onMouseDown(xx / this.windowWidth, yy / this.windowHeight);
+      return;
+    }
     this.orbitControl.onMouseDown(xx, yy);
     //this.tools23d.onMouseDown(xx /this.windowWidth, yy / this.windowHeight);
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
@@ -1317,6 +1330,10 @@ export default class VolumeRenderer3d {
   }
   onMouseMove(xx, yy) {
     //this.tools23d.onMouseMove(xx / this.windowWidth, yy / this.windowHeight);
+    if (this.Tool23D) {
+      this.graphics23d.onMouseMove(xx / this.windowWidth, yy / this.windowHeight);
+      return;
+    }
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return;
     }
@@ -1328,7 +1345,11 @@ export default class VolumeRenderer3d {
       this.volumeUpdater.eraser.eraseStart(xx, yy, this.windowWidth, this.matVolumeRender.uniforms.isoThreshold.value, false);
     }
   }
-  onMouseUp( /* xx, yy */ ) {
+  onMouseUp( xx, yy ) {
+    if (this.Tool23D) {
+      this.graphics23d.onMouseUp(xx / this.windowWidth, yy / this.windowHeight);
+      return;
+    }
     //this.tools23d.onMouseUp(xx / this.windowWidth, yy / this.windowHeight);
     this.orbitControl.onMouseUp();
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {

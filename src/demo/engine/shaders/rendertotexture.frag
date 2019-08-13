@@ -914,6 +914,7 @@ void main() {
       if (acc.a < 1.9)
         acc.rgb = VolumeRender(acc.rgb, dir, back).rgb;
     }
+    acc.rgb = (1.0 - contrast3D)*acc.rgb + contrast3D*vec3(vol);
     gl_FragColor = acc;
     return;
   }

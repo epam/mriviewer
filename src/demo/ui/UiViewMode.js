@@ -90,7 +90,7 @@ class UiViewMode extends React.Component {
     const store = this.props;
     // this.logObject('UiViewMode this props: ', store);
     let viewMode = store.modeView;
-    //let isTool3D = store.isTool3D;
+    let isTool3D = store.isTool3D;
     if ((viewMode === ModeView.VIEW_MPR) && (!this.m_needModeMpr)) {
       viewMode = ModeView.VIEW_2D;
     }
@@ -108,10 +108,8 @@ class UiViewMode extends React.Component {
     const str2d = (viewMode === ModeView.VIEW_2D) ? ' active' : '';
     const str3dLight = (viewMode === ModeView.VIEW_3D_LIGHT) ? ' active' : '';
     const str3d = (viewMode === ModeView.VIEW_3D) ? ' active' : '';
-    //const strTool3Don = (viewMode === ModeView.VIEW_3D_LIGHT && isTool3D === true) ? ' active' : '';
-    //const strTool3Doff = (viewMode === ModeView.VIEW_3D_LIGHT && isTool3D === true) ? ' active' : '';
-    const strTool3Don = 'active';
-    const strTool3Doff = 'active';
+    const strTool3Don = (viewMode === ModeView.VIEW_3D_LIGHT && isTool3D === true) ? ' active' : '';
+    const strTool3Doff = (viewMode === ModeView.VIEW_3D_LIGHT && isTool3D === false) ? ' active' : '';
 
     const jsx3d =
     <OverlayTrigger placement="bottom" overlay = {
@@ -148,7 +146,7 @@ class UiViewMode extends React.Component {
 
     const vol = store.volume;
     const FOUR = 4;
-    const test = false;
+    const test = true;
     const jsxOut = 
       <ButtonToolbar aria-label="Toolbar with button groups">
         <ButtonGroup className="mr-2" aria-label="First group">

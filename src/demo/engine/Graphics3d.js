@@ -15,6 +15,7 @@ import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
 import StoreActionType from '../store/ActionTypes';
 import VolumeRenderer3d from './VolumeRenderer3d'
+//import DistanceTool from '../tools23d/distancetool'
 
 // ********************************************************
 // Const
@@ -47,6 +48,7 @@ class Graphics3d extends React.Component {
 
     this.m_mount = null;
     this.m_volumeRenderer3D = null;
+    this.m_distanceTool = null;
     this.m_renderer = null;
     // animation
     this.m_frameId = null;
@@ -288,6 +290,7 @@ class Graphics3d extends React.Component {
     const modeView = store.modeView;
     if (this.m_volumeRenderer3D !== null) {
       // console.log(`Graphics3d . mode = ${mode3d}`);
+      this.m_volumeRenderer3D.switchToTool23D(store.isTool3D);
       if (modeView !== ModeView.VIEW_3D) {
         if (mode3d === Modes3d.RAYCAST) {
           //if (this.m_prevMode === Modes3d.EREASER) {
