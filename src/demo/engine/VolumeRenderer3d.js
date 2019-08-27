@@ -731,6 +731,7 @@ export default class VolumeRenderer3d {
       v.applyMatrix4(invPerspective);
       v.applyMatrix4(invView);
       v.applyMatrix4(l2w);
+      //v.applyMatrix4(this.getScreen2WorldTransform());
       //uvw[i * VAL_3 + 1] = (v.y + this.geo_offset1.y) * this.geo_scale.y + this.geo_offset2.y;
       //uvw[i * VAL_3 + 0] = -(v.x + this.geo_offset1.x) * this.geo_scale.x + this.geo_offset2.x;
       //// eslint-disable-next-line
@@ -748,6 +749,17 @@ export default class VolumeRenderer3d {
     }
     this.planeGeometry.addAttribute('uvw', new THREE.BufferAttribute(uvw, VAL_3));
     this.planeGeometry.getAttribute('uvw').needsUpdate = true;
+  }
+  getScreen2WorldTransform() {
+    const l2w = new THREE.Matrix4();
+    l2w.getInverse(this.mesh.matrix);
+    const s2w = new THREE.Matrix4();
+    s2w.getInverse(this.camera.projectionMatrix);
+    const invView = new THREE.Matrix4();
+    invView.copy(this.camera.matrixWorld);
+    s2w.multiply(invView);
+    s2w.multiply(l2w);
+    return s2w;
   }
   /**
    * Create geometry and materials for 3D rendering
