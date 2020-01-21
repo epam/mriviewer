@@ -39,6 +39,13 @@ Three.js is used as some gateway to WebGL renderer. The current Three.js version
 so we use tricky way to build 2d texture from initial 3d texture by linking 2d slices all together
 as a large tile map. This idea (with source codes) can be seen in project [WebGL Volume Rendering](https://github.com/lebarba/WebGLVolumeRendering).
 
+## Publications 
+Links to publications that contain **med3web** references
+* [Belyaev, S., Smirnov, P., Smirnova, N., Shubnikov, V. Fast adaptive undersampling for volume rendering](http://dx.doi.org/10.24132/JWSCG.2019.27.1.1)
+* [Belyaev, S.Y., Smirnova, N.D., Smirnov, P.O., Savchuk, D.A. Fast selective antialiasing for direct volume rendering](http://dx.doi.org/10.24132/JWSCG.2019.27.1.1)
+* [Savchuk, D.A., Belyaev, S.Y. Two-pass real-Time direct isosurface rendering algorithm optimization for HTC Vive and low performance devices](http://dx.doi.org/10.1117/12.2292183)
+* [Belyaev, S., Smirnov, P., Shubnikov, V., Smirnova, N. Adaptive algorithm for accelerating direct isosurface rendering on GPU](https://www.researchgate.net/publication/325975658_An_Adaptive_Algorithm_for_Accelerating_Direct_Isosurface_Rendering_on_GPU)
+
 ## Project documentation
 
 Introduction to the project can be loaded here:
