@@ -8,6 +8,7 @@
   "homepage": ".",
   "private": false,
   "dependencies": {
+    "@tensorflow/tfjs": "^1.7.0",
     "bootstrap": "^4.2.1",
     "jquery": "^3.3.1",
     "popper.js": "^1.14.7",

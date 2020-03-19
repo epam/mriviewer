@@ -26,6 +26,7 @@ import ToolEdit from './tools2d/ToolEdit';
 import ToolDelete from './tools2d/ToolDelete';
 
 import Tools2dType from './tools2d/ToolTypes';
+import Segm2d  from './Segm2d';
 
 import RoiPalette from './loaders/roipalette';
 
@@ -74,6 +75,10 @@ class Graphics2d extends React.Component {
       yMouse: -1,
     };
 
+    // segm 2d
+    this.segm2d = new Segm2d(this);
+    this.m_isSegmented = false;
+
     // tools2d
     this.m_toolPick = new ToolPick(this);
     this.m_toolDistance = new ToolDistance(this);
@@ -109,7 +114,12 @@ class Graphics2d extends React.Component {
   }
   componentDidMount() {
     // this.start();
-    this.renderScene();
+    //this.renderScene();
+
+    this.prepareImageForRender();
+    this.renderReadyImage();
+
+
     // detect actual render window dims
     const w = this.m_mount.clientWidth;
     const h = this.m_mount.clientHeight;
@@ -138,7 +148,8 @@ class Graphics2d extends React.Component {
     // this.stop()
   }
   componentDidUpdate() {
-    this.renderScene();
+    // this.prepareImageForRender();
+    this.renderReadyImage();
   }
   /**
    * Get screenshot
@@ -224,7 +235,8 @@ class Graphics2d extends React.Component {
     }
       
   }
-  renderScene() {
+  prepareImageForRender() {
+    // console.log('prepareImageForRender ...');
     const objCanvas = this.m_mount;
     if (objCanvas === null) {
       return;
@@ -235,6 +247,9 @@ class Graphics2d extends React.Component {
     if (w * h === 0) {
       return;
     }
+
+    const store = this.props;
+
     ctx.fillStyle = 'rgb(64, 64, 64)';
     ctx.fillRect(0,0, w, h);
     // console.log(`render scene 2d. screen = ${w} * ${h}`);
@@ -259,9 +274,8 @@ class Graphics2d extends React.Component {
       ctx.putImageData(imgData, 0, 0); 
     }
 
-    const store = this.props;
     const vol = store.volume;
-    const mode2d = store.mode2d;
+    const mode2d = this.m_mode2d;
     const sliceRatio = store.slider2d;
 
     if (vol !== null) {
@@ -278,7 +292,7 @@ class Graphics2d extends React.Component {
         console.log(`Bad src data len = ${dataSrc.length}, but expect ${xDim}*${yDim}*${zDim}`);
       }
 
-      // console.log(`Graphics2d. mode=${this.m_mode2d} slice src=${xDim}*${yDim}*${zDim} into ${w}*${h}`);
+      // console.log(`Graphics2d. prepareImageForRender. mode= ${mode2d}`);
 
       const ONE = 1;
       const FOUR = 4;
@@ -575,21 +589,45 @@ class Graphics2d extends React.Component {
         } // end if 4 bpp
       }
 
-      ctx.putImageData(imgData, 0, 0); 
+      // check is segmentation 2d mode is active
+      // const isSegm = store.graphics2dModeSegmentation;
+      // console.log("Segm2d mode = " + isSegm);
 
-      // render text info
-      this.renderTextInfo(ctx, vol);
-      // render all tools
-      this.m_toolPick.render(ctx);
-      this.m_toolDistance.render(ctx, store);
-      this.m_toolAngle.render(ctx, store);
-      this.m_toolArea.render(ctx, store);
-      this.m_toolRect.render(ctx, store);
-      this.m_toolText.render(ctx, store);
-      this.m_toolEdit.render(ctx, store);
-      this.m_toolDelete.render(ctx, store);
-    } // if not empty vol
-  } // render scene
+      this.imgData = imgData;
+      this.segm2d.setImageData(imgData);
+    } // if vol not null
+  } // prepareImageForRender
+
+  renderReadyImage() {
+    // console.log('renderReadyImage ...');
+    const objCanvas = this.m_mount;
+    if (objCanvas === null) {
+      return;
+    }
+    const ctx = objCanvas.getContext('2d');
+    const store = this.props;
+    const vol = store.volume;
+    const isSegm = this.m_isSegmented;
+    if (isSegm) {
+      const w = this.m_toolPick.m_wScreen;
+      const h = this.m_toolPick.m_hScreen;
+      this.segm2d.render(ctx, w, h, this.imgData);
+    } else {
+      ctx.putImageData(this.imgData, 0, 0);
+    }
+    // render text info
+    this.renderTextInfo(ctx, vol);
+    // render all tools
+    this.m_toolPick.render(ctx);
+    this.m_toolDistance.render(ctx, store);
+    this.m_toolAngle.render(ctx, store);
+    this.m_toolArea.render(ctx, store);
+    this.m_toolRect.render(ctx, store);
+    this.m_toolText.render(ctx, store);
+    this.m_toolEdit.render(ctx, store);
+    this.m_toolDelete.render(ctx, store);
+  }
+
   onMouseWheel(evt) {
     const store = this.props;
     const indexTools2d = store.indexTools2d;
@@ -740,6 +778,18 @@ class Graphics2d extends React.Component {
    * Invoke forced rendering, after some tool visual changes
    */
   forceUpdate() {
+    // console.log('forceUpdate ...');
+    this.prepareImageForRender();
+    // this.forceRender();
+    if (this.m_isSegmented) { // need to draw segmented image
+      if (this.segm2d.model !== null) {
+        // we have loaded model: applt it to image
+        this.segm2d.startApplyImage();
+      }
+    }
+  }
+  forceRender() {
+    // console.log('forceRender ...');
     this.setState({ state: this.state });
   }
   /**

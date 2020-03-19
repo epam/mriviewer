@@ -44,19 +44,25 @@ class UiCtrl2d extends React.Component {
     this.m_updateEnable = true;
   }
   onMode(indexMode) {
-    this.m_updateEnable = true;
-    console.log(`2d controls. on new mode = ${indexMode}`);
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_MODE_2D, mode2d: indexMode });
-    // clear all tools
     const gra2d = store.graphics2d;
+
+    this.m_updateEnable = true;
+    // console.log(`2d controls. on new mode = ${indexMode}`);
+    store.dispatch({ type: StoreActionType.SET_MODE_2D, mode2d: indexMode });
+    gra2d.m_mode2d = indexMode;
+
+    // clear all tools
     gra2d.clear();
     // init zoom
     store.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: 1.0 });
     store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: 0.0 });
     store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: 0.0 });
-    // re-render
+
+    // build render image
     gra2d.forceUpdate();
+    // render just builded image
+    gra2d.forceRender();
   }
   onModeSaggital() {
     this.onMode(Modes2d.SAGGITAL);
@@ -75,10 +81,17 @@ class UiCtrl2d extends React.Component {
       val = Number.parseFloat(aval);
       // console.log(`onSlider. val = ${val}`);
       const store = this.props;
+      this.valSlider = val;
       store.dispatch({ type: StoreActionType.SET_SLIDER_2D, slider2d: val });
       // clear all 2d tools
       const gra2d = store.graphics2d;
       gra2d.clear();
+
+      // re-render (and rebuild segm if present)
+      gra2d.forceUpdate();
+
+      // render just builded image
+      gra2d.forceRender();
     }
   }
   shouldComponentUpdate() {

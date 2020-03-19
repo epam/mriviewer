@@ -45,9 +45,9 @@ export default class DistanceTool {
     /** @property {float} yPixelSize - canvas pixel size in mm for y axis */
     this.m_yPixelSize = -1; // in mm
     /** @property {Object} m_linesMaterial - line material object */
-    const R_MATERIAL = 0.86;
-    const G_MATERIAL = 0.59;
-    const B_MATERIAL = 0.17;
+    //const R_MATERIAL = 0.86;
+    //const G_MATERIAL = 0.59;
+    //const B_MATERIAL = 0.17;
     //this.m_linesMaterial = new MaterialColor2d(R_MATERIAL, G_MATERIAL, B_MATERIAL);
     const linesMaterial = new MaterialColor2d();
     this.m_linesMaterial = linesMaterial.create();

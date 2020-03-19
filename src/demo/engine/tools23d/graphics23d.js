@@ -24,23 +24,23 @@ under the License.
 
 import * as THREE from 'three';
 
-import MaterialTex2d from '../gfx/mattex2d';
-import MaterialColor2d from '../gfx/matcolor2d';
-import MeshText2D from './meshtext2d';
-import Line2D from './line2d';
-import Circle2D from './circle2d';
+// import MaterialTex2d from '../gfx/mattex2d';
+// import MaterialColor2d from '../gfx/matcolor2d';
+// import MeshText2D from './meshtext2d';
+// import Line2D from './line2d';
+// import Circle2D from './circle2d';
 import DistanceTool from './distancetool';
-import AngleTool from './angletool';
-import AreaTool from './areatool';
-import ZoomTool from './zoomtool';
-import RectTool from './recttool';
-import MoveTool from './movetool';
-import DeleteTool from './deletetool';
-import EditTool from './edittool';
-import TextTool from './texttool';
+// import AngleTool from './angletool';
+// import AreaTool from './areatool';
+// import ZoomTool from './zoomtool';
+// import RectTool from './recttool';
+// import MoveTool from './movetool';
+// import DeleteTool from './deletetool';
+// import EditTool from './edittool';
+// import TextTool from './texttool';
 
 /**  @constant {number} SCENE_3D_BACKGROUND_COLOR - backgroudn color for 3d window */
-const SCENE_2D_BACKGROUND_COLOR = 0xbbbbff; // 0x00
+// const SCENE_2D_BACKGROUND_COLOR = 0xbbbbff; // 0x00
 
 /** Possible 2d tools */
 const tools2d = {

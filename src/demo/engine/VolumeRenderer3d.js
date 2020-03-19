@@ -39,7 +39,7 @@ import VolumeFilter3D from './volumeFilter3d';
 import RoiPalette from './loaders/roipalette';
 import TetrahedronGenerator from './actvolume/tetra';
 import Graphics23d from './tools23d/graphics23d';
-import MaterialColor2d from './gfx/matcolor2d';
+// import MaterialColor2d from './gfx/matcolor2d';
 
 
 // import GlCheck from './glcheck';

@@ -33,6 +33,5 @@ const StoreActionType = {
   SET_ERR_ARRAY: 28,
   SET_MODE_3Droi: 29,
   SET_DICOM_SERIES: 30,
-
 };
 export default StoreActionType;
