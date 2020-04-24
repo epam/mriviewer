@@ -93,6 +93,7 @@ class FileTools {
       }
       dotFound = (sym === '.') ? true : dotFound;
     } // for (i)
+    console.log(`${strOut}`);
     return strOut;
   } // encodeUrl
 

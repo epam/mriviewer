@@ -594,21 +594,21 @@ class UiOpenMenu extends React.Component {
     if (index === 0) {
       // 20101108.ktx
       // const FN_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/31212219.luy';
-      const FN_ENCODED = 'http://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/31212219.luy';
+      const FN_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/31212219.luy';
       const ft = new FileTools();
       fileName = ft.decodeUrl(FN_ENCODED);
       // console.log(`onDemoSelected. enc = ${fileName}`);
     } else if (index === 1) {
       // set00.ktx
       // const FN_ENCO = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/tfu11.luy';
-      const FN_ENCO = 'http://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/tfu11.luy';
+      const FN_ENCO = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/tfu11.luy';
       const ft = new FileTools();
       fileName = ft.decodeUrl(FN_ENCO);
       // console.log(`onDemoSelected. enc = ${fileName}`);
     } else if (index === 2) {
       // gm3 nii
       // const FN_GM_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ojguj/hn4_623_623_276.ojj';
-      const FN_GM_ENCODED = 'http://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/hn4_623_623_276.ojj';
+      const FN_GM_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/hn4_623_623_276.ojj';
       const ft = new FileTools();
       fileName = ft.decodeUrl(FN_GM_ENCODED);
       // fileName = ft.encodeUrl(FN_GM_DECODED);
@@ -618,7 +618,7 @@ class UiOpenMenu extends React.Component {
       if (numUrls === 0) {
         // woman pelvis
         // const FN_WOMM_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ejdpn/xpnbo_qfmwjt/wig.:12.edn';
-        const FN_WOMM_ENCODED = 'http://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/xpnbo_qfmwjt/wig.:12.edn';
+        const FN_WOMM_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/xpnbo_qfmwjt/wig.:12.edn';
         const ft = new FileTools();
         fileName = ft.decodeUrl(FN_WOMM_ENCODED);
       } else {
@@ -641,7 +641,7 @@ class UiOpenMenu extends React.Component {
       if (numUrls === 0) {
         // lungs dicom 00cba..957e.dcm
         // const FN_OCB_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ejdpn/11dcb1:2gb5be73dd4311b768bfc:68f/145784245dcfg6fb26gg:f1d91:1611b.edn';
-        const FN_OCB_ENCODED = 'http://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/11dcb1:2gb5be73dd4311b768bfc:68f/145784245dcfg6fb26gg:f1d91:1611b.edn';
+        const FN_OCB_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/11dcb1:2gb5be73dd4311b768bfc:68f/145784245dcfg6fb26gg:f1d91:1611b.edn';
         const ft = new FileTools();
         fileName = ft.decodeUrl(FN_OCB_ENCODED);
       } else {
@@ -662,7 +662,7 @@ class UiOpenMenu extends React.Component {
     } else if (index === 5) {
       // ct_256_256_256.ktx
       // const FN_CT256_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/du_367_367_367.luy';
-      const FN_CT256_ENCODED = 'http://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/du_367_367_367.luy';
+      const FN_CT256_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/du_367_367_367.luy';
       const ft = new FileTools();
       fileName = ft.decodeUrl(FN_CT256_ENCODED);
       // fileName = ft.encodeUrl(FN_CT256_DECODED);
@@ -670,7 +670,7 @@ class UiOpenMenu extends React.Component {
     } else if (index === 6) {
       // lungs_256_256_256.ktx
       // const FN_LUNGS256_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/mvoht_367_367_367.luy';
-      const FN_LUNGS256_ENCODED = 'http://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/mvoht_367_367_367.luy';
+      const FN_LUNGS256_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/mvoht_367_367_367.luy';
       const ft = new FileTools();
       fileName = ft.decodeUrl(FN_LUNGS256_ENCODED);
       // fileName = ft.encodeUrl(FN_LUNGS256_DECODED);
@@ -678,7 +678,7 @@ class UiOpenMenu extends React.Component {
     } else if (index === 7) {
       // hdr set (roi)
       // const FN_HDRSET_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ies/tfu_jouo.i';
-      const FN_HDRSET_ENCODED = 'http://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/ies/tfu_jouo.i';
+      const FN_HDRSET_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/ies/tfu_jouo.i';
       const ft = new FileTools();
       fileName = ft.decodeUrl(FN_HDRSET_ENCODED);
     } else {
