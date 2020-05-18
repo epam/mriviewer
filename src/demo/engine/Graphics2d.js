@@ -786,7 +786,9 @@ class Graphics2d extends React.Component {
         // we have loaded model: applt it to image
         this.segm2d.startApplyImage();
       }
-    }
+    } else {
+      this.forceRender();
+    } // if not segmented image
   }
   forceRender() {
     // console.log('forceRender ...');

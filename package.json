@@ -4,7 +4,7 @@
   "description": "Med3web is unique 2d/3d medical volume data web viewer application. You can inspect data both in 2d and 3d modes.",
   "version": "1.0.2",
   "author": "EPAM Systems",
-  "year": "2019",
+  "year": "2020",
   "homepage": ".",
   "private": false,
   "dependencies": {
@@ -40,7 +40,8 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "canvas": "^2.4.1",
+    "canvas": "^2.6.1",
+    "node-pre-gyp": "^0.14.0",
     "esdoc": "^1.1.0",
     "esdoc-ecmascript-proposal-plugin": "^1.0.0",
     "esdoc-react-plugin": "^1.0.1",
