@@ -19,7 +19,6 @@ class ToolPick {
     this.m_objGraphics2d = objGra;
     this.m_wScreen = 0;
     this.m_hScreen = 0;
-    this.m_volume = null;
     this.m_strMessage = '';
     this.m_xMessage = 0;
     this.m_yMessage = 0;
@@ -30,9 +29,6 @@ class ToolPick {
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
-  }
-  setVolume(vol) {
-    this.m_volume = vol;
   }
   /**
   * @param {number} xScr - relative x screen position. In [0..1]
@@ -48,7 +44,11 @@ class ToolPick {
     };
     const mode2d = store.mode2d;
     const sliderPosition = store.slider2d;
-    const vol = store.volume;
+
+    const volSet = store.volumeSet;
+    const volIndex = store.volumeIndex;
+    const vol = volSet.getVolume(volIndex);
+
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
@@ -80,10 +80,6 @@ class ToolPick {
       console.log('ToolPick. onMouseDown. Bad screen size');
       return;
     }
-    if (this.m_volume === null) {
-      console.log('ToolPick. onMouseDown. Volume not set');
-      return;
-    }
 
     const xRatioImage = xScr / this.m_wScreen;
     const yRatioImage = yScr / this.m_hScreen;
@@ -93,8 +89,10 @@ class ToolPick {
     }
     const vTex = this.screenToTexture(xRatioImage, yRatioImage, store);
 
-    const xDim = store.volume.m_xDim;
-    const yDim = store.volume.m_yDim;
+    const volSet = store.volumeSet;
+    const vol = volSet.getVolume(store.volumeIndex);
+    const xDim = vol.m_xDim;
+    const yDim = vol.m_yDim;
     /*
     if (mode2d === Modes2d.SAGGITAL) {
       // x
@@ -117,14 +115,14 @@ class ToolPick {
 
     const ONE = 1;
     const FOUR = 4;
-    const bpp = this.m_volume.m_bytesPerVoxel;
+    const bpp = vol.m_bytesPerVoxel;
     let off = vTex.x + (vTex.y * xDim) + (vTex.z * xDim * yDim);
     let val = 0;
     if (bpp === ONE) {
-      val = this.m_volume.m_dataArray[off];
+      val = vol.m_dataArray[off];
     } else if (bpp === FOUR) {
       off = off * FOUR;
-      val = this.m_volume.m_dataArray[off];
+      val = vol.m_dataArray[off];
     }
     
     this.m_xMessage = xScr;

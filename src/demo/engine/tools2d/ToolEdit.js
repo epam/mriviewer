@@ -20,7 +20,6 @@ class ToolEdit {
     this.m_objGraphics2d = objGra;
     this.m_wScreen = 0;
     this.m_hScreen = 0;
-    this.m_volume = null;
 
     this.m_xPixelSize = 0;
     this.m_yPixelSize = 0;
@@ -37,9 +36,6 @@ class ToolEdit {
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
-  }
-  setVolume(vol) {
-    this.m_volume = vol;
   }
   setPixelSize(xs, ys) {
     this.m_xPixelSize = xs;

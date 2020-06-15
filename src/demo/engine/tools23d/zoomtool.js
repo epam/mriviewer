@@ -24,7 +24,6 @@ under the License.
 
 
 export default class ZoomTool {
-
   /**
    * Initialize area tool
    * @param (object) scene - scene object
@@ -34,7 +33,6 @@ export default class ZoomTool {
     /** @property {float} m_zoom - size of zoom */
     this.m_zoom = zoom;
   }
-
   /**
    * Return running state
    * @return {boolean} True if last line has not been fixed yet
@@ -42,7 +40,6 @@ export default class ZoomTool {
   isRunning() {
     return this.m_runningState;
   }
-
   /**
    * Mouse down events handler
    * @param (float) wheelDeltaX - mouse wheel x coordinate
@@ -57,7 +54,6 @@ export default class ZoomTool {
       this.m_zoom = this.m_zoom + wheelDeltaY * TRANSFORM;
     }
   }
-
   makeDefault() {
     this.m_zoom = 1;
   }

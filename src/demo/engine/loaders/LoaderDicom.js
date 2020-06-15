@@ -24,6 +24,10 @@ import FileTools from './FileTools';
 import FileLoader from './FileLoader';
 import Hash from '../utils/Hash';
 
+// import Volume from '../Volume';
+import VolumeSet from '../VolumeSet';
+import Volume from '../Volume';
+
 // ********************************************************
 // Const
 // ********************************************************
@@ -210,14 +214,32 @@ class LoaderDicom{
     return this.m_dicomInfo;
   }
   /**
+   * Create volume from slices set (m_slicesVolume)
+   * It can be several set of slices (for multiple series) and hash will
+   * select required slices
    * 
    * Create volume data array from individual slices, loaded from different files
-   * @param {object} volDst  - destination volume, will be created
-   * @param {number} hashSelected  - desired serie hash
+   * @param {VolumeSet} volSet - destination volume set, will be created
+   * @param {number} indexSelected  - desired volume (serie) index
    * @param {number} hashSelected - use only slices with this hash
    * @return {LoadResult} LoadResult.SUCCESS if success
    */
- createVolumeFromSlices(volDst, hashSelected) {
+ createVolumeFromSlices(volSet, indexSelected, hashSelected) {
+  // check arguments
+  console.assert(volSet != null, "Null volume");
+  console.assert(volSet instanceof VolumeSet, "Should be volume set");
+  console.assert(typeof(indexSelected) === "number", "index should be number");
+  console.assert(typeof(hashSelected) === "number", "index should be number");
+
+  let volDst = null;
+  if (indexSelected < volSet.getNumVolumes()) {
+    volDst = volSet.getVolume(indexSelected);
+  } else {
+    volDst = new Volume();
+    volSet.addVolume(volDst);
+    volDst = volSet.getVolume(indexSelected);
+    console.assert(volDst !== null);
+  }
   const imagePosBox = {
     x: this.m_imagePosMax.x - this.m_imagePosMin.x,
     y: this.m_imagePosMax.y - this.m_imagePosMin.y,
@@ -257,11 +279,15 @@ class LoaderDicom{
   let xyDim = this.m_xDim * this.m_yDim;
   let maxVal = 0;
 
+  // TODO: check correct slices number
+  /*
   if (this.m_slicesVolume.m_numSlices !== this.m_zDim) {
     console.log('Error logic zDim');
     return LoadResult.ERROR_WRONG_NUM_SLICES;
   }
+  */
 
+  // ge maximum value from slices
   const numSlices = this.m_slicesVolume.m_numSlices;
   for (let s = 0; s < numSlices; s++) {
     const slice = this.m_slicesVolume.m_slices[s];
@@ -387,8 +413,10 @@ class LoaderDicom{
     return LoadResult.ERROR_SCALING;
   }
 
+  // TODO: need not to remove slices
   // remove unused objects in slices (make length equal to actual number of slices)
-  this.m_slicesVolume.m_slices = this.m_slicesVolume.m_slices.slice(0, numSlices);
+  // this.m_slicesVolume.m_slices = this.m_slicesVolume.m_slices.slice(0, numSlices);
+
   const srcSlices = this.m_slicesVolume.m_slices;
 
   const numSlicesByTags = this.m_slicesVolume.m_maxSlice - this.m_slicesVolume.m_minSlice + 1;
@@ -418,19 +446,20 @@ class LoaderDicom{
     });
   }
   // assign new slice numbers according accending location
+  let ind = 0;
   for (let s = 0; s < numSlices; s++) {
-    srcSlices[s].m_sliceNumber = s;
+    if (srcSlices[s].m_hash === hashSelected) {
+      srcSlices[s].m_sliceNumber = ind;
+      ind++;
+    }
   }
 
-  // reassign slice numbers according to hash 
+  // get num slices for current vol index
   let numSlicesActaullyBuild = 0;
-  for (let s = 0; s < numSlices; s++) {
-    const slice = srcSlices[s];
+  for (let sInd = 0; sInd < numSlices; sInd++) {
+    const slice = srcSlices[sInd];
     if (slice.m_hash === hashSelected) {
-      slice.m_sliceNumber = numSlicesActaullyBuild;
       numSlicesActaullyBuild++;
-    } else {
-      slice.m_sliceNumber = -1;
     }
   }
   // correct zDim according to actaul slice count
@@ -479,7 +508,8 @@ class LoaderDicom{
     } // if has slice data
   } // for(s) all slices
 
-  this.m_slicesVolume.destroy();
+  // TODO: destroy for what?
+  // this.m_slicesVolume.destroy();
 
   // Scale down volume by slices
   const numPixelsInVolume = this.m_xDim * this.m_yDim * this.m_zDim;
@@ -724,6 +754,8 @@ class LoaderDicom{
   volDst.m_institutionName = this.m_dicomInfo.m_institutionName;
   volDst.m_operatorsName = this.m_dicomInfo.m_operatorsName;
   volDst.m_physicansName = this.m_dicomInfo.m_physicansName;
+
+  volDst.createIcon();
 
 
   return LoadResult.SUCCESS;
@@ -1146,567 +1178,575 @@ class LoaderDicom{
   * @param {object} arrBuf - source byte buffer, ArrayBuffer type
   * @return LoadResult.XXX
   */
- readFromBuffer(indexFile, fileName, ratioLoaded, arrBuf, callbackProgress, callbackComplete) {
-  if (typeof indexFile !== 'number') {
-    console.log('LoaderDicom.readFromBuffer: bad indexFile argument');
-  }
-  if (typeof fileName !== 'string') {
-    console.log('LoaderDicom.readFromBuffer: bad fileName argument');
-  }
-  if (typeof arrBuf !== 'object') {
-    console.log('LoaderDicom.readFromBuffer: bad arrBuf argument');
-  }
-  // const bufBytes = new Uint8Array(arrBuf);
-  // const isUint8Arr = bufBytes instanceof Uint8Array;
-  // if (!isUint8Arr) {
-  //   console.log('LoaderDicom. readFromBuffer. Error read buffer');
-  //   return false;
-  // }
-
-  // console.log(`LoaderDicom. readFromBuffer. file = ${fileName}, ratio = ${ratioLoaded}`);
-
-  // add info
-  const dicomInfo = this.m_dicomInfo;
-  const sliceInfo = new DicomSliceInfo();
-  const strSlice = 'Slice ' + indexFile.toString();
-  sliceInfo.m_sliceName = strSlice;
-  sliceInfo.m_fileName = fileName;
-  sliceInfo.m_tags = [];
-  dicomInfo.m_sliceInfo.push(sliceInfo);
-
-  const dataView = new DataView(arrBuf);
-  if (dataView === null) {
-    console.log('No memory');
-    return LoadResult.ERROR_NO_MEMORY;
-  }
-  const fileSize = dataView.byteLength;
-  // check dicom header
-  const SIZE_HEAD = 144;
-  if (fileSize < SIZE_HEAD) {
-    // this.m_errors[indexFile] = DICOM_ERROR_TOO_SMALL_FILE;
-    this.m_error = LoadResult.ERROR_TOO_SMALL_DATA_SIZE;
-    if (callbackComplete !== undefined) {
-      callbackComplete(LoadResult.ERROR_TOO_SMALL_DATA_SIZE);
+  readFromBuffer(indexFile, fileName, ratioLoaded, arrBuf, callbackProgress, callbackComplete) {
+    if (typeof indexFile !== 'number') {
+      console.log('LoaderDicom.readFromBuffer: bad indexFile argument');
     }
-    return LoadResult.ERROR_TOO_SMALL_DATA_SIZE;
-  }
-  const OFF_MAGIC = 128;
-  const SIZE_DWORD = 4;
-  const SIZE_SHORT = 2;
-  for (let i = 0; i < SIZE_DWORD; i++) {
-    const v = dataView.getUint8(OFF_MAGIC + i);
-    if (v !== MAGIC_DICM[i]) {
-      this.m_errors[indexFile] = DICOM_ERROR_WRONG_HEADER;
-      console.log(`Dicom readFromBuffer. Wrong header in file: ${fileName}`);
-      if (callbackComplete !== undefined) {
-        callbackComplete(LoadResult.WRONG_HEADER_MAGIC);
-      }
-      return LoadResult.WRONG_HEADER_MAGIC;
+    if (typeof fileName !== 'string') {
+      console.log('LoaderDicom.readFromBuffer: bad fileName argument');
     }
-  }
-  let offset = OFF_MAGIC;
-  offset += SIZE_DWORD;
-
-  //
-  this.m_littleEndian = true;
-  this.m_explicit = true;
-  this.m_metaFound = false;
-  this.m_metaFinished = false;
-  this.m_metaFinishedOffset = -1;
-  this.m_needsDeflate = false;
-
-  this.m_imageNumber = -1;
-  this.m_xDim = -1;
-  this.m_yDim = -1;
-  this.m_bitsPerPixel = -1;
-  let pixelBitMask = 0;
-  let pixelPaddingValue = 0;
-  let pixelsTagReaded = false;
-  let pixelMinValue = -1;
-  let pixelMaxValue = -1;
-
-  // read tag by tag, until image tag
-  let tag;
-  for (tag = this.getNextTag(dataView, offset); tag !== null;) {
-    if (tag.isPixelData()) {
-      pixelsTagReaded = true;
-      break;
+    if (typeof arrBuf !== 'object') {
+      console.log('LoaderDicom.readFromBuffer: bad arrBuf argument');
     }
-    offset = tag.m_offsetEnd;
-    tag = this.getNextTag(dataView, offset);
-    if (tag === null) {
-      break;
-    }
+    // const bufBytes = new Uint8Array(arrBuf);
+    // const isUint8Arr = bufBytes instanceof Uint8Array;
+    // if (!isUint8Arr) {
+    //   console.log('LoaderDicom. readFromBuffer. Error read buffer');
+    //   return false;
+    // }
 
-    // add to tag info
+    // console.log(`LoaderDicom. readFromBuffer. file = ${fileName}, ratio = ${ratioLoaded}`);
+
+    // add info
     const dicomInfo = this.m_dicomInfo;
-    const numlices = dicomInfo.m_sliceInfo.length;
-    const sliceInfo = dicomInfo.m_sliceInfo[numlices - 1];
-    const tagInfo = new DicomTagInfo();
-    tagInfo.m_tag = '(' + 
-      LoaderDicom.numberToHexString(tag.m_group) + ',' + 
-      LoaderDicom.numberToHexString(tag.m_element) + ')';
-    const strTagName = this.m_dictionary.getTextDesc(tag.m_group, tag.m_element);
-    tagInfo.m_attrName = (strTagName.length > 1) ? strTagName : '';
+    const sliceInfo = new DicomSliceInfo();
+    const strSlice = 'Slice ' + indexFile.toString();
+    sliceInfo.m_sliceName = strSlice;
+    sliceInfo.m_fileName = fileName;
+    sliceInfo.m_tags = [];
+    dicomInfo.m_sliceInfo.push(sliceInfo);
 
-    let strVal = LoaderDicom.getAttrValueAsString(tag);
-    strVal = (strVal !== null) ? strVal : '';
-
-    tagInfo.m_attrValue = strVal;
-    sliceInfo.m_tags.push(tagInfo);
-
-    // console.log(`Add tag info. tag = ${tagInfo.m_tag} atNa = ${tagInfo.m_attrName} atVal = ${tagInfo.m_attrValue} `);
-
-    // get important info from tag: image number
-    if ((tag.m_group === TAG_IMAGE_INSTANCE_NUMBER[0]) && (tag.m_element === TAG_IMAGE_INSTANCE_NUMBER[1])) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      const strNum = LoaderDicom.getStringAt(dv, 0, dataLen);
-      this.m_imageNumber = parseInt(strNum, 10) - 1;
-      if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`Str = ${strNum}, ImageNumber = ${this.m_imageNumber}`);
-      }
+    const dataView = new DataView(arrBuf);
+    if (dataView === null) {
+      console.log('No memory');
+      return LoadResult.ERROR_NO_MEMORY;
     }
-    // get important tag: image rows
-    if ((tag.m_group === TAG_IMAGE_ROWS[0]) && (tag.m_element === TAG_IMAGE_ROWS[1])) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      const yDim = (dataLen === SIZE_SHORT) ?
-        dv.getUint16(0, this.m_littleEndian) : dv.getUint32(0, this.m_littleEndian);
-      if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`yDim = ${yDim}`);
+    const fileSize = dataView.byteLength;
+    // check dicom header
+    const SIZE_HEAD = 144;
+    if (fileSize < SIZE_HEAD) {
+      // this.m_errors[indexFile] = DICOM_ERROR_TOO_SMALL_FILE;
+      this.m_error = LoadResult.ERROR_TOO_SMALL_DATA_SIZE;
+      if (callbackComplete !== undefined) {
+        callbackComplete(LoadResult.ERROR_TOO_SMALL_DATA_SIZE);
       }
-      if (this.m_yDim < 0) {
-        this.m_yDim = yDim;
-      } else if (this.m_yDim !== yDim) {
-        console.log('Bad image size y');
+      return LoadResult.ERROR_TOO_SMALL_DATA_SIZE;
+    }
+    const OFF_MAGIC = 128;
+    const SIZE_DWORD = 4;
+    const SIZE_SHORT = 2;
+    for (let i = 0; i < SIZE_DWORD; i++) {
+      const v = dataView.getUint8(OFF_MAGIC + i);
+      if (v !== MAGIC_DICM[i]) {
+        this.m_errors[indexFile] = DICOM_ERROR_WRONG_HEADER;
+        console.log(`Dicom readFromBuffer. Wrong header in file: ${fileName}`);
         if (callbackComplete !== undefined) {
-          callbackComplete(LoadResult.WRONG_IMAGE_DIM_Y);
+          callbackComplete(LoadResult.WRONG_HEADER_MAGIC);
         }
-        return LoadResult.WRONG_IMAGE_DIM_Y;
+        return LoadResult.WRONG_HEADER_MAGIC;
       }
     }
-    // get important tag: image cols
-    if ((tag.m_group === TAG_IMAGE_COLS[0]) && (tag.m_element === TAG_IMAGE_COLS[1])) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      const xDim = (dataLen === SIZE_SHORT) ?
-        dv.getUint16(0, this.m_littleEndian) : dv.getUint32(0, this.m_littleEndian);
-      if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`xDim = ${xDim}`);
-      }
-      if (this.m_xDim < 0) {
-        this.m_xDim = xDim;
-      } else if (this.m_xDim !== xDim) {
-        console.log('Bad image size x');
-        if (callbackComplete !== undefined) {
-          callbackComplete(LoadResult.WRONG_IMAGE_DIM_X);
-        }
-        return LoadResult.WRONG_IMAGE_DIM_X;
-      }
-    }
-    // get important tag: bits allocated
-    if ((tag.m_group === TAG_BITS_ALLOCATED[0]) && (tag.m_element === TAG_BITS_ALLOCATED[1])) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      this.m_bitsPerPixel = (dataLen === SIZE_SHORT) ?
-        dv.getUint16(0, this.m_littleEndian) : dv.getUint32(0, this.m_littleEndian);
-      if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`bitsPerPixel = ${this.m_bitsPerPixel}`);
-      }
-    }
+    let offset = OFF_MAGIC;
+    offset += SIZE_DWORD;
 
-    // get series number
-    if ((tag.m_group === TAG_SERIES_NUMBER[0]) && (tag.m_element === TAG_SERIES_NUMBER[1])) {
-      if ((tag.m_value != null) && (tag.m_value.byteLength > 0)) {
+    //
+    this.m_littleEndian = true;
+    this.m_explicit = true;
+    this.m_metaFound = false;
+    this.m_metaFinished = false;
+    this.m_metaFinishedOffset = -1;
+    this.m_needsDeflate = false;
+
+    this.m_imageNumber = -1;
+    this.m_xDim = -1;
+    this.m_yDim = -1;
+    this.m_bitsPerPixel = -1;
+    let pixelBitMask = 0;
+    let pixelPaddingValue = 0;
+    let pixelsTagReaded = false;
+    let pixelMinValue = -1;
+    let pixelMaxValue = -1;
+
+    // read tag by tag, until image tag
+    let tag;
+    for (tag = this.getNextTag(dataView, offset); tag !== null;) {
+      if (tag.isPixelData()) {
+        pixelsTagReaded = true;
+        break;
+      }
+      offset = tag.m_offsetEnd;
+      tag = this.getNextTag(dataView, offset);
+      if (tag === null) {
+        break;
+      }
+
+      // add to tag info
+      const dicomInfo = this.m_dicomInfo;
+      const numlices = dicomInfo.m_sliceInfo.length;
+      const sliceInfo = dicomInfo.m_sliceInfo[numlices - 1];
+      const tagInfo = new DicomTagInfo();
+      tagInfo.m_tag = '(' + 
+        LoaderDicom.numberToHexString(tag.m_group) + ',' + 
+        LoaderDicom.numberToHexString(tag.m_element) + ')';
+      const strTagName = this.m_dictionary.getTextDesc(tag.m_group, tag.m_element);
+      tagInfo.m_attrName = (strTagName.length > 1) ? strTagName : '';
+
+      let strVal = LoaderDicom.getAttrValueAsString(tag);
+      strVal = (strVal !== null) ? strVal : '';
+
+      tagInfo.m_attrValue = strVal;
+      sliceInfo.m_tags.push(tagInfo);
+
+      // console.log(`Add tag info. tag = ${tagInfo.m_tag} atNa = ${tagInfo.m_attrName} atVal = ${tagInfo.m_attrValue} `);
+
+      // get important info from tag: image number
+      if ((tag.m_group === TAG_IMAGE_INSTANCE_NUMBER[0]) && (tag.m_element === TAG_IMAGE_INSTANCE_NUMBER[1])) {
         const dataLen = tag.m_value.byteLength;
         const dv = new DataView(tag.m_value);
         const strNum = LoaderDicom.getStringAt(dv, 0, dataLen);
-        this.m_seriesNumber = parseInt(strNum, 10);
+        this.m_imageNumber = parseInt(strNum, 10) - 1;
         if (DEBUG_PRINT_TAGS_INFO) {
-          console.log(`Str = ${strNum}, SeriesNumber = ${this.m_seriesNumber}`);
-        }
-      } // if non zero data
-    } // series number
-
-    // get important tag: series description
-    if ((tag.m_group === TAG_SERIES_DESCRIPTION[0]) && (tag.m_element === TAG_SERIES_DESCRIPTION[1]) &&
-      (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      this.m_seriesDescr = LoaderDicom.getStringAt(dv, 0, dataLen);
-      if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`Series description = ${this.m_seriesDescr}`);
-      }
-    }
-    // get important tag: hight bit
-    if ((tag.m_group === TAG_IMAGE_HIGH_BIT[0]) && (tag.m_element === TAG_IMAGE_HIGH_BIT[1])) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      const highBit = (dataLen === SIZE_SHORT) ?
-        dv.getUint16(0, this.m_littleEndian) : dv.getUint32(0, this.m_littleEndian);
-      pixelBitMask = (1 << (highBit + 1)) - 1;
-      if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`highBit = ${highBit}`);
-      }
-    }
-
-    // get important tag: min pixel value
-    if ((tag.m_group === TAG_IMAGE_SMALL_PIX_VAL[0]) && (tag.m_element === TAG_IMAGE_SMALL_PIX_VAL[1])) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      pixelMinValue = (dataLen === SIZE_SHORT) ?
-        dv.getInt16(0, this.m_littleEndian) : dv.getInt32(0, this.m_littleEndian);
-      if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`pixelMinValue = ${pixelMinValue}`);
-      }
-    }
-
-    // get important tag: max pixel value
-    if ((tag.m_group === TAG_IMAGE_LARGE_PIX_VAL[0]) && (tag.m_element === TAG_IMAGE_LARGE_PIX_VAL[1])) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      pixelMaxValue = (dataLen === SIZE_SHORT) ?
-        dv.getInt16(0, this.m_littleEndian) : dv.getInt32(0, this.m_littleEndian);
-      if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`pixelMaxValue = ${pixelMaxValue}`);
-      }
-    }
-
-    // get important tag: pixel padding value
-    if ((tag.m_group === TAG_PIXEL_PADDING_VALUE[0]) && (tag.m_element === TAG_PIXEL_PADDING_VALUE[1])) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      pixelPaddingValue = (dataLen === SIZE_SHORT) ?
-        dv.getUint16(0, this.m_littleEndian) : dv.getUint32(0, this.m_littleEndian);
-      if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`pixelPaddingValue = ${pixelPaddingValue}`);
-      }
-    }
-    // get important tag: pixel spacing in 2d (xy)
-    if ((tag.m_group === TAG_PIXEL_SPACING[0]) && (tag.m_element === TAG_PIXEL_SPACING[1])) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      const strPixelSpacing = LoaderDicom.getStringAt(dv, 0, dataLen);
-      const strArr = strPixelSpacing.split('\\');
-      if (strArr.length === SIZE_SHORT) {
-        this.m_pixelSpacing.x = parseFloat(strArr[0]);
-        this.m_pixelSpacing.y = parseFloat(strArr[1]);
-        if (DEBUG_PRINT_TAGS_INFO) {
-          console.log(`TAG. pixel spacing xy = ${this.m_pixelSpacing.x} * ${this.m_pixelSpacing.y}`);
+          console.log(`Str = ${strNum}, ImageNumber = ${this.m_imageNumber}`);
         }
       }
-    }
-    // get important tag: image position (x,y,z)
-    if ((tag.m_group === TAG_IMAGE_POSITION[0]) && (tag.m_element === TAG_IMAGE_POSITION[1])) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      const strImagePosition = LoaderDicom.getStringAt(dv, 0, dataLen);
-      const strArr = strImagePosition.split('\\');
-      const NUM_COMPONENTS_3 = 3;
-      if (strArr.length === NUM_COMPONENTS_3) {
-        // eslint-disable-next-line
-        const xPos = parseFloat(strArr[0]);
-        // eslint-disable-next-line
-        const yPos = parseFloat(strArr[1]);
-        // eslint-disable-next-line
-        const zPos = parseFloat(strArr[2]);
-        this.m_imagePosMin.x = (xPos < this.m_imagePosMin.x) ? xPos : this.m_imagePosMin.x;
-        this.m_imagePosMin.y = (yPos < this.m_imagePosMin.y) ? yPos : this.m_imagePosMin.y;
-        this.m_imagePosMin.z = (zPos < this.m_imagePosMin.z) ? zPos : this.m_imagePosMin.z;
-        this.m_imagePosMax.x = (xPos > this.m_imagePosMax.x) ? xPos : this.m_imagePosMax.x;
-        this.m_imagePosMax.y = (yPos > this.m_imagePosMax.y) ? yPos : this.m_imagePosMax.y;
-        this.m_imagePosMax.z = (zPos > this.m_imagePosMax.z) ? zPos : this.m_imagePosMax.z;
+      // get important tag: image rows
+      if ((tag.m_group === TAG_IMAGE_ROWS[0]) && (tag.m_element === TAG_IMAGE_ROWS[1])) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        const yDim = (dataLen === SIZE_SHORT) ?
+          dv.getUint16(0, this.m_littleEndian) : dv.getUint32(0, this.m_littleEndian);
         if (DEBUG_PRINT_TAGS_INFO) {
-          console.log(`TAG. image position x,y,z = ${xPos}, ${yPos}, ${zPos}`);
+          console.log(`yDim = ${yDim}`);
+        }
+        if (this.m_yDim < 0) {
+          this.m_yDim = yDim;
+        } else if (this.m_yDim !== yDim) {
+          console.log('Bad image size y');
+          if (callbackComplete !== undefined) {
+            callbackComplete(LoadResult.WRONG_IMAGE_DIM_Y);
+          }
+          return LoadResult.WRONG_IMAGE_DIM_Y;
         }
       }
-    }
-
-    // slice thickness
-    if ((tag.m_group === TAG_SLICE_THICKNESS[0]) && (tag.m_element === TAG_SLICE_THICKNESS[1])) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      const strSliceThickness = LoaderDicom.getStringAt(dv, 0, dataLen);
-      this.m_pixelSpacing.z = parseFloat(strSliceThickness);
-      if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`TAG. slice thickness = ${this.m_pixelSpacing.z}`);
+      // get important tag: image cols
+      if ((tag.m_group === TAG_IMAGE_COLS[0]) && (tag.m_element === TAG_IMAGE_COLS[1])) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        const xDim = (dataLen === SIZE_SHORT) ?
+          dv.getUint16(0, this.m_littleEndian) : dv.getUint32(0, this.m_littleEndian);
+        if (DEBUG_PRINT_TAGS_INFO) {
+          console.log(`xDim = ${xDim}`);
+        }
+        if (this.m_xDim < 0) {
+          this.m_xDim = xDim;
+        } else if (this.m_xDim !== xDim) {
+          console.log('Bad image size x');
+          if (callbackComplete !== undefined) {
+            callbackComplete(LoadResult.WRONG_IMAGE_DIM_X);
+          }
+          return LoadResult.WRONG_IMAGE_DIM_X;
+        }
       }
-    }
-
-    // get important tag: slice location (x,y,z)
-    if ((tag.m_group === TAG_SLICE_LOCATION[0]) && (tag.m_element === TAG_SLICE_LOCATION[1])) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      const strSliceLocation = LoaderDicom.getStringAt(dv, 0, dataLen);
-      const sliceLoc = parseFloat(strSliceLocation);
-      this.m_sliceLocation = sliceLoc;
-      this.m_sliceLocMin = (sliceLoc < this.m_sliceLocMin) ? sliceLoc : this.m_sliceLocMin;
-      this.m_sliceLocMax = (sliceLoc > this.m_sliceLocMax) ? sliceLoc : this.m_sliceLocMax;
-      if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`TAG. Slice location = ${this.m_sliceLocation}`);
+      // get important tag: bits allocated
+      if ((tag.m_group === TAG_BITS_ALLOCATED[0]) && (tag.m_element === TAG_BITS_ALLOCATED[1])) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        this.m_bitsPerPixel = (dataLen === SIZE_SHORT) ?
+          dv.getUint16(0, this.m_littleEndian) : dv.getUint32(0, this.m_littleEndian);
+        if (DEBUG_PRINT_TAGS_INFO) {
+          console.log(`bitsPerPixel = ${this.m_bitsPerPixel}`);
+        }
       }
-    }
 
-    // get important tag: samples per pixel
-    if ((tag.m_group === TAG_SAMPLES_PER_PIXEL[0]) && (tag.m_element === TAG_SAMPLES_PER_PIXEL[1])) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      this.m_samplesPerPixel = (dataLen === SIZE_SHORT) ?
-        dv.getUint16(0, this.m_littleEndian) : dv.getUint32(0, this.m_littleEndian);
-      if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`samplesPerPixel = ${this.m_samplesPerPixel}`);
+      // get series number
+      if ((tag.m_group === TAG_SERIES_NUMBER[0]) && (tag.m_element === TAG_SERIES_NUMBER[1])) {
+        if ((tag.m_value != null) && (tag.m_value.byteLength > 0)) {
+          const dataLen = tag.m_value.byteLength;
+          const dv = new DataView(tag.m_value);
+          const strNum = LoaderDicom.getStringAt(dv, 0, dataLen);
+          this.m_seriesNumber = parseInt(strNum, 10);
+          if (DEBUG_PRINT_TAGS_INFO) {
+            console.log(`Str = ${strNum}, SeriesNumber = ${this.m_seriesNumber}`);
+          }
+        } // if non zero data
+      } // series number
+
+      // get important tag: series description
+      if ((tag.m_group === TAG_SERIES_DESCRIPTION[0]) && (tag.m_element === TAG_SERIES_DESCRIPTION[1]) &&
+        (tag.m_value !== null)) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        this.m_seriesDescr = LoaderDicom.getStringAt(dv, 0, dataLen);
+        if (DEBUG_PRINT_TAGS_INFO) {
+          console.log(`Series description = ${this.m_seriesDescr}`);
+        }
       }
-    }
-    // dicom info
-    if ((tag.m_group === TAG_SERIES_DESCRIPTION[0]) && (tag.m_element === TAG_SERIES_DESCRIPTION[1]) &&
-      (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      const strDescr = LoaderDicom.getStringAt(dv, 0, dataLen);
-      // console.log(`DicomLoader. Series descr read = ${strDescr}`);
-      this.m_dicomInfo.m_seriesDescr = strDescr;
-    }
-    if ((tag.m_group === TAG_SERIES_TIME[0]) && (tag.m_element === TAG_SERIES_TIME[1]) &&
-      (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      const strTimeMerged = LoaderDicom.getStringAt(dv, 0, dataLen);
-      // eslint-disable-next-line
-      const strHour = strTimeMerged.substring(0, 2);
-      // eslint-disable-next-line
-      const strMinute = strTimeMerged.substring(2, 4);
-      // eslint-disable-next-line
-      const strSec = strTimeMerged.substring(4, strTimeMerged.length);
-      const strTimeBuild = `${strHour}:${strMinute}:${strSec}`;
-      // console.log(`Series time read = ${strTimeBuild}`);
-      this.m_dicomInfo.m_seriesTime = strTimeBuild;
-      if (DEBUG_PRINT_TAGS_INFO) {
-        console.log(`Series time = ${this.m_dicomInfo.m_seriesTime}`);
+      // get important tag: hight bit
+      if ((tag.m_group === TAG_IMAGE_HIGH_BIT[0]) && (tag.m_element === TAG_IMAGE_HIGH_BIT[1])) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        const highBit = (dataLen === SIZE_SHORT) ?
+          dv.getUint16(0, this.m_littleEndian) : dv.getUint32(0, this.m_littleEndian);
+        pixelBitMask = (1 << (highBit + 1)) - 1;
+        if (DEBUG_PRINT_TAGS_INFO) {
+          console.log(`highBit = ${highBit}`);
+        }
       }
-    }
-    if ((tag.m_group === TAG_PATIENT_NAME[0]) && (tag.m_element === TAG_PATIENT_NAME[1]) &&
-      (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      this.m_dicomInfo.m_patientName = LoaderDicom.getUtf8StringAt(dv, 0, dataLen);
-      this.m_dicomInfo.m_patientName = this.m_dicomInfo.m_patientName.trim();
-      //console.log(`m_patientName = ${this.m_dicomInfo.m_patientName}`);
-    }
-    if ((tag.m_group === TAG_PATIENT_ID[0]) && (tag.m_element === TAG_PATIENT_ID[1]) &&
-      (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      this.m_dicomInfo.m_patientId = LoaderDicom.getStringAt(dv, 0, dataLen);
-      // console.log(`m_patientId = ${this.m_dicomInfo.m_patientId}`);
-    }
-    if ((tag.m_group === TAG_PATIENT_GENDER[0]) && (tag.m_element === TAG_PATIENT_GENDER[1]) &&
-      (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      this.m_dicomInfo.m_patientGender = LoaderDicom.getStringAt(dv, 0, dataLen);
-      // console.log(`m_patientGender = ${this.m_dicomInfo.m_patientGender}`);
-    }
-    if ((tag.m_group === TAG_PATIENT_BIRTH_DATE[0]) && (tag.m_element === TAG_PATIENT_BIRTH_DATE[1]) &&
-      (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      const strDateMerged = LoaderDicom.getStringAt(dv, 0, dataLen);
-      // eslint-disable-next-line
-      const strY = strDateMerged.substring(0, 4);
-      // eslint-disable-next-line
-      const strM = strDateMerged.substring(4, 6);
-      // eslint-disable-next-line
-      const strD = strDateMerged.substring(6);
-      this.m_dicomInfo.m_patientDateOfBirth = `${strD}/${strM}/${strY}`;
-      // console.log(`m_patientDateOfBirth = ${this.m_dicomInfo.m_patientDateOfBirth}`);
-    }
-    if ((tag.m_group === TAG_STUDY_DATE[0]) && (tag.m_element === TAG_STUDY_DATE[1]) &&
-      (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      const strDateMerged = LoaderDicom.getStringAt(dv, 0, dataLen);
-      // eslint-disable-next-line
-      const strY = strDateMerged.substring(0, 4);
-      // eslint-disable-next-line
-      const strM = strDateMerged.substring(4, 6);
-      // eslint-disable-next-line
-      const strD = strDateMerged.substring(6);
-      this.m_dicomInfo.m_studyDate = `${strD}/${strM}/${strY}`;
-      // console.log(`m_studyDate = ${this.m_dicomInfo.m_studyDate}`);
-    }
-    if ((tag.m_group === TAG_STUDY_DESCR[0]) && (tag.m_element === TAG_STUDY_DESCR[1]) &&
-      (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      const strDescr = LoaderDicom.getStringAt(dv, 0, dataLen);
-      this.m_dicomInfo.m_studyDescr = strDescr;
-      this.m_dicomInfo.m_studyDescr = this.m_dicomInfo.m_studyDescr.trim();
-      // console.log(`m_studyDescr = ${this.m_dicomInfo.m_studyDescr}`);
-    }
-    if ((tag.m_group === TAG_BODY_PART_EXAMINED[0]) && (tag.m_element === TAG_BODY_PART_EXAMINED[1]) &&
-      (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      this.m_dicomInfo.m_bodyPartExamined = LoaderDicom.getStringAt(dv, 0, dataLen);
-      // console.log(`m_patientName = ${this.m_dicomInfo.m_patientName}`);
-    }
+
+      // get important tag: min pixel value
+      if ((tag.m_group === TAG_IMAGE_SMALL_PIX_VAL[0]) && (tag.m_element === TAG_IMAGE_SMALL_PIX_VAL[1])) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        pixelMinValue = (dataLen === SIZE_SHORT) ?
+          dv.getInt16(0, this.m_littleEndian) : dv.getInt32(0, this.m_littleEndian);
+        if (DEBUG_PRINT_TAGS_INFO) {
+          console.log(`pixelMinValue = ${pixelMinValue}`);
+        }
+      }
+
+      // get important tag: max pixel value
+      if ((tag.m_group === TAG_IMAGE_LARGE_PIX_VAL[0]) && (tag.m_element === TAG_IMAGE_LARGE_PIX_VAL[1])) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        pixelMaxValue = (dataLen === SIZE_SHORT) ?
+          dv.getInt16(0, this.m_littleEndian) : dv.getInt32(0, this.m_littleEndian);
+        if (DEBUG_PRINT_TAGS_INFO) {
+          console.log(`pixelMaxValue = ${pixelMaxValue}`);
+        }
+      }
+
+      // get important tag: pixel padding value
+      if ((tag.m_group === TAG_PIXEL_PADDING_VALUE[0]) && (tag.m_element === TAG_PIXEL_PADDING_VALUE[1])) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        pixelPaddingValue = (dataLen === SIZE_SHORT) ?
+          dv.getUint16(0, this.m_littleEndian) : dv.getUint32(0, this.m_littleEndian);
+        if (DEBUG_PRINT_TAGS_INFO) {
+          console.log(`pixelPaddingValue = ${pixelPaddingValue}`);
+        }
+      }
+      // get important tag: pixel spacing in 2d (xy)
+      if ((tag.m_group === TAG_PIXEL_SPACING[0]) && (tag.m_element === TAG_PIXEL_SPACING[1])) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        const strPixelSpacing = LoaderDicom.getStringAt(dv, 0, dataLen);
+        const strArr = strPixelSpacing.split('\\');
+        if (strArr.length === SIZE_SHORT) {
+          this.m_pixelSpacing.x = parseFloat(strArr[0]);
+          this.m_pixelSpacing.y = parseFloat(strArr[1]);
+          if (DEBUG_PRINT_TAGS_INFO) {
+            console.log(`TAG. pixel spacing xy = ${this.m_pixelSpacing.x} * ${this.m_pixelSpacing.y}`);
+          }
+        }
+      }
+      // get important tag: image position (x,y,z)
+      if ((tag.m_group === TAG_IMAGE_POSITION[0]) && (tag.m_element === TAG_IMAGE_POSITION[1])) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        const strImagePosition = LoaderDicom.getStringAt(dv, 0, dataLen);
+        const strArr = strImagePosition.split('\\');
+        const NUM_COMPONENTS_3 = 3;
+        if (strArr.length === NUM_COMPONENTS_3) {
+          // eslint-disable-next-line
+          const xPos = parseFloat(strArr[0]);
+          // eslint-disable-next-line
+          const yPos = parseFloat(strArr[1]);
+          // eslint-disable-next-line
+          const zPos = parseFloat(strArr[2]);
+          this.m_imagePosMin.x = (xPos < this.m_imagePosMin.x) ? xPos : this.m_imagePosMin.x;
+          this.m_imagePosMin.y = (yPos < this.m_imagePosMin.y) ? yPos : this.m_imagePosMin.y;
+          this.m_imagePosMin.z = (zPos < this.m_imagePosMin.z) ? zPos : this.m_imagePosMin.z;
+          this.m_imagePosMax.x = (xPos > this.m_imagePosMax.x) ? xPos : this.m_imagePosMax.x;
+          this.m_imagePosMax.y = (yPos > this.m_imagePosMax.y) ? yPos : this.m_imagePosMax.y;
+          this.m_imagePosMax.z = (zPos > this.m_imagePosMax.z) ? zPos : this.m_imagePosMax.z;
+          if (DEBUG_PRINT_TAGS_INFO) {
+            console.log(`TAG. image position x,y,z = ${xPos}, ${yPos}, ${zPos}`);
+          }
+        }
+      }
+
+      // slice thickness
+      if ((tag.m_group === TAG_SLICE_THICKNESS[0]) && (tag.m_element === TAG_SLICE_THICKNESS[1])) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        const strSliceThickness = LoaderDicom.getStringAt(dv, 0, dataLen);
+        this.m_pixelSpacing.z = parseFloat(strSliceThickness);
+        if (DEBUG_PRINT_TAGS_INFO) {
+          console.log(`TAG. slice thickness = ${this.m_pixelSpacing.z}`);
+        }
+      }
+
+      // get important tag: slice location (x,y,z)
+      if ((tag.m_group === TAG_SLICE_LOCATION[0]) && (tag.m_element === TAG_SLICE_LOCATION[1])) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        const strSliceLocation = LoaderDicom.getStringAt(dv, 0, dataLen);
+        const sliceLoc = parseFloat(strSliceLocation);
+        this.m_sliceLocation = sliceLoc;
+        this.m_sliceLocMin = (sliceLoc < this.m_sliceLocMin) ? sliceLoc : this.m_sliceLocMin;
+        this.m_sliceLocMax = (sliceLoc > this.m_sliceLocMax) ? sliceLoc : this.m_sliceLocMax;
+        if (DEBUG_PRINT_TAGS_INFO) {
+          console.log(`TAG. Slice location = ${this.m_sliceLocation}`);
+        }
+      }
+
+      // get important tag: samples per pixel
+      if ((tag.m_group === TAG_SAMPLES_PER_PIXEL[0]) && (tag.m_element === TAG_SAMPLES_PER_PIXEL[1])) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        this.m_samplesPerPixel = (dataLen === SIZE_SHORT) ?
+          dv.getUint16(0, this.m_littleEndian) : dv.getUint32(0, this.m_littleEndian);
+        if (DEBUG_PRINT_TAGS_INFO) {
+          console.log(`samplesPerPixel = ${this.m_samplesPerPixel}`);
+        }
+      }
+      // dicom info
+      if ((tag.m_group === TAG_SERIES_DESCRIPTION[0]) && (tag.m_element === TAG_SERIES_DESCRIPTION[1]) &&
+        (tag.m_value !== null)) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        const strDescr = LoaderDicom.getStringAt(dv, 0, dataLen);
+        // console.log(`DicomLoader. Series descr read = ${strDescr}`);
+        this.m_dicomInfo.m_seriesDescr = strDescr;
+      }
+      if ((tag.m_group === TAG_SERIES_TIME[0]) && (tag.m_element === TAG_SERIES_TIME[1]) &&
+        (tag.m_value !== null)) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        const strTimeMerged = LoaderDicom.getStringAt(dv, 0, dataLen);
+        // eslint-disable-next-line
+        const strHour = strTimeMerged.substring(0, 2);
+        // eslint-disable-next-line
+        const strMinute = strTimeMerged.substring(2, 4);
+        // eslint-disable-next-line
+        const strSec = strTimeMerged.substring(4, strTimeMerged.length);
+        const strTimeBuild = `${strHour}:${strMinute}:${strSec}`;
+        // console.log(`Series time read = ${strTimeBuild}`);
+        this.m_dicomInfo.m_seriesTime = strTimeBuild;
+        if (DEBUG_PRINT_TAGS_INFO) {
+          console.log(`Series time = ${this.m_dicomInfo.m_seriesTime}`);
+        }
+      }
+      if ((tag.m_group === TAG_PATIENT_NAME[0]) && (tag.m_element === TAG_PATIENT_NAME[1]) &&
+        (tag.m_value !== null)) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        this.m_dicomInfo.m_patientName = LoaderDicom.getUtf8StringAt(dv, 0, dataLen);
+        this.m_dicomInfo.m_patientName = this.m_dicomInfo.m_patientName.trim();
+        //console.log(`m_patientName = ${this.m_dicomInfo.m_patientName}`);
+      }
+      if ((tag.m_group === TAG_PATIENT_ID[0]) && (tag.m_element === TAG_PATIENT_ID[1]) &&
+        (tag.m_value !== null)) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        this.m_dicomInfo.m_patientId = LoaderDicom.getStringAt(dv, 0, dataLen);
+        // console.log(`m_patientId = ${this.m_dicomInfo.m_patientId}`);
+      }
+      if ((tag.m_group === TAG_PATIENT_GENDER[0]) && (tag.m_element === TAG_PATIENT_GENDER[1]) &&
+        (tag.m_value !== null)) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        this.m_dicomInfo.m_patientGender = LoaderDicom.getStringAt(dv, 0, dataLen);
+        // console.log(`m_patientGender = ${this.m_dicomInfo.m_patientGender}`);
+      }
+      if ((tag.m_group === TAG_PATIENT_BIRTH_DATE[0]) && (tag.m_element === TAG_PATIENT_BIRTH_DATE[1]) &&
+        (tag.m_value !== null)) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        const strDateMerged = LoaderDicom.getStringAt(dv, 0, dataLen);
+        // eslint-disable-next-line
+        const strY = strDateMerged.substring(0, 4);
+        // eslint-disable-next-line
+        const strM = strDateMerged.substring(4, 6);
+        // eslint-disable-next-line
+        const strD = strDateMerged.substring(6);
+        this.m_dicomInfo.m_patientDateOfBirth = `${strD}/${strM}/${strY}`;
+        // console.log(`m_patientDateOfBirth = ${this.m_dicomInfo.m_patientDateOfBirth}`);
+      }
+      if ((tag.m_group === TAG_STUDY_DATE[0]) && (tag.m_element === TAG_STUDY_DATE[1]) &&
+        (tag.m_value !== null)) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        const strDateMerged = LoaderDicom.getStringAt(dv, 0, dataLen);
+        // eslint-disable-next-line
+        const strY = strDateMerged.substring(0, 4);
+        // eslint-disable-next-line
+        const strM = strDateMerged.substring(4, 6);
+        // eslint-disable-next-line
+        const strD = strDateMerged.substring(6);
+        this.m_dicomInfo.m_studyDate = `${strD}/${strM}/${strY}`;
+        // console.log(`m_studyDate = ${this.m_dicomInfo.m_studyDate}`);
+      }
+      if ((tag.m_group === TAG_STUDY_DESCR[0]) && (tag.m_element === TAG_STUDY_DESCR[1]) &&
+        (tag.m_value !== null)) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        const strDescr = LoaderDicom.getStringAt(dv, 0, dataLen);
+        this.m_dicomInfo.m_studyDescr = strDescr;
+        this.m_dicomInfo.m_studyDescr = this.m_dicomInfo.m_studyDescr.trim();
+        // console.log(`m_studyDescr = ${this.m_dicomInfo.m_studyDescr}`);
+      }
+      if ((tag.m_group === TAG_BODY_PART_EXAMINED[0]) && (tag.m_element === TAG_BODY_PART_EXAMINED[1]) &&
+        (tag.m_value !== null)) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        this.m_dicomInfo.m_bodyPartExamined = LoaderDicom.getStringAt(dv, 0, dataLen);
+        // console.log(`m_patientName = ${this.m_dicomInfo.m_patientName}`);
+      }
 
 
-    if ((tag.m_group === TAG_ACQUISION_TIME[0]) && (tag.m_element === TAG_ACQUISION_TIME[1]) &&
+      if ((tag.m_group === TAG_ACQUISION_TIME[0]) && (tag.m_element === TAG_ACQUISION_TIME[1]) &&
+        (tag.m_value !== null)) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        this.m_dicomInfo.m_acquisionTime = LoaderDicom.getStringAt(dv, 0, dataLen);
+        // console.log(`m_acquisionTime = ${this.m_dicomInfo.m_acquisionTime}`);
+      }
+      if ((tag.m_group === TAG_INSTITUTION_NAME[0]) && (tag.m_element === TAG_INSTITUTION_NAME[1]) &&
+        (tag.m_value !== null)) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        this.m_dicomInfo.m_institutionName = LoaderDicom.getUtf8StringAt(dv, 0, dataLen);
+        this.m_dicomInfo.m_institutionName = this.m_dicomInfo.m_institutionName.trim();
+        // console.log(`m_institutionName = ${this.m_dicomInfo.m_institutionName}`);
+      }
+
+      if ((tag.m_group === TAG_OPERATORS_NAME[0]) && (tag.m_element === TAG_OPERATORS_NAME[1]) &&
       (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      this.m_dicomInfo.m_acquisionTime = LoaderDicom.getStringAt(dv, 0, dataLen);
-      // console.log(`m_acquisionTime = ${this.m_dicomInfo.m_acquisionTime}`);
-    }
-    if ((tag.m_group === TAG_INSTITUTION_NAME[0]) && (tag.m_element === TAG_INSTITUTION_NAME[1]) &&
-      (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      this.m_dicomInfo.m_institutionName = LoaderDicom.getUtf8StringAt(dv, 0, dataLen);
-      this.m_dicomInfo.m_institutionName = this.m_dicomInfo.m_institutionName.trim();
-      // console.log(`m_institutionName = ${this.m_dicomInfo.m_institutionName}`);
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        this.m_dicomInfo.m_operatorsName = LoaderDicom.getUtf8StringAt(dv, 0, dataLen);
+        this.m_dicomInfo.m_operatorsName = this.m_dicomInfo.m_operatorsName.trim();
+        // console.log(`m_operatorsName = ${this.m_dicomInfo.m_operatorsName}`);
+      }
+      if ((tag.m_group === TAG_PHYSICANS_NAME[0]) && (tag.m_element === TAG_PHYSICANS_NAME[1]) &&
+        (tag.m_value !== null)) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        this.m_dicomInfo.m_physicansName = LoaderDicom.getUtf8StringAt(dv, 0, dataLen);
+        this.m_dicomInfo.m_physicansName = this.m_dicomInfo.m_physicansName.trim();
+        // console.log(`m_physicansName = ${this.m_dicomInfo.m_physicansName}`);
+      }
+      if ((tag.m_group === TAG_MANUFACTURER_NAME[0]) && (tag.m_element === TAG_MANUFACTURER_NAME[1]) &&
+        (tag.m_value !== null)) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        this.m_dicomInfo.m_manufacturerName = LoaderDicom.getStringAt(dv, 0, dataLen);
+        this.m_dicomInfo.m_manufacturerName = this.m_dicomInfo.m_manufacturerName.trim();
+        // console.log(`m_manufacturerName = ${this.m_dicomInfo.m_manufacturerName}`);
+      }
+    } // for all tags readed
+    if (!pixelsTagReaded) {
+      if (callbackComplete !== undefined) {
+        callbackComplete(LoadResult.ERROR_PIXELS_TAG_NOT_FOUND);
+      }
+      return LoadResult.ERROR_PIXELS_TAG_NOT_FOUND;
     }
 
-    if ((tag.m_group === TAG_OPERATORS_NAME[0]) && (tag.m_element === TAG_OPERATORS_NAME[1]) &&
-    (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      this.m_dicomInfo.m_operatorsName = LoaderDicom.getUtf8StringAt(dv, 0, dataLen);
-      this.m_dicomInfo.m_operatorsName = this.m_dicomInfo.m_operatorsName.trim();
-      // console.log(`m_operatorsName = ${this.m_dicomInfo.m_operatorsName}`);
+    // check correct data from tags
+    const BITS_IN_BYTE = 8;
+    const imageSizeBytes = Math.floor(this.m_xDim * this.m_yDim * (this.m_bitsPerPixel / BITS_IN_BYTE));
+    if ((imageSizeBytes !== tag.m_value.byteLength) || (pixelBitMask === 0)) {
+      console.log(`Wrong image pixels size. Readed ${tag.m_value.byteLength}, but expected ${imageSizeBytes}`);
+      if (callbackComplete !== undefined) {
+        callbackComplete(LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED);
+      }
+      return LoadResult.WRONG_HEADER_DATA_SIZE;
     }
-    if ((tag.m_group === TAG_PHYSICANS_NAME[0]) && (tag.m_element === TAG_PHYSICANS_NAME[1]) &&
-      (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      this.m_dicomInfo.m_physicansName = LoaderDicom.getUtf8StringAt(dv, 0, dataLen);
-      this.m_dicomInfo.m_physicansName = this.m_dicomInfo.m_physicansName.trim();
-      // console.log(`m_physicansName = ${this.m_dicomInfo.m_physicansName}`);
+
+    const numPixels = this.m_xDim * this.m_yDim;
+    const volSlice = this.m_slicesVolume.getNewSlice();
+    if (volSlice === null) {
+      console.log('No memory');
+      return LoadResult.ERROR_NO_MEMORY;
     }
-    if ((tag.m_group === TAG_MANUFACTURER_NAME[0]) && (tag.m_element === TAG_MANUFACTURER_NAME[1]) &&
-      (tag.m_value !== null)) {
-      const dataLen = tag.m_value.byteLength;
-      const dv = new DataView(tag.m_value);
-      this.m_dicomInfo.m_manufacturerName = LoaderDicom.getStringAt(dv, 0, dataLen);
-      this.m_dicomInfo.m_manufacturerName = this.m_dicomInfo.m_manufacturerName.trim();
-      // console.log(`m_manufacturerName = ${this.m_dicomInfo.m_manufacturerName}`);
+
+    // this.m_slices[this.m_imageNumber] = new Uint16Array(numPixels);
+    volSlice.m_image = new Uint16Array(numPixels);
+    if (volSlice.m_image === null) {
+      console.log('No memory');
+      return LoadResult.ERROR_NO_MEMORY;
     }
-  } // for all tags readed
-  if (!pixelsTagReaded) {
+    volSlice.m_sliceNumber = this.m_imageNumber;
+    volSlice.m_sliceLocation = this.m_sliceLocation;
+    volSlice.m_patientName = this.m_dicomInfo.m_patientName;
+    volSlice.m_studyDescr = this.m_dicomInfo.m_studyDescr;
+    volSlice.m_studyDate = this.m_dicomInfo.m_studyDate;
+    volSlice.m_seriesTime = this.m_dicomInfo.m_seriesTime;
+    volSlice.m_seriesDescr = this.m_dicomInfo.m_seriesDescr;
+    volSlice.m_bodyPartExamined = this.m_dicomInfo.m_bodyPartExamined;
+    volSlice.m_institutionName = this.m_dicomInfo.m_institutionName;
+    volSlice.m_operatorsName = this.m_dicomInfo.m_operatorsName;
+    volSlice.m_physicansName = this.m_dicomInfo.m_physicansName;
+
+    // get hash from all slice text features
+    const strMix = volSlice.m_patientName + volSlice.m_studyDescr +
+      volSlice.m_studyDate + volSlice.m_seriesTime + 
+      volSlice.m_seriesDescr + volSlice.m_bodyPartExamined;
+    volSlice.m_hash = Hash.getHash(strMix);
+
+    // console.log(`patName = ${volSlice.m_patientName}`);
+    // console.log(`studyDescr = ${volSlice.m_studyDescr}`);
+    // console.log(`studyDate = ${volSlice.m_studyDate}`);
+    // console.log(`seriesTime = ${volSlice.m_seriesTime}`);
+    // console.log(`seriesDescr = ${volSlice.m_seriesDescr}`);
+    // console.log(`bodyPartExamined = ${volSlice.m_bodyPartExamined}`);
+
+    this.m_slicesVolume.updateSliceNumber(this.m_imageNumber);
+
+    // Fill slice image
+    // const imageDst = this.m_slices[this.m_imageNumber];
+    const imageDst = volSlice.m_image;
+    const imageSrc = new DataView(tag.m_value);
+    if (imageSrc === null) {
+      console.log('No memory');
+      return LoadResult.ERROR_NO_MEMORY;
+    }
+
+    const BITS_16 = 16;
+    let i;
+    if (this.m_bitsPerPixel === BITS_16) {
+      let i2 = 0;
+      const pixValDif = pixelMaxValue - pixelMinValue;
+      if ((pixelMaxValue === -1) || (pixValDif === 0)) {
+        for (i = 0; i < numPixels; i++) {
+          let val = imageSrc.getUint16(i2, this.m_littleEndian);
+          i2 += SIZE_SHORT;
+          val = (val !== pixelPaddingValue) ? val : 0;
+          val &= pixelBitMask;
+          // some tricky read form gm dicom data volume
+          const MASK_TRICK = 0x7000;
+          val = (val & MASK_TRICK) ? 0 : val;
+          imageDst[i] = val;
+        } // for (i) all pixels
+      } else { // if no max value
+        const SCALE_BIT_ACC = 12;
+        const MAX_SCALED_VAL = 4095;
+        const valScale = Math.floor((MAX_SCALED_VAL << SCALE_BIT_ACC) / (pixelMaxValue - pixelMinValue));
+        for (i = 0; i < numPixels; i++) {
+          let val = imageSrc.getInt16(i2, this.m_littleEndian);
+          i2 += SIZE_SHORT;
+
+          // val &= pixelBitMask;
+          val = (val !== pixelPaddingValue) ? val : 0;
+          val = (val >= pixelMinValue) ? val : pixelMinValue;
+          val = (val <= pixelMaxValue) ? val : pixelMaxValue;
+          val -= pixelMinValue;
+          val = (val * valScale) >> SCALE_BIT_ACC;
+          imageDst[i] = val;
+        } // for (i) all pixels
+      } // if pixel max value
+    } else { // if 16 bpp
+      console.log('TODO: need to implement reading non-16 bit dicom images');
+    }
+    this.m_error = DICOM_ERROR_OK;
+
+    // console.log(`Dicom read OK. Volume pixels = ${this.m_xDim} * ${this.m_yDim} * ${this.m_zDim}`);
     if (callbackComplete !== undefined) {
-      callbackComplete(LoadResult.ERROR_PIXELS_TAG_NOT_FOUND);
+      callbackComplete(LoadResult.SUCCESS);
     }
-    return LoadResult.ERROR_PIXELS_TAG_NOT_FOUND;
-  }
-
-  // check correct data from tags
-  const BITS_IN_BYTE = 8;
-  const imageSizeBytes = Math.floor(this.m_xDim * this.m_yDim * (this.m_bitsPerPixel / BITS_IN_BYTE));
-  if ((imageSizeBytes !== tag.m_value.byteLength) || (pixelBitMask === 0)) {
-    console.log(`Wrong image pixels size. Readed ${tag.m_value.byteLength}, but expected ${imageSizeBytes}`);
-    if (callbackComplete !== undefined) {
-      callbackComplete(LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED);
-    }
-    return LoadResult.WRONG_HEADER_DATA_SIZE;
-  }
-
-  const numPixels = this.m_xDim * this.m_yDim;
-  const volSlice = this.m_slicesVolume.getNewSlice();
-  if (volSlice === null) {
-    console.log('No memory');
-    return LoadResult.ERROR_NO_MEMORY;
-  }
-
-  // this.m_slices[this.m_imageNumber] = new Uint16Array(numPixels);
-  volSlice.m_image = new Uint16Array(numPixels);
-  if (volSlice.m_image === null) {
-    console.log('No memory');
-    return LoadResult.ERROR_NO_MEMORY;
-  }
-  volSlice.m_sliceNumber = this.m_imageNumber;
-  volSlice.m_sliceLocation = this.m_sliceLocation;
-  volSlice.m_patientName = this.m_dicomInfo.m_patientName;
-  volSlice.m_studyDescr = this.m_dicomInfo.m_studyDescr;
-  volSlice.m_studyDate = this.m_dicomInfo.m_studyDate;
-  volSlice.m_seriesTime = this.m_dicomInfo.m_seriesTime;
-  volSlice.m_seriesDescr = this.m_dicomInfo.m_seriesDescr;
-  volSlice.m_bodyPartExamined = this.m_dicomInfo.m_bodyPartExamined;
-  volSlice.m_institutionName = this.m_dicomInfo.m_institutionName;
-  volSlice.m_operatorsName = this.m_dicomInfo.m_operatorsName;
-  volSlice.m_physicansName = this.m_dicomInfo.m_physicansName;
-
-  // get hash from all slice text features
-  const strMix = volSlice.m_patientName + volSlice.m_studyDescr +
-    volSlice.m_studyDate + volSlice.m_seriesTime + 
-    volSlice.m_seriesDescr + volSlice.m_bodyPartExamined;
-  volSlice.m_hash = Hash.getHash(strMix);
-
-  // console.log(`patName = ${volSlice.m_patientName}`);
-  // console.log(`studyDescr = ${volSlice.m_studyDescr}`);
-  // console.log(`studyDate = ${volSlice.m_studyDate}`);
-  // console.log(`seriesTime = ${volSlice.m_seriesTime}`);
-  // console.log(`seriesDescr = ${volSlice.m_seriesDescr}`);
-  // console.log(`bodyPartExamined = ${volSlice.m_bodyPartExamined}`);
-
-  this.m_slicesVolume.updateSliceNumber(this.m_imageNumber);
-
-  // Fill slice image
-  // const imageDst = this.m_slices[this.m_imageNumber];
-  const imageDst = volSlice.m_image;
-  const imageSrc = new DataView(tag.m_value);
-  if (imageSrc === null) {
-    console.log('No memory');
-    return LoadResult.ERROR_NO_MEMORY;
-  }
-
-  const BITS_16 = 16;
-  let i;
-  if (this.m_bitsPerPixel === BITS_16) {
-    let i2 = 0;
-    const pixValDif = pixelMaxValue - pixelMinValue;
-    if ((pixelMaxValue === -1) || (pixValDif === 0)) {
-      for (i = 0; i < numPixels; i++) {
-        let val = imageSrc.getUint16(i2, this.m_littleEndian);
-        i2 += SIZE_SHORT;
-        val = (val !== pixelPaddingValue) ? val : 0;
-        val &= pixelBitMask;
-        // some tricky read form gm dicom data volume
-        const MASK_TRICK = 0x7000;
-        val = (val & MASK_TRICK) ? 0 : val;
-        imageDst[i] = val;
-      } // for (i) all pixels
-    } else { // if no max value
-      const SCALE_BIT_ACC = 12;
-      const MAX_SCALED_VAL = 4095;
-      const valScale = Math.floor((MAX_SCALED_VAL << SCALE_BIT_ACC) / (pixelMaxValue - pixelMinValue));
-      for (i = 0; i < numPixels; i++) {
-        let val = imageSrc.getInt16(i2, this.m_littleEndian);
-        i2 += SIZE_SHORT;
-
-        // val &= pixelBitMask;
-        val = (val !== pixelPaddingValue) ? val : 0;
-        val = (val >= pixelMinValue) ? val : pixelMinValue;
-        val = (val <= pixelMaxValue) ? val : pixelMaxValue;
-        val -= pixelMinValue;
-        val = (val * valScale) >> SCALE_BIT_ACC;
-        imageDst[i] = val;
-      } // for (i) all pixels
-    } // if pixel max value
-  } else { // if 16 bpp
-    console.log('TODO: need to implement reading non-16 bit dicom images');
-  }
-  this.m_error = DICOM_ERROR_OK;
-
-  // console.log(`Dicom read OK. Volume pixels = ${this.m_xDim} * ${this.m_yDim} * ${this.m_zDim}`);
-  if (callbackComplete !== undefined) {
-    callbackComplete(LoadResult.SUCCESS);
-  }
-  return LoadResult.SUCCESS;
+    return LoadResult.SUCCESS;
   } // end readFromBuffer
 
-  readFromUrl(volDst, strUrl, callbackProgress, callbackComplete) {
+  readFromUrl(volSet, strUrl, callbackProgress, callbackComplete) {
+    // check arguments
+    console.assert(volSet != null, "Null volume");
+    console.assert(volSet instanceof VolumeSet, "Should be volume set");
+    console.assert(strUrl != null, "Null string url");
+    
+    // console.log(`typeof(strUrl) - ${typeof(strUrl)}`);
+    console.assert(typeof(strUrl) === 'string', "Should be string in url");
+    
     // replace file name to 'file_list.txt'
     const ft = new FileTools();
     const isValidUrl = ft.isValidUrl(strUrl);
@@ -1725,7 +1765,7 @@ class LoaderDicom{
     fileLoader.readFile((arrBuf) => {
       this.m_fileListCounter += 1;
       if (this.m_fileListCounter === 1) {
-        const okRead = this.readReadyFileList(volDst, arrBuf, callbackProgress, callbackComplete);
+        const okRead = this.readReadyFileList(volSet, arrBuf, callbackProgress, callbackComplete);
         return okRead;
       }
       return true;
@@ -1736,7 +1776,13 @@ class LoaderDicom{
     }); // get file from server
     return true;
   }
-  readReadyFileList(volDst, arrBuf, callbackProgress, callbackComplete) {
+  readReadyFileList(volSet, arrBuf, callbackProgress, callbackComplete) {
+    // check arguments
+    console.assert(volSet != null, "Null volume");
+    console.assert(volSet instanceof VolumeSet, "Should be volume set");
+    console.assert(arrBuf != null, "Null array");
+    console.assert(arrBuf.constructor.name === "ArrayBuffer", "Should be ArrayBuf in arrBuf");
+
     const uint8Arr = new Uint8Array(arrBuf);
     // const strFileContent = new TextDecoder('utf-8').decode(uint8Arr);
     const strFileContent = String.fromCharCode.apply(null, uint8Arr);
@@ -1809,7 +1855,12 @@ class LoaderDicom{
       this.m_loaders[i] = new FileLoader(urlFile);
       const loader = this.m_loaders[i];
       const NOT_FROM_GOOGLE = false;
-      const okLoader = this.runLoader(volDst, arrFileNames[i], loader, i, callbackProgress, callbackComplete, NOT_FROM_GOOGLE);
+      // let volDst = volSet.getVolume(0);
+      //if (volDst === null) {
+      //  volDst = new Volume();
+      //  volSet.addVolume(volDst);
+      // } 
+      const okLoader = this.runLoader(volSet, arrFileNames[i], loader, i, callbackProgress, callbackComplete, NOT_FROM_GOOGLE);
       if (!okLoader) {
         return false;
       }
@@ -1818,7 +1869,7 @@ class LoaderDicom{
   } // end readReadyFileList(arrBuf)
   /**
   * Run loader to read dicom file
-  * @param {object} volDst - destination volumee
+  * @param {object} volSet - destination volum set
   * @param {string} fileName - File to read
   * @param {object} loader - loader object with file inside
   * @param {number} i - index of file in files array
@@ -1827,7 +1878,7 @@ class LoaderDicom{
   * @param {bool} fromGoogle - true, if from google store
   *
   */
-  runLoader(volDst, fileName, loader, i, callbackProgress, callbackComplete, fromGoogle) {
+  runLoader(volSet, fileName, loader, i, callbackProgress, callbackComplete, fromGoogle) {
     this.m_fromGoogle = fromGoogle;
     // console.log(`Loading url: ${fileName}`);
     loader.readFile((fileArrBu) => {
@@ -1901,8 +1952,9 @@ class LoaderDicom{
           this.m_slicesVolume.buildSeriesInfo();
           series = this.m_slicesVolume.getSeries();
         }
-        const hash = series[0].m_hash;
-        const errStatus = this.createVolumeFromSlices(volDst, hash);
+        const indexSerie = 0;
+        const hash = series[indexSerie].m_hash;
+        const errStatus = this.createVolumeFromSlices(volSet, indexSerie,  hash);
         if (callbackComplete !== null) {
           callbackComplete(errStatus);
           return true;

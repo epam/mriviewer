@@ -89,8 +89,6 @@ class UiMain3dLight extends React.Component {
   }
   //{(store.isTool3D === false) ? jsxView : jsxTool}
   render() {
-    // const store = this.props;
-    // const vol = store.volume;
     const store = this.props;
     const modeViewIndex = store.modeView;
 

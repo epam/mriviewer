@@ -21,7 +21,6 @@ class ToolText {
     this.m_objGraphics2d = objGra;
     this.m_wScreen = 0;
     this.m_hScreen = 0;
-    this.m_volume = null;
 
     this.m_texts = [];
     this.m_pointPressed = null;
@@ -40,9 +39,6 @@ class ToolText {
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
-  }
-  setVolume(vol) {
-    this.m_volume = vol;
   }
   setPixelSize(xs, ys) {
     this.m_xPixelSize = xs;

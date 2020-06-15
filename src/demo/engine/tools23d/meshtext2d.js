@@ -38,7 +38,6 @@ export default class MeshText2D extends Text2D {
     this.m_yMin = 3.0;
     this.m_yMax = -3.0;
   }
-
   static getXMin(xc, xAlign, psx) {
     if (xAlign === MeshText2D.ALIGN_LEFT) {
       return xc;
@@ -49,7 +48,6 @@ export default class MeshText2D extends Text2D {
     }
     return 0.0;
   }
-
   static getXMax(xc, xAlign, psx) {
     if (xAlign === MeshText2D.ALIGN_LEFT) {
       return xc + psx;
@@ -60,7 +58,6 @@ export default class MeshText2D extends Text2D {
     }
     return 0.0;
   }
-
   static getYMin(yc, yAlign, psy) {
     if (yAlign === MeshText2D.ALIGN_TOP) {
       return yc - psy;
@@ -71,7 +68,6 @@ export default class MeshText2D extends Text2D {
     }
     return 0.0;
   }
-
   static getYMax(yc, yAlign, psy) {
     if (yAlign === MeshText2D.ALIGN_TOP) {
       return yc;
@@ -85,7 +81,6 @@ export default class MeshText2D extends Text2D {
   getRenderedTextHeight() {
     return this.m_renderedTextHeight;
   }
-
   /**
   * Update text 2d object: create mesh in desired position, content and width
   * @param (object) container - object container for 3d rendering
@@ -221,7 +216,7 @@ export default class MeshText2D extends Text2D {
     }
   } // updateText
 }
-
+// consts
 MeshText2D.ALIGN_LEFT = 0;
 MeshText2D.ALIGN_RIGHT = 1;
 MeshText2D.ALIGN_TOP = 2;

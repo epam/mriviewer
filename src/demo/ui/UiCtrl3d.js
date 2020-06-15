@@ -55,7 +55,10 @@ class UiCtrl3d extends React.Component {
     const store = this.props;
     const sliderOpacity = store.sliderOpacity;
     const wArrOpacity = [sliderOpacity];
-    const vol = store.volume;
+
+    const volSet = store.volumeSet;
+    const volIndex = store.volumeIndex;
+    const vol = volSet.getVolume(volIndex);
 
     const NEED_TANSF_FUNC = true;
     const funcTra = (NEED_TANSF_FUNC) ? this.transferFuncCallback : undefined;

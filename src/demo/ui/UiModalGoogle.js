@@ -76,7 +76,7 @@ class UiModalGoogle extends React.Component {
     const strTextMenu = evt.target.innerHTML;
     const ind = UiModalGoogle.getIndex(this.m_arrMenu, strTextMenu);
     if ((ind >= 0) && (this.m_funcDemo !== undefined)) {
-      // TODO: perform action o
+      // perform action on cliked demo index
       //console.log(`onClick: element = ${ind}`);
       this.m_funcDemo(ind);
     }

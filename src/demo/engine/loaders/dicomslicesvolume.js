@@ -10,9 +10,9 @@ import DicomSerieDescr from './dicomseriedescr'
 // ********************************************************
 
 /** Maximum possible slices in volume */
-const MAX_SLICES_IN_VOLUME = 1024;
+// const MAX_SLICES_IN_VOLUME = 1024;
 const FLOAT_TOO_STANGE_VALUE = -5555555.5;
-
+const INT_TOO_BIG_VALUE = 55555555555;
 
 // ********************************************************
 // Class
@@ -26,13 +26,18 @@ class DicomSlicesVolume {
   constructor() {
     this.m_numSlices = 0;
     this.m_slices = [];
+
+    // do not create slices in advance
+
+    /*
     for (let i = 0; i < MAX_SLICES_IN_VOLUME; i++) {
       const slice = new DicomSlice();
-      slice.m_sliceNumber = -1;
+      slice.m_sliceNumber = INT_TOO_BIG_VALUE;
       slice.m_sliceLocation = FLOAT_TOO_STANGE_VALUE;
       slice.m_image = null;
       this.m_slices.push(slice);
     }
+    */
     // eslint-disable-next-line
     this.m_minSlice = +1000000;
     this.m_maxSlice = -1000000;
@@ -41,22 +46,33 @@ class DicomSlicesVolume {
   }
   /** Destroy volume and initialize values */
   destroy() {
+    this.m_slices = [];
+    /*
     for (let i = 0; i < this.m_numSlices; i++) {
-      this.m_slices[i].m_sliceNumber = -1;
+      this.m_slices[i].m_sliceNumber = INT_TOO_BIG_VALUE;
       this.m_slices[i].m_sliceLocation = FLOAT_TOO_STANGE_VALUE;
       this.m_slices[i].m_image = null;
     }
+    */
     this.m_numSlices = 0;
     // eslint-disable-next-line
     this.m_minSlice = +1000000;
     this.m_maxSlice = -1;
   }
   getNewSlice() {
+    const slice = new DicomSlice();
+    slice.m_sliceNumber = INT_TOO_BIG_VALUE;
+    slice.m_sliceLocation = FLOAT_TOO_STANGE_VALUE;
+    slice.m_image = null;
+    this.m_slices.push(slice);
+    this.m_numSlices += 1;
+    /*
     if (this.m_numSlices >= MAX_SLICES_IN_VOLUME) {
       return null;
     }
     const slice = this.m_slices[this.m_numSlices];
     this.m_numSlices += 1;
+    */
     return slice;
   }
   updateSliceNumber(sliceNumber) {

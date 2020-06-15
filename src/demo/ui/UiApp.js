@@ -156,6 +156,13 @@ class UiApp extends React.Component {
    */
   doSetProgressBarRatio(ratio) {
     // console.log(`doSetProgressBarRatio: ${ratio}`);
+
+    // show progress bar if it was hidden but need to show some non-0, non-100 progress
+    if ((ratio >= 0) && (ratio <= 99)) {
+      if (this.state.showProgressBar === false) {
+        this.setState({ showProgressBar: true });
+      }
+    }
     this.setState({ progressBarRatio: ratio });
   }
   /**
@@ -206,6 +213,7 @@ class UiApp extends React.Component {
           </Navbar.Collapse>
 
         </Navbar>
+        {objProgressBar}
         {(isLoaded) ? <UiMain /> : <p></p>}
         {(arrErrorsLoadedd.length > 0) ? <UiErrConsole /> : <p></p>}
         <UiModalText stateVis={this.state.showModalText}
@@ -213,8 +221,6 @@ class UiApp extends React.Component {
         <UiModalAlert stateVis={this.state.showModalAlert}
           onHide={this.onHideModalAlert} onShow={this.onShowModalAlert} 
           title={this.state.strAlertTitle} text={this.state.strAlertText} />
-
-        {objProgressBar}
       </Container>;
 
     return jsxNavBarReact;

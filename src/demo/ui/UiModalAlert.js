@@ -37,7 +37,7 @@ class UiModalAlert extends React.Component {
    * When user press OK button
    */
   onButtonOk() {
-    // console.log('TODO on save btn');
+    // console.log('on button OK');
     this.m_hideFunc();
   }
   render() {

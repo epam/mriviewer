@@ -40,7 +40,7 @@ class UiModalSaveNifti extends React.Component {
     };
   } // end constr
   onButtonSave() {
-    // console.log('TODO on save btn');
+    // console.log('on button save');
     this.m_hideFunc();
     this.onSaveNifti();
   }
@@ -63,7 +63,11 @@ class UiModalSaveNifti extends React.Component {
   // invoked on save nifti file format
   onSaveNifti() {
     const store = this.props;
-    const vol = store.volume;
+
+    const volSet = store.volumeSet;
+    const volIndex = store.volumeIndex;
+    const vol = volSet.getVolume(volIndex);
+
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;

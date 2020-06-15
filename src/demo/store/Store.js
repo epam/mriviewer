@@ -12,7 +12,8 @@ import Modes3droi from './Modes3droi';
 export const initialState = {
   isLoaded: false,
   fileName: 'brain.ktx',
-  volume: null,
+  volumeSet: null,
+  volumeIndex: 0,
   texture3d: null,
   modeView: ModeView.VIEW_2D,
   mode2d: Modes2d.TRANSVERSE,
@@ -41,6 +42,7 @@ export const initialState = {
   sliderContrast3D: 0.0,
   arrErrors: [],
   dicomSeries: [],
+  loaderDicom: null,
 };
 //
 // App reducer
@@ -51,8 +53,10 @@ const medReducer = (state = initialState, action) => {
     return Object.assign({}, state, { isLoaded: action.isLoaded });
   case StoreActionType.SET_FILENAME:
     return Object.assign({}, state, { fileName: action.fileName });
-  case StoreActionType.SET_VOLUME:
-    return Object.assign({}, state, { volume: action.volume });
+  case StoreActionType.SET_VOLUME_SET:
+    return Object.assign({}, state, { volumeSet: action.volumeSet });
+  case StoreActionType.SET_VOLUME_INDEX:
+    return Object.assign({}, state, { volumeIndex: action.volumeIndex });
   case StoreActionType.SET_TEXTURE3D:
     return Object.assign({}, state, { texture3d: action.texture3d });
   case StoreActionType.SET_MODE_VIEW:
@@ -109,6 +113,8 @@ const medReducer = (state = initialState, action) => {
     return Object.assign({}, state, { arrErrors: action.arrErrors });
   case StoreActionType.SET_DICOM_SERIES:
     return Object.assign({}, state, { dicomSeries: action.dicomSeries });
+  case StoreActionType.SET_LOADER_DICOM:
+    return Object.assign({}, state, { loaderDicom: action.loaderDicom });
   default:
     return state;
   }

@@ -92,7 +92,6 @@ class UiCtrl3dLight extends React.Component {
    * @param {object} arrayRoi - array of objects with props: id, name, selected, see (UiRoiSelect)
    */
   setRoi(arrayRoi) {
-    // TODO
     // This is demo code:
     // just print all states of all roi elements, according to the UI
     const numElems = arrayRoi.length;
@@ -162,7 +161,11 @@ class UiCtrl3dLight extends React.Component {
         <UiTFroi/>
       </ListGroup>
     let indx = 0;
-    const vol = store.volume;
+
+    const volSet = store.volumeSet;
+    const volIndex = store.volumeIndex;
+    const vol = volSet.getVolume(volIndex);
+
     const FOUR = 4;
     if (vol.m_bytesPerVoxel === FOUR) {
       indx = 1;

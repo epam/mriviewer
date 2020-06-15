@@ -21,7 +21,6 @@ class ToolAngle {
     this.m_objGraphics2d = objGra;
     this.m_wScreen = 0;
     this.m_hScreen = 0;
-    this.m_volume = null;
 
     const v0 = {
       x: 0.0, y: 0.0
@@ -49,9 +48,6 @@ class ToolAngle {
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
-  }
-  setVolume(vol) {
-    this.m_volume = vol;
   }
   setPixelSize(xs, ys) {
     this.m_xPixelSize = xs;

@@ -20,8 +20,7 @@ class ToolDistance {
     this.m_objGraphics2d = objGra;
     this.m_wScreen = 0;
     this.m_hScreen = 0;
-    this.m_volume = null;
-
+  
     this.m_pointStart = null;
     this.m_lines = [];
     this.m_mouseDown = false;
@@ -34,9 +33,6 @@ class ToolDistance {
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
-  }
-  setVolume(vol) {
-    this.m_volume = vol;
   }
   /**
    * 
@@ -101,7 +97,11 @@ class ToolDistance {
     const yRel = yScr / hScr;
 
     const mode2d = store.mode2d;
-    const vol = store.volume;
+
+    const volSet = store.volumeSet;
+    const volIndex = store.volumeIndex;
+    const vol = volSet.getVolume(volIndex);
+
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
@@ -136,7 +136,8 @@ class ToolDistance {
       y: 0.0,
     };
     const mode2d = store.mode2d;
-    const vol = store.volume;
+    const volSet = store.volumeSet; 
+    const vol = volSet.getVolume(store.volumeIndex);
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;

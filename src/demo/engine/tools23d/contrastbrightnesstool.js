@@ -39,7 +39,6 @@ export default class ContrastBrightnessTool {
     this.m_brightness = 0;
     this.m_COBRflag = false;
   }
-
   clear() {
     /*this.m_x = 0;
     this.m_y = 0;*/
@@ -47,12 +46,10 @@ export default class ContrastBrightnessTool {
     this.m_brightness = 0;
     this.m_COBRflag = false;
   }
-
   setPixelSize(xPixelSize, yPixelSize) { // in mm
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }
-
   /*onMouseMove(x,y) {
 
     if (this.m_x !== 0.0 && this.m_y !== 0.0) {

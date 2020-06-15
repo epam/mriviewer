@@ -144,7 +144,10 @@ class UiViewMode extends React.Component {
       </OverlayTrigger>
     </ButtonGroup>
 
-    const vol = store.volume;
+    const volSet = store.volumeSet;
+    const volIndex = store.volumeIndex;
+    const vol = volSet.getVolume(volIndex);
+
     const FOUR = 4;
     const test = true;
     const jsxOut = 

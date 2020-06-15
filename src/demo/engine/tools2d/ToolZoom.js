@@ -23,7 +23,6 @@ class ToolZoom {
     this.m_objGraphics2d = objGra;
     this.m_wScreen = 0;
     this.m_hScreen = 0;
-    this.m_volume = null;
 
     this.setScreenDim = this.setScreenDim.bind(this);
     this.onMouseWheel = this.onMouseWheel.bind(this);
@@ -40,9 +39,6 @@ class ToolZoom {
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
-  }
-  setVolume(vol) {
-    this.m_volume = vol;
   }
   onMouseDown(xScr, yScr) {
     this.state.mouseDown = true;
@@ -73,6 +69,8 @@ class ToolZoom {
         (yPos >= 0.0) && (yPos + zoom <= 1.0)) {
         store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: xPos });
         store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: yPos });
+        const gra = store.graphics2d;
+        gra.forceUpdate();
       }
     }
   }
@@ -99,6 +97,9 @@ class ToolZoom {
       store.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: zoomNew });
       store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: xPosNew });
       store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: yPosNew });
+
+      const gra = store.graphics2d;
+      gra.forceUpdate();
     }
   } // end on mouse wheel
 

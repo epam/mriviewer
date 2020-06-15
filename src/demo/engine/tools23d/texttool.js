@@ -25,7 +25,6 @@ under the License.
 import MeshText2D from './meshtext2d';
 
 export default class TextTool {
-
   /**
    * Initialize area tool
    * @param (object) scene - scene object
@@ -80,7 +79,6 @@ export default class TextTool {
       this.m_scene.add(this.m_textArr[i]);
     }
   }
-
   move(i, newX, newY, zoom, posX, posY) {
     this.m_vertexes[i].xZ = (newX + (1 - 1 / zoom)) * zoom + posX;
     this.m_vertexes[i].yZ = (newY - (1 - 1 / zoom)) * zoom + posY;
@@ -89,7 +87,6 @@ export default class TextTool {
     this.m_textArr[i].updateText(xText, yText, this.m_textWidthScr,
       MeshText2D.ALIGN_LEFT, MeshText2D.ALIGN_TOP, this.m_textBgColor, this.m_textColor);
   }
-
   /**
    * Set pixel size in mm
    * @param (float) xPixelSize - canvas pixel size in mm for x axis

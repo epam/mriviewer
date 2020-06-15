@@ -12,6 +12,8 @@ import LoadResult from '../LoadResult';
 import FileTools from './FileTools';
 import LoadFilePromise from './LoadPromise';
 import Volume from '../Volume';
+import VolumeSet from '../VolumeSet';
+
 
 // ********************************************************
 // Const
@@ -106,6 +108,12 @@ class LoaderHdr {
   // read header file
   //
   readFromBufferHeader(volumeDst, arrBuf, callbackProgress, callbackComplete) {
+    // check arguments
+    console.assert(volumeDst != null, "Null volume");
+    console.assert(volumeDst instanceof Volume, "Should be volume");
+    console.assert(arrBuf != null, "Null array");
+    console.assert(arrBuf.constructor.name === "ArrayBuffer", "Should be ArrayBuf in arrBuf");
+
     const bufBytes = new Uint8Array(arrBuf);
     const bufLen = bufBytes.length;
     const HDR_HEADER_SIZE = 348;
@@ -288,6 +296,12 @@ class LoaderHdr {
   // read image file
   //
   readFromBufferImage(volumeDst, arrBuf, callbackProgress, callbackComplete) {
+    // check arguments
+    console.assert(volumeDst != null, "Null volume");
+    console.assert(volumeDst instanceof Volume, "Should be volume");
+    console.assert(arrBuf != null, "Null array");
+    console.assert(arrBuf.constructor.name === "ArrayBuffer", "Should be ArrayBuf in arrBuf");
+
     const bufBytes = new Uint8Array(arrBuf);
     const bufLen = bufBytes.length;
     const MIN_BUF_SIZE = 8;
@@ -313,6 +327,10 @@ class LoaderHdr {
   // create volume from 2 components
   //
   createVolumeFromHeaderAndImage(volDst) {
+    // check arguments
+    console.assert(volDst != null, "Null volume");
+    console.assert(volDst instanceof Volume, "Should be volume");
+  
     const NUM_BYTES_CHAR = 1;
     const NUM_BYTES_WORD = 2;
 
@@ -363,6 +381,12 @@ class LoaderHdr {
   // create vol from 2 volumes: intensity and hdr
   //
   createRoiVolumeFromHeaderAndImage(volDst, volRoi) {
+    // check arguments
+    console.assert(volDst != null, "Null volume");
+    console.assert(volDst instanceof Volume, "Should be volume");
+    console.assert(volRoi != null, "Null volume");
+    console.assert(volRoi instanceof Volume, "Should be volume");
+
     // both volumes are in 1 byte format
     const ONE = 1;
     if (volDst.m_bytesPerVoxel !== ONE) {
@@ -403,13 +427,13 @@ class LoaderHdr {
   /**
    * Read hdr (h + img) files from URL
    * 
-   * @param {object} volDst - destination volume to fill
+   * @param {object} volSet - volume set
    * @param {string} strUrl - url string
    * @param {func} callbackProgress - callback during read progress
    * @param {func} callbackComplete - callback after complete (good or bad)
    * @return true, if success
    */
-  readFromUrl(volDst, strUrl, callbackProgress, callbackComplete) {
+  readFromUrl(volSet, strUrl, callbackProgress, callbackComplete) {
     console.log(`readFromUrl. going to read from ${strUrl} ...`);
 
     const ft = new FileTools();
@@ -442,18 +466,24 @@ class LoaderHdr {
     arrUrls.push(fileNameIntensityImage);
     arrUrls.push(fileNameMaskHeader);
     arrUrls.push(fileNameMaskImage);
-    const ok = this.readFromUrls(arrUrls, volDst, callbackProgress, callbackComplete);
+    const ok = this.readFromUrls(arrUrls, volSet, callbackProgress, callbackComplete);
 
     return ok;
   } // end of readFromUrl
   /**
    * 
    * @param {object} arrUrls  - array of strings urls
-   * @param {*} volDst  - dest volume
+   * @param {*} volSet  - dest volume set
    * @param {*} callbackProgress - callback during read
    * @param {*} callbackComplete - callback after end fo read
    */
-  readFromUrls(arrUrls, volDst, callbackProgress, callbackComplete) {
+  readFromUrls(arrUrls, volSet, callbackProgress, callbackComplete) {
+
+    // check arguments
+    console.assert(volSet != null, "Null volume set");
+    console.assert(volSet instanceof VolumeSet, "Should be volume set");
+    
+
     const numUrls = arrUrls.length;
     const NUM_URLS_IN_SET = 2;
     const NUM_FILES_VOL_INT_ROI = 4;
@@ -474,6 +504,7 @@ class LoaderHdr {
 
       // this.m_volIntensity = new HdrVolume(this.m_needScaleDownTexture);
 
+      const volDst = volSet.getVolume(0);
       loaderHdr.readFromUrl(urlHdr).then((arrBufHdr) => {
         this.readFromBufferHeader(volDst, arrBufHdr, callbackComplete, callbackProgress);
         console.log(`Load success HDR file: ${urlHdr}`);
@@ -509,6 +540,7 @@ class LoaderHdr {
       // this.m_volRoi = new HdrVolume(this.m_needScaleDownTexture);
 
       const volRoi = new Volume();
+      const volDst = volSet.getVolume(0);
 
       loaderHdrInt.readFromUrl(urlHdrInt).then((arrBufHdr) => {
         // this.m_volIntensity.readBufferHead(arrBufHdr, callbackComplete, callbackProgress);

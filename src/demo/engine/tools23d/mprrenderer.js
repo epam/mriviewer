@@ -143,7 +143,6 @@ export default class MprRenderer {
     const container = this.m_container;
     container.append(this.m_renderer.domElement);
   } // create
-
   clearScene() {
     for (let i = 0; i < this.m_boundLines.length; ++i) {
       if (this.m_boundLines[i] !== undefined) {
@@ -319,7 +318,6 @@ export default class MprRenderer {
 
     this.updateControlLines();
   }
-
   clearControlLines() {
     if (this.m_linesXOnZ !== null) {
       this.m_scene.remove(this.m_linesXOnZ[0].getRenderObject());
@@ -344,7 +342,6 @@ export default class MprRenderer {
       this.m_scene.remove(this.m_controlLineYOnX.getRenderObject());
     }
   }
-
   updateControlLines() {
     this.clearControlLines();
     const SHIFT_MUL = 7;
@@ -443,8 +440,6 @@ export default class MprRenderer {
       }
     }
   }
-
-
   /**
    * Mouse events handler
    */
@@ -452,8 +447,6 @@ export default class MprRenderer {
     this.m_runningState = false;
     this.m_activePlane = -1;
   }
-
-
   /**
    * Mouse move event handler
    * @param (float) xScr - normalized mouse x coordinate in screen
@@ -475,26 +468,25 @@ export default class MprRenderer {
       const xRatio = (xt - activeRect.xMin) / (activeRect.xMax - activeRect.xMin);
       const yRatio = (yt - activeRect.yMin) / (activeRect.yMax - activeRect.yMin);
       switch (this.m_activePlane) {
-        case PROJECTION_X:
-          this.m_sliceRatio[PROJECTION_Y] = xRatio;
-          this.m_sliceRatio[PROJECTION_Z] = yRatio;
-          break;
-        case PROJECTION_Y:
-          this.m_sliceRatio[PROJECTION_X] = xRatio;
-          this.m_sliceRatio[PROJECTION_Z] = yRatio;
-          break;
-        case PROJECTION_Z:
-          this.m_sliceRatio[PROJECTION_X] = xRatio;
-          this.m_sliceRatio[PROJECTION_Y] = yRatio;
-          break;
-        default:
-          console.log('MPR: Unexpected active plane');
-          break;
-      }
+      case PROJECTION_X:
+        this.m_sliceRatio[PROJECTION_Y] = xRatio;
+        this.m_sliceRatio[PROJECTION_Z] = yRatio;
+        break;
+      case PROJECTION_Y:
+        this.m_sliceRatio[PROJECTION_X] = xRatio;
+        this.m_sliceRatio[PROJECTION_Z] = yRatio;
+        break;
+      case PROJECTION_Z:
+        this.m_sliceRatio[PROJECTION_X] = xRatio;
+        this.m_sliceRatio[PROJECTION_Y] = yRatio;
+        break;
+      default:
+        console.log('MPR: Unexpected active plane');
+        break;
+      } // end switch
       this.updateControlLines();
     }
   }
-
   /**
   * Action on each render
   */

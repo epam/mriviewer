@@ -23,6 +23,8 @@ class DicomSlice {
     this.m_seriesDescr = '';
     // 18, 15
     this.m_bodyPartExamined = '';
+    //
+    this.m_hash = -5555555;
 
   }
 }

@@ -46,7 +46,7 @@ class UiModalText extends React.Component {
    * When user press OK button
    */
   onButtonOk() {
-    // console.log('TODO on save btn');
+    // console.log('on button ok');
     this.m_hideFunc();
     this.onTextEntered();
   }

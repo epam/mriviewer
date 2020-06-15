@@ -27,7 +27,6 @@ import MaterialColor2d from '../gfx/matcolor2d';
 import Line2D from './line2d';
 
 export default class RectTool {
-
   /**
    * Initialize area tool
    * @param (object) scene - scene object
@@ -123,7 +122,6 @@ export default class RectTool {
       this.m_scene.add(this.m_areas[i].text);
     }
   }
-
   /**
    * Set pixel size in mm
    * @param (float) xPixelSize - canvas pixel size in mm for x axis
@@ -133,7 +131,6 @@ export default class RectTool {
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }
-
   /**
    * Return running state
    * @return {boolean} True if last line has not been fixed yet
@@ -141,7 +138,6 @@ export default class RectTool {
   isRunning() {
     return this.m_runningState;
   }
-
   /**
    * Mouse down events handler
    * @param (float) x - mouse x coordinate
@@ -177,7 +173,6 @@ export default class RectTool {
       this.m_yStart = -1;
     }
   }
-
   /**
    * Mouse move events handler
    * @param (float) x - mouse x coordinate

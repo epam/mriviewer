@@ -17,6 +17,7 @@ import UiCtrl2d from './UiCtrl2d';
 import Graphics2d from '../engine/Graphics2d';
 import UiTools2d from './UiTools2d';
 import UiSegm2d from './UiSegm2d';
+import UiVolumeSel from './UiVolumeSel'
 
 // import UiHistCard from './UiHistCard';
 
@@ -43,15 +44,18 @@ class UiMain2d extends React.Component {
    * Main component render func callback
    */
   render() {
-    // const store = this.props;
-    // const vol = store.volume;
-    // const NEED_TANSF_FUNC = false;
-    // const funcTra = (NEED_TANSF_FUNC) ? this.transferFuncCallback : undefined;
-
     const MIN_HEIGHT = 800;
     const strMinHeight = {
       minHeight: MIN_HEIGHT.toString() + 'px'
     };
+    const store = this.props;
+    // const dicomSeries = store.dicomSeries;
+    // const numSer = dicomSeries.length;
+    const volSet = store.volumeSet;
+    const vols = volSet.m_volumes;
+    const numVols = vols.length;
+    const jsxVolSel = (numVols > 1) ? <UiVolumeSel /> : <br />
+
 
     const jsxMain2d = 
       <Container fluid="true" style={{ height: '100%', minHeight:'100%' }} >
@@ -60,6 +64,7 @@ class UiMain2d extends React.Component {
             <UiCtrl2d />
             <UiTools2d />
             <UiSegm2d />
+            {jsxVolSel}
 
             { /*            
             <UiHistCard volume={vol} transfFunc={funcTra} />

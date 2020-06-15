@@ -21,7 +21,6 @@ class ToolArea {
     this.m_objGraphics2d = objGra;
     this.m_wScreen = 0;
     this.m_hScreen = 0;
-    this.m_volume = null;
 
     this.m_areas = [];
     this.m_inCreateMode = false;
@@ -41,9 +40,6 @@ class ToolArea {
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
-  }
-  setVolume(vol) {
-    this.m_volume = vol;
   }
   setPixelSize(xs, ys) {
     this.m_xPixelSize = xs;
@@ -281,7 +277,10 @@ class ToolArea {
    * @param {array} points - array of points (x,y) props
    */
   getPolyArea(points, store) {
-    const vol = store.volume;
+    const volSet = store.volumeSet;
+    const volIndex = store.volumeIndex;
+    const vol = volSet.getVolume(volIndex);
+
     const xSize = vol.m_boxSize.x;
     const ySize = vol.m_boxSize.y;
     const zSize = vol.m_boxSize.z;

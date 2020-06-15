@@ -255,7 +255,7 @@ export default class LoaderKtx {
       this.m_header.m_pixelHeight *
       this.m_header.m_pixelDepth * bytesPerVoxel;
     if (this.m_dataSize !== dataSizeCalculated) {
-      console.log('!!! TODO: not implemented yet');
+      console.log('!!! not implemented yet');
       if (callbackComplete !== undefined) {
         callbackComplete(LoadResult.WRONG_HEADER_DATA_SIZE);
       }

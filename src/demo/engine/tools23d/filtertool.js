@@ -39,7 +39,6 @@ export default class FilterTool {
     //this.m_sigmaB = 0.01;
     //this.m_BIFIflag = false;
   }
-
   clear() {
     this.m_x = 0;
     this.m_y = 0;

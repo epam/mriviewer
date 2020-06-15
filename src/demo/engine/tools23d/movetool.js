@@ -23,7 +23,6 @@ under the License.
  */
 
 export default class MoveTool {
-
   /**
    * Initialize area tool
    * @param (object) scene - scene object
@@ -39,7 +38,6 @@ export default class MoveTool {
     this.m_delta.x = posX;
     this.m_delta.y = posY;
   }
-
   /**
    * Mouse down events handler
    * @param (float) x - mouse x coordinate
@@ -51,7 +49,6 @@ export default class MoveTool {
     this.m_tempCoordinates.x = x;
     this.m_tempCoordinates.y = y;
   }
-
   /**
    * Mouse down events handler
    * @param (float) x - mouse x coordinate
@@ -61,7 +58,6 @@ export default class MoveTool {
     this.m_runningState = false;
     console.log(`${this.m_runningState}`);
   }
-
   /**
    * Mouse move events handler
    * @param (float) x - mouse x coordinate

@@ -702,8 +702,6 @@ export default class DicomDictionary {
       [0x0043, 0x10AA, 'LO', 'AdditionalFilteringParameters'],
       [0x0043, 0x10B1, 'SS', 'ExcitationMode'],
 
-      // TODO: group 0x0045, 0x0053
-
       [0x0045, 0x0010, 'LO', 'PrivateCreator'],
       [0x0045, 0x1001, 'XX', 'NumberOfMacroRowsInDetector'],
       [0x0045, 0x1002, 'XX', 'MacroWidthAtISOCenter'],

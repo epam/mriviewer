@@ -74,6 +74,9 @@ class UiCtrl2d extends React.Component {
     this.onMode(Modes2d.TRANSVERSE);
   }
   onChangeSliderSlice() {
+    if (this.refs === undefined) {
+      return;
+    }
     this.m_updateEnable = false;
     let val = 0.0;
     const aval = this.refs.slider1.slider.get();

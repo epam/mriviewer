@@ -28,7 +28,7 @@ class UiMainMpr extends React.Component {
    * Main component render func callback
    */
   render() {
-    const jsxRet = <p>TODO: MPR is not implemented yet</p>;
+    const jsxRet = <p>MPR is not implemented yet</p>;
     return jsxRet;
   };
 }

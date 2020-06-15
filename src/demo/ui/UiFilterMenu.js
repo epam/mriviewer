@@ -61,7 +61,10 @@ class UiFilterMenu extends React.Component {
   onButtonLungsSeg() {
     //evt.preventDefault();
     const store = this.props;
-    const vol = store.volume;
+    const volSet = store.volumeSet;
+    const volIndex = store.volumeIndex;
+    const vol = volSet.getVolume(volIndex);
+
     if ((vol === undefined) || (vol === null)) {
       console.log('onButtonDetectBrain: no volume!');
       return;
@@ -78,7 +81,8 @@ class UiFilterMenu extends React.Component {
       console.log('onButtonDetectBrain: supported only 1bpp volumes');
       return;
     }
-    this.lungsFiller = new LungsFillTool(store.volume);
+
+    this.lungsFiller = new LungsFillTool(vol);
     //const callbackProgress = this.callbackProgressFun;
     //lungsFiller.run(callbackProgress);
     const uiApp = store.uiApp;
@@ -115,7 +119,11 @@ class UiFilterMenu extends React.Component {
   onButtonDetectBrain() {
     // get globals
     const store = this.props;
-    const vol = store.volume;
+
+    const volSet = store.volumeSet;
+    const volIndex = store.volumeIndex;
+    const vol = volSet.getVolume(volIndex);
+
     if ((vol === undefined) || (vol === null)) {
       console.log('onButtonDetectBrain: no volume!');
       return;
@@ -234,11 +242,14 @@ class UiFilterMenu extends React.Component {
       this.m_actVolume.skullRemoveStop(this.m_geoRender);
 
       // perform finalize skull remove
-      const vol = store.volume;
+      const volSet = store.volumeSet;
+      const volIndex = store.volumeIndex;
+      const vol = volSet.getVolume(volIndex);
+
       const volTextureDst = this.m_actVolume.m_volTexDst;
       vol.m_dataArray = volTextureDst;
 
-      store.dispatch({ type: StoreActionType.SET_VOLUME, volume: vol });
+      store.dispatch({ type: StoreActionType.SET_VOLUME_SET, volumeSet: volSet });
       store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
       const tex3d = new Texture3D();
       tex3d.createFromRawVolume(vol);

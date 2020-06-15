@@ -34,7 +34,6 @@ const angleToolState = {
 };
 
 export default class AngleTool {
-
   /**
    * Initialize angle tool
    * @param (object) scene - scene object
@@ -69,7 +68,6 @@ export default class AngleTool {
     /** @property {Object} m_textBgColor - text background color */
     this.m_textBgColor = 'rgb(65, 65, 65)';
   }
-
   /**
    * Remove all distance lines from scene
    */
@@ -84,7 +82,6 @@ export default class AngleTool {
     this.m_state = angleToolState.WAITING;
     this.m_vertexes = [];
   }
-
   /**
    * Redraw all lines
    */
@@ -118,7 +115,6 @@ export default class AngleTool {
       this.m_scene.add(this.m_angles[i].text);
     }
   }
-
   /**
    * Mouse down events handler
    * @param (float) x - mouse x coordinate
@@ -128,49 +124,45 @@ export default class AngleTool {
     const xZ = (x + (1 - 1 / zoom)) * zoom + posX;
     const yZ = (y - (1 - 1 / zoom)) * zoom + posY;
     switch (this.m_state) {
-      case angleToolState.WAITING: {
-        this.m_xStart = x;
-        this.m_yStart = y;
+    case angleToolState.WAITING:
+      this.m_xStart = x;
+      this.m_yStart = y;
 
-        const line1 = new Line2D(this.m_scene, this.m_lineWidth, x, y, x, y, this.m_linesMaterial);
-        const line2 = new Line2D(this.m_scene, this.m_lineWidth, x, y, x, y, this.m_linesMaterial);
-        const strMsg = '0°';
-        const text = new MeshText2D(strMsg);
-        text.updateText(x, y, this.m_textWidthScr, MeshText2D.ALIGN_CENTER,
-          MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
-        this.m_scene.add(text);
-        this.m_angles.push({ line1, line2, text });
-        this.m_vertexes.push({ xZ, yZ });
-        this.m_state = angleToolState.FIRST_LINE;
-        break;
+      const line1 = new Line2D(this.m_scene, this.m_lineWidth, x, y, x, y, this.m_linesMaterial);
+      const line2 = new Line2D(this.m_scene, this.m_lineWidth, x, y, x, y, this.m_linesMaterial);
+      const strMsg = '0°';
+      const text = new MeshText2D(strMsg);
+      text.updateText(x, y, this.m_textWidthScr, MeshText2D.ALIGN_CENTER,
+        MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
+      this.m_scene.add(text);
+      this.m_angles.push({ line1, line2, text });
+      this.m_vertexes.push({ xZ, yZ });
+      this.m_state = angleToolState.FIRST_LINE;
+      break;
+    case angleToolState.FIRST_LINE:
+      // check pushed line has non-zero length
+      const dx = x - this.m_xStart;
+      const dy = y - this.m_yStart;
+      const ESTIMATED_MIN_SCREEN_SIZE = 400.0;
+      const MIN_PIXELS_DIST = 1.0 / ESTIMATED_MIN_SCREEN_SIZE;
+      if (dx * dx + dy * dy > MIN_PIXELS_DIST * MIN_PIXELS_DIST) {
+        this.m_state = angleToolState.SECOND_LINE;
       }
-      case angleToolState.FIRST_LINE: {
-        // check pushed line has non-zero length
-        const dx = x - this.m_xStart;
-        const dy = y - this.m_yStart;
-        const ESTIMATED_MIN_SCREEN_SIZE = 400.0;
-        const MIN_PIXELS_DIST = 1.0 / ESTIMATED_MIN_SCREEN_SIZE;
-        if (dx * dx + dy * dy > MIN_PIXELS_DIST * MIN_PIXELS_DIST) {
-          this.m_state = angleToolState.SECOND_LINE;
-        }
-        this.m_vertexes.push({ xZ, yZ });
-        break;
-      }
-      case angleToolState.SECOND_LINE: {
-        this.m_xStart = -1;
-        this.m_yStart = -1;
-        this.m_firstVector.x = 0;
-        this.m_firstVector.y = 0;
-        this.m_state = angleToolState.WAITING;
-        this.m_vertexes.push({ xZ, yZ });
-        break;
-      }
-      default:
-        console.log('Unexpected angle tool state');
-        break;
-    }
+      this.m_vertexes.push({ xZ, yZ });
+      break;
+    case angleToolState.SECOND_LINE:
+      this.m_xStart = -1;
+      this.m_yStart = -1;
+      this.m_firstVector.x = 0;
+      this.m_firstVector.y = 0;
+      this.m_state = angleToolState.WAITING;
+      this.m_vertexes.push({ xZ, yZ });
+      break;
+    default:
+      console.log('Unexpected angle tool state');
+      break;
+    } // end switch
   }
-
   /**
    * Mouse move events handler
    * @param (float) x - mouse x coordinate
@@ -179,52 +171,51 @@ export default class AngleTool {
   onMouseMove(x, y) {
     let angle = null;
     switch (this.m_state) {
-      case angleToolState.WAITING:
-        break;
-      case angleToolState.FIRST_LINE: {
-        angle = this.m_angles.pop();
-        this.m_scene.remove(angle.line1.getRenderObject());
-        const line1 = new Line2D(this.m_scene, this.m_lineWidth, this.m_xStart, this.m_yStart, x, y,
-          this.m_linesMaterial);
-        this.m_firstVector.x = x - this.m_xStart;
-        this.m_firstVector.y = y - this.m_yStart;
-        angle.line1 = line1;
-        this.m_angles.push(angle);
-        break;
-      }
-      case angleToolState.SECOND_LINE: {
-        const len1 = Math.sqrt(this.m_firstVector.x * this.m_firstVector.x +
-          this.m_firstVector.y * this.m_firstVector.y);
-        const len2 = Math.sqrt((x - this.m_xStart) * (x - this.m_xStart) + (y - this.m_yStart) * (y - this.m_yStart));
-        // check both lines are too small
-        const TOO_SMALL_VEC_LEN_MULT = 1.0e-5;
-        if (len1 * len2 < TOO_SMALL_VEC_LEN_MULT) {
-          break;
-        }
-        angle = this.m_angles.pop();
-        this.m_scene.remove(angle.line2.getRenderObject());
-        const line2 = new Line2D(this.m_scene, this.m_lineWidth, this.m_xStart, this.m_yStart, x, y,
-          this.m_linesMaterial);
-        this.m_scene.remove(angle.text);
-        const strMsg = `${(Math.acos((this.m_firstVector.x * (x - this.m_xStart) +
-          // eslint-disable-next-line
-          this.m_firstVector.y * (y - this.m_yStart)) / (len1 * len2)) / Math.PI * 180).toFixed(2)}°`;
-        const text = new MeshText2D(strMsg);
-        const Y_SHIFT_UP = 0.02;
-        text.updateText(this.m_xStart, this.m_yStart - Y_SHIFT_UP, this.m_textWidthScr, MeshText2D.ALIGN_CENTER,
-          MeshText2D.ALIGN_TOP, this.m_textBgColor, this.m_textColor);
-        this.m_scene.add(text);
-        angle.line2 = line2;
-        angle.text = text;
-        this.m_angles.push(angle);
-        break;
-      }
-      default:
-        console.log('Unexpected angle tool state');
-        break;
+    case angleToolState.WAITING:
+      break;
+    case angleToolState.FIRST_LINE: {
+      angle = this.m_angles.pop();
+      this.m_scene.remove(angle.line1.getRenderObject());
+      const line1 = new Line2D(this.m_scene, this.m_lineWidth, this.m_xStart, this.m_yStart, x, y,
+        this.m_linesMaterial);
+      this.m_firstVector.x = x - this.m_xStart;
+      this.m_firstVector.y = y - this.m_yStart;
+      angle.line1 = line1;
+      this.m_angles.push(angle);
+      break;
     }
+    case angleToolState.SECOND_LINE: {
+      const len1 = Math.sqrt(this.m_firstVector.x * this.m_firstVector.x +
+        this.m_firstVector.y * this.m_firstVector.y);
+      const len2 = Math.sqrt((x - this.m_xStart) * (x - this.m_xStart) + (y - this.m_yStart) * (y - this.m_yStart));
+      // check both lines are too small
+      const TOO_SMALL_VEC_LEN_MULT = 1.0e-5;
+      if (len1 * len2 < TOO_SMALL_VEC_LEN_MULT) {
+        break;
+      }
+      angle = this.m_angles.pop();
+      this.m_scene.remove(angle.line2.getRenderObject());
+      const line2 = new Line2D(this.m_scene, this.m_lineWidth, this.m_xStart, this.m_yStart, x, y,
+        this.m_linesMaterial);
+      this.m_scene.remove(angle.text);
+      const strMsg = `${(Math.acos((this.m_firstVector.x * (x - this.m_xStart) +
+        // eslint-disable-next-line
+        this.m_firstVector.y * (y - this.m_yStart)) / (len1 * len2)) / Math.PI * 180).toFixed(2)}°`;
+      const text = new MeshText2D(strMsg);
+      const Y_SHIFT_UP = 0.02;
+      text.updateText(this.m_xStart, this.m_yStart - Y_SHIFT_UP, this.m_textWidthScr, MeshText2D.ALIGN_CENTER,
+        MeshText2D.ALIGN_TOP, this.m_textBgColor, this.m_textColor);
+      this.m_scene.add(text);
+      angle.line2 = line2;
+      angle.text = text;
+      this.m_angles.push(angle);
+      break;
+    }
+    default:
+      console.log('Unexpected angle tool state');
+      break;
+    } // end switch
   }
-
   updateVertexes(zoom, posX, posY) {
     this.m_vertexes = [];
     for (let i = 0; i < this.m_angles.length; ++i) {

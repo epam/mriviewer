@@ -5,10 +5,10 @@
  */
 
 import * as THREE from 'three';
-import MaterialBlur from './gfx/matblur';
-import GlSelector from './GlSelector';
-import AmbientTexture from './ambientTexture';
-import TransferTexture from './transferTexture'
+// import MaterialBlur from './gfx/matblur';
+// import GlSelector from './GlSelector';
+// import AmbientTexture from './ambientTexture';
+// import TransferTexture from './transferTexture'
 import Eraser from './Eraser';
 /** Class Graphics3d is used for 3d render */
 export default class VolumeFilter3d {

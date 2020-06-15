@@ -74,6 +74,8 @@ class Graphics2d extends React.Component {
       xMouse: -1,
       yMouse: -1,
     };
+    this.m_volumeIndex = 0;
+
 
     // segm 2d
     this.segm2d = new Segm2d(this);
@@ -129,19 +131,15 @@ class Graphics2d extends React.Component {
       // console.log(`gra2d. wRender*hRender = ${w}*${h}`);
 
       // tools 2d setup
-      const store = this.props;
-      const vol = store.volume;
+      // const store = this.props;
+      // const volSet = store.volumeSet;
+      // const volIndex = store.volumeIndex;
+      // const vol = volSet.getVolume(volIndex);
       // console.log(`gra2d. vol = ${vol}`);
 
-      this.m_toolPick.setVolume(vol);
-      this.m_toolZoom.setVolume(vol);
-      this.m_toolDistance.setVolume(vol);
-      this.m_toolAngle.setVolume(vol);
-      this.m_toolArea.setVolume(vol);
-      this.m_toolRect.setVolume(vol);
-      this.m_toolText.setVolume(vol);
-      this.m_toolEdit.setVolume(vol);
-      this.m_toolDelete.setVolume(vol);
+      // may be here need to assign volume to 2d tools, 
+      // but better use store.volumeSet interface from 
+      // any application point
     }
   }
   componentWillUnmount() {
@@ -170,9 +168,9 @@ class Graphics2d extends React.Component {
    * Render text info about volume
    * 
    * @param {object} ctx - render context
-   * @param {object} vol - volume to be render
+   * @param {VolumeSet} volSet - volume set to rener
    */
-  renderTextInfo(ctx, vol) {
+  renderTextInfo(ctx, volSet, vol) {
     let strMsg;
     let xText = 4;
     let yText = 4;
@@ -197,37 +195,37 @@ class Graphics2d extends React.Component {
     ctx.fillText(strMsg, xText, yText);
     yText += FONT_SZ;
 
-    const patName = vol.m_patientName;
+    const patName = volSet.m_patientName;
     if (patName.length > 1) {
       strMsg = 'patient name = ' + patName; 
       ctx.fillText(strMsg, xText, yText);
       yText += FONT_SZ;
     }
-    const patBirth = vol.m_patientBirth;
+    const patBirth = volSet.m_patientBirth;
     if (patBirth.length > 1) {
       strMsg = 'patient birth = ' + patBirth;
       ctx.fillText(strMsg, xText, yText);
       yText += FONT_SZ;
     }
-    const seriesDescr = vol.m_seriesDescr;
+    const seriesDescr = volSet.m_seriesDescr;
     if (seriesDescr.length > 1) {
       strMsg = 'series descr = ' + seriesDescr;
       ctx.fillText(strMsg, xText, yText);
       yText += FONT_SZ;
     }
-    const institutionName = vol.m_institutionName;
+    const institutionName = volSet.m_institutionName;
     if (institutionName.length > 1) {
       strMsg = 'institution name = ' + institutionName;
       ctx.fillText(strMsg, xText, yText);
       yText += FONT_SZ;
     }
-    const operatorsName = vol.m_operatorsName;
+    const operatorsName = volSet.m_operatorsName;
     if (operatorsName.length > 1) {
       strMsg = 'operators name = ' + operatorsName;
       ctx.fillText(strMsg, xText, yText);
       yText += FONT_SZ;
     }
-    const physicansName = vol.m_physicansName;
+    const physicansName = volSet.m_physicansName;
     if (physicansName.length > 1) {
       strMsg = 'physicans name = ' + physicansName;
       ctx.fillText(strMsg, xText, yText);
@@ -274,7 +272,10 @@ class Graphics2d extends React.Component {
       ctx.putImageData(imgData, 0, 0); 
     }
 
-    const vol = store.volume;
+    const volSet = store.volumeSet;
+    const volIndex = this.m_volumeIndex;
+
+    const vol = volSet.getVolume(volIndex);
     const mode2d = this.m_mode2d;
     const sliceRatio = store.slider2d;
 
@@ -597,7 +598,6 @@ class Graphics2d extends React.Component {
       this.segm2d.setImageData(imgData);
     } // if vol not null
   } // prepareImageForRender
-
   renderReadyImage() {
     // console.log('renderReadyImage ...');
     const objCanvas = this.m_mount;
@@ -606,7 +606,11 @@ class Graphics2d extends React.Component {
     }
     const ctx = objCanvas.getContext('2d');
     const store = this.props;
-    const vol = store.volume;
+
+    const volSet = store.volumeSet;
+    const volIndex = store.volumeIndex;
+    const vol = volSet.getVolume(volIndex);
+
     const isSegm = this.m_isSegmented;
     if (isSegm) {
       const w = this.m_toolPick.m_wScreen;
@@ -616,7 +620,7 @@ class Graphics2d extends React.Component {
       ctx.putImageData(this.imgData, 0, 0);
     }
     // render text info
-    this.renderTextInfo(ctx, vol);
+    this.renderTextInfo(ctx, volSet, vol);
     // render all tools
     this.m_toolPick.render(ctx);
     this.m_toolDistance.render(ctx, store);
@@ -627,7 +631,6 @@ class Graphics2d extends React.Component {
     this.m_toolEdit.render(ctx, store);
     this.m_toolDelete.render(ctx, store);
   }
-
   onMouseWheel(evt) {
     const store = this.props;
     const indexTools2d = store.indexTools2d;
@@ -798,7 +801,11 @@ class Graphics2d extends React.Component {
    * Main component render func callback
    */
   render() {
-    const vol = this.props.volume;
+    const store = this.props;
+    const volSet = store.volumeSet;
+    const volIndex = store.volumeIndex;
+    const vol = volSet.getVolume(volIndex);
+    
     if (vol !== null) {
       this.m_vol = vol;
     }

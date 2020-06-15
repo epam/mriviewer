@@ -27,7 +27,6 @@ import MaterialColor2d from '../gfx/matcolor2d';
 import Line2D from './line2d';
 
 export default class AreaTool {
-
   /**
    * Initialize distance tool
    * @param (object) scene - scene object
@@ -78,7 +77,6 @@ export default class AreaTool {
      * cursor and first vertex*/
     this.connect_line = false;
   }
-
   /**
    * Remove all distance lines from scene
    */
@@ -97,7 +95,6 @@ export default class AreaTool {
     this.m_yStart = -1;
     this.last_length = 0;
   }
-
   /**
    * Redraw all lines
    */
@@ -122,7 +119,6 @@ export default class AreaTool {
       }
     }
   }
-
   /**
    * Set pixel size in mm
    * @param (float) xPixelSize - canvas pixel size in mm for x axis
@@ -132,7 +128,6 @@ export default class AreaTool {
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }
-
   /**
    * Return running state
    * @return {boolean} True if last line has not been fixed yet
@@ -140,7 +135,6 @@ export default class AreaTool {
   isRunning() {
     return this.m_runningState;
   }
-
   /**
    * Return point of intersection
    * @param (Object) point1 - first point of first segment
@@ -171,7 +165,6 @@ export default class AreaTool {
       seg2
     };
   }
-
   /**
    * Calculate area of polygon
    * @param (float) length - number of points in the polygon
@@ -200,7 +193,6 @@ export default class AreaTool {
     }
     return -1;
   }
-
   /**
    * Draw lines
    * @param (Array) vertex1 - first point of line
@@ -219,7 +211,6 @@ export default class AreaTool {
     this.m_scene.add(text);
     this.m_distances.push({ line, text });
   }
-
   /**
    * Mouse down events handler
    * @param (float) x - mouse x coordinate
@@ -350,7 +341,6 @@ export default class AreaTool {
       }
     }
   }
-
   /**
    * Mouse move events handler
    * @param (float) x - mouse x coordinate
@@ -378,7 +368,6 @@ export default class AreaTool {
       }
     }
   }
-
   updateVertexes(zoom, posX, posY) {
     this.m_vertexes2 = [];
     //this.m_vertexes = [];

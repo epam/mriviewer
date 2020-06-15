@@ -11,22 +11,25 @@
 
 import React from 'react';
 
-// import LoadResult from './LoadResult';
-import LoaderKtx from './loaders/LoaderKtx';
-import LoaderNifti from './loaders/LoaderNifti';
-import LoaderDicom from './loaders/LoaderDicom';
-import LoaderHdr from './loaders/LoaderHdr';
+//import LoaderKtx from './loaders/LoaderKtx';
+//import LoaderNifti from './loaders/LoaderNifti';
+//import LoaderDicom from './loaders/LoaderDicom';
+//import LoaderHdr from './loaders/LoaderHdr';
 
 // ********************************************************
 // Const
 // ********************************************************
+
+export const VOLUME_ICON_SIDE = 64;
 
 // ********************************************************
 // Class
 // ********************************************************
 
 /**
- * Class Volume  some text later...
+ * Class Volume  
+ * 
+ * Result volume, loaded from Dicom, Ktx, Nifti, ... files
  */
 class Volume extends React.Component {
   /**
@@ -43,16 +46,10 @@ class Volume extends React.Component {
     this.m_boxSize = {
       x: 0.0, y: 0.0, z: 0.0
     };
-    this.m_patientName = '';
-    this.m_patientBirth = '';
-    this.m_seriesDescr = '';
-    this.m_studyDescr = '';
-    this.m_studyDate = '';
-    this.m_seriesTime = '';
-    this.m_bodyPartExamined = '';
-    this.m_institutionName = '';
-    this.m_operatorsName = '';
-    this.m_physicansName = '';
+    // icon to show
+    this.m_xIcon = 0;
+    this.m_yIcon = 0;
+    this.m_dataIcon = null;
   }
   createEmptyBytesVolume(xDim, yDim, zDim) {
     this.m_xDim = xDim;
@@ -69,11 +66,50 @@ class Volume extends React.Component {
       this.m_dataArray[i] = 0;
     }
   }
+  // Create icon for volume
+  createIcon() {
+    console.assert(this.m_xDim > 0);
+    console.assert(this.m_yDim > 0);
+    console.assert(this.m_zDim > 0);
+    console.assert(this.m_dataArray !== null);
+    const sizeSrcMax = (this.m_xDim > this.m_yDim) ? this.m_xDim : this.m_yDim;
+    const scale = sizeSrcMax / VOLUME_ICON_SIDE;
+
+    // central slice
+    const zCenter = Math.floor(this.m_zDim / 2);
+    const zOff = zCenter * this.m_xDim * this.m_yDim;
+
+    this.m_xIcon = VOLUME_ICON_SIDE;
+    this.m_yIcon = this.m_xIcon;
+    const numPixelsIcon = this.m_xIcon * this.m_yIcon;
+    this.m_dataIcon = new Uint8Array(numPixelsIcon);
+    for (let i = 0; i < numPixelsIcon; i++){
+      this.m_dataIcon[i] = 0;
+    }
+    // actual size in icon (dest image)
+    const wDst = Math.floor(VOLUME_ICON_SIDE * this.m_xDim / sizeSrcMax);
+    const hDst = Math.floor(VOLUME_ICON_SIDE * this.m_yDim / sizeSrcMax);
+    // top left corner in dst image
+    const xDstL = Math.floor(this.m_xIcon / 2 - wDst / 2);
+    const yDstT = Math.floor(this.m_yIcon / 2 - hDst / 2);
+    for (let yDst = 0; yDst < hDst; yDst++) {
+      const ySrc = Math.floor(yDst * scale);
+      for (let xDst = 0; xDst < wDst; xDst++) {
+        const xSrc = Math.floor(xDst * scale);
+        const val = this.m_dataArray[xSrc + ySrc * this.m_xDim + zOff];
+        // write result
+        const xWrite = xDst + xDstL;
+        const yWrite = yDst + yDstT;
+        this.m_dataIcon[xWrite + yWrite * this.m_xIcon] = val;
+      } // for xDst
+    } // for yDst
+  } // end createIcon
   //
   // Make each volume texture size equal to 4 * N
   //
   makeDimensions4x() {
-    if (this.m_zDim <= 1) {
+    // do nothing if z slices less then 4 (was less 1)
+    if (this.m_zDim < 4) {
       return;
     }
     const xDimNew = (this.m_xDim + 3) & (~3);
@@ -147,79 +183,11 @@ class Volume extends React.Component {
     this.m_dataArray = datArrayNew;
     this.m_dataSize = xyzDimNew;
   } // end
-  //
-  // Read from KTX format
-  //
-  readFromKtx(arrBuf, callbackProgress, callbackComplete) {
-    const loader = new LoaderKtx();
-    const ret = loader.readFromBuffer(this, arrBuf, callbackProgress, callbackComplete);
-    return ret;
-  } // end readFromKtx
-  //
-  // Read from KTX by URL
-  //
-  readFromKtxUrl(strUrl, callbackProgress, callbackComplete) {
-    const loader = new LoaderKtx();
-    loader.readFromUrl(this, strUrl, callbackProgress, callbackComplete);
-  }
-  //
-  // Read from NII by URL
-  //
-  readFromNiiUrl(strUrl, callbackProgress, callbackComplete) {
-    const loader = new LoaderNifti();
-    const ret = loader.readFromUrl(this, strUrl, callbackProgress, callbackComplete);
-    return ret;
-  }
-  //
-  // Read from Dicom by URL
-  //
-  readFromDicomUrl(strUrl, callbackProgress, callbackComplete) {
-    const NUM_FILES = 0; // will be filled later
-    const loader = new LoaderDicom(NUM_FILES);
-    const ret = loader.readFromUrl(this, strUrl, callbackProgress, callbackComplete);
-    return ret;
-  }
-  //
-  // Read from Hdr by URL
-  //
-  readFromHdrUrl(strUrl, callbackProgress, callbackComplete) {
-    const loader = new LoaderHdr();
-    const ret = loader.readFromUrl(this, strUrl, callbackProgress, callbackComplete);
-    return ret;
-  }
-  //
-  // Read from local nifti
-  //
-  readFromNifti(arrBuf, callbackProgress, callbackComplete) {
-    const loader = new LoaderNifti();
-    const ret = loader.readFromBuffer(this, arrBuf, callbackProgress, callbackComplete);
-    return ret;
-  }
-  //
-  // Read from local dicom
-  //
-  readFromDicom(loader, arrBuf, callbackProgress, callbackComplete) {
-    /*
-    // save dicomInfo to store
-    const dcmInfo = loader.m_dicomInfo;
-    const store = props;
-    store.dispatch({ type: StoreActionType.SET_DICOM_INFO, dicomInfo: dcmInfo });
-    */
-    const indexFile = 0;
-    const fileName = 'file???';
-    const ratio = 0.0;
-
-    const ret = loader.readFromBuffer(indexFile, fileName, ratio, arrBuf, callbackProgress, callbackComplete);
-    return ret;
-  }
-  readSingleSliceFromDicom(loader, indexFile, fileName, ratioLoaded, arrBuf, callbackProgress, callbackComplete) {
-    const ret = loader.readFromBuffer(indexFile, fileName, ratioLoaded, arrBuf, callbackProgress, callbackComplete);
-    return ret;
-  }
   // do nothing. But we need to implement render() to run Volume tests
   render() {
     return <p>></p>;
   }
+
 } // end class Volume
 
 export default Volume;

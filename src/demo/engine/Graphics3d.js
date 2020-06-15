@@ -151,7 +151,9 @@ class Graphics3d extends React.Component {
     this.setVolRenderToStore(this.m_volumeRenderer3D);
     if (this.volume !== null && this.isLoaded === false && this.m_volumeRenderer3D !== null) { 
       const store = this.props;
-      const vol = store.volume;
+      const volSet = store.volumeSet;
+      const volIndex = store.volumeIndex;
+      const vol = volSet.getVolume(volIndex);
       const FOUR = 4;
       const isIso = (vol.m_bytesPerVoxel === FOUR) ? true : false;    
       const modeView = store.modeView; 
@@ -280,7 +282,9 @@ class Graphics3d extends React.Component {
    */
   render() {
     const store = this.props;
-    const vol = store.volume;
+    const volSet = store.volumeSet;
+    const volIndex = store.volumeIndex;
+    const vol = volSet.getVolume(volIndex);
     // const tex3d = this.props.texture3d;
     if (vol !== null) {
       this.volume = vol;

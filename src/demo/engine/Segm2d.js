@@ -52,9 +52,8 @@ class Segm2d
 
     this.m_needApplySegmentation = false;
   }
-
   // debug
-  printTensor(tensor, numValues = 64*3) {
+  printTensor(tensor, numValues = 64 * 3) {
     console.log('tensor shape = ' + tensor.shape);
     const tensorData = tensor.dataSync();
     let strDebug = ''
@@ -79,7 +78,6 @@ class Segm2d
       console.log(strOut);
     } // for (y)
   }
-
   scaleUp(pixelsSrcInt, wSrc, hSrc, pixelsDst, wDst, hDst) {
     // float scales
     const xScale = wSrc / wDst;
@@ -104,14 +102,13 @@ class Segm2d
       } // for (x)
     } // for (y)
   }
-
   async onLoadModel() {
     this.stage = STAGE_MODEL_IS_LOADING;
     this.pixels = null;
-    const PATH_MODEL='http://d-inter.ru/private/med3web/2020_03_06/tfjs/model.json';
+    const PATH_MODEL = 'http://d-inter.ru/private/med3web/2020_03_06/tfjs/model.json';
 
     console.log('Loading tfjs model...');
-    const modelLoaded = await tf.loadLayersModel(PATH_MODEL, {strict: false} );
+    const modelLoaded = await tf.loadLayersModel(PATH_MODEL, { strict: false } );
 
     this.model = modelLoaded;
     this.stage = STAGE_MODEL_READY;
@@ -246,8 +243,7 @@ class Segm2d
 
     this.objGraphics2d.forceRender();
   }
-
-  getStageString(stage) {
+  getStageString() {
     const msgArr = [
       'Wait. Model is not loaded', // const STAGE_MODEL_NOT_LOADED = 0;
       'Wait. Model is loading ...',  // const STAGE_MODEL_IS_LOADING = 1;
@@ -258,11 +254,9 @@ class Segm2d
     const strMessage = msgArr[this.stage];
     return strMessage;
   }
-
   setImageData(imgData) {
     this.srcImageData = imgData;
   }
-
   render(ctx, w, h, imgData) {
     this.srcImageData = imgData;
     this.wSrc = w;
@@ -270,7 +264,7 @@ class Segm2d
 
     // debug
     console.log('Segm2d render. VGG model ' + ((this.model === null) ? 'not loaded' : 'loaded') );
-    const strMessage = this.getStageString(this.stage);
+    const strMessage = this.getStageString();
     console.log('Segm2d render. stage = ' + strMessage );
 
     /*
@@ -317,10 +311,10 @@ class Segm2d
     ctx.lineTo(0, h - 1);
     ctx.stroke();
     // draw wait message
-    const strMsgPrint = this.getStageString(this.stage);
+    const strMsgPrint = this.getStageString();
     ctx.font = '24px serif';
     ctx.fillStyle = 'rgb(64, 255, 64)';
-    ctx.fillText(strMsgPrint, w/2, h/2);
+    ctx.fillText(strMsgPrint, w / 2, h / 2);
   }
 }
 

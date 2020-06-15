@@ -34,7 +34,6 @@ export default class PickTool {
     this.m_volHeader = null;
     this.m_volData = null;
   } // end of constructor
-
   clear() {
     // remove message from srceen
     if (this.m_text !== null) {
@@ -51,7 +50,6 @@ export default class PickTool {
   setData(vdata) {
     this.m_volData = vdata;
   }
-
   onMouseDown(xScr, yScr, sliceAxis, sliderPosition, zoom, posX, posY) {
     // remove old message from screen
     this.clear();
@@ -119,7 +117,6 @@ export default class PickTool {
     const d = new Date();
     this.m_textTime = d.getTime();
   }
-
   update() {
     const d = new Date();
     const curTime = d.getTime();
