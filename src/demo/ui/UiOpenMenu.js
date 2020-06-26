@@ -13,6 +13,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { NavDropdown, Button, Modal, InputGroup, FormControl, } from 'react-bootstrap';
+// import { gzip, ungzip } from 'node-gzip';
+import zlib from 'zlib';
+import createReadStream from 'filereader-stream';
 
 import VolumeSet from '../engine/VolumeSet';
 import Volume from '../engine/Volume';
@@ -220,13 +223,40 @@ class UiOpenMenu extends React.Component {
       this.setErrorString(strErr);
     }
   }
+  onFileReadSingleUncompressedFile(strContent, callbackProgress, callbackComplete, callbackCompleteSingleDicom) {
+    if (this.m_fileName.endsWith('.ktx') || this.m_fileName.endsWith('.KTX')) {
+      // if read ktx
+      this.m_volumeSet.readFromKtx(strContent, callbackProgress, callbackComplete);
+    } else if (this.m_fileName.endsWith('.nii') || this.m_fileName.endsWith('.NII')) {
+      this.m_volumeSet.readFromNifti(strContent, callbackProgress, callbackComplete);
+    } else if (this.m_fileName.endsWith('.dcm') || this.m_fileName.endsWith('.DCM')) {
+      this.m_loaderDicom = new LoaderDicom();
+      this.m_loaderDicom.m_zDim = 1;
+      this.m_loaderDicom.m_numFiles = 1;
+      this.m_volumeSet.readFromDicom(this.m_loaderDicom, strContent, callbackProgress, callbackCompleteSingleDicom);
+    } else if (this.m_fileName.endsWith('.hdr') || this.m_fileName.endsWith('.HDR')) {
+      // readOk = vol.readFromHdrHeader(strContent, callbackProgress, callbackComplete);
+      console.log(`cant read single hdr file: ${this.m_fileName}`);
+      // readStatus = LoadResult.BAD_HEADER;
+    } else if (this.m_fileName.endsWith('.img') || this.m_fileName.endsWith('.IMG')) {
+      // readOk = vol.readFromHdrImage(strContent, callbackProgress, callbackComplete);
+      console.log(`cant read single img file: ${this.m_fileName}`);
+      // readStatus = LoadResult.BAD_HEADER;
+    } else {
+      console.log(`onFileContentReadSingleFile: unknown file type: ${this.m_fileName}`);
+    }
+  }
+  onFileContentReadSingleFile() {
+    let strContent = this.m_fileReader.result;
+    this.onFileReadSingleBuffer(strContent);
+  }
+
   //
   // based on local file read
   // read from string content in this.m_fileReader.result
   //
-  onFileContentReadSingleFile() {
-    console.log('UiOpenMenu. onFileContentReadSingleFile ...');
-    const strContent = this.m_fileReader.result;
+  onFileReadSingleBuffer(strContent) {
+    console.log('UiOpenMenu. onFileReadSingleBuffer ...');
     // console.log(`file content = ${strContent.substring(0, 64)}`);
     // console.log(`onFileContentRead. type = ${typeof strContent}`);
     this.m_volumeSet = new VolumeSet();
@@ -238,6 +268,34 @@ class UiOpenMenu extends React.Component {
 
     //const strType = strContent.constructor.name;
     //console.log(`single file read content type = ${strType}`);
+
+    /*
+    // if file gzipped, unpack data (strContent) first
+    if (this.m_fileName.endsWith('.gz')) {
+      // const decompressedData = await ungzip(strContent);
+      // strContent = decompressedData;
+      // remove last 3 chars form file name string
+      this.m_fileName = this.m_fileName.slice(0, -3);
+
+      //zlib.gunzip(strContent, function(err, data) {
+      //  console.log("err = " + err);
+      //  this.onFileReadSingleUncompressedFile(data, callbackProgress, callbackComplete, callbackCompleteSingleDicom);
+      //});
+
+      const compressed = await gzip('Hello World. This is a sample text to demonstrate zip/unzip');
+      const decompressed = await ungzip(compressed);
+      console.log('decomp text is: ' + decompressed.toString());  
+
+      // TODO: seems strContent is not same as compressed above
+      ungzip(strContent.toString()).then((decompr) => {
+        const str = decompr.toString();
+        console.log("decomp = " + str.substr(0, 12));
+        // this.onFileReadSingleUncompressedFile(decompressed, callbackProgress, callbackComplete, callbackCompleteSingleDicom);
+      });
+      return;
+    }
+    */
+
 
     if (this.m_fileName.endsWith('.ktx') || this.m_fileName.endsWith('.KTX')) {
       // if read ktx
@@ -479,6 +537,89 @@ class UiOpenMenu extends React.Component {
       if (numFiles === 1) {
         const file = evt.target.files[0];
         this.m_fileName = file.name;
+
+        //  read gzip
+        if (this.m_fileName.endsWith('.gz')) {
+          // here will be result raw buffer
+          this.m_unzippedBuffer = null;
+
+          // remove last 3 chars form file name string
+          this.m_fileName = this.m_fileName.slice(0, -3);
+
+          const store = this.props;
+
+          const gunzip = zlib.createGunzip();
+          createReadStream(file).pipe(gunzip);
+          gunzip.on('data', (data) => {
+            // progress
+            const uiapp = store.uiApp;
+            if (this.m_unzippedBuffer == null) {
+              uiapp.doShowProgressBar('Read gzip...');
+            } else {
+              const readSize = this.m_unzippedBuffer.length;
+              const allSize = file.size;
+              const KOEF_DEFLATE = 0.28;
+              const ratio100 = Math.floor(readSize * 100.0 * KOEF_DEFLATE / allSize);
+              uiapp.doSetProgressBarRatio(ratio100);
+            }
+
+            // read the data chunk-by-chunk
+            // data is Uint8Array
+            const dataSize = data.length;
+            if (this.m_unzippedBuffer == null) {
+              // create buffer from first ungzipped data chunk
+              this.m_unzippedBuffer = new Uint8Array(dataSize);
+              this.m_unzippedBuffer.set(data, 0);
+            } else {
+              // append buffer from 2,3,... ungzipped data chunks
+              const dataCollectedSize = this.m_unzippedBuffer.length;
+              const arrNew = new Uint8Array(dataCollectedSize + dataSize);
+              arrNew.set(this.m_unzippedBuffer, 0);
+              arrNew.set(data, dataCollectedSize);
+              this.m_unzippedBuffer = arrNew;
+            }
+          });
+          gunzip.on('close', () => {
+            console.log('gzip on close');
+          });
+
+          gunzip.on('end', () => {
+            // close progress
+            const uiapp = store.uiApp;
+            uiapp.doHideProgressBar();
+
+            // now all chunks are read. Need to check raw ungzipped buffer
+            const sizeBuffer = this.m_unzippedBuffer.length;
+            if (sizeBuffer < 128) {
+              console.log('Too small ungzipped data: ' + sizeBuffer.toString() + ' bytes. canat read volume data');
+              return;
+            }
+            // check correct nifti header after extract raw bytes from gzip
+            const headTemplate = [0x00, 0x00, 0x01, 0x5c];
+            let correctHead0 = true;
+            for (let i = 0; i < 4; i++) {
+              if (this.m_unzippedBuffer[i] !== headTemplate[i]) {
+                correctHead0 = false;
+              }
+            }
+            let correctHead1 = true;
+            for (let i = 0; i < 4; i++) {
+              if (this.m_unzippedBuffer[i] !== headTemplate[3 - i]) {
+                correctHead1 = false;
+              }
+            }
+            if (!correctHead0 && !correctHead1) {
+              console.log('Wrong nifi header, cant read gzipped file');
+              return;
+            }
+            console.log('ungzip done with ' + sizeBuffer.toString() + ' bytes. Correct nifti header detected');
+            // process raw data buffer
+            this.onFileReadSingleBuffer(this.m_unzippedBuffer);
+          });
+          return;
+        } // if gzipped file
+
+
         this.m_fileReader = new FileReader();
         this.m_fileReader.onloadend = this.onFileContentReadSingleFile;
         this.m_fileReader.readAsArrayBuffer(file);
@@ -520,7 +661,7 @@ class UiOpenMenu extends React.Component {
   buildFileSelector() {
     const fileSelector = document.createElement('input');
     fileSelector.setAttribute('type', 'file');
-    fileSelector.setAttribute('accept', '.ktx,.dcm,.nii,.hdr,.h,.img');
+    fileSelector.setAttribute('accept', '.ktx,.dcm,.nii,.hdr,.h,.img,.gz');
     fileSelector.setAttribute('multiple', '');
     fileSelector.onchange = this.handleFileSelected;
     return fileSelector;
@@ -543,7 +684,7 @@ class UiOpenMenu extends React.Component {
   onChangeUrlString(evt) {
     const str = evt.target.value;
     this.setState({ strUrl: str }); 
-    console.log(`onChangeUrlString. str = ${str}`)
+    // console.log(`onChangeUrlString. str = ${str}`)
   }
   callbackReadCompleteUrlKtxNii(codeResult) {
     if (codeResult !== LoadResult.SUCCESS) {

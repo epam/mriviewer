@@ -31,6 +31,7 @@ class LoaderNifti {
    * @param {object} props - props from up level object
    */
   constructor() {
+    this.m_littleEndian = true;
     this.m_header = {
       m_id: '',
       m_endianness: 0,
@@ -62,15 +63,25 @@ class LoaderNifti {
   * @param {number} off - offset in buffer
   * @return 32 bit integer number
   */
-  static readIntFromBuffer(buf, off) {
-    const res = ((buf[off + 0]) |
-      // eslint-disable-next-line
-      (buf[off + 1] << 8) |
-      // eslint-disable-next-line
-      (buf[off + 2] << 16) |
-      // eslint-disable-next-line
-      (buf[off + 3] << 24)
-    );
+  readIntFromBuffer(buf, off) {
+    let res = 0;
+    if (this.m_littleEndian) {
+      res = ((buf[off + 0]) |
+        // eslint-disable-next-line
+        (buf[off + 1] << 8) |
+        // eslint-disable-next-line
+        (buf[off + 2] << 16) |
+        // eslint-disable-next-line
+        (buf[off + 3] << 24));
+    } else {
+      res = ((buf[off + 3]) |
+        // eslint-disable-next-line
+        (buf[off + 2] << 8) |
+        // eslint-disable-next-line
+        (buf[off + 1] << 16) |
+        // eslint-disable-next-line
+        (buf[off + 0] << 24));
+    }
     return res;
   }
   /**
@@ -79,9 +90,15 @@ class LoaderNifti {
   * @param {number} off - offset in buffer
   * @return 16 bit short integer number
   */
-  static readShortFromBuffer(buf, off) {
-    // eslint-disable-next-line
-    const res = ((buf[off + 0]) | (buf[off + 1] << 8));
+  readShortFromBuffer(buf, off) {
+    let res = 0;
+    if (this.m_littleEndian) {
+      // eslint-disable-next-line
+      res = ((buf[off + 0]) | (buf[off + 1] << 8));
+    } else {
+      // eslint-disable-next-line
+      res = ((buf[off + 1]) | (buf[off + 0] << 8));
+    }
     return res;
   }
   /**
@@ -90,7 +107,7 @@ class LoaderNifti {
   * @param {number} off - offset in buffer
   * @return float number, loaded from buffer
   */
-  static readFloatFromBuffer(buf, off) {
+  readFloatFromBuffer(buf, off) {
     const BYTES_IN_FLOAT = 4;
     const arBuf = new ArrayBuffer(BYTES_IN_FLOAT);
     const dataArray = new DataView(arBuf);
@@ -102,8 +119,7 @@ class LoaderNifti {
     dataArray.setUint8(2, buf[off + 2]);
     // eslint-disable-next-line
     dataArray.setUint8(3, buf[off + 3]);
-    const IS_LITTLE_ENDIAN = true;
-    const res = dataArray.getFloat32(0, IS_LITTLE_ENDIAN);
+    const res = dataArray.getFloat32(0, this.m_littleEndian);
     return res;
   }
   /**
@@ -147,7 +163,12 @@ class LoaderNifti {
     const SIZE_SHORT = 2;
 
     let bufOff = 0;
-    const headSize = LoaderNifti.readIntFromBuffer(bufBytes, bufOff);
+    let headSize = this.readIntFromBuffer(bufBytes, bufOff);
+    if (headSize > (2 << 24)) {
+      this.m_littleEndian = false;
+      headSize = this.readIntFromBuffer(bufBytes, bufOff);
+    }
+
     bufOff += SIZE_DWORD;
     if (headSize !== NIFTI_HEADER_SIZE) {
       console.log(`Nifti first int wrong: ${headSize}, but should be ${NIFTI_HEADER_SIZE}`);
@@ -173,7 +194,7 @@ class LoaderNifti {
     bufOff += 1;
 
     // read number of dimensions
-    const numDimensions = LoaderNifti.readShortFromBuffer(bufBytes, bufOff);
+    const numDimensions = this.readShortFromBuffer(bufBytes, bufOff);
     bufOff += SIZE_SHORT;
     const MIN_NUM_DIMS = 3;
     if (numDimensions < MIN_NUM_DIMS) {
@@ -183,11 +204,11 @@ class LoaderNifti {
       }
       return false;
     }
-    this.m_xDim = LoaderNifti.readShortFromBuffer(bufBytes, bufOff);
+    this.m_xDim = this.readShortFromBuffer(bufBytes, bufOff);
     bufOff += SIZE_SHORT;
-    this.m_yDim = LoaderNifti.readShortFromBuffer(bufBytes, bufOff);
+    this.m_yDim = this.readShortFromBuffer(bufBytes, bufOff);
     bufOff += SIZE_SHORT;
-    this.m_zDim = LoaderNifti.readShortFromBuffer(bufBytes, bufOff);
+    this.m_zDim = this.readShortFromBuffer(bufBytes, bufOff);
     bufOff += SIZE_SHORT;
 
     // eslint-disable-next-line
@@ -201,9 +222,9 @@ class LoaderNifti {
     bufOff += SIZE_DWORD;
     // intent_code
     bufOff += SIZE_SHORT;
-    const dataType = LoaderNifti.readShortFromBuffer(bufBytes, bufOff);
+    const dataType = this.readShortFromBuffer(bufBytes, bufOff);
     bufOff += SIZE_SHORT;
-    const bitPix = LoaderNifti.readShortFromBuffer(bufBytes, bufOff);
+    const bitPix = this.readShortFromBuffer(bufBytes, bufOff);
     bufOff += SIZE_SHORT;
 
     const NIFTI_DATA_TYPE_UINT8 = 2;
@@ -243,13 +264,13 @@ class LoaderNifti {
     bufOff += SIZE_SHORT;
 
     // grid spacing
-    // const pixdim0 = LoaderNifti.readFloatFromBuffer(bufBytes, bufOff);
+    // const pixdim0 = this.readFloatFromBuffer(bufBytes, bufOff);
     bufOff += SIZE_DWORD;
-    const pixdim1 = LoaderNifti.readFloatFromBuffer(bufBytes, bufOff);
+    const pixdim1 = this.readFloatFromBuffer(bufBytes, bufOff);
     bufOff += SIZE_DWORD;
-    const pixdim2 = LoaderNifti.readFloatFromBuffer(bufBytes, bufOff);
+    const pixdim2 = this.readFloatFromBuffer(bufBytes, bufOff);
     bufOff += SIZE_DWORD;
-    const pixdim3 = LoaderNifti.readFloatFromBuffer(bufBytes, bufOff);
+    const pixdim3 = this.readFloatFromBuffer(bufBytes, bufOff);
     bufOff += SIZE_DWORD;
 
     // console.log(`Nifti pixdim0: ${pixdim0}`);
@@ -350,7 +371,7 @@ class LoaderNifti {
     j = 0;
     if ((dataType === NIFTI_DATA_TYPE_INT16) || (dataType === NIFTI_DATA_TYPE_UINT16)) {
       for (i = 0; i < numVoxels; i++) {
-        const val = LoaderNifti.readShortFromBuffer(bufBytes, dataOff + j);
+        const val = this.readShortFromBuffer(bufBytes, dataOff + j);
         // eslint-disable-next-line
         j += 2;
         if (val > valMax) {
@@ -380,7 +401,7 @@ class LoaderNifti {
     }
     if (dataType === NIFTI_DATA_TYPE_FLOAT32) {
       for (i = 0; i < numVoxels; i++) {
-        const fval = LoaderNifti.readFloatFromBuffer(bufBytes, dataOff + j);
+        const fval = this.readFloatFromBuffer(bufBytes, dataOff + j);
         const val = Math.floor(fval) + 1;
         // eslint-disable-next-line
         j += 4;
@@ -406,7 +427,7 @@ class LoaderNifti {
     j = 0;
     if ((dataType === NIFTI_DATA_TYPE_INT16) || (dataType === NIFTI_DATA_TYPE_UINT16)) {
       for (i = 0; i < numVoxels; i++) {
-        const val = LoaderNifti.readShortFromBuffer(bufBytes, dataOff + j);
+        const val = this.readShortFromBuffer(bufBytes, dataOff + j);
         // eslint-disable-next-line
         j += 2;
         histArray[val] ++;
@@ -414,7 +435,7 @@ class LoaderNifti {
     } // if
     if (dataType === NIFTI_DATA_TYPE_FLOAT32) {
       for (i = 0; i < numVoxels; i++) {
-        const val = Math.floor(LoaderNifti.readFloatFromBuffer(bufBytes, dataOff + j));
+        const val = Math.floor(this.readFloatFromBuffer(bufBytes, dataOff + j));
         // eslint-disable-next-line
         j += 4;
         histArray[val] ++;
@@ -465,7 +486,7 @@ class LoaderNifti {
     j = 0;
     if ((dataType === NIFTI_DATA_TYPE_INT16) || (dataType === NIFTI_DATA_TYPE_UINT16)) {
       for (i = 0; i < numVoxels; i++) {
-        let val = LoaderNifti.readShortFromBuffer(bufBytes, dataOff + j);
+        let val = this.readShortFromBuffer(bufBytes, dataOff + j);
         // eslint-disable-next-line
         j += 2;
         // scale down to [0..255]
@@ -499,7 +520,7 @@ class LoaderNifti {
     } // if 8 bit
     if (dataType === NIFTI_DATA_TYPE_FLOAT32) {
       for (i = 0; i < numVoxels; i++) {
-        let val = Math.floor(LoaderNifti.readFloatFromBuffer(bufBytes, dataOff + j));
+        let val = Math.floor(this.readFloatFromBuffer(bufBytes, dataOff + j));
         // eslint-disable-next-line
         j += 4;
         // scale down to [0..255]

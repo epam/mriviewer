@@ -74,6 +74,18 @@ export default class FileLoader {
         console.log('Bad response type. Expect object type in response.');
       } else if (doneCallback) {
         // console.log(`FileFromServer response received. url = ${this.m_url}`);
+
+        // check wrong buffer content
+        const enc = new TextDecoder("utf-8");
+        let sz = arrBuf.byteLength;
+        if (sz > 4000) {
+          sz = 4000;
+        }
+        const bufHead = arrBuf.slice(0, sz);
+        const strBuf = enc.decode(bufHead);
+        if (strBuf.substr(0, 9) === "<!DOCTYPE") {
+          console.log("Error load data from URL. Read result is " + strBuf);
+        }
         doneCallback(arrBuf);
       }
     }, false);
