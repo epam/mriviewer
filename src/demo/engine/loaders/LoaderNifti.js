@@ -463,7 +463,11 @@ class LoaderNifti {
     // }
 
     const VAL_MIN = 4.0;
-    const indMax = histogram.getLastMaxIndex(VAL_MIN);
+    // fix max index if maximum not found
+    let indMax = histogram.getLastMaxIndex(VAL_MIN);
+    if (indMax < 4) {
+      indMax = valMax;
+    }
     console.log(`LoaderNifti. get Last max peak: ${indMax} / ${histogram.m_numColors}`);
 
     // replace val max to extracted maximum from histogram
