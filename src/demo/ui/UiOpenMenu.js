@@ -250,7 +250,6 @@ class UiOpenMenu extends React.Component {
     let strContent = this.m_fileReader.result;
     this.onFileReadSingleBuffer(strContent);
   }
-
   //
   // based on local file read
   // read from string content in this.m_fileReader.result

@@ -19,6 +19,8 @@ import Texture3D from '../engine/Texture3D';
 import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
 
+import SobelEdgeDetector from '../engine/imgproc/Sobel';
+
 
 // ********************************************************
 // Const
@@ -39,6 +41,9 @@ class UiFilterMenu extends React.Component {
     this.onLungsFillerCallback = this.onLungsFillerCallback.bind(this);
     this.onButtonDetectBrain = this.onButtonDetectBrain.bind(this);
     this.onSkullRemoveCallback = this.onSkullRemoveCallback.bind(this);
+    this.onButtonSobel = this.onButtonSobel.bind(this);
+    this.onSobelCallback = this.onSobelCallback.bind(this);
+
     //this.callbackProgressFun = this.callbackProgressFun.bind(this);
   }
   /*
@@ -106,7 +111,7 @@ class UiFilterMenu extends React.Component {
       uiApp.doHideProgressBar();
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
-      store.graphics2d.renderScene();
+      // store.graphics2d.renderScene();
     }
     // update render
     store.graphics2d.forceUpdate();
@@ -116,6 +121,110 @@ class UiFilterMenu extends React.Component {
       this.m_timerId = setTimeout(this.onLungsFillerCallback, SK_REM_DELAY_MSEC);
     }
   }
+  // on sobel
+  onButtonSobel() {
+    // get globals
+    const store = this.props;
+
+    const volSet = store.volumeSet;
+    const volIndex = store.volumeIndex;
+    const vol = volSet.getVolume(volIndex);
+
+    if ((vol === undefined) || (vol === null)) {
+      console.log('onButtonSobel: no volume!');
+      return;
+    }
+    this.m_vol = vol;
+    const xDim = vol.m_xDim;
+    const yDim = vol.m_yDim;
+    const zDim = vol.m_zDim;
+    if (xDim * yDim * zDim < 1) {
+      console.log(`onButtonSobel: bad volume! dims = ${xDim}*${yDim}*${zDim}`);
+      return;
+    }
+    // let volTextureSrc = vol.m_dataArray;
+    const ONE = 1;
+    if (vol.m_bytesPerVoxel !== ONE) {
+      console.log('onButtonSobel: supported only 1bpp volumes');
+      return;
+    }
+
+    console.log('onButtonSobel: start sobel...');
+    //const xyzDim = xDim * yDim * zDim;
+    //const volTextureDst = new Uint8Array(xyzDim);
+
+    const sobel = new SobelEdgeDetector();
+    sobel.start(vol);
+    this.m_sobel = sobel;
+
+    const uiApp = store.uiApp;
+    uiApp.doShowProgressBar('Apply sobel edge detector...');
+    uiApp.doSetProgressBarRatio(0.0);
+
+    const SOBEL_UPDATE_DELAY_MSEC = 150;
+    this.m_timerId = setTimeout(this.onSobelCallback, SOBEL_UPDATE_DELAY_MSEC);
+
+  } // end onButtonSobel
+  // callback for periodicallt invoke sobel 3d volume filtering
+  onSobelCallback() {
+    this.m_sobel.update();
+
+    const store = this.props;
+
+    let ratioUpdate = this.m_sobel.getRatio();
+    ratioUpdate = (ratioUpdate < 1.0) ? ratioUpdate : 1.0;
+    ratioUpdate *= 100;
+    ratioUpdate = Math.floor(ratioUpdate);
+    // console.log('ratio = ' + ratioUpdate.toString() );
+
+    const uiApp = store.uiApp;
+    uiApp.doSetProgressBarRatio(ratioUpdate);
+
+    const isFinished = this.m_sobel.isFinished();
+
+    if (isFinished) {
+      console.log('`onSobelCallback: iters finished!');
+      uiApp.doHideProgressBar();
+
+      clearInterval(this.m_timerId);
+      this.m_timerId = 0;
+
+      const volSet = store.volumeSet;
+      const volIndex = store.volumeIndex;
+      const vol = volSet.getVolume(volIndex);
+
+      // normalize dst
+      this.m_sobel.normalizeDstImage();
+
+      // copy result pixels into source
+      const xDim = vol.m_xDim;
+      const yDim = vol.m_yDim;
+      const zDim = vol.m_zDim;
+      const xyzDim = xDim * yDim * zDim;
+      const pixelsDst = this.m_sobel.getPixelsDst()
+      for (let i = 0; i < xyzDim; i++) {
+        vol.m_dataArray[i] = Math.floor(pixelsDst[i]);
+      } // for i
+      this.m_sobel.stop();
+
+      // rebuild 3d data
+      store.dispatch({ type: StoreActionType.SET_VOLUME_SET, volumeSet: volSet });
+      store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
+      const tex3d = new Texture3D();
+      tex3d.createFromRawVolume(vol);
+      store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
+    } // if finished
+    // update render
+    store.graphics2d.forceUpdate();
+    // next update timer
+    if (!isFinished) {
+      const SOBEL_UPDATE_DELAY_MSEC = 150;
+      this.m_timerId = setTimeout(this.onSobelCallback, SOBEL_UPDATE_DELAY_MSEC);
+    }
+  } // end onSobelCallback
+  // detect brain segmentation
   onButtonDetectBrain() {
     // get globals
     const store = this.props;
@@ -288,6 +397,9 @@ class UiFilterMenu extends React.Component {
         <NavDropdown.Item href="#actionDataectBrain" onClick={evt => this.onButtonDetectBrain(evt)}>
           <i className="fas fa-brain"></i>
           Auto detect brain
+        </NavDropdown.Item>
+        <NavDropdown.Item href="#actionSobel" onClick={evt => this.onButtonSobel(evt)}>
+          Sobel filter
         </NavDropdown.Item>
       </NavDropdown>;
 

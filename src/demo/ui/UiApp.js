@@ -181,9 +181,9 @@ class UiApp extends React.Component {
 
     const objPrgBarVis = 
       <Row>
-        <Col>
+        <Col xs xl sm md lg="12" style={{ width: '100%' } }>
           {strProgressMsg}
-          <ProgressBar animated variant="info"
+          <ProgressBar animated variant="success"
             now={this.state.progressBarRatio} label={`${this.state.progressBarRatio}%`}  />
         </Col>
       </Row>

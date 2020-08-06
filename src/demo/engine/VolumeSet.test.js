@@ -3,8 +3,8 @@
 // Imports
 // ********************************************************
 
-// import VolumeSet from './VolumeSet';
-// import Volume from './Volume';
+import VolumeSet from './VolumeSet';
+import Volume from './Volume';
 import { KtxHeader } from './loaders/LoaderKtx';
 import LoadResult from './LoadResult';
 

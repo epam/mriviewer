@@ -10,6 +10,7 @@
 
 import ToolArea from './tools2d/ToolArea';
 import Graphics2d from './Graphics2d';
+import VolumeSet from './VolumeSet';
 
 // ********************************************************
 // Tests
@@ -131,13 +132,15 @@ describe('ToolArea. test line intersect', () => {
         z: 10.0,
       }
     };
+    const volSet = new VolumeSet();
+    volSet.addVolume(vol);
     const store = {
-      volume: vol
+      volumeSet: volSet,
+      volumeIndex: 0,
     };
     const gra = new Graphics2d(store);
     const toolArea = new ToolArea(gra);
     toolArea.setScreenDim(100.0, 100.0);
-    toolArea.setVolume(vol);
 
     const points = [];
     points.push({ x: 0.0, y: 0.0 });
