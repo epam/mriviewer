@@ -903,9 +903,6 @@ class UiOpenMenu extends React.Component {
     // clear modal
     store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: [] });
   }
-  // invoked before render
-  componentWillMount() {
-  }
   // invoked after render
   componentDidMount() {
     this.m_fileSelector = this.buildFileSelector();

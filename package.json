@@ -11,6 +11,7 @@
     "@tensorflow/tfjs": "^1.7.4",
     "bootstrap": "^4.5.0",
     "filereader-stream": "^2.0.0",
+    "gulp": "^4.0.2",
     "jquery": "^3.5.1",
     "node-gzip": "^1.1.2",
     "popper.js": "^1.16.1",
@@ -51,5 +52,9 @@
     "eslint": "^5.16.0",
     "eslint-plugin-react": "^7.20.0",
     "node-pre-gyp": "^0.14.0"
+  },
+  "engines": {
+    "node": "12.16.1",
+    "npm": "6.13.4"
   }
 }

@@ -18,28 +18,60 @@ under the License.
 */
 
 /**
-* Soble edge detector
-* @module demo/engine/imgproc/Sobel
+* Gauss filtering
+* @module demo/engine/imgproc/Gauss
 */
 
-//
-// Sobel edge detectio
-//
+import Volume from '../Volume';
 
-const MAX_SQRT = (5400 * 5400)
-
-export default class SobelEdgeDetector {
+//
+// Gauss edge detectio
+//
+class GaussSmoother {
   constructor() {
     this.m_vol = null;
     this.m_z = -1;
     this.m_iter = -1;
     this.m_pixelsDst = null;
-    this.m_sqrtTable = null;
+    this.m_kernel = null;
   }
   getPixelsDst() {
     return this.m_pixelsDst;
   }
-  start(vol) {
+  createKernel(kernelSize, sigma) {
+    const side      = kernelSize * 2 + 1;
+    const xyzKernel = side * side * side;
+    const arr = new Float32Array(xyzKernel);
+  
+    const mult = 1.0 / (2.0 * sigma * sigma);
+  
+    let off = 0;
+    let sum = 0.0;
+    for (let dz = -kernelSize; dz <= +kernelSize; dz++)
+    {
+      const tz = dz / kernelSize;
+      for (let dy = -kernelSize; dy <= +kernelSize; dy++)
+      {
+        const ty = dy / kernelSize;
+        for (let dx = -kernelSize; dx <= +kernelSize; dx++)
+        {
+          const tx = dx / kernelSize;
+          const w = Math.exp(-(tx * tx + ty * ty + tz * tz) * mult);
+          arr[off++] = w;
+          sum += w;
+        } // for dx
+      } // for dy
+    } // for dz
+  
+    // normalize arr
+    const scl = 1.0 / sum;
+    for (let i = 0; i < xyzKernel; i++)
+      arr[i] *= scl;
+    this.m_kernel = arr;
+  }
+  start(vol, kernelSize, sigma) {
+    this.createKernel(kernelSize, sigma);
+    this.m_kernelSize = kernelSize;
     console.assert(vol != null);
     console.assert(vol.m_dataArray !== null);
     this.m_vol = vol;
@@ -49,11 +81,6 @@ export default class SobelEdgeDetector {
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
     this.m_pixelsDst = new Float32Array(xDim * yDim * zDim);
-    // create sqrt table
-    this.m_sqrtTable = new Float32Array(MAX_SQRT);
-    for (let i = 0; i < MAX_SQRT; i++) {
-      this.m_sqrtTable[i] = Math.sqrt(i);
-    }
   }
   normalizeDstImage() {
     let valMax = 0.0;
@@ -70,7 +97,7 @@ export default class SobelEdgeDetector {
   }
   stop() {
     this.m_pixelsDst = null;
-    this.m_sqrtTable = null;
+    this.m_kernel = null;
   }
   // return ratio in [0..1]
   getRatio() {
@@ -97,65 +124,43 @@ export default class SobelEdgeDetector {
     const zDim = this.m_vol.m_zDim;
     const xyDim = xDim * yDim;
 
-    const STEP = 24;
+    const STEP = (zDim > 16 ) ? 24 : 2;
     const zNext = Math.floor((this.m_iter + 1) * zDim / STEP);
-    // console.log('Sobel update z from ' + this.m_z.toString() + ' until ' + zNext.toString());
+    // console.log('Gauss update z from ' + this.m_z.toString() + ' until ' + zNext.toString());
 
-    // let maxSqrt = 0;
+    const arrKernel = this.m_kernel;
+    const kernelSize = this.m_kernelSize;
 
     // update all z slices from this.m_z to zNext
     let off = this.m_z * xyDim;
     for (let z = this.m_z; z < zNext; z++) {
       for (let y = 0; y < yDim; y++) {
         for (let x = 0; x < xDim; x++) {
-          let sumDx = 0.0, sumDy = 0.0, sumDz = 0.0;
-          for (let dz = -1; dz <= +1; dz++) {
+          // process pixel (x,y,z)
+          let sum = 0.0;
+          let offKer = 0;
+          for (let dz = -kernelSize; dz <= +kernelSize; dz++) {
             let zz = z + dz;
             zz = (zz >= 0) ? zz : 0;
             zz = (zz < zDim) ? zz : (zDim - 1);
             const zzOff = zz * xyDim;
-            for (let dy = -1; dy <= +1; dy++) {
+            for (let dy = -kernelSize; dy <= +kernelSize; dy++) {
               let yy = y + dy;
               yy = (yy >= 0) ? yy : 0;
               yy = (yy < yDim) ? yy : (yDim - 1);
               const yyOff = yy * xDim;
-              for (let dx = -1; dx <= +1; dx++) {
+              for (let dx = -kernelSize; dx <= +kernelSize; dx++) {
                 let xx = x + dx;
                 xx = (xx >= 0) ? xx : 0;
                 xx = (xx < xDim) ? xx : (xDim - 1);
   
-                const val = pixelsSrc[xx + yyOff + zzOff];
-  
-                let kx = 1;
-                if (dy === 0)
-                  kx *= 2;
-                if (dz === 0)
-                  kx *= 2;
-                sumDx += dx * val * kx;
-  
-                let ky = 1;
-                if (dx === 0)
-                  ky *= 2;
-                if (dz === 0)
-                  ky *= 2;
-                sumDy += dy * val * ky;
-  
-                let kz = 1;
-                if (dx === 0)
-                  kz *= 2;
-                if (dy === 0)
-                  kz *= 2;
-                sumDz += dz * val * kz;
+                sum += arrKernel[offKer] * pixelsSrc[xx + yyOff + zzOff];
+                offKer++;
   
               } // for dx
             } // for dy
           } // for dz
-
-          // tricky fast convert float to int (for positive values only)
-          const dotProd = (sumDx * sumDx + sumDy * sumDy + sumDz * sumDz) | 0;
-          console.assert(dotProd < MAX_SQRT);
-
-          this.m_pixelsDst[off] = this.m_sqrtTable[dotProd];
+          this.m_pixelsDst[off] = sum;
           off++;
   
         } // for x
@@ -168,4 +173,50 @@ export default class SobelEdgeDetector {
     this.m_iter += 1;
     this.m_z = zNext;
   }
-}
+  testSimple() {
+    // create simple small volume
+    const SZ = 16;
+    const HALF_SZ = SZ / 2;
+    const volume = new Volume();
+    volume.createEmptyBytesVolume(SZ, SZ, SZ);
+    let offDst = 0;
+    const pixelsSrc = volume.m_dataArray;
+    for (let z = 0; z < SZ; z++) {
+      for (let y = 0; y < SZ; y++) {
+        for (let x = 0; x < SZ; x++) {
+          pixelsSrc[offDst++] = (z < HALF_SZ) ? 0 : 255;
+        }
+      }
+    }
+    // apply gauss
+    const kernelSize = 2;
+    const sigma = kernelSize / 6.0;
+    this.start(volume, kernelSize, sigma);
+    while (!this.isFinished()) {
+      this.update();
+    }
+    // gauss.normalizeDstImage();
+    const pixelsDst = this.getPixelsDst();
+    // check some pixels
+    const xOff = HALF_SZ;
+    const yOff = HALF_SZ * SZ;
+    const xyDim = SZ * SZ;
+    let valPrev = -1;
+    for (let z = 0; z < SZ; z++) {
+      const srcVal = pixelsSrc[xOff + yOff + z * xyDim];
+      const val = pixelsDst[xOff + yOff + z * xyDim];
+      console.log('src val / gauss val = ' + srcVal.toString() + ' / ' + val.toString());
+      const isGood = (val >= valPrev) ? true : false;
+      if (!isGood) {
+        console.log('gauss test failed');
+      }
+      valPrev = val;
+    } // for z
+    this.stop();
+    console.log('gauss test completed on a small volume');
+
+  } // end test simple
+
+} // end class
+
+export default GaussSmoother;

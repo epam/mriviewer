@@ -68,7 +68,7 @@ class UiApp extends React.Component {
       strProgressMessage: 'Loading...',
     };
   }
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     // read paraameters from url
     // for dicom folder like:
     // ?url=http://www.someplace.com/folder

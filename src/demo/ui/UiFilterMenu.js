@@ -20,6 +20,7 @@ import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
 
 import SobelEdgeDetector from '../engine/imgproc/Sobel';
+import UiModalGauss from './UiModalGauss';
 
 
 // ********************************************************
@@ -43,6 +44,14 @@ class UiFilterMenu extends React.Component {
     this.onSkullRemoveCallback = this.onSkullRemoveCallback.bind(this);
     this.onButtonSobel = this.onButtonSobel.bind(this);
     this.onSobelCallback = this.onSobelCallback.bind(this);
+    this.onButtonGauss = this.onButtonGauss.bind(this);
+
+    this.showModalGauss = this.showModalGauss.bind(this);
+    this.hideModalGauss = this.hideModalGauss.bind(this);
+    this.state = {
+      showModalGauss: false,
+    };
+
 
     //this.callbackProgressFun = this.callbackProgressFun.bind(this);
   }
@@ -224,7 +233,15 @@ class UiFilterMenu extends React.Component {
       this.m_timerId = setTimeout(this.onSobelCallback, SOBEL_UPDATE_DELAY_MSEC);
     }
   } // end onSobelCallback
+  //
+  // on gauss
+  //
+  onButtonGauss() {
+    this.showModalGauss();
+  }
+  //
   // detect brain segmentation
+  //
   onButtonDetectBrain() {
     // get globals
     const store = this.props;
@@ -376,6 +393,14 @@ class UiFilterMenu extends React.Component {
   }
   componentDidMount() {
   }
+  showModalGauss() {
+    this.setState({ showModalGauss: true });
+  }
+  hideModalGauss() {
+    this.setState({ showModalGauss: false });
+    // console.log('onModalSaveNiftiHide...');
+  }
+  //
   render() {
     const store = this.props;
     const isLoaded = store.isLoaded;
@@ -401,6 +426,10 @@ class UiFilterMenu extends React.Component {
         <NavDropdown.Item href="#actionSobel" onClick={evt => this.onButtonSobel(evt)}>
           Sobel filter
         </NavDropdown.Item>
+        <NavDropdown.Item href="#actionGauss" onClick={evt => this.onButtonGauss(evt)}>
+          Guass smoothing
+        </NavDropdown.Item>
+        <UiModalGauss stateVis={this.state.showModalGauss} onHide={this.hideModalGauss} />
       </NavDropdown>;
 
     /*

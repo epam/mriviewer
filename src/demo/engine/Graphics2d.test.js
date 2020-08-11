@@ -11,6 +11,7 @@
 import ToolArea from './tools2d/ToolArea';
 import Graphics2d from './Graphics2d';
 import VolumeSet from './VolumeSet';
+import Volume from './Volume';
 
 // ********************************************************
 // Tests
@@ -122,16 +123,9 @@ describe('ToolArea. test line intersect', () => {
   });
 
   it('ToolArea. test check area', () => {
-    const vol = {
-      m_xDim: 100.0,
-      m_yDim: 100.0,
-      m_zDim: 100.0,
-      m_boxSize: {
-        x: 10.0,
-        y: 10.0,
-        z: 10.0,
-      }
-    };
+    const vol = new Volume();
+    vol.m_xDim = vol.m_yDim = vol.m_zDim = 100.0;
+    vol.m_boxSize.x = vol.m_boxSize.y = vol.m_boxSize.z = 10.0; 
     const volSet = new VolumeSet();
     volSet.addVolume(vol);
     const store = {
