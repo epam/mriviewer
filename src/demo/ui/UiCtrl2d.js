@@ -83,9 +83,29 @@ class UiCtrl2d extends React.Component {
     if (typeof (aval) === 'string') {
       val = Number.parseFloat(aval);
       // console.log(`onSlider. val = ${val}`);
+      // convert slider value from [0.. ?dim] to [0..1]
       const store = this.props;
-      this.valSlider = val;
-      store.dispatch({ type: StoreActionType.SET_SLIDER_2D, slider2d: val });
+      const mode2d = store.mode2d;
+      const volSet = store.volumeSet;
+      const volIndex = store.volumeIndex;
+      const vol = volSet.getVolume(volIndex);
+      let xDim = 0, yDim = 0, zDim = 0;
+      if (vol !== null) {
+        xDim = vol.m_xDim;
+        yDim = vol.m_yDim;
+        zDim = vol.m_zDim;
+      }
+  
+      let slideRangeMax = 0;
+      if (mode2d === Modes2d.SAGGITAL) {
+        slideRangeMax = xDim;
+      } else if (mode2d === Modes2d.CORONAL) {
+        slideRangeMax = yDim;
+      } else if (mode2d === Modes2d.TRANSVERSE) {
+        slideRangeMax = zDim;
+      }
+      const valNormalizedTo01 = val / slideRangeMax; 
+      store.dispatch({ type: StoreActionType.SET_SLIDER_2D, slider2d: valNormalizedTo01 });
       // clear all 2d tools
       const gra2d = store.graphics2d;
       gra2d.clear();
@@ -112,17 +132,36 @@ class UiCtrl2d extends React.Component {
 
     const strSlider1 = 'slider1';
 
-    const wArr = [valSlider];
-    const valToolTps = true;
-
     const strClass = 'btn btn-secondary';
     const strSag = strClass + ((mode2d === Modes2d.SAGGITAL) ? ' active' : '');
     const strCor = strClass + ((mode2d === Modes2d.CORONAL) ? ' active' : '');
     const strTra = strClass + ((mode2d === Modes2d.TRANSVERSE) ? ' active' : '');
 
-    // console.log(`UiCtrl2d. render. mode2d = ${mode2d}`);
+    const volSet = store.volumeSet;
+    const volIndex = store.volumeIndex;
+    const vol = volSet.getVolume(volIndex);
+    let xDim = 0, yDim = 0, zDim = 0;
+    if (vol !== null) {
+      xDim = vol.m_xDim;
+      yDim = vol.m_yDim;
+      zDim = vol.m_zDim;
+    }
+    // slider maximum value is depend on current x or y or z 2d mode selection
+    let slideRangeMax = 0;
+    if (mode2d === Modes2d.SAGGITAL) {
+      slideRangeMax = xDim - 1;
+    } else if (mode2d === Modes2d.CORONAL) {
+      slideRangeMax = yDim - 1;
+    } else if (mode2d === Modes2d.TRANSVERSE) {
+      slideRangeMax = zDim - 1;
+    }
+    const rangeDescr = {
+      min: 0,
+      max: slideRangeMax
+    };
 
-    // btn-default active
+    const wArr = [valSlider * slideRangeMax];
+    const valToolTps = true;
 
     const jsxRenderControls =
       <div className="card">
@@ -146,8 +185,8 @@ class UiCtrl2d extends React.Component {
           <li className="list-group-item">
             <p> Select </p>
             <Nouislider onSlide={this.onChangeSliderSlice.bind(this)} ref={strSlider1}
-              range={{ min: 0.0, max: 1.0 }}
-              start={wArr} step={0.02} tooltips={valToolTps} />
+              range={rangeDescr}
+              start={wArr} step={1.0} tooltips={valToolTps} />
           </li>
         </ul>
       </div>
