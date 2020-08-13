@@ -38,7 +38,7 @@ class UiTools2d extends React.Component {
         { img: 'images/icon_tools2d_zoom.png', txt: 'zoom', ke: Tools2dType.ZOOM, msgTp: 'Zoom in/out' },
         { img: 'images/icon_tools2d_default.png', txt: 'default', ke: Tools2dType.DEFAULT, msgTp: 'Zoom to default' },
         // { img: 'images/icon_tools2d_filter.png', txt: 'filter', ke: Tools2dType.FILTER },
-        { img: 'images/icon_tools2d_empty.png', txt: 'none', ke: Tools2dType.NONE, msgTp: 'Empty' },
+        { img: 'images/icon_tools2d_smartbrush.png', txt: 'Smart brush', ke: Tools2dType.SMARTBRUSH, msgTp: 'Segment image' },
       ],
     };
   }
@@ -50,6 +50,7 @@ class UiTools2d extends React.Component {
       // set new toools 2s index to global store
       const store = this.props;
       store.dispatch({ type: StoreActionType.SET_2D_TOOLS_INDEX, indexTools2d: idx });
+      store.updateMain2d()
       // console.log(`UiTools2d. onClickButton index = ${idx}`);
       if( idx === Tools2dType.DEFAULT) {
         store.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: 1.0 });

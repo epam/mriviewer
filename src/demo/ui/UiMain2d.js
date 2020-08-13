@@ -16,8 +16,10 @@ import { Row, Col, Container } from 'react-bootstrap';
 import UiCtrl2d from './UiCtrl2d';
 import Graphics2d from '../engine/Graphics2d';
 import UiTools2d from './UiTools2d';
+import UiSmartBrush from './UiSmartBrush';
 import UiSegm2d from './UiSegm2d';
 import UiVolumeSel from './UiVolumeSel'
+import Tools2dType from '../engine/tools2d/ToolTypes';
 
 // import UiHistCard from './UiHistCard';
 
@@ -55,14 +57,15 @@ class UiMain2d extends React.Component {
     const vols = volSet.m_volumes;
     const numVols = vols.length;
     const jsxVolSel = (numVols > 1) ? <UiVolumeSel /> : <br />
-
+    const idx = store.indexTools2d
 
     const jsxMain2d = 
       <Container fluid="true" style={{ height: '100%', minHeight:'100%' }} >
         <Row>
           <Col xs md lg="4" style={{ height: '100%', position: 'relative' }} >
             <UiCtrl2d />
-            <UiTools2d />
+            <UiTools2d updateMain2d={this.forceUpdate.bind(this)}/>
+            {(idx === Tools2dType.SMARTBRUSH) ? <UiSmartBrush /> : null}
             <UiSegm2d />
             {jsxVolSel}
 

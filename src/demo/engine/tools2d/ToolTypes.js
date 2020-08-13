@@ -16,7 +16,8 @@ const Tools2dType = {
   CLEAR: 8,
   ZOOM: 9,
   DEFAULT: 10,
-  FILTER: 11,
-  NONE: 12,
+  SMARTBRUSH: 11,
+  FILTER: 12,
+  NONE: 13,
 };
 export default Tools2dType;
