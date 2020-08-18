@@ -311,23 +311,25 @@ class Graphics2d extends React.Component {
       if (pbox.x * pbox.y * pbox.z < TOO_SMALL) {
         console.log(`Bad physical dimensions for rendered volume = ${pbox.x}*${pbox.y}*${pbox.z} `);
       }
+      let wScreen = 0, hScreen = 0;
+
       const xPos = store.render2dxPos;
       const yPos = store.render2dyPos;
       const zoom = store.render2dZoom;
       // console.log(`Gra2d. RenderScene. zoom=${zoom}, xyPos=${xPos}, ${yPos}`);
       if (mode2d === Modes2d.TRANSVERSE) {
         // calc screen rect based on physics volume slice size (z slice)
-        const pratio = pbox.x / pbox.y;
-        let wScreen, hScreen;
+        const xyRratio = pbox.x / pbox.y;
         wScreen = w;
-        hScreen = Math.floor(w / pratio);
+        hScreen = Math.floor(w / xyRratio);
         if (hScreen > h) {
           hScreen = h;
-          wScreen = Math.floor(h * pratio);
+          wScreen = Math.floor(h * xyRratio);
           if (wScreen > w) {
             console.log(`logic error! wScreen * hScreen = ${wScreen} * ${hScreen}`);
           }
         }
+        hScreen = (hScreen > 0) ? hScreen : 1;
         // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
 
         this.m_toolPick.setScreenDim(wScreen, hScreen);
@@ -360,7 +362,8 @@ class Graphics2d extends React.Component {
         }
   
         // z slice
-        const zSlice = Math.floor(zDim * sliceRatio);
+        let zSlice = Math.floor(zDim * sliceRatio);
+        zSlice = (zSlice < zDim) ? zSlice : (zDim - 1);
         const zOff = zSlice * xyDim;
         const xStep = zoom * xDim / wScreen;
         const yStep = zoom * yDim / hScreen;
@@ -407,17 +410,17 @@ class Graphics2d extends React.Component {
 
       } else if (mode2d === Modes2d.SAGGITAL) {
         // calc screen rect based on physics volume slice size (x slice)
-        const pratio = pbox.y / pbox.z;
-        let wScreen, hScreen;
+        const yzRatio = pbox.y / pbox.z;
         wScreen = w;
-        hScreen = Math.floor(w / pratio);
+        hScreen = Math.floor(w / yzRatio);
         if (hScreen > h) {
           hScreen = h;
-          wScreen = Math.floor(h * pratio);
+          wScreen = Math.floor(h * yzRatio);
           if (wScreen > w) {
             console.log(`logic error! wScreen * hScreen = ${wScreen} * ${hScreen}`);
           }
         }
+        hScreen = (hScreen > 0) ? hScreen : 1;
         // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
 
         this.m_toolPick.setScreenDim(wScreen, hScreen);
@@ -450,7 +453,8 @@ class Graphics2d extends React.Component {
         }
 
         // x slice
-        const xSlice = Math.floor(xDim * sliceRatio);
+        let xSlice = Math.floor(xDim * sliceRatio);
+        xSlice = (xSlice < xDim) ? xSlice : (xDim - 1);
 
         const yStep = zoom * yDim / wScreen;
         const zStep = zoom * zDim / hScreen;
@@ -499,17 +503,17 @@ class Graphics2d extends React.Component {
         } // if 4 bppp
       } else if (mode2d === Modes2d.CORONAL) {
         // calc screen rect based on physics volume slice size (y slice)
-        const pratio = pbox.x / pbox.z;
-        let wScreen, hScreen;
+        const xzRatio = pbox.x / pbox.z;
         wScreen = w;
-        hScreen = Math.floor(w / pratio);
+        hScreen = Math.floor(w / xzRatio);
         if (hScreen > h) {
           hScreen = h;
-          wScreen = Math.floor(h * pratio);
+          wScreen = Math.floor(h * xzRatio);
           if (wScreen > w) {
             console.log(`logic error! wScreen * hScreen = ${wScreen} * ${hScreen}`);
           }
         }
+        hScreen = (hScreen > 0) ? hScreen : 1;
         // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
 
         this.m_toolPick.setScreenDim(wScreen, hScreen);
@@ -542,7 +546,8 @@ class Graphics2d extends React.Component {
         }
 
         // y slice
-        const ySlice = Math.floor(yDim * sliceRatio);
+        let ySlice = Math.floor(yDim * sliceRatio);
+        ySlice = (ySlice < yDim) ? ySlice : (yDim - 1);
         const yOff = ySlice * xDim;
 
         const xStep = zoom * xDim / wScreen;
