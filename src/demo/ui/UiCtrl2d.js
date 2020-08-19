@@ -14,6 +14,8 @@ import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { Card, ButtonGroup, Button } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import Nouislider from 'react-nouislider';
 
@@ -132,10 +134,9 @@ class UiCtrl2d extends React.Component {
 
     const strSlider1 = 'slider1';
 
-    const strClass = 'btn btn-secondary';
-    const strSag = strClass + ((mode2d === Modes2d.SAGGITAL) ? ' active' : '');
-    const strCor = strClass + ((mode2d === Modes2d.CORONAL) ? ' active' : '');
-    const strTra = strClass + ((mode2d === Modes2d.TRANSVERSE) ? ' active' : '');
+    const varSag = (mode2d === Modes2d.SAGGITAL) ? 'primary' : 'secondary';
+    const varCor = (mode2d === Modes2d.CORONAL) ? 'primary' : 'secondary';
+    const varTra = (mode2d === Modes2d.TRANSVERSE) ? 'primary' : 'secondary';
 
     const volSet = store.volumeSet;
     const volIndex = store.volumeIndex;
@@ -163,33 +164,59 @@ class UiCtrl2d extends React.Component {
     const wArr = [valSlider * slideRangeMax];
     const valToolTps = true;
 
-    const jsxRenderControls =
-      <div className="card">
-        <div className="card-header">
-          Plane (slice) view
-        </div>
-        <div className="card-body">
-          <div className="btn-group btn-block">
-            <button type="button" className={strSag} onClick={this.onModeSaggital} >
+    const jsxSlider = (slideRangeMax > 0) ?
+      <ul className="list-group list-group-flush">
+        <li className="list-group-item">
+          <p> Select </p>
+          < Nouislider onSlide={this.onChangeSliderSlice.bind(this)} ref={strSlider1}
+            range={rangeDescr}
+            start={wArr} step={1.0} tooltips={valToolTps} />
+        </li>
+      </ul> : <p></p>;
+
+    const jsxSliceSelector = (slideRangeMax > 0) ?
+      <Card.Body>
+        <ButtonGroup className="mr-2" aria-label="Ctrl2d group">
+          <OverlayTrigger key="zx" placement="bottom" overlay={
+            <Tooltip>
+              Show slices along x axis
+            </Tooltip>
+          }>
+            <Button variant={varSag} onClick={this.onModeSaggital} >
               Saggital
-            </button>
-            <button type="button" className={strCor} onClick={this.onModeCoronal}  >
+            </Button>
+          </OverlayTrigger>
+
+          <OverlayTrigger key="zy" placement="bottom" overlay={
+            <Tooltip>
+              Show slices along y axis
+            </Tooltip>
+          }>
+            <Button variant={varCor} onClick={this.onModeCoronal} >
               Coronal
-            </button>
-            <button type="button" className={strTra} onClick={this.onModeTransverse} >
+            </Button>
+          </OverlayTrigger>
+
+          <OverlayTrigger key="za" placement="bottom" overlay={
+            <Tooltip>
+              Show slices along z axis
+            </Tooltip>
+          }>
+            <Button variant={varTra} onClick={this.onModeTransverse} >
               Transverse
-            </button>
-          </div>
-        </div>
-        <ul className="list-group list-group-flush">
-          <li className="list-group-item">
-            <p> Select </p>
-            <Nouislider onSlide={this.onChangeSliderSlice.bind(this)} ref={strSlider1}
-              range={rangeDescr}
-              start={wArr} step={1.0} tooltips={valToolTps} />
-          </li>
-        </ul>
-      </div>
+            </Button>
+          </OverlayTrigger>
+        </ButtonGroup>
+      </Card.Body> : <p></p>
+
+    const jsxRenderControls =
+      <Card>
+        <Card.Header>
+          Plane (slice) view
+        </Card.Header>
+        {jsxSliceSelector}
+        {jsxSlider}
+      </Card>
     return jsxRenderControls;
   }
 }

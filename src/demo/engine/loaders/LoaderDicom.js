@@ -128,6 +128,8 @@ class LoaderDicom{
     this.m_yDim = -1;
     /** @property {number} m_bitsPerPixel - bits per pixe;. Can be 8, 16, 32 */
     this.m_bitsPerPixel = -1;
+    /** @property {number} m_samplesPerPixel - number of samples per pixel. Can be 1 or 3. Used as average */
+    this.m_samplesPerPixel = 1;
     /** @property {number} m_seriesNumber - Index of series to check the same image set in slices */
     this.m_seriesNumber = -1;
     /** @property {string} m_seriesDescr - Description of series */
@@ -1635,7 +1637,7 @@ class LoaderDicom{
 
     // check correct data from tags
     const BITS_IN_BYTE = 8;
-    const imageSizeBytes = Math.floor(this.m_xDim * this.m_yDim * (this.m_bitsPerPixel / BITS_IN_BYTE));
+    const imageSizeBytes = Math.floor(this.m_xDim * this.m_yDim * (this.m_bitsPerPixel / BITS_IN_BYTE) * this.m_samplesPerPixel);
     if ((imageSizeBytes !== tag.m_value.byteLength) || (pixelBitMask === 0)) {
       console.log(`Wrong image pixels size. Readed ${tag.m_value.byteLength}, but expected ${imageSizeBytes}`);
       if (callbackComplete !== undefined) {
@@ -1693,9 +1695,33 @@ class LoaderDicom{
       return LoadResult.ERROR_NO_MEMORY;
     }
 
+    const BITS_8 = 8;
     const BITS_16 = 16;
+    const NUM_1 = 1;
+    const NUM_3 = 3;
+
     let i;
-    if (this.m_bitsPerPixel === BITS_16) {
+    if (this.m_bitsPerPixel === BITS_8) {
+      if (this.m_samplesPerPixel === NUM_1) {
+        for (i = 0; i < numPixels; i++) {
+          const val = imageSrc.getUint8(i);
+          imageDst[i] = val;
+        }
+          // if 1 sample per pixel
+      } else if (this.m_samplesPerPixel === NUM_3) {
+        // if 3 samples per pixel
+        let j = 0;
+        for (i = 0; i < numPixels; i++, j += 3) {
+          const b0 = imageSrc.getUint8(j + 0);
+          const b1 = imageSrc.getUint8(j + 1);
+          const b2 = imageSrc.getUint8(j + 2);
+          // assert(b0 < 256);
+          // assert(b1 < 256);
+          // assert(b2 < 256);
+          imageDst[i] = Math.floor((b0 + b1 + b2) / 3);
+        }
+      }
+    } else if (this.m_bitsPerPixel === BITS_16) {
       let i2 = 0;
       const pixValDif = pixelMaxValue - pixelMinValue;
       if ((pixelMaxValue === -1) || (pixValDif === 0)) {
@@ -1727,7 +1753,7 @@ class LoaderDicom{
         } // for (i) all pixels
       } // if pixel max value
     } else { // if 16 bpp
-      console.log('TODO: need to implement reading non-16 bit dicom images');
+      console.log('TODO: need to implement reading non-8 and non-16 bit dicom images');
     }
     this.m_error = DICOM_ERROR_OK;
 

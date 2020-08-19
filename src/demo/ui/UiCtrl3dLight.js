@@ -14,7 +14,8 @@ import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Card, ListGroup, Button } from 'react-bootstrap';
+import { Card, ListGroup, Button, ButtonGroup } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 //import Nouislider from 'react-nouislider';
 
@@ -119,32 +120,63 @@ class UiCtrl3dLight extends React.Component {
     const mode3d = store.mode3d;
     // const mode3droi = store.mode3droi;
 
-    const strA = (mode3d === Modes3d.ISO) ? 'active' : '';
-    const strB = (mode3d === Modes3d.RAYCAST) ? 'active' : '';
-    const strC = (mode3d === Modes3d.RAYFAST) ? 'active' : '';
-    const strD = (mode3d === Modes3d.ERASER) ? 'active' : '';
-    // const strAroi = (mode3droi === Modes3droi.ISO) ? 'active' : '';
-    // const strBroi = (mode3droi === Modes3droi.RAYCAST) ? 'active' : '';
+    const strA = (mode3d === Modes3d.ISO) ? 'primary' : 'secondary';
+    const strB = (mode3d === Modes3d.RAYCAST) ? 'primary' : 'secondary';
+    const strC = (mode3d === Modes3d.RAYFAST) ? 'primary' : 'secondary';
+    const strD = (mode3d === Modes3d.ERASER) ? 'primary' : 'secondary';
+    // const strAroi = (mode3droi === Modes3droi.ISO) ? 'primary' : 'secondary';
+    // const strBroi = (mode3droi === Modes3droi.RAYCAST) ? 'primary' : 'secondary';
 
     const jsxRenderControls =
       <div>
         <Card>
+          <Card.Title>
+            3d mode selection
+          </Card.Title>
           <Card.Body>
 
-            <Button variant="info" className={strA} onClick={this.onModeA}  >
-              Isosurface
-            </Button>
-            <Button variant="info" className={strB} onClick={this.onModeB} >
-              VolumeRender
-            </Button>
+            <ButtonGroup>
+              <OverlayTrigger key="iso" placement="bottom" overlay={
+                <Tooltip>
+                  Show just barrier value surface, 1st ray intersection
+                </Tooltip>
+              }>
+                <Button variant={strA} onClick={this.onModeA}  >
+                  Iso
+                </Button>
+              </OverlayTrigger>
 
-            <Button variant="info" className={strC} onClick={this.onModeC} >
-              MaxProjection
-            </Button>
+              <OverlayTrigger key="vre" placement="bottom" overlay={
+                <Tooltip>
+                  Show complete 3d volumetric rendering
+                </Tooltip>
+              }>
+                <Button variant={strB} onClick={this.onModeB} >
+                  Vol
+                </Button>
+              </OverlayTrigger>
 
-            <Button variant="info" className={strD} onClick={this.onModeD} >
-              VolumeEraser
-            </Button>
+              <OverlayTrigger key="maxproj" placement="bottom" overlay={
+                <Tooltip>
+                  Show maximum projection rendering
+                </Tooltip>
+              }>
+                <Button variant={strC} onClick={this.onModeC} >
+                  MaxPrj
+                </Button>
+              </OverlayTrigger>
+
+              <OverlayTrigger key="volera" placement="bottom" overlay={
+                <Tooltip>
+                  Special volume eraser tool
+                </Tooltip>
+              }>
+                <Button variant={strD} onClick={this.onModeD} >
+                  Eraser
+                </Button>
+              </OverlayTrigger>
+
+            </ButtonGroup>
 
           </Card.Body>
         </Card>

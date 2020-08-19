@@ -104,41 +104,42 @@ class UiViewMode extends React.Component {
       viewMode = ModeView.VIEW_3D;
     }
 
-    // const strMpr = (viewMode === ModeView.VIEW_MPR) ? ' active' : '';
-    const str2d = (viewMode === ModeView.VIEW_2D) ? ' active' : '';
-    const str3dLight = (viewMode === ModeView.VIEW_3D_LIGHT) ? ' active' : '';
-    const str3d = (viewMode === ModeView.VIEW_3D) ? ' active' : '';
-    const strTool3Don = (viewMode === ModeView.VIEW_3D_LIGHT && isTool3D === true) ? ' active' : '';
-    const strTool3Doff = (viewMode === ModeView.VIEW_3D_LIGHT && isTool3D === false) ? ' active' : '';
+    // const strMpr = (viewMode === ModeView.VIEW_MPR) ? 'primary' : 'secondary';
+    const str2d = (viewMode === ModeView.VIEW_2D) ? 'primary' : 'secondary';
+    const str3dLight = (viewMode === ModeView.VIEW_3D_LIGHT) ? 'primary' : 'secondary';
+    const str3d = (viewMode === ModeView.VIEW_3D) ? 'primary' : 'secondary';
+
+    const strTool3Don = (viewMode === ModeView.VIEW_3D_LIGHT && isTool3D === true) ? 'primary' : 'secondary';
+    const strTool3Doff = (viewMode === ModeView.VIEW_3D_LIGHT && isTool3D === false) ? 'primary' : 'secondary';
 
     const jsx3d =
-    <OverlayTrigger placement="bottom" overlay = {
+    <OverlayTrigger key="3d" placement="bottom" overlay={
       <Tooltip>
         Show volume in 3d mode with old rendering
       </Tooltip>
     }>
-      <Button variant="secondary" className={str3d} onClick={this.onMode3d} >
+      <Button variant={str3d} onClick={this.onMode3d} >
         3D
       </Button>
     </OverlayTrigger>
       
     const jsxViewTool =
-    <ButtonGroup className="mr-2" aria-label="First group">
-      <OverlayTrigger placement="bottom" overlay={
+    <ButtonGroup className="mr-2" aria-label="Top group">
+      <OverlayTrigger key="view" placement="bottom" overlay={
         <Tooltip>
           Show volume in 3d mode with fast rendering
         </Tooltip>
       }>
-        <Button variant="info" className={strTool3Doff} onClick={this.onView3d} >
+        <Button variant={strTool3Doff} onClick={this.onView3d} >
           View
         </Button>
       </OverlayTrigger>
-      <OverlayTrigger placement="bottom" overlay={
+      <OverlayTrigger key="tool" placement="bottom" overlay={
         <Tooltip>
           Show volume in 2d mode per slice on selected orientation
         </Tooltip>
       }>
-        <Button variant="info" className={strTool3Don} onClick={this.onTool3d} >
+        <Button variant={strTool3Don} onClick={this.onTool3d} >
           Tool
         </Button>
       </OverlayTrigger>
@@ -151,38 +152,36 @@ class UiViewMode extends React.Component {
     const FOUR = 4;
     const test = true;
     const jsxOut = 
-      <ButtonToolbar aria-label="Toolbar with button groups">
-        <ButtonGroup className="mr-2" aria-label="First group">
+      <ButtonToolbar ria-label="Toolbar with button groups">
+        <ButtonGroup className="mr-2" aria-label="Top group">
  
-          <OverlayTrigger placement="bottom" overlay = {
+          <OverlayTrigger key="2d" placement="bottom" overlay={
             <Tooltip>
               Show volume in 2d mode per slice on selected orientation
             </Tooltip>
           }>
 
-            <Button variant="secondary" className={str2d} onClick={this.onMode2d} >
+            <Button variant={str2d} onClick={this.onMode2d} >
               2D
             </Button>
           </OverlayTrigger>  
 
-          <OverlayTrigger placement="bottom" overlay = {
+          <OverlayTrigger key="3dLight" placement="bottom" overlay={
             <Tooltip>
               Show volume in 3d mode with fast rendering
             </Tooltip>
           }>
 
-            <Button variant="secondary" className={str3dLight} onClick={this.onMode3dLight} >
+            <Button variant={str3dLight} onClick={this.onMode3dLight} >
               3D
               <span className="fa fa-bolt"></span>
             </Button>
 
           </OverlayTrigger>  
-          {(vol.m_bytesPerVoxel !== FOUR) ? jsx3d : <p></p>}
+          {(vol.m_bytesPerVoxel !== FOUR) ? jsx3d : ''}
         </ButtonGroup>
-        <ButtonGroup className="mr-2" aria-label="Second group">
-          {(viewMode === ModeView.VIEW_3D_LIGHT && test) ? jsxViewTool : <p></p>}
-        </ButtonGroup>
-      </ButtonToolbar>;
+        {(viewMode === ModeView.VIEW_3D_LIGHT && test) ? jsxViewTool : ''}
+      </ButtonToolbar>
 
     return jsxOut;
   }
