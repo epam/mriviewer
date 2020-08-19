@@ -14,6 +14,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Nouislider from 'react-nouislider';
+import { Card, Button } from 'react-bootstrap';
 
 // ********************************************************
 // Class
@@ -52,26 +53,26 @@ class UiSmartBrush extends React.Component {
   render() {
     const btnName = ((this.mode === this.modeType.FILL) ? "Erase" : "Fill")
     const jsx = 
-    <div className="card">
-      <div className="card-header">
+    <Card>
+      <Card.Header>
         Smart Brush
-      </div >
-      <div className="card-body">
-        <div className="card-text" style={{ paddingTop: 10, paddingBottom: 15}}> 
+      </Card.Header>
+      <Card.Body>
+        <Card.Text style={{ paddingTop: 10, paddingBottom: 15}}> 
           Radius
           <Nouislider onSlide={this.onChangeRadiusSlider} ref={"radiusSlider"}
             range={{min: 10, max: 50}} start={[30]} step={1} tooltips={true} /> 
-        </div>
-        <div className="card-text" style={{ paddingTop: 15, paddingBottom: 10}}> 
+        </Card.Text>
+        <Card.Text className="card-text" style={{ paddingTop: 15, paddingBottom: 10}}> 
           Sensetivity
           <Nouislider onSlide={this.onChangeSensetivitySlider} ref={"sensetivitySlider"}
             range={{min: 0.0, max: 1.0}} start={[0.5]} step={0.01} tooltips={true} />
-        </div>
-        <button type="button" className="btn btn-secondary active" style={{ width: 100 }} onClick={this.onModeChange} >
+        </Card.Text>
+        <Button variant="secondary" style={{ width: 100 }} onClick={this.onModeChange} >
           {btnName}
-        </button>
-      </div>
-    </div>
+        </Button>
+      </Card.Body>
+    </Card>
     return jsx
   }
 }
