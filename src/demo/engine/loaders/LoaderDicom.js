@@ -11,6 +11,8 @@
 
 // import gdcm from 'gdcm-js';
 
+// import jpeg from 'jpeg-lossless-decoder-js';
+
 import LoadResult from '../LoadResult';
 
 import DicomDictionary from './dicomdict';
@@ -72,7 +74,16 @@ const TAG_SLICE_THICKNESS = [0x0018, 0x0050];
 const TAG_BODY_PART_EXAMINED = [0x0018, 0x0015];
 
 const TRANSFER_SYNTAX_IMPLICIT_LITTLE = '1.2.840.10008.1.2';
+const TRANSFER_SYNTAX_EXPLICIT_LITTLE = '1.2.840.10008.1.2.1';
 const TRANSFER_SYNTAX_EXPLICIT_BIG = '1.2.840.10008.1.2.2';
+const TRANSFER_SYNTAX_COMPRESSION_JPEG = '1.2.840.10008.1.2.4';
+const TRANSFER_SYNTAX_COMPRESSION_JPEG_LOSSLESS = '1.2.840.10008.1.2.4.57';
+const TRANSFER_SYNTAX_COMPRESSION_JPEG_LOSSLESS_SEL1 = '1.2.840.10008.1.2.4.70';
+const TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_8BIT = '1.2.840.10008.1.2.4.50';
+const TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_12BIT = '"1.2.840.10008.1.2.4.51';
+const TRANSFER_SYNTAX_COMPRESSION_JPEG_2000_LOSSLESS = '1.2.840.10008.1.2.4.90';
+const TRANSFER_SYNTAX_COMPRESSION_JPEG_2000 = '1.2.840.10008.1.2.4.91';
+const TRANSFER_SYNTAX_COMPRESSION_RLE = '1.2.840.10008.1.2.5';
 const TRANSFER_SYNTAX_COMPRESSION_DEFLATE = '1.2.840.10008.1.2.1.99';
 
 // Information from dicom tags, displayed in 2d screen
@@ -120,6 +131,8 @@ class LoaderDicom{
     this.m_imageNumber = -1;
     /** @property {array} m_errors - array  with error after file read, used internally */
     this.m_errors = [];
+    /**  @property {string} m_transformSyntax - string with pixel data transform syntax */
+    this.m_transformSyntax = "";
     /** @property {array} m_loaders - array with objects for individual file loading */
     this.m_loaders = [];
     /** @property {number} m_xDim - volume dimension on x (width) */
@@ -1125,6 +1138,23 @@ class LoaderDicom{
       this.m_needsDeflate = true;
       this.m_explicit = true;
       this.m_littleEndian = true;
+    } else if (strTagVal == TRANSFER_SYNTAX_COMPRESSION_JPEG) {
+      this.m_transformSyntax = TRANSFER_SYNTAX_COMPRESSION_JPEG;
+    } else if (strTagVal == TRANSFER_SYNTAX_COMPRESSION_JPEG_LOSSLESS_SEL1) {
+      this.m_transformSyntax = TRANSFER_SYNTAX_COMPRESSION_JPEG_LOSSLESS_SEL1;
+    } else if (strTagVal == TRANSFER_SYNTAX_COMPRESSION_JPEG_LOSSLESS) {
+      this.m_transformSyntax = TRANSFER_SYNTAX_COMPRESSION_JPEG_LOSSLESS;
+    } else if (strTagVal == TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_8BIT) {
+      this.m_transformSyntax = TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_8BIT;
+    } else if (strTagVal == TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_12BIT) {
+      this.m_transformSyntax = TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_12BIT;
+    } else if (strTagVal == TRANSFER_SYNTAX_COMPRESSION_JPEG_2000_LOSSLESS) {
+      this.m_transformSyntax = TRANSFER_SYNTAX_COMPRESSION_JPEG_2000_LOSSLESS;
+    } else if (strTagVal == TRANSFER_SYNTAX_COMPRESSION_JPEG_2000) {
+      this.m_transformSyntax = TRANSFER_SYNTAX_COMPRESSION_JPEG_2000;
+    } else if (strTagVal == TRANSFER_SYNTAX_COMPRESSION_RLE) {
+      this.m_transformSyntax = TRANSFER_SYNTAX_COMPRESSION_RLE;
+
     } else {
       this.m_explicit = true;
       this.m_littleEndian = true;
@@ -1633,6 +1663,15 @@ class LoaderDicom{
         callbackComplete(LoadResult.ERROR_PIXELS_TAG_NOT_FOUND);
       }
       return LoadResult.ERROR_PIXELS_TAG_NOT_FOUND;
+    }
+    // check transform syntax
+    if (this.m_transformSyntax.length > 1) {
+      // const decoder = new jpeg.lossless.Decoder();
+      // const outBuffer = decoder.decompress(tag.m_value);
+      if (callbackComplete !== undefined) {
+        callbackComplete(LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED);
+      }
+      return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
     }
 
     // check correct data from tags
