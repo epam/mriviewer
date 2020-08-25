@@ -28,7 +28,8 @@ describe('UiFilterMenuTests', () => {
       }
     }
     // apply gauss
-    const gauss = new GaussSmoother();
+    const NEED_HW = false;
+    const gauss = new GaussSmoother(NEED_HW);
     const kernelSize = 2;
     const sigma = kernelSize / 6.0;
     gauss.start(volume, kernelSize, sigma);

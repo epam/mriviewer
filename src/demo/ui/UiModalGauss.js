@@ -84,7 +84,8 @@ class UiModalGauss extends React.Component {
     //const xyzDim = xDim * yDim * zDim;
     //const volTextureDst = new Uint8Array(xyzDim);
 
-    const gauss = new GaussSmoother();
+    const NEED_HW = true;
+    const gauss = new GaussSmoother(NEED_HW);
 
     // test
     // gauss.testSimple();
@@ -131,7 +132,6 @@ class UiModalGauss extends React.Component {
       const volIndex = store.volumeIndex;
       const vol = volSet.getVolume(volIndex);
 
-      // copy result pixels into source
       const xDim = vol.m_xDim;
       const yDim = vol.m_yDim;
       const zDim = vol.m_zDim;

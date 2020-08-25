@@ -22,20 +22,29 @@ under the License.
 * @module demo/engine/imgproc/Gauss
 */
 
+import * as THREE from 'three';
+
 import Volume from '../Volume';
+import GaussHW from './GaussHW';
 
 //
 // Gauss edge detectio
 //
 class GaussSmoother {
-  constructor() {
+  constructor(needHw = false) {
+    this.m_needHw = needHw;
     this.m_vol = null;
     this.m_z = -1;
     this.m_iter = -1;
     this.m_pixelsDst = null;
     this.m_kernel = null;
+    this.m_gaussHw = null;
   }
   getPixelsDst() {
+    if (this.m_needHw) {
+      const arr = this.m_gaussHw.getImageDst();
+      return arr;
+    }
     return this.m_pixelsDst;
   }
   createKernel(kernelSize, sigma) {
@@ -81,8 +90,20 @@ class GaussSmoother {
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
     this.m_pixelsDst = new Float32Array(xDim * yDim * zDim);
+
+    // start perform hardware gauss filetering
+    if (this.m_needHw) {
+      this.m_gaussHw = new GaussHW();
+      const vTexelSize = new THREE.Vector3(1.0 / xDim, 1.0 / yDim, 1.0 / zDim);
+      this.m_gaussHw.create(vol, vTexelSize, kernelSize, sigma);
+    } // if HW gauss
+
   }
   normalizeDstImage() {
+    if (this.m_needHw) {
+      return;
+    }
+
     let valMax = 0.0;
     const xyzDim = this.m_vol.m_xDim * this.m_vol.m_yDim * this.m_vol.m_zDim;
     for (let i = 0; i < xyzDim; i++) {
@@ -102,19 +123,35 @@ class GaussSmoother {
   // return ratio in [0..1]
   getRatio() {
     const zDim = this.m_vol.m_zDim;
-    const ratio01 = this.m_z / zDim;
+    let ratio01 = 0.0; 
+    if (this.m_needHw) {
+      ratio01 = this.m_gaussHw.m_z / zDim;
+    } else {
+      ratio01 = this.m_z / zDim;
+    }
     return ratio01;
   }
   isFinished() {
     console.assert(this.m_z >= 0);
     const zDim = this.m_vol.m_zDim;
-    if (this.m_z >= zDim) {
-      return true;
+    if (this.m_needHw) {
+      if (this.m_gaussHw.m_z >= zDim) {
+        return true;
+      } 
+    } else {
+      if (this.m_z >= zDim) {
+        return true;
+      }
     }
     return false;
   }
   // invoked several times externally, until entire image processed
   update() {
+    if (this.m_needHw) {
+      this.m_gaussHw.update();
+      return;
+    }
+    // perform slow software gauss update with portion of slices
     console.assert(this.m_z >= 0);
     console.assert(this.m_pixelsDst !== null);
     const pixelsSrc = this.m_vol.m_dataArray;
