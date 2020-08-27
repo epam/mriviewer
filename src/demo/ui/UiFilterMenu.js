@@ -20,7 +20,7 @@ import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
 
 import SobelEdgeDetector from '../engine/imgproc/Sobel';
-import UiModalGauss from './UiModalGauss';
+import UiModalBilateral from './UiModalBilateral';
 
 
 // ********************************************************
@@ -44,12 +44,12 @@ class UiFilterMenu extends React.Component {
     this.onSkullRemoveCallback = this.onSkullRemoveCallback.bind(this);
     this.onButtonSobel = this.onButtonSobel.bind(this);
     this.onSobelCallback = this.onSobelCallback.bind(this);
-    this.onButtonGauss = this.onButtonGauss.bind(this);
+    this.onButtonBilateral = this.onButtonBilateral.bind(this);
 
-    this.showModalGauss = this.showModalGauss.bind(this);
-    this.hideModalGauss = this.hideModalGauss.bind(this);
+    this.showModalBilateral = this.showModalBilateral.bind(this);
+    this.hideModalBilateral = this.hideModalBilateral.bind(this);
     this.state = {
-      showModalGauss: false,
+      showModalBilateral: false,
     };
 
 
@@ -234,10 +234,10 @@ class UiFilterMenu extends React.Component {
     }
   } // end onSobelCallback
   //
-  // on gauss
+  // on Bilateral
   //
-  onButtonGauss() {
-    this.showModalGauss();
+  onButtonBilateral() {
+    this.showModalBilateral();
   }
   //
   // detect brain segmentation
@@ -393,11 +393,11 @@ class UiFilterMenu extends React.Component {
   }
   componentDidMount() {
   }
-  showModalGauss() {
-    this.setState({ showModalGauss: true });
+  showModalBilateral() {
+    this.setState({ showModalBilateral: true });
   }
-  hideModalGauss() {
-    this.setState({ showModalGauss: false });
+  hideModalBilateral() {
+    this.setState({ showModalBilateral: false });
     // console.log('onModalSaveNiftiHide...');
   }
   //
@@ -426,38 +426,12 @@ class UiFilterMenu extends React.Component {
         <NavDropdown.Item href="#actionSobel" onClick={evt => this.onButtonSobel(evt)}>
           Sobel filter
         </NavDropdown.Item>
-        <NavDropdown.Item href="#actionGauss" onClick={evt => this.onButtonGauss(evt)}>
-          Guass smoothing
+        <NavDropdown.Item href="#actionBilateral" onClick={evt => this.onButtonBilateral(evt)}>
+          Bilateral (denoise or smooth)
         </NavDropdown.Item>
-        <UiModalGauss stateVis={this.state.showModalGauss} onHide={this.hideModalGauss} />
+        <UiModalBilateral stateVis={this.state.showModalBilateral} onHide={this.hideModalBilateral} />
       </NavDropdown>;
 
-    /*
-        <NavDropdown.Item>
-          <i className="fas fa-brain"></i>
-            Auto detect brain
-        </NavDropdown.Item>
-        <NavDropdown.Item>
-          <i className="fas fa-arrows-alt"></i>
-          Active volume enlarge (seed sphere)
-        </NavDropdown.Item>
-        <NavDropdown.Item>
-          <i className="fas fa-circle"></i>
-          Sphere evolve with clip
-        </NavDropdown.Item>
-        <NavDropdown.Item>
-          <i className="fas fa-circle"></i>
-          Sphere evolve no clipping
-        </NavDropdown.Item>
-        <NavDropdown.Item href="#actionLungsSeg" onClick={evt => this.onButtonLungsSeg(evt)}>
-          <i className="fas fa-cloud"></i>
-          Lungs segmentation
-        </NavDropdown.Item>
-        <NavDropdown.Item>
-          <i className="fas fa-dungeon"></i>
-          FCMeans segmentation
-        </NavDropdown.Item>
-    */
     return jsxFilterMenu;
   }
 }

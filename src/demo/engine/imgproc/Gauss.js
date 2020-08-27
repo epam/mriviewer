@@ -25,7 +25,7 @@ under the License.
 import * as THREE from 'three';
 
 import Volume from '../Volume';
-import GaussHW from './GaussHW';
+import BilateralHW from './BilateralHW';
 
 //
 // Gauss edge detectio
@@ -38,11 +38,11 @@ class GaussSmoother {
     this.m_iter = -1;
     this.m_pixelsDst = null;
     this.m_kernel = null;
-    this.m_gaussHw = null;
+    this.m_bilateralHw = null;
   }
   getPixelsDst() {
     if (this.m_needHw) {
-      const arr = this.m_gaussHw.getImageDst();
+      const arr = this.m_bilateralHw.getImageDst();
       return arr;
     }
     return this.m_pixelsDst;
@@ -78,8 +78,9 @@ class GaussSmoother {
       arr[i] *= scl;
     this.m_kernel = arr;
   }
-  start(vol, kernelSize, sigma) {
-    this.createKernel(kernelSize, sigma);
+  start(vol, kernelSize, koefDist, koefVal = 0.1) {
+    const sigmaDist = (1.0 / kernelSize) * koefDist;
+    this.createKernel(kernelSize, sigmaDist);
     this.m_kernelSize = kernelSize;
     console.assert(vol != null);
     console.assert(vol.m_dataArray !== null);
@@ -91,11 +92,11 @@ class GaussSmoother {
     const zDim = vol.m_zDim;
     this.m_pixelsDst = new Float32Array(xDim * yDim * zDim);
 
-    // start perform hardware gauss filetering
+    // start perform hardware gauss filtering
     if (this.m_needHw) {
-      this.m_gaussHw = new GaussHW();
+      this.m_bilateralHw = new BilateralHW();
       const vTexelSize = new THREE.Vector3(1.0 / xDim, 1.0 / yDim, 1.0 / zDim);
-      this.m_gaussHw.create(vol, vTexelSize, kernelSize, sigma);
+      this.m_bilateralHw.create(vol, vTexelSize, kernelSize, koefDist, koefVal);
     } // if HW gauss
 
   }
@@ -125,7 +126,7 @@ class GaussSmoother {
     const zDim = this.m_vol.m_zDim;
     let ratio01 = 0.0; 
     if (this.m_needHw) {
-      ratio01 = this.m_gaussHw.m_z / zDim;
+      ratio01 = this.m_bilateralHw.m_z / zDim;
     } else {
       ratio01 = this.m_z / zDim;
     }
@@ -135,7 +136,7 @@ class GaussSmoother {
     console.assert(this.m_z >= 0);
     const zDim = this.m_vol.m_zDim;
     if (this.m_needHw) {
-      if (this.m_gaussHw.m_z >= zDim) {
+      if (this.m_bilateralHw.m_z >= zDim) {
         return true;
       } 
     } else {
@@ -148,7 +149,7 @@ class GaussSmoother {
   // invoked several times externally, until entire image processed
   update() {
     if (this.m_needHw) {
-      this.m_gaussHw.update();
+      this.m_bilateralHw.update();
       return;
     }
     // perform slow software gauss update with portion of slices

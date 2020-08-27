@@ -1,5 +1,5 @@
 /**
- * @fileOverview UiModalGauss
+ * @fileOverview UiModalBilateral
  * @author Epam
  * @version 1.0.0
  */
@@ -26,7 +26,7 @@ import Modes3d from '../store/Modes3d';
 // Class
 // ********************************************************
 
-class UiModalGauss extends React.Component {
+class UiModalBilateral extends React.Component {
   /**
    * @param {object} props - props from up level object
    */
@@ -35,9 +35,10 @@ class UiModalGauss extends React.Component {
     this.onModalShow = this.onModalShow.bind(this);
     this.onModalHide = this.onModalHide.bind(this);
     this.onButtonStart = this.onButtonStart.bind(this);
-    this.onChangeSliderSlice = this.onChangeSliderSlice.bind(this);
+    this.onChangeSliderKoefDist = this.onChangeSliderKoefDist.bind(this);
+    this.onChangeSliderKoefVal = this.onChangeSliderKoefVal.bind(this);
 
-    this.onGaussCallback = this.onGaussCallback.bind(this);
+    this.onBilateralCallback = this.onBilateralCallback.bind(this);
 
     this.m_hideFunc = null;
     this.m_gauss = null;
@@ -46,13 +47,16 @@ class UiModalGauss extends React.Component {
       showModalGauss: false,
       text: 'dump'
     };
-    this.m_kernelSize = 2;
+
+    this.m_kernelSize = 10;
+    this.m_koefDist = 3.0;
+    this.m_koefVal = 0.1;
   } // end constr
   //
   //
   //
   onButtonStart() {
-    console.log('on button start gauss with kernel = ' + this.m_kernelSize.toString());
+    console.log('on button start Bilateral with kernel = ' + this.m_kernelSize.toString());
     this.m_hideFunc();
 
     const store = this.props;
@@ -70,17 +74,17 @@ class UiModalGauss extends React.Component {
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
     if (xDim * yDim * zDim < 1) {
-      console.log(`onButtonGauss: bad volume! dims = ${xDim}*${yDim}*${zDim}`);
+      console.log(`onButtonBilateral: bad volume! dims = ${xDim}*${yDim}*${zDim}`);
       return;
     }
     // let volTextureSrc = vol.m_dataArray;
     const ONE = 1;
     if (vol.m_bytesPerVoxel !== ONE) {
-      console.log('onButtonGauss: supported only 1bpp volumes');
+      console.log('onButtonBilateral: supported only 1bpp volumes');
       return;
     }
 
-    console.log('onButtonGauss: start gauss...');
+    console.log('onButtonBilateral: start 3d bilateral filtration...');
     //const xyzDim = xDim * yDim * zDim;
     //const volTextureDst = new Uint8Array(xyzDim);
 
@@ -91,21 +95,20 @@ class UiModalGauss extends React.Component {
     // gauss.testSimple();
 
     const kernelSize = this.m_kernelSize;
-    const sigma = kernelSize / 6.0;
-    gauss.start(vol, kernelSize, sigma);
+    gauss.start(vol, kernelSize, this.m_koefDist, this.m_koefVal);
     this.m_gauss = gauss;
 
     const uiApp = store.uiApp;
-    uiApp.doShowProgressBar('Apply gauss smoother...');
+    uiApp.doShowProgressBar('Apply bilateral filter...');
     uiApp.doSetProgressBarRatio(0.0);
 
     const UPDATE_DELAY_MSEC = 150;
-    this.m_timerId = setTimeout(this.onGaussCallback, UPDATE_DELAY_MSEC);
+    this.m_timerId = setTimeout(this.onBilateralCallback, UPDATE_DELAY_MSEC);
   }
   //
   // callback for periodicallt invoke sobel 3d volume filtering
   //
-  onGaussCallback() {
+  onBilateralCallback() {
     this.m_gauss.update();
 
     const store = this.props;
@@ -122,7 +125,7 @@ class UiModalGauss extends React.Component {
     const isFinished = this.m_gauss.isFinished();
 
     if (isFinished) {
-      console.log('onGaussCallback: iters finished!');
+      console.log('onBilateralCallback: iters finished!');
       uiApp.doHideProgressBar();
 
       clearInterval(this.m_timerId);
@@ -156,9 +159,9 @@ class UiModalGauss extends React.Component {
     // next update timer
     if (!isFinished) {
       const UPDATE_DELAY_MSEC = 150;
-      this.m_timerId = setTimeout(this.onGaussCallback, UPDATE_DELAY_MSEC);
+      this.m_timerId = setTimeout(this.onBilateralCallback, UPDATE_DELAY_MSEC);
     }
-  } // end onGaussCallback
+  } // end onBilateralCallback
   //
   onModalShow() {
     this.setState({ showModalGauss: true });
@@ -171,7 +174,7 @@ class UiModalGauss extends React.Component {
     this.m_hideFunc();
     // this.onSaveNifti();
   }
-  onChangeSliderSlice() {
+  onChangeSliderKoefDist() {
     if (this.refs === undefined) {
       return;
     }
@@ -180,25 +183,41 @@ class UiModalGauss extends React.Component {
     const aval = this.refs.slider1.slider.get();
     if (typeof (aval) === 'string') {
       val = Number.parseFloat(aval);
-      this.m_kernelSize = val;
+      this.m_koefDist = val;
     }
-
   }
+  onChangeSliderKoefVal() {
+    if (this.refs === undefined) {
+      return;
+    }
+    this.m_updateEnable = false;
+    let val = 0.0;
+    const aval = this.refs.slider2.slider.get();
+    if (typeof (aval) === 'string') {
+      val = Number.parseFloat(aval);
+      this.m_koefVal = val;
+    }
+  }
+  //
   render() {
     const stateVis = this.props.stateVis;
     const onHideFunc = this.props.onHide;
     this.m_hideFunc = onHideFunc;
 
-    const valSlider = 2;
     const strSlider1 = 'slider1';
-    const wArr = [valSlider];
+    const strSlider2 = 'slider2';
+    const defaultDist = 3;
+    const defaultVal = 0.1;
+    const wArrDist = [defaultDist];
+    const wArrVal = [defaultVal];
+
     const valToolTps = true;
 
     const jsxModalGauss =
     <Modal show={stateVis} onHide={onHideFunc} >
 
       <Modal.Title>
-        Gauss smoothing
+        Bilateral filtration
       </Modal.Title>
 
       <Modal.Body>
@@ -208,7 +227,7 @@ class UiModalGauss extends React.Component {
 
             <tr>
               <td style={{ paddingBottom: '32px' }}>
-                Select kernel size 
+                Select koefficient distance (kd)
               </td>
             </tr>
 
@@ -218,15 +237,47 @@ class UiModalGauss extends React.Component {
                 <Row>
                   <Col>
                     <Form onSubmit={evt => this.handleFormSubmit(evt)}>
-                      <Nouislider onSlide={this.onChangeSliderSlice.bind(this)} ref={strSlider1}
-                        range={{ min: 1.0, max: 8.0 }}
-                        start={wArr} step={1.0} tooltips={valToolTps} />
+                      <Nouislider onSlide={this.onChangeSliderKoefDist.bind(this)} ref={strSlider1}
+                        range={{ min: 0.5, max: 3.0 }}
+                        start={wArrDist} step={0.2} tooltips={valToolTps} />
                     </Form>
                   </Col>
                 </Row>
 
               </td>
             </tr>
+
+            <tr>
+              <td style={{ paddingBottom: '32px' }}>
+                Select koefficient value (kv)
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+
+                <Row>
+                  <Col>
+                    <Form onSubmit={evt => this.handleFormSubmit(evt)}>
+                      <Nouislider onSlide={this.onChangeSliderKoefVal.bind(this)} ref={strSlider2}
+                        range={{ min: 0.1, max: 4.0 }}
+                        start={wArrVal} step={0.2} tooltips={valToolTps} />
+                    </Form>
+                  </Col>
+                </Row>
+
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <b>Hints to setup values:</b> <br />
+                kd = 0.5, kv = 0.1 => original image <br />
+                kd = 3.0, kv = 0.1 => denoise image <br />
+                kd = 3.0, kv = 4.0 => image blur
+              </td>
+            </tr>
+
             <tr>
               <td>
                 <Row>
@@ -253,6 +304,6 @@ class UiModalGauss extends React.Component {
 
 } // end class
 
-export default connect(store => store)(UiModalGauss);
+export default connect(store => store)(UiModalBilateral);
 
 

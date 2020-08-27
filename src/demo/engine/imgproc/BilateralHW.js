@@ -1,5 +1,5 @@
 //
-// Blur 3d iamge using render and shader 
+// Bilateral filter for 3d iamge using render and shader 
 // 
 
 import * as THREE from 'three';
@@ -21,7 +21,8 @@ precision highp sampler3D;
 uniform sampler3D texVolume;
 uniform vec3 texelSize;
 uniform float volumeSizeZ;
-uniform float blurSigma;
+uniform float distSigma;
+uniform float valSigma;
 uniform float kernelSize;
 uniform float xDim;
 uniform float yDim;
@@ -29,9 +30,9 @@ uniform float curZ;
 
 float filterBlur(vec3 base)
 {
-  float sigma = blurSigma;
-  float koef = 1.0 / (2.0 * sigma * sigma);
-  float val = texture(texVolume, base).r;
+  float koefDist = 1.0 / (3.0 * distSigma * distSigma);
+  float koefVal = 1.0 / (valSigma * valSigma);
+  float valCenter = texture(texVolume, base + vec3(0.5, 0.5, 0.5)).r;
   float sumWeights = 0.0;
   float acc = 0.0;
 
@@ -49,7 +50,11 @@ float filterBlur(vec3 base)
         texc = texc + vec3(0.5, 0.5, 0.5);
         texc = clamp(texc, vec3(0.0, 0.0, 0.0), vec3(1.0 - texelSize.x, 1.0 - texelSize.y, 1.0 - texelSize.z));
         float curVal = texture(texVolume, texc).r;
-        float weight = exp( -(tx * tx + ty * ty + tz * tz) * koef);
+        float deltaVal = (curVal - valCenter) / 256.0;
+        float weightDist = exp( -(tx * tx + ty * ty + tz * tz) * koefDist);
+        float weightVal = exp( -(deltaVal * deltaVal) * koefVal );
+        float weight = weightDist * weightVal;
+        // float weight = weightDist;
         acc += curVal * weight;
         sumWeights += weight;
       } // for x
@@ -59,6 +64,7 @@ float filterBlur(vec3 base)
   // get weighted result intencity
   acc = acc / sumWeights;
   return acc;
+  //return valCenter;
 }
 
 void main() {
@@ -72,20 +78,22 @@ void main() {
 
 `;
 
-export default class GaussHW {
+export default class BilateralHW {
   constructor() {
     this.m_strShaderVertex = s_shaderVertex;
     this.m_strShaderFragment = s_shaderFragment;
     this.m_bufferTextureCPU = null;
     const VOL_SIZE_Z = 256.0;
-    const BLUR_SIGMA = 0.8;
+    const DIST_SIGMA = 0.8;
+    const VAL_SIGMA = 1.6;
     this.m_uniforms = {
       texVolume: { type: 't', value: null },
       texelSize: { type: 'v3', value: null },
       volumeSizeZ: { type: 'f', value: VOL_SIZE_Z },
       xDim: { type: 'f', value: VOL_SIZE_Z },
       yDim: { type: 'f', value: VOL_SIZE_Z },
-      blurSigma:   { type: 'f', value: BLUR_SIGMA },
+      distSigma:   { type: 'f', value: DIST_SIGMA },
+      valSigma:   { type: 'f', value: VAL_SIGMA },
       curZ: { type: 'f', value: 0.0 },
       kernelSize: { type: 'f', value: 0.0 },
     };
@@ -133,9 +141,12 @@ export default class GaussHW {
     this.m_z = zNext;
   }
   // before iterative renders
-  setVolumeTextureWebGL2(blurSigma) {
-    this.m_material.uniforms.blurSigma.value = blurSigma;
-    this.m_material.uniforms.blurSigma.needsUpdate = true;
+  setVolumeTextureWebGL2(distSigma, valSigma) {
+    this.m_material.uniforms.distSigma.value = distSigma;
+    this.m_material.uniforms.distSigma.needsUpdate = true;
+    this.m_material.uniforms.valSigma.value = valSigma;
+    this.m_material.uniforms.valSigma.needsUpdate = true;
+
     this.m_z = 0;
     this.m_iter = 0;
     const VAL_4 = 4;
@@ -143,7 +154,7 @@ export default class GaussHW {
     this.gl = this.rendererBlur.getContext();
   }
   // create camera , context
-  initRenderer(blurSigma) {
+  initRenderer(distSigma, valSigma) {
     this.sceneBlur = new THREE.Scene();
     // eslint-disable-next-line
     this.cameraOrtho = new THREE.OrthographicCamera(
@@ -168,15 +179,26 @@ export default class GaussHW {
     this.m_defines.useWebGL2 = 1;
     this.sceneBlur.add(mesh);
 
-    // this.switchToBlurRender();
     this.m_material.needsUpdate = true;
 
     // render with blur and copy pixels back to this.bufferRgba
-    this.setVolumeTextureWebGL2(blurSigma);
+    this.setVolumeTextureWebGL2(distSigma, valSigma);
   }
   // create renderer
-  create(volume, texelSize, kernelSize, blurSigma) {
-    // console.log('MaterialImageBlur: start...');
+  // koefDist in 0.5 .. 3.0
+  // koefVal in 0.1 .. 4.0
+  // 
+  //                | koefDist = 0.5  | koefDist = 3.0
+  // ---------------+-----------------+----------------
+  // koefVal = 0.1  | orig            | Nice without noise 
+  // koefVal = 4.0  | orig            | Blurred
+  //
+  //
+  create(volume, texelSize, kernelSize, koefDist, koefVal = 0.1) {
+
+    const distSigma = (1.0 / kernelSize) * koefDist;
+    const valSigma = (1.0 / 256.0) * koefVal;
+    console.log('BilateralHW params: kernel=' + kernelSize.toString() +  ' dist sigma=' + distSigma.toString() + ' val sigma=' + valSigma.toString() );
     const xDim = volume.m_xDim;
     const yDim = volume.m_yDim;
     const zDim = volume.m_zDim;
@@ -224,7 +246,7 @@ export default class GaussHW {
     this.m_uniforms.kernelSize.value = kernelSize;
 
     if (this.m_zDim > 1) {
-      this.initRenderer(blurSigma);
+      this.initRenderer(distSigma, valSigma);
     }
     return this.m_bufferTextureCPU;
   } // end create
