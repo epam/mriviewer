@@ -34,6 +34,8 @@ export default class LoadResult {
       return 'Success';
     case LoadResult.UNKNOWN:
       return 'Unknown';
+    case LoadResult.BAD_DICOM:
+      return 'Bad Dicom';
     case LoadResult.BAD_HEADER:
       return 'Bad header';
     case LoadResult.UNSUPPORTED_ENDIANNESS:
@@ -84,8 +86,9 @@ export default class LoadResult {
   }  // getResultString
 } // class LoadResult
 
-LoadResult.SUCCESS = 1;
-LoadResult.UNKNOWN = 2;
+LoadResult.SUCCESS = 0;
+LoadResult.UNKNOWN = 1;
+LoadResult.BAD_DICOM = 2;
 LoadResult.BAD_HEADER = 3;
 LoadResult.UNSUPPORTED_ENDIANNESS = 4;
 LoadResult.UNSUPPORTED_COLOR_FORMAT = 5;

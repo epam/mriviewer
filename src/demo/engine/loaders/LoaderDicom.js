@@ -18,13 +18,12 @@ import LoadResult from '../LoadResult';
 import DicomDictionary from './dicomdict';
 import DicomInfo from './dicominfo';
 import DicomTag from './dicomtag';
+import DicomSlice from './dicomslice';
 import DicomSlicesVolume from './dicomslicesvolume';
 import DicomSliceInfo from './dicomsliceinfo';
 import DicomTagInfo from './dicomtaginfo';
-import UiHistogram from '../../ui/UiHistogram';
 import FileTools from './FileTools';
 import FileLoader from './FileLoader';
-import Hash from '../utils/Hash';
 
 // import Volume from '../Volume';
 import VolumeSet from '../VolumeSet';
@@ -51,6 +50,8 @@ const DICOM_ERROR_TOO_SMALL_FILE = -2;
 
 const UNDEFINED_LENGTH = 0xFFFFFFFF;
 
+const LARGE_NUMBER = 0x3FFFFFFF;
+
 const TAG_IMAGE_INSTANCE_NUMBER = [0x0020, 0x0013];
 const TAG_PIXEL_DATA = [0x7FE0, 0x0010];
 
@@ -62,6 +63,13 @@ const TAG_IMAGE_SMALL_PIX_VAL = [0x0028, 0x0106];
 const TAG_IMAGE_LARGE_PIX_VAL = [0x0028, 0x0107];
 const TAG_PIXEL_PADDING_VALUE = [0x0028, 0x0120];
 const TAG_PIXEL_SPACING = [0x0028, 0x0030];
+const TAG_WINDOW_CENTER = [0x0028, 0x1050];
+const TAG_WINDOW_WIDTH = [0x0028, 0x1051];
+const TAG_RESCALE_INTERCEPT = [0x0028, 0x1052];
+const TAG_RESCALE_SLOPE = [0x0028, 0x1053];
+const TAG_RESCALE_TYPE = [0x0028, 0x1054];
+const TAG_PIXEL_REPRESENTATION = [0x0028, 0x0103];
+
 const TAG_IMAGE_POSITION = [0x0020, 0x0032];
 const TAG_SLICE_LOCATION = [0x0020, 0x1041];
 const TAG_SAMPLES_PER_PIXEL = [0x0028, 0x0002];
@@ -141,6 +149,17 @@ class LoaderDicom{
     this.m_yDim = -1;
     /** @property {number} m_bitsPerPixel - bits per pixe;. Can be 8, 16, 32 */
     this.m_bitsPerPixel = -1;
+    /** @property {number} m_padValue - background pixel value, not used in histogram */
+    this.m_padValue = -LARGE_NUMBER;
+    this.m_windowCenter = LARGE_NUMBER; // TAG_WINDOW_CENTER
+    this.m_windowWidth = LARGE_NUMBER; // TAG_WINDOW_WIDTH
+    this.m_rescaleIntercept = 0; // TAG_RESCALE_INTERCEPT, used as v` = v * rescaleSlope + rescaleIntercept
+    this.m_rescaleSlope = 1; // TAG_RESCALE_SLOPE
+    this.m_rescaleHounsfield = false;
+    this.m_pixelRepresentaionSigned = false;
+
+    /** @property {number} m_littleEndian - little ednian encoding of pixel data */
+    this.m_littleEndian = true;
     /** @property {number} m_samplesPerPixel - number of samples per pixel. Can be 1 or 3. Used as average */
     this.m_samplesPerPixel = 1;
     /** @property {number} m_seriesNumber - Index of series to check the same image set in slices */
@@ -255,6 +274,24 @@ class LoaderDicom{
     volDst = volSet.getVolume(indexSelected);
     console.assert(volDst !== null);
   }
+
+  const numSeries = this.m_slicesVolume.m_series.length;
+  // get serie with given hash
+  let indSerie = -1;
+  for (let s = 0; s < numSeries; s++) {
+    if (this.m_slicesVolume.m_series[s].m_hash === hashSelected) {
+      indSerie = s; break;
+    }
+  }
+  console.assert(indSerie >= 0);
+  const serie = this.m_slicesVolume.m_series[indSerie];
+  const slice0 = serie.m_slices[0];
+  const numSlices = serie.m_slices.length;
+  this.m_xDim = slice0.m_xDim;
+  this.m_yDim = slice0.m_yDim;
+  this.m_zDim = serie.m_slices.length;
+  let xyDim = this.m_xDim * this.m_yDim;
+  
   const imagePosBox = {
     x: this.m_imagePosMax.x - this.m_imagePosMin.x,
     y: this.m_imagePosMax.y - this.m_imagePosMin.y,
@@ -291,150 +328,92 @@ class LoaderDicom{
   let dataSize = 0;
   let dataArray = null;
 
-  let xyDim = this.m_xDim * this.m_yDim;
-  let maxVal = 0;
+  // convert big endian in slices
+  if (!this.m_littleEndian) {
+    for (let ser = 0; ser < numSeries; ser++){
+      const serie = this.m_slicesVolume.m_series[ser];
+      if (serie.m_hash !== hashSelected) {
+        continue;
+      }
+      for (let sl = 0; sl < numSlices; sl++) {
+        const slice = serie.m_slices[sl];
+        const sliceData16 = slice.m_image;
+        const xDim = slice.m_xDim;
+        const yDim = slice.m_yDim;
+        xyDim = xDim * yDim;
+        for (i = 0; i < xyDim; i++) {
+          const val16 = sliceData16[i];
+          sliceData16[i] = (val16 >> 8) | (val16 << 8);
+        } // for (i) all slice pixels
+      } // for sl
+    } // for ser
+  } // if big endian
 
-  // TODO: check correct slices number
-  /*
-  if (this.m_slicesVolume.m_numSlices !== this.m_zDim) {
-    console.log('Error logic zDim');
-    return LoadResult.ERROR_WRONG_NUM_SLICES;
-  }
-  */
-
-  // ge maximum value from slices
-  const numSlices = this.m_slicesVolume.m_numSlices;
-  for (let s = 0; s < numSlices; s++) {
-    const slice = this.m_slicesVolume.m_slices[s];
-    if (slice.m_hash === hashSelected) {
-      const sliceData16 = slice.m_image;
+  // remove pad values or too much values
+  for (let ser = 0; ser < numSeries; ser++) {
+    const serie = this.m_slicesVolume.m_series[ser];
+    if (serie.m_hash !== hashSelected) {
+      continue;
+    }
+    for (let sl = 0; sl < numSlices; sl++) {
+      const slicePad = serie.m_slices[sl];
+      const xDim = slicePad.m_xDim;
+      const yDim = slicePad.m_yDim;
+      xyDim = xDim * yDim;
       for (i = 0; i < xyDim; i++) {
-        const val16 = sliceData16[i];
-        maxVal = (val16 > maxVal) ? val16 : maxVal;
+        const val16 = slicePad.m_image[i];
+        // if ((val16 === this.m_padValue) || ((val16 & 0x8000) !== 0)) {
+        if (val16 === this.m_padValue) {
+          val16 = 0;
+        }
+        slicePad.m_image[i] = val16;
       } // for (i) all slice pixels
-    } // if hash correct
-  }  // for (s) all slices
-  // allocate one more entry for values
-  maxVal++;
+    } // for sl
+  } // for ser
 
-  console.log(`Build Volume. max value=${maxVal}. Volume dim = ${this.m_xDim}*${this.m_yDim}*${this.m_zDim}`);
-  console.log(`Min slice number = ${this.m_slicesVolume.m_minSlice}`);
-  console.log(`Max slice number = ${this.m_slicesVolume.m_maxSlice}`);
+  // dont apply rescale formula here, due to unsigned numbder can became signed, but store
+  // image in the unsigmed form
 
-  const histogram = new Float32Array(maxVal);
-  for (i = 0; i < maxVal; i++) {
-    histogram[i] = 0;
-  }
-  for (let s = 0; s < numSlices; s++) {
-    const slice = this.m_slicesVolume.m_slices[s];
-    if (slice.m_hash === hashSelected) {
+  // get maximum value from slices (but only for given serie : hash)
+  let maxVal = -LARGE_NUMBER;
+  let minVal = +LARGE_NUMBER;
+  for (let ser = 0; ser < numSeries; ser++) {
+    const serie = this.m_slicesVolume.m_series[ser];
+    if (serie.m_hash !== hashSelected) {
+      continue;
+    }
+    for (let sl = 0; sl < numSlices; sl++) {
+      const slice = serie.m_slices[sl];
       const sliceData16 = slice.m_image;
+      const xDim = slice.m_xDim;
+      const yDim = slice.m_yDim;
+      xyDim = xDim * yDim;
       for (i = 0; i < xyDim; i++) {
-        const val16 = sliceData16[i];
-        histogram[val16]++;
-      } // for all pixels
-    } // if hash
-  }
-  //console.log(`histogram[0] = ${histogram[0]}`);
-  //console.log(`histogram[1] = ${histogram[1]}`);
-  //console.log(`histogram[maxVal - 2] = ${histogram[maxVal - 2]}`);
-  //console.log(`histogram[maxVal - 1] = ${histogram[maxVal - 1]}`);
-  let numDifHistValues = 0;
-  for (i = 0; i < maxVal; i++) {
-    numDifHistValues += (histogram[i] !== 0.0) ? 1: 0;
-  }
-  console.log(`num different histogram values = ${numDifHistValues}`);
+        const valData = sliceData16[i] * this.m_rescaleSlope + this.m_rescaleIntercept;
+        minVal = (valData < minVal) ? valData : minVal;
+        maxVal = (valData > maxVal) ? valData : maxVal;
+      } // for (i) all slice pixels
+    } // for sl
+  } // for ser
 
-  const hist = new UiHistogram();
-  hist.assignArray(maxVal, histogram);
-  const HIST_SMOOTH_SIGMA = 0.8;
-  const NEED_NORMALIZE = false;
-  hist.smoothHistogram(HIST_SMOOTH_SIGMA, NEED_NORMALIZE);
-  const histSmooothed = hist.m_histogram;
-
-  // Find val max in smoothed histogram
-  const VAL_8 = 8;
-  maxVal -= 1;
-  for (; maxVal > VAL_8; maxVal--) {
-    if (histSmooothed[maxVal] > 0) {
-      break;
-    }
-  }
-  // Find last local max in smoothed historgam
-  const HIST_MIN_VAL = Math.floor((xyDim * numSlices) / (9 * 15));
-  let idxLastLocalMax = 0;
-  for (i = maxVal - VAL_8; i > VAL_8; i--) {
-    if (histSmooothed[i] > HIST_MIN_VAL) {
-      let iL = i - 1;
-      let iR = i + 1;
-      while ((histSmooothed[i] === histSmooothed[iL]) && (iL >= VAL_8)) {
-        iL -= 1;
-      }
-      while ((histSmooothed[i] === histSmooothed[iR]) && (iR < maxVal - VAL_8)) {
-        iR += 1;
-      }
-      if ((histSmooothed[i] > histSmooothed[iL]) && (histSmooothed[i] > histSmooothed[iR])) {
-        idxLastLocalMax = i;
-        break;
-      } // if
-    } // if more min val
-  } // for i
-
-  // if not found local max: find some more or less bright value ending
-  if (idxLastLocalMax === 0) {
-    const HIST_BARRIER_VAL = Math.floor((xyDim * numSlices) / (1024 * 10));
-    for (i = maxVal - 8; i > 8; i--)
-    {
-      if (histSmooothed[i] > HIST_BARRIER_VAL)
-      {
-        idxLastLocalMax = i;
-        maxVal = i;
-        break;
-      }
-    } // for
-  } // if not found loc max
-
-  const TWICE = 2;
-  const idxSomeAfterMax = Math.floor((idxLastLocalMax + maxVal) / TWICE);
-  const yLocMax = histSmooothed[idxLastLocalMax];
-  const yAftMax = histSmooothed[idxSomeAfterMax];
-  console.log(`Build Volume. idxLastLocalMax = ${idxLastLocalMax}, maxVal = ${maxVal}`);
-
-  if (idxLastLocalMax > 0) {
-    if (yLocMax !== yAftMax) {
-      // linear approximation
-      const deltaIndex = idxSomeAfterMax - idxLastLocalMax;
-      if (deltaIndex === 0) {
-        console.log('Critical error build 8bit volume');
-        return LoadResult.ERROR_HISTOGRAM_DETECT_RIDGES;
-      }
-      const koefA = (yAftMax - yLocMax) / deltaIndex;
-      const koefB = yAftMax - koefA * idxSomeAfterMax;
-      const xMax = koefB / (-koefA);
-      maxVal = Math.floor(xMax);
-    } else {
-      // same function level: just select minimum x
-      maxVal = idxLastLocalMax;
-    }
-  }
-  console.log(`Build Volume. max value after search last hill: ${maxVal}`);
+  console.log(`Build Volume. min/max value=${minVal}/${maxVal}. Volume dim = ${this.m_xDim}*${this.m_yDim}*${this.m_zDim}`);
+  console.log(`Min slice number = ${serie.m_minSlice}`);
+  console.log(`Max slice number = ${serie.m_maxSlice}`);
+  maxVal = (maxVal - minVal > 0) ? maxVal : (maxVal + 1); 
 
   const BITS_ACCUR = 11;
   const BITS_IN_BYTE = 8;
-  const scale = Math.floor((1 << (BITS_IN_BYTE + BITS_ACCUR)) / maxVal);
+  const scale = Math.floor((1 << (BITS_IN_BYTE + BITS_ACCUR)) / (maxVal - minVal));
   const TOO_MIN_SCALE = 4;
   if (scale <= TOO_MIN_SCALE) {
     console.log('Bad scaling: image will be 0');
     return LoadResult.ERROR_SCALING;
   }
 
-  // TODO: need not to remove slices
-  // remove unused objects in slices (make length equal to actual number of slices)
-  // this.m_slicesVolume.m_slices = this.m_slicesVolume.m_slices.slice(0, numSlices);
+  // get slices for selected serie
+  const srcSlices = serie.m_slices;
 
-  const srcSlices = this.m_slicesVolume.m_slices;
-
-  const numSlicesByTags = this.m_slicesVolume.m_maxSlice - this.m_slicesVolume.m_minSlice + 1;
+  const numSlicesByTags = serie.m_maxSlice - serie.m_minSlice + 1;
   if (numSlicesByTags !== numSlices) {
     console.log(`Sort by location! N slices by tags = ${numSlicesByTags}, but N readed slices = ${numSlices}`);
   }
@@ -463,25 +442,14 @@ class LoaderDicom{
   // assign new slice numbers according accending location
   let ind = 0;
   for (let s = 0; s < numSlices; s++) {
-    if (srcSlices[s].m_hash === hashSelected) {
-      srcSlices[s].m_sliceNumber = ind;
-      ind++;
-    }
+    srcSlices[s].m_sliceNumber = ind;
+    ind++;
   }
-
-  // get num slices for current vol index
-  let numSlicesActaullyBuild = 0;
-  for (let sInd = 0; sInd < numSlices; sInd++) {
-    const slice = srcSlices[sInd];
-    if (slice.m_hash === hashSelected) {
-      numSlicesActaullyBuild++;
-    }
-  }
-  // correct zDim according to actaul slice count
-  this.m_zDim = numSlicesActaullyBuild;
+  this.m_zDim = numSlices;
 
   // create out volume data array
   // normal copy volume with transform 16 -> 8 bit
+
   dataSize = this.m_xDim * this.m_yDim * this.m_zDim;
   dataArray = new Uint8Array(dataSize);
   if (dataArray === null) {
@@ -492,34 +460,55 @@ class LoaderDicom{
     dataArray[i] = 0;
   }
 
-
+  // convert slices data into volume set data (16 bpp -> 8 bpp, etc)
   const MAX_BYTE = 255;
   for (let s = 0; s < numSlices; s++) {
-    const slice = srcSlices[s];
-    if (slice.m_hash !== hashSelected) {
-      continue;
-    }
-    const sliceData16 = slice.m_image;
+    const sliceSrc = srcSlices[s];
+    xyDim = sliceSrc.m_xDim * sliceSrc.m_yDim;
+    const dataSrc16 = sliceSrc.m_image;
     // console.log(`Slice[${s}] sliceNumber = ${slice.m_sliceNumber} sliceLocation = ${slice.m_sliceLocation}`);
 
     // const z = slice.m_sliceNumber - this.m_slicesVolume.m_minSlice;
-    let z = slice.m_sliceNumber;
-    if (z >= this.m_slicesVolume.m_numSlices) {
-      z = slice.m_sliceNumber - this.m_slicesVolume.m_minSlice;
+    let z = sliceSrc.m_sliceNumber;
+    if (z >= serie.m_slices.length) {
+      z = sliceSrc.m_sliceNumber - serie.m_minSlice;
       if ((z < 0) || (z >= this.m_zDim)) {
         console.log('Invalid z slice reference');
         return LoadResult.ERROR_INVALID_SLICE_INDEX;
       } // if z invalid
     } // if z more num slices
 
-    if (sliceData16 !== null) {
+    if (dataSrc16 !== null) {
       const offZ = z * xyDim;
-      for (i = 0; i < xyDim; i++) {
-        const val16 = sliceData16[i];
-        let val = (val16 * scale) >> BITS_ACCUR;
-        val = (val <= MAX_BYTE) ? val : MAX_BYTE;
-        dataArray[offZ + i] = val;
-      } // for i
+
+      if ((this.m_windowCenter !== LARGE_NUMBER) && (this.m_windowWidth !== LARGE_NUMBER)) {
+        const winMin = this.m_windowCenter - this.m_windowWidth * 0.5;
+        for (i = 0; i < xyDim; i++) {
+          const valScaled = dataSrc16[i] * this.m_rescaleSlope + this.m_rescaleIntercept;
+
+          let val = 0;
+          if (this.m_rescaleHounsfield) {
+            // rescale for hounsfield units
+            val = Math.floor((valScaled - winMin) * 255 / this.m_windowWidth);
+          } else {
+            // usual (default) rescale
+            val = Math.floor(127 + (valScaled - this.m_windowCenter) * 128 / (this.m_windowWidth / 2));
+          }
+          val = (val >= 0) ? val : 0;
+          val = (val < 255) ? val : 255;
+          dataArray[offZ + i] = val;
+        } // for i
+      } else {
+        // window center, width not specified
+        for (i = 0; i < xyDim; i++) {
+          const val16 = dataSrc16[i] * this.m_rescaleSlope + this.m_rescaleIntercept;
+          let val = ((val16 - minVal) * scale) >> BITS_ACCUR;
+          // let val = Math.floor(255 * val16 / maxVal);
+          val = (val <= MAX_BYTE) ? val : MAX_BYTE;
+          dataArray[offZ + i] = val;
+        } // for i
+      } // no defined window center, width
+
     } // if has slice data
   } // for(s) all slices
 
@@ -1283,6 +1272,8 @@ class LoaderDicom{
     this.m_xDim = -1;
     this.m_yDim = -1;
     this.m_bitsPerPixel = -1;
+    this.m_windowCenter = -1;
+    this.m_windowWidth = -1;
     let pixelBitMask = 0;
     let pixelPaddingValue = 0;
     let pixelsTagReaded = false;
@@ -1380,6 +1371,89 @@ class LoaderDicom{
         }
       }
 
+      // window center
+      if ((tag.m_group === TAG_WINDOW_CENTER[0]) && (tag.m_element === TAG_WINDOW_CENTER[1])) {
+        if ((tag.m_value != null) && (tag.m_value.byteLength > 0)) {
+          const dataLen = tag.m_value.byteLength;
+          const dv = new DataView(tag.m_value);
+          const strNum = LoaderDicom.getStringAt(dv, 0, dataLen);
+          this.m_windowCenter = parseInt(strNum, 10);
+          if (DEBUG_PRINT_TAGS_INFO) {
+            console.log(`Str = ${strNum}, WindowCenter = ${this.m_windowCenter}`);
+          }
+        } // if non zero data
+      } // window center
+      
+      // window width
+      if ((tag.m_group === TAG_WINDOW_WIDTH[0]) && (tag.m_element === TAG_WINDOW_WIDTH[1])) {
+        if ((tag.m_value != null) && (tag.m_value.byteLength > 0)) {
+          const dataLen = tag.m_value.byteLength;
+          const dv = new DataView(tag.m_value);
+          const strNum = LoaderDicom.getStringAt(dv, 0, dataLen);
+          this.m_windowWidth = parseInt(strNum, 10);
+          if (DEBUG_PRINT_TAGS_INFO) {
+            console.log(`Str = ${strNum}, WindowWidth = ${this.m_windowWidth}`);
+          }
+        } // if non zero data
+      } // window width
+
+      // rescale intercept
+      if ((tag.m_group === TAG_RESCALE_INTERCEPT[0]) && (tag.m_element === TAG_RESCALE_INTERCEPT[1])) {
+        if ((tag.m_value != null) && (tag.m_value.byteLength > 0)) {
+          const dataLen = tag.m_value.byteLength;
+          const dv = new DataView(tag.m_value);
+          const strNum = LoaderDicom.getStringAt(dv, 0, dataLen);
+          this.m_rescaleIntercept = parseInt(strNum, 10);
+          if (DEBUG_PRINT_TAGS_INFO) {
+            console.log(`Str = ${strNum}, RescaleIntercept = ${this.m_rescaleIntercept}`);
+          }
+        } // if non zero data
+      } // rescale intercept
+
+      // rescale slope
+      if ((tag.m_group === TAG_RESCALE_SLOPE[0]) && (tag.m_element === TAG_RESCALE_SLOPE[1])) {
+        if ((tag.m_value != null) && (tag.m_value.byteLength > 0)) {
+          const dataLen = tag.m_value.byteLength;
+          const dv = new DataView(tag.m_value);
+          const strNum = LoaderDicom.getStringAt(dv, 0, dataLen);
+          this.m_rescaleSlope = parseInt(strNum, 10);
+          if (DEBUG_PRINT_TAGS_INFO) {
+            console.log(`Str = ${strNum}, RescaleSlope = ${this.m_rescaleSlope}`);
+          }
+        } // if non zero data
+      } // rescale slope
+
+      // rescale type
+      if ((tag.m_group === TAG_RESCALE_TYPE[0]) && (tag.m_element === TAG_RESCALE_TYPE[1])) {
+        if ((tag.m_value != null) && (tag.m_value.byteLength > 0)) {
+          const dataLen = tag.m_value.byteLength;
+          const dv = new DataView(tag.m_value);
+          const strVal = LoaderDicom.getStringAt(dv, 0, dataLen);
+          if (strVal === 'HU') {
+            this.m_rescaleHounsfield = true;  
+          }
+          if (DEBUG_PRINT_TAGS_INFO) {
+            console.log(`Str = ${strNum}, RescaleType = ${this.m_rescaleHounsfield}`);
+          }
+        } // if non zero data
+      } // rescale type
+
+      // pixel representation
+      if ((tag.m_group === TAG_PIXEL_REPRESENTATION[0]) && (tag.m_element === TAG_PIXEL_REPRESENTATION[1])) {
+        if ((tag.m_value != null) && (tag.m_value.byteLength > 0)) {
+          const dataLenPixRep = tag.m_value.byteLength;
+          const dvPixRep = new DataView(tag.m_value);
+          const pixRep = (dataLenPixRep === SIZE_SHORT) ?
+            dvPixRep.getUint16(0, this.m_littleEndian) : dvPixRep.getUint32(0, this.m_littleEndian);
+          if (pixRep === 1) {
+            this.m_pixelRepresentaionSigned = true;
+          }
+          if (DEBUG_PRINT_TAGS_INFO) {
+            console.log(`Str = ${strNum}, Pixel representation is signed = ${this.m_pixelRepresentaionSigned}`);
+          }
+        } // if non zero data
+      } // rescale slope
+
       // get series number
       if ((tag.m_group === TAG_SERIES_NUMBER[0]) && (tag.m_element === TAG_SERIES_NUMBER[1])) {
         if ((tag.m_value != null) && (tag.m_value.byteLength > 0)) {
@@ -1443,6 +1517,7 @@ class LoaderDicom{
         const dv = new DataView(tag.m_value);
         pixelPaddingValue = (dataLen === SIZE_SHORT) ?
           dv.getUint16(0, this.m_littleEndian) : dv.getUint32(0, this.m_littleEndian);
+        this.m_padValue = pixelPaddingValue;
         if (DEBUG_PRINT_TAGS_INFO) {
           console.log(`pixelPaddingValue = ${pixelPaddingValue}`);
         }
@@ -1522,6 +1597,7 @@ class LoaderDicom{
           console.log(`samplesPerPixel = ${this.m_samplesPerPixel}`);
         }
       }
+
       // dicom info
       if ((tag.m_group === TAG_SERIES_DESCRIPTION[0]) && (tag.m_element === TAG_SERIES_DESCRIPTION[1]) &&
         (tag.m_value !== null)) {
@@ -1686,14 +1762,18 @@ class LoaderDicom{
     }
 
     const numPixels = this.m_xDim * this.m_yDim;
-    const volSlice = this.m_slicesVolume.getNewSlice();
+    // const volSlice = this.m_slicesVolume.getNewSlice();
+    const volSlice = new DicomSlice();
     if (volSlice === null) {
       console.log('No memory');
       return LoadResult.ERROR_NO_MEMORY;
     }
 
-    // this.m_slices[this.m_imageNumber] = new Uint16Array(numPixels);
-    volSlice.m_image = new Uint16Array(numPixels);
+    if (this.m_pixelRepresentaionSigned) {
+      volSlice.m_image = new Int16Array(numPixels);
+    } else {
+      volSlice.m_image = new Uint16Array(numPixels);
+    }
     if (volSlice.m_image === null) {
       console.log('No memory');
       return LoadResult.ERROR_NO_MEMORY;
@@ -1709,12 +1789,10 @@ class LoaderDicom{
     volSlice.m_institutionName = this.m_dicomInfo.m_institutionName;
     volSlice.m_operatorsName = this.m_dicomInfo.m_operatorsName;
     volSlice.m_physicansName = this.m_dicomInfo.m_physicansName;
+    volSlice.buildHash();
 
-    // get hash from all slice text features
-    const strMix = volSlice.m_patientName + volSlice.m_studyDescr +
-      volSlice.m_studyDate + volSlice.m_seriesTime + 
-      volSlice.m_seriesDescr + volSlice.m_bodyPartExamined;
-    volSlice.m_hash = Hash.getHash(strMix);
+    volSlice.m_xDim = this.m_xDim;
+    volSlice.m_yDim = this.m_yDim;
 
     // console.log(`patName = ${volSlice.m_patientName}`);
     // console.log(`studyDescr = ${volSlice.m_studyDescr}`);
@@ -1723,7 +1801,7 @@ class LoaderDicom{
     // console.log(`seriesDescr = ${volSlice.m_seriesDescr}`);
     // console.log(`bodyPartExamined = ${volSlice.m_bodyPartExamined}`);
 
-    this.m_slicesVolume.updateSliceNumber(this.m_imageNumber);
+    
 
     // Fill slice image
     // const imageDst = this.m_slices[this.m_imageNumber];
@@ -1762,39 +1840,18 @@ class LoaderDicom{
       }
     } else if (this.m_bitsPerPixel === BITS_16) {
       let i2 = 0;
-      const pixValDif = pixelMaxValue - pixelMinValue;
-      if ((pixelMaxValue === -1) || (pixValDif === 0)) {
-        for (i = 0; i < numPixels; i++) {
-          let val = imageSrc.getUint16(i2, this.m_littleEndian);
-          i2 += SIZE_SHORT;
-          val = (val !== pixelPaddingValue) ? val : 0;
-          val &= pixelBitMask;
-          // some tricky read form gm dicom data volume
-          const MASK_TRICK = 0x7000;
-          val = (val & MASK_TRICK) ? 0 : val;
-          imageDst[i] = val;
-        } // for (i) all pixels
-      } else { // if no max value
-        const SCALE_BIT_ACC = 12;
-        const MAX_SCALED_VAL = 4095;
-        const valScale = Math.floor((MAX_SCALED_VAL << SCALE_BIT_ACC) / (pixelMaxValue - pixelMinValue));
-        for (i = 0; i < numPixels; i++) {
-          let val = imageSrc.getInt16(i2, this.m_littleEndian);
-          i2 += SIZE_SHORT;
-
-          // val &= pixelBitMask;
-          val = (val !== pixelPaddingValue) ? val : 0;
-          val = (val >= pixelMinValue) ? val : pixelMinValue;
-          val = (val <= pixelMaxValue) ? val : pixelMaxValue;
-          val -= pixelMinValue;
-          val = (val * valScale) >> SCALE_BIT_ACC;
-          imageDst[i] = val;
-        } // for (i) all pixels
-      } // if pixel max value
+      for (i = 0; i < numPixels; i++) {
+        let val = imageSrc.getUint16(i2, this.m_littleEndian);
+        i2 += SIZE_SHORT;
+        imageDst[i] = val;
+      } // end for i pixels
     } else { // if 16 bpp
       console.log('TODO: need to implement reading non-8 and non-16 bit dicom images');
     }
     this.m_error = DICOM_ERROR_OK;
+
+    // add volume slice to slices volume (and manage series)
+    this.m_slicesVolume.addSlice(volSlice);
 
     // console.log(`Dicom read OK. Volume pixels = ${this.m_xDim} * ${this.m_yDim} * ${this.m_zDim}`);
     if (callbackComplete !== undefined) {
@@ -1854,7 +1911,7 @@ class LoaderDicom{
 
     const LEN_LOG = 64;
     const strLog = strFileContent.substr(0, LEN_LOG);
-    console.log(`Loaded file list. Started with:  ${strLog}`);
+    console.log(`Loaded file list. Started with:  ${strLog} ...`);
 
     const arrFileNames = strFileContent.split('\n');
 

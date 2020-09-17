@@ -10,6 +10,7 @@
   "dependencies": {
     "@tensorflow/tfjs": "^1.7.4",
     "bootstrap": "^4.5.0",
+    "daikon": "^1.2.42",
     "filereader-stream": "^2.0.0",
     "gulp": "^4.0.2",
     "jquery": "^3.5.1",

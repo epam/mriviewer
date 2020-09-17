@@ -1380,6 +1380,6 @@ export default class VolumeRenderer3d {
       return;
     }
     this.renderState = this.RENDER_STATE.ONCE;
-    e.preventDefault();
+    // e.preventDefault();
   }
 } // class Graphics3d

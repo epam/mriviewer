@@ -64,12 +64,13 @@ export default class MaterialFF {
       fragmentLoader.load(FRONT_FACE_FRAGMENT_SHADER, (strFragmentSh) => {
         this.m_strShaderFragment = strFragmentSh;
 
-        // log
-        // {
-        //   const strLoaded = JSON.stringify(this.m_strShaderVertex);
-        //   console.log(`Readed vertex shader is: ${strLoaded} ...`);
-        // }
-
+        const NEED_LOG = false;
+        if (NEED_LOG) {
+          const strLoadedVert = JSON.stringify(this.m_strShaderVertex);
+          console.log(`Readed vertex shader is: ${strLoadedVert} ...`);
+          const strLoadedFrag = JSON.stringify(this.m_strShaderFragment);
+          console.log(`Readed fragment shader is: ${strLoadedFrag} ...`);
+        }
         const material = new THREE.ShaderMaterial({
           uniforms: this.m_uniforms,
           vertexShader: this.m_strShaderVertex,

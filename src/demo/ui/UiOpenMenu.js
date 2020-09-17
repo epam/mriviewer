@@ -35,6 +35,8 @@ import LoaderDicom from '../engine/loaders/LoaderDicom';
 import LoaderHdr from '../engine/loaders/LoaderHdr';
 
 import LoaderUrlDicom from '../engine/loaders/LoaderUrlDicom';
+import LoaderDcmDaikon from '../engine/loaders/LoaderDcmDaikon';
+import LoaderDcmUrlDaikon from '../engine//loaders/LoadDcmUrlDiakon';
 
 import config from '../config/config';
 
@@ -47,6 +49,9 @@ const NEED_DEMO_MENU = true;
 
 /** deep artificially fix volume texture size to 4 * N */
 const NEED_TEXTURE_SIZE_4X = true;
+
+// use daikon parser for Dicom (*dcm) file loading
+const READ_DICOM_VIA_DAIKON = true;
 
 // ********************************************************
 // Class
@@ -93,6 +98,7 @@ class UiOpenMenu extends React.Component {
 
     this.m_fileNameOnLoad = '';
     this.m_fileName = '';
+    this.m_fileIndex = 0;
     this.m_fileReader = null;
     this.state = {
       strUrl: '',
@@ -205,11 +211,12 @@ class UiOpenMenu extends React.Component {
   callbackReadSingleDicomComplete(errCode) {
     if (errCode === LoadResult.SUCCESS) {
       // select 1st slice and hash
-      let series = this.m_loaderDicom.m_slicesVolume.getSeries();
-      if (series.length === 0) {
-        this.m_loaderDicom.m_slicesVolume.buildSeriesInfo();
-        series = this.m_loaderDicom.m_slicesVolume.getSeries();
-      }
+      //let series = this.m_loaderDicom.m_slicesVolume.getSeries();
+      //if (series.length === 0) {
+      //  this.m_loaderDicom.m_slicesVolume.buildSeriesInfo();
+      //  series = this.m_loaderDicom.m_slicesVolume.getSeries();
+      //}
+      const series = this.m_loaderDicom.m_slicesVolume.getSeries();
       const index  = 0;
       const hash = series[index].m_hash;
       const volSet = this.m_volumeSet;
@@ -251,10 +258,31 @@ class UiOpenMenu extends React.Component {
     this.onFileReadSingleBuffer(strContent);
   }
   //
+  // daikon read individual slice from file buffer (one from multiple files)
+  // strContent is ArrayBuffer
+  readSliceDicomViaDaikon(fileIndex, fileName, ratioLoad, strContent) {
+    const loaderDaikon = new LoaderDcmDaikon();
+    const ret = loaderDaikon.readSlice(this.m_loader, fileIndex, fileName, strContent);
+    return ret;
+  } // end read single slice via daikon
+  //
   // based on local file read
   // read from string content in this.m_fileReader.result
   //
   onFileReadSingleBuffer(strContent) {
+    // daikon read
+    // strContent is ArrayBuffer
+    if ( (this.m_fileName.endsWith('.dcm') || this.m_fileName.endsWith('.DCM')) && READ_DICOM_VIA_DAIKON) {
+      const loaderDcm = new LoaderDcmDaikon();
+      const store = this.props;
+      const fileIndex = this.m_fileIndex;
+      const fileName = this.m_fileName;
+      this.m_loaderDicom = new LoaderDicom(1);
+      const ret = loaderDcm.readSingleSlice(store, this.m_loaderDicom, fileIndex, fileName, strContent);
+      this.callbackReadSingleDicomComplete(ret);
+      return ret;
+    }
+
     console.log('UiOpenMenu. onFileReadSingleBuffer ...');
     // console.log(`file content = ${strContent.substring(0, 64)}`);
     // console.log(`onFileContentRead. type = ${typeof strContent}`);
@@ -264,36 +292,6 @@ class UiOpenMenu extends React.Component {
     const callbackProgress = this.callbackReadProgress;
     const callbackComplete = this.callbackReadComplete;
     const callbackCompleteSingleDicom = this.callbackReadSingleDicomComplete;
-
-    //const strType = strContent.constructor.name;
-    //console.log(`single file read content type = ${strType}`);
-
-    /*
-    // if file gzipped, unpack data (strContent) first
-    if (this.m_fileName.endsWith('.gz')) {
-      // const decompressedData = await ungzip(strContent);
-      // strContent = decompressedData;
-      // remove last 3 chars form file name string
-      this.m_fileName = this.m_fileName.slice(0, -3);
-
-      //zlib.gunzip(strContent, function(err, data) {
-      //  console.log("err = " + err);
-      //  this.onFileReadSingleUncompressedFile(data, callbackProgress, callbackComplete, callbackCompleteSingleDicom);
-      //});
-
-      const compressed = await gzip('Hello World. This is a sample text to demonstrate zip/unzip');
-      const decompressed = await ungzip(compressed);
-      console.log('decomp text is: ' + decompressed.toString());  
-
-      // TODO: seems strContent is not same as compressed above
-      ungzip(strContent.toString()).then((decompr) => {
-        const str = decompr.toString();
-        console.log("decomp = " + str.substr(0, 12));
-        // this.onFileReadSingleUncompressedFile(decompressed, callbackProgress, callbackComplete, callbackCompleteSingleDicom);
-      });
-      return;
-    }
-    */
 
 
     if (this.m_fileName.endsWith('.ktx') || this.m_fileName.endsWith('.KTX')) {
@@ -306,6 +304,13 @@ class UiOpenMenu extends React.Component {
       this.m_loaderDicom.m_zDim = 1;
       this.m_loaderDicom.m_numFiles = 1;
       this.m_volumeSet.readFromDicom(this.m_loaderDicom, strContent, callbackProgress, callbackCompleteSingleDicom);
+      // save dicomInfo to store
+      const dicomInfo = this.m_loaderDicom.m_dicomInfo;
+      const sliceInfo = dicomInfo.m_sliceInfo[0];
+      sliceInfo.m_fileName = this.m_fileName;
+      sliceInfo.m_sliceName = 'Slice 0';
+      const store = this.props;
+      store.dispatch({ type: StoreActionType.SET_DICOM_INFO, dicomInfo: dicomInfo });
     } else if (this.m_fileName.endsWith('.hdr') || this.m_fileName.endsWith('.HDR')) {
       // readOk = vol.readFromHdrHeader(strContent, callbackProgress, callbackComplete);
       console.log(`cant read single hdr file: ${this.m_fileName}`);
@@ -454,26 +459,23 @@ class UiOpenMenu extends React.Component {
     // can be invoked with error code
     const callbackColmpleteVoid = this.callbackCompleteMultipleDicom;
 
+    let readStatus;
 
-    const readStatus = this.m_volumeSet.readSingleSliceFromDicom(this.m_loader, this.m_fileIndex - 1, 
-      this.m_fileName, ratioLoad, strContent, callbackProgress, callbackColmpleteVoid);
+    if (READ_DICOM_VIA_DAIKON) {
+      readStatus = this.readSliceDicomViaDaikon(this.m_fileIndex - 1, this.m_fileName, ratioLoad, strContent);
+    } else {
+      readStatus = this.m_volumeSet.readSingleSliceFromDicom(this.m_loader, this.m_fileIndex - 1, 
+        this.m_fileName, ratioLoad, strContent, callbackProgress, callbackColmpleteVoid);
+    }
+
     if (readStatus !== LoadResult.SUCCESS) {
       console.log('onFileContentReadMultipleDicom. Error read individual file');
     }
     if ( (readStatus === LoadResult.SUCCESS) && (this.m_fileIndex === this.m_numFiles)) {
-      this.m_loader.m_slicesVolume.buildSeriesInfo();
-      const numSeries = this.m_loader.m_slicesVolume.getNumSeries();
+      // this.m_loader.m_slicesVolume.buildSeriesInfo();
+      const numSeries = this.m_loader.m_slicesVolume.m_series.length;
       console.log(`num series = ${numSeries}`);
       const series = this.m_loader.m_slicesVolume.getSeries();
-      /*
-      for (let i = 0; i < numSeries; i++) {
-        const ser = series[i];
-        console.log(`pn = ${ser.m_patientName}, studydesc = ${ser.m_studyDescr}`);
-        console.log(`studydate = ${ser.m_studyDate}  sertime = ${ser.m_seriesTime}`);
-        console.log(`seriesdescr = ${ser.m_seriesDescr}  bpart = ${ser.m_bodyPartExamined}`);
-        console.log(`num slices  = ${ser.m_numSlices} `);
-      }
-      */
       // save loaded series description to store
       if (numSeries === 1) {
         const indexSerie = 0;
@@ -483,7 +485,6 @@ class UiOpenMenu extends React.Component {
         console.log(`onFileContentReadMultipleDicom read all ${this.m_numFiles} files`);
       } else {
         // now we have loaded more then 1 series from dicon files set
-
         for (let i = 0; i < numSeries; i++) {
           const hashCode = series[i].m_hash;
           this.m_loader.createVolumeFromSlices(this.m_volumeSet, i, hashCode);
@@ -526,7 +527,7 @@ class UiOpenMenu extends React.Component {
   // Perform open file after it selected in dialog
   handleFileSelected(evt) {
     if (evt.target.files !== undefined) {
-      const numFiles = evt.target.files.length;
+      let numFiles = evt.target.files.length;
       console.log(`UiOpenMenu. Trying to open ${numFiles} files`);
       if (numFiles <= 0) {
         return;
@@ -618,19 +619,32 @@ class UiOpenMenu extends React.Component {
           return;
         } // if gzipped file
 
-
         this.m_fileReader = new FileReader();
         this.m_fileReader.onloadend = this.onFileContentReadSingleFile;
         this.m_fileReader.readAsArrayBuffer(file);
       } else {
         // not single file was open
-        this.m_files = evt.target.files;
+        this.m_files = Array.from(evt.target.files); // FileList -> Array
         this.m_fileIndex = 0;
         this.m_numFiles = numFiles;
         this.m_fileReader = new FileReader();
         // if multiple files, create Dicom loader
         this.m_loader = null;
         if (evt.target.files[0].name.endsWith(".dcm")) {
+
+          // remove non-dcm files
+          let numFilesNew = 0;
+          for (let i = numFiles - 1; i >= 0; i--) {
+            if (this.m_files[i].name.endsWith(".dcm")) {
+              numFilesNew ++;
+            } else {
+              this.m_files.splice(i, 1);
+            }
+
+          }
+          numFiles = numFilesNew;
+          this.m_numFiles = numFilesNew;
+          
           this.m_loader = new LoaderDicom(numFiles);
           const dicomInfo = this.m_loader.m_dicomInfo;
 
@@ -722,6 +736,12 @@ class UiOpenMenu extends React.Component {
         this.m_volumeSet.readFromNiiUrl(strUrl, callbackProgress, callbackComplete);
         // if NII (Nifti format)
       } else if (strUrl.endsWith('.dcm')) {
+        if (READ_DICOM_VIA_DAIKON) {
+          const loaderUrlDcm = new LoaderDcmUrlDaikon();
+          const ret = loaderUrlDcm.readFromUrl(this.m_volumeSet, strUrl, this.callbackReadCompleteUrlKtxNii, this.callbackReadProgress);
+          return ret;
+        }
+
         const callbackProgress = this.callbackReadProgress;
         const callbackComplete = this.callbackReadCompleteUrlKtxNii;
         this.callbackReadProgress(0.0);

@@ -1,11 +1,19 @@
 
 // ********************************************************
+// Imports
+// ********************************************************
+
+import Hash from '../utils/Hash';
+
+
+// ********************************************************
 // Class
 // ********************************************************
 
 /**
 * Class DicomSlice Single slice with info, used to detect series
 */
+
 class DicomSlice {
   constructor() {
     this.m_image = null;
@@ -24,9 +32,16 @@ class DicomSlice {
     // 18, 15
     this.m_bodyPartExamined = '';
     //
-    this.m_hash = -5555555;
-
+    this.m_hash = 0;
+    this.m_xDim = 0;
+    this.m_yDim = 0;
   }
-}
+  buildHash() {
+    const strMix = this.m_patientName + this.m_studyDescr +
+    this.m_studyDate + this.m_seriesTime + 
+    this.m_seriesDescr + this.m_bodyPartExamined;
+    this.m_hash = Hash.getHash(strMix);
+  } // end build hash
+} // end class DicomSlice
 
 export default DicomSlice;
