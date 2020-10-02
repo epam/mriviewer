@@ -83,6 +83,8 @@ export default class BilateralHW {
     this.m_strShaderVertex = s_shaderVertex;
     this.m_strShaderFragment = s_shaderFragment;
     this.m_bufferTextureCPU = null;
+    this.m_iter = 0;
+    this.m_z = 0;
     const VOL_SIZE_Z = 256.0;
     const DIST_SIGMA = 0.8;
     const VAL_SIGMA = 1.6;
@@ -245,7 +247,7 @@ export default class BilateralHW {
     this.m_uniforms.texelSize.value = texelSize;
     this.m_uniforms.kernelSize.value = kernelSize;
 
-    if (this.m_zDim > 1) {
+    if (this.m_zDim >= 1) {
       this.initRenderer(distSigma, valSigma);
     }
     return this.m_bufferTextureCPU;

@@ -78,12 +78,9 @@ class UiVolumeSel extends React.Component {
       // store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
       store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
 
-      // setup volume index directly to graphics2d, without store (async setting)
       const gra = store.graphics2d;
-      gra.m_volumeIndex = indexSelected;
-
       gra.clear();
-      gra.forceUpdate();
+      gra.forceUpdate(indexSelected);
       gra.forceRender();
 
     } // if vol data not null

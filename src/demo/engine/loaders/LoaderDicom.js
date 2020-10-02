@@ -343,7 +343,7 @@ class LoaderDicom{
         xyDim = xDim * yDim;
         for (i = 0; i < xyDim; i++) {
           const val16 = sliceData16[i];
-          sliceData16[i] = (val16 >> 8) | (val16 << 8);
+          sliceData16[i] = (val16 >> 8) | ((val16 << 8) & 0xffff);
         } // for (i) all slice pixels
       } // for sl
     } // for ser
@@ -512,7 +512,7 @@ class LoaderDicom{
     } // if has slice data
   } // for(s) all slices
 
-  // TODO: destroy for what?
+  // destroy for what?
   // this.m_slicesVolume.destroy();
 
   // Scale down volume by slices
@@ -763,7 +763,7 @@ class LoaderDicom{
 
 
   return LoadResult.SUCCESS;
-} // createVolumeFromSlices
+} // end createVolumeFromSlices
 
   static getVrsStringIndex(vr) {
     const VRS = [

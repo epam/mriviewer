@@ -62,10 +62,14 @@ class Graphics2d extends React.Component {
     this.m_zoom = 1;
     this.m_xPos = 0;
     this.m_yPos = 0;
+    
+    // mounted
+    this.m_isMounted = false;
 
     // animation
-    this.animate = this.animate.bind(this);
-    this.m_frameId = null;
+    // this.animate = this.animate.bind(this);
+    // this.m_frameId = null;
+
     // actual render window dimenison
     this.state = {
       wRender: 0,
@@ -74,9 +78,6 @@ class Graphics2d extends React.Component {
       xMouse: -1,
       yMouse: -1,
     };
-    this.m_volumeIndex = 0;
-
-
     // segm 2d
     this.segm2d = new Segm2d(this);
     this.m_isSegmented = false;
@@ -101,6 +102,7 @@ class Graphics2d extends React.Component {
     store.dispatch({ type: StoreActionType.SET_GRAPHICS_2D, graphics2d: this });
 
   }
+  /*
   start() {
     if (this.m_frameId === null) {
       this.m_frameId = requestAnimationFrame(this.animate);
@@ -114,9 +116,11 @@ class Graphics2d extends React.Component {
     // this.renderScene();
     // this.m_frameId = window.requestAnimationFrame(this.animate);
   }
+  */
   componentDidMount() {
+    this.m_isMounted = true;
     // this.start();
-    //this.renderScene();
+    // this.renderScene();
 
     this.prepareImageForRender();
     this.renderReadyImage();
@@ -128,26 +132,16 @@ class Graphics2d extends React.Component {
     if (this.state.wRender === 0) {
       this.setState({ wRender: w });
       this.setState({ hRender: h });
-      // console.log(`gra2d. wRender*hRender = ${w}*${h}`);
-
-      // tools 2d setup
-      // const store = this.props;
-      // const volSet = store.volumeSet;
-      // const volIndex = store.volumeIndex;
-      // const vol = volSet.getVolume(volIndex);
-      // console.log(`gra2d. vol = ${vol}`);
-
-      // may be here need to assign volume to 2d tools, 
-      // but better use store.volumeSet interface from 
-      // any application point
     }
   }
   componentWillUnmount() {
-    // this.stop()
+    this.m_isMounted = false;
   }
   componentDidUpdate() {
     // this.prepareImageForRender();
-    this.renderReadyImage();
+    if (this.m_isMounted) {
+      this.renderReadyImage();
+    }
   }
   /**
    * Get screenshot
@@ -233,7 +227,7 @@ class Graphics2d extends React.Component {
     }
       
   }
-  prepareImageForRender() {
+  prepareImageForRender(volIndexArg) {
     // console.log('prepareImageForRender ...');
     const objCanvas = this.m_mount;
     if (objCanvas === null) {
@@ -273,7 +267,8 @@ class Graphics2d extends React.Component {
     }
 
     const volSet = store.volumeSet;
-    const volIndex = this.m_volumeIndex;
+    // const volIndex = this.m_volumeIndex;
+    const volIndex = (volIndexArg !== undefined) ? volIndexArg : store.volumeIndex;
 
     const vol = volSet.getVolume(volIndex);
     const mode2d = this.m_mode2d;
@@ -605,6 +600,10 @@ class Graphics2d extends React.Component {
   } // prepareImageForRender
   renderReadyImage() {
     // console.log('renderReadyImage ...');
+    if (!this.m_isMounted) {
+      return;
+    }
+
     const objCanvas = this.m_mount;
     if (objCanvas === null) {
       return;
@@ -613,8 +612,14 @@ class Graphics2d extends React.Component {
     const store = this.props;
 
     const volSet = store.volumeSet;
+    if (volSet.getNumVolumes() === 0) {
+      return;
+    }
     const volIndex = store.volumeIndex;
     const vol = volSet.getVolume(volIndex);
+    if (vol === null) {
+      return;
+    }
 
     const isSegm = this.m_isSegmented;
     if (isSegm) {
@@ -785,9 +790,9 @@ class Graphics2d extends React.Component {
   /**
    * Invoke forced rendering, after some tool visual changes
    */
-  forceUpdate() {
+  forceUpdate(volIndex) {
     // console.log('forceUpdate ...');
-    this.prepareImageForRender();
+    this.prepareImageForRender(volIndex);
     // this.forceRender();
     if (this.m_isSegmented) { // need to draw segmented image
       if (this.segm2d.model !== null) {
@@ -799,21 +804,17 @@ class Graphics2d extends React.Component {
     } // if not segmented image
   }
   forceRender() {
-    // console.log('forceRender ...');
-    this.setState({ state: this.state });
+    if (this.m_isMounted) {
+      // console.log('forceRender ...');
+      this.setState({ state: this.state });
+    }
   }
   /**
    * Main component render func callback
    */
   render() {
-    const store = this.props;
-    const volSet = store.volumeSet;
-    const volIndex = store.volumeIndex;
-    const vol = volSet.getVolume(volIndex);
-    
-    if (vol !== null) {
-      this.m_vol = vol;
-    }
+    // const store = this.props;
+    // const volSet = store.volumeSet;
     this.m_sliceRatio = this.props.sliderValue;
     this.m_mode2d = this.props.mode2d;
 

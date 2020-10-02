@@ -134,9 +134,12 @@ class UiTF extends React.Component {
     const wArrErRadius = [sliderErRadius];
     const wArrErDepth = [sliderErDepth];
 
+    let vol = null;
     const volSet = store.volumeSet;
-    const volIndex = store.volumeIndex;
-    const vol = volSet.getVolume(volIndex);
+    if (volSet.getNumVolumes() > 0) {
+      const volIndex = store.volumeIndex;
+      vol = volSet.getVolume(volIndex);
+    }
 
     const NEED_TANSF_FUNC = true;
     const funcTra = (NEED_TANSF_FUNC) ? this.transferFuncCallback : undefined;

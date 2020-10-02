@@ -23,6 +23,7 @@ import Texture3D from '../engine/Texture3D';
 
 import UiModalDemo from './UiModalDemo';
 import UiModalGoogle from './UiModalGoogle';
+import UiModalWindowCenterWidth from './UiModalWinCW';
 // import UiModalDicomSeries from './UiModalDicomSeries';
 import StoreActionType from '../store/ActionTypes';
 import ModeView from '../store/ModeView';
@@ -83,6 +84,8 @@ class UiOpenMenu extends React.Component {
     this.onModalDemoOpenHide = this.onModalDemoOpenHide.bind(this);
     this.onDemoSelected = this.onDemoSelected.bind(this);
 
+    this.onModalWindowCWHide = this.onModalWindowCWHide.bind(this); 
+
     this.onModalGoogleShow = this.onModalGoogleShow.bind(this);
     this.onModalGoogleHide = this.onModalGoogleHide.bind(this);
     this.onGoogleSelected = this.onGoogleSelected.bind(this);
@@ -105,6 +108,7 @@ class UiOpenMenu extends React.Component {
       showModalUrl: false,
       showModalDemo: false,
       showModalGoogle: false,
+      showModalWindowCW: false,
       onLoadCounter: 1,
     };
     this.m_volumeSet = null;
@@ -210,17 +214,20 @@ class UiOpenMenu extends React.Component {
   }
   callbackReadSingleDicomComplete(errCode) {
     if (errCode === LoadResult.SUCCESS) {
-      // select 1st slice and hash
-      //let series = this.m_loaderDicom.m_slicesVolume.getSeries();
-      //if (series.length === 0) {
-      //  this.m_loaderDicom.m_slicesVolume.buildSeriesInfo();
-      //  series = this.m_loaderDicom.m_slicesVolume.getSeries();
-      //}
-      const series = this.m_loaderDicom.m_slicesVolume.getSeries();
-      const index  = 0;
-      const hash = series[index].m_hash;
-      const volSet = this.m_volumeSet;
-      this.m_loaderDicom.createVolumeFromSlices(volSet, index, hash);
+      // console.log('TODO: UI select window center /width ...');
+
+      const store = this.props;
+      store.dispatch({ type: StoreActionType.SET_VOLUME_SET, volumeSet: this.m_volumeSet });
+      store.dispatch({ type: StoreActionType.SET_VOLUME_INDEX, volumeIndex: 0 });
+      // save dicom loader to store
+      store.dispatch({ type: StoreActionType.SET_LOADER_DICOM, loaderDicom: this.m_loader });
+
+      // setup modal: window min, max
+      this.childModalWindowCenterWidth.initWindowRange();
+
+      // show modal: select window center, width
+      this.setState({ showModalWindowCW: true });
+      return; // do nothing immediately after: wait for dialog
     }
     this.callbackReadComplete(errCode);
   }
@@ -237,10 +244,10 @@ class UiOpenMenu extends React.Component {
     } else if (this.m_fileName.endsWith('.nii') || this.m_fileName.endsWith('.NII')) {
       this.m_volumeSet.readFromNifti(strContent, callbackProgress, callbackComplete);
     } else if (this.m_fileName.endsWith('.dcm') || this.m_fileName.endsWith('.DCM')) {
-      this.m_loaderDicom = new LoaderDicom();
-      this.m_loaderDicom.m_zDim = 1;
-      this.m_loaderDicom.m_numFiles = 1;
-      this.m_volumeSet.readFromDicom(this.m_loaderDicom, strContent, callbackProgress, callbackCompleteSingleDicom);
+      this.m_loader = new LoaderDicom();
+      this.m_loader.m_zDim = 1;
+      this.m_loader.m_numFiles = 1;
+      this.m_volumeSet.readFromDicom(this.m_loader, strContent, callbackProgress, callbackCompleteSingleDicom);
     } else if (this.m_fileName.endsWith('.hdr') || this.m_fileName.endsWith('.HDR')) {
       // readOk = vol.readFromHdrHeader(strContent, callbackProgress, callbackComplete);
       console.log(`cant read single hdr file: ${this.m_fileName}`);
@@ -277,8 +284,8 @@ class UiOpenMenu extends React.Component {
       const store = this.props;
       const fileIndex = this.m_fileIndex;
       const fileName = this.m_fileName;
-      this.m_loaderDicom = new LoaderDicom(1);
-      const ret = loaderDcm.readSingleSlice(store, this.m_loaderDicom, fileIndex, fileName, strContent);
+      this.m_loader = new LoaderDicom(1);
+      const ret = loaderDcm.readSingleSlice(store, this.m_loader, fileIndex, fileName, strContent);
       this.callbackReadSingleDicomComplete(ret);
       return ret;
     }
@@ -300,12 +307,12 @@ class UiOpenMenu extends React.Component {
     } else if (this.m_fileName.endsWith('.nii') || this.m_fileName.endsWith('.NII')) {
       this.m_volumeSet.readFromNifti(strContent, callbackProgress, callbackComplete);
     } else if (this.m_fileName.endsWith('.dcm') || this.m_fileName.endsWith('.DCM')) {
-      this.m_loaderDicom = new LoaderDicom();
-      this.m_loaderDicom.m_zDim = 1;
-      this.m_loaderDicom.m_numFiles = 1;
-      this.m_volumeSet.readFromDicom(this.m_loaderDicom, strContent, callbackProgress, callbackCompleteSingleDicom);
+      this.m_loader = new LoaderDicom();
+      this.m_loader.m_zDim = 1;
+      this.m_loader.m_numFiles = 1;
+      this.m_volumeSet.readFromDicom(this.m_loader, strContent, callbackProgress, callbackCompleteSingleDicom);
       // save dicomInfo to store
-      const dicomInfo = this.m_loaderDicom.m_dicomInfo;
+      const dicomInfo = this.m_loader.m_dicomInfo;
       const sliceInfo = dicomInfo.m_sliceInfo[0];
       sliceInfo.m_fileName = this.m_fileName;
       sliceInfo.m_sliceName = 'Slice 0';
@@ -472,7 +479,24 @@ class UiOpenMenu extends React.Component {
       console.log('onFileContentReadMultipleDicom. Error read individual file');
     }
     if ( (readStatus === LoadResult.SUCCESS) && (this.m_fileIndex === this.m_numFiles)) {
-      // this.m_loader.m_slicesVolume.buildSeriesInfo();
+      // setup global vars
+      const store = this.props;
+      store.dispatch({ type: StoreActionType.SET_VOLUME_INDEX, volumeIndex: 0 });
+      store.dispatch({ type: StoreActionType.SET_VOLUME_SET, volumeSet: this.m_volumeSet });
+
+      // save dicom loader to store
+      store.dispatch({ type: StoreActionType.SET_LOADER_DICOM, loaderDicom: this.m_loader });
+      // stop show loading progress bar
+      this.callbackReadProgress(1.0);
+      this.callbackReadComplete(LoadResult.SUCCESS);
+
+      this.childModalWindowCenterWidth.initWindowRange();
+
+      // show modal: select window center, width
+      this.setState({ showModalWindowCW: true });
+      return; // do nothing immediately after: wait for dialog
+      /*
+
       const numSeries = this.m_loader.m_slicesVolume.m_series.length;
       console.log(`num series = ${numSeries}`);
       const series = this.m_loader.m_slicesVolume.getSeries();
@@ -499,7 +523,8 @@ class UiOpenMenu extends React.Component {
       
       this.callbackReadProgress(1.0);
       this.callbackReadComplete(LoadResult.SUCCESS);
-    }
+      */
+    } // end if successfully read all files (multiple dicom read)
     // read again new file
     if (readStatus === LoadResult.SUCCESS) {
       if (this.m_fileIndex < this.m_numFiles) {
@@ -777,6 +802,7 @@ class UiOpenMenu extends React.Component {
   onModalDemoOpenHide() {
     this.setState({ showModalDemo: false });
   }
+  //
   arrNumToStr(arrNums) {
     const numLet = arrNums.length;
     let str = '';
@@ -923,7 +949,28 @@ class UiOpenMenu extends React.Component {
     // clear modal
     store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: [] });
   }
+  //
+  onModalWindowCWHide(needShow) {
+    this.setState({ showModalWindowCW: false });
+    if (needShow) {
+      this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
+      // setup dicom series (volumes info) for global store: select volume later
+      const store = this.props;
+      let series = null;
+      if (this.m_loader !== undefined) {
+        series = this.m_loader.m_slicesVolume.getSeries();
+        store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: series });
+      }
+      // update graphics 2d window
+      const gra = store.graphics2d;
+      if (gra !== null) {
+        gra.forceUpdate();
+      }
+    }
+  }
+  //
   // invoked after render
+  //
   componentDidMount() {
     this.m_fileSelector = this.buildFileSelector();
     const fileNameOnLoad = this.m_fileNameOnLoad;
@@ -1025,6 +1072,8 @@ class UiOpenMenu extends React.Component {
         <UiModalGoogle stateVis={this.state.showModalGoogle}
           onHide={this.onModalGoogleHide} onSelectDemo={this.onGoogleSelected}  
           arrMenu={config.arrMenuGoogle}/>
+        <UiModalWindowCenterWidth stateVis={this.state.showModalWindowCW} volSet={this.m_volumeSet}
+          onHide={this.onModalWindowCWHide} onRef={ ref => (this.childModalWindowCenterWidth = ref)} />
 
       </NavDropdown>
 

@@ -195,13 +195,15 @@ class UiCtrl3dLight extends React.Component {
     let indx = 0;
 
     const volSet = store.volumeSet;
-    const volIndex = store.volumeIndex;
-    const vol = volSet.getVolume(volIndex);
+    if (volSet.getNumVolumes() > 0) {
+      const volIndex = store.volumeIndex;
+      const vol = volSet.getVolume(volIndex);
 
-    const FOUR = 4;
-    if (vol.m_bytesPerVoxel === FOUR) {
-      indx = 1;
-    }
+      const FOUR = 4;
+      if (vol.m_bytesPerVoxel === FOUR) {
+        indx = 1;
+      }
+    } // end if more 0 volumes
     const jsxArray = [jsxRenderControls, jsxROI];
     const jsxRet = jsxArray[indx];
     return jsxRet;

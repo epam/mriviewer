@@ -145,11 +145,19 @@ class UiViewMode extends React.Component {
       </OverlayTrigger>
     </ButtonGroup>
 
-    const volSet = store.volumeSet;
-    const volIndex = store.volumeIndex;
-    const vol = volSet.getVolume(volIndex);
-
     const FOUR = 4;
+    let needShow3d = false;
+
+    const volSet = store.volumeSet;
+    if (volSet.getNumVolumes() > 0) {
+      const volIndex = store.volumeIndex;
+      const vol = volSet.getVolume(volIndex);
+      if (vol !== null) {
+        if (vol.m_bytesPerVoxel !== FOUR) {
+          needShow3d = true;
+        }
+      }
+    } // if more 0 volumes
     const test = true;
     const jsxOut = 
       <ButtonToolbar ria-label="Toolbar with button groups">
@@ -178,7 +186,7 @@ class UiViewMode extends React.Component {
             </Button>
 
           </OverlayTrigger>  
-          {(vol.m_bytesPerVoxel !== FOUR) ? jsx3d : ''}
+          {(needShow3d) ? jsx3d : ''}
         </ButtonGroup>
         {(viewMode === ModeView.VIEW_3D_LIGHT && test) ? jsxViewTool : ''}
       </ButtonToolbar>

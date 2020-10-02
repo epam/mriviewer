@@ -186,7 +186,7 @@ class Graphics3d extends React.Component {
       const box = this.m_mount.getBoundingClientRect();
       const containerX = e.clientX - box.left;
       const containerY = e.clientY - box.top;
-      this.m_volumeRenderer3D.onMouseMove(containerX, this.state.hRender - containerY, this.props.ereaseStart);
+      this.m_volumeRenderer3D.onMouseMove(containerX, -(this.state.hRender - containerY), this.props.ereaseStart);
     }
   }
   _onMouseDown(e) {
@@ -195,7 +195,7 @@ class Graphics3d extends React.Component {
       const box = this.m_mount.getBoundingClientRect();
       const containerX = e.clientX - box.left;
       const containerY = e.clientY - box.top;
-      this.m_volumeRenderer3D.onMouseDown(containerX, this.state.hRender - containerY, this.props.ereaseStart);
+      this.m_volumeRenderer3D.onMouseDown(containerX, -(this.state.hRender - containerY), this.props.ereaseStart);
     }
   }
   _onMouseUp() { // ommited args: evt
@@ -282,9 +282,12 @@ class Graphics3d extends React.Component {
    */
   render() {
     const store = this.props;
+    let vol = null;
     const volSet = store.volumeSet;
-    const volIndex = store.volumeIndex;
-    const vol = volSet.getVolume(volIndex);
+    if (volSet.getNumVolumes() > 0) {
+      const volIndex = store.volumeIndex;
+      vol = volSet.getVolume(volIndex);
+    }
     // const tex3d = this.props.texture3d;
     if (vol !== null) {
       this.volume = vol;

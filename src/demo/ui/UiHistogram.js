@@ -375,6 +375,9 @@ export default class UiHistogram extends React.Component {
     if (vol === undefined) {
       return <p>UiHistogram.props volume is not defined !!!</p>;
     }
+    if (vol === null) {
+      return <p></p>;
+    }
     this.m_transfFuncCallback = this.props.transfFunc;
     this.m_transfFuncUpdateCallback = this.props.transfFuncUpdate;
   

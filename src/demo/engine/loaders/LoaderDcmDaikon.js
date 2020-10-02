@@ -219,8 +219,10 @@ class LoaderDcmDaikon {
     ind = daikon.Utils.dec2hex(daikon.Tag.TAG_IMAGE_NUM[0]) + daikon.Utils.dec2hex(daikon.Tag.TAG_IMAGE_NUM[1]);
     const tagSlNum = image.tags[ind];
     if (tagSlNum !== undefined) {
-      let sliceNumber = tagSlNum.value[0];
-      volSlice.m_sliceNumber = sliceNumber;
+      if (tagSlNum.value !== null) {
+        let sliceNumber = tagSlNum.value[0];
+        volSlice.m_sliceNumber = sliceNumber;
+      }
     }
     // samples per pixel
     ind = daikon.Utils.dec2hex(daikon.Tag.TAG_SAMPLES_PER_PIXEL[0]) + daikon.Utils.dec2hex(daikon.Tag.TAG_SAMPLES_PER_PIXEL[1]);

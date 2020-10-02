@@ -138,15 +138,17 @@ class UiCtrl2d extends React.Component {
     const varCor = (mode2d === Modes2d.CORONAL) ? 'primary' : 'secondary';
     const varTra = (mode2d === Modes2d.TRANSVERSE) ? 'primary' : 'secondary';
 
-    const volSet = store.volumeSet;
-    const volIndex = store.volumeIndex;
-    const vol = volSet.getVolume(volIndex);
     let xDim = 0, yDim = 0, zDim = 0;
-    if (vol !== null) {
-      xDim = vol.m_xDim;
-      yDim = vol.m_yDim;
-      zDim = vol.m_zDim;
-    }
+    const volSet = store.volumeSet;
+    if (volSet.getNumVolumes() > 0) {
+      const volIndex = store.volumeIndex;
+      const vol = volSet.getVolume(volIndex);
+      if (vol !== null) {
+        xDim = vol.m_xDim;
+        yDim = vol.m_yDim;
+        zDim = vol.m_zDim;
+      }
+    } // if more 0 volumes
     // slider maximum value is depend on current x or y or z 2d mode selection
     let slideRangeMax = 0;
     if (mode2d === Modes2d.SAGGITAL) {
@@ -157,12 +159,26 @@ class UiCtrl2d extends React.Component {
       slideRangeMax = zDim - 1;
     }
     const rangeDescr = {
-      min: 0,
-      max: slideRangeMax
+      'min': 0,
+      'max': slideRangeMax
     };
 
-    const wArr = [valSlider * slideRangeMax];
+    const wArr = [Math.floor(valSlider * slideRangeMax)];
     const valToolTps = true;
+    // special formatter interface for show only intefer numbers
+    // in slider: 
+    // provide two conversion functions:
+    // to (int -> string)
+    // from (string -> int)
+    const formatterInt = {
+      to(valNum) {
+        const i = Math.floor(valNum);
+        return i.toString();
+      },
+      from(valStr) {
+        return parseInt(valStr);
+      }
+    };
 
     const jsxSlider = (slideRangeMax > 0) ?
       <ul className="list-group list-group-flush">
@@ -170,7 +186,9 @@ class UiCtrl2d extends React.Component {
           <p> Select </p>
           < Nouislider onSlide={this.onChangeSliderSlice.bind(this)} ref={strSlider1}
             range={rangeDescr}
-            start={wArr} step={1.0} tooltips={valToolTps} />
+            start={wArr} step={1}
+            format={formatterInt}
+            tooltips={valToolTps} />
         </li>
       </ul> : <p></p>;
 
