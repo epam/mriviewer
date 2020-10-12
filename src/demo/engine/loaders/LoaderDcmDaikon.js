@@ -23,6 +23,9 @@ import DicomSlice from './dicomslice';
 // read dicom via daikon: print every tag readed
 const NEED_DEBUG_PRINT_TAGS = false;
 
+// future possible development:
+// deep debug: develop read dicomdir file
+const READ_DICOMDIR = false;
 
 // **********************************************
 // Class
@@ -31,6 +34,50 @@ const NEED_DEBUG_PRINT_TAGS = false;
 class LoaderDcmDaikon {
   constructor(){ 
     this.m_loaderDicom = null;
+  }
+  //
+  // see example read
+  // https://github.com/mbarnig/dumpDICOMDIRarchive/blob/master/dumpDICOMDIR.js
+  //
+  loadDicomfir(fileName, strContent) {
+    const dataFile = new DataView(strContent);
+    let image = null;
+    try {
+      image = daikon.Series.parseImage(dataFile);
+    } catch (err) {
+      console.log("error parse dcm file buffer");
+      return LoadResult.BAD_DICOM;
+    }
+    if ((image === undefined) || (image === null)) {
+      return LoadResult.BAD_DICOM;
+    }
+    const TAG_DIRECTORY_REC = [0x0004, 0x1220];
+    let ind;
+    // slice location detect (to correct slices order on z)
+    ind = daikon.Utils.dec2hex(TAG_DIRECTORY_REC[0]) + daikon.Utils.dec2hex(TAG_DIRECTORY_REC[1]);
+    const tagDirRec = image.tags[ind];
+    if (tagDirRec !== undefined) {
+      const numEntries = tagDirRec.value.length;
+      for (let k = 0; k < numEntries; k++) {
+        let dirEntry = tagDirRec.value[k];
+        if ((dirEntry.element === 57344) && (dirEntry.group === 65534)) {
+          const numSub = dirEntry.value.length;
+          for (let s = 0; s < numSub; s++) {
+            let elemSub = dirEntry.value[s];
+            if ((elemSub.element === 5168) && (elemSub.group === 4)) {
+              //const str = elemSub.value[0];
+              //console.log(`elem sub val = ${str}`);
+            }
+            if ((elemSub.element === 5376) && (elemSub.group === 4)) {
+              const fold = elemSub.value[0];
+              const fname = elemSub.value[1];
+              console.log(`image nm = ${fold} / ${fname}`);
+            }
+          } // for s, all sub elemenst 
+        } // if entry with patient and image information
+      } // for k all entries in dir
+    } // if dir rec found
+    return LoadResult.SUCCESS;
   }
   // load single slice, using file index
   loadSingleSlice(fileIndex, fileName, strContent) {
@@ -398,7 +445,12 @@ class LoaderDcmDaikon {
   // read 1 slice
   readSingleSlice(store, loader, fileIndex, fileName, strContent) {
     this.m_loaderDicom = loader;
-    const ret = this.loadSingleSlice(fileIndex, fileName, strContent);
+    let ret;
+    if (!READ_DICOMDIR) {
+      ret = this.loadSingleSlice(fileIndex, fileName, strContent);
+    } else {
+      ret = this.loadDicomfir(fileName, strContent);
+    }
     if (ret !== LoadResult.SUCCESS) {
       return ret;
     }

@@ -14,6 +14,17 @@ import * as tf from '@tensorflow/tfjs';
 // Const
 // ********************************************************
 
+// where VGG_UNET ready model file located to download
+// this folder should contain following files:
+// - model.json: description of machine learning model koefficienst
+// - group1-shard1of12.bin: 1st binary koeeficient file
+// - group1-shard2of12.bin: 2nd binary koeeficient file
+// - ...
+// - group1-shard12of12.bin: last binary koeeficient file
+// - .htaccess: file to prevent CORS issue
+
+const PATH_MODEL = 'http://lugachai.ru/med3web/tfjs/model.json';
+
 // stages
 const STAGE_MODEL_NOT_LOADED = 0;
 const STAGE_MODEL_IS_LOADING = 1;
@@ -102,10 +113,11 @@ class Segm2d
       } // for (x)
     } // for (y)
   }
+  //
+  // Load model
   async onLoadModel() {
     this.stage = STAGE_MODEL_IS_LOADING;
     this.pixels = null;
-    const PATH_MODEL = 'http://d-inter.ru/private/med3web/2020_03_06/tfjs/model.json';
 
     console.log('Loading tfjs model...');
     const modelLoaded = await tf.loadLayersModel(PATH_MODEL, { strict: false } );
