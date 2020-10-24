@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ feature/actions ]
-  #pull_request:
-  #  branches: [ master ]
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
@@ -31,3 +31,9 @@ jobs:
       - run: npm test
         env:
           CI: true
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: |
+            build
