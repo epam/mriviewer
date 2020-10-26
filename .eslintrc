@@ -1,0 +1,63 @@
+{
+    "plugins": ["react"],
+    "parser": "babel-eslint",
+    "settings": {
+      "react": {
+        "createClass": "createReactClass",
+        "pragma": "React",
+        "version": "detect",
+        "flowVersion": "0.53"
+      }	
+    },
+    "env": {
+        "browser": true,
+        "node": true,
+        "jest": true
+    },
+    "globals": {
+      "shallow": true
+    },
+    "rules": {
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error",
+        "react/prefer-es6-class" : [2],
+        "linebreak-style": "off",
+        "no-unused-vars": ["error"],
+        "indent": ["error", 2],
+        "no-alert": "off",
+        "no-underscore-dangle": "off",
+        "vars-on-top": "off",
+        "space-before-function-paren": ["warn", "never"],
+        "no-mixed-operators": "off",
+        "key-spacing": "off",
+        "spaced-comment": "off",
+        "func-names": "off",
+        "function-paren-newline": ["error", "never"],
+        "padded-blocks": "off",
+        "quote-props": "off",
+        "one-var-declaration-per-line": "off",
+        "max-len": [1, 200, 2, {ignoreComments: true}],
+        "object-curly-spacing": ["error", "always"],
+        "no-param-reassign": "off",
+        "one-var": "off",
+        "no-undef": "off",
+        "no-console": "off",
+        "comma-dangle": "off",
+        "no-multi-spaces": "off",
+        "no-prototype-builtins": "off",
+        "wrap-iife": ["error", "any"],
+        "no-use-before-define": ["error", "nofunc"],
+        "object-property-newline": "off",
+        "no-restricted-syntax": "off",
+        "no-else-return": "off",
+        "no-cond-assign": ["error", "except-parens"],
+        "space-infix-ops": ["warn", {int32Hint: true}],
+        "no-nested-ternary": "off",
+        "global-require": "off",
+        "no-continue": "off",
+        "no-bitwise": "off",
+        "no-plusplus": "off",
+        "no-multi-assign": "off",
+        "lines-between-class-members": ["error", "never"]
+    }
+}

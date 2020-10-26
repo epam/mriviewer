@@ -1,0 +1,10 @@
+{
+  "source": "src",
+  "destination": "./esdoc",
+  "excludes": ["serviceWorker.js"],
+  "plugins": [
+    {"name": "esdoc-standard-plugin"},
+    {"name": "esdoc-react-plugin"},
+    {"name": "esdoc-jsx-plugin", "option": {"enable": true}}
+  ]
+}
