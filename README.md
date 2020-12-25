@@ -57,9 +57,6 @@ Introduction to the project can be loaded here:
 ## Demo app
 [Here](https://epa.ms/mri) you can find a demo app.
 
-## More datasets
-[Here](http://obsolete.tuberculosis.by/getpatientimages) you can download more dicom datasets.
-
 ## Getting started
 
 Load project from git server:
