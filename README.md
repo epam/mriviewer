@@ -41,13 +41,7 @@ Three.js is used as some gateway to WebGL renderer. The current Three.js version
 so we use tricky way to build 2d texture from initial 3d texture by linking 2d slices all together
 as a large tile map. This idea (with source codes) can be seen in project [WebGL Volume Rendering](https://github.com/lebarba/WebGLVolumeRendering).
 
-## Current version limitations
-
-Med3Web app has some important limitations, but we hope to impmelent them later:
-1. Dicom reader does not support compressed formats for pixels.
-2. Dicom reader does not support read folder with several series inside. Now we support only single serie reading from single folder.
-
-## Publications 
+# Publications 
 Links to publications that contain **med3web** references
 * [Belyaev, S., Smirnov, P., Smirnova, N., Shubnikov, V. Fast adaptive undersampling for volume rendering](http://dx.doi.org/10.24132/JWSCG.2019.27.1.1)
 * [Belyaev, S.Y., Smirnova, N.D., Smirnov, P.O., Savchuk, D.A. Fast selective antialiasing for direct volume rendering](http://dx.doi.org/10.24132/JWSCG.2019.27.1.1)
@@ -62,9 +56,6 @@ Introduction to the project can be loaded here:
 
 ## Demo app
 [Here](https://epa.ms/mri) you can find a demo app.
-
-## More datasets
-[Here](http://obsolete.tuberculosis.by/getpatientimages) you can download more dicom datasets.
 
 ## Getting started
 
