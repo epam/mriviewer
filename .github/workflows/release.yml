@@ -12,13 +12,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/setup-setup-dotnet@v1
+      - name: Fetch all history for all tags and branches
+        run: git fetch --prune --unshallow
 
-      - uses: actions/setup-gitversion@v1.0.0
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.7
         with:
-          gitversion-version: 5.1.1
-          
-      - run: GitVersion
+          versionSpec: '5.x'
+
+      - name: Use GitVersion
+        uses: gittools/actions/gitversion/execute@v0.9.7
+        id: gitversion
 
       - name: Use Node.js 12
         uses: actions/setup-node@v1
@@ -44,7 +48,7 @@ jobs:
         env:
           CI: true
 
-      - run: mv ./build ./docker/build
+      - run: mv ./build ./docker/build ; echo ${{ steps.gitversion.outputs.majorMinorPatch }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
