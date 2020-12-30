@@ -48,7 +48,7 @@ jobs:
         env:
           CI: true
 
-      - run: mv ./build ./docker/build ; echo ${{ steps.gitversion.outputs.majorMinorPatch }}
+      - run: mv ./build ./docker/build
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
