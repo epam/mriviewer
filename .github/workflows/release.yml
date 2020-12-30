@@ -1,0 +1,107 @@
+name: Release
+
+on:
+  push:
+#    tags:
+#      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Fetch tags for GitVersion
+        run: git fetch --tags
+
+      - name: Fetch master for GitVersion
+        if: github.ref != 'refs/heads/master'
+        run: git branch --create-reflog master origin/master
+
+      - name: GitVersion
+        id: gitversion  # step id used as reference for output values
+        uses: roryprimrose/rungitversion@v1.0.0
+      
+      - name: Output version values 
+        run: |
+          echo "Major: ${{ steps.gitversion.outputs.Major }}"
+          echo "Minor: ${{ steps.gitversion.outputs.Minor }}"
+          echo "Patch: ${{ steps.gitversion.outputs.Patch }}"
+          echo "PreReleaseTag: ${{ steps.gitversion.outputs.PreReleaseTag }}"
+          echo "PreReleaseTagWithDash: ${{ steps.gitversion.outputs.PreReleaseTagWithDash }}"
+          echo "PreReleaseLabel: ${{ steps.gitversion.outputs.PreReleaseLabel }}"
+          echo "PreReleaseNumber: ${{ steps.gitversion.outputs.PreReleaseNumber }}"
+          echo "WeightedPreReleaseNumber: ${{ steps.gitversion.outputs.WeightedPreReleaseNumber }}"
+          echo "BuildMetaData: ${{ steps.gitversion.outputs.BuildMetaData }}"
+          echo "BuildMetaDataPadded: ${{ steps.gitversion.outputs.BuildMetaDataPadded }}"
+          echo "FullBuildMetaData: ${{ steps.gitversion.outputs.FullBuildMetaData }}"
+          echo "MajorMinorPatch: ${{ steps.gitversion.outputs.MajorMinorPatch }}"
+          echo "SemVer: ${{ steps.gitversion.outputs.SemVer }}"
+          echo "LegacySemVer: ${{ steps.gitversion.outputs.LegacySemVer }}"
+          echo "LegacySemVerPadded: ${{ steps.gitversion.outputs.LegacySemVerPadded }}"
+          echo "AssemblySemVer: ${{ steps.gitversion.outputs.AssemblySemVer }}"
+          echo "AssemblySemFileVer: ${{ steps.gitversion.outputs.AssemblySemFileVer }}"
+          echo "FullSemVer: ${{ steps.gitversion.outputs.FullSemVer }}"
+          echo "InformationalVersion: ${{ steps.gitversion.outputs.InformationalVersion }}"
+          echo "BranchName: ${{ steps.gitversion.outputs.BranchName }}"
+          echo "Sha: ${{ steps.gitversion.outputs.Sha }}"
+          echo "ShortSha: ${{ steps.gitversion.outputs.ShortSha }}"
+          echo "NuGetVersionV2: ${{ steps.gitversion.outputs.NuGetVersionV2 }}"
+          echo "NuGetVersion: ${{ steps.gitversion.outputs.NuGetVersion }}"
+          echo "NuGetPreReleaseTagV2: ${{ steps.gitversion.outputs.NuGetPreReleaseTagV2 }}"
+          echo "NuGetPreReleaseTag: ${{ steps.gitversion.outputs.NuGetPreReleaseTag }}"
+          echo "VersionSourceSha: ${{ steps.gitversion.outputs.VersionSourceSha }}"
+          echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"
+          echo "CommitsSinceVersionSourcePadded: ${{ steps.gitversion.outputs.CommitsSinceVersionSourcePadded }}"
+          echo "CommitDate: ${{ steps.gitversion.outputs.CommitDate }}"
+      
+      - name: Use Node.js 12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+
+      - run: node --version
+
+      - run: npm install
+
+      - run: npm run build
+
+      - run: npm test
+        env:
+          CI: true
+
+      - run: mv ./build ./docker/build
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./docker/
+          file: ./docker/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: lifescience/med3web:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
