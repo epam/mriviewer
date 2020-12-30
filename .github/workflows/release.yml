@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-#    tags:
-#      - 'v*.*.*'
+    tags:
+      - 'v*.*.*'
 
 jobs:
   build:
@@ -67,7 +67,9 @@ jobs:
           file: ./docker/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: lifescience/med3web:latest
+          tags: |
+            lifescience/med3web:latest
+            lifescience/med3web:${{ steps.gitversion.outputs.MajorMinorPatch }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
