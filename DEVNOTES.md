@@ -1,5 +1,89 @@
 # Development notes
 
+
+## Getting started
+
+Load project from git server:
+```
+git clone https://github.com/epam/med3web.git
+```
+
+Start operations in order to load all required Node.js packages:
+```
+cd med3web
+npm install
+```
+
+## Prerequisites
+
+### Node.js and Tools
+
+Download link:
+[NodeJS](https://nodejs.org/en/download/).
+
+Version not below than v.6.10.3 is required.
+
+After NodeJS installation please check that everything is installed correctly (for example, PATH ), using command:
+```
+node --version
+```
+Stdout should be
+v6.10.3 (or higher).
+
+## Project installation on local machine
+Run command 
+```
+npm install
+```
+to download all required for this project nodeJS packages
+
+
+# Build and run
+
+All build commands performed via npm interface. Please, see commands details in package.json nfile.
+
+## Start app on local server
+
+```
+npm run start
+```
+
+Start app on local virtual server:
+localhost://3000
+
+## Lint project
+
+```
+npm run lint
+```
+
+You will see lint result
+
+## Perform auto-tests
+
+```
+npm run test
+```
+
+Run all auto - tests for project. *.test.js files will be used for test run
+
+## Create autodocumentation
+
+```
+npm run doc
+```
+
+See results in esdoc folder
+
+## Create app build for project deploy on server
+
+```
+npm run build
+```
+
+See results in build folder
+
+
 ## Project customization
 
 ### References to your own demonstration data
