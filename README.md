@@ -1,6 +1,6 @@
 # Med3Web Dicom 2d/3d web viewer.
 
-Copyright (c) 2015–2020 [EPAM Systems, Inc.](https://www.epam.com/)
+Copyright (c) 2015â€“2021 [EPAM Systems, Inc.](https://www.epam.com/)
 
 ## Purpose
 
