@@ -1,6 +1,6 @@
 # Med3Web Dicom 2d/3d web viewer.
 
-Copyright (c) 2015–2020 [EPAM Systems, Inc.](https://www.epam.com/)
+Copyright (c) 2015â€“2020 [EPAM Systems, Inc.](https://www.epam.com/)
 
 ## Purpose
 
@@ -49,98 +49,8 @@ Links to publications that contain **med3web** references
 * [Belyaev, S., Shubnikov, V., Motornyi, N. Adaptive screen sampling algorithm acceleration for volume rendering](https://www.scopus.com/record/display.uri?eid=2-s2.0-85063124756&origin=inward&txGid=79efa190ff7df9d2821ef08f7ac01e72)
 * [Belyaev, S., Smirnov, P., Shubnikov, V., Smirnova, N. Adaptive algorithm for accelerating direct isosurface rendering on GPU](https://www.scopus.com/record/display.uri?eid=2-s2.0-85059228722&doi=10.11989%2fJEST.1674-862X.71013102&origin=inward&txGid=a917c3aa38d38f5b6e1b5add9aa3bb29)
 
-## Project documentation
-
-Introduction to the project can be loaded here:
-[Application user interface documentation](docs/general/README.md).
-
 ## Demo app
 [Here](https://epa.ms/mri) you can find a demo app.
 
-## Getting started
-
-Load project from git server:
-```
-git clone https://github.com/epam/med3web.git
-```
-
-Start operations in order to load all required Node.js packages:
-```
-cd med3web
-npm install
-```
-
-## Prerequisites
-
-### Node.js and Tools
-
-Download link:
-[NodeJS](https://nodejs.org/en/download/).
-
-Version not below than v.6.10.3 is required.
-
-After NodeJS installation please check that everything is installed correctly (for example, PATH ), using command:
-```
-node --version
-```
-Stdout should be
-v6.10.3 (or higher).
-
-## Project installation on local machine
-Run command 
-```
-npm install
-```
-to download all required for this project nodeJS packages
-
-
-# Build and run
-
-All build commands performed via npm interface. Please, see commands details in package.json nfile.
-
-## Start app on local server
-
-```
-npm run start
-```
-
-Start app on local virtual server:
-localhost://3000
-
-## Lint project
-
-```
-npm run lint
-```
-
-You will see lint result
-
-## Perform auto-tests
-
-```
-npm run test
-```
-
-Run all auto - tests for project. *.test.js files will be used for test run
-
-## Create autodocumentation
-
-```
-npm run doc
-```
-
-See results in esdoc folder
-
-## Create app build for project deploy on server
-
-```
-npm run build
-```
-
-See results in build folder
-
-## Development notes
-
-You can read more [technical notes here](./DEVNOTES.md) if wish to deep inside tech details of the project
-
-
+## Contribution
+[CONTRIBUTING.md](CONTRIBUTING.md)
