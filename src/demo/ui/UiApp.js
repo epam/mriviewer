@@ -1,21 +1,7 @@
-/**
- * @fileOverview UiApp
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
 
 import { Nav, Navbar, Container, ProgressBar, Row, Col } from 'react-bootstrap';
-// import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-// import { Button } from 'react-bootstrap';
-
 import StoreActionType from '../store/ActionTypes';
 
 import UiMain from './UiMain';
@@ -32,14 +18,6 @@ import ModeView from '../store/ModeView';
 
 import BrowserDetector from '../engine/utils/BrowserDetector';
 
-
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class UiApp implements all application functionality. This is root class.
- */
 class UiApp extends React.Component {
   constructor(props) {
     super(props);
@@ -69,14 +47,9 @@ class UiApp extends React.Component {
     };
   }
   UNSAFE_componentWillMount() {
-    // read paraameters from url
-    // for dicom folder like:
-    // ?url=http://www.someplace.com/folder
-    //
     let fileNameOnLoad = '';
     const strSearch = window.location.search;
     if (strSearch.length > 0) {
-      // console.log(`UiApp. componentDidMount. app search = ${strSearch}`);
       const strReg = /\\?url=(\S+)/;
       const arr = strSearch.match(strReg);
       if (arr === null) {
@@ -84,13 +57,6 @@ class UiApp extends React.Component {
         return;
       }
       fileNameOnLoad = arr[1];
-      // console.log(`fileNameOnLoad = ${fileNameOnLoad}`);
-
-      // check url valid
-      // use both forms to check urls:
-      // www.XXX.YYY/....
-      // DDD.DDD.DDD.DDD:ddd/....
-      //
       const regA = /^((ftp|http|https):\/\/)?(([\S]+)\.)?([\S]+)\.([A-z]{2,})(:\d{1,6})?\/[\S]+/;
       const regB = /(ftp|http|https):\/\/([\d]+)\.([\d]+)\.([\d]+)\.([\d]+)(:([\d]+))?\/([\S]+)/;
       const isValidA = fileNameOnLoad.match(regA);
@@ -103,7 +69,6 @@ class UiApp extends React.Component {
     }
   }
   componentDidMount() {
-    // setup self reference to store
     const store = this.m_store;
     if (store === null) {
       console.log('UiApp. componentDidMount. store is NULL');
@@ -123,8 +88,8 @@ class UiApp extends React.Component {
         this.setState({ strAlertTitle: 'Browser compatibility problem detected' });
         this.setState({ strAlertText: 'App is specially designed for Chrome/Firefox/Opera/Safari browsers' });
         this.onShowModalAlert();
-      } // if not valid browser
-    } // if webgl 2.0 supported
+      }
+    }
   }
   onShowModalText() {
     this.setState({ showModalText: true });
@@ -224,7 +189,7 @@ class UiApp extends React.Component {
       </Container>;
 
     return jsxNavBarReact;
-  } // end render
-} // end class
+  }
+}
 
 export default connect(store => store)(UiApp);

@@ -1,14 +1,3 @@
-/**
- * @fileOverview UiMain
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -18,21 +7,7 @@ import UiMain3dLight from './UiMain3dLight';
 
 import ModeView from '../store/ModeView';
 
-// ********************************************************
-// Const
-// ********************************************************
-
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class UiMain some text later...
- */
 class UiMain extends React.Component {
-  /**
-   * Main component render func callback
-   */
   render() {
     const store = this.props;
     const modeViewIndex = store.modeView;
