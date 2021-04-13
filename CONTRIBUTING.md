@@ -1,6 +1,5 @@
 # Development notes
 
-
 ## Getting started
 
 Load project from git server:
