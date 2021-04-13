@@ -2,10 +2,20 @@
   "name": "Med3web",
   "fullName": "Med3web 2d/3d Dicom and other medical formats web viewer/editor",
   "description": "Med3web is unique 2d/3d medical volume data web viewer application. You can inspect data both in 2d and 3d modes.",
-  "version": "1.0.2",
-  "author": "EPAM Systems",
-  "year": "2020",
-  "homepage": ".",
+  "version": "1.0.0",
+  "author": "EPAM Systems <mri@epam.com>",
+  "year": "2021",
+  "license": "Apache-2.0",
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/epam/med3web/issues"
+  },
+  "homepage": "https://med3web.opensource.epam.com/",
   "private": false,
   "dependencies": {
     "@tensorflow/tfjs": "^1.7.4",
@@ -40,7 +50,7 @@
   "browserslist": [
     ">0.2%",
     "not dead",
-    "not ie <= 11",
+    "not ie",
     "not op_mini all"
   ],
   "devDependencies": {
