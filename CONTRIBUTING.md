@@ -1,102 +1,28 @@
-# Development notes
+# Contributing
 
 ## Getting started
 
-Load project from git server:
+0. Install [Git](https://git-scm.com/downloads) and [Node.js](https://nodejs.org/en/download/)
+1. Run in Terminal:
 ```
-git clone https://github.com/epam/med3web.git
-```
-
-Start operations in order to load all required Node.js packages:
-```
-cd med3web
-npm install
+$ git clone https://github.com/epam/med3web.git && cd med3web
+$ npm i
+$ npm start
 ```
 
-## Prerequisites
+## Submitting changes
 
-### Node.js and Tools
+We are following [GitHub's Collaborating with Issues and Pull Requests Guide](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests)
 
-Download link:
-[NodeJS](https://nodejs.org/en/download/).
+## Demo data customization
 
-Version not below than v.6.10.3 is required.
+### To add custom models to Demo files
+Edit `/src/demo/config/config.js`, for example:
 
-After NodeJS installation please check that everything is installed correctly (for example, PATH ), using command:
-```
-node --version
-```
-Stdout should be
-v6.10.3 (or higher).
-
-## Project installation on local machine
-Run command 
-```
-npm install
-```
-to download all required for this project nodeJS packages
-
-
-# Build and run
-
-All build commands performed via npm interface. Please, see commands details in package.json nfile.
-
-## Start app on local server
-
-```
-npm run start
-```
-
-Start app on local virtual server:
-localhost://3000
-
-## Lint project
-
-```
-npm run lint
-```
-
-You will see lint result
-
-## Perform auto-tests
-
-```
-npm run test
-```
-
-Run all auto - tests for project. *.test.js files will be used for test run
-
-## Create autodocumentation
-
-```
-npm run doc
-```
-
-See results in esdoc folder
-
-## Create app build for project deploy on server
-
-```
-npm run build
-```
-
-See results in build folder
-
-
-## Project customization
-
-### References to your own demonstration data
-Open -> Demo models Open allows to add some predefined data to the app
-in the demonstrational puproses.
-You can change <project>/src/demo/config/config.js file to add your own
-data.
-
-#### Data declaration
-Here example of config.js modification:
 ```
 export default {
-  demoWomanPelvisPrefix : 'http://your.site.com/folder1/folder2/folder3/dicom/modelName1/',
-  demoWomanPelvisUrls : [
+  demoPelvisPrefix : 'http://your.site.com/folder1/folder2/folder3/dicom/modelName1/',
+  demoPelvisUrls : [
     'file0001.dcm',
     'file0002.dcm',
     'file0003.dcm',
@@ -120,18 +46,5 @@ export default {
   ],
 };
 ```
-Remember, nice demo data should have at least 32 slices (dcm files)
+Demo data should have at least 32 dcm files (slices).
 
-#### Source code modification
-
-In your code you can add remote dcm file loading procedure in the following way:
-```
-  const arrFileNames = [];
-  arrFileNames.push('http://your.site.com/folder/file00001.dcm');
-  arrFileNames.push('http://your.site.com/folder/file00002.dcm');
-  arrFileNames.push('http://your.site.com/folder/file00003.dcm');
-  // ...
-  const store = this.getGlobalStorePointer();
-  const loader = new LoaderUrlDicom(store);
-  loader.loadFromUrlArray(arrFileNames);
-```
