@@ -33,7 +33,8 @@ export default {
     'file0008.dcm',
     'file0009.dcm',
     'file0010.dcm',
-    'file0011.dcm',
+    ...
+    'file9871.dcm',
   ],
   demoLungsPrefix: 'http://your.site.com/folder1/folder2/folder3/dicom/modelName2/',
   demoLungsUrls: [
@@ -42,7 +43,8 @@ export default {
     'name003.dcm',
     'name004.dcm',
     'name005.dcm',
-    'name006.dcm',
+    ...
+    'name406.dcm',
   ],
 };
 ```
