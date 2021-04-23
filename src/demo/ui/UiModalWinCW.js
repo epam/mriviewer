@@ -1,35 +1,13 @@
-/**
- * @fileOverview UiModalWinCW
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
-// special css for NoUiSlioder
 import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Modal, Container, Row, Col, Button, ListGroup } from 'react-bootstrap';
-
 import Nouislider from 'react-nouislider';
-
-// ********************************************************
-// Const
-// ********************************************************
 
 const LARGE_NUMBER = 0x3FFFFFFF;
 const DEFAULT_WIN_MIN = 650 - 2000 / 2;
 const DEFAULT_WIN_MAX = 650 + 2000 / 2;
-
-// ********************************************************
-// Class
-// ********************************************************
 
 class UiModalWindowCenterWidth extends React.Component {
   constructor(props) {

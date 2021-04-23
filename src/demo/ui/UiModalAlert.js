@@ -1,26 +1,7 @@
-/**
- * @fileOverview UiModalAlert
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Modal, Button, Row, Col } from 'react-bootstrap';
-
-// ********************************************************
-// Class
-// ********************************************************
-
 class UiModalAlert extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
     this.onButtonOk = this.onButtonOk.bind(this);
@@ -32,10 +13,7 @@ class UiModalAlert extends React.Component {
       title: '',
       text: '',
     };
-  } // end constr
-  /**
-   * When user press OK button
-   */
+  }
   onButtonOk() {
     // console.log('on button OK');
     this.m_hideFunc();
@@ -51,8 +29,7 @@ class UiModalAlert extends React.Component {
     const strTitle = this.props.title;
     const strText = this.props.text;
 
-    const jsxModalAlert =
-    <Modal show={stateVis} onHide={onHideFunc} >
+    return <Modal show={stateVis} onHide={onHideFunc}>
 
       <Modal.Header closeButton>
         <Modal.Title>
@@ -68,7 +45,7 @@ class UiModalAlert extends React.Component {
 
         <Row>
           <Col lg xl="2">
-            <Button onClick={this.onButtonOk} >
+            <Button onClick={this.onButtonOk}>
               Ok
             </Button>
           </Col>
@@ -79,8 +56,7 @@ class UiModalAlert extends React.Component {
 
       </Modal.Body>
 
-    </Modal>
-    return jsxModalAlert;
+    </Modal>;
   } // end render
 
 } // end class

@@ -1,14 +1,3 @@
-/**
- * @fileOverview Graphics2d
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -32,21 +21,7 @@ import RoiPalette from './loaders/roipalette';
 
 // import { timingSafeEqual } from 'crypto';
 
-// ********************************************************
-// Const
-// ********************************************************
-
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class Graphics2d some text later...
- */
 class Graphics2d extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
 

@@ -1,16 +1,5 @@
-/**
- * @fileOverview UiFilterMenu
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { NavDropdown } from 'react-bootstrap';
 import LungsFillTool from '../engine/actvolume/lungsfill/lft';
 
 import ActiveVolume from '../engine/actvolume/actvol';
@@ -20,22 +9,9 @@ import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
 
 import SobelEdgeDetector from '../engine/imgproc/Sobel';
-import UiModalBilateral from './UiModalBilateral';
+// import UiModalBilateral from './UiModalBilateral';
 
-
-// ********************************************************
-// Const
-// ********************************************************
-
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class UiFilterMenu some text later...
- */
 class UiFilterMenu extends React.Component {
-  // invoked after render
   constructor(props) {
     super(props);
     this.onButtonLungsSeg = this.onButtonLungsSeg.bind(this);
@@ -407,30 +383,27 @@ class UiFilterMenu extends React.Component {
 
     const strDisabled = (isLoaded) ? false : true;
     const jsxFilterMenu =
-      <NavDropdown id="save-nav-dropdown" 
-        disabled={strDisabled}
-        title={
-          <div style={{ display: 'inline-block' }}> 
-            <i className="fas fa-broom"></i>
+      <div>
+        <div style={{ display: 'inline-block' }}> 
+          <i className="fas fa-broom"></i>
             Filter
-          </div>
-        } >
-        <NavDropdown.Item href="#actionLungsSeg" onClick={evt => this.onButtonLungsSeg(evt)}>
+        </div>
+        <div onClick={evt => this.onButtonLungsSeg(evt)}>
           <i className="fas fa-cloud"></i>
           Lungs segmentation
-        </NavDropdown.Item>
-        <NavDropdown.Item href="#actionDataectBrain" onClick={evt => this.onButtonDetectBrain(evt)}>
+        </div>
+        <div onClick={evt => this.onButtonDetectBrain(evt)}>
           <i className="fas fa-brain"></i>
           Auto detect brain
-        </NavDropdown.Item>
-        <NavDropdown.Item href="#actionSobel" onClick={evt => this.onButtonSobel(evt)}>
+        </div>
+        <div onClick={evt => this.onButtonSobel(evt)}>
           Sobel filter
-        </NavDropdown.Item>
-        <NavDropdown.Item href="#actionBilateral" onClick={evt => this.onButtonBilateral(evt)}>
+        </div>
+        <div onClick={evt => this.onButtonBilateral(evt)}>
           Bilateral (denoise or smooth)
-        </NavDropdown.Item>
-        <UiModalBilateral stateVis={this.state.showModalBilateral} onHide={this.hideModalBilateral} />
-      </NavDropdown>;
+        </div>
+        {/*<UiModalBilateral stateVis={this.state.showModalBilateral} onHide={this.hideModalBilateral} />*/}
+      </div>
 
     return jsxFilterMenu;
   }

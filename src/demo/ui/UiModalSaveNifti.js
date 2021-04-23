@@ -1,28 +1,10 @@
-/**
- * @fileOverview UiModalSaveNifti
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
 
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Modal, Table, Button, Form, Row, Col } from 'react-bootstrap';
-
 import SaverNifti from '../engine/savers/SaverNifti';
 
-// ********************************************************
-// Class
-// ********************************************************
-
 class UiModalSaveNifti extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
     this.onModalShow = this.onModalShow.bind(this);

@@ -1,27 +1,6 @@
-/**
- * @fileOverview UiSkelAni
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
 
-// ********************************************************
-// Const
-// ********************************************************
-
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class UiSkelAni some text later...
- */
 class UiSkelAni extends React.Component {
   /**
    * @param {object} props - props from up level object

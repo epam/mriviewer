@@ -10,7 +10,6 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { NavDropdown } from 'react-bootstrap';
 
 import UiModalSaveNifti from './UiModalSaveNifti';
 

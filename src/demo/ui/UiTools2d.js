@@ -1,25 +1,9 @@
-/**
- * @fileOverview UiTools2d
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
 
 import StoreActionType from '../store/ActionTypes';
 import Tools2dType from '../engine/tools2d/ToolTypes';
 
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-
-// ********************************************************
-// Class
-// ********************************************************
 class UiTools2d extends React.Component {
   constructor(props) {
     super(props);
@@ -90,16 +74,7 @@ class UiTools2d extends React.Component {
             const jsxBtn = <button type='button' className={strAttr} key={d.ke} id={d.ke} onClick={this.onClickButtonTools} >
               <img className='img-thumbnail' src={d.img} alt={d.txt} />
             </button>
-            const msgTooltip = d.msgTp;
-            const jsxOverlay = <OverlayTrigger key={d.txt} placement="bottom" overlay={
-              <Tooltip>
-                {msgTooltip}
-              </Tooltip>
-            }>
-              {jsxBtn} 
-            </OverlayTrigger>
-
-            return jsxOverlay; 
+            return { jsxBtn } ; 
           })}
 
         </div>

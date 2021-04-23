@@ -10,7 +10,6 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { NavDropdown } from 'react-bootstrap';
 
 import UiModalDicomTags from './UiModalDicomTags';
 import Screenshot from '../engine/utils/Screenshot';

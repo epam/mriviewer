@@ -1,19 +1,5 @@
-/**
- * @fileOverview UiOpenMenu
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { NavDropdown, Button, Modal, InputGroup, FormControl, } from 'react-bootstrap';
-// import { gzip, ungzip } from 'node-gzip';
 import zlib from 'zlib';
 import createReadStream from 'filereader-stream';
 
@@ -22,14 +8,13 @@ import Volume from '../engine/Volume';
 import Texture3D from '../engine/Texture3D';
 
 import UiModalDemo from './UiModalDemo';
-import UiModalGoogle from './UiModalGoogle';
-import UiModalWindowCenterWidth from './UiModalWinCW';
+// import UiModalGoogle from './UiModalGoogle';
+// import UiModalWindowCenterWidth from './UiModalWinCW';
 // import UiModalDicomSeries from './UiModalDicomSeries';
 import StoreActionType from '../store/ActionTypes';
 import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
 
-// import { timingSafeEqual } from 'crypto';
 import LoadResult from '../engine/LoadResult';
 import FileTools from '../engine/loaders/FileTools';
 import LoaderDicom from '../engine/loaders/LoaderDicom';
@@ -41,11 +26,6 @@ import LoaderDcmUrlDaikon from '../engine//loaders/LoadDcmUrlDiakon';
 
 import config from '../config/config';
 
-// ********************************************************
-// Const
-// ********************************************************
-
-/** Need to have demo menu */
 const NEED_DEMO_MENU = true;
 
 /** deep artificially fix volume texture size to 4 * N */
@@ -54,18 +34,7 @@ const NEED_TEXTURE_SIZE_4X = true;
 // use daikon parser for Dicom (*dcm) file loading
 const READ_DICOM_VIA_DAIKON = true;
 
-// ********************************************************
-// Class
-// ********************************************************
-
-
-/**
- * Class UiOpenMenu some text later...
- */
 class UiOpenMenu extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
     this.onButtonLocalFile = this.onButtonLocalFile.bind(this);
@@ -1069,11 +1038,11 @@ class UiOpenMenu extends React.Component {
 
         <UiModalDemo stateVis={this.state.showModalDemo}
           onHide={this.onModalDemoOpenHide} onSelectDemo={this.onDemoSelected}  />
-        <UiModalGoogle stateVis={this.state.showModalGoogle}
-          onHide={this.onModalGoogleHide} onSelectDemo={this.onGoogleSelected}  
-          arrMenu={config.arrMenuGoogle}/>
-        <UiModalWindowCenterWidth stateVis={this.state.showModalWindowCW} volSet={this.m_volumeSet}
-          onHide={this.onModalWindowCWHide} onRef={ ref => (this.childModalWindowCenterWidth = ref)} />
+        {/*<UiModalGoogle stateVis={this.state.showModalGoogle}*/}
+        {/*  onHide={this.onModalGoogleHide} onSelectDemo={this.onGoogleSelected}  */}
+        {/*  arrMenu={config.arrMenuGoogle}/>*/}
+        {/*<UiModalWindowCenterWidth stateVis={this.state.showModalWindowCW} volSet={this.m_volumeSet}*/}
+        {/*  onHide={this.onModalWindowCWHide} onRef={ ref => (this.childModalWindowCenterWidth = ref)} />*/}
 
       </NavDropdown>
 

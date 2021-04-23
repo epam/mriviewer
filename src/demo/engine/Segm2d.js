@@ -1,18 +1,4 @@
-/**
- * @fileOverview Segm2d
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import * as tf from '@tensorflow/tfjs';
-
-// ********************************************************
-// Const
-// ********************************************************
 
 // where VGG_UNET ready model file located to download
 // this folder should contain following files:
@@ -37,11 +23,6 @@ const STAGE_SEGMENTATION_READY = 4;
 const OUT_W = 240;
 const OUT_H = 160;
 const NUM_CLASSES = 96;
-
-
-// ********************************************************
-// Class
-// ********************************************************
 
 class Segm2d
 {

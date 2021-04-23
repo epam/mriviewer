@@ -1,24 +1,6 @@
-/**
- * @fileOverview UiSegm2d
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
 
-// import StoreActionType from '../store/ActionTypes';
-// import Tools2dType from '../engine/tools2d/ToolTypes';
-import { Form, Card, OverlayTrigger, Tooltip } from 'react-bootstrap';
-
-// ********************************************************
-// Class
-// ********************************************************
 class UiSegm2d extends React.Component {
   constructor(props) {
     super(props);

@@ -1,17 +1,5 @@
-/**
- * @fileOverview UiModalBilateral
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
-
-import { Modal, Button, Form, Row, Col, Table } from 'react-bootstrap';
 import Nouislider from 'react-nouislider';
 
 import GaussSmoother from '../engine/imgproc/Gauss';
@@ -21,15 +9,7 @@ import Texture3D from '../engine/Texture3D';
 import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
 
-
-// ********************************************************
-// Class
-// ********************************************************
-
 class UiModalBilateral extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
     this.onModalShow = this.onModalShow.bind(this);

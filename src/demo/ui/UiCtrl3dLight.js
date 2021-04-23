@@ -1,24 +1,7 @@
-/**
- * @fileOverview UiCtrl3dLight
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
-// special css for NoUiSlioder
 import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Card, ListGroup, Button, ButtonGroup } from 'react-bootstrap';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-
-//import Nouislider from 'react-nouislider';
-
 import Modes3d from '../store/Modes3d';
 import Modes3droi from '../store/Modes3droi';
 import StoreActionType from '../store/ActionTypes';
@@ -26,21 +9,7 @@ import UiTF from './UiTF';
 import UiTFroi from './UiTFroi';
 import UiRoiSelect from './UiRoiSelect';
 
-// ********************************************************
-// Const
-// ********************************************************
-
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class UiCtrl3dLight some text later...
- */
 class UiCtrl3dLight extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
     this.onModeA = this.onModeA.bind(this);
@@ -85,16 +54,8 @@ class UiCtrl3dLight extends React.Component {
   }
   shouldComponentUpdate() {
     return this.m_updateEnable;
-    //return true;
   }
-  /**
-   * Callback, invoked after any ROI setup array change
-   * 
-   * @param {object} arrayRoi - array of objects with props: id, name, selected, see (UiRoiSelect)
-   */
   setRoi(arrayRoi) {
-    // This is demo code:
-    // just print all states of all roi elements, according to the UI
     const numElems = arrayRoi.length;
     const store = this.props;
     const MAXELEM = 256;
@@ -112,86 +73,40 @@ class UiCtrl3dLight extends React.Component {
     }
     store.volumeRenderer.updateSelectedRoiMap(selectedROI);
   }
-  /**
-   * Main component render func callback
-   */
   render() {
     const store = this.props;
-    const mode3d = store.mode3d;
-    // const mode3droi = store.mode3droi;
-
-    const strA = (mode3d === Modes3d.ISO) ? 'primary' : 'secondary';
-    const strB = (mode3d === Modes3d.RAYCAST) ? 'primary' : 'secondary';
-    const strC = (mode3d === Modes3d.RAYFAST) ? 'primary' : 'secondary';
-    const strD = (mode3d === Modes3d.ERASER) ? 'primary' : 'secondary';
-    // const strAroi = (mode3droi === Modes3droi.ISO) ? 'primary' : 'secondary';
-    // const strBroi = (mode3droi === Modes3droi.RAYCAST) ? 'primary' : 'secondary';
 
     const jsxRenderControls =
       <div>
-        <Card>
-          <Card.Title>
-            3d mode selection
-          </Card.Title>
-          <Card.Body>
-
-            <ButtonGroup>
-              <OverlayTrigger key="iso" placement="bottom" overlay={
-                <Tooltip>
-                  Show just barrier value surface, 1st ray intersection
-                </Tooltip>
-              }>
-                <Button variant={strA} onClick={this.onModeA}  >
+        <h3>3d mode selection</h3>
+                  Hint: Show just barrier value surface, 1st ray intersection
+               
+        <button onClick={this.onModeA}  >
                   Iso
-                </Button>
-              </OverlayTrigger>
+        </button>
 
-              <OverlayTrigger key="vre" placement="bottom" overlay={
-                <Tooltip>
-                  Show complete 3d volumetric rendering
-                </Tooltip>
-              }>
-                <Button variant={strB} onClick={this.onModeB} >
+             Hint:                 Show complete 3d volumetric rendering
+        <button onClick={this.onModeB} >
                   Vol
-                </Button>
-              </OverlayTrigger>
+        </button>
 
-              <OverlayTrigger key="maxproj" placement="bottom" overlay={
-                <Tooltip>
+              Hint:
                   Show maximum projection rendering
-                </Tooltip>
-              }>
-                <Button variant={strC} onClick={this.onModeC} >
-                  MaxPrj
-                </Button>
-              </OverlayTrigger>
+        <button onClick={this.onModeC} >
+                  MaxPrj</button>
 
-              <OverlayTrigger key="volera" placement="bottom" overlay={
-                <Tooltip>
+              Hint:
                   Special volume eraser tool
-                </Tooltip>
-              }>
-                <Button variant={strD} onClick={this.onModeD} >
+        <button onClick={this.onModeD} >
                   Eraser
-                </Button>
-              </OverlayTrigger>
-
-            </ButtonGroup>
-
-          </Card.Body>
-        </Card>
+        </button>
         <UiTF />
       </div>
 
-    const jsxROI =
-      <ListGroup as="ul" variant="flush">
-
-        <ListGroup.Item as="li">
-          <UiRoiSelect setRoiFunc={this.setRoi}/>
-        </ListGroup.Item>
-
-        <UiTFroi/>
-      </ListGroup>
+    const jsxROI = <div>
+      <UiRoiSelect setRoiFunc={this.setRoi}/>
+      <UiTFroi/>
+    </div>
     let indx = 0;
 
     const volSet = store.volumeSet;
@@ -205,8 +120,7 @@ class UiCtrl3dLight extends React.Component {
       }
     } // end if more 0 volumes
     const jsxArray = [jsxRenderControls, jsxROI];
-    const jsxRet = jsxArray[indx];
-    return jsxRet;
+    return jsxArray[indx];
 
   }
 }

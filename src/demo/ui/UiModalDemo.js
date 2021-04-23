@@ -1,35 +1,8 @@
-/**
- * @fileOverview UiModalDemo
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
 
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Container, Row, Col, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Modal, Button } from 'react-bootstrap';
-
-// ********************************************************
-// Const
-// ********************************************************
-
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class UiModalDemo some text later...
- */
 class UiModalDemo extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
     this.onModalShow = this.onModalShow.bind(this);
@@ -84,10 +57,6 @@ class UiModalDemo extends React.Component {
     this.onDemo(7);
   }
   render() {
-    const stateVis = this.props.stateVis;
-    const onHideFunc = this.props.onHide;
-
-    // icons description
     const iconsSet = [
       {
         tooltip: 'Lungs 20101108 from ktx',
@@ -140,46 +109,15 @@ class UiModalDemo extends React.Component {
     ];
 
     const jsxModalDemo = 
-      <Modal show={stateVis} onHide={onHideFunc} >
-        <Modal.Header closeButton>
-          <Modal.Title>
-            Load demo data
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-
-          <Container>
-            <Row>
-              {iconsSet.map( (d, i) => {
-                const strId = `id_${i}`;
-                const strTooltip = d.tooltip;
-                const strImage = d.image;
-                const strAlt = d.alt;
-                const funcCallback = d.func;
-                return <Col xs={6} md={4} key={strId}>
-                  <OverlayTrigger
-                    placement="top"
-                    delay={{ show: 150, hide: 300 }}
-                    overlay={
-                      <Tooltip id={strId}>
-                        {strTooltip}
-                      </Tooltip>
-                    }
-                  >
-                    <Button variant="light" onClick={funcCallback} >
-                      <Image src={strImage} alt={strAlt} thumbnail />
-                    </Button>
-                  </OverlayTrigger>
-                </Col>
-              })}
-            </Row>
-          </Container>            
-
-        </Modal.Body>
-      </Modal>;
+      <dialog >
+        <h3>Load demo data</h3>
+        {iconsSet.map( ({ tooltip, image, alt }) => {
+          return <img src={image} alt={alt} title={tooltip} />
+        })}
+      </dialog>;
 
     return jsxModalDemo;
-  } // end render
-} // end class
+  }
+}
 
 export default connect(store => store)(UiModalDemo);

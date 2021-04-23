@@ -1,24 +1,32 @@
 {
-  "name": "Med3web",
+  "name": "med3web",
   "fullName": "Med3web 2d/3d Dicom and other medical formats web viewer/editor",
   "description": "Med3web is unique 2d/3d medical volume data web viewer application. You can inspect data both in 2d and 3d modes.",
-  "version": "1.0.2",
-  "author": "EPAM Systems",
-  "year": "2020",
-  "homepage": ".",
+  "version": "1.0.0",
+  "author": "EPAM Systems <mri@epam.com>",
+  "year": "2021",
+  "license": "Apache-2.0",
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/epam/med3web/issues"
+  },
+  "homepage": "https://med3web.opensource.epam.com/",
   "private": false,
   "dependencies": {
-    "@tensorflow/tfjs": "^1.7.4",
-    "bootstrap": "^4.5.0",
+    "@tensorflow/tfjs": "3.4.x",
     "daikon": "^1.2.42",
+    "eslint-plugin-react": "^7.23.2",
     "filereader-stream": "^2.0.0",
     "gulp": "^4.0.2",
     "jquery": "^3.5.1",
     "node-gzip": "^1.1.2",
     "popper.js": "^1.16.1",
     "react": "^16.13.1",
-    "react-bootstrap": "^1.0.1",
-    "react-bootstrap-table-next": "^3.3.5",
     "react-dom": "^16.13.1",
     "react-nouislider": "^2.0.1",
     "react-redux": "^6.0.0",
@@ -31,31 +39,23 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
     "lint": "eslint src/**/*.js",
-    "doc": "esdoc -c esdoc.json"
+    "docker": "docker run --name med3web -v $INIT_CWD/build:/usr/share/nginx/html:ro -d -p 8080:80 nginx"
   },
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
   "devDependencies": {
     "canvas": "^2.6.1",
-    "esdoc": "^1.1.0",
-    "esdoc-ecmascript-proposal-plugin": "^1.0.0",
-    "esdoc-react-plugin": "^1.0.1",
-    "esdoc-standard-plugin": "^1.0.0",
-    "eslint": "^5.16.0",
-    "eslint-plugin-react": "^7.20.0",
     "node-pre-gyp": "^0.14.0"
   },
+  "browserslist": [
+    "edge >=79",
+    "firefox >=51",
+    "chrome >=56"
+  ],
   "engines": {
-    "node": "12.16.1",
-    "npm": "6.13.4"
+    "node": ">=12.16.1",
+    "npm": ">=6.13.4"
   }
 }

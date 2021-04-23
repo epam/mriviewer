@@ -1,21 +1,7 @@
-/**
- * @fileOverview Graphics2d.test
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import ToolArea from './tools2d/ToolArea';
 import Graphics2d from './Graphics2d';
 import VolumeSet from './VolumeSet';
 import Volume from './Volume';
-
-// ********************************************************
-// Tests
-// ********************************************************
 
 describe('ToolArea. test line intersect', () => {
   it('ToolArea. test line intersect no 0', () => {

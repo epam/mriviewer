@@ -1,15 +1,4 @@
-/**
- * @fileOverview UiTF
- * @author Epam
- * @version 1.0.0
- */
 
-
-// ********************************************************
-// Imports
-// ********************************************************
-
-// special css for NoUiSlioder
 import 'nouislider/distribute/nouislider.css';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -17,17 +6,6 @@ import { connect } from 'react-redux';
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
 
-
-// ********************************************************
-// Const
-// ********************************************************
-
-// ********************************************************
-// Class
-// ********************************************************
-/**
- * Class UiTF some text later...
- */
 class UiTFroi extends React.Component {
   constructor(props) {
     super(props);
