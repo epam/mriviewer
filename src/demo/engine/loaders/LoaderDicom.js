@@ -1,3 +1,8 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 /**
  * @fileOverview LoaderDicom
  * @author Epam
@@ -361,7 +366,7 @@ class LoaderDicom{
       const yDim = slicePad.m_yDim;
       xyDim = xDim * yDim;
       for (i = 0; i < xyDim; i++) {
-        const val16 = slicePad.m_image[i];
+        let val16 = slicePad.m_image[i];
         // if ((val16 === this.m_padValue) || ((val16 & 0x8000) !== 0)) {
         if (val16 === this.m_padValue) {
           val16 = 0;
@@ -2096,4 +2101,3 @@ class LoaderDicom{
 
 export default LoaderDicom;
 
- 

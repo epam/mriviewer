@@ -1,3 +1,8 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import * as tf from '@tensorflow/tfjs';
 
 // where VGG_UNET ready model file located to download

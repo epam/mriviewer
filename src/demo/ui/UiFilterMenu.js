@@ -1,3 +1,8 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import LungsFillTool from '../engine/actvolume/lungsfill/lft';
@@ -378,10 +383,6 @@ class UiFilterMenu extends React.Component {
   }
   //
   render() {
-    const store = this.props;
-    const isLoaded = store.isLoaded;
-
-    const strDisabled = (isLoaded) ? false : true;
     const jsxFilterMenu =
       <div>
         <div style={{ display: 'inline-block' }}> 

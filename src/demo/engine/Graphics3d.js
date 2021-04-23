@@ -1,3 +1,8 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 /**
  * @fileOverview Graphics3d
  * @author Epam
@@ -381,4 +386,3 @@ class Graphics3d extends React.Component {
 }
 
 export default connect(store => store)(Graphics3d);
- 

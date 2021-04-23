@@ -1,3 +1,8 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import ToolArea from './tools2d/ToolArea';
 import Graphics2d from './Graphics2d';
 import VolumeSet from './VolumeSet';
