@@ -17,15 +17,9 @@ import UiRoiSelect from './UiRoiSelect';
 class UiCtrl3dLight extends React.Component {
   constructor(props) {
     super(props);
-    this.onModeA = this.onModeA.bind(this);
-    this.onModeB = this.onModeB.bind(this);
-    this.onModeC = this.onModeC.bind(this);
-    this.onModeD = this.onModeD.bind(this);
-    this.onMode = this.onMode.bind(this);
-    this.onModeroi = this.onModeroi.bind(this);
     this.m_updateEnable = true;
   }
-  onMode(indexMode) {
+  onMode = (indexMode) => {
     this.m_updateEnable = true;
     this.props.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: indexMode });
     const store = this.props;

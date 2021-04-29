@@ -7,6 +7,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import BrowserDetector from '../engine/utils/BrowserDetector';
 import StoreActionType from '../store/ActionTypes';
+import { ReactComponent as Logo } from './icons/logo.svg'
+import UiOpenMenu from "./UiOpenMenu";
 
 class UiApp extends React.Component {
   constructor(props) {
@@ -39,7 +41,7 @@ class UiApp extends React.Component {
   componentDidMount() {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_UI_APP, uiApp: this });
-
+		
     // browser detector
     const browserDetector = new BrowserDetector();
     this.isWebGl20supported = browserDetector.checkWebGlSupported();
@@ -58,9 +60,9 @@ class UiApp extends React.Component {
   }
   render() {
     return <div>
-      <img src='images/logo.png' alt='Logo' />
-      {/*<UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>*/}
-
+      <Logo />
+      <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>
+			
       {/*{(isLoaded && this.isWebGl20supported) ? <UiViewMode/> : <p></p>}*/}
       {/*{(isLoaded) ? <UiMain/> : <p></p>}*/}
       {/*<UiSaveMenu/>*/}
