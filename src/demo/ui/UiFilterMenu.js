@@ -378,10 +378,6 @@ class UiFilterMenu extends React.Component {
   }
   //
   render() {
-    const store = this.props;
-    const isLoaded = store.isLoaded;
-
-    const strDisabled = (isLoaded) ? false : true;
     const jsxFilterMenu =
       <div>
         <div style={{ display: 'inline-block' }}> 
