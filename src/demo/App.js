@@ -8,11 +8,9 @@ import { connect } from 'react-redux';
 
 import UiApp from './ui/UiApp';
 
-import './App.css';
-
 class App extends React.Component {
   render() {
-    return <UiApp className="App"/>
+    return <UiApp />
   }
 }
 

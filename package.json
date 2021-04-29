@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "canvas": "^2.6.1",
-    "eslint-plugin-react": "^7.23.2",
+    "eslint-plugin-react": "7.x.x",
     "node-pre-gyp": "^0.14.0"
   },
   "browserslist": [
@@ -55,7 +55,7 @@
     "chrome >=56"
   ],
   "engines": {
-    "node": ">=12.16.1",
-    "npm": ">=6.13.4"
+    "node": "15.x.x",
+    "npm": "6.x.x"
   }
 }

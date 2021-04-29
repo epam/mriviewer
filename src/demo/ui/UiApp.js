@@ -9,6 +9,7 @@ import BrowserDetector from '../engine/utils/BrowserDetector';
 import StoreActionType from '../store/ActionTypes';
 import { ReactComponent as Logo } from './icons/logo.svg'
 import UiOpenMenu from "./UiOpenMenu";
+import './UiApp.css'
 
 class UiApp extends React.Component {
   constructor(props) {
@@ -59,7 +60,7 @@ class UiApp extends React.Component {
     }
   }
   render() {
-    return <div>
+    return <div className="app-grid">
       <Logo />
       <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>
 			

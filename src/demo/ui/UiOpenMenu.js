@@ -21,19 +21,21 @@ import FileTools from '../engine/loaders/FileTools';
 import LoaderDicom from '../engine/loaders/LoaderDicom';
 import LoaderHdr from '../engine/loaders/LoaderHdr';
 
-import LoaderUrlDicom from '../engine/loaders/LoaderUrlDicom';
-import LoaderDcmDaikon from '../engine/loaders/LoaderDcmDaikon';
-import LoaderDcmUrlDaikon from '../engine/loaders/LoadDcmUrlDiakon';
+import { ReactComponent as OpenLocalFolderIcon } from "./icons/folder.svg";
+import { ReactComponent as OpenLinkIcon } from "./icons/link.svg";
+import { ReactComponent as OpenDemoIcon } from "./icons/demo.svg";
+import { ReactComponent as OpenLocalFileIcon } from "./icons/file.svg";
+import { ReactComponent as DownloadIcon } from "./icons/download.svg";
+import { ReactComponent as GetFileIcon } from "./icons/getfile.svg";
 
-import config from '../config/config';
 
-import { ReactComponent as OpenLocalFileIcon } from "./icons/folder.svg";
+import LoaderDcmDaikon from "../engine/loaders/LoaderDcmDaikon";
+import LoaderDcmUrlDaikon from "../engine/loaders/LoadDcmUrlDiakon";
+
+import './UiOpenMenu.css';
 
 /** deep artificially fix volume texture size to 4 * N */
 const NEED_TEXTURE_SIZE_4X = true;
-
-// use daikon parser for Dicom (*dcm) file loading
-const READ_DICOM_VIA_DAIKON = true;
 
 class UiOpenMenu extends React.Component {
   constructor(props) {
@@ -138,14 +140,11 @@ class UiOpenMenu extends React.Component {
     }
     const store = this.props;
     const uiapp = store.uiApp;
-    // console.log(`callbackReadComplete wiyth err = ${loadErrorCode}`);
     uiapp.doHideProgressBar();
 		
     if (errCode === LoadResult.SUCCESS) {
-      // console.log('callbackReadComplete finished OK');
       this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
     } else {
-      console.log(`callbackReadComplete failed! reading ${this.m_fileName} file`);
       const arrErr = [];
       const strErr = LoadResult.getResultString(errCode);
       arrErr.push(strErr);
@@ -154,8 +153,6 @@ class UiOpenMenu extends React.Component {
   }
   callbackReadSingleDicomComplete(errCode) {
     if (errCode === LoadResult.SUCCESS) {
-      // console.log('TODO: UI select window center /width ...');
-			
       const store = this.props;
       store.dispatch({ type: StoreActionType.SET_VOLUME_SET, volumeSet: this.m_volumeSet });
       store.dispatch({ type: StoreActionType.SET_VOLUME_INDEX, volumeIndex: 0 });
@@ -206,17 +203,12 @@ class UiOpenMenu extends React.Component {
   }
   readSliceDicomViaDaikon(fileIndex, fileName, ratioLoad, strContent) {
     const loaderDaikon = new LoaderDcmDaikon();
-    const ret = loaderDaikon.readSlice(this.m_loader, fileIndex, fileName, strContent);
-    return ret;
-  } // end read single slice via daikon
-  //
-  // based on local file read
-  // read from string content in this.m_fileReader.result
-  //
+    return loaderDaikon.readSlice(this.m_loader, fileIndex, fileName, strContent);
+  }
   onFileReadSingleBuffer(strContent) {
     // daikon read
     // strContent is ArrayBuffer
-    if ((this.m_fileName.endsWith('.dcm') || this.m_fileName.endsWith('.DCM')) && READ_DICOM_VIA_DAIKON) {
+    if ((this.m_fileName.endsWith('.dcm') || this.m_fileName.endsWith('.DCM'))) {
       const loaderDcm = new LoaderDcmDaikon();
       const store = this.props;
       const fileIndex = this.m_fileIndex;
@@ -330,7 +322,7 @@ class UiOpenMenu extends React.Component {
     }
 		
     // read header or image from src files
-    let readOk = false;
+    let readOk;
     if (isHdr) {
       readOk = this.m_loader.readFromBufferHeader(volDst, strContent, callbackProgress, callbackComplete);
     } else {
@@ -381,9 +373,6 @@ class UiOpenMenu extends React.Component {
     const strContent = this.m_fileReader.result;
     this.m_fileIndex++;
     const ratioLoad = this.m_fileIndex / this.m_numFiles;
-    // console.log(`onFileContentReadMultipleDicom. r = ${ratioLoad}`);
-    const callbackProgress = null;
-    // const callbackComplete = this.callbackReadMultipleComplete;
 		
     if (this.m_fileIndex <= 1) {
       // add new volume to volume set on the first slice
@@ -393,18 +382,7 @@ class UiOpenMenu extends React.Component {
       this.callbackReadProgress(0.0);
     }
 		
-    // FIX 05/06/2020: read multiple dicom callback complete 
-    // can be invoked with error code
-    const callbackColmpleteVoid = this.callbackCompleteMultipleDicom;
-		
-    let readStatus;
-		
-    if (READ_DICOM_VIA_DAIKON) {
-      readStatus = this.readSliceDicomViaDaikon(this.m_fileIndex - 1, this.m_fileName, ratioLoad, strContent);
-    } else {
-      readStatus = this.m_volumeSet.readSingleSliceFromDicom(this.m_loader, this.m_fileIndex - 1,
-        this.m_fileName, ratioLoad, strContent, callbackProgress, callbackColmpleteVoid);
-    }
+    let readStatus = this.readSliceDicomViaDaikon(this.m_fileIndex - 1, this.m_fileName, ratioLoad, strContent);
 		
     if (readStatus !== LoadResult.SUCCESS) {
       console.log('onFileContentReadMultipleDicom. Error read individual file');
@@ -633,286 +611,192 @@ class UiOpenMenu extends React.Component {
     fileSelector.onchange = this.handleFileSelected;
     return fileSelector;
   }
-  onButtonLocalFile = (evt) => {
-    evt.preventDefault();
-    this.m_fileSelector.click();
-  }
-  onModalUrlShow() {
-    console.log(`onModalUrlShow`);
-    this.setState({ strUrl: '' });
-    this.setState({ showModalUrl: true });
-  }
-  onModalUrlHide() {
-    console.log(`onModalUrlHide`);
-    this.setState({ showModalUrl: false });
-  }
-  onChangeUrlString(evt) {
-    const str = evt.target.value;
-    this.setState({ strUrl: str });
-    // console.log(`onChangeUrlString. str = ${str}`)
-  }
-  callbackReadCompleteUrlKtxNii(codeResult) {
-    if (codeResult !== LoadResult.SUCCESS) {
-      console.log(`onCompleteFromUrlKtx. Bad result: ${codeResult}`);
-			
-      const arrErrors = [];
-      const strErr = LoadResult.getResultString(codeResult);
-      arrErrors.push(strErr);
-      this.finalizeFailedLoadedVolume(this.m_volumeSet, this.m_fileName, arrErrors);
-      return;
-    } else {
-      this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
-      this.callbackReadComplete(LoadResult.SUCCESS, null, 0, null);
-    }
-  }
-  loadFromUrl(strUrl) {
-    const fileTools = new FileTools();
-    const isValid = fileTools.isValidUrl(strUrl);
-    if (isValid) {
-      this.m_url = strUrl;
-			
-      this.m_fileName = fileTools.getFileNameFromUrl(strUrl);
-      this.m_volumeSet = new VolumeSet();
-      this.m_volumeSet.addVolume(new Volume());
-			
-      if (strUrl.endsWith('.ktx')) {
-        const callbackProgress = this.callbackReadProgress;
-        const callbackComplete = this.callbackReadCompleteUrlKtxNii;
-        this.callbackReadProgress(0.0);
-        this.m_volumeSet.readFromKtxUrl(strUrl, callbackProgress, callbackComplete);
-        // if KTX
-      } else if (strUrl.endsWith('.nii')) {
-        const callbackProgress = this.callbackReadProgress;
-        const callbackComplete = this.callbackReadCompleteUrlKtxNii;
-        this.callbackReadProgress(0.0);
-        this.m_volumeSet.readFromNiiUrl(strUrl, callbackProgress, callbackComplete);
-        // if NII (Nifti format)
-      } else if (strUrl.endsWith('.dcm')) {
-        if (READ_DICOM_VIA_DAIKON) {
-          const loaderUrlDcm = new LoaderDcmUrlDaikon();
-          const ret = loaderUrlDcm.readFromUrl(this.m_volumeSet, strUrl, this.callbackReadCompleteUrlKtxNii, this.callbackReadProgress);
-          return ret;
-        }
+	onButtonLocalFile = (evt) => {
+		  evt.preventDefault();
+		  this.m_fileSelector.click();
+	}
+	onModalUrlShow() {
+		  console.log(`onModalUrlShow`);
+		  this.setState({ strUrl: '' });
+		  this.setState({ showModalUrl: true });
+	}
+	onModalUrlHide() {
+		  console.log(`onModalUrlHide`);
+		  this.setState({ showModalUrl: false });
+	}
+	onChangeUrlString(evt) {
+		  const str = evt.target.value;
+		  this.setState({ strUrl: str });
+		  // console.log(`onChangeUrlString. str = ${str}`)
+	}
+	callbackReadCompleteUrlKtxNii(codeResult) {
+		  if (codeResult !== LoadResult.SUCCESS) {
+		    console.log(`onCompleteFromUrlKtx. Bad result: ${codeResult}`);
 				
-        const callbackProgress = this.callbackReadProgress;
-        const callbackComplete = this.callbackReadCompleteUrlKtxNii;
-        this.callbackReadProgress(0.0);
-        this.m_volumeSet.readFromDicomUrl(strUrl, callbackProgress, callbackComplete);
-        // if Dicom
-      } else if (strUrl.endsWith('.h')) {
-        const callbackProgress = this.callbackReadProgress;
-        const callbackComplete = this.callbackReadCompleteUrlKtxNii;
-        this.callbackReadProgress(0.0);
-        this.m_volumeSet.readFromHdrUrl(strUrl, callbackProgress, callbackComplete);
-        // if Hdr
-      } else {
-        console.log(`UiOpenMenu. Unknow file type from URL = ${strUrl}`);
-      }
+		    const arrErrors = [];
+		    const strErr = LoadResult.getResultString(codeResult);
+		    arrErrors.push(strErr);
+		    this.finalizeFailedLoadedVolume(this.m_volumeSet, this.m_fileName, arrErrors);
+		  } else {
+		    this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
+		    this.callbackReadComplete(LoadResult.SUCCESS, null, 0, null);
+		  }
+	}
+	loadFromUrl(strUrl) {
+		  const fileTools = new FileTools();
+		  const isValid = fileTools.isValidUrl(strUrl);
+		  if (isValid) {
+		    this.m_url = strUrl;
+				
+		    this.m_fileName = fileTools.getFileNameFromUrl(strUrl);
+		    this.m_volumeSet = new VolumeSet();
+		    this.m_volumeSet.addVolume(new Volume());
+				
+		    if (strUrl.endsWith('.ktx')) {
+		      const callbackProgress = this.callbackReadProgress;
+		      const callbackComplete = this.callbackReadCompleteUrlKtxNii;
+		      this.callbackReadProgress(0.0);
+		      this.m_volumeSet.readFromKtxUrl(strUrl, callbackProgress, callbackComplete);
+		      // if KTX
+		    } else if (strUrl.endsWith('.nii')) {
+		      const callbackProgress = this.callbackReadProgress;
+		      const callbackComplete = this.callbackReadCompleteUrlKtxNii;
+		      this.callbackReadProgress(0.0);
+		      this.m_volumeSet.readFromNiiUrl(strUrl, callbackProgress, callbackComplete);
+		      // if NII (Nifti format)
+		    } else if (strUrl.endsWith('.dcm')) {
+		      const loaderUrlDcm = new LoaderDcmUrlDaikon();
+		      return loaderUrlDcm.readFromUrl(this.m_volumeSet, strUrl, this.callbackReadCompleteUrlKtxNii, this.callbackReadProgress);
+		    } else if (strUrl.endsWith('.h')) {
+		      const callbackProgress = this.callbackReadProgress;
+		      const callbackComplete = this.callbackReadCompleteUrlKtxNii;
+		      this.callbackReadProgress(0.0);
+		      this.m_volumeSet.readFromHdrUrl(strUrl, callbackProgress, callbackComplete);
+		      // if Hdr
+		    } else {
+		      console.log(`UiOpenMenu. Unknow file type from URL = ${strUrl}`);
+		    }
+				
+		    // if valid url
+		  } else {
+		    const strErr = `UiOpenMenu. Bad URL = ${strUrl}`;
+		    console.log(strErr);
+		    this.setErrorString(strErr);
+		  }
+	}
+	onClickLoadUrl() {
+		  this.setState({ showModalUrl: false });
+		  const strUrl = this.state.strUrl;
+		  console.log(`onClickLoadUrl with strUrl = ${strUrl}`);
+		  this.loadFromUrl(strUrl);
+	}
+	onModalDemoOpenShow() {
+		  this.setState({ showModalDemo: true });
+	}
+	onModalDemoOpenHide() {
+		  this.setState({ showModalDemo: false });
+	}
+	arrNumToStr(arrNums) {
+		  const numLet = arrNums.length;
+		  let str = '';
+		  for (let i = 0; i < numLet; i++) {
+		    const n = arrNums[i];
+		    str = str.concat(String.fromCharCode(n));
+		  }
+		  return str;
+	}
+	onModalGoogleShow() {
+		  this.setState({ showModalGoogle: true });
+	}
+	onModalGoogleHide() {
+		  this.setState({ showModalGoogle: false });
+	}
+	onGoogleSelected(index) {
+		  // perform action on click i-th item in Google cloud menu . Or remove this menu completely
+		  console.log(`onGoogleSelected(${index}) ... `);
+	}
+	onDemoSelected(index) {
+		  return this.loadFromUrl([
+		    'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/31212219.luy',
+		    'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/tfu11.luy',
+		    'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/hn4_623_623_276.ojj',
+		    'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/xpnbo_qfmwjt/wig.:12.edn',
+		    'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/11dcb1:2gb5be73dd4311b768bfc:68f/145784245dcfg6fb26gg:f1d91:1611b.edn',
+		    'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/du_367_367_367.luy',
+		    'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/mvoht_367_367_367.luy',
+		    'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ies/tfu_jouo.i'
+		  ][index]);
+	}
+	onModalDicomSeriesHide() {
+		  const arrEmpty = [];
+		  const store = this.props;
+		  store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: arrEmpty });
+	}
+	onDicomSerieSelected(indexSelected) {
+		  const store = this.props;
+		  const series = store.dicomSeries;
+		  const serieSelected = series[indexSelected];
+		  const hash = serieSelected.m_hash;
+		  this.m_loader.createVolumeFromSlices(this.m_volumeSet, indexSelected, hash);
+		  this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
+		  console.log(`onFileContentReadMultipleDicom read all ${this.m_numFiles} files`);
 			
-      // if valid url
-    } else {
-      const strErr = `UiOpenMenu. Bad URL = ${strUrl}`;
-      console.log(strErr);
-      this.setErrorString(strErr);
-    }
-  }
-  onClickLoadUrl() {
-    this.setState({ showModalUrl: false });
-    const strUrl = this.state.strUrl;
-    console.log(`onClickLoadUrl with strUrl = ${strUrl}`);
-    this.loadFromUrl(strUrl);
-  }
-  onModalDemoOpenShow() {
-    this.setState({ showModalDemo: true });
-  }
-  onModalDemoOpenHide() {
-    this.setState({ showModalDemo: false });
-  }
-  arrNumToStr(arrNums) {
-    const numLet = arrNums.length;
-    let str = '';
-    for (let i = 0; i < numLet; i++) {
-      const n = arrNums[i];
-      str = str.concat(String.fromCharCode(n));
-    }
-    return str;
-  }
-  onModalGoogleShow() {
-    this.setState({ showModalGoogle: true });
-  }
-  onModalGoogleHide() {
-    this.setState({ showModalGoogle: false });
-  }
-  onGoogleSelected(index) {
-    // perform action on click i-th item in Google cloud menu . Or remove this menu completely
-    console.log(`onGoogleSelected(${index}) ... `);
-  }
-  onDemoSelected(index) {
-    const arr = config.demoUrls;
-    if (arr.length >= 8) {
-      const fileName = arr[index];
-      console.log(`onDemoSelected: load file ${fileName}, config[ ${index} ]`);
-      this.loadFromUrl(fileName);
-      return;
-    }
-    let fileName = '';
-    if (index === 0) {
-      // 20101108.ktx
-      // const FN_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/31212219.luy';
-      const FN_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/31212219.luy';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_ENCODED);
-      // console.log(`onDemoSelected. enc = ${fileName}`);
-    } else if (index === 1) {
-      // set00.ktx
-      // const FN_ENCO = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/tfu11.luy';
-      const FN_ENCO = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/tfu11.luy';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_ENCO);
-      // console.log(`onDemoSelected. enc = ${fileName}`);
-    } else if (index === 2) {
-      // gm3 nii
-      // const FN_GM_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ojguj/hn4_623_623_276.ojj';
-      const FN_GM_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/hn4_623_623_276.ojj';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_GM_ENCODED);
-      // fileName = ft.encodeUrl(FN_GM_DECODED);
-      // console.log(`onDemoSelected. enc = ${fileName}`);
-    } else if (index === 3) {
-      const numUrls = config.demoWomanPelvisUrls.length;
-      if (numUrls === 0) {
-        // woman pelvis
-        // const FN_WOMM_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ejdpn/xpnbo_qfmwjt/wig.:12.edn';
-        const FN_WOMM_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/xpnbo_qfmwjt/wig.:12.edn';
-        const ft = new FileTools();
-        fileName = ft.decodeUrl(FN_WOMM_ENCODED);
-      } else {
-        const strPrefix = config.demoWomanPelvisPrefix;
-        // console.log(`config. prefix = ${strPrefix}`);
-        const arrFileNames = [];
-        for (let i = 0; i < numUrls; i++) {
-          const strFn = config.demoWomanPelvisUrls[i];
-          const url = `${strPrefix}${strFn}`;
-          arrFileNames.push(url);
-        }
-        const store = this.props;
-        const loader = new LoaderUrlDicom(store);
-        const GOOGLE_HEADER = false;
-        loader.loadFromUrlArray(arrFileNames, GOOGLE_HEADER);
-        return;
-      }
-    } else if (index === 4) {
-      const numUrls = config.demoLungsUrls.length;
-      if (numUrls === 0) {
-        // lungs dicom 00cba..957e.dcm
-        // const FN_OCB_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ejdpn/11dcb1:2gb5be73dd4311b768bfc:68f/145784245dcfg6fb26gg:f1d91:1611b.edn';
-        const FN_OCB_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/11dcb1:2gb5be73dd4311b768bfc:68f/145784245dcfg6fb26gg:f1d91:1611b.edn';
-        const ft = new FileTools();
-        fileName = ft.decodeUrl(FN_OCB_ENCODED);
-      } else {
-        const strPrefix = config.demoLungsPrefix;
-        console.log(`config. Lungs prefix = ${strPrefix}`);
-        const arrFileNames = [];
-        for (let i = 0; i < numUrls; i++) {
-          const strFn = config.demoLungsUrls[i];
-          const url = `${strPrefix}${strFn}`;
-          arrFileNames.push(url);
-        }
-        const store = this.props;
-        const loader = new LoaderUrlDicom(store);
-        const GOOGLE_HEADER = false;
-        loader.loadFromUrlArray(arrFileNames, GOOGLE_HEADER);
-        return;
-      }
-    } else if (index === 5) {
-      // ct_256_256_256.ktx
-      // const FN_CT256_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/du_367_367_367.luy';
-      const FN_CT256_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/du_367_367_367.luy';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_CT256_ENCODED);
-      // fileName = ft.encodeUrl(FN_CT256_DECODED);
-      // console.log(`onDemoSelected. enc = ${fileName}`);
-    } else if (index === 6) {
-      // lungs_256_256_256.ktx
-      // const FN_LUNGS256_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/mvoht_367_367_367.luy';
-      const FN_LUNGS256_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/mvoht_367_367_367.luy';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_LUNGS256_ENCODED);
-      // fileName = ft.encodeUrl(FN_LUNGS256_DECODED);
-      // console.log(`onDemoSelected. enc = ${fileName}`);
-    } else if (index === 7) {
-      // hdr set (roi)
-      // const FN_HDRSET_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ies/tfu_jouo.i';
-      const FN_HDRSET_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/ies/tfu_jouo.i';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_HDRSET_ENCODED);
-    } else {
-      console.log(`onDemoSelected. not implemented for index = ${index}`);
-    }
-    if (fileName.length > 0) {
-      this.loadFromUrl(fileName);
-    } // if fileName not empty
-  } // end of onDemoSelected
-  //
-  onModalDicomSeriesHide() {
-    const arrEmpty = [];
-    const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: arrEmpty });
-  }
-  onDicomSerieSelected(indexSelected) {
-    const store = this.props;
-    const series = store.dicomSeries;
-    const serieSelected = series[indexSelected];
-    const hash = serieSelected.m_hash;
-    this.m_loader.createVolumeFromSlices(this.m_volumeSet, indexSelected, hash);
-    this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
-    console.log(`onFileContentReadMultipleDicom read all ${this.m_numFiles} files`);
-		
-    // clear modal
-    store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: [] });
-  }
-  onModalWindowCWHide(needShow) {
-    this.setState({ showModalWindowCW: false });
-    if (needShow) {
-      this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
-      // setup dicom series (volumes info) for global store: select volume later
-      const store = this.props;
-      let series = null;
-      if (this.m_loader !== undefined) {
-        series = this.m_loader.m_slicesVolume.getSeries();
-        store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: series });
-      }
-      // update graphics 2d window
-      const gra = store.graphics2d;
-      if (gra !== null) {
-        gra.forceUpdate();
-      }
-    }
-  }
-  componentDidMount() {
-    this.m_fileSelector = this.buildFileSelector();
-    const fileNameOnLoad = this.m_fileNameOnLoad;
-    // console.log(`UiOpenMenu. componentDidMount. fnonl = ${fileNameOnLoad}`);
-    if ((fileNameOnLoad.length > 0) && (this.state.onLoadCounter > 0)) {
-      this.setState({ onLoadCounter: 0 });
-      const TIMEOUT_MS = 50;
-      setTimeout(this.loadFromUrl(fileNameOnLoad), TIMEOUT_MS);
-    }
-  }
-  render() {
-    // todo: get path from url
-    // todo: get from gDrive
-    // todo: get from Demo Set
-    // todo: get from Local Folder/File
-
-    return <>
-      <div className="open-file__area">
-        <button onClick={this.onButtonLocalFile}>
-          <OpenLocalFileIcon/>
-        </button>
-      </div>
-    </>;
-  }
+		  // clear modal
+		  store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: [] });
+	}
+	onModalWindowCWHide(needShow) {
+		  this.setState({ showModalWindowCW: false });
+		  if (needShow) {
+		    this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
+		    // setup dicom series (volumes info) for global store: select volume later
+		    const store = this.props;
+		    let series = null;
+		    if (this.m_loader !== undefined) {
+		      series = this.m_loader.m_slicesVolume.getSeries();
+		      store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: series });
+		    }
+		    // update graphics 2d window
+		    const gra = store.graphics2d;
+		    if (gra !== null) {
+		      gra.forceUpdate();
+		    }
+		  }
+	}
+	componentDidMount() {
+		  this.m_fileSelector = this.buildFileSelector();
+		  const fileNameOnLoad = this.m_fileNameOnLoad;
+		  // console.log(`UiOpenMenu. componentDidMount. fnonl = ${fileNameOnLoad}`);
+		  if ((fileNameOnLoad.length > 0) && (this.state.onLoadCounter > 0)) {
+		    this.setState({ onLoadCounter: 0 });
+		    const TIMEOUT_MS = 50;
+		    setTimeout(this.loadFromUrl(fileNameOnLoad), TIMEOUT_MS);
+		  }
+	}
+	render() {
+		  // todo: get path from url
+		  // todo: get from gDrive
+		  // todo: get from Demo Set
+		  // todo: get from Local Folder/File
+		  // todo: style open file area
+			
+		  return <>
+				<div className="open-file__area">
+				  <div className="left" onClick={this.onButtonLocalFile}>
+					  <OpenLocalFileIcon/>
+				    <span className="filename">{this.m_fileName || 'file_name_displayed_here.dicom'}</span>
+				  </div>
+				  <div className="right">
+					  <OpenLocalFolderIcon/>
+					  <OpenLinkIcon/>
+					  <OpenDemoIcon/>
+				  </div>
+				</div>
+        <div className="save-file__area">
+          <DownloadIcon />
+          <GetFileIcon />
+        </div>
+			</>;
+	}
 }
 
 export default connect(store => store)(UiOpenMenu);
