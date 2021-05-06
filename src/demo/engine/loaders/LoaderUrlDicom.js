@@ -22,7 +22,7 @@ import LoaderDicom from './LoaderDicom';
 
 import Texture3D from '../Texture3D';
 import StoreActionType from '../../store/ActionTypes';
-import ModeView from '../../store/ModeView';
+import ViewModes from '../../store/ViewModes';
 import Modes3d from '../../store/Modes3d';
 
 
@@ -50,6 +50,7 @@ class LoaderUrlDicom {
     this.callbackReadComplete = this.callbackReadComplete.bind(this);
     this.m_fileName = '???';
   }
+
   /**
    * Progress read callback
    * 
@@ -68,7 +69,9 @@ class LoaderUrlDicom {
     } else {
       uiapp.doSetProgressBarRatio(ratioPrc);
     }
-  } // callback progress
+  }
+
+ // callback progress
   /**
    * Invoked after read finished (or may be with error)
    * 
@@ -87,6 +90,7 @@ class LoaderUrlDicom {
       this.finalizeSuccessLoadedVolume(this.m_volume, this.m_fileName);
     }
   }
+
   /**
    * End action if loading failed
    * 
@@ -104,6 +108,7 @@ class LoaderUrlDicom {
     const uiapp = store.uiApp;
     uiapp.doHideProgressBar();
   }
+
   /**
    * On the end of success loading dicom folder
    * 
@@ -125,10 +130,11 @@ class LoaderUrlDicom {
       const tex3d = new Texture3D();
       tex3d.createFromRawVolume(vol);
       store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ViewModes.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     }
   }
+
   /**
    * 
    * @param {object} arrFileNames - array of file names (with URL) 

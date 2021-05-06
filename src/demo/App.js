@@ -3,12 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import UiApp from './ui/UiApp';
 
-export default class App extends React.Component {
-  render() {
-    return <UiApp />
-  }
-}
+import { Context, initialContext } from "./context/Context";
+
+const App = () => {
+  const [context, setContext] = useState({ ...initialContext })
+  
+  return <Context.Provider value={{ context, setContext }}>
+    <UiApp/>
+  </Context.Provider>
+};
+
+export default App;

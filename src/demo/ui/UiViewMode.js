@@ -5,7 +5,7 @@
 
 import React from 'react';
 
-import ModeView from '../store/ModeView';
+import ViewModes from '../store/ViewModes';
 import StoreActionType from '../store/ActionTypes';
 import connect from "react-redux/lib/connect/connect";
 
@@ -26,47 +26,56 @@ class UiViewMode extends React.Component {
     this.onTool3d = this.onTool3d.bind(this);
     this.onView3d = this.onView3d.bind(this);
   }
+
   onMode(indexMode) {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: indexMode });
   }
+
   onTool_View(isOn) {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_IS_TOOL3D, isTool3D: isOn });
     store.dispatch({ type: StoreActionType.SET_SLIDER_Contrast3D, sliderContrast3D: 0 });    
   }
+
   onModeMpr() {
-    this.onMode(ModeView.VIEW_MPR);
+    this.onMode(ViewModes.VIEW_MPR);
   }
+
   onMode2d() {
-    this.onMode(ModeView.VIEW_2D);
+    this.onMode(ViewModes.VIEW_2D);
   }
+
   onMode3dLight() {
-    this.onMode(ModeView.VIEW_3D_LIGHT);
+    this.onMode(ViewModes.VIEW_3D_LIGHT);
   }
+
   onMode3d() {
-    this.onMode(ModeView.VIEW_3D);
+    this.onMode(ViewModes.VIEW_3D);
   }
+
   onTool3d() {
     this.onTool_View(true);
   }
+
   onView3d() {
     this.onTool_View(false);
   }
+
   render() {
     const store = this.props;
     let viewMode = store.modeView;
-    if ((viewMode === ModeView.VIEW_MPR) && (!this.m_needModeMpr)) {
-      viewMode = ModeView.VIEW_2D;
+    if ((viewMode === ViewModes.VIEW_MPR) && (!this.m_needModeMpr)) {
+      viewMode = ViewModes.VIEW_2D;
     }
-    if ((viewMode === ModeView.VIEW_3D_LIGHT) && (!this.m_needMode3dLight)) {
-      viewMode = ModeView.VIEW_2D;
+    if ((viewMode === ViewModes.VIEW_3D_LIGHT) && (!this.m_needMode3dLight)) {
+      viewMode = ViewModes.VIEW_2D;
     }
-    if ((viewMode === ModeView.VIEW_3D) && (!this.m_needMode3d)) {
-      viewMode = ModeView.VIEW_2D;
+    if ((viewMode === ViewModes.VIEW_3D) && (!this.m_needMode3d)) {
+      viewMode = ViewModes.VIEW_2D;
     }
-    if ((viewMode === ModeView.VIEW_2D) && (!this.m_needMode2d)) {
-      viewMode = ModeView.VIEW_3D;
+    if ((viewMode === ViewModes.VIEW_2D) && (!this.m_needMode2d)) {
+      viewMode = ViewModes.VIEW_3D;
     }
 
     const jsx3d =
@@ -106,7 +115,7 @@ class UiViewMode extends React.Component {
         <span className="fa fa-bolt"></span>
       </button>
       {(needShow3d) ? jsx3d : ''}
-      {(viewMode === ModeView.VIEW_3D_LIGHT && test) ? jsxViewTool : ''}
+      {(viewMode === ViewModes.VIEW_3D_LIGHT && test) ? jsxViewTool : ''}
     </div>;
   }
 }

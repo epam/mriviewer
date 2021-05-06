@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const ModeView = {
+const ViewModes = {
   VIEW_NA: -1,
   VIEW_MPR: 0,
   VIEW_2D: 1,
@@ -12,4 +12,4 @@ const ModeView = {
   VIEW_COUNT: 4
 };
 
-export default ModeView;
+export default ViewModes;

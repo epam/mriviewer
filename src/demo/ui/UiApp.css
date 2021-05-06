@@ -2,11 +2,16 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-.app-grid {
+.progress--top {
+    position: absolute;
+    top: 2px;
+    width: 100%;
+}
+
+.file-area {
     display: flex;
-    flex-direction: row;
     flex-wrap: nowrap;
-    align-content: flex-start;
-    justify-content: flex-start;
+    flex-direction: row;
     align-items: center;
+    margin-top: 0.5em;
 }

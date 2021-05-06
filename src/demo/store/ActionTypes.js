@@ -8,7 +8,6 @@
 //
 const StoreActionType = {
   SET_IS_LOADED: 0,
-  SET_FILENAME: 1,
   SET_VOLUME_SET: 2,
   SET_VOLUME_INDEX: 3,
   SET_TEXTURE3D: 4,
@@ -40,5 +39,7 @@ const StoreActionType = {
   SET_MODE_3Droi: 30,
   SET_DICOM_SERIES: 31,
   SET_LOADER_DICOM: 32,
+  
+  ALERT_SHOW: 33,
 };
 export default StoreActionType;

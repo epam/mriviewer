@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2021 EPAM Systems, Inc. (httpvolumeSet://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
 

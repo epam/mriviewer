@@ -10,7 +10,7 @@ import LungsFillTool from '../engine/actvolume/lungsfill/lft';
 import ActiveVolume from '../engine/actvolume/actvol';
 import StoreActionType from '../store/ActionTypes';
 import Texture3D from '../engine/Texture3D';
-import ModeView from '../store/ModeView';
+import ViewModes from '../store/ViewModes';
 import Modes3d from '../store/Modes3d';
 
 import SobelEdgeDetector from '../engine/imgproc/Sobel';
@@ -36,6 +36,7 @@ class UiFilterMenu extends React.Component {
 
     //this.callbackProgressFun = this.callbackProgressFun.bind(this);
   }
+
   /*
   callbackProgressFun(ratio01) {
     // console.log(`callbackReadProgress = ${ratio01}`);
@@ -87,6 +88,7 @@ class UiFilterMenu extends React.Component {
     this.m_timerId = setTimeout(this.onLungsFillerCallback, SK_REM_DELAY_MSEC);
     //store.volumeRenderer.volumeUpdater.createUpdatableVolumeTex(store.volume, false, null);
   }
+
   onLungsFillerCallback() {
     const store = this.props;
     const ratioUpdate = this.lungsFiller.m_ratioUpdate;
@@ -111,6 +113,7 @@ class UiFilterMenu extends React.Component {
       this.m_timerId = setTimeout(this.onLungsFillerCallback, SK_REM_DELAY_MSEC);
     }
   }
+
   // on sobel
   onButtonSobel() {
     // get globals
@@ -154,7 +157,9 @@ class UiFilterMenu extends React.Component {
     const SOBEL_UPDATE_DELAY_MSEC = 150;
     this.m_timerId = setTimeout(this.onSobelCallback, SOBEL_UPDATE_DELAY_MSEC);
 
-  } // end onButtonSobel
+  }
+
+ // end onButtonSobel
   // callback for periodicallt invoke sobel 3d volume filtering
   onSobelCallback() {
     this.m_sobel.update();
@@ -203,7 +208,7 @@ class UiFilterMenu extends React.Component {
       const tex3d = new Texture3D();
       tex3d.createFromRawVolume(vol);
       store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ViewModes.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     } // if finished
     // update render
@@ -213,13 +218,16 @@ class UiFilterMenu extends React.Component {
       const SOBEL_UPDATE_DELAY_MSEC = 150;
       this.m_timerId = setTimeout(this.onSobelCallback, SOBEL_UPDATE_DELAY_MSEC);
     }
-  } // end onSobelCallback
+  }
+
+ // end onSobelCallback
   //
   // on Bilateral
   //
   onButtonBilateral() {
     this.showModalBilateral();
   }
+
   //
   // detect brain segmentation
   //
@@ -324,6 +332,7 @@ class UiFilterMenu extends React.Component {
     store.graphics2d.forceUpdate();
     */
   }
+
   onSkullRemoveCallback() {
     const store = this.props;
     const iterCounter = this.m_actVolume.m_updateCounter;
@@ -361,7 +370,7 @@ class UiFilterMenu extends React.Component {
       const tex3d = new Texture3D();
       tex3d.createFromRawVolume(vol);
       store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ViewModes.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     }
     // update render
@@ -372,15 +381,19 @@ class UiFilterMenu extends React.Component {
       this.m_timerId = setTimeout(this.onSkullRemoveCallback, SK_REM_DELAY_MSEC);
     }
   }
+
   componentDidMount() {
   }
+
   showModalBilateral() {
     this.setState({ showModalBilateral: true });
   }
+
   hideModalBilateral() {
     this.setState({ showModalBilateral: false });
     // console.log('onModalSaveNiftiHide...');
   }
+
   //
   render() {
     const jsxFilterMenu =

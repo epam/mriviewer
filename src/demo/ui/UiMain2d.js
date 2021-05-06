@@ -3,25 +3,28 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, {
+  useContext,
+} from 'react';
 import Graphics2d from '../engine/Graphics2d';
-import UiVolumeSel from './UiVolumeSel'
+import UiVolumeSel from "./UiVolumeSel";
+import { Context } from "../context/Context";
 
-export default class UiMain2d extends React.Component {
-  numVols = useState({ numVols: 0 }).volumeSet.m_volumes.length;
+const UiMain2d = () => {
+  const { context } = useContext(Context)
+  const numVols = context.volumeSet.m_volumes.length;
   
-  transferFuncCallback({ m_handleX, m_handleY, m_indexMoved: i }) {
-    const x = m_handleX[i];
-    const y = m_handleY[i];
-    console.log(`moved point[${i}] = ${x}, ${y}  `);
-  }
-
-  render() {
-    const jsxVolSel = (this.numVols > 1) ? <UiVolumeSel /> : <br />
+  // function transferFuncCallback({ m_handleX, m_handleY, m_indexMoved: i }) {
+  //   const x = m_handleX[i];
+  //   const y = m_handleY[i];
+  //   console.log(`moved point[${i}] = ${x}, ${y}  `);
+  // }
 
     return <>
-      {jsxVolSel}
+      {(numVols > 1) ? <UiVolumeSel /> : <br />}
       <Graphics2d/>
     </>;
-  };
+  
 }
+
+export default UiMain2d;

@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import ModeView from '../store/ModeView';
+import ViewModes from '../store/ViewModes';
 import Modes3d from '../store/Modes3d';
 import StoreActionType from '../store/ActionTypes';
 import VolumeRenderer3d from './VolumeRenderer3d'
@@ -75,6 +75,7 @@ class Graphics3d extends React.Component {
       hRender: 0,
     };
   }
+
   setVolRenderToStore(VolRender) {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_VOLUME_Renderer, volumeRenderer: VolRender });
@@ -87,15 +88,18 @@ class Graphics3d extends React.Component {
     store.dispatch({ type: StoreActionType.SET_SLIDER_Cut, sliderCut: Number.parseFloat(1.0) });
     store.dispatch({ type: StoreActionType.SET_SLIDER_Quality, sliderQuality: Number.parseFloat(0.35) });
   }
+
   start() {
     if (this.m_frameId === null) {
       this.m_frameId = requestAnimationFrame(this.animate);
     }
   }
+
   stop() {
     cancelAnimationFrame(this.m_frameId);
     this.m_frameId = null;
   }
+
   animate() {
     /*this.m_mesh.rotation.x += 0.01;
     this.m_mesh.rotation.y += 0.01;
@@ -105,16 +109,19 @@ class Graphics3d extends React.Component {
     this.renderScene();
     this.m_frameId = window.requestAnimationFrame(this.animate);
   }
+
   renderScene() {
     // this.m_renderer.render(this.m_scene, this.m_camera);
     if (this.m_volumeRenderer3D !== null) {
       this.m_volumeRenderer3D.render();
     }
   }
+
   onMode(indexMode) {
     //this.m_updateEnable = true;
     this.props.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: indexMode });
   }
+
   componentDidMount() {
     // detect actual render window dims
     const MIN_DIM = 200;
@@ -164,7 +171,7 @@ class Graphics3d extends React.Component {
       const modeView = store.modeView; 
       //let tst = 0;
       //if (this.volume.m_zDim < 4)
-      if (modeView === ModeView.VIEW_3D) {
+      if (modeView === ViewModes.VIEW_3D) {
         this.m_volumeRenderer3D.initWithVolume(this.volume, this.volume.m_boxSize, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, true);
       } else {
         this.m_volumeRenderer3D.initWithVolume(this.volume, this.volume.m_boxSize, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, false);
@@ -178,6 +185,7 @@ class Graphics3d extends React.Component {
     // setup keyboard
     this.m_mount.focus();
   }
+
   componentWillUnmount() {
     this.stop()
     if (this.m_renderer !== null) {
@@ -185,6 +193,7 @@ class Graphics3d extends React.Component {
     }
     this.m_volumeRenderer3D = null;
   }
+
   _onMouseMove(e) {
     // console.log(`${e.x}, ${e.y}\n`);
     if (this.m_volumeRenderer3D !== null) {
@@ -194,6 +203,7 @@ class Graphics3d extends React.Component {
       this.m_volumeRenderer3D.onMouseMove(containerX, -(this.state.hRender - containerY), this.props.ereaseStart);
     }
   }
+
   _onMouseDown(e) {
     //console.log(`${e.x}, ${e.y}\n`);
     if (this.m_volumeRenderer3D !== null) {
@@ -203,21 +213,25 @@ class Graphics3d extends React.Component {
       this.m_volumeRenderer3D.onMouseDown(containerX, -(this.state.hRender - containerY), this.props.ereaseStart);
     }
   }
+
   _onMouseUp() { // ommited args: evt
     //console.log(`${e.x}, ${e.y}\n`);
     if (this.m_volumeRenderer3D !== null) {
       this.m_volumeRenderer3D.onMouseUp();
     }
   }
+
   _onWheel(e) {
     //console.log(`${e.x}, ${e.y}\n`);
     if (this.m_volumeRenderer3D !== null) {
       this.m_volumeRenderer3D.onMouseWheel(e);
     }
   }
+
   onClick(evt) {
     evt.stopPropagation();
   }
+
   onTouchStart(evt) {
     if ((this.m_mount !== undefined) && (this.m_mount !== null)) {
       // evt.preventDefault();
@@ -239,6 +253,7 @@ class Graphics3d extends React.Component {
       }
     }
   }
+
   onTouchMove(evt) {
     if ((this.m_mount !== undefined) && (this.m_mount !== null)) {
       // evt.preventDefault();
@@ -258,11 +273,13 @@ class Graphics3d extends React.Component {
       }
     }
   }
+
   onTouchEnd() {
     if (this.m_volumeRenderer3D !== null) {
       this.m_volumeRenderer3D.onMouseUp();
     }
   }
+
   onKeyDown(evt) {
     const key = evt.key;
     if (key === 'Control') {
@@ -273,6 +290,7 @@ class Graphics3d extends React.Component {
   
     }
   }
+
   onKeyUp(evt) {
     const key = evt.key;
     if (key === 'Control') {
@@ -282,6 +300,7 @@ class Graphics3d extends React.Component {
       store.volumeRenderer.setEraserStart(false);
     }
   }
+
   /**
    * Main component render func callback
    */
@@ -303,7 +322,7 @@ class Graphics3d extends React.Component {
     if (this.m_volumeRenderer3D !== null) {
       // console.log(`Graphics3d . mode = ${mode3d}`);
       this.m_volumeRenderer3D.switchToTool23D(store.isTool3D);
-      if (modeView !== ModeView.VIEW_3D) {
+      if (modeView !== ViewModes.VIEW_3D) {
         if (mode3d === Modes3d.RAYCAST) {
           //if (this.m_prevMode === Modes3d.EREASER) {
           //this.m_volumeRenderer3D.setEraserMode(false);

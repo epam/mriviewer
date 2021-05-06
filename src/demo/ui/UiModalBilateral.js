@@ -11,7 +11,7 @@ import GaussSmoother from '../engine/imgproc/Gauss';
 
 import StoreActionType from '../store/ActionTypes';
 import Texture3D from '../engine/Texture3D';
-import ModeView from '../store/ModeView';
+import ViewModes from '../store/ViewModes';
 import Modes3d from '../store/Modes3d';
 
 class UiModalBilateral extends React.Component {
@@ -36,7 +36,9 @@ class UiModalBilateral extends React.Component {
     this.m_kernelSize = 10;
     this.m_koefDist = 3.0;
     this.m_koefVal = 0.1;
-  } // end constr
+  }
+
+ // end constr
   //
   //
   //
@@ -90,6 +92,7 @@ class UiModalBilateral extends React.Component {
     const UPDATE_DELAY_MSEC = 150;
     this.m_timerId = setTimeout(this.onBilateralCallback, UPDATE_DELAY_MSEC);
   }
+
   //
   // callback for periodicallt invoke sobel 3d volume filtering
   //
@@ -136,7 +139,7 @@ class UiModalBilateral extends React.Component {
       const tex3d = new Texture3D();
       tex3d.createFromRawVolume(vol);
       store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ViewModes.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     } // if finished
     // update render
@@ -146,19 +149,24 @@ class UiModalBilateral extends React.Component {
       const UPDATE_DELAY_MSEC = 150;
       this.m_timerId = setTimeout(this.onBilateralCallback, UPDATE_DELAY_MSEC);
     }
-  } // end onBilateralCallback
+  }
+
+ // end onBilateralCallback
   //
   onModalShow() {
     this.setState({ showModalGauss: true });
   }
+
   onModalHide() {
     this.setState({ showModalGauss: false });
   }
+
   handleFormSubmit(evt) {
     evt.preventDefault();
     this.m_hideFunc();
     // this.onSaveNifti();
   }
+
   onChangeSliderKoefDist() {
     if (this.refs === undefined) {
       return;
@@ -171,6 +179,7 @@ class UiModalBilateral extends React.Component {
       this.m_koefDist = val;
     }
   }
+
   onChangeSliderKoefVal() {
     if (this.refs === undefined) {
       return;
@@ -183,6 +192,7 @@ class UiModalBilateral extends React.Component {
       this.m_koefVal = val;
     }
   }
+
   //
   render() {
     const stateVis = this.props.stateVis;

@@ -4,21 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// ********************************************************
-// Imports
-// ********************************************************
-
 import VolumeSet from './VolumeSet';
 import Volume from './Volume';
 import { KtxHeader } from './loaders/LoaderKtx';
 import LoadResult from './LoadResult';
 
-// ********************************************************
-// Tests
-// ********************************************************
-
 describe('VolumeSetTests', () => {
-  // special finction to creatre ktx in memory
+  // special function to create ktx in memory
   const _writeInt = (arrBuf, offs, valInt) => {
     let offsNew = offs;
     let val = valInt;
@@ -223,21 +215,19 @@ describe('VolumeSetTests', () => {
     expect(readOk === LoadResult.SUCCESS).toBeTruthy();
   });
 
-
-  //
   it('testCreateSingleVolume', () => {
     const volumeSet = new VolumeSet();
     const volume = new Volume();
     volume.createEmptyBytesVolume(16, 16, 16);
     volumeSet.addVolume(volume);
     const numVols = volumeSet.getNumVolumes();
-    expect(numVols == 1).toBeTruthy();
+    expect(numVols === 1).toBeTruthy();
     const volNeg = volumeSet.getVolume(-1);
     expect(volNeg == null).toBeTruthy();
     const volBadRange = volumeSet.getVolume(1);
     expect(volBadRange == null).toBeTruthy();
     const volFrom = volumeSet.getVolume(0);
-    expect(volFrom == volume).toBeTruthy();
+    expect(volFrom === volume).toBeTruthy();
   });
   //
   it('testCreateTwoVolumes', () => {

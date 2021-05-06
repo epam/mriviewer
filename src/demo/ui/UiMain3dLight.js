@@ -14,37 +14,42 @@ import 'nouislider/distribute/nouislider.css';
 import Nouislider from 'react-nouislider';
 
 import StoreActionType from '../store/ActionTypes';
-import ModeView from '../store/ModeView';
+import ViewModes from '../store/ViewModes';
 import UiTools2d from './UiTools2d';
 class UiMain3dLight extends React.Component {
   constructor(props) {
     super(props);
     this.m_updateEnable = true;
   }
+
   onChangeSliderBrightness() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderBrightness.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Brightness, sliderBrightness: Number.parseFloat(aval) });
   }
+
   onChangeSliderCut() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderCut.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Cut, sliderCut: Number.parseFloat(aval) });
   }
+
   onChangeSliderQuality() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderQuality.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Quality, sliderQuality: Number.parseFloat(aval) });    
   }
+
   onChangeSliderContrast3D() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderContrast3D.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Contrast3D, sliderContrast3D: Number.parseFloat(aval) });    
   }
+
   shouldComponentUpdate(nextProps) {
     let flag = this.m_updateEnable;
     if (this.props.isTool3D !== nextProps.isTool3D || this.props.modeView !== nextProps.modeView) {
@@ -52,6 +57,7 @@ class UiMain3dLight extends React.Component {
     }
     return flag;
   }
+
   //{(store.isTool3D === false) ? jsxView : jsxTool}
   render() {
     const store = this.props;
@@ -67,9 +73,9 @@ class UiMain3dLight extends React.Component {
     const jsx3dLight = <UiCtrl3dLight />;
     const jsx3d = <UiCtrl3d />;
 
-    const jsxArray = new Array(ModeView.VIEW_COUNT);
-    jsxArray[ModeView.VIEW_3D_LIGHT] = jsx3dLight ;
-    jsxArray[ModeView.VIEW_3D] = jsx3d;
+    const jsxArray = new Array(ViewModes.VIEW_COUNT);
+    jsxArray[ViewModes.VIEW_3D_LIGHT] = jsx3dLight ;
+    jsxArray[ViewModes.VIEW_3D] = jsx3d;
     const jsxRet = jsxArray[modeViewIndex];
     const jsxView = <div>
       <p> Brightness </p>

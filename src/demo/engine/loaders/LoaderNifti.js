@@ -3,34 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @fileOverview LoaderNifti
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import LoadResult from '../LoadResult';
 import UiHistogram from '../../ui/UiHistogram';
 import FileLoader from './FileLoader';
 
-// ********************************************************
-// Const
-// ********************************************************
-
-// const NEED_EVEN_TEXTURE_SIZE = false;
-
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class LoaderNifti some text later...
- */
 class LoaderNifti {
   /**
    * @param {object} props - props from up level object
@@ -61,7 +37,9 @@ class LoaderNifti {
       y: 0.0,
       z: 0.0
     };
-  } // constructor
+  }
+
+ // constructor
   /**
   * Read 32 bit integer from input buffer
   * @param {object} buf - source buffer
@@ -89,6 +67,7 @@ class LoaderNifti {
     }
     return res;
   }
+
   /**
   * Read 16 bit short integer from input buffer
   * @param {object} buf - source buffer
@@ -106,6 +85,7 @@ class LoaderNifti {
     }
     return res;
   }
+
   /**
   * Read 32 bit float from input buffer
   * @param {object} buf - source buffer
@@ -127,6 +107,7 @@ class LoaderNifti {
     const res = dataArray.getFloat32(0, this.m_littleEndian);
     return res;
   }
+
   /**
   * Read from local file buffer
   * @param {object} volDst - Destination volume object to be fiiied
@@ -584,13 +565,12 @@ class LoaderNifti {
     // clear borders
     let x; let y;
     let z;
-    const zOffMin = 0 * xyDim;
     const zOffMax = (this.m_zDim - 1) * xyDim;
     for (y = 0; y < this.m_yDim; y++) {
       const yOff = y * this.m_xDim;
       for (x = 0; x < this.m_xDim; x++) {
         let off;
-        off = zOffMin + yOff + x;
+        off = yOff + x;
         dataArray[off] = 0;
         off = zOffMax + yOff + x;
         dataArray[off] = 0;
@@ -625,9 +605,7 @@ class LoaderNifti {
     volDst.m_xDim = this.m_xDim;
     volDst.m_yDim = this.m_yDim;
     volDst.m_zDim = this.m_zDim;
-
-    const ONE = 1;
-    volDst.m_bytesPerVoxel = ONE;
+    volDst.m_bytesPerVoxel = 1;
     volDst.m_dataArray = dataArray;
     volDst.m_dataSize = numVoxels;
     volDst.m_boxSize = this.m_boxSize;
@@ -655,7 +633,9 @@ class LoaderNifti {
     } // if callbackComplete ready
 
     return true;
-  } // end of readFromBuffer
+  }
+
+ // end of readFromBuffer
   /**
   *
   * Read Nifti file from URL

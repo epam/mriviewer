@@ -21,18 +21,14 @@
     "@tensorflow/tfjs": "3.4.x",
     "daikon": "^1.2.42",
     "filereader-stream": "^2.0.0",
-    "gulp": "^4.0.2",
-    "jquery": "^3.5.1",
-    "node-gzip": "^1.1.2",
-    "popper.js": "^1.16.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-nouislider": "^2.0.1",
-    "react-redux": "^6.0.0",
+    "react-redux": "7.x.x",
     "react-scripts": "2.x.x",
     "redux": "^4.0.5",
     "three": "^0.101.1",
-    "zlib": "^1.0.5"
+    "zlib": "1.x.x"
   },
   "scripts": {
     "start": "react-scripts start",

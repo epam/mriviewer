@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 
 import UiModalDicomTags from './UiModalDicomTags';
 import Screenshot from '../engine/utils/Screenshot';
-import ModeView from '../store/ModeView';
+import ViewModes from '../store/ViewModes';
 
 // ********************************************************
 // Const
@@ -44,31 +44,36 @@ class UiReportMenu extends React.Component {
       showModalDicomTags: false,
     };
   }
+
   onModalDicomTagsShow() {
     this.setState({ showModalDicomTags: true });
   }
+
   onModalDicomTagsHide() {
     this.setState({ showModalDicomTags: false });
   }
+
   onModalScreenshot() {
     const SHOT_W = 800;
     const SHOT_H = 600;
 
     const store = this.props;
     const modeView = store.modeView;
-    if (modeView === ModeView.VIEW_2D) {
+    if (modeView === ViewModes.VIEW_2D) {
       const gra2d = store.graphics2d;
       Screenshot.makeScreenshot(gra2d, SHOT_W, SHOT_H);
-    } else if ((modeView === ModeView.VIEW_3D) || (modeView === ModeView.VIEW_3D_LIGHT)) {
+    } else if ((modeView === ViewModes.VIEW_3D) || (modeView === ViewModes.VIEW_3D_LIGHT)) {
       const volRender = store.volumeRenderer;
       Screenshot.makeScreenshot(volRender, SHOT_W, SHOT_H);
     } else {
       console.log('onModalScreenshot. not implemented yet');
     }
   }
+
   // invoked after render
   componentDidMount() {
   }
+
   render() {
     const store = this.props;
     const isLoaded = store.isLoaded;
