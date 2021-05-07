@@ -6,28 +6,29 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import VolumeSet from '../engine/VolumeSet';
-import Texture3D from '../engine/Texture3D';
+import VolumeSet from '../../engine/VolumeSet';
+import Texture3D from '../../engine/Texture3D';
 
-import StoreActionType from '../store/ActionTypes';
-import ViewModes from '../store/ViewModes';
-import Modes3d from '../store/Modes3d';
+import StoreActionType from '../../store/ActionTypes';
+import ViewModes from '../../store/ViewModes';
+import Modes3d from '../../store/Modes3d';
 
-import LoadResult from '../engine/LoadResult';
-import LoaderDicom from '../engine/loaders/LoaderDicom';
+import LoadResult from '../../engine/LoadResult';
+import LoaderDicom from '../../engine/loaders/LoaderDicom';
 
-import { ReactComponent as OpenLocalFolderIcon } from "./icons/folder.svg";
-import { ReactComponent as OpenLinkIcon } from "./icons/link.svg";
-import { ReactComponent as OpenDemoIcon } from "./icons/demo.svg";
-import { ReactComponent as OpenLocalFileIcon } from "./icons/file.svg";
-import { ReactComponent as DownloadIcon } from "./icons/download.svg";
-import { ReactComponent as GetFileIcon } from "./icons/getfile.svg";
+import { ReactComponent as OpenLocalFolderIcon } from "../icons/folder.svg";
+import { ReactComponent as OpenLinkIcon } from "../icons/link.svg";
+import { ReactComponent as OpenDemoIcon } from "../icons/demo.svg";
+import { ReactComponent as OpenLocalFileIcon } from "../icons/file.svg";
+import { ReactComponent as DownloadIcon } from "../icons/download.svg";
+import { ReactComponent as GetFileIcon } from "../icons/getfile.svg";
 
-import LoaderDcmDaikon from "../engine/loaders/LoaderDcmDaikon";
+import LoaderDcmDaikon from "../../engine/loaders/LoaderDcmDaikon";
 
 import './UiOpenMenu.css';
-import { Context } from "../context/Context";
-import Volume from "../engine/Volume";
+import { Context } from "../../context/Context";
+import Volume from "../../engine/Volume";
+import UiDemoMenu from "../UiModalDemo";
 
 const UiOpenMenu = () => {
   const fileInput = useRef(null)
@@ -258,16 +259,25 @@ const UiOpenMenu = () => {
     }
   }
   
-  console.log(state);
+  const toggleDemoModal = () => {
+    setState({ ...state, showModalDemo: !state.showModalDemo });
+  }
+  
+  const loadDemo = () => {
+    console.error('load demo')
+  }
+  useEffect(() => {
+    console.log(state);
+  });
   return <>
     <input
-    type='file'
-    accept='.ktx,.dcm,.nii,.hdr,.h,.img,.gz'
-    multiple
-    onChange={onFileSelected}
-    style={{ 'display': 'none' }}
-    ref={fileInput}
-  />
+      type='file'
+      accept='.ktx,.dcm,.nii,.hdr,.h,.img,.gz'
+      multiple
+      onChange={onFileSelected}
+      style={{ 'display': 'none' }}
+      ref={fileInput}
+    />
     <div className="open-file__area">
       <div className="left">
         <OpenLocalFileIcon onClick={() => fileInput.current.click()}/>
@@ -276,13 +286,14 @@ const UiOpenMenu = () => {
       <div className="right">
         <OpenLocalFolderIcon/>
         <OpenLinkIcon/>
-        <OpenDemoIcon/>
+        <OpenDemoIcon onClick={toggleDemoModal}/>
       </div>
     </div>
     <div className="save-file__area">
       <DownloadIcon/>
       <GetFileIcon/>
     </div>
+    <UiDemoMenu onDemo={loadDemo}/>
   </>;
   
 }

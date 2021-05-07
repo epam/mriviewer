@@ -3,8 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useContext, useRef, useState } from 'react';
-import { connect } from 'react-redux';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import Modes2d from '../store/Modes2d';
 import ToolPick from './tools2d/ToolPick';
@@ -24,7 +23,13 @@ import RoiPalette from './loaders/roipalette';
 import { Context } from "../context/Context";
 
 const Graphics2d = props => {
-  const m_mode2d = props.mode2d || Modes2d.TRANSVERSE;
+  const [plane, setPlane] = useState(Modes2d.TRANSVERSE)
+  
+  useEffect((plane) => {
+    if (props.plane !== plane) {
+      setPlane(props.plane)
+    }
+  }, [plane])
   
   const { context } = useContext(Context);
   const [state, setState] = useState({
@@ -95,10 +100,6 @@ const Graphics2d = props => {
     const sliceRatio = context.slider2d;
     
     if (vol !== null) {
-      if (vol.m_dataArray === null) {
-        console.log('Graphics2d. Volume has no data array');
-        return;
-      }
       const xDim = vol.m_xDim;
       const yDim = vol.m_yDim;
       const zDim = vol.m_zDim;
@@ -126,7 +127,7 @@ const Graphics2d = props => {
       const yPos = props.render2dyPos;
       const zoom = props.render2dZoom;
       // console.log(`Gra2d. RenderScene. zoom=${zoom}, xyPos=${xPos}, ${yPos}`);
-      if (m_mode2d === Modes2d.TRANSVERSE) {
+      if (plane === Modes2d.TRANSVERSE) {
         // calc screen rect based on physics volume slice size (z slice)
         const xyRratio = pbox.x / pbox.y;
         wScreen = w;
@@ -211,7 +212,7 @@ const Graphics2d = props => {
           }
         }
         
-      } else if (m_mode2d === Modes2d.SAGGITAL) {
+      } else if (plane === Modes2d.SAGGITAL) {
         // calc screen rect based on physics volume slice size (x slice)
         const yzRatio = pbox.y / pbox.z;
         wScreen = w;
@@ -302,7 +303,7 @@ const Graphics2d = props => {
             } // for (x)
           } // for (y)
         } // if 4 bppp
-      } else if (m_mode2d === Modes2d.CORONAL) {
+      } else if (plane === Modes2d.CORONAL) {
         // calc screen rect based on physics volume slice size (y slice)
         const xzRatio = pbox.x / pbox.z;
         wScreen = w;
@@ -653,4 +654,4 @@ const Graphics2d = props => {
   
 }
 
-export default connect(store => store)(Graphics2d);
+export default Graphics2d;

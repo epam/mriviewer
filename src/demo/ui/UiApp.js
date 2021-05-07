@@ -7,7 +7,7 @@ import React, { useContext } from 'react';
 
 import BrowserDetector from '../engine/utils/BrowserDetector';
 import { ReactComponent as Logo } from './icons/logo.svg'
-import UiOpenMenu from "./UiOpenMenu";
+import UiOpenMenu from "./OpenFile/UiOpenMenu";
 import './UiApp.css'
 import UiMain2d from "./UiMain2d";
 import UiMain3dLight from "./UiMain3dLight";

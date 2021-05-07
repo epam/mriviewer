@@ -1,6 +1,7 @@
 /**
 * Pixel shader for filtering source dates and nolmals calculation
 */
+#version 300 es
 #if useWebGL2 == 1
 precision highp sampler3D;
 uniform sampler3D texVolume;
