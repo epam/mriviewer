@@ -14,6 +14,7 @@ import ViewModes from '../store/ViewModes';
 import Modes3d from '../store/Modes3d';
 
 import SobelEdgeDetector from '../engine/imgproc/Sobel';
+import { Context } from "../context/Context";
 // import UiModalBilateral from './UiModalBilateral';
 
 class UiFilterMenu extends React.Component {
@@ -54,6 +55,39 @@ class UiFilterMenu extends React.Component {
     }
   } // callback progress
   */
+
+  showProgressBar(text = "", value = 0) {
+    this.context.setContext(prev => ({
+      ...prev,
+      progress: {
+        show: true,
+        value,
+        text,
+      }
+    }));
+  }
+
+  updateProgressBar(newVal) {
+    this.context.setContext(prev => ({
+      ...prev,
+      progress: {
+        ...prev.progress,
+        value: newVal,
+      }
+    }));
+  }
+
+  hideProgressBar() {
+    this.context.setContext(prev => ({
+      ...prev,
+      progress: {
+        show: false,
+        value: 0,
+        text: "",
+      }
+    }))
+  }
+
   onButtonLungsSeg() {
     //evt.preventDefault();
     const store = this.props;
@@ -81,9 +115,7 @@ class UiFilterMenu extends React.Component {
     this.lungsFiller = new LungsFillTool(vol);
     //const callbackProgress = this.callbackProgressFun;
     //lungsFiller.run(callbackProgress);
-    const uiApp = store.uiApp;
-    uiApp.doShowProgressBar('lungsFiller...');
-    uiApp.doSetProgressBarRatio(0.0);
+    this.showProgressBar('lungsFiller...');
     const SK_REM_DELAY_MSEC = 200;
     this.m_timerId = setTimeout(this.onLungsFillerCallback, SK_REM_DELAY_MSEC);
     //store.volumeRenderer.volumeUpdater.createUpdatableVolumeTex(store.volume, false, null);
@@ -93,14 +125,13 @@ class UiFilterMenu extends React.Component {
     const store = this.props;
     const ratioUpdate = this.lungsFiller.m_ratioUpdate;
     console.log(`onLungsFillerCallback: iter counter = ${ratioUpdate}`);
-    const uiApp = store.uiApp;
-    uiApp.doSetProgressBarRatio(ratioUpdate);
+    this.updateProgressBar(ratioUpdate)
 
     const isFinished = this.lungsFiller.run();
- 
+
     if (isFinished) {
       console.log('`onSkullRemoveCallback: iters finished!');
-      uiApp.doHideProgressBar();
+      this.hideProgressBar();
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
       // store.graphics2d.renderScene();
@@ -150,9 +181,7 @@ class UiFilterMenu extends React.Component {
     sobel.start(vol);
     this.m_sobel = sobel;
 
-    const uiApp = store.uiApp;
-    uiApp.doShowProgressBar('Apply sobel edge detector...');
-    uiApp.doSetProgressBarRatio(0.0);
+    this.showProgressBar('Apply sobel edge detector...');
 
     const SOBEL_UPDATE_DELAY_MSEC = 150;
     this.m_timerId = setTimeout(this.onSobelCallback, SOBEL_UPDATE_DELAY_MSEC);
@@ -172,14 +201,14 @@ class UiFilterMenu extends React.Component {
     ratioUpdate = Math.floor(ratioUpdate);
     // console.log('ratio = ' + ratioUpdate.toString() );
 
-    const uiApp = store.uiApp;
-    uiApp.doSetProgressBarRatio(ratioUpdate);
+    this.updateProgressBar(ratioUpdate);
 
     const isFinished = this.m_sobel.isFinished();
 
     if (isFinished) {
       console.log('`onSobelCallback: iters finished!');
-      uiApp.doHideProgressBar();
+      // uiApp.doHideProgressBar();
+      this.hideProgressBar();
 
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
@@ -281,9 +310,7 @@ class UiFilterMenu extends React.Component {
     const actVolume = new ActiveVolume();
     this.m_actVolume = actVolume;
 
-    const uiApp = store.uiApp;
-    uiApp.doShowProgressBar('Remove skull...');
-    uiApp.doSetProgressBarRatio(0.0);
+    this.showProgressBar('Remove skull...')
 
     this.m_geoRender = actVolume.skullRemoveStart(xDim, yDim, zDim,
       volTextureSrc, volTextureDst, CREATE_TYPE, NEED_LOG);
@@ -343,15 +370,15 @@ class UiFilterMenu extends React.Component {
     ratioUpdate = (ratioUpdate < 1.0) ? ratioUpdate : 1.0;
     ratioUpdate *= 100;
 
-    const uiApp = store.uiApp;
-    uiApp.doSetProgressBarRatio(ratioUpdate);
+    this.updateProgressBar(ratioUpdate);
 
     const isFinished = this.m_actVolume.skullRemoveUpdate(this.m_geoRender);
- 
+
     if (isFinished) {
       console.log('`onSkullRemoveCallback: iters finished!');
 
-      uiApp.doHideProgressBar();
+
+      this.hideProgressBar();
 
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
@@ -398,7 +425,7 @@ class UiFilterMenu extends React.Component {
   render() {
     const jsxFilterMenu =
       <div>
-        <div style={{ display: 'inline-block' }}> 
+        <div style={{ display: 'inline-block' }}>
           <i className="fas fa-broom"></i>
             Filter
         </div>
@@ -422,6 +449,7 @@ class UiFilterMenu extends React.Component {
     return jsxFilterMenu;
   }
 }
- 
-export default connect(store => store)(UiFilterMenu);
 
+UiFilterMenu.contextType = Context;
+
+export default connect(store => store)(UiFilterMenu);

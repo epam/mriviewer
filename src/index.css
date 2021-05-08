@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+html {
+  height: 100vh;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -13,6 +17,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 
   background-color: #000;
+  height: 100vh;
 }
 
 code {
@@ -20,3 +25,24 @@ code {
     monospace;
 }
 
+#root {
+  /* Primary colors */
+  --red: #DC5E47;
+  --green: #438F56;
+  --black: #18191B;
+
+  /* Additional colors */
+  --gray: #636666;
+  --white: #fff;
+
+  /* Page layout */
+  box-sizing: border-box;
+  max-width: 1800px;
+  height: 100%;
+  margin: 0 auto;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  padding: 30px 6px;
+}

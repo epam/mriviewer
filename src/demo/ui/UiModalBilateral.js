@@ -14,6 +14,9 @@ import Texture3D from '../engine/Texture3D';
 import ViewModes from '../store/ViewModes';
 import Modes3d from '../store/Modes3d';
 
+import { Context } from "../context/Context";
+
+
 class UiModalBilateral extends React.Component {
   constructor(props) {
     super(props);
@@ -40,8 +43,39 @@ class UiModalBilateral extends React.Component {
 
  // end constr
   //
-  //
-  //
+
+  showProgressBar(text = "", value = 0) {
+    this.context.setContext(prev => ({
+      ...prev,
+      progress: {
+        show: true,
+        value,
+        text,
+      }
+    }));
+  }
+
+  updateProgressBar(newVal) {
+    this.context.setContext(prev => ({
+      ...prev,
+      progress: {
+        ...prev.progress,
+        value: newVal,
+      }
+    }));
+  }
+
+  hideProgressBar() {
+    this.context.setContext(prev => ({
+      ...prev,
+      progress: {
+        show: false,
+        value: 0,
+        text: "",
+      }
+    }))
+  }
+
   onButtonStart() {
     console.log('on button start Bilateral with kernel = ' + this.m_kernelSize.toString());
     this.m_hideFunc();
@@ -85,9 +119,7 @@ class UiModalBilateral extends React.Component {
     gauss.start(vol, kernelSize, this.m_koefDist, this.m_koefVal);
     this.m_gauss = gauss;
 
-    const uiApp = store.uiApp;
-    uiApp.doShowProgressBar('Apply bilateral filter...');
-    uiApp.doSetProgressBarRatio(0.0);
+    this.showProgressBar('Apply bilateral filter...');
 
     const UPDATE_DELAY_MSEC = 150;
     this.m_timerId = setTimeout(this.onBilateralCallback, UPDATE_DELAY_MSEC);
@@ -107,14 +139,14 @@ class UiModalBilateral extends React.Component {
     ratioUpdate = Math.floor(ratioUpdate);
     // console.log('ratio = ' + ratioUpdate.toString() );
 
-    const uiApp = store.uiApp;
-    uiApp.doSetProgressBarRatio(ratioUpdate);
+
+    this.updateProgressBar(ratioUpdate);
 
     const isFinished = this.m_gauss.isFinished();
 
     if (isFinished) {
       console.log('onBilateralCallback: iters finished!');
-      uiApp.doHideProgressBar();
+      this.hideProgressBar();
 
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
@@ -298,6 +330,8 @@ class UiModalBilateral extends React.Component {
   } // end render
 
 } // end class
+
+UiModalBilateral.contextType = Context;
 
 export default connect(store => store)(UiModalBilateral);
 

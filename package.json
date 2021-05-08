@@ -51,7 +51,7 @@
     "chrome >=56"
   ],
   "engines": {
-    "node": "15.x.x",
-    "npm": "6.x.x"
+    "node": "16.x.x",
+    "npm": "7.x.x"
   }
 }
