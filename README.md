@@ -1,18 +1,18 @@
 ![](https://img.shields.io/github/workflow/status/epam/med3web/PR?style=for-the-badge)
 ![](https://img.shields.io/github/v/release/epam/med3web?style=for-the-badge)
-# Med3Web Dicom 2d/3d web viewer.
+# Med3Web DICOM 2D/3D web viewer.
 
 Copyright (c) 2015–2021 [EPAM Systems, Inc.](https://www.epam.com/)
 
 ## Purpose
 
-Med3Web is a high performance web tool for advanced visualization (both in 2d and 3d modes)
-medical volumetric data, provided in popular file formats: Dicom, Nifti, Ktx, Hdr.
+Med3Web is a high performance web tool for advanced visualization (both in 2D and 3D modes)
+medical volumetric data, provided in popular file formats: DICOM, NIfTI, KTX™️, HDR.
 Other popular formats will be planned for future improvements.
 Med3Web can read local data from files/folders and from predefined web locations.
-Demonstration project shows both (local data / remote data) usage types.
+The demonstration project shows both (local data / remote data) usage types.
 It works as a standalone HTML5 web application. The latest version can be used with
-WebGL-enabled desktop browsers (Chrome, Firefox, Opera) and allow limited usage
+WebGL-enabled desktop browsers (Chrome, Firefox, Opera) and allows limited usage
 with mobile browsers (Android Chrome). Version for Safari (macOS, iOS) is planned for future.
 
 ![Background image](public/images/med3web_logo.png)
@@ -22,25 +22,25 @@ with mobile browsers (Android Chrome). Version for Safari (macOS, iOS) is planne
 Med3Web can be used in a medical center with diagnostic equipment.
 MRI and CT scanning results can be viewed in any computer (inside the medical office and in the client home)
 and qualified medical personnel can provide diagnosis or conclusion based on provided visualization.
-Unlike the range of standalone Dicom viewers executables, this app can be used as a web
+Unlike the range of standalone DICOM viewers executables, this app can be used as a web
 application as a part of large websites and services. Also, it can be used by research institutes
-due to Nifti, Hdr, etc. file standards support (more popular for researchers rather than physicians).
+due to NIfTI, HDR, etc. file standards support (more popular for researchers rather than physicians).
 Medical centers can create their clients database, based on this viewer.
 
 ## References
 
-Dicom file format description can be found [here](http://dicom.nema.org/standard.html) and [here](https://www.leadtools.com/sdk/medical/dicom-spec).
-Ktx file format details are listed in [KTX](https://www.khronos.org/opengles/sdk/tools/KTX/file_format_spec/).
-Popular Dicom loader framework: [GDCM](http://gdcm.sourceforge.net/wiki/index.php/Main_Page).
-Some JavaScript libraries to work with Dicom file format:
+DICOM file format description can be found [here](http://dicom.nema.org/standard.html) and [here](https://www.leadtools.com/sdk/medical/dicom-spec).
+KTX™️ file format details are listed in [KTX](https://www.khronos.org/opengles/sdk/tools/KTX/file_format_spec/).
+Popular DICOM loader framework: [GDCM](https://sourceforge.net/projects/gdcm/).
+Some JavaScript libraries to work with DICOM file format:
 1. [dicomParser](https://github.com/chafey/dicomParser)
 2. [Daikon](https://github.com/rii-mango/Daikon)
 3. [Xtk](https://github.com/xtk/X#readme).
 
-## 3d volumetric rendering idea in a few words
+## 3D volumetric rendering idea in a few words
 
-Three.js is used as some gateway to WebGL renderer. The current Three.js version does not support 3d textures,
-so we use tricky way to build 2d texture from initial 3d texture by linking 2d slices all together
+Three.js is used as some gateway to WebGL renderer. The current Three.js version does not support 3D textures,
+so we use tricky way to build 2D texture from initial 3D texture by linking 2D slices all together
 as a large tile map. This idea (with source codes) can be seen in project [WebGL Volume Rendering](https://github.com/lebarba/WebGLVolumeRendering).
 
 # Publications 
