@@ -30,7 +30,7 @@ Medical centers can create their clients database, based on this viewer.
 ## References
 
 DICOM file format description can be found [here](http://dicom.nema.org/standard.html) and [here](https://www.leadtools.com/sdk/medical/dicom-spec).
-KTX™️ file format details are listed in [KTX](https://www.khronos.org/opengles/sdk/tools/KTX/file_format_spec/).
+KTX<sup>™</sup> file format details are listed in [KTX](https://www.khronos.org/opengles/sdk/tools/KTX/file_format_spec/).
 Popular DICOM loader framework: [GDCM](https://sourceforge.net/projects/gdcm/).
 Some JavaScript libraries to work with DICOM file format:
 1. [dicomParser](https://github.com/chafey/dicomParser)
