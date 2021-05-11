@@ -7,7 +7,7 @@ Copyright (c) 2015–2021 [EPAM Systems, Inc.](https://www.epam.com/)
 ## Purpose
 
 Med3Web is a high performance web tool for advanced visualization (both in 2D and 3D modes)
-medical volumetric data, provided in popular file formats: DICOM, NIfTI, KTX™️, HDR.
+medical volumetric data, provided in popular file formats: DICOM, NIfTI, KTX<sup>™</sup>, HDR.
 Other popular formats will be planned for future improvements.
 Med3Web can read local data from files/folders and from predefined web locations.
 The demonstration project shows both (local data / remote data) usage types.
