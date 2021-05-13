@@ -5,12 +5,13 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import { createStore } from 'redux';
 import { Provider } from 'react-redux'
 
-import { createStore } from 'redux';
 import rootReducer from './demo/store/Store';
-import App from './demo/App';
+import App from './demo/app/App';
+
+import './index.css';
 
 const rootElement = document.getElementById('root');
 

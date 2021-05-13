@@ -36,7 +36,7 @@ const UiOpenMenu = () => {
   const { context, setContext } = useContext(Context)
   const [fileName, setFileName] = useState('')
   const [file, setFile] = useState()
-  
+
   const [state, setState] = useState({
     strUrl: '',
     showModalUrl: false,
@@ -45,11 +45,11 @@ const UiOpenMenu = () => {
     onLoadCounter: 1,
     isLoaded: false,
   })
-  
+
   const finalizeSuccessLoadedVolume = (volumeSet, fileName) => {
     const vol = volumeSet.getVolume(0);
     const texture3d = new Texture3D();
-    
+
     if (vol.m_dataArray !== null) {
       vol.makeDimensions4x();
       setState({
@@ -58,7 +58,7 @@ const UiOpenMenu = () => {
         fileName
       })
       texture3d.createFromRawVolume(vol);
-      
+
       setContext({
         ...context,
         volumeSet,
@@ -68,17 +68,17 @@ const UiOpenMenu = () => {
       });
     }
   }
-  
+
   const setErrorString = (strErr) => {
     dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: false });
     dispatch({ type: StoreActionType.SET_ERR_ARRAY, arrErrors: [strErr] });
     dispatch({ type: StoreActionType.SET_VOLUME_SET, volume: null });
   }
-  
+
   const hideProgressBar = () => {
     setContext({ ...context, progress: { show: false } });
   }
-  
+
   const showProgressBar = (ratio, text) => {
     setContext({
       progress: {
@@ -87,7 +87,7 @@ const UiOpenMenu = () => {
       }
     })
   }
-  
+
   const finalizeFailedLoadedVolume = (_, fileName, arrErrors) => {
     setState({
       ...state,
@@ -103,7 +103,7 @@ const UiOpenMenu = () => {
     })
     hideProgressBar();
   }
-  
+
   const finalizeCallback = (resultCode) => {
     if (resultCode !== LoadResult.SUCCESS) {
       setErrorString(LoadResult.getResultString(resultCode));
@@ -115,7 +115,7 @@ const UiOpenMenu = () => {
       finalizeFailedLoadedVolume(context.volumeSet, fileName, arrErr);
     }
   }
-  
+
   const readSingleDicomCallback = (errCode, volumeSet) => {
     if (errCode === LoadResult.SUCCESS) {
       setContext({
@@ -126,7 +126,7 @@ const UiOpenMenu = () => {
     }
     finalizeCallback(errCode);
   }
-  
+
   const onFileReadSingleBuffer = (fileContent) => {
     if (fileName.endsWith('.dcm')) {
       const loaderDcm = new LoaderDcmDaikon();
@@ -135,10 +135,10 @@ const UiOpenMenu = () => {
       readSingleDicomCallback(ret);
       return ret;
     }
-    
+
     setContext({ ...context, volumeSet: new VolumeSet() });
     context.volumeSet.addVolume(new Volume());
-    
+
     // add empty [0]-th volume in set to read single file
     // context.volumeSet.addVolume(new Volume())
     if (fileName.endsWith('.ktx')) {
@@ -157,7 +157,7 @@ const UiOpenMenu = () => {
       dispatch({ type: StoreActionType.SET_DICOM_INFO, dicomInfo: dicomInfo });
     }
   }
-  
+
   const unzipGzip = (file, cb) => {
     let m_unzippedBuffer = null;
     setFileName(fileName.slice(0, -3).toLowerCase())
@@ -165,7 +165,7 @@ const UiOpenMenu = () => {
     const createReadStream = require('filereader-stream');
     const gunzip = zlib.createGunzip();
     createReadStream(file).pipe(gunzip);
-    
+
     gunzip.on('data', (data) => {
       // progress
       if (m_unzippedBuffer == null) {
@@ -198,10 +198,10 @@ const UiOpenMenu = () => {
         m_unzippedBuffer.set(data, 0);
       }
     });
-    
+
     gunzip.on('end', () => {
       hideProgressBar();
-      
+
       // now all chunks are read. Need to check raw ungzipped buffer
       const sizeBuffer = m_unzippedBuffer.length;
       if (sizeBuffer < 128) {
@@ -240,7 +240,7 @@ const UiOpenMenu = () => {
   }, [file])
   const onFileSelected = (evt) => {
     if (evt.target.files === undefined) return;
-    
+
     const { files } = evt.target;
     setFile(files[0])
     setFileName(files[0].name.toLowerCase())
@@ -258,11 +258,11 @@ const UiOpenMenu = () => {
       }
     }
   }
-  
+
   const toggleDemoModal = () => {
     setState({ ...state, showModalDemo: !state.showModalDemo });
   }
-  
+
   const loadDemo = () => {
     console.error('load demo')
   }
@@ -293,9 +293,9 @@ const UiOpenMenu = () => {
       <DownloadIcon/>
       <GetFileIcon/>
     </div>
-    <UiDemoMenu onDemo={loadDemo}/>
+    {/*<UiDemoMenu onDemo={loadDemo}/>*/}
   </>;
-  
+
 }
 
 export default UiOpenMenu;

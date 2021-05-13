@@ -12,7 +12,7 @@ svg {
   display: flex;
   align-content: center;
   align-items: center;
-  padding: 0 0.5em;
+  padding: 0 0 0 0.5em;
   justify-content: space-between;
   width: 8em;
 }
@@ -22,7 +22,7 @@ svg {
   background: #18191B;
   opacity: .8;
   border-radius: 100px;
-  margin: .5em;
+  margin: 0 .5em;
   display: flex;
   align-content: center;
   align-items: center;
