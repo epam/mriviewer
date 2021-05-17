@@ -13,12 +13,17 @@ import { Context } from "../context/Context";
 
 import UIProgressBar from "./ProgressBar/UIProgressBar";
 import { UiOpenMenu } from "./OpenFile/UiOpenMenu";
-import UiMain2d from "./UiMain2d";
 import UiMain3dLight from "./UiMain3dLight";
 
 import css from "./UiApp.module.css";
+import Graphics2d from "../engine/Graphics2d";
 
-function validateBrowser(isWebGl20supported, setContext, context, browserDetector) {
+function validateBrowser() {
+  const { context, setContext } = useContext(Context)
+  
+  const browserDetector = new BrowserDetector();
+  const isWebGl20supported = browserDetector.checkWebGlSupported();
+  
   if (!isWebGl20supported) {
     setContext({
       ...context, alert: {
@@ -40,34 +45,22 @@ function validateBrowser(isWebGl20supported, setContext, context, browserDetecto
   }
 }
 
-const UiApp = () => {
-  const { context, setContext } = useContext(Context)
-  
-  console.log( `initial context: ${JSON.stringify(context, null, 2)}`);
-
-  const browserDetector = new BrowserDetector();
-  const isWebGl20supported = browserDetector.checkWebGlSupported();
-
-  validateBrowser(isWebGl20supported, setContext, context, browserDetector)
+export const UiApp = () => {
+  validateBrowser()
 
   return (
       <>
         <UIProgressBar />
-        <div className={ css["app-header"] }>
+        <div className={ css["header"] }>
           <Logo/>
-          <UiOpenMenu fileNameOnLoad={'m_fileNameOnLoad'}/>
-          {/*<UiSaveMenu/>*/}
-          {/*<UiReportMenu/>*/}
-          {/*{(store.modeView === ModeView.VIEW_2D) ? <UiFilterMenu/> : <p></p>}*/}
+          <UiOpenMenu />
         </div>
 
         {{
-          [ViewModes.VIEW_2D]: <UiMain2d/>,
+          [ViewModes.VIEW_2D]: <Graphics2d/>,
           [ViewModes.VIEW_3D]: <UiMain3dLight/>,
           [ViewModes.VIEW_3D_LIGHT]: <UiMain3dLight/>,
         }[context.viewMode]},
       </>
   )
 }
-
-export default UiApp;

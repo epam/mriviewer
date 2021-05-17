@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 
-import UiApp from '../ui/UiApp';
+import { UiApp } from '../ui/UiApp';
 
 import { Context, initialContext } from "../context/Context";
 

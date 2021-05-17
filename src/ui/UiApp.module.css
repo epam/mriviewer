@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-.app-header {
+.header {
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
