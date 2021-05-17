@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import Graphics2d from "../Graphics2d";
+import MeshText2D from "./meshtext2d";
+
 /**
  * 2d mode pick tool
  * @module app/scripts/graphics2d/picktool
  */
-
-import MeshText2D from './meshtext2d';
-import Graphics2d from './graphics2d';
 
 export default class PickTool {
   constructor(scene) {
@@ -19,23 +19,29 @@ export default class PickTool {
     this.m_hProjScreen = 0.0;
     this.m_volHeader = null;
     this.m_volData = null;
-  } // end of constructor
+  }
+
+ // end of constructor
   clear() {
     // remove message from srceen
     if (this.m_text !== null) {
       this.m_scene.remove(this.m_text);
     }
   }
+
   setProjScreen(wProjScreen, hProjScreen) {
     this.m_wProjScreen = wProjScreen;
     this.m_hProjScreen = hProjScreen;
   }
+
   setHeader(header) {
     this.m_volHeader = header;
   }
+
   setData(vdata) {
     this.m_volData = vdata;
   }
+
   onMouseDown(xScr, yScr, sliceAxis, sliderPosition, zoom, posX, posY) {
     // remove old message from screen
     this.clear();
@@ -103,6 +109,7 @@ export default class PickTool {
     const d = new Date();
     this.m_textTime = d.getTime();
   }
+
   update() {
     const d = new Date();
     const curTime = d.getTime();
