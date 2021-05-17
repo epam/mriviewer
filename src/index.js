@@ -8,8 +8,8 @@ import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux'
 
-import rootReducer from './demo/store/Store';
-import App from './demo/app/App';
+import rootReducer from './store/Store';
+import App from './app/App';
 
 import './index.css';
 

@@ -18,7 +18,7 @@
   "homepage": "https://med3web.opensource.epam.com/",
   "private": false,
   "dependencies": {
-    "@tensorflow/tfjs": "3.4.x",
+    "@tensorflow/tfjs": "^3.6.x",
     "daikon": "^1.2.42",
     "filereader-stream": "^2.0.0",
     "react": "^16.13.1",
@@ -27,7 +27,7 @@
     "react-redux": "7.x.x",
     "react-scripts": "2.x.x",
     "redux": "^4.0.5",
-    "three": "^0.101.1",
+    "three": "0.101.1",
     "zlib": "1.x.x"
   },
   "scripts": {
