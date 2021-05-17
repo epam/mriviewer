@@ -12,19 +12,13 @@ import ViewModes from "../store/ViewModes";
 import { Context } from "../context/Context";
 
 import UIProgressBar from "./ProgressBar/UIProgressBar";
-import UiOpenMenu from "./OpenFile/UiOpenMenu";
+import { UiOpenMenu } from "./OpenFile/UiOpenMenu";
 import UiMain2d from "./UiMain2d";
 import UiMain3dLight from "./UiMain3dLight";
 
 import css from "./UiApp.module.css";
 
-const UiApp = () => {
-  const { context, setContext } = useContext(Context)
-   console.log( `initial context: ${JSON.stringify(context, null, 2)}`);
-
-  const browserDetector = new BrowserDetector();
-  const isWebGl20supported = browserDetector.checkWebGlSupported();
-
+function validateBrowser(isWebGl20supported, setContext, context, browserDetector) {
   if (!isWebGl20supported) {
     setContext({
       ...context, alert: {
@@ -44,6 +38,17 @@ const UiApp = () => {
       })
     }
   }
+}
+
+const UiApp = () => {
+  const { context, setContext } = useContext(Context)
+  
+  console.log( `initial context: ${JSON.stringify(context, null, 2)}`);
+
+  const browserDetector = new BrowserDetector();
+  const isWebGl20supported = browserDetector.checkWebGlSupported();
+
+  validateBrowser(isWebGl20supported, setContext, context, browserDetector)
 
   return (
       <>

@@ -3,37 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-//
-//
-//
-
-// **********************************************
-// Import
-// **********************************************
-
-import VolumeSet from '../VolumeSet';
-import LoadResult from '../LoadResult';
+import VolumeSet from '../../engine/VolumeSet';
+import LoadResult from './LoadResult';
 import FileTools from './FileTools';
-import FileLoader from './FileLoader';
+import FileLoaderSingleton from '../../ui/OpenFile/FileLoader';
 import LoaderDcmDaikon from './LoaderDcmDaikon';
 import LoaderDicom from './LoaderDicom';
-// import DicomSlicesVolume from './dicomslicesvolume';
-
-// **********************************************
-// Const
-// **********************************************
 
 const DEBUG_PRINT_TAGS_INFO = false;
-
-// **********************************************
-// Class
-// **********************************************
 
 class LoaderDcmUrlDaikon {
   constructor() {
     this.m_loaderDaikon = new LoaderDcmDaikon();
     this.readReadyFileList = this.readReadyFileList.bind(this);
   }
+
   readFromUrl(volSet, strUrl, callbackComplete, callbackProgress) {
     // check arguments
     console.assert(volSet != null, "Null volume");
@@ -54,7 +38,7 @@ class LoaderDcmUrlDaikon {
 
     callbackProgress(0.0);
     
-    const fileLoader = new FileLoader(urlFileList);
+    const fileLoader = new FileLoaderSingleton(urlFileList);
     this.m_fileListCounter = 0;
     fileLoader.readFile((arrBuf) => {
       this.m_fileListCounter += 1;
@@ -69,7 +53,9 @@ class LoaderDcmUrlDaikon {
       return false;
     }); // get file from server
     return true;
-  } // end read from url
+  }
+
+ // end read from url
   //
   readReadyFileList(volSet, arrBuf, callbackComplete, callbackProgress) {
     const uint8Arr = new Uint8Array(arrBuf);
@@ -150,7 +136,7 @@ class LoaderDcmUrlDaikon {
       const urlFile = `${this.m_folder}/${arrFileNames[i]}`;
       // console.log(`trying read file ${urlFile} from web`);
 
-      this.m_loaders[i] = new FileLoader(urlFile);
+      this.m_loaders[i] = new FileLoaderSingleton(urlFile);
       const loader = this.m_loaders[i];
       loader.readFile((fileArrBu) => {
         const ratioLoaded = this.m_filesLoadedCounter / this.m_numLoadedFiles;

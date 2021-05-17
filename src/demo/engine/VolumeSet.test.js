@@ -5,9 +5,9 @@
  */
 
 import VolumeSet from './VolumeSet';
-import Volume from './Volume';
-import { KtxHeader } from './loaders/LoaderKtx';
-import LoadResult from './LoadResult';
+import { Volume } from './Volume';
+import { KtxHeader } from '../ui/OpenFile/LoaderKtx';
+import LoadResult from '../ui/OpenFile/LoadResult';
 
 describe('VolumeSetTests', () => {
   // special function to create ktx in memory

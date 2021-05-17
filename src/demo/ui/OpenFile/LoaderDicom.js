@@ -18,21 +18,21 @@
 
 // import jpeg from 'jpeg-lossless-decoder-js';
 
-import LoadResult from '../LoadResult';
+import LoadResult from './LoadResult';
 
-import DicomDictionary from './dicomdict';
-import DicomInfo from './dicominfo';
-import DicomTag from './dicomtag';
-import DicomSlice from './dicomslice';
-import DicomSlicesVolume from './dicomslicesvolume';
-import DicomSliceInfo from './dicomsliceinfo';
-import DicomTagInfo from './dicomtaginfo';
+import DicomDictionary from '../../engine/loaders/dicomdict';
+import DicomInfo from '../../engine/loaders/dicominfo';
+import DicomTag from '../../engine/loaders/dicomtag';
+import DicomSlice from '../../engine/loaders/dicomslice';
+import DicomSlicesVolume from '../../engine/loaders/dicomslicesvolume';
+import DicomSliceInfo from '../../engine/loaders/dicomsliceinfo';
+import DicomTagInfo from '../../engine/loaders/dicomtaginfo';
 import FileTools from './FileTools';
-import FileLoader from './FileLoader';
+import { FileLoader } from '../../ui/OpenFile/FileLoader';
 
 // import Volume from '../Volume';
-import VolumeSet from '../VolumeSet';
-import Volume from '../Volume';
+import VolumeSet from '../../engine/VolumeSet';
+import { Volume } from '../../engine/Volume';
 
 // ********************************************************
 // Const
@@ -130,7 +130,6 @@ class LoaderDicom{
     this.m_yDim = -1;
     this.m_zDim = numFiles;
     this.m_needScaleDownTexture = needScaleDownTexture;
-    /** @property {object} m_fileLoader - low level file loader */
     this.m_folder = null;
     /** @property {boolean} m_isLoadedSuccessfull - Loaded flag: success o not */
     this.m_isLoadedSuccessfull = false;
@@ -1883,24 +1882,15 @@ class LoaderDicom{
     }
     this.m_folder = ft.getFolderNameFromUrl(strUrl);
     const urlFileList = this.m_folder + '/file_list.txt';
-    console.log(`readFromUrl: load file = ${urlFileList} `);
-
-    const fileLoader = new FileLoader(urlFileList);
-    this.m_callbackComplete = callbackComplete;
-    this.m_callbackProgress = callbackProgress;
+    const fileLoader = new FileLoader({url: urlFileList});
     this.m_fileListCounter = 0;
     fileLoader.readFile((arrBuf) => {
       this.m_fileListCounter += 1;
       if (this.m_fileListCounter === 1) {
-        const okRead = this.readReadyFileList(volSet, arrBuf, callbackProgress, callbackComplete);
-        return okRead;
+        return this.readReadyFileList(volSet, arrBuf, callbackProgress, callbackComplete);
       }
       return true;
-    }, (errMsg) => {
-      console.log(`Error read file: ${errMsg}`);
-      callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
-      return false;
-    }); // get file from server
+    });
     return true;
   }
   readReadyFileList(volSet, arrBuf, callbackProgress, callbackComplete) {
@@ -1978,19 +1968,7 @@ class LoaderDicom{
 
     for (let i = 0; (i < this.m_numLoadedFiles) && (this.m_numFailsLoad < 1); i++) {
       const urlFile = `${this.m_folder}/${arrFileNames[i]}`;
-      // console.log(`Loading (${i})-th url: ${urlFile}`);
-      this.m_loaders[i] = new FileLoader(urlFile);
-      const loader = this.m_loaders[i];
-      const NOT_FROM_GOOGLE = false;
-      // let volDst = volSet.getVolume(0);
-      //if (volDst === null) {
-      //  volDst = new Volume();
-      //  volSet.addVolume(volDst);
-      // } 
-      const okLoader = this.runLoader(volSet, arrFileNames[i], loader, i, callbackProgress, callbackComplete, NOT_FROM_GOOGLE);
-      if (!okLoader) {
-        return false;
-      }
+      this.runLoader(volSet, arrFileNames[i], loader, i, callbackProgress, callbackComplete, NOT_FROM_GOOGLE);
     }  // for i all files-slices in folder
     return true;
   } // end readReadyFileList(arrBuf)
@@ -2008,7 +1986,7 @@ class LoaderDicom{
   runLoader(volSet, fileName, loader, i, callbackProgress, callbackComplete, fromGoogle) {
     this.m_fromGoogle = fromGoogle;
     // console.log(`Loading url: ${fileName}`);
-    loader.readFile((fileArrBu) => {
+    loadFile((fileArrBu) => {
       const ratioLoaded = this.m_filesLoadedCounter / this.m_numLoadedFiles;
       const VAL_MASK = 7;
       if ((callbackProgress !== undefined) && ((this.m_filesLoadedCounter & VAL_MASK) === 0)) {

@@ -15,12 +15,12 @@
 // ********************************************************
 
 import FileTools from './FileTools';
-import LoadResult from '../LoadResult';
-import Volume from '../Volume';
-import FileLoader from './FileLoader';
+import LoadResult from './LoadResult';
+import { Volume } from '../../engine/Volume';
+import FileLoaderSingleton from '../../ui/OpenFile/FileLoader';
 import LoaderDicom from './LoaderDicom';
 
-import Texture3D from '../Texture3D';
+import Texture3D from '../../engine/Texture3D';
 import StoreActionType from '../../store/ActionTypes';
 import ViewModes from '../../store/ViewModes';
 import Modes3d from '../../store/Modes3d';
@@ -189,7 +189,7 @@ class LoaderUrlDicom {
       }
 
       // create loader for cur file
-      this.m_loaders[i] = new FileLoader(fileNameUrl);
+      this.m_loaders[i] = new FileLoaderSingleton(fileNameUrl);
       const loader = this.m_loaders[i];
       const okLoader = this.m_loaderDicom.runLoader(this.m_volume, fileNameUrl,
         loader, i, callbackProgress, callbackComplete, fromGoogle);

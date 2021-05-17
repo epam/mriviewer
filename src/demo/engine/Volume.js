@@ -5,7 +5,7 @@
 
 export const VOLUME_ICON_SIDE = 64;
 
-class Volume {
+export class Volume {
   constructor() {
     this.m_xDim = 0;
     this.m_yDim = 0;
@@ -22,28 +22,13 @@ class Volume {
     this.m_dataIcon = null;
   }
   
+  // cube x*y*z filled with 0
   createEmptyBytesVolume(xDim, yDim, zDim) {
-    this.m_xDim = xDim;
-    this.m_yDim = yDim;
-    this.m_zDim = zDim;
-    const xyzDim = xDim * yDim * zDim;
-    this.m_bytesPerVoxel = 1;
-    this.m_dataArray = new Uint8Array(xyzDim);
-    this.m_dataSize = xyzDim;
-    this.m_boxSize = {
-      x: xDim, y: yDim, z: zDim
-    };
-    for (let i = 0; i < xyzDim; i++) {
-      this.m_dataArray[i] = 0;
-    }
+    this.m_dataArray = new Uint8Array(xDim * yDim * zDim);
   }
   
   // Create icon for volume
   createIcon() {
-    console.assert(this.m_xDim > 0);
-    console.assert(this.m_yDim > 0);
-    console.assert(this.m_zDim > 0);
-    console.assert(this.m_dataArray !== null);
     const sizeSrcMax = (this.m_xDim > this.m_yDim) ? this.m_xDim : this.m_yDim;
     const scale = sizeSrcMax / VOLUME_ICON_SIDE;
     
@@ -157,5 +142,3 @@ class Volume {
     this.m_dataSize = xyzDimNew;
   }
 }
-
-export default Volume;

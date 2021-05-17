@@ -13,11 +13,11 @@
 // Imports
 // ********************************************************
 
-import LoadResult from '../LoadResult';
+import LoadResult from './LoadResult';
 import FileTools from './FileTools';
 import LoadFilePromise from './LoadPromise';
-import Volume from '../Volume';
-import VolumeSet from '../VolumeSet';
+import { Volume } from '../../engine/Volume';
+import VolumeSet from '../../engine/VolumeSet';
 
 
 // ********************************************************
@@ -41,6 +41,7 @@ class LoaderHdr {
   static readByteFromBuffer(buf, off) {
     return buf[off];
   }
+
   /**
   * Read 32 bit integer from input buffer
   * @param {object} buf - source buffer
@@ -58,6 +59,7 @@ class LoaderHdr {
     );
     return res;
   }
+
   /**
   * Read 16 bit short integer from input buffer
   * @param {object} buf - source buffer
@@ -69,6 +71,7 @@ class LoaderHdr {
     const res = ((buf[off + 0]) | (buf[off + 1] << 8));
     return res;
   }
+
   /**
   * Read 32 bit float from input buffer
   * @param {object} buf - source buffer
@@ -91,6 +94,7 @@ class LoaderHdr {
     const res = dataArray.getFloat32(0, IS_LITTLE_ENDIAN);
     return res;
   }
+
   /**
   * Convert DataView object into string
   * @param {object} buf - buffer
@@ -109,6 +113,7 @@ class LoaderHdr {
     }
     return str;
   }
+
   //
   // read header file
   //
@@ -297,6 +302,7 @@ class LoaderHdr {
 
     return true;
   }
+
   //
   // read image file
   //
@@ -327,7 +333,9 @@ class LoaderHdr {
     volumeDst.m_arrBuf = arrBuf;
     console.log(`readFromBufferImage complete with ${bufLen} bytes in image `);
     return true;
-  } // end readFromBufferImage
+  }
+
+ // end readFromBufferImage
   //
   // create volume from 2 components
   //
@@ -382,6 +390,7 @@ class LoaderHdr {
     volDst.m_dataSize = volDst.m_imageBufferSize;
     return true;
   }
+
   //
   // create vol from 2 volumes: intensity and hdr
   //
@@ -428,7 +437,9 @@ class LoaderHdr {
     volDst.m_bytesPerVoxel = FOUR;
     console.log('createRoiVolumeFromHeaderAndImage: success');
     return true;
-  } //
+  }
+
+ //
   /**
    * Read hdr (h + img) files from URL
    * 
@@ -474,7 +485,9 @@ class LoaderHdr {
     const ok = this.readFromUrls(arrUrls, volSet, callbackProgress, callbackComplete);
 
     return ok;
-  } // end of readFromUrl
+  }
+
+ // end of readFromUrl
   /**
    * 
    * @param {object} arrUrls  - array of strings urls

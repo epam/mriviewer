@@ -7,86 +7,19 @@
 //
 //
 
-// **********************************************
-// Imports
-// **********************************************
-
-// 31.08.2020. Daikon reader
-import daikon from  'daikon';
-import DicomSliceInfo from './dicomsliceinfo';
-import LoadResult from '../LoadResult';
+import daikon from 'daikon';
+import DicomSliceInfo from '../../engine/loaders/dicomsliceinfo';
+import LoadResult from './LoadResult';
 import LoaderDicom from './LoaderDicom';
 import DicomTagInfo from './LoaderDicom';
-
-import StoreActionType from '../../store/ActionTypes';
-import DicomSlice from './dicomslice';
-
-// **********************************************
-// Const
-// **********************************************
-
-// read dicom via daikon: print every tag readed
-const NEED_DEBUG_PRINT_TAGS = false;
-
-// future possible development:
-// deep debug: develop read dicomdir file
-const READ_DICOMDIR = false;
-
-// **********************************************
-// Class
-// **********************************************
+import DicomSlice from '../../engine/loaders/dicomslice';
 
 class LoaderDcmDaikon {
   constructor(){ 
-    this.m_loaderDicom = null;
+    this.m_loaderDicom = new LoaderDicom(1);
   }
-  //
-  // see example read
-  // https://github.com/mbarnig/dumpDICOMDIRarchive/blob/master/dumpDICOMDIR.js
-  //
-  loadDicomfir(fileName, strContent) {
-    const dataFile = new DataView(strContent);
-    let image = null;
-    try {
-      image = daikon.Series.parseImage(dataFile);
-    } catch (err) {
-      console.log("error parse dcm file buffer");
-      return LoadResult.BAD_DICOM;
-    }
-    if ((image === undefined) || (image === null)) {
-      return LoadResult.BAD_DICOM;
-    }
-    const TAG_DIRECTORY_REC = [0x0004, 0x1220];
-    let ind;
-    // slice location detect (to correct slices order on z)
-    ind = daikon.Utils.dec2hex(TAG_DIRECTORY_REC[0]) + daikon.Utils.dec2hex(TAG_DIRECTORY_REC[1]);
-    const tagDirRec = image.tags[ind];
-    if (tagDirRec !== undefined) {
-      const numEntries = tagDirRec.value.length;
-      for (let k = 0; k < numEntries; k++) {
-        let dirEntry = tagDirRec.value[k];
-        if ((dirEntry.element === 57344) && (dirEntry.group === 65534)) {
-          const numSub = dirEntry.value.length;
-          for (let s = 0; s < numSub; s++) {
-            let elemSub = dirEntry.value[s];
-            if ((elemSub.element === 5168) && (elemSub.group === 4)) {
-              //const str = elemSub.value[0];
-              //console.log(`elem sub val = ${str}`);
-            }
-            if ((elemSub.element === 5376) && (elemSub.group === 4)) {
-              const fold = elemSub.value[0];
-              const fname = elemSub.value[1];
-              console.log(`image nm = ${fold} / ${fname}`);
-            }
-          } // for s, all sub elemenst 
-        } // if entry with patient and image information
-      } // for k all entries in dir
-    } // if dir rec found
-    return LoadResult.SUCCESS;
-  }
-  // load single slice, using file index
+
   loadSingleSlice(fileIndex, fileName, strContent) {
-    // console.log("loadSingleSlice [" + fileIndex.toString() + "]");
     const dataFile = new DataView(strContent);
     let image = null;
     try {
@@ -98,13 +31,9 @@ class LoaderDcmDaikon {
     if ((image === undefined) || (image === null)) {
       return LoadResult.BAD_DICOM;
     }
-    // console.log("dcm parse completed");
     const yDim = image.getRows();
     const xDim = image.getCols();
     const bits = image.getBitsAllocated();
-    if ((bits !== 8) && (bits !== 16)) {
-      console.log('Parse Dicom data. Strange bits per pixel = ' + bits.toString());
-    }
     // data for hash code evaluate
     const patientName = image.getPatientName();
     const studyDescr = image.getImageDescription();
@@ -116,7 +45,7 @@ class LoaderDcmDaikon {
     //const isComp = image.isCompressed();
 
 
-    const dicomInfo = this.m_loaderDicom.m_dicomInfo;
+    let dicomInfo = this.m_loaderDicom.m_dicomInfo;
     //const volSlice = this.m_loaderDicom.m_slicesVolume.getNewSlice();
     const volSlice = new DicomSlice();
     volSlice.m_sliceNumber = fileIndex;
@@ -145,8 +74,7 @@ class LoaderDcmDaikon {
     this.m_loaderDicom.m_newTagEvent.detail.fileName = fileName;
 
     const sliceInfo = new DicomSliceInfo();
-    const strSlice = 'Slice ' + fileIndex.toString();
-    sliceInfo.m_sliceName = strSlice;
+    sliceInfo.m_sliceName = 'Slice ' + fileIndex.toString();
     sliceInfo.m_fileName = fileName;
     sliceInfo.m_tags = [];
     dicomInfo.m_sliceInfo.push(sliceInfo);
@@ -251,9 +179,6 @@ class LoaderDcmDaikon {
   
         tagInfo.m_attrValue = strVal;
         sliceInfo.m_tags.push(tagInfo);
-        if (NEED_DEBUG_PRINT_TAGS) {
-          console.log('tag readed = ' + group.toString() + ', ' + element.toString() + ', v = ' + strVal);
-        }
       } // if non null tag
     } // for k all known tags
 
@@ -272,16 +197,14 @@ class LoaderDcmDaikon {
     const tagSlNum = image.tags[ind];
     if (tagSlNum !== undefined) {
       if (tagSlNum.value !== null) {
-        let sliceNumber = tagSlNum.value[0];
-        volSlice.m_sliceNumber = sliceNumber;
+        volSlice.m_sliceNumber = tagSlNum.value[0];
       }
     }
     // samples per pixel
     ind = daikon.Utils.dec2hex(daikon.Tag.TAG_SAMPLES_PER_PIXEL[0]) + daikon.Utils.dec2hex(daikon.Tag.TAG_SAMPLES_PER_PIXEL[1]);
     const tagSamPerPix = image.tags[ind];
     if (tagSamPerPix !== undefined) {
-      let samPerPixel = tagSamPerPix.value[0];
-      this.m_loaderDicom.m_samplesPerPixel = samPerPixel;
+      this.m_loaderDicom.m_samplesPerPixel = tagSamPerPix.value[0];
     }
 
     // read pixel padding value
@@ -379,9 +302,6 @@ class LoaderDcmDaikon {
         this.m_loaderDicom.m_imagePosMax.x = (xPos > this.m_loaderDicom.m_imagePosMax.x) ? xPos : this.m_loaderDicom.m_imagePosMax.x;
         this.m_loaderDicom.m_imagePosMax.y = (yPos > this.m_loaderDicom.m_imagePosMax.y) ? yPos : this.m_loaderDicom.m_imagePosMax.y;
         this.m_loaderDicom.m_imagePosMax.z = (zPos > this.m_loaderDicom.m_imagePosMax.z) ? zPos : this.m_loaderDicom.m_imagePosMax.z;
-        if (NEED_DEBUG_PRINT_TAGS) {
-          console.log(`TAG. image position x,y,z = ${xPos}, ${yPos}, ${zPos}`);
-        } // if print
       } // if 3 components in array
     } // if tag exists
 
@@ -438,34 +358,10 @@ class LoaderDcmDaikon {
     volSlice.m_xDim = xDim;
     volSlice.m_yDim = yDim;
     return LoadResult.SUCCESS;
-  } // end load single slice
-  //
-  // read 1 slice during reading multiple dcm files
-  //
-  readSlice(loader, fileIndex, fileName, strContent) {
-    this.m_loaderDicom = loader;
-    const ret = this.loadSingleSlice(fileIndex, fileName, strContent);
-    return ret;
   }
-  // read 1 slice
-  readSingleSlice(store, loader, fileIndex, fileName, strContent) {
-    this.m_loaderDicom = loader;
-    let ret;
-    if (!READ_DICOMDIR) {
-      ret = this.loadSingleSlice(fileIndex, fileName, strContent);
-    } else {
-      ret = this.loadDicomfir(fileName, strContent);
-    }
-    if (ret !== LoadResult.SUCCESS) {
-      return ret;
-    }
-    
-    // save dicomInfo to store
-    const dicomInfo = this.m_loaderDicom.m_dicomInfo;
-    store.dispatch({ type: StoreActionType.SET_DICOM_INFO, dicomInfo: dicomInfo });
-    // save dicom loader to store
-    store.dispatch({ type: StoreActionType.SET_LOADER_DICOM, loaderDicom: this.m_loaderDicom });
-    return ret;
+
+  readOneSlice(setContext, fileIndex, fileName, strContent) {
+    return this.loadSingleSlice(fileIndex, fileName, strContent);
   }
 
 }

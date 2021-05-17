@@ -14,6 +14,7 @@ export const initialContext = {
     value: 0,
   },
   volumeSet: new VolumeSet(),
+  texture3d: {},
   arrErrors: [],
   viewMode: ViewModes.VIEW_2D
 }

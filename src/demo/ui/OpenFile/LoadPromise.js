@@ -20,6 +20,7 @@ export default class LoadFilePromise {
     this.m_reader = null;
     this.m_request = null;
   }
+  
   /**
   * Read local file. If success, invoke resolve callback for created promise
   *
@@ -39,6 +40,7 @@ export default class LoadFilePromise {
       this.m_reader.readAsArrayBuffer(this.m_file);
     });
   }
+  
   /**
   * Read remote file (via promise). If success, invoke resolve callback for created promise
   *

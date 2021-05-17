@@ -6,7 +6,7 @@
 import ToolArea from './tools2d/ToolArea';
 import Graphics2d from './Graphics2d';
 import VolumeSet from './VolumeSet';
-import Volume from './Volume';
+import { Volume } from './Volume';
 
 describe('ToolArea. test line intersect', () => {
   it('ToolArea. test line intersect no 0', () => {
