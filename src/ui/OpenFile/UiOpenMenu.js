@@ -44,7 +44,7 @@ export const UiOpenMenu = () => {
     });
 
     if (fileName.endsWith('.ktx')) {
-      return setContext({ ...context, volumeSet: [{ m_dataArray: arrayBuffer }] })
+      return setContext({ ...context, volumeSet: [...{ m_dataArray: arrayBuffer }] })
     }
   }
 
@@ -61,7 +61,6 @@ export const UiOpenMenu = () => {
       const fileReader = new FileReader();
       fileReader.addEventListener('load', (e) => {
         onFileLoad(e.target.result);
-        
       });
       fileReader.readAsArrayBuffer(file);
     }

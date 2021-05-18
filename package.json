@@ -18,7 +18,7 @@
   "homepage": "https://med3web.opensource.epam.com/",
   "private": false,
   "dependencies": {
-    "@tensorflow/tfjs": "^3.6.x",
+    "@tensorflow/tfjs": "^3.6.0",
     "daikon": "^1.2.42",
     "filereader-stream": "^2.0.0",
     "react": "^16.13.1",
