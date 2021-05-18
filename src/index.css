@@ -42,3 +42,7 @@ code {
 
   padding: 30px 6px;
 }
+
+button svg {
+  cursor: pointer;
+}

@@ -4,7 +4,7 @@
  */
 import ViewModes from "../store/ViewModes";
 import { createContext } from "react";
-import VolumeSet from "../engine/VolumeSet";
+import { Volume } from "../engine/Volume";
 
 export const initialContext = {
   alert: {},
@@ -13,7 +13,7 @@ export const initialContext = {
     text: '',
     value: 0,
   },
-  volumeSet: new VolumeSet(),
+  volumeSet: [new Volume()],
   texture3d: {},
   arrErrors: [],
   viewMode: ViewModes.VIEW_2D
