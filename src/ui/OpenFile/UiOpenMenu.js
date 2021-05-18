@@ -21,6 +21,8 @@ import './UiOpenMenu.css';
 import { Context } from "../../context/Context";
 import { Volume } from "../../engine/Volume";
 import { unzipGzip } from "./ungzip";
+import LoadResult from "./LoadResult";
+import { FileLoader } from "three";
 
 export const KtxHeader = {
   KTX_GL_RED: 0x1903,
@@ -54,7 +56,7 @@ export class LoaderKtx {
       z: 0.0
     };
   }
-  
+
   static readInt(bufBytes, bufOff) {
     let iVal = 0;
     const BYTES_IN_INT = 4;
@@ -81,30 +83,30 @@ export class LoaderKtx {
     const res = dataArray.getFloat32(0, IS_LITTLE_ENDIAN);
     return res;
   }
-  
+
   static readFromBuffer(volDst, arrBuf, callbackProgress, callbackComplete) {
     // prepare KTX header
     const bufBytes = new Uint8Array(arrBuf);
     let bufOff = 0;
-    
+
     const SIZE_DWORD = 4;
     // read endianess
     this.m_header.m_endianness = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
     this.m_header.m_glType = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
     this.m_header.m_glTypeSize = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
     this.m_header.m_glFormat = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
-    
+
     this.m_header.m_glInternalFormat = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
     this.m_header.m_glBaseInternalFormat = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
     this.m_header.m_pixelWidth = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
     this.m_header.m_pixelHeight = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
     this.m_header.m_pixelDepth = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
-    
+
     // save to result volume
     volDst.m_xDim = this.m_header.m_pixelWidth;
     volDst.m_yDim = this.m_header.m_pixelHeight;
     volDst.m_zDim = this.m_header.m_pixelDepth;
-    
+
     // check dim
     const head = this.m_header;
     // console.log(`check dim: ${head.m_pixelWidth} * ${head.m_pixelHeight} * ${head.m_pixelDepth}`);
@@ -126,12 +128,12 @@ export class LoaderKtx {
       }
       return LoadResult.WRONG_IMAGE_DIM_X;
     }
-    
+
     this.m_header.m_numberOfArrayElements = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
     this.m_header.m_numberOfFaces = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
     this.m_header.m_numberOfMipmapLevels = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
     this.m_header.m_bytesOfKeyValueData = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
-    
+
     let bytesPerVoxel = 0;
     const SIZE_BYTE = 1;
     const SIZE_COLOR3 = 3;
@@ -143,18 +145,18 @@ export class LoaderKtx {
     } else if (this.m_header.m_glFormat === KtxHeader.KTX_GL_RGBA) {
       bytesPerVoxel = SIZE_COLOR4;
     }
-    
+
     // read user data
     if (this.m_header.m_bytesOfKeyValueData > 0) {
       let udataOff = bufOff;
       bufOff += this.m_header.m_bytesOfKeyValueData;
-      
+
       let xMin, yMin, zMin, xMax, yMax, zMax;
       while (udataOff < bufOff) {
         // read pair len
         // const pairLen = KtxLoader.readInt(bufBytes, udataOff);
         udataOff += SIZE_DWORD;
-        
+
         // read string until 0
         let str = '';
         let b;
@@ -215,7 +217,7 @@ export class LoaderKtx {
       pwr2 = 1;
     }
     const progressMask = (1 << pwr2) - 1;
-    
+
     for (let i = 0; i < this.m_dataSize; i++) {
       this.m_dataArray[i] = bufBytes[bufOff];
       bufOff += 1;
@@ -235,13 +237,13 @@ export class LoaderKtx {
       this.m_boxSize.z = MM_PER_PIXEL * this.m_header.m_pixelDepth;
       console.log(`vBox = ${this.m_boxSize.x} * ${this.m_boxSize.y} * ${this.m_boxSize.z}`);
     }
-    
+
     volDst.m_bytesPerVoxel = bytesPerVoxel;
     volDst.m_dataArray = this.m_dataArray;
     volDst.m_dataSize = this.m_dataSize;
     volDst.m_boxSize = this.m_boxSize;
     console.log(`KTX Loaded successfully with dim = ${volDst.m_xDim}*${volDst.m_yDim}*${volDst.m_zDim}. bpp=${volDst.m_bytesPerVoxel}`);
-    
+
     this.m_isLoadedSuccessfull = true;
   }
 
@@ -274,40 +276,45 @@ export const UiOpenMenu = () => {
   const { context, setContext } = useContext(Context)
   const [fileName, setFileName] = useState('')
   const [file, setFile] = useState()
-  
+
   const onFileLoad = () => {
     setContext({ ...context });
     context.volumeSet.addVolume(new Volume());
-  
+
     if (fileName.endsWith('.gz')) {
       unzipGzip(file, onFileLoad);
     }
-    
+
+    function arrBuf() {
+
+    }
+
     if (fileName.endsWith('.ktx')) {
       return LoaderKtx.readFromBuffer(arrBuf);
     }
   }
-  
+
   const onFileSelected = (evt) => {
     if (evt.target.files === undefined) return;
-    
+
     const { files } = evt.target;
     setFile(files[0])
     setFileName(files[0].name.toLowerCase())
   }
-  
+
   useEffect(() => {
     if (file) {
       const fileReader = new FileReader();
       fileReader.addEventListener('load', (e) => {
         onFileLoad(e.target.result);
+        let volumeSet;
         const vol = volumeSet.getVolume(0);
         const texture3d = new Texture3D();
-  
+
         if (vol.m_dataArray !== null) {
           vol.makeDimensions4x();
           texture3d.createFromRawVolume(vol);
-    
+
           setContext({
             ...context,
             volumeSet,
@@ -320,7 +327,7 @@ export const UiOpenMenu = () => {
       fileReader.readAsArrayBuffer(file);
     }
   }, [file])
-  
+
   return <>
     <input
       type='file'

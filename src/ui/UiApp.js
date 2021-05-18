@@ -3,50 +3,33 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
-import BrowserDetector from '../engine/utils/BrowserDetector';
 import { ReactComponent as Logo } from './icons/logo.svg'
 
 import ViewModes from "../store/ViewModes";
 import { Context } from "../context/Context";
+import { validateBrowser } from "../utils";
 
 import UIProgressBar from "./ProgressBar/UIProgressBar";
 import { UiOpenMenu } from "./OpenFile/UiOpenMenu";
 import UiMain3dLight from "./UiMain3dLight";
 
-import css from "./UiApp.module.css";
 import Graphics2d from "../engine/Graphics2d";
 
-function validateBrowser() {
-  const { context, setContext } = useContext(Context)
-  
-  const browserDetector = new BrowserDetector();
-  const isWebGl20supported = browserDetector.checkWebGlSupported();
-  
-  if (!isWebGl20supported) {
-    setContext({
-      ...context, alert: {
-        title: 'Browser compatibility problem detected',
-        text: 'This browser not supported WebGL 2.0. Application functinality is decreased and app can be unstable'
-      }
-    })
-  } else {
-    const isValidBro = browserDetector.checkValidBrowser();
-    if (!isValidBro) {
-      setContext({
-        ...context,
-        alert: {
-          title: 'Browser compatibility problem detected',
-          text: 'App is specially designed for Chrome/Firefox/Opera/Safari browsers'
-        }
-      })
-    }
-  }
-}
+import css from "./UiApp.module.css";
+
 
 export const UiApp = () => {
-  validateBrowser()
+  const { context, setContext } = useContext(Context);
+
+  useEffect(() => {
+      const alert = validateBrowser();
+      if (alert) {
+          setContext(prev => ({ ...prev, ...alert }))
+      }
+  }, []);
+
 
   return (
       <>
