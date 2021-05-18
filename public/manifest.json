@@ -1,6 +1,6 @@
 {
   "short_name": "Med3Web",
-  "name": "Dicom 2d/3d browser app. Also can read Nifti, Ktx, Hdr, other formats",
+  "name": "Dicom 2D/3D browser app. Also can read Ktx, NiFTi, HDR, other formats",
   "icons": [
     {
       "src": "favicon.ico",

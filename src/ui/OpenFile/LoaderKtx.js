@@ -22,8 +22,7 @@ export class LoaderKtx {
   }
   
   static readFloat(buf, off) {
-    const BYTES_IN_FLOAT = 4;
-    const arBuf = new ArrayBuffer(BYTES_IN_FLOAT);
+    const arBuf = new ArrayBuffer(4);
     const dataArray = new DataView(arBuf);
     const OFF_0 = 0; const OFF_1 = 1;
     const OFF_2 = 2; const OFF_3 = 3;

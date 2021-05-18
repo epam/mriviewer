@@ -3,15 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * 3D volume/isosurface rendering engine
- * @module app/scripts/engine/VolumeRenderer3d
- */
-
 import * as THREE from 'three';
-// import swal from 'sweetalert';
 
-import GlSelector from './GlSelector';
 import OrbitControl from './orbitcontrol';
 import MaterialBF from './gfx/matbackface';
 import MaterialFF from './gfx/matfrontface';
@@ -25,13 +18,6 @@ import VolumeFilter3D from './volumeFilter3d';
 import RoiPalette from './loaders/roipalette';
 import TetrahedronGenerator from './actvolume/tetra';
 import Graphics23d from './tools23d/graphics23d';
-// import MaterialColor2d from './gfx/matcolor2d';
-
-
-// import GlCheck from './glcheck';
-// import GeoRender from '../actvolume/georender';
-
-/**  @constant {number} SCENE_3D_BACKGROUND_COLOR - backgroudn color for 3d window */
 const SCENE_3D_BACKGROUND_COLOR = 0x0;
 const VOLUME_COLOR1_MIN_R = 0.1;
 const VOLUME_COLOR1_MIN_G = 0.0;
@@ -51,133 +37,52 @@ const VOLUME_COLOR2_MAX_B = 0.3;
 const STEP_SIZE1 = 0.0025;
 const STEP_SIZE2 = 0.0033;
 const STEP_SIZE3 = 0.0025;
-//const STEP_SIZE3 = 0.0039;
 const STEP_SIZE4 = 0.0029;
 const OPACITY_SCALE = 175.0;
-//const MIN_FPS = 10;
 
-// Special values to check frame buffer
 const CHECK_MODE_NOT_CHECKED = 0;
 const CHECK_MODE_RESULT_OK = 1;
-// const CHECK_MODE_RESULT_BAD = 2;
-
-// When scene is ready (how much materials are created via arrow functions)
 const SCENE_READY_COUNTER_OK = 5;
-
-// Scene render type
 const SCENE_TYPE_RAYCAST = 0;
 const SCENE_TYPE_SPHERE = 1;
-
-/** Class Graphics3d is used for 3d render */
 export default class VolumeRenderer3d {
-
-  /**
-   * Initialize render
-   * @param (object) props - object container for various properties
-   * @param (object) curFileDataType - file type
-   * @return {Object} Instance of this class (singleton)
-   */
   constructor(props) {
     this.curFileDataType = props.curFileDataType;
     this.sceneReadyCounter = 0;
     this.renderCounter = 0;
     this.scene = new THREE.Scene();
     this.sceneClipPlane = new THREE.Scene();
-
-    // tetra scene seems to be unused!
-    // this.sceneTetra = new THREE.Scene();
-
     this.scene23D = new THREE.Scene();
-    this.graphics23d = null;
     this.sceneSphere = new THREE.Scene();
-    this.meshSphere = null;
-    this.newScene = new THREE.Scene();
     this.renderScene = SCENE_TYPE_RAYCAST;
-
-    this.planeGeometry = null;
-    this.props = props;
-    this.mesh = null;
-    this.renderer = null;
-    this.texTF = null;
-    this.volTexture = null;
-    this.origVolumeTex = null;
-    this.texRoiId = null;
-    this.texRoiColor = null;
-    this.RoiVolumeTex = null;
-    this.volTextureMask = null;
-    this.texVolumeAO = null;
-    this.bfTexture = null;
-    this.ffTexture = null;
-    this.renderToTexture = null;
-    this.geometry = null;
-    this.geometrySphere = null;
-    this.geometryWireFrameSphere = null;
-    this.matBF = null;
-    this.matFF = null;
-    this.matScreenTex = null;
-    this.matWireFrame = null;
-    this.matRenderToTexture = null;
-    //this.matInterpolation = null;
-    this.matVolumeRender = null;
-    this.volumeUpdater = null;
     this.checkFrameBufferMode = CHECK_MODE_NOT_CHECKED;
     this.eraserStarted = false;
     this.lockEraserBuffersUpdating = false;
 
-    // eslint-disable-next-line
     this.planeCenterPt = new THREE.Vector3(-0.5, -0.5, 0.5 * 1.4);
-    // this.renderer = new THREE.WebGLRenderer({ antialias: false, logarithmicDepthBuffer: false });
-    // this.renderer = new THREE.WebGLRenderer({ antialias: false }
-    // this.canvas3d = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
-    const glSelector = new GlSelector();
-    this.context = glSelector.createWebGLContext();
-    this.isWebGL2 = glSelector.useWebGL2();
-    this.canvas3d = glSelector.getCanvas();
+    const canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
     this.renderer = new THREE.WebGLRenderer({
-      antialias: false, canvas: this.canvas3d,
-      preserveDrawingBuffer: true, context: this.context
+      antialias: false,
+      canvas,
+      preserveDrawingBuffer: true,
+      context: canvas.getContext('webgl2')
     });
     this.renderer.autoClearStencil = false;
     this.renderer.autoClearColor = false;
-    if (!this.renderer) {
-      console.log('cant create 3d renderer');
-    }
-
-    // Assign current window to render area
     this.windowWidth = Math.floor(props.width);
-    // eslint-disable-next-line
     this.windowHeight = Math.floor(props.height);
-    // console.log("Window: " + this.windowWidth + "x" + this.windowHeight);
-    console.log(`Window: ${this.windowWidth} x ${this.windowHeight}`);
     const camAspect = this.windowWidth / this.windowHeight;
-    // eslint-disable-next-line
     this.camera = new THREE.PerspectiveCamera(60, camAspect, 0.01, 3);
     this.camera.position.z = 10;
     this.renderer.setSize(this.windowWidth, this.windowHeight);
 
     this.renderer.setClearColor(SCENE_3D_BACKGROUND_COLOR);
 
-    /*if (root3dContainer.length === 1) {
-      root3dContainer.append(this.renderer.domElement);
-    } else {
-      console.log('containter with id=med3web-container-3d not found in scene');
-    }*/
     props.mount.appendChild(this.renderer.domElement);
-    // When rotating an object, it is necessary to reverse the rotation of
-    // the cutting plane and the direction vector onto the light source
-    // this.orbitControl = new OrbitControl(root3dContainer, this.camera, this.scene, this.meshSphere, () => {
     this.orbitControl = new OrbitControl(this.renderer.domElement, this.camera, this.scene, this.mesh, () => {
-      if (true) {
-      //  if (this.checkFrameBufferMode === CHECK_MODE_RESULT_OK) {
         this.updateCutPlanes();
         this.updateLightDir();
-        //this.updateMeshSphere();
-      }
     });
-    //this.orbitControl.addCallbacks();
-
-    // tetra geometry seems to be unused!
-    // this.createTetraGeometry();
 
     this.renderer.gammaInput = true;
     this.renderer.gammaOutput = true;
@@ -191,45 +96,16 @@ export default class VolumeRenderer3d {
     this.renderState = this.RENDER_STATE.ENABLED;
     this.fps = 0;
     this.isoThreshold = 0.0;
-    /*root3dContainer.on('mousedown', (event) => {
-      const domElem = root3dContainer.get(0);
-      const box = domElem.getBoundingClientRect();
-      const containerX = event.clientX - box.left;
-      const containerY = event.clientY - box.top;
-      this.onMouseDown(containerX, this.windowHeight - containerY, event.ctrlKey);
-    });
-    root3dContainer.on('mouseup', () => { this.onMouseUp(); });
-    root3dContainer.on('mousemove', (event) => {
-      const domElem = root3dContainer.get(0);
-      const box = domElem.getBoundingClientRect();
-      const containerX = event.clientX - box.left;
-      const containerY = event.clientY - box.top;
-      this.onMouseMove(containerX, this.windowHeight - containerY, event.ctrlKey);
-    });
-    root3dContainer.on('DOMMouseScroll', (e) => { this.onMouseWheel(e); });
-    root3dContainer.on('mousewheel', (e) => { this.onMouseWheel(e); });*/
     this.isEraseMode = false;
     this.eraserRadius = 10;
-    this.eraserDepth = 20;
-    this.eraserSrart = false;
     this.lockEraserBuffersUpdating = false;
     this.eraserMouseDown = false;
-    this.m_eraser = null;
-
-    this.isSculptingMode = false;
-    this.sculptingCapturedVertex = null;
-    this.sculptingSphereCenter = new THREE.Vector3(0.0, 0.0, 0.0);
-    this.sculptingSphereSize = 1.0;
     this.vBoxVirt = {
       x: 1.0,
       y: 1.0,
       z: 1.0,
     };
 
-  }
-
-  setFileDataType(curFileDataType) {
-    this.curFileDataType = curFileDataType;
   }
 
   /**

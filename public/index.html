@@ -12,12 +12,24 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
     <title>Med3Web — Dicom 2D/3D browser</title>
+    <script src="libktx.js"></script>
+
   </head>
   <body>
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
     <div id="root"></div>
+    <canvas></canvas>
+
+    <script type="text/javascript">
+      LIBKTX({preinitializedWebGLContext: gl}).then(module => {
+        window.LIBKTX = module;
+        // Make existing WebGL context current for Emscripten OpenGL.
+        LIBKTX.GL.makeContextCurrent(LIBKTX.GL.createContext(null, { majorVersion: 2.0 }));
+        texture = loadTexture(gl, 'ktx_app.ktx2');
+      });
+    </script>
   </body>
 </html>
 
