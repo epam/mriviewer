@@ -20,8 +20,6 @@ import { ReactComponent as GetFileIcon } from "../icons/getfile.svg";
 import css from './UiOpenMenu.module.css';
 import { Context } from "../../context/Context";
 import { unzipGzip } from "./ungzip";
-import LoadResult from "./LoadResult";
-import { FileLoader } from "three";
 
 export const UiOpenMenu = () => {
   const fileInput = useRef(null)
