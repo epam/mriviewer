@@ -19,6 +19,7 @@
   "private": false,
   "dependencies": {
     "@tensorflow/tfjs": "^3.6.0",
+    "classnames": "^2.3.1",
     "daikon": "^1.2.42",
     "filereader-stream": "^2.0.0",
     "react": "^16.13.1",

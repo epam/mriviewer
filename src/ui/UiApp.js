@@ -17,6 +17,8 @@ import UiMain3dLight from "./UiMain3dLight";
 
 import Graphics2d from "../engine/Graphics2d";
 
+import { ButtonsDemo } from "./Button/ButtonsDemo";
+
 import css from "./UiApp.module.css";
 
 
@@ -38,12 +40,13 @@ export const UiApp = () => {
           <Logo/>
           <UiOpenMenu />
         </div>
-
+          {/* Uncomment for test */}
+          {/* <ButtonsDemo />*/}
         {{
           [ViewModes.VIEW_2D]: <Graphics2d/>,
           [ViewModes.VIEW_3D]: <UiMain3dLight/>,
           [ViewModes.VIEW_3D_LIGHT]: <UiMain3dLight/>,
-        }[context.viewMode]},
+        }[context.viewMode]}
       </>
   )
 }

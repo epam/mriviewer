@@ -33,6 +33,8 @@ code {
 
   /* Additional colors */
   --gray: #636666;
+  --dark-gray: #282A2D;
+  --light: #CBD2D2;
   --white: #fff;
 
   /* Page layout */
