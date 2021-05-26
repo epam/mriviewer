@@ -13,10 +13,10 @@ jobs:
         with: 
           persist-credentials: false
 
-      - name: Use Node.js 12
+      - name: Use Node.js 16
         uses: actions/setup-node@v1
         with:
-          node-version: 12.x
+          node-version: 16.x
 
       - name: Reconfigure git to use HTTP authentication
         run: >
@@ -33,6 +33,7 @@ jobs:
             ${{ runner.OS }}-
 
       - run: node --version
+      - run: npm --version
 
       - run: npm ci
 
