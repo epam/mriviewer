@@ -17,7 +17,6 @@ import LoadResult from './LoadResult';
 import FileTools from './FileTools';
 import LoadFilePromise from './LoadPromise';
 import { Volume } from '../../engine/Volume';
-import VolumeSet from '../../engine/VolumeSet';
 
 
 // ********************************************************
@@ -496,12 +495,6 @@ class LoaderHdr {
    * @param {*} callbackComplete - callback after end fo read
    */
   readFromUrls(arrUrls, volSet, callbackProgress, callbackComplete) {
-
-    // check arguments
-    console.assert(volSet != null, "Null volume set");
-    console.assert(volSet instanceof VolumeSet, "Should be volume set");
-    
-
     const numUrls = arrUrls.length;
     const NUM_URLS_IN_SET = 2;
     const NUM_FILES_VOL_INT_ROI = 4;

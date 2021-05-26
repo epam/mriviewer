@@ -2,15 +2,7 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-/**
-* Screen shot take from app
-* @module demo/engine/utils/screenshot
-*/
-// absolute imports
-/**
-* Class Screenshot to take screen copy
-* @class Screenshot
-*/
+
 class Screenshot {
   /**
   * Convert string into byte array

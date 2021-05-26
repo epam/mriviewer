@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import VolumeSet from '../../engine/VolumeSet';
 import LoadResult from './LoadResult';
 import FileTools from './FileTools';
 import FileLoaderSingleton from '../OpenFile/FileLoader';

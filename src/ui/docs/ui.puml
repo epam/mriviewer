@@ -1,0 +1,28 @@
+@startuml
+class UiButton {
+    icon
+    caption
+    handler
+    active
+    rounded
+    type = "button"
+    mode
+
+    render()
+}
+
+interface UiOpenLocalFile {
+    file
+    onFileLoad(arrayBuffer)
+}
+
+class LoaderKtx {
+}
+
+class Context {
+    volumeSet: [Volume]
+
+}
+
+
+@enduml

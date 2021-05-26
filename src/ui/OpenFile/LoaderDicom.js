@@ -1,22 +1,7 @@
 /*
- * Copyright 2021 EPAM Systems, Inc. (httpvolumeSet://www.epam.com/)
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-
-/**
- * @fileOverview LoaderDicom
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
-// import gdcm from 'gdcm-js';
-
-// import jpeg from 'jpeg-lossless-decoder-js';
 
 import LoadResult from './LoadResult';
 
@@ -31,7 +16,6 @@ import FileTools from './FileTools';
 import { FileLoader } from '../OpenFile/FileLoader';
 
 // import Volume from '../Volume';
-import VolumeSet from '../../engine/VolumeSet';
 import { Volume } from '../../engine/Volume';
 
 // ********************************************************
@@ -263,12 +247,6 @@ class LoaderDicom{
    * @return {LoadResult} LoadResult.SUCCESS if success
    */
  createVolumeFromSlices(volSet, indexSelected, hashSelected) {
-  // check arguments
-  console.assert(volSet != null, "Null volume");
-  console.assert(volSet instanceof VolumeSet, "Should be volume set");
-  console.assert(typeof(indexSelected) === "number", "index should be number");
-  console.assert(typeof(hashSelected) === "number", "index should be number");
-
   let volDst = null;
   if (indexSelected < volSet.getNumVolumes()) {
     volDst = volSet.getVolume(indexSelected);
@@ -1865,15 +1843,6 @@ class LoaderDicom{
   } // end readFromBuffer
 
   readFromUrl(volSet, strUrl, callbackProgress, callbackComplete) {
-    // check arguments
-    console.assert(volSet != null, "Null volume");
-    console.assert(volSet instanceof VolumeSet, "Should be volume set");
-    console.assert(strUrl != null, "Null string url");
-    
-    // console.log(`typeof(strUrl) - ${typeof(strUrl)}`);
-    console.assert(typeof(strUrl) === 'string', "Should be string in url");
-    
-    // replace file name to 'file_list.txt'
     const ft = new FileTools();
     const isValidUrl = ft.isValidUrl(strUrl);
     if (!isValidUrl) {
@@ -1894,12 +1863,6 @@ class LoaderDicom{
     return true;
   }
   readReadyFileList(volSet, arrBuf, callbackProgress, callbackComplete) {
-    // check arguments
-    console.assert(volSet != null, "Null volume");
-    console.assert(volSet instanceof VolumeSet, "Should be volume set");
-    console.assert(arrBuf != null, "Null array");
-    console.assert(arrBuf.constructor.name === "ArrayBuffer", "Should be ArrayBuf in arrBuf");
-
     const uint8Arr = new Uint8Array(arrBuf);
     // const strFileContent = new TextDecoder('utf-8').decode(uint8Arr);
     const strFileContent = String.fromCharCode.apply(null, uint8Arr);

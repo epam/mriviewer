@@ -8,22 +8,6 @@ import UiHistogram from '../UiHistogram';
 class LoaderNifti {
   constructor() {
     this.m_littleEndian = true;
-    this.m_header = {
-      m_id: '',
-      m_endianness: 0,
-      m_glType: 0,
-      m_glTypeSize: 0,
-      m_glFormat: 0,
-      m_glInternalFormat: 0,
-      m_glBaseInternalFormat: 0,
-      m_pixelWidth: 0,
-      m_pixelHeight: 0,
-      m_pixelDepth: 0,
-      m_numberOfArrayElements: 0,
-      m_numberOfFaces: 0,
-      m_numberOfMipmapLevels: 0,
-      m_bytesOfKeyValueData: 0
-    };
     this.m_xDim = 0;
     this.m_yDim = 0;
     this.m_zDim = 0;

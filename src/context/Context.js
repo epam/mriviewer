@@ -2,9 +2,7 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-import ViewModes from "../store/ViewModes";
 import { createContext } from "react";
-import { Volume } from "../engine/Volume";
 
 export const initialContext = {
   alert: {},
@@ -13,10 +11,20 @@ export const initialContext = {
     text: '',
     value: 0,
   },
-  volumeSet: [new Volume()],
+  volumeSet: [],
+  volSetInfo: {},
+  volumeIndex: 0,
   texture3d: {},
   arrErrors: [],
-  viewMode: ViewModes.VIEW_2D
+  viewMode: '2D',
+  render2dZoom: 0,
+  render2dyPos: 0,
+  render2dxPos: 0,
+  slider2d: 0,
+
+  ff: {
+    NEED_TEST_RAINBOW: true,
+  }
 }
 
 export const Context = createContext({ ...initialContext });

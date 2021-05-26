@@ -7,13 +7,12 @@ import React, { useContext, useEffect } from 'react';
 
 import { ReactComponent as Logo } from './icons/logo.svg'
 
-import ViewModes from "../store/ViewModes";
 import { Context } from "../context/Context";
 import { validateBrowser } from "../utils";
 
 import UIProgressBar from "./ProgressBar/UIProgressBar";
 import { UiOpenMenu } from "./OpenFile/UiOpenMenu";
-import UiMain3dLight from "./UiMain3dLight";
+// import UiMain3dLight from "./UiMain3dLight";
 
 import Graphics2d from "../engine/Graphics2d";
 
@@ -41,11 +40,11 @@ export const UiApp = () => {
           <UiOpenMenu />
         </div>
           {/* Uncomment for test */}
-          {/* <ButtonsDemo />*/}
+           <ButtonsDemo />
         {{
-          [ViewModes.VIEW_2D]: <Graphics2d/>,
-          [ViewModes.VIEW_3D]: <UiMain3dLight/>,
-          [ViewModes.VIEW_3D_LIGHT]: <UiMain3dLight/>,
+          '2D': <Graphics2d/>,
+          // [ViewModes.VIEW_3D]: <UiMain3dLight/>,
+          // [ViewModes.VIEW_3D_LIGHT]: <UiMain3dLight/>,
         }[context.viewMode]}
       </>
   )

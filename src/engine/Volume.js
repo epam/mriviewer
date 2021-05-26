@@ -6,13 +6,14 @@
 export const VOLUME_ICON_SIDE = 64;
 
 export class Volume {
-  constructor() {
+  constructor(arrayBuffer = null) {
     this.m_xDim = 0;
     this.m_yDim = 0;
     this.m_zDim = 0;
-    this.m_bytesPerVoxel = 0;
-    this.m_dataArray = null;
+    this.m_dataArray = arrayBuffer;
     this.m_dataSize = 0;
+
+    this.m_bytesPerVoxel = 0;
     this.m_boxSize = {
       x: 0.0, y: 0.0, z: 0.0
     };

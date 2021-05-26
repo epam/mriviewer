@@ -48,3 +48,11 @@ code {
 button svg {
   cursor: pointer;
 }
+
+canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -9999;
+  max-width: calc(100vw - 1px);
+}
