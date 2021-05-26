@@ -39,7 +39,6 @@ export const UiApp = () => {
           <Logo/>
           <UiOpenMenu />
         </div>
-          {/* Uncomment for test */}
            <ButtonsDemo />
         {{
           '2D': <Graphics2d/>,

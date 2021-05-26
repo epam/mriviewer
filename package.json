@@ -18,6 +18,7 @@
   "homepage": "https://med3web.opensource.epam.com/",
   "private": false,
   "dependencies": {
+    "@babel/core": "7.14.3",
     "@tensorflow/tfjs": "^3.6.0",
     "classnames": "^2.3.1",
     "daikon": "^1.2.42",
@@ -25,8 +26,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-nouislider": "^2.0.1",
-    "react-scripts": "^1.1.5",
-    "seedrandom": "^2.4.4",
+    "react-scripts": "^4.0.3",
     "three": "0.101.1",
     "zlib": "1.x.x"
   },
