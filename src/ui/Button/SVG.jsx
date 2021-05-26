@@ -6,7 +6,7 @@
 import React from "react";
 
 const DEFAULT_FILL = "#ffffff";
-const DEFAULT_SIZE = 24
+const DEFAULT_SIZE = 24;
 
 
 export const SVG = ({ name, fill = DEFAULT_FILL, size = DEFAULT_SIZE, title }) => {

@@ -12,10 +12,11 @@ import css from "./Button.module.css";
 
 
 export const UIButton = ({ icon, caption, handler, active, rounded, type = "button", mode }) => {
+    const modeStyle = (mode === "light" && css.light) ||  (mode === "accent" && css.accent)
     return (
         <button
             type={type}
-            className={ cx(css.button, active && css.active, rounded && css.rounded, mode === "light" && css.light, mode === "accent" && css.accent) }
+            className={ cx(css.button, active && css.active, rounded && css.rounded, modeStyle) }
             onClick={ handler }
         >
             { icon ? <SVG name={ icon } title={ caption }/> : caption }
