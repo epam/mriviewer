@@ -26,6 +26,7 @@
     "react-dom": "^16.13.1",
     "react-nouislider": "^2.0.1",
     "react-scripts": "^4.0.3",
+    "seedrandom": "^2.4.4",
     "three": "0.101.1",
     "zlib": "1.x.x"
   },
