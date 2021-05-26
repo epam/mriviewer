@@ -285,6 +285,7 @@ const Graphics2d = props => {
             } // end if 4 bpp
         }
         (new Segm2d()).setImageData(localImgData);
+        return localImgData;
     }
 
     const renderTextInfo = (volSet, vol) => {
@@ -349,7 +350,12 @@ const Graphics2d = props => {
         }
     }
 
-    const renderReadyImage = () => {
+    const renderReadyImage = (imgData) => {
+        const objCanvas = canvasRef.current;
+        if (objCanvas === null) {
+            return;
+        }
+        const ctx = objCanvas.getContext('2d');
         const volSet = context.volumeSet;
         if (volSet.length === 0) {
             return;
@@ -360,11 +366,11 @@ const Graphics2d = props => {
         }
 
         renderTextInfo(volSet, vol);
+        ctx.putImageData(imgData, 0, 0);
     }
 
     useEffect(() => {
-        prepareImageForRender();
-        renderReadyImage();
+        renderReadyImage(prepareImageForRender());
     })
 
 
