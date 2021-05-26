@@ -25,9 +25,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-nouislider": "^2.0.1",
-    "react-redux": "7.x.x",
-    "react-scripts": "2.x.x",
-    "redux": "^4.0.5",
+    "react-scripts": "^4.0.3",
     "three": "0.101.1",
     "zlib": "1.x.x"
   },

@@ -212,14 +212,6 @@ export const LoadKtxFromBuffer = (arrBuf) => {
     // read image data size
     const m_dataSize = readInt(bufBytes, bufOff);
     bufOff += SIZE_DWORD;
-    const dataSizeCalculated =
-        m_header.m_pixelWidth *
-        m_header.m_pixelHeight *
-        m_header.m_pixelDepth * bytesPerVoxel;
-    if (m_dataSize !== dataSizeCalculated) {
-        console.log('!!! not implemented yet');
-        return LoadResult.WRONG_HEADER_DATA_SIZE;
-    }
     const m_dataArray = new Uint8Array(m_dataSize);
     // get power of 2 for data size
     let pwr2;
