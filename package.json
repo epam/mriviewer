@@ -22,9 +22,7 @@
     "bootstrap": "^4.5.0",
     "daikon": "^1.2.42",
     "filereader-stream": "^2.0.0",
-    "gulp": "^4.0.2",
     "jquery": "^3.5.1",
-    "node-gzip": "^1.1.2",
     "popper.js": "^1.16.1",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
@@ -55,13 +53,8 @@
   ],
   "devDependencies": {
     "canvas": "^2.6.1",
-    "esdoc": "^1.1.0",
-    "esdoc-ecmascript-proposal-plugin": "^1.0.0",
-    "esdoc-react-plugin": "^1.0.1",
-    "esdoc-standard-plugin": "^1.0.0",
-    "eslint": "^5.16.0",
-    "eslint-plugin-react": "^7.20.0",
-    "node-pre-gyp": "^0.14.0"
+    "eslint-plugin-react": "7.x.x",
+    "husky": "^6.0.0"
   },
   "engines": {
     "node": ">=12.16.1",
