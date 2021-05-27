@@ -21,6 +21,7 @@
     "@tensorflow/tfjs": "^1.7.4",
     "bootstrap": "^4.5.0",
     "daikon": "^1.2.42",
+    "eslint": "^7.27.0",
     "filereader-stream": "^2.0.0",
     "jquery": "^3.5.1",
     "popper.js": "^1.16.1",
@@ -40,7 +41,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "lint": "eslint src/**/*.js",
-    "doc": "esdoc -c esdoc.json"
+    "docker": "npm run build && docker run --name med3web -v ./build:/usr/share/nginx/html:ro -d -p 8080:80 nginx",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.js": "npm run lint"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -54,7 +59,8 @@
   "devDependencies": {
     "canvas": "^2.6.1",
     "eslint-plugin-react": "7.x.x",
-    "husky": "^6.0.0"
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0"
   },
   "engines": {
     "node": ">=12.16.1",
