@@ -37,6 +37,7 @@ class Screenshot {
     }
     return bytes.buffer;
   }
+
   /**
   * Encode byte buffer into base64
   */
@@ -48,6 +49,7 @@ class Screenshot {
     }
     return window.btoa(binary);
   }
+
   /**
   * Convert data URI to blob (for further save)
   */
@@ -61,6 +63,7 @@ class Screenshot {
     }
     return null;
   }
+
   /**
   * Open new browser window and display screenshot in it
   */
@@ -70,6 +73,7 @@ class Screenshot {
     const win = window.open('about:blank', 'Screenshot', 'width=800,height=600');
     win.document.write(`<body style="margin:0"><img src="${imageUri}" alt="from canvas" /></body>`);
   }
+
   /**
   * Save screenshot in file
   */
@@ -89,6 +93,7 @@ class Screenshot {
       document.body.removeChild(lnk);
     }
   }
+
   /**
   * Format value as a text with 2 digits. '2' -> '02', '34' -> '34'
   */
@@ -99,6 +104,7 @@ class Screenshot {
     }
     return `0${val}`;
   }
+
   /**
   * Get current date + time in format YYMMDD-HHMMSS
   */
@@ -113,6 +119,7 @@ class Screenshot {
     const strDate = `${yy}${mn}${dd}-${hh}${mi}${ss}`;
     return strDate;
   }
+
   /**
   * Get screenshot
   */

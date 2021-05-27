@@ -51,6 +51,7 @@ class TransfFunc {
       console.log(`Wrong array this.m_handleColors: ${this.m_handleColors.length} !== ${this.m_numHandles}`);
     }
   } // end constructor
+
   render(ctx, xMin, yMin, wScreen, hScreen) {
 
     this.m_xMin = xMin;
@@ -106,6 +107,7 @@ class TransfFunc {
     } // for (i) all handle points
 
   } // end render
+
   onMouseDown(xScr, yScr) {
     for (let i = 0; i < this.m_numHandles; i++) {
       const dx = xScr - this.m_proj[i].x;
@@ -120,6 +122,7 @@ class TransfFunc {
     }
     return false;
   }
+
   /**
    * on mouse up even t handler
    * 
@@ -130,6 +133,7 @@ class TransfFunc {
     this.m_mouseDown = false;
     return false;
   }
+
   onMouseMove(xScr, yScr) {
     if (this.m_mouseDown) {
       const isBorderPoint = (this.m_indexMoved === 0) || (this.m_indexMoved === this.m_numHandles - 1);

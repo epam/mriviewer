@@ -51,6 +51,7 @@ class Volume extends React.Component {
     this.m_yIcon = 0;
     this.m_dataIcon = null;
   }
+
   createEmptyBytesVolume(xDim, yDim, zDim) {
     this.m_xDim = xDim;
     this.m_yDim = yDim;
@@ -66,6 +67,7 @@ class Volume extends React.Component {
       this.m_dataArray[i] = 0;
     }
   }
+
   // Create icon for volume
   createIcon() {
     console.assert(this.m_xDim > 0);
@@ -104,6 +106,7 @@ class Volume extends React.Component {
       } // for xDst
     } // for yDst
   } // end createIcon
+
   //
   // Make each volume texture size equal to 4 * N
   //
@@ -183,6 +186,7 @@ class Volume extends React.Component {
     this.m_dataArray = datArrayNew;
     this.m_dataSize = xyzDimNew;
   } // end
+
   // do nothing. But we need to implement render() to run Volume tests
   render() {
     return <p>></p>;

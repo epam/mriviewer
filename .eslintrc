@@ -23,7 +23,6 @@
         "react/prefer-es6-class" : [2],
         "linebreak-style": "off",
         "no-unused-vars": ["error"],
-        "indent": ["error", 2],
         "no-alert": "off",
         "no-underscore-dangle": "off",
         "vars-on-top": "off",
@@ -58,6 +57,6 @@
         "no-bitwise": "off",
         "no-plusplus": "off",
         "no-multi-assign": "off",
-        "lines-between-class-members": ["error", "never"]
+        "lines-between-class-members": ["error", "always"]
     }
 }

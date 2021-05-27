@@ -36,26 +36,32 @@ export default class Text2D extends THREE.Object3D {
     this.m_antialias = true;
     this.m_text = strText;
   }
+
   getText() {
     return this.m_text;
   }
+
   setText(val) {
     if (this.m_text !== val) {
       this.m_text = val;
       this.updateText();
     }
   }
+
   getFont() {
     return this.m_font;
   }
+
   updateText() {
     console.log(`Use virtual method for ${this.m_text}`);
   }
+
   cleanUp() {
     if (this.texture) {
       this.texture.dispose();
     }
   }
+
   applyAntiAlias() {
     if (this.antialias === false) {
       this.texture.magFilter = THREE.NearestFilter;

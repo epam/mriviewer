@@ -38,9 +38,11 @@ class UiModalDicomTags extends React.Component {
       currentSlice: 0,
     };
   }
+
   onModalHide() {
     this.setState({ showModalDemo: false });
   }
+
   onSelectSlice(evt) {
     // const nam = evt.target.name;
     const val = evt.target.value;
@@ -50,6 +52,7 @@ class UiModalDicomTags extends React.Component {
     console.log(`onSelectSlice. index = ${ind}`);
     this.setState({ currentSlice: ind });
   }
+
   render() {
     const stateVis = this.props.stateVis;
     const onHideFunc = this.props.onHide;

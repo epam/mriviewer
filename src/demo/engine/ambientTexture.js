@@ -18,6 +18,7 @@ export default class AmbientTexture {
     this.texVolumeAO = null;
     this.vectorsTex = null;
   }
+
   _setAOVectorTex() {
     const VAL_4 = 4;
     const VAL_255 = 255;
@@ -47,6 +48,7 @@ export default class AmbientTexture {
     this.vectorsTex.minFilter = THREE.NearestFilter;
     this.vectorsTex.needsUpdate = true;
   }
+
   set(texVolume, isoThreshold) {
     if (this.vectorsTex === null) {
       this._setAOVectorTex();
@@ -88,6 +90,7 @@ export default class AmbientTexture {
       this.texVolumeAO.needsUpdate = true;
     });
   }
+
   setAmbientTextureWebGL2() {
     const VAL_4 = 4;
     const frameBuf = new Uint8Array(VAL_4 * this.xDimAO * this.yDimAO);
@@ -110,6 +113,7 @@ export default class AmbientTexture {
     }
     console.log('AO WebGL2 End');
   }
+
   get() {
     return this.texVolumeAO;
   }

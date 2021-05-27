@@ -53,6 +53,7 @@ export default class LaplasianSmoother {
   constructor() {
     this.m_vertNeib = null;
   }
+
   performSmoothStep(numVertices, vertSrc4, numTriangles, triIndices, vertDst) {
     // allocate memory for each vertex neighbours
     if (this.m_vertNeib === null) {
@@ -133,6 +134,7 @@ export default class LaplasianSmoother {
     }
     return 1;
   }
+
   getVerticesNeighbours(numVertices, vertSrc4, numTriangles, triIndices) {
     const NUM_ELLEMS = LAPSMOOTH_NUM_NEIBS * numVertices;
     let i, j;
@@ -155,6 +157,7 @@ export default class LaplasianSmoother {
       this.addNeib(indC, indB);
     }
   } // of getVerticesNeighbours
+
   addNeib(indFrom, indTo) {
     const idx = indFrom * LAPSMOOTH_NUM_NEIBS;
     let i;

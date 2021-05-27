@@ -33,6 +33,7 @@ export default class LungsFillTool {
     this.m_volTexMask2 = new Uint8Array(this.m_xDim * this.m_yDim * this.m_zDim);
     this.m_ratioUpdate = 0;
   }
+
   detectNonEmptyBox(pixelsSrc, xDim, yDim, zDim) {
     const MIN_VAL_BARRIER = 8;
     const TWICE = 2;
@@ -97,6 +98,7 @@ export default class LungsFillTool {
       this.yBorderMax = y + 1;
     }
   }
+
   delatation() {
     let x, y, z;
     let x1, y1, z1;
@@ -130,6 +132,7 @@ export default class LungsFillTool {
       }
     }
   }
+
   erosion() {
     let x, y, z;
     let x1, y1, z1;
@@ -164,6 +167,7 @@ export default class LungsFillTool {
       }
     }
   }
+
   run() {
     const xyzDim = this.m_xDim * this.m_yDim * this.m_zDim;
     const VIS = 255;

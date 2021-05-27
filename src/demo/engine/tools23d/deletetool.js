@@ -82,6 +82,7 @@ export default class DeleteTool {
     this.isPointsExist = false;
     this.isOut = false;
   }
+
   /**
    * Remove all distance lines from scene
    */
@@ -96,6 +97,7 @@ export default class DeleteTool {
     this.m_runningState = false;
     this.m_vertexes = [];
   }
+
   /**
    * Redraw all lines
    */
@@ -120,12 +122,14 @@ export default class DeleteTool {
       this.m_scene.add(this.m_distances[i].text);
     }
   }
+
   /**
    * Update zoom
    */
   updateZoom(zoom) {
     this.m_zoom = zoom;
   }
+
   /**
    * Set pixel size in mm
    * @param (float) xPixelSize - canvas pixel size in mm for x axis
@@ -135,6 +139,7 @@ export default class DeleteTool {
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }
+
   /**
    * Return running state
    * @return {boolean} True if last line has not been fixed yet
@@ -142,6 +147,7 @@ export default class DeleteTool {
   isRunning() {
     return this.m_runningState;
   }
+
   /**
    * Delete checked line
    * @param (Array) distancesV - array of all distances
@@ -166,6 +172,7 @@ export default class DeleteTool {
       //}
     }
   }
+
   /**
    * Delete checked angle
    * @param (Array) anglesA- array of all angles
@@ -191,6 +198,7 @@ export default class DeleteTool {
       //}
     }
   }
+
   /**
    * Delete checked rectangle
    * @param (Array) rectR- array of all rectangles
@@ -216,6 +224,7 @@ export default class DeleteTool {
       console.log(`${this.m_point.length}`);
     }
   }
+
   /**
    * Delete checked polygon
    * @param (Array) areaLL - array of last lengths
@@ -267,6 +276,7 @@ export default class DeleteTool {
       console.log(`${this.m_point.length}`);
     }
   }
+
   /**
    * Delete checked text
    * @param (Array) textT - array of all text elements
@@ -286,6 +296,7 @@ export default class DeleteTool {
       console.log(`${this.m_point.length}`);
     }
   }
+
   /**
    * Mouse down events handler
    * @param (float) x - mouse x coordinate
@@ -300,6 +311,7 @@ export default class DeleteTool {
     this.deleteText(textT, vertexesT);
     this.freeArrays();
   }
+
   /**
    * Mouse move events handler
    * @param (float) x - mouse x coordinate
@@ -365,6 +377,7 @@ export default class DeleteTool {
       this.isOut = true;
     }
   }
+
   processingLine(l, x, y, i, type) {
     /*console.log('PREPARE TO DESTRUCTION');
     console.log("kek");
@@ -410,6 +423,7 @@ export default class DeleteTool {
       this.isOut = true;
     }
   }
+
   processingText(mesh, x, y, i) {
     if (mesh.m_xMin <= x && x <= mesh.m_xMax && mesh.m_yMin <= y && y <= mesh.m_yMax) {
       if (!this.isPointsExist) {
@@ -431,6 +445,7 @@ export default class DeleteTool {
       this.isOut = true;
     }
   }
+
   deletePoints() {
     console.log('delete');
     for (let j = 0; j < this.m_point.length; ++j) {
@@ -440,6 +455,7 @@ export default class DeleteTool {
       console.log(`${this.m_point.length}`);
     }
   }
+
   freeArrays() {
     this.m_checkedRects = [];
     this.m_checkedLines = [];

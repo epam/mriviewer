@@ -50,18 +50,22 @@ export default class UiHistogram extends React.Component {
       height: DEFAULT_HEIGHT,
     };
   }
+
   componentDidMount() {
     this.updateCanvas();
     window.addEventListener('resize', this.handleResize, false);
     this.setSize();    
   }
+
   componentDidUpdate() {
     this.updateCanvas();
     window.removeEventListener('resize', this.handleResize, false);
   }
+
   handleResize() {
     this.setSize();
   }
+
   setSize() {
     const objOwner = this.m_canvasOwner;
     if (objOwner !== null) {
@@ -72,6 +76,7 @@ export default class UiHistogram extends React.Component {
       this.setState({ height: h });
     }
   }
+
   getVolumeHistogram(vol) {
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
@@ -104,10 +109,12 @@ export default class UiHistogram extends React.Component {
     this.smoothHistogram();
     this.getMaxPeak();
   }
+
   assignArray(numColors, histogramArray) {
     this.m_numColors = numColors;
     this.m_histogram = histogramArray;
   }
+
   getLastMaxIndex(valMin = 0.0) {
     const IND_MIN = 4;
     let i;
@@ -128,6 +135,7 @@ export default class UiHistogram extends React.Component {
     return i;
 
   } // end get last max index
+
   //
   //
   getMaxPeak() {
@@ -149,6 +157,7 @@ export default class UiHistogram extends React.Component {
       } // if (ha slocal peak)
     } // for (all colors to scan) 
   }
+
   smoothHistogram(sigma = 1.2, needNormalize = true) {
     const SIZE_DIV = 60;
     let RAD = Math.floor(this.m_numColors / SIZE_DIV);
@@ -191,6 +200,7 @@ export default class UiHistogram extends React.Component {
       } // for (i)
     }
   } // smoothHistogram
+
   onMouseDown(evt) {
     if ((this.m_transfFuncCallback === undefined) ||
       (this.m_transfFuncUpdateCallback === undefined)) {
@@ -204,6 +214,7 @@ export default class UiHistogram extends React.Component {
       this.forceRender();
     }
   }
+
   onMouseUp(evt) {
     if ((this.m_transfFuncCallback === undefined) ||
       (this.m_transfFuncUpdateCallback === undefined)) {
@@ -217,6 +228,7 @@ export default class UiHistogram extends React.Component {
       this.forceRender();
     }
   }
+
   onMouseMove(evt) {
     if ((this.m_transfFuncCallback === undefined) ||
       (this.m_transfFuncUpdateCallback === undefined)) {
@@ -230,6 +242,7 @@ export default class UiHistogram extends React.Component {
       this.forceRender();
     }
   }
+
   updateCanvas() {
     if (this.refs.canvasHistogram === undefined) {
       return;
@@ -361,12 +374,14 @@ export default class UiHistogram extends React.Component {
       this.m_transfFunc.render(ctx, xMin, yMin, wRect, hRect);
     }
   } // end update canvas
+
   forceRender() {
     this.setState({ state: this.state });
     if (this.m_transfFuncCallback !== undefined) {
       this.m_transfFuncCallback(this.m_transfFunc);
     }
   }
+
   /**
    * Main component render func callback
    */
@@ -392,4 +407,3 @@ export default class UiHistogram extends React.Component {
     return jsxHist;
   }
 }
- 

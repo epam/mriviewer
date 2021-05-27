@@ -30,10 +30,12 @@ class ToolDistance {
     this.m_xPixelSize = 0;
     this.m_yPixelSize = 0;
   }
+
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
   }
+
   /**
    * 
    * @param {number} xs - world units hor / volume pixels (x)
@@ -43,6 +45,7 @@ class ToolDistance {
     this.m_xPixelSize = xs;
     this.m_yPixelSize = ys;
   }
+
   /**
    * Determine intersection with points in lines set.
    * Input - screen coordinates of pick point
@@ -69,6 +72,7 @@ class ToolDistance {
     }
     return null;
   }
+
   /**
    * Move edited point into new pos
    * 
@@ -81,6 +85,7 @@ class ToolDistance {
     // update line len
     this.m_objEdit.distMm = this.getDistMm(this.m_objEdit.vs, this.m_objEdit.ve);
   }
+
   /**
    * Remove highlighted object
    */
@@ -92,6 +97,7 @@ class ToolDistance {
       }
     }
   }
+
   static screenToTexture(xScr, yScr, wScr, hScr, store) {
     const xRel = xScr / wScr;
     const yRel = yScr / hScr;
@@ -130,6 +136,7 @@ class ToolDistance {
     }
     return vTex;
   }
+
   static textureToScreen(xTex, yTex, wScr, hScr, store) {
     const vScr = {
       x: 0.0,
@@ -163,6 +170,7 @@ class ToolDistance {
     vScr.y *= hScr;
     return vScr;
   }
+
   getDistMm(vs, ve) {
     const dx = vs.x - ve.x;
     const dy = vs.y - ve.y;
@@ -170,6 +178,7 @@ class ToolDistance {
       dy * dy * this.m_yPixelSize * this.m_yPixelSize);
     return dist;
   }
+
   onMouseDown(xScr, yScr, store) {
     const vTex = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
     const vStart = {
@@ -190,6 +199,7 @@ class ToolDistance {
     // this.m_pointStart = v;
     // console.log(`onMouseDown: ${xScr}, ${yScr}`);
   }
+
   onMouseMove(xScr, yScr, store) {
     if (!this.m_mouseDown) {
       return;
@@ -212,6 +222,7 @@ class ToolDistance {
       } // if last line is long enough
     } // if num lines more 0
   }
+
   onMouseUp() { // omitted args: xScr, yScr, store
     this.m_mouseDown = false;
     const numLines = this.m_lines.length;
@@ -227,9 +238,11 @@ class ToolDistance {
     } // if num lines more 0
 
   }
+
   clear() {
     this.m_lines = [];
   }
+
   //
   // render lines on screen
   // 

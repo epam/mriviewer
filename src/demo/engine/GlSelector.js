@@ -31,6 +31,7 @@ export default class GlSelector {
   constructor() {
     this.m_useWebGL2 = undefined;
   }
+
   /** Create compatible canvas
    *
    */
@@ -47,10 +48,12 @@ export default class GlSelector {
     }
     return context;
   }
+
   /** return canvas */
   getCanvas() {
     return this.canvas;
   }
+
   /** Create compatible canvas
    *
    */

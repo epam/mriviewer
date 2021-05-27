@@ -30,16 +30,19 @@ class UiCtrl3d extends React.Component {
     this.transferFuncCallback = this.transferFuncCallback.bind(this);
     this.m_updateEnable = true;
   }
+
   onChangeSliderOpacity() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderOpacity.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, sliderOpacity: Number.parseFloat(aval) });
   }
+
   shouldComponentUpdate() {
     return this.m_updateEnable;
     //return true;
   }
+
   transferFuncCallback(transfFuncObj) {
     const i = transfFuncObj.m_indexMoved;
     const x = transfFuncObj.m_handleX[i];
@@ -48,6 +51,7 @@ class UiCtrl3d extends React.Component {
     const vr = this.props.volumeRenderer;
     vr.updateTransferFuncTexture(transfFuncObj.m_handleX, transfFuncObj.m_handleY);
   }
+
   /**
    * Main component render func callback
    */

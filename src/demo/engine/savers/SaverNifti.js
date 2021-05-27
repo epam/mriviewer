@@ -21,20 +21,24 @@ class SaverNifti {
     const dataArray = new DataView(buf, off);
     dataArray.setInt32(0, val, IS_LITTLE_ENDIAN);
   }
+
   static writeShortToBuffer(val, buf, off) {
     const dataArray = new DataView(buf, off);
     dataArray.setInt16(0, val, IS_LITTLE_ENDIAN);
   }
+
   static writeFloatToBuffer(val, buf, off) {
     const dataArray = new DataView(buf, off);
     dataArray.setFloat32(0, val, IS_LITTLE_ENDIAN);
   }
+
   static fpsToDimInfo(freq, phase, slice) {
     const res = (freq & 0x3) | 
       ((phase & 0x3) << 2) |
       ((slice & 0x3) << 4);
     return res;
   }
+
   /**
   * Write nifti file data to buffer array
   * @param {object} volumeData - array of intensities (uint8)

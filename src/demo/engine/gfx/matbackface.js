@@ -41,6 +41,7 @@ export default class MaterialBF {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
   }
+
   /** Backface material constructor
   * @return {object} Three.js material with this shader
   */

@@ -53,10 +53,12 @@ export default class FloodFill {
     this.m_indexStack3d = 0;
     this.m_numFilled3d = 0;
   }
+
   static isVisible(pixels, offset, threshold) {
     const VIS = 255;
     return (pixels[offset] <= threshold) ? 0 : VIS;
   }
+
   floodFill3dThreshold(xDim, yDim,  zDim, pixelsDst, vSeed, threshold) {
     const xyDim = xDim * yDim;
     const stack = [];

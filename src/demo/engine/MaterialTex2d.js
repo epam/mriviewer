@@ -205,6 +205,7 @@ export default class MaterialTex2d  {
       } // end of main
     `;
   } // end construrot
+
   /** Create material for 2d texture display
   * @param {object} tex - texture with 2d layout of 3d source
   * @param {int} xDim - 3d texture dimension on x

@@ -39,27 +39,33 @@ class UiModalSaveNifti extends React.Component {
       text: 'dump'
     };
   } // end constr
+
   onButtonSave() {
     // console.log('on button save');
     this.m_hideFunc();
     this.onSaveNifti();
   }
+
   onModalShow() {
     this.setState({ showModalSaveNifti: true });
   }
+
   onModalHide() {
     this.setState({ showModalSaveNifti: false });
   }
+
   handleFormSubmit(evt) {
     evt.preventDefault();
     this.m_hideFunc();
     this.onSaveNifti();
   }
+
   onTexChange(evt) {
     const strText = evt.target.value;
     // console.log(`onTexChange. text = ${strText}`);
     this.setState({ text: strText });
   }
+
   // invoked on save nifti file format
   onSaveNifti() {
     const store = this.props;
@@ -108,6 +114,7 @@ class UiModalSaveNifti extends React.Component {
 
     downloadLink.click();
   } // end on save nifti
+
   render() {
     const stateVis = this.props.stateVis;
     const onHideFunc = this.props.onHide;

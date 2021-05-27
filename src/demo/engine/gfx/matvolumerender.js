@@ -80,6 +80,7 @@ export default class MaterialVolumeRender {
       useWebGL2: 1,
     };
   }
+
   /** Simple material constructor
   * @return {object} Three.js material with this shader
   */

@@ -45,14 +45,17 @@ class ToolAngle {
     this.onMouseMove = this.onMouseMove.bind(this);
     this.render = this.render.bind(this);
   }
+
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
   }
+
   setPixelSize(xs, ys) {
     this.m_xPixelSize = xs;
     this.m_yPixelSize = ys;
   }
+
   /**
    * Determine intersection with points in lines set.
    * Input - screen coordinates of pick point
@@ -84,12 +87,14 @@ class ToolAngle {
     }
     return null;
   }
+
   moveEditPoint(vVolOld, vVolNew) {
     vVolOld.x = vVolNew.x;
     vVolOld.y = vVolNew.y;
     // update angle dist
     this.getAngleForObj(this.m_objEdit);
-  }    
+  }
+    
   /**
    * Remove highlighted object
    */
@@ -101,6 +106,7 @@ class ToolAngle {
       }
     }
   }
+
   getDistMm(vs, ve) {
     const dx = vs.x - ve.x;
     const dy = vs.y - ve.y;
@@ -108,6 +114,7 @@ class ToolAngle {
       dy * dy * this.m_yPixelSize * this.m_yPixelSize);
     return dist;
   }
+
   getAngleForObj(objAngle) {
     for (let i = 0; i < 3; i++) {
       this.m_points[i].x = objAngle.points[i].x;
@@ -116,6 +123,7 @@ class ToolAngle {
     const ang = this.getAngle();
     objAngle.angle = ang;
   }
+
   getAngle() {
     const v1x = this.m_points[1].x - this.m_points[0].x;
     const v1y = this.m_points[1].y - this.m_points[0].y;
@@ -138,6 +146,7 @@ class ToolAngle {
     const ang = Math.acos(cosAlp) * M_180 / M_PI;
     return ang;
   }
+
   onMouseDown(xScr, yScr, store) {
     const vTex = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
     if (this.m_numClicks === 0) {
@@ -177,6 +186,7 @@ class ToolAngle {
       this.m_numClicks = 0;
     }
   }
+
   onMouseMove(xScr, yScr, store) {
     if (this.m_numClicks === 0) {
       return;
@@ -192,12 +202,15 @@ class ToolAngle {
     // invoke redraw
     this.m_objGraphics2d.forceUpdate();
   }
+
   onMouseUp() { // ommited args: xScr, yScr, store
   }
+
   clear() {
     this.m_angles = [];
     this.m_numClicks = 0;
   }
+
   //
   // render lines on screen
   // 

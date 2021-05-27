@@ -55,6 +55,7 @@ class UiFilterMenu extends React.Component {
 
     //this.callbackProgressFun = this.callbackProgressFun.bind(this);
   }
+
   /*
   callbackProgressFun(ratio01) {
     // console.log(`callbackReadProgress = ${ratio01}`);
@@ -106,6 +107,7 @@ class UiFilterMenu extends React.Component {
     this.m_timerId = setTimeout(this.onLungsFillerCallback, SK_REM_DELAY_MSEC);
     //store.volumeRenderer.volumeUpdater.createUpdatableVolumeTex(store.volume, false, null);
   }
+
   onLungsFillerCallback() {
     const store = this.props;
     const ratioUpdate = this.lungsFiller.m_ratioUpdate;
@@ -130,6 +132,7 @@ class UiFilterMenu extends React.Component {
       this.m_timerId = setTimeout(this.onLungsFillerCallback, SK_REM_DELAY_MSEC);
     }
   }
+
   // on sobel
   onButtonSobel() {
     // get globals
@@ -174,6 +177,7 @@ class UiFilterMenu extends React.Component {
     this.m_timerId = setTimeout(this.onSobelCallback, SOBEL_UPDATE_DELAY_MSEC);
 
   } // end onButtonSobel
+
   // callback for periodicallt invoke sobel 3d volume filtering
   onSobelCallback() {
     this.m_sobel.update();
@@ -233,12 +237,14 @@ class UiFilterMenu extends React.Component {
       this.m_timerId = setTimeout(this.onSobelCallback, SOBEL_UPDATE_DELAY_MSEC);
     }
   } // end onSobelCallback
+
   //
   // on Bilateral
   //
   onButtonBilateral() {
     this.showModalBilateral();
   }
+
   //
   // detect brain segmentation
   //
@@ -343,6 +349,7 @@ class UiFilterMenu extends React.Component {
     store.graphics2d.forceUpdate();
     */
   }
+
   onSkullRemoveCallback() {
     const store = this.props;
     const iterCounter = this.m_actVolume.m_updateCounter;
@@ -391,15 +398,19 @@ class UiFilterMenu extends React.Component {
       this.m_timerId = setTimeout(this.onSkullRemoveCallback, SK_REM_DELAY_MSEC);
     }
   }
+
   componentDidMount() {
   }
+
   showModalBilateral() {
     this.setState({ showModalBilateral: true });
   }
+
   hideModalBilateral() {
     this.setState({ showModalBilateral: false });
     // console.log('onModalSaveNiftiHide...');
   }
+
   //
   render() {
     const store = this.props;

@@ -86,24 +86,31 @@ export default class OrbitControl {
     //console.log(`Mouse container: ${this.m_container.offsetLeft}, ${this.m_container.offsetTop}`);
     this.isEraserMode = false;
   }
+
   setEraserMode(isOn) {
     this.isEraserMode = isOn;
   }
+
   setMesh(mesh) {
     this.m_mesh = mesh;
   }
+
   setWireMesh(wireMesh) {
     this.m_wireMesh = wireMesh;
   }
+
   setScene(scene) {
     this.m_scene = scene;
   }
+
   getX(xx) {
     return xx - this.domElem.offsetLeft;
   }
+
   getY(yy) {
     return yy - this.domElem.offsetTop;
   }
+
   // updateTime(dx, dy, useCallback = true) {
   updateTime(dx, dy) {
     if (dx === 0 && dy === 0) {
@@ -140,6 +147,7 @@ export default class OrbitControl {
     }
     this.m_callback();
   }
+
   onMouseDown(xMouse, yMouse, ctrlKey) {
     this.m_pressedLeft = true;
     this.m_prevMouse = { x: xMouse, y: yMouse };
@@ -148,11 +156,13 @@ export default class OrbitControl {
     this.m_prevTime = new Date().getTime();// -1;
     this.ctrlKey = ctrlKey;
   }
+
   onMouseUp() {
     this.m_pressedLeft = false;
     this.m_prevMouse.x = -1;
     this.m_prevMouse.y = -1;
   }
+
   onMouseMove(x, y) {
     if (this.m_prevMouse.x < 0) {
       this.m_prevMouse.x = x;
@@ -169,6 +179,7 @@ export default class OrbitControl {
       this.updateTime(dx, dy);
     }
   }
+
   /*addCallbacks() {
     this.m_container.on('mousedown', (event) => {
       event = event || window.event;

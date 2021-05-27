@@ -10,11 +10,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
 
       - name: Use Node.js 12
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
+
+      - name: Reconfigure git to use HTTP authentication
+        run: >
+          git config --global url."https://github.com/".insteadOf
+          ssh://git@github.com/
 
       - name: Cache Node.js modules
         uses: actions/cache@v2
@@ -26,8 +33,11 @@ jobs:
             ${{ runner.OS }}-
 
       - run: node --version
+      - run: npm --version
 
-      - run: npm install
+      - run: npm ci
+
+      - run: npm audit --audit-level=critical
 
       - run: npm run build
 

@@ -63,6 +63,7 @@ class Segm2d
 
     this.m_needApplySegmentation = false;
   }
+
   // debug
   printTensor(tensor, numValues = 64 * 3) {
     console.log('tensor shape = ' + tensor.shape);
@@ -73,6 +74,7 @@ class Segm2d
     }
     console.log("tensor raw data = " + strDebug);
   }
+
   // debug
   printTensorIndices(tensor) {
     const numCols = tensor.shape[1];
@@ -89,6 +91,7 @@ class Segm2d
       console.log(strOut);
     } // for (y)
   }
+
   scaleUp(pixelsSrcInt, wSrc, hSrc, pixelsDst, wDst, hDst) {
     // float scales
     const xScale = wSrc / wDst;
@@ -113,6 +116,7 @@ class Segm2d
       } // for (x)
     } // for (y)
   }
+
   //
   // Load model
   async onLoadModel() {
@@ -130,6 +134,7 @@ class Segm2d
     //this.objGraphics2d.forceUpdate();
     this.startApplyImage();
   }
+
   async startApplyImage() {
     this.stage = STAGE_IMAGE_PROCESSED;
     console.log("Start apply segm to image ...");
@@ -255,6 +260,7 @@ class Segm2d
 
     this.objGraphics2d.forceRender();
   }
+
   getStageString() {
     const msgArr = [
       'Wait. Model is not loaded', // const STAGE_MODEL_NOT_LOADED = 0;
@@ -266,9 +272,11 @@ class Segm2d
     const strMessage = msgArr[this.stage];
     return strMessage;
   }
+
   setImageData(imgData) {
     this.srcImageData = imgData;
   }
+
   render(ctx, w, h, imgData) {
     this.srcImageData = imgData;
     this.wSrc = w;

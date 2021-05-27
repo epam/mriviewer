@@ -46,6 +46,7 @@ export default class MaterialWC {
       texFF: { type: 't', value: null },
     };
   }
+
   /** Wireframe material constructor
   * @return {object} Three.js material with this shader
   */

@@ -27,6 +27,7 @@ class UiSegm2d extends React.Component {
       isSegmented: false,
     };
   }
+
   onChangeSegm2d() {
     // console.log('UiSegm2d. onChangeSegm2d ...');
     this.setState({ isSegmented: !this.state.isSegmented });
@@ -50,6 +51,7 @@ class UiSegm2d extends React.Component {
       }
     }
   } // end of onChangeSegm2d
+
   // render UI for 2d segmentation on screen
   render() {
     const strTitle = 'Segmentation 2d (brain only)';

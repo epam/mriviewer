@@ -29,6 +29,7 @@ class BrowserDetector {
     this.m_isChrome = false;
     this.m_isMobileBrowser = false;
   }
+
   /**
    * Check support WebGL 2.0
    * 
@@ -48,6 +49,7 @@ class BrowserDetector {
     canvas = undefined;
     return glFound;
   }
+
   /**
   * Check is this browser valid
   * @return {boolean} true, if valid for 3d vizualization

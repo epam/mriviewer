@@ -42,6 +42,7 @@ class UiTools2d extends React.Component {
       ],
     };
   }
+
   onClickButtonTools(evt) {
     // console.log('UiTools2d. onClickButtonTools');
     const btn = evt.target;
@@ -69,6 +70,7 @@ class UiTools2d extends React.Component {
 
     } // if button index valid
   } // end of onClickButtonTools
+
   render() {
     const strTitle = 'Tools';
 

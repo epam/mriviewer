@@ -40,12 +40,15 @@ class UiReportMenu extends React.Component {
       showModalDicomTags: false,
     };
   }
+
   onModalDicomTagsShow() {
     this.setState({ showModalDicomTags: true });
   }
+
   onModalDicomTagsHide() {
     this.setState({ showModalDicomTags: false });
   }
+
   onModalScreenshot() {
     const SHOT_W = 800;
     const SHOT_H = 600;
@@ -62,9 +65,11 @@ class UiReportMenu extends React.Component {
       console.log('onModalScreenshot. not implemented yet');
     }
   }
+
   // invoked after render
   componentDidMount() {
   }
+
   render() {
     const store = this.props;
     const isLoaded = store.isLoaded;

@@ -47,6 +47,7 @@ export default class Circle2D {
     this.m_xRadius = xRadius;
     this.m_yRadius = yRadius;
   }
+
   createWithMaterial(scene, lineWidth,
     xCenter, yCenter, xRadius, yRadius,
     matColor2d) {
@@ -117,6 +118,7 @@ export default class Circle2D {
     this.m_scene.add(this.m_mesh);
     // console.log(`Line added to scene: ${xs},${ys} -> ${xe},${ye} `);
   }
+
   /**
   * Get object for further scene addition. Need to remove old circle from scene
   * @return (object) geometry mesh object (circle)
@@ -124,6 +126,7 @@ export default class Circle2D {
   getRenderObject() {
     return this.m_mesh;
   }
+
   /**
   * Return coordinate x of circle center
   * @return (float) x
@@ -131,6 +134,7 @@ export default class Circle2D {
   getxCenter() {
     return this.m_xCenter;
   }
+
   /**
   * Return coordinate y of circle center
   * @return (float) y
@@ -138,6 +142,7 @@ export default class Circle2D {
   getyCenter() {
     return this.m_yCenter;
   }
+
   /**
   * Return x radius of circle
   * @return (float) x
@@ -145,6 +150,7 @@ export default class Circle2D {
   getxRadius() {
     return this.m_xRadius;
   }
+
   /**
   * Return y radius of circle
   * @return (float) y

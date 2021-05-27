@@ -51,42 +51,52 @@ class UiCtrl3dLight extends React.Component {
     this.onModeroi = this.onModeroi.bind(this);
     this.m_updateEnable = true;
   }
+
   onMode(indexMode) {
     this.m_updateEnable = true;
     this.props.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: indexMode });
     const store = this.props;
     store.volumeRenderer.offAmbientTextureMode();
   }
+
   onModeA() {
     this.onMode(Modes3d.ISO);
     this.props.volumeRenderer.setEraserMode(false);
   }
+
   onModeB() {
     this.onMode(Modes3d.RAYCAST);
     this.props.volumeRenderer.setEraserMode(false);
   }
+
   onModeC() {
     this.onMode(Modes3d.RAYFAST);
     this.props.volumeRenderer.setEraserMode(false);
   }
+
   onModeD() {
     this.onMode(Modes3d.EREASER);
     this.props.volumeRenderer.setEraserMode(true);
   }
+
   onModeroi(indexMode) {
     this.m_updateEnable = true;
     this.props.dispatch({ type: StoreActionType.SET_MODE_3Droi, mode3droi: indexMode });
   }
+
   onModeAroi() {
     this.onModeroi(Modes3droi.ISO);
   }
+
   onModeBroi() {
     this.onModeroi(Modes3droi.RAYCAST);
   }
+
   shouldComponentUpdate() {
     return this.m_updateEnable;
     //return true;
   }
+
   /**
    * Callback, invoked after any ROI setup array change
    * 
@@ -112,6 +122,7 @@ class UiCtrl3dLight extends React.Component {
     }
     store.volumeRenderer.updateSelectedRoiMap(selectedROI);
   }
+
   /**
    * Main component render func callback
    */

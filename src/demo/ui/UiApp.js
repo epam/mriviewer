@@ -46,6 +46,7 @@ class UiApp extends React.Component {
       strProgressMessage: 'Loading...',
     };
   }
+
   UNSAFE_componentWillMount() {
     let fileNameOnLoad = '';
     const strSearch = window.location.search;
@@ -68,6 +69,7 @@ class UiApp extends React.Component {
       this.m_fileNameOnLoad = fileNameOnLoad;
     }
   }
+
   componentDidMount() {
     const store = this.m_store;
     if (store === null) {
@@ -91,18 +93,23 @@ class UiApp extends React.Component {
       }
     }
   }
+
   onShowModalText() {
     this.setState({ showModalText: true });
   }
+
   onHideModalText() {
     this.setState({ showModalText: false });
   }
+
   onShowModalAlert() {
     this.setState({ showModalAlert: true });
   }
+
   onHideModalAlert() {
     this.setState({ showModalAlert: false });
   }
+
   doShowProgressBar(strProgressMsg) {
     if ((strProgressMsg === undefined) || (strProgressMsg === null)) {
       console.log('doShowProgressBar: need argument - strProgressMsg');
@@ -111,10 +118,12 @@ class UiApp extends React.Component {
     this.setState({ strProgressMessage: strProgressMsg });
     this.setState({ showProgressBar: true });
   }
+
   doHideProgressBar() {
     // console.log('doHideProgressBar');
     this.setState({ showProgressBar: false });
   }
+
   /**
    * 
    * @param {number} ratio - in [0..99] range
@@ -130,6 +139,7 @@ class UiApp extends React.Component {
     }
     this.setState({ progressBarRatio: ratio });
   }
+
   /**
    * Main component render func callback
    */

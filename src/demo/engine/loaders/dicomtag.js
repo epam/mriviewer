@@ -47,6 +47,7 @@ class DicomTag {
     /** @property {number} m_littleEndian - is in big/little endian */
     this.m_littleEndian = littleEndian;
   }
+
   /**
   * get value
   * @return {object} data content of this tag
@@ -54,6 +55,7 @@ class DicomTag {
   value() {
     return this.m_value;
   }
+
   /**
   * check has transform syntax or not
   * @return {boolean} is transform
@@ -64,6 +66,7 @@ class DicomTag {
     }
     return false;
   }
+
   /**
   * check is this tag meta
   * @return {boolean} true, if this tag is meta tag
@@ -74,6 +77,7 @@ class DicomTag {
     }
     return false;
   }
+
   /**
   * check has image bits in this tag data
   * @return {boolean} true, if image bits is inside tag data

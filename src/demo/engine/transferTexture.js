@@ -45,6 +45,7 @@ export default class TransferTexture {
       { r: 255, g: 255, b: 255 },
     ];
   }
+
   /**
    * Filtering the source data and building the normals on the GPU
    * @param isRoiVolume
@@ -63,6 +64,7 @@ export default class TransferTexture {
       this.texRoiColor = this.createRoiColorMap(roiColors);
     }    
   }
+
   /**
    * Create 2D texture containing transfer func colors
   */
@@ -125,6 +127,7 @@ export default class TransferTexture {
     this.transferFuncTexture = textureOut;
     return textureOut;
   }
+
   /**
    * Creates transfer function color map
    * @param ctrlPts Array of control points of type HEX  = color value
@@ -135,6 +138,7 @@ export default class TransferTexture {
       this.transferFuncCtrlPtsRgb.push(new THREE.Vector3(colors[i].r, colors[i].g, colors[i].b));
     }
   }
+
   /**
    * Creates transfer function color map
    * @param ctrlPts Array of Vector2 where (x,y) = x coordinate in [0, 1], alpha value in [0, 1]
@@ -166,6 +170,7 @@ export default class TransferTexture {
     this.transferFuncTexture.needsUpdate = true;
     return this.transferFuncRgba;
   }
+
   /**
    * Create 2D texture containing roi color map
    * @param colorArray 256 RGBA roi colors
@@ -197,6 +202,7 @@ export default class TransferTexture {
     textureOut.needsUpdate = true;
     return textureOut;
   }
+
   /**
    * Create 2D texture containing selected ROIs
    */
@@ -226,6 +232,7 @@ export default class TransferTexture {
     textureOut.needsUpdate = true;
     return textureOut;
   }
+
   /**
    * Create 2D texture containing selected ROIs
    * @param selectedROIs 256 byte roi values

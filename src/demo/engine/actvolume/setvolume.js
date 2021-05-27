@@ -29,6 +29,7 @@ export default class VolumeFilter3d {
     this.bufferTextureCPU = null;
     this.eraser = null;
   }
+
   /**
    * Copies the source data into the buffer (bufferRgba) from which the 3� texture is created
    */
@@ -57,6 +58,7 @@ export default class VolumeFilter3d {
     }
     console.log('setBufferRgbaFrom1Bytes for 3d texture');
   }
+
   /**
    * Copies the source data into the buffer (bufferRgba) from which the 3� texture is created
    */
@@ -109,6 +111,7 @@ export default class VolumeFilter3d {
     }
     console.log('setBufferRgbaFrom4Bytes');
   }
+
   /**
    * Copies the source data into the buffer (bufferRgba) from which the 3� texture is created
    */
@@ -148,6 +151,7 @@ export default class VolumeFilter3d {
     }
     console.log('setBufferRgbaFrom4Bytes for 3D texture');
   }
+
   getOffDstValueByXYZ(mainX, mainY, mainZ) {
     if (this.isWebGL2 === 0) {
       const yTile = Math.floor(mainZ / this.zDimSqrt);
@@ -159,6 +163,7 @@ export default class VolumeFilter3d {
       return mainX + mainY * this.xTex + mainZ * this.xTex * this.yTex;
     }
   }
+
   getIntensity(pointX, pointY, pointZ, undoFlag) {
     const full = 255;
     let offDst = 0;
@@ -179,6 +184,7 @@ export default class VolumeFilter3d {
     }
     return intensityPoint;
   }
+
   changeIntensity(targetX, targetY, targetZ, undoFlag) {
     const mainX = targetX;
     const mainY = targetY;
@@ -199,6 +205,7 @@ export default class VolumeFilter3d {
       this.bufferMask[offDst] = 0;
     }
   }
+
   /**
    * Create 2D texture containing roi color map
    * @param colorArray 256 RGBA roi colors
@@ -206,6 +213,7 @@ export default class VolumeFilter3d {
   createRoiColorMap(colorArray) {
     return this.transferFunc.createRoiColorMap(colorArray);
   }
+
   /**
    * Create 2D texture containing selected ROIs
    * @param colorArray 256 RGBA roi colors
@@ -213,6 +221,7 @@ export default class VolumeFilter3d {
   createSelectedRoiMap() {
     return this.createSelectedRoiMap();
   }
+
   /**
    * Create 2D texture containing selected ROIs
    * @param selectedROIs 256 byte roi values
@@ -231,6 +240,7 @@ export default class VolumeFilter3d {
     this.transferFunc.updateSelectedRoi(roiId, selectedState);
     this.setVolumeTexture(1.0);
   }
+
   /**
    * Create 3D texture containing filtered source data and calculated normal values
    * @param props An object that contains all volume-related info
@@ -376,6 +386,7 @@ export default class VolumeFilter3d {
     this.eraser = new Eraser();
     return this.updatableTexture;
   }
+
   /**
    * Create 3D texture containing mask of data which were erase
    * @param volume An object that contains all volume-related info

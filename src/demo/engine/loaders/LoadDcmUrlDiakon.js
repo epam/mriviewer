@@ -29,6 +29,7 @@ class LoaderDcmUrlDaikon {
     this.m_loaderDaikon = new LoaderDcmDaikon();
     this.readReadyFileList = this.readReadyFileList.bind(this);
   }
+
   readFromUrl(volSet, strUrl, callbackComplete, callbackProgress) {
     // check arguments
     console.assert(volSet != null, "Null volume");
@@ -65,6 +66,7 @@ class LoaderDcmUrlDaikon {
     }); // get file from server
     return true;
   } // end read from url
+
   //
   readReadyFileList(volSet, arrBuf, callbackComplete, callbackProgress) {
     const uint8Arr = new Uint8Array(arrBuf);

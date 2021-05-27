@@ -48,9 +48,11 @@ class UiModalWindowCenterWidth extends React.Component {
       windowMax: DEFAULT_WIN_MAX, 
     };
   } // end constructor
+
   onModalHide() {
     this.setState({ showModalWindowCenterWidth: false });
   }
+
   reset() {
     // restore data params to initial for next lloading
     this.m_dataMin = LARGE_NUMBER;
@@ -58,6 +60,7 @@ class UiModalWindowCenterWidth extends React.Component {
     this.setState({ windowMin: DEFAULT_WIN_MIN });
     this.setState({ windowMax: DEFAULT_WIN_MAX });
   }
+
   //
   onButtonCancel() {
     // console.log('TODO: on Cancel ...');
@@ -66,6 +69,7 @@ class UiModalWindowCenterWidth extends React.Component {
     const onHideFunc = this.props.onHide;
     onHideFunc(false);
   }
+
   //
   onButtonApply() {
     // console.log('TODO: on Apply ...');
@@ -93,6 +97,7 @@ class UiModalWindowCenterWidth extends React.Component {
     const onHideFunc = this.props.onHide;
     onHideFunc(true);
   }
+
   //
   componentDidMount() {
     // use onRef to provide access to this for the parent component
@@ -100,12 +105,15 @@ class UiModalWindowCenterWidth extends React.Component {
     this.props.onRef(this);
     this.renderPreview();
   }
+
   componentWillUnmount() {
     this.props.onRef(undefined);
   }
+
   componentDidUpdate() {
     this.renderPreview();
   }
+
   drawSlice(ctx, wScreen, hScreen, imgData, dataDst, series, loaderDicom) {
     const serie = series[0];
     const slices = serie.m_slices;
@@ -232,6 +240,7 @@ class UiModalWindowCenterWidth extends React.Component {
     } // for y
     ctx.putImageData(imgData, 0, 0);
   } // end draw slice
+
   //
   // render preview window with slice and selected window properties
   //
@@ -284,6 +293,7 @@ class UiModalWindowCenterWidth extends React.Component {
     }
     this.drawSlice(ctx, wScreen, hScreen, imgData, dataDst, series, loaderDicom);
   } // end render preview
+
   //
   // callbakc on user change window range (min, max)
   //
@@ -296,6 +306,7 @@ class UiModalWindowCenterWidth extends React.Component {
     this.setState({ windowMax: vMax });
     // console.log(`slider min/max = ${vMin} / ${vMax}`);
   }
+
   getDataMinMax(store, loaderDicom) {
     const series = loaderDicom.m_slicesVolume.m_series;
     if (series.length === 0) {
@@ -330,6 +341,7 @@ class UiModalWindowCenterWidth extends React.Component {
     this.m_dataMax = maxVal;
     // console.log(`data min max ready`);
   } // end get data min max
+
   //
   // Invoked from parent component once
   // to initialize window range (if found in dicom tags)
@@ -354,6 +366,7 @@ class UiModalWindowCenterWidth extends React.Component {
       this.getDataMinMax(store, loaderDicom);
     } // if loader dicom ready
   } // end init
+
   // render 
   render() {
 

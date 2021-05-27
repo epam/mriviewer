@@ -40,6 +40,7 @@ class GaussSmoother {
     this.m_kernel = null;
     this.m_bilateralHw = null;
   }
+
   getPixelsDst() {
     if (this.m_needHw) {
       const arr = this.m_bilateralHw.getImageDst();
@@ -47,6 +48,7 @@ class GaussSmoother {
     }
     return this.m_pixelsDst;
   }
+
   createKernel(kernelSize, sigma) {
     const side      = kernelSize * 2 + 1;
     const xyzKernel = side * side * side;
@@ -78,6 +80,7 @@ class GaussSmoother {
       arr[i] *= scl;
     this.m_kernel = arr;
   }
+
   start(vol, kernelSize, koefDist, koefVal = 0.1) {
     const sigmaDist = (1.0 / kernelSize) * koefDist;
     this.createKernel(kernelSize, sigmaDist);
@@ -100,6 +103,7 @@ class GaussSmoother {
     } // if HW gauss
 
   }
+
   normalizeDstImage() {
     if (this.m_needHw) {
       return;
@@ -117,10 +121,12 @@ class GaussSmoother {
       this.m_pixelsDst[i] = Math.floor(this.m_pixelsDst[i] * scl);
     } // for i
   }
+
   stop() {
     this.m_pixelsDst = null;
     this.m_kernel = null;
   }
+
   // return ratio in [0..1]
   getRatio() {
     const zDim = this.m_vol.m_zDim;
@@ -132,6 +138,7 @@ class GaussSmoother {
     }
     return ratio01;
   }
+
   isFinished() {
     console.assert(this.m_z >= 0);
     const zDim = this.m_vol.m_zDim;
@@ -146,6 +153,7 @@ class GaussSmoother {
     }
     return false;
   }
+
   // invoked several times externally, until entire image processed
   update() {
     if (this.m_needHw) {
@@ -211,6 +219,7 @@ class GaussSmoother {
     this.m_iter += 1;
     this.m_z = zNext;
   }
+
   testSimple() {
     // create simple small volume
     const SZ = 16;

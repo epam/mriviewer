@@ -20,6 +20,7 @@ export default class VolumeFilter3d {
     this.bufferTextureCPU = null;
     this.eraser = null;
   }
+
   /**
    * Filtering the source data and building the normals on the GPU
    * @param isRoiVolume
@@ -75,6 +76,7 @@ export default class VolumeFilter3d {
     });
     this.vectorsTex = null;
   }
+
   /**
    * Create 2D texture containing transfer func colors
   */
@@ -84,6 +86,7 @@ export default class VolumeFilter3d {
     }
     return null;
   }
+
   /**
    * Creates transfer function color map
    * @param ctrlPts Array of control points of type HEX  = color value
@@ -91,6 +94,7 @@ export default class VolumeFilter3d {
   setTransferFuncColors(ctrlPtsColorsHex) {
     this.transferFunc.setTransferFuncColors(ctrlPtsColorsHex);
   }
+
   /**
    * Creates transfer function color map
    * @param ctrlPts Array of Vector2 where (x,y) = x coordinate in [0, 1], alpha value in [0, 1]
@@ -99,6 +103,7 @@ export default class VolumeFilter3d {
   updateTransferFuncTexture(intensities, opacities) {
     return this.transferFunc.updateTransferFuncTexture(intensities, opacities);
   }
+
   /**
    * Setting a variable for conditional compilation (Roi Render)
    */
@@ -106,6 +111,7 @@ export default class VolumeFilter3d {
     this.material.defines.renderRoiMap = 1;
     this.material.needsUpdate = true;
   }
+
   /**
    * Setting a variable for conditional compilation (Blur)
    */
@@ -113,6 +119,7 @@ export default class VolumeFilter3d {
     this.material.defines.renderRoiMap = 0;
     this.material.needsUpdate = true;
   }
+
   /**
    * Filtering the source data and building the normals on the GPU
    * @param blurSigma Gauss sigma parameter
@@ -126,6 +133,7 @@ export default class VolumeFilter3d {
     this.setVolumeTextureWebGL2(blurSigma);
     this.updatableTexture.needsUpdate = true;
   }
+
   updateVolumeTextureWithMask() {
     if (this.eraser.bufferMask === null){
       console.log('volTextureMask null');
@@ -150,6 +158,7 @@ export default class VolumeFilter3d {
     this.origVolumeTex.needsUpdate = true;
     this.setVolumeTexture(1.0);
   }
+
   setVolumeTextureWebGL2(blurSigma) {
     this.material.uniforms.blurSigma.value = blurSigma;
     this.material.uniforms.blurSigma.needsUpdate = true;
@@ -183,6 +192,7 @@ export default class VolumeFilter3d {
       }
     }
   }
+
   /**
    * Copies the source data into the buffer (bufferRgba) from which the 3� texture is created
    */
@@ -211,6 +221,7 @@ export default class VolumeFilter3d {
     }
     console.log('setBufferRgbaFrom1Bytes for 3d texture');
   }
+
   /**
    * Copies the source data into the buffer (bufferRgba) from which the 3� texture is created
    */
@@ -256,6 +267,7 @@ export default class VolumeFilter3d {
     }
     console.log('setBufferRgbaFrom4Bytes for 3D texture');
   }
+
   /**
    * Create 2D texture containing roi color map
    * @param colorArray 256 RGBA roi colors
@@ -263,6 +275,7 @@ export default class VolumeFilter3d {
   createRoiColorMap(colorArray) {
     return this.transferFunc.createRoiColorMap(colorArray);
   }
+
   /**
    * Create 2D texture containing selected ROIs
    * @param colorArray 256 RGBA roi colors
@@ -270,6 +283,7 @@ export default class VolumeFilter3d {
   createSelectedRoiMap() {
     return this.createSelectedRoiMap();
   }
+
   /**
    * Create 2D texture containing selected ROIs
    * @param selectedROIs 256 byte roi values
@@ -288,6 +302,7 @@ export default class VolumeFilter3d {
     this.transferFunc.updateSelectedRoi(roiId, selectedState);
     this.setVolumeTexture(1.0);
   }
+
   /**
    * Create 3D texture containing filtered source data and calculated normal values
    * @param props An object that contains all volume-related info
@@ -363,6 +378,7 @@ export default class VolumeFilter3d {
     this.eraser = new Eraser();
     return this.updatableTexture;
   }
+
   /**
    * Create 3D texture containing mask of data which were erase
    * @param volume An object that contains all volume-related info

@@ -45,6 +45,7 @@ class LoaderUrlDicom {
     this.callbackReadComplete = this.callbackReadComplete.bind(this);
     this.m_fileName = '???';
   }
+
   /**
    * Progress read callback
    * 
@@ -64,6 +65,7 @@ class LoaderUrlDicom {
       uiapp.doSetProgressBarRatio(ratioPrc);
     }
   } // callback progress
+
   /**
    * Invoked after read finished (or may be with error)
    * 
@@ -82,6 +84,7 @@ class LoaderUrlDicom {
       this.finalizeSuccessLoadedVolume(this.m_volume, this.m_fileName);
     }
   }
+
   /**
    * End action if loading failed
    * 
@@ -99,6 +102,7 @@ class LoaderUrlDicom {
     const uiapp = store.uiApp;
     uiapp.doHideProgressBar();
   }
+
   /**
    * On the end of success loading dicom folder
    * 
@@ -124,6 +128,7 @@ class LoaderUrlDicom {
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     }
   }
+
   /**
    * 
    * @param {object} arrFileNames - array of file names (with URL) 

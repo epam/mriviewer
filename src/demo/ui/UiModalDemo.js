@@ -47,42 +47,54 @@ class UiModalDemo extends React.Component {
       showModalDemo: false
     };
   }
+
   onModalShow() {
     this.setState({ showModalDemo: true });
   }
+
   onModalHide() {
     this.setState({ showModalDemo: false });
   }
+
   onDemo(index) {
     const onSelectFunc = this.props.onSelectDemo;
     const onHideFunc = this.props.onHide;
     onHideFunc();
     onSelectFunc(index);
   }
+
   onButton0() {
     this.onDemo(0);
   }
+
   onButton1() {
     this.onDemo(1);
   }
+
   onButton2() {
     this.onDemo(2);
   }
+
   onButton3() {
     this.onDemo(3);
   }
+
   onButton4() {
     this.onDemo(4);
   }
+
   onButton5() {
     this.onDemo(5);
   }
+
   onButton6() {
     this.onDemo(6);
   }
+
   onButton7() {
     this.onDemo(7);
   }
+
   render() {
     const stateVis = this.props.stateVis;
     const onHideFunc = this.props.onHide;

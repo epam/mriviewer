@@ -33,19 +33,23 @@ class ToolDelete {
     this.m_pointTracked = null;
     this.m_toolTracked = null;
   }
+
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
   }
+
   setPixelSize(xs, ys) {
     this.m_xPixelSize = xs;
     this.m_yPixelSize = ys;
   }
+
   clear() {
     this.m_mousePressed = false;
     this.m_pointTracked = null;
     this.m_toolTracked = null;
   }
+
   /**
    * When mouse pressed down
    */  
@@ -59,6 +63,7 @@ class ToolDelete {
       this.m_objGraphics2d.forceUpdate();
     }
   }
+
   onMouseMove(xScr, yScr, store) {
     if (!this.m_mousePressed) {
       // fly mouse over objects on 2d screen
@@ -104,9 +109,11 @@ class ToolDelete {
       */
     }
   }
+
   onMouseUp() { // ommited args: xScr, yScr, store
     this.m_mousePressed = false;
   }
+
   /**
    * Render all areas on screen in 2d mode
    * 

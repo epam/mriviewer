@@ -114,9 +114,11 @@ export default class Graphics23d {
     */
     //this.m_distanceTool.test();
   } // end of constructor
+
   set2dToolType(toolType) {
     this.m_toolType = toolType;
   }
+
   /**
    * Callback on file loaded
    */
@@ -129,6 +131,7 @@ export default class Graphics23d {
     this.m_deleteTool.clearLines();
     this.m_editTool.clearLines();
   }
+
   clear2DTools() {
     this.m_distanceTool.clearLines();
     this.m_angleTool.clearLines();
@@ -138,6 +141,7 @@ export default class Graphics23d {
     this.m_deleteTool.clearLines();
     this.m_editTool.clearLines();
   }
+
   default2DTools() {
     this.m_zoom = 1;
     this.m_posX = 0;
@@ -149,14 +153,17 @@ export default class Graphics23d {
     this.m_materialsTex2d.m_uniforms.zoom.value = this.m_zoom;
     this.updateLines();
   }
+
   fov2Tan(fov) {
     const HALF = 0.5;
     return Math.tan(THREE.Math.degToRad(HALF * fov));
   }
+
   tan2Fov(tan) {
     const TWICE = 2.0;
     return THREE.Math.radToDeg(Math.atan(tan)) * TWICE;
   }
+
   /**
   * Keyboard event handler
   * @param (number) keyCode - keyboard code
@@ -171,6 +178,7 @@ export default class Graphics23d {
       // }
     }
   }
+
   /**
   * Mouse events handler
   * xScr, yScr in [0..1] is normalized mouse coordinate in screen
@@ -247,6 +255,7 @@ export default class Graphics23d {
       break;
     }
   }
+
   /**
    * Mouse events handler
    * xScr, yScr in [0..1] is normalized mouse coordinate in screen
@@ -303,6 +312,7 @@ export default class Graphics23d {
       break;
     }
   }
+
   /**
    * Mouse move event handler
    * @param (float) xScr - normalized mouse x coordinate in screen
@@ -375,6 +385,7 @@ export default class Graphics23d {
       break;
     }
   }
+
   /**
    * Mouse events handler
    * xScr, yScr in [0..1] is normalized mouse coordinate in screen
@@ -409,6 +420,7 @@ export default class Graphics23d {
       break;
     }
   }
+
   updateLines() {
     this.m_distanceTool.updateLines(this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
     this.m_angleTool.updateLines(this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
@@ -418,6 +430,7 @@ export default class Graphics23d {
     this.m_deleteTool.updateLines(this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
     this.m_editTool.updateLines(this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
   }
+
   updateMove(xt, yt) {
     const TWICE = 2;
     const delta = (TWICE - TWICE * this.m_zoom);
@@ -445,6 +458,7 @@ export default class Graphics23d {
     }
     this.updateLines();
   }
+
   updateZoom() {
     const TWICE = 2;
     this.m_materialsTex2d.m_uniforms.zoom.value = this.m_zoomTool.m_zoom;
@@ -460,9 +474,11 @@ export default class Graphics23d {
     }
     this.updateLines();
   }
+
   updateText() {
     //this.m_pickTool.update();
   }
+
   static shortenString(str) {
     const MAX_ITEM_LEN = 20;
     const SHORT_ITEM_PART = 5;

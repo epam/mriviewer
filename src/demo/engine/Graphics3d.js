@@ -70,6 +70,7 @@ class Graphics3d extends React.Component {
       hRender: 0,
     };
   }
+
   setVolRenderToStore(VolRender) {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_VOLUME_Renderer, volumeRenderer: VolRender });
@@ -82,15 +83,18 @@ class Graphics3d extends React.Component {
     store.dispatch({ type: StoreActionType.SET_SLIDER_Cut, sliderCut: Number.parseFloat(1.0) });
     store.dispatch({ type: StoreActionType.SET_SLIDER_Quality, sliderQuality: Number.parseFloat(0.35) });
   }
+
   start() {
     if (this.m_frameId === null) {
       this.m_frameId = requestAnimationFrame(this.animate);
     }
   }
+
   stop() {
     cancelAnimationFrame(this.m_frameId);
     this.m_frameId = null;
   }
+
   animate() {
     /*this.m_mesh.rotation.x += 0.01;
     this.m_mesh.rotation.y += 0.01;
@@ -100,16 +104,19 @@ class Graphics3d extends React.Component {
     this.renderScene();
     this.m_frameId = window.requestAnimationFrame(this.animate);
   }
+
   renderScene() {
     // this.m_renderer.render(this.m_scene, this.m_camera);
     if (this.m_volumeRenderer3D !== null) {
       this.m_volumeRenderer3D.render();
     }
   }
+
   onMode(indexMode) {
     //this.m_updateEnable = true;
     this.props.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: indexMode });
   }
+
   componentDidMount() {
     // detect actual render window dims
     const MIN_DIM = 200;
@@ -173,6 +180,7 @@ class Graphics3d extends React.Component {
     // setup keyboard
     this.m_mount.focus();
   }
+
   componentWillUnmount() {
     this.stop()
     if (this.m_renderer !== null) {
@@ -180,6 +188,7 @@ class Graphics3d extends React.Component {
     }
     this.m_volumeRenderer3D = null;
   }
+
   _onMouseMove(e) {
     // console.log(`${e.x}, ${e.y}\n`);
     if (this.m_volumeRenderer3D !== null) {
@@ -189,6 +198,7 @@ class Graphics3d extends React.Component {
       this.m_volumeRenderer3D.onMouseMove(containerX, -(this.state.hRender - containerY), this.props.ereaseStart);
     }
   }
+
   _onMouseDown(e) {
     //console.log(`${e.x}, ${e.y}\n`);
     if (this.m_volumeRenderer3D !== null) {
@@ -198,21 +208,25 @@ class Graphics3d extends React.Component {
       this.m_volumeRenderer3D.onMouseDown(containerX, -(this.state.hRender - containerY), this.props.ereaseStart);
     }
   }
+
   _onMouseUp() { // ommited args: evt
     //console.log(`${e.x}, ${e.y}\n`);
     if (this.m_volumeRenderer3D !== null) {
       this.m_volumeRenderer3D.onMouseUp();
     }
   }
+
   _onWheel(e) {
     //console.log(`${e.x}, ${e.y}\n`);
     if (this.m_volumeRenderer3D !== null) {
       this.m_volumeRenderer3D.onMouseWheel(e);
     }
   }
+
   onClick(evt) {
     evt.stopPropagation();
   }
+
   onTouchStart(evt) {
     if ((this.m_mount !== undefined) && (this.m_mount !== null)) {
       // evt.preventDefault();
@@ -234,6 +248,7 @@ class Graphics3d extends React.Component {
       }
     }
   }
+
   onTouchMove(evt) {
     if ((this.m_mount !== undefined) && (this.m_mount !== null)) {
       // evt.preventDefault();
@@ -253,11 +268,13 @@ class Graphics3d extends React.Component {
       }
     }
   }
+
   onTouchEnd() {
     if (this.m_volumeRenderer3D !== null) {
       this.m_volumeRenderer3D.onMouseUp();
     }
   }
+
   onKeyDown(evt) {
     const key = evt.key;
     if (key === 'Control') {
@@ -268,6 +285,7 @@ class Graphics3d extends React.Component {
   
     }
   }
+
   onKeyUp(evt) {
     const key = evt.key;
     if (key === 'Control') {
@@ -277,6 +295,7 @@ class Graphics3d extends React.Component {
       store.volumeRenderer.setEraserStart(false);
     }
   }
+
   /**
    * Main component render func callback
    */
@@ -381,4 +400,3 @@ class Graphics3d extends React.Component {
 }
 
 export default connect(store => store)(Graphics3d);
- 

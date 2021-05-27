@@ -48,30 +48,35 @@ class UiMain3dLight extends React.Component {
     super(props);
     this.m_updateEnable = true;
   }
+
   onChangeSliderBrightness() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderBrightness.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Brightness, sliderBrightness: Number.parseFloat(aval) });
   }
+
   onChangeSliderCut() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderCut.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Cut, sliderCut: Number.parseFloat(aval) });
   }
+
   onChangeSliderQuality() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderQuality.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Quality, sliderQuality: Number.parseFloat(aval) });    
   }
+
   onChangeSliderContrast3D() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderContrast3D.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Contrast3D, sliderContrast3D: Number.parseFloat(aval) });    
   }
+
   /*
   shouldComponentUpdate() {
     //return this.m_updateEnable;
@@ -87,6 +92,7 @@ class UiMain3dLight extends React.Component {
     return flag;
     //return true;
   }
+
   //{(store.isTool3D === false) ? jsxView : jsxTool}
   render() {
     const store = this.props;

@@ -83,6 +83,7 @@ export default class EditTool {
     this.m_xInnerShift = 0.0;
     this.m_yInnerShift = 0.0;
   }
+
   /**
    * Remove all distance lines from scene
    */
@@ -97,6 +98,7 @@ export default class EditTool {
     this.m_runningState = false;
     this.m_vertexes = [];
   }
+
   /**
    * Redraw all lines
    */
@@ -121,12 +123,14 @@ export default class EditTool {
       this.m_scene.add(this.m_distances[i].text);
     }
   }
+
   /**
    * Update zoom
    */
   updateZoom(zoom) {
     this.m_zoom = zoom;
   }
+
   /**
    * Set pixel size in mm
    * @param (float) xPixelSize - canvas pixel size in mm for x axis
@@ -136,6 +140,7 @@ export default class EditTool {
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }
+
   /**
    * Return running state
    * @return {boolean} True if last line has not been fixed yet
@@ -143,6 +148,7 @@ export default class EditTool {
   isRunning() {
     return this.m_runningState;
   }
+
   /**
    * Mouse down events handler
    * @param (float) x - mouse x coordinate
@@ -152,6 +158,7 @@ export default class EditTool {
     this.m_runningState = true;
     //console.log(`${this.m_runningState}`);
   }
+
   /**
    * Mouse down events handler
    * @param (float) x - mouse x coordinate
@@ -161,6 +168,7 @@ export default class EditTool {
     this.m_runningState = false;
     //console.log(`${this.m_runningState}`);
   }
+
   /**
    * Mouse move events handler
    * @param (float) x - mouse x coordinate
@@ -361,6 +369,7 @@ export default class EditTool {
       this.isOut = true;
     }
   }
+
   processingLine(l, x, y) {
     const CONSTRAINTS = 0.02;
     let newLine = null;
@@ -375,6 +384,7 @@ export default class EditTool {
     }
     return newLine;
   }
+
   processingLine2(l, x, y) {
     let point;
     const CONSTRAINTS = 0.01;
@@ -392,6 +402,7 @@ export default class EditTool {
       this.isOut = true;
     }
   }
+
   processingText(mesh) {
     if (!this.isPointsExist) {
       let point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMin, mesh.m_yMin,
@@ -409,6 +420,7 @@ export default class EditTool {
     }
     this.isOut = true;
   }
+
   deletePoints() {
     for (let j = 0; j < this.m_point.length; ++j) {
       const pointe = this.m_point.pop();
@@ -417,12 +429,14 @@ export default class EditTool {
       //console.log(`${this.m_point.length}`);
     }
   }
+
   freeArrays() {
     this.m_checkedRects = [];
     this.m_checkedLines = [];
     this.m_checkedAngles = [];
     this.m_checkedAreasDistances = [];
   }
+
   updateArea(array, numLine, vertexes) {
     let sum1 = 0;
     let sum2 = 0;
@@ -441,6 +455,7 @@ export default class EditTool {
     }
     return 0;
   }
+
   num(array, numLine) {
     for (let j = 0; j < array.length; ++j) {
       if ((array[j].begin <= numLine) && (numLine <= array[j].endl)) {

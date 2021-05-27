@@ -47,6 +47,7 @@ export default class MaterialFF {
       PlaneZ: { type: 'v4', value: new THREE.Vector4(0.0, 0.0, -1.0, 0.5) },
     };
   }
+
   /** Frontface material constructor
   * @return {object} Three.js material with this shader
   */

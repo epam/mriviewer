@@ -41,6 +41,7 @@ export default class MaterialColor2d {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
   }
+
   create() {
     this.m_strShaderVertex = `
       void main() {

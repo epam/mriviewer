@@ -18,6 +18,7 @@ class FileTools {
     }
     return true;
   } // end isValidUrl
+
   getFileNameFromUrl(strUrl) {
     let idx = strUrl.lastIndexOf('/');
     if (idx < 0) {
@@ -32,6 +33,7 @@ class FileTools {
     strFileName = (strFileName.length <= MAX_LEN) ? strFileName : strFileName.substring(0, MAX_LEN);
     return strFileName;
   }
+
   getFolderNameFromUrl(strUrl) {
     let idx = strUrl.lastIndexOf('/');
     if (idx < 0) {
@@ -44,6 +46,7 @@ class FileTools {
     const strFolder = strUrl.substring(0, idx);
     return strFolder;
   }
+
   isUrlExists(strUrl) {
     let request = null;
     if (window.XMLHttpRequest) {
@@ -59,6 +62,7 @@ class FileTools {
     const isValid = (request.status !== RES_FAIL_404);
     return isValid;
   } // isUrlkExist
+
   encodeUrl(strIn) {
     let strOut = '';
     let dotFound = false;
@@ -77,6 +81,7 @@ class FileTools {
     } // for (i)
     return strOut;
   } // encodeUrl
+
   decodeUrl(strIn) {
     let strOut = '';
     let dotFound = false;

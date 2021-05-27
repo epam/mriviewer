@@ -116,6 +116,7 @@ class UiOpenMenu extends React.Component {
     this.m_updateEnable = true;
     this.roiMode = false;
   }
+
   finalizeSuccessLoadedVolume(volSet, fileNameIn) {
     const store = this.props;
 
@@ -150,6 +151,7 @@ class UiOpenMenu extends React.Component {
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     }
   }
+
   setErrorString(strErr) {
     const store = this.props;
     const arrErrors = [];
@@ -158,6 +160,7 @@ class UiOpenMenu extends React.Component {
     store.dispatch({ type: StoreActionType.SET_ERR_ARRAY, arrErrors: arrErrors });
     store.dispatch({ type: StoreActionType.SET_VOLUME_SET, volume: null });
   }
+
   finalizeFailedLoadedVolume(volSet, fileNameIn, arrErrors) {
     console.assert(arrErrors !== undefined);
     // invoke notification
@@ -170,6 +173,7 @@ class UiOpenMenu extends React.Component {
     const uiapp = store.uiApp;
     uiapp.doHideProgressBar();
   }
+
   callbackReadProgress(ratio01) {
     // console.log(`callbackReadProgress = ${ratio01}`);
     const ratioPrc = Math.floor(ratio01 * 100);
@@ -187,6 +191,7 @@ class UiOpenMenu extends React.Component {
       }
     }
   } // callback progress
+
   callbackReadComplete(errCode) {
     if (errCode === undefined) {
       console.log('callbackReadComplete. should be errCode');
@@ -212,6 +217,7 @@ class UiOpenMenu extends React.Component {
       this.finalizeFailedLoadedVolume(this.m_volumeSet, this.m_fileName, arrErr);
     }
   }
+
   callbackReadSingleDicomComplete(errCode) {
     if (errCode === LoadResult.SUCCESS) {
       // console.log('TODO: UI select window center /width ...');
@@ -231,12 +237,14 @@ class UiOpenMenu extends React.Component {
     }
     this.callbackReadComplete(errCode);
   }
+
   callbackReadMultipleComplete(errCode) {
     if (errCode !== LoadResult.SUCCESS) {
       const strErr = LoadResult.getResultString(errCode);
       this.setErrorString(strErr);
     }
   }
+
   onFileReadSingleUncompressedFile(strContent, callbackProgress, callbackComplete, callbackCompleteSingleDicom) {
     if (this.m_fileName.endsWith('.ktx') || this.m_fileName.endsWith('.KTX')) {
       // if read ktx
@@ -260,10 +268,12 @@ class UiOpenMenu extends React.Component {
       console.log(`onFileContentReadSingleFile: unknown file type: ${this.m_fileName}`);
     }
   }
+
   onFileContentReadSingleFile() {
     let strContent = this.m_fileReader.result;
     this.onFileReadSingleBuffer(strContent);
   }
+
   //
   // daikon read individual slice from file buffer (one from multiple files)
   // strContent is ArrayBuffer
@@ -272,6 +282,7 @@ class UiOpenMenu extends React.Component {
     const ret = loaderDaikon.readSlice(this.m_loader, fileIndex, fileName, strContent);
     return ret;
   } // end read single slice via daikon
+
   //
   // based on local file read
   // read from string content in this.m_fileReader.result
@@ -331,6 +342,7 @@ class UiOpenMenu extends React.Component {
     }
    
   }
+
   //
   // read hdr/img. content is in this.m_fileReader.result
   //
@@ -435,6 +447,7 @@ class UiOpenMenu extends React.Component {
     }
 
   } // on multuple hdr
+
   // on complete read multuple dicom
   callbackCompleteMultipleDicom(errCode) {
     if (errCode !== LoadResult.SUCCESS) {
@@ -442,6 +455,7 @@ class UiOpenMenu extends React.Component {
       this.setErrorString(strErr);
     }
   }
+
   //
   // read from string content in this.m_fileReader.result
   //
@@ -548,6 +562,7 @@ class UiOpenMenu extends React.Component {
       this.finalizeFailedLoadedVolume(this.m_volumeSet, this.m_fileName, arrErr);
     } // if result is not success
   }
+
   //
   // Perform open file after it selected in dialog
   handleFileSelected(evt) {
@@ -696,6 +711,7 @@ class UiOpenMenu extends React.Component {
       } // if num files > 1
     } // if event is mnot empty
   }
+
   buildFileSelector() {
     const fileSelector = document.createElement('input');
     fileSelector.setAttribute('type', 'file');
@@ -704,26 +720,31 @@ class UiOpenMenu extends React.Component {
     fileSelector.onchange = this.handleFileSelected;
     return fileSelector;
   }
+
   onButtonLocalFile(evt) {
     // console.log('onButtonLocalFile started');
     evt.preventDefault();
     this.m_fileSelector.click();
   }
+
   //
   onModalUrlShow() {
     console.log(`onModalUrlShow`);
     this.setState({ strUrl: '' }); 
     this.setState({ showModalUrl: true });
   }
+
   onModalUrlHide() {
     console.log(`onModalUrlHide`);
     this.setState({ showModalUrl: false });
   }
+
   onChangeUrlString(evt) {
     const str = evt.target.value;
     this.setState({ strUrl: str }); 
     // console.log(`onChangeUrlString. str = ${str}`)
   }
+
   callbackReadCompleteUrlKtxNii(codeResult) {
     if (codeResult !== LoadResult.SUCCESS) {
       console.log(`onCompleteFromUrlKtx. Bad result: ${codeResult}`);
@@ -738,6 +759,7 @@ class UiOpenMenu extends React.Component {
       this.callbackReadComplete(LoadResult.SUCCESS, null, 0, null);
     }
   }
+
   loadFromUrl(strUrl) {
     const fileTools = new FileTools();
     const isValid = fileTools.isValidUrl(strUrl);
@@ -789,19 +811,23 @@ class UiOpenMenu extends React.Component {
       this.setErrorString(strErr);
     }
   }
+
   onClickLoadUrl() {
     this.setState({ showModalUrl: false });
     const strUrl = this.state.strUrl;
     console.log(`onClickLoadUrl with strUrl = ${strUrl}`);
     this.loadFromUrl(strUrl);
   }
+
   //
   onModalDemoOpenShow() {
     this.setState({ showModalDemo: true });
   }
+
   onModalDemoOpenHide() {
     this.setState({ showModalDemo: false });
   }
+
   //
   arrNumToStr(arrNums) {
     const numLet = arrNums.length;
@@ -812,16 +838,20 @@ class UiOpenMenu extends React.Component {
     }
     return str;
   }
+
   onModalGoogleShow() {
     this.setState({ showModalGoogle: true });
   }
+
   onModalGoogleHide() {
     this.setState({ showModalGoogle: false });
   }
+
   onGoogleSelected(index) {
     // perform action on click i-th item in Google cloud menu . Or remove this menu completely
     console.log(`onGoogleSelected(${index}) ... `);
   }
+
   onDemoSelected(index) {
     const arr = config.demoUrls;
     if (arr.length >= 8) {
@@ -928,15 +958,18 @@ class UiOpenMenu extends React.Component {
       this.loadFromUrl(fileName);
     } // if fileName not empty
   } // end of onDemoSelected
+
   //
   shouldComponentUpdate() {
     return true;
   }
+
   onModalDicomSeriesHide() {
     const arrEmpty = [];
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: arrEmpty });
   }
+
   onDicomSerieSelected(indexSelected) {
     const store = this.props;
     const series = store.dicomSeries;
@@ -949,6 +982,7 @@ class UiOpenMenu extends React.Component {
     // clear modal
     store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: [] });
   }
+
   //
   onModalWindowCWHide(needShow) {
     this.setState({ showModalWindowCW: false });
@@ -968,6 +1002,7 @@ class UiOpenMenu extends React.Component {
       }
     }
   }
+
   //
   // invoked after render
   //
@@ -981,6 +1016,7 @@ class UiOpenMenu extends React.Component {
       setTimeout( this.loadFromUrl(fileNameOnLoad), TIMEOUT_MS );
     }
   }
+
   // render
   render() {
     const isGoogle = config.googleCloudDemoActivce;

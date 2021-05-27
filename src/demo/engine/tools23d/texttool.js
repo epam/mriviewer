@@ -51,6 +51,7 @@ export default class TextTool {
     /** @property {float} m_curY - y coordinate of current mouse down */
     this.m_curY = -1;
   }
+
   /**
    * Remove all area lines from scene
    */
@@ -62,6 +63,7 @@ export default class TextTool {
     // this.m_runningState = false;
     this.m_vertexes = [];
   }
+
   /**
    * Redraw all lines
    */
@@ -79,6 +81,7 @@ export default class TextTool {
       this.m_scene.add(this.m_textArr[i]);
     }
   }
+
   move(i, newX, newY, zoom, posX, posY) {
     this.m_vertexes[i].xZ = (newX + (1 - 1 / zoom)) * zoom + posX;
     this.m_vertexes[i].yZ = (newY - (1 - 1 / zoom)) * zoom + posY;
@@ -87,6 +90,7 @@ export default class TextTool {
     this.m_textArr[i].updateText(xText, yText, this.m_textWidthScr,
       MeshText2D.ALIGN_LEFT, MeshText2D.ALIGN_TOP, this.m_textBgColor, this.m_textColor);
   }
+
   /**
    * Set pixel size in mm
    * @param (float) xPixelSize - canvas pixel size in mm for x axis
@@ -96,6 +100,7 @@ export default class TextTool {
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }
+
   /**
    * Mouse down events handler
    * @param (float) x - mouse x coordinate
@@ -105,6 +110,7 @@ export default class TextTool {
     this.m_curX = (x + (1 - 1 / zoom)) * zoom + posX;
     this.m_curY = (y - (1 - 1 / zoom)) * zoom + posY;
   }
+
   /**
    * Set text on screen
    * @param (String) text - text input by user
@@ -125,6 +131,7 @@ export default class TextTool {
       this.m_curY = -1;
     }
   }
+
   /**
    * Cancel text input
    */
@@ -132,6 +139,7 @@ export default class TextTool {
     this.m_curX = -1;
     this.m_curY = -1;
   }
+
   /**
    * Remove text element by curX and curY coordinates
    * @return removed element text

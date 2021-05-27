@@ -57,6 +57,7 @@ class LoaderNifti {
       z: 0.0
     };
   } // constructor
+
   /**
   * Read 32 bit integer from input buffer
   * @param {object} buf - source buffer
@@ -84,6 +85,7 @@ class LoaderNifti {
     }
     return res;
   }
+
   /**
   * Read 16 bit short integer from input buffer
   * @param {object} buf - source buffer
@@ -101,6 +103,7 @@ class LoaderNifti {
     }
     return res;
   }
+
   /**
   * Read 32 bit float from input buffer
   * @param {object} buf - source buffer
@@ -122,6 +125,7 @@ class LoaderNifti {
     const res = dataArray.getFloat32(0, this.m_littleEndian);
     return res;
   }
+
   /**
   * Read from local file buffer
   * @param {object} volDst - Destination volume object to be fiiied
@@ -651,6 +655,7 @@ class LoaderNifti {
 
     return true;
   } // end of readFromBuffer
+
   /**
   *
   * Read Nifti file from URL

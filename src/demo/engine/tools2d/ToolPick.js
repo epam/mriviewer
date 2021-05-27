@@ -26,10 +26,12 @@ class ToolPick {
 
     this.onTimerEnd = this.onTimerEnd.bind(this);
   }
+
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
   }
+
   /**
   * @param {number} xScr - relative x screen position. In [0..1]
   * @param {number} yScr - relative y screen position. In [0..1]
@@ -75,6 +77,7 @@ class ToolPick {
     }
     return vTex;
   }
+
   onMouseDown(xScr, yScr, store) {
     if ((this.m_wScreen === 0) || (this.m_hScreen === 0)) {
       console.log('ToolPick. onMouseDown. Bad screen size');
@@ -134,9 +137,11 @@ class ToolPick {
     setTimeout(this.onTimerEnd, 1500);
 
   } // end onMouseDown
+
   onTimerEnd() {
     this.m_objGraphics2d.forceUpdate();
   }
+
   render(ctx) {
     if (this.m_timeStart === 0) {
       return;
