@@ -33,12 +33,15 @@ export default class UiAbout extends React.Component {
     this.onShow = this.onShow.bind(this);
     this.onHide = this.onHide.bind(this);
   }
+
   onShow() {
     this.setState({ modalShow: true });
   }
+
   onHide() {
     this.setState({ modalShow: false });
   }
+
   render() {
 
     const strVer = packageJson.version;

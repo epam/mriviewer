@@ -36,6 +36,7 @@ export default class FloodFillTool {
     this.m_indexStack3d = 0;
     this.m_numFilled3d = 0;
   }
+
   createStack3d(numPixelsAll) {
     const MAGIC_STCAK_ESTIMATE = 0.3;
     this.m_maxStack3d = Math.floor(numPixelsAll * MAGIC_STCAK_ESTIMATE);
@@ -47,9 +48,11 @@ export default class FloodFillTool {
     this.m_numFilled3d = 0;
     return 1;
   }
+
   destroyStack3d() {
     this.m_stack3d = null;
   }
+
   stack3dPush(v) {
     if (this.m_indexStack3d >= this.m_maxStack3d) {
       return 0;
@@ -60,6 +63,7 @@ export default class FloodFillTool {
     this.m_indexStack3d++;
     return 1;
   }
+
   stack3dPop() {
     if (this.m_indexStack3d <= 0) {
       return null;
@@ -71,9 +75,11 @@ export default class FloodFillTool {
     v.z = this.m_stack3d[this.m_indexStack3d].z;
     return v;
   }
+
   stack3dEIsEmpty() {
     return (this.m_indexStack3d <= 0);
   }
+
   detectSeedPoint3d(xDim, yDim, zDim, pixels, vaSeedPoints, maxSeedPoints) {
     const TWO = 2;
     const yDimHalf = Math.floor(yDim / TWO);
@@ -124,6 +130,7 @@ export default class FloodFillTool {
     } // for (zIter)
     return numSeedPointsDetected;
   }
+
   floodFill3d(xDim, yDim, zDim, pixels, vSeed) {
     const xyDim = xDim * yDim;
     const okCreate = this.createStack3d(xDim * yDim * zDim);

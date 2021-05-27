@@ -33,6 +33,7 @@ class UiTFroi extends React.Component {
     super(props);
     this.m_updateEnable = true;
   }
+
   shouldComponentUpdate(nextProps) {
     //return this.m_updateEnable;
     let flag = this.m_updateEnable;
@@ -41,6 +42,7 @@ class UiTFroi extends React.Component {
     }
     return flag;
   }
+
   onChangeSliderTF() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderTF.slider.get();
@@ -48,18 +50,21 @@ class UiTFroi extends React.Component {
     store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3d_r: Number.parseFloat(aval[0]) });
     store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: Number.parseFloat(aval[1]) });
   }
+
   onChangeSliderOpacity() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderOpacity.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, sliderOpacity: Number.parseFloat(aval) });
   }
+
   onChangeSliderIsosurface() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderIsosurface.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, sliderIsosurface: Number.parseFloat(aval) });
   }
+
   /**
    * Main component render func callback
     const jsxRet = jsxArray[mode3d];

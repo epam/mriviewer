@@ -36,18 +36,22 @@ class ToolZoom {
       yMouse: 0,
     };
   }
+
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
   }
+
   onMouseDown(xScr, yScr) {
     this.state.mouseDown = true;
     this.state.xMouse = xScr;
     this.state.yMouse = yScr;
   }
+
   onMouseUp() {
     this.state.mouseDown = false;
   }
+
   onMouseMove(store, xScr, yScr) {
     if (this.state.mouseDown) {
       const dx = xScr - this.state.xMouse;
@@ -74,6 +78,7 @@ class ToolZoom {
       }
     }
   }
+
   onMouseWheel(store, evt) {
     const delta = Math.max(-1, Math.min(1, (evt.deltaY || -evt.detail)));
     const MULT_STEP = 0.04;

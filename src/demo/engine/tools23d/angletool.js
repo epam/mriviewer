@@ -68,6 +68,7 @@ export default class AngleTool {
     /** @property {Object} m_textBgColor - text background color */
     this.m_textBgColor = 'rgb(65, 65, 65)';
   }
+
   /**
    * Remove all distance lines from scene
    */
@@ -82,6 +83,7 @@ export default class AngleTool {
     this.m_state = angleToolState.WAITING;
     this.m_vertexes = [];
   }
+
   /**
    * Redraw all lines
    */
@@ -115,6 +117,7 @@ export default class AngleTool {
       this.m_scene.add(this.m_angles[i].text);
     }
   }
+
   /**
    * Mouse down events handler
    * @param (float) x - mouse x coordinate
@@ -163,6 +166,7 @@ export default class AngleTool {
       break;
     } // end switch
   }
+
   /**
    * Mouse move events handler
    * @param (float) x - mouse x coordinate
@@ -216,6 +220,7 @@ export default class AngleTool {
       break;
     } // end switch
   }
+
   updateVertexes(zoom, posX, posY) {
     this.m_vertexes = [];
     for (let i = 0; i < this.m_angles.length; ++i) {

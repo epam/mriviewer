@@ -36,6 +36,7 @@ export default class TriangleStack {
     this.m_numStacked = 0;
     this.m_stack = null;
   }
+
   /*
   * Create triangle stack
   * @param {number} depthLevel number of triangles in stack
@@ -54,6 +55,7 @@ export default class TriangleStack {
     }
     this.m_numStacked    = 0;
   } // create
+
   /*
   * Get stack depth
   * @return {number} number of triangles in stack
@@ -61,6 +63,7 @@ export default class TriangleStack {
   getStackDepth() {
     return this.m_numStacked;
   }
+
   /*
   * Chech is stack empty
   * @return {boolean} true, if empty
@@ -68,6 +71,7 @@ export default class TriangleStack {
   isEmpty() {
     return (this.m_numStacked === 0);
   }
+
   /*
   * Push triangle onto stack
   * @param {object} va triangle a (THREE.Vector3)
@@ -84,6 +88,7 @@ export default class TriangleStack {
     this.m_numStacked++;
     return 1;
   } // push triangle
+
   /*
   * Pop triangle from stack
   * @return {object} TriangleSingle object

@@ -68,6 +68,7 @@ export default class DistanceTool {
     /** @property {float} m_zoom - size zoom */
     this.m_zoom = 1;
   }
+
   /**
    * Remove all distance lines from scene
    */
@@ -81,6 +82,7 @@ export default class DistanceTool {
     this.m_runningState = false;
     this.m_vertexes = [];
   }
+
   /**
    * Redraw all lines
    */
@@ -105,12 +107,14 @@ export default class DistanceTool {
       this.m_scene.add(this.m_distances[i].text);
     }
   }
+
   /**
    * Update zoom
    */
   updateZoom(zoom) {
     this.m_zoom = zoom;
   }
+
   /**
    * Set pixel size in mm
    * @param (float) xPixelSize - canvas pixel size in mm for x axis
@@ -120,6 +124,7 @@ export default class DistanceTool {
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }
+
   /**
    * Return running state
    * @return {boolean} True if last line has not been fixed yet
@@ -127,6 +132,7 @@ export default class DistanceTool {
   isRunning() {
     return this.m_runningState;
   }
+
   /**
    * Mouse down events handler
    * @param (float) x - mouse x coordinate
@@ -154,9 +160,11 @@ export default class DistanceTool {
       this.m_yStart = -1;
     }
   }
+
   test() {
     new Line2D(this.m_scene, this.m_lineWidth, -1.0, 1.0, -0.5, 0.5, this.m_linesMaterial);
   }
+
   /**
    * Mouse move events handler
    * @param (float) x - mouse x coordinate
@@ -179,6 +187,7 @@ export default class DistanceTool {
       this.m_distances.push({ line, text });
     }
   }
+
   updateVertexes(zoom, posX, posY) {
     this.m_vertexes = [];
     for (let i = 0; i < this.m_distances.length; ++i) {

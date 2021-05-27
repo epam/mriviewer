@@ -69,6 +69,7 @@ export default class MprRenderer {
     this.m_runningState = false;
     this.m_activePlane = -1;
   }
+
   /**
   * Create WebGl renderer and connect to HTML container
   */
@@ -143,6 +144,7 @@ export default class MprRenderer {
     const container = this.m_container;
     container.append(this.m_renderer.domElement);
   } // create
+
   clearScene() {
     for (let i = 0; i < this.m_boundLines.length; ++i) {
       if (this.m_boundLines[i] !== undefined) {
@@ -169,6 +171,7 @@ export default class MprRenderer {
 
     this.m_meshes.fill(undefined);
   }
+
   /**
   * Action when new file was completely loaded
   */
@@ -318,6 +321,7 @@ export default class MprRenderer {
 
     this.updateControlLines();
   }
+
   clearControlLines() {
     if (this.m_linesXOnZ !== null) {
       this.m_scene.remove(this.m_linesXOnZ[0].getRenderObject());
@@ -342,6 +346,7 @@ export default class MprRenderer {
       this.m_scene.remove(this.m_controlLineYOnX.getRenderObject());
     }
   }
+
   updateControlLines() {
     this.clearControlLines();
     const SHIFT_MUL = 7;
@@ -402,6 +407,7 @@ export default class MprRenderer {
   // eslint-disable-next-line
   onKeyDown() {
   }
+
   /**
    * Mouse events handler
    * xScr, yScr in [0..1] is normalized mouse coordinate in screen
@@ -440,6 +446,7 @@ export default class MprRenderer {
       }
     }
   }
+
   /**
    * Mouse events handler
    */
@@ -447,6 +454,7 @@ export default class MprRenderer {
     this.m_runningState = false;
     this.m_activePlane = -1;
   }
+
   /**
    * Mouse move event handler
    * @param (float) xScr - normalized mouse x coordinate in screen
@@ -487,6 +495,7 @@ export default class MprRenderer {
       this.updateControlLines();
     }
   }
+
   /**
   * Action on each render
   */

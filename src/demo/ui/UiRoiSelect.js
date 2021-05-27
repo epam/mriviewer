@@ -73,6 +73,7 @@ class UiRoiSelect extends React.Component {
       checkboxes: arrState,
     };
   }
+
   /**
    * On change individual
    * 
@@ -101,6 +102,7 @@ class UiRoiSelect extends React.Component {
       }
     }
   }
+
   /**
    * On select all chech box event handler
    * 
@@ -120,6 +122,7 @@ class UiRoiSelect extends React.Component {
       this.m_setRoiFunc(arrStates);
     }
   }
+
   render() {
     this.m_setRoiFunc = this.props.setRoiFunc;
     const isAllSel = this.state.allSelected;

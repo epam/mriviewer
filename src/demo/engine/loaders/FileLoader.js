@@ -44,6 +44,7 @@ export default class FileLoader {
     this.m_request = null;
     this.readFile = this.readFile.bind(this);
   }
+
   /** Read file
   * @param {object} doneCallback - invoked callback
   */

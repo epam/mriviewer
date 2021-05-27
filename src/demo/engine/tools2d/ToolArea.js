@@ -37,19 +37,23 @@ class ToolArea {
     this.onMouseMove = this.onMouseMove.bind(this);
     this.render = this.render.bind(this);
   }
+
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
   }
+
   setPixelSize(xs, ys) {
     this.m_xPixelSize = xs;
     this.m_yPixelSize = ys;
   }
+
   clear() {
     this.m_areas = [];
     this.m_inCreateMode = false;
     this.m_objSelfIntersect = null;
   }
+
   /**
    * Determine intersection with points in areas set.
    * Input - screen coordinates of pick point
@@ -74,6 +78,7 @@ class ToolArea {
     } // for (i) all areas
     return null;
   }
+
   /**
    * Move edited point into new pos
    * 
@@ -97,6 +102,7 @@ class ToolArea {
     const store = this.store;
     this.m_objEdit.m_area = this.getPolyArea(this.m_objEdit.m_points, store);
   }
+
   /**
    * Remove highlighted object
    */
@@ -108,6 +114,7 @@ class ToolArea {
       }
     }
   }
+
   getDistMm(vs, ve) {
     const dx = vs.x - ve.x;
     const dy = vs.y - ve.y;
@@ -115,6 +122,7 @@ class ToolArea {
       dy * dy * this.m_yPixelSize * this.m_yPixelSize);
     return dist;
   }
+
   /**
    * Get lines intersection in 2d
    * 
@@ -175,6 +183,7 @@ class ToolArea {
     };
     return vIntersection;
   }
+
   static hasSelfIntersection(points) {
     let i, j;
     for (i = 0; i < points.length; i++) {
@@ -196,6 +205,7 @@ class ToolArea {
     } // for (i)
     return false;
   }
+
   static getSelfIntersectPoint(points) {
     const numPoints = points.length;
     if (numPoints <= 3) {
@@ -235,6 +245,7 @@ class ToolArea {
     }
     return null;
   }
+
   /**
    * 
    * @param {object} vNew - new added point
@@ -272,6 +283,7 @@ class ToolArea {
     points.push(vNew);
     return false;
   }
+
   /**
    * 
    * @param {array} points - array of points (x,y) props
@@ -319,6 +331,7 @@ class ToolArea {
     }
     return area * 0.5;
   }
+
   /**
    * When mouse button is pressed
    * 
@@ -366,6 +379,7 @@ class ToolArea {
       }
     }
   }
+
   /**
    * When mouse is moved
    * 
@@ -388,8 +402,10 @@ class ToolArea {
     this.m_objSelfIntersect = pt;
     this.m_objGraphics2d.forceUpdate();
   }
+
   onMouseUp() { // ommited args: xScr, yScr, store
   }
+
   /**
    * Render all areas on screen in 2d mode
    * 

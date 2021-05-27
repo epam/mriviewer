@@ -33,19 +33,23 @@ class ToolEdit {
     this.m_pointTracked = null;
     this.m_toolTracked = null;
   }
+
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
   }
+
   setPixelSize(xs, ys) {
     this.m_xPixelSize = xs;
     this.m_yPixelSize = ys;
   }
+
   clear() {
     this.m_mousePressed = false;
     this.m_pointTracked = null;
     this.m_toolTracked = null;
   }
+
   /**
    * When mouse pressed down
    * 
@@ -56,6 +60,7 @@ class ToolEdit {
   onMouseDown() { // ommited args: xScr, yScr, store
     this.m_mousePressed = true;
   }
+
   onMouseMove(xScr, yScr, store) {
     if (!this.m_mousePressed) {
       // fly mouse over objects on 2d screen
@@ -100,9 +105,11 @@ class ToolEdit {
       } // if we have tracked point
     }
   }
+
   onMouseUp() { // ommited args : xScr, yScr, store
     this.m_mousePressed = false;
   }
+
   /**
    * Render all areas on screen in 2d mode
    * 

@@ -46,6 +46,7 @@ export default class Line2D {
     this.m_xE = xe;
     this.m_yE = ye;
   }
+
   createWithMaterial(scene,
     lineWidth,
     xs, ys, xe, ye,
@@ -101,6 +102,7 @@ export default class Line2D {
     this.m_scene.add(this.m_mesh);
     console.log(`Line added to scene: ${xs},${ys} -> ${xe},${ye} `);
   }
+
   /**
   * Get object for further scene addition. Need to remove old line from scene
   * @return (object) line object
@@ -108,6 +110,7 @@ export default class Line2D {
   getRenderObject() {
     return this.m_mesh;
   }
+
   /**
   * Return coordinate x of start point
   * @return (float) x
@@ -115,6 +118,7 @@ export default class Line2D {
   getxS() {
     return this.m_xS;
   }
+
   /**
   * Return coordinate y of start point
   * @return (float) y
@@ -122,6 +126,7 @@ export default class Line2D {
   getyS() {
     return this.m_yS;
   }
+
   /**
   * Return coordinate x of end point
   * @return (float) x
@@ -129,6 +134,7 @@ export default class Line2D {
   getxE() {
     return this.m_xE;
   }
+
   /**
   * Return coordinate y of end point
   * @return (float) y

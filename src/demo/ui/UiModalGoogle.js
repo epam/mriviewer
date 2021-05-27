@@ -40,18 +40,22 @@ class UiModalGoogle extends React.Component {
       showModalDemo: false
     };
   }
+
   onModalShow() {
     this.setState({ showModalDemo: true });
   }
+
   onModalHide() {
     this.setState({ showModalDemo: false });
   }
+
   onDemo(index) {
     const onSelectFunc = this.props.onSelectDemo;
     const onHideFunc = this.props.onHide;
     onHideFunc();
     onSelectFunc(index);
   }
+
   logObject(strTitle, obj) {
     let str = '';
     for (let prp in obj) {
@@ -62,6 +66,7 @@ class UiModalGoogle extends React.Component {
     }
     console.log(`${strTitle}\n${str}`);
   }
+
   static getIndex(arrMenu, strElem) {
     const len = arrMenu.length;
     for (let i = 0; i < len; i++) {
@@ -71,6 +76,7 @@ class UiModalGoogle extends React.Component {
     }
     return -1;
   }
+
   onClick(evt) {
     this.m_onHideFunc();
     const strTextMenu = evt.target.innerHTML;
@@ -81,6 +87,7 @@ class UiModalGoogle extends React.Component {
       this.m_funcDemo(ind);
     }
   }
+
   render() {
     const arrMenu = this.props.arrMenu;
     this.m_arrMenu = arrMenu;

@@ -26,12 +26,15 @@ class DicomSlicesVolume {
     //
     this.m_series = [];
   }
+
   destroy() {
     this.m_series = [];
   }
+
   getSeries() {
     return this.m_series;
   }
+
   //
   // slice: DicomSlice
   addSlice(slice) {
@@ -50,6 +53,7 @@ class DicomSlicesVolume {
     const ser = this.m_series[indSerie];
     ser.addSlice(slice);
   } // end add slice
+
   getSerieIndex(slice) {
     const numSeries = this.m_series.length;
     for (let i = 0; i < numSeries; i++) {

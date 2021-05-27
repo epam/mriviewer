@@ -17,6 +17,7 @@ class DicomSerie {
     this.m_minSlice = +FLOAT_TOO_LARGE_VALUE;
     this.m_maxSlice = -FLOAT_TOO_LARGE_VALUE;
   }
+
   addSlice(slice) {
     console.assert(slice !== undefined);
     console.assert(slice instanceof DicomSlice, "added slice should be DicomSlice object");

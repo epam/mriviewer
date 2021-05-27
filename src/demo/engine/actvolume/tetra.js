@@ -46,6 +46,7 @@ export default class TetrahedronGenerator {
     this.m_pointSet = null;
     this.m_triangleSet = null;
   }
+
   /**
   * Create triangle mesh structure
   * @param {number} vRadiusEllipse Ellipse radius
@@ -115,18 +116,23 @@ export default class TetrahedronGenerator {
 
     return 1;
   } // create
+
   getNumTriangles() {
     return this.m_triangleSet.m_numTriangles;
   }
+
   getNumVertices() {
     return this.m_pointSet.m_numPoints;
   }
+
   getVertex(i) {
     return this.m_pointSet.m_points[i].m_point;
   }
+
   getTriangle(i) {
     return this.m_triangleSet.m_triangles[i].m_indices;
   }
+
   /**
   * Save tetrahedron geometry into given file (PLY type)
   * see PLY format description here:
@@ -183,6 +189,7 @@ export default class TetrahedronGenerator {
     eventGen.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
     linkGen.dispatchEvent(eventGen);
   } // saveGeoToPlyFile
+
   /**
   * Save tetrahedron geometry into given file (OBJ type)
   */
@@ -239,6 +246,7 @@ export default class TetrahedronGenerator {
     eventGen.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
     linkGen.dispatchEvent(eventGen);
   } // saveGeoToObjFile
+
   /*
   * Sub divide source mesh
   * @param {number} numSubdividesOfOrigTetra number of sub divides

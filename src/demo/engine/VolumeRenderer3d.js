@@ -241,9 +241,11 @@ export default class VolumeRenderer3d {
     };
 
   }
+
   setFileDataType(curFileDataType) {
     this.curFileDataType = curFileDataType;
   }
+
   /**
   * Special scene with sphere: remove old before adding new one
   */
@@ -254,6 +256,7 @@ export default class VolumeRenderer3d {
     this.meshSphere = null;
     this.geometrySphere = null;
   }
+
   /**
   * Special scene with sphere: add new generated Three js geometry (sphere)
   */
@@ -306,6 +309,7 @@ export default class VolumeRenderer3d {
     this.sceneSphere.add(this.meshSphere);
     return this.meshSphere;
   }
+
   /**
   * Special scene with sphere: copy rotated (by mouse) orientation from
   * main mesh to sphere mesh
@@ -321,20 +325,24 @@ export default class VolumeRenderer3d {
     }
   */
   }
+
   /**
    * Returns true if the maderial for VolumeRender is set
    */
   isVolumeLoaded() {
     return (this.matVolumeRender !== null);
   }
+
   fov2Tan(fov) {
     const HALF = 0.5;
     return Math.tan(THREE.Math.degToRad(HALF * fov));
   }
+
   tan2Fov(tan) {
     const TWICE = 2.0;
     return THREE.Math.radToDeg(Math.atan(tan)) * TWICE;
   }
+
   /**
    * Get screen copy image from current render
    *
@@ -381,6 +389,7 @@ export default class VolumeRenderer3d {
     }
     return screenshotImage;
   }
+
   /**
    * Setting a MaskFlag
    */
@@ -390,6 +399,7 @@ export default class VolumeRenderer3d {
     this.matRenderToTexture.defines.MaskFlag = MaskFlag;
     this.matRenderToTexture.needsUpdate = true;
   }
+
   /**
    * Setting a variable for conditional compilation (Volume Render)
    */
@@ -402,6 +412,7 @@ export default class VolumeRenderer3d {
       this.graphics23d = null;
     }
   }
+
   switchToVolumeRender() {
     if (this.matVolumeRender !== null && this.matRenderToTexture !== null) {
       if (this.isRoiVolume > 0) {
@@ -423,6 +434,7 @@ export default class VolumeRenderer3d {
       }
     }
   }
+
   /**
    * Setting a variable for conditional compilation (Full Volume Render)
    */
@@ -447,6 +459,7 @@ export default class VolumeRenderer3d {
       }
     }
   }
+
   /**
    * Setting a variable for conditional compilation (Isosurface render)
    */
@@ -472,6 +485,7 @@ export default class VolumeRenderer3d {
       }
     }
   }
+
   /**
    * Setting a variable for conditional compilation (Max projection render)
    */
@@ -486,6 +500,7 @@ export default class VolumeRenderer3d {
       this.renderState = this.RENDER_STATE.ONCE;
     }
   }
+
   /**
    * Setting isosurface threshold
    */
@@ -499,6 +514,7 @@ export default class VolumeRenderer3d {
       this.renderState = this.RENDER_STATE.ONCE;
     }
   }
+
   /**
    * Setting volume opacity
    * @param (number) sliderValue - slider ration in 0..1
@@ -511,6 +527,7 @@ export default class VolumeRenderer3d {
       this.matRenderToTexture.uniforms.opacityBarrier.needsUpdate = true;
     }
   }
+
   /**
    * Setting Brightness
    * @param (number) value - brightness of ???
@@ -526,6 +543,7 @@ export default class VolumeRenderer3d {
       // this.volumeUpdater.updateVolumeTexture(0.1 + 1.5*value);
     }
   }
+
   /**
    * Setting Contrast
    * @param (number) value - constrast of ???
@@ -538,6 +556,7 @@ export default class VolumeRenderer3d {
       this.matVolumeRender.uniforms.contrast3D.needsUpdate = true;
     }
   }
+
   setAmbientTextureMode(isoThreshold) {
     if (this.texVolumeAO) {
       this.texVolumeAO.dispose();
@@ -553,6 +572,7 @@ export default class VolumeRenderer3d {
     this.matVolumeRender.uniforms.texVolumeAO.value = this.texVolumeAO;
     this.matVolumeRender.uniforms.texVolumeAO.needsUpdate = true;
   }
+
   offAmbientTextureMode() {
     if (this.texVolumeAO) {
       this.texVolumeAO.dispose();
@@ -562,6 +582,7 @@ export default class VolumeRenderer3d {
     this.matRenderToTexture.needsUpdate = true;
     this.matVolumeRender.needsUpdate = true;
   }
+
   /**
    * Setting Cut Plane
    * @param (number) value - ???
@@ -571,6 +592,7 @@ export default class VolumeRenderer3d {
     this.planeCenterPt.z = Z_MULTIPLIER * value;
     this.updateCutPlanes();
   }
+
   /**
    * Setting Transfer Function Params
    * @param (array) values - 3 threshold values for volumetric render
@@ -619,6 +641,7 @@ export default class VolumeRenderer3d {
       this.matVolumeRender.uniforms.stepSize.needsUpdate = true;
     }
   }
+
   /**
    * Compute 3D texture coordinates on BBOX
    * @param (object) nonEmptyBoxMin - Min corner for non empty box in volume
@@ -662,6 +685,7 @@ export default class VolumeRenderer3d {
       this.geometry.getAttribute('uvw').needsUpdate = true;
     }
   }
+
   computeGeometrySphereUVs() {
     const VAL_3 = 3;
     // Need calculate uvw coords for sphere geo
@@ -704,6 +728,7 @@ export default class VolumeRenderer3d {
       this.geometrySphere.uvw = uvw;
     } // if need face uv
   }
+
   createClipPlaneGeometry() {
     const matClipPlane = new MaterialClipPlane();
     matClipPlane.create(this.bfTexture, (mat) => {
@@ -713,6 +738,7 @@ export default class VolumeRenderer3d {
       this.sceneClipPlane.add(plane);
     });
   }
+
   updateClipPlaneGeometry() {
     const VAL_3 = 3;
     const uvw = new Float32Array(this.planeGeometry.getAttribute('position').count * VAL_3);
@@ -750,6 +776,7 @@ export default class VolumeRenderer3d {
     this.planeGeometry.addAttribute('uvw', new THREE.BufferAttribute(uvw, VAL_3));
     this.planeGeometry.getAttribute('uvw').needsUpdate = true;
   }
+
   getScreen2WorldTransform() {
     const l2w = new THREE.Matrix4();
     l2w.getInverse(this.mesh.matrix);
@@ -761,6 +788,7 @@ export default class VolumeRenderer3d {
     s2w.multiply(l2w);
     return s2w;
   }
+
   /**
    * Create geometry and materials for 3D rendering
    * @param (object) box - physic volume box dimensions
@@ -1080,6 +1108,7 @@ export default class VolumeRenderer3d {
     //this.tools23d.set2dToolType(toolType);
     //matSkullThreeGS.m_uniforms.texVolumeMask.value = this.volTextureMask;
   } // callbackCreateCubeVolume
+
   /**
    * Creates transfer function color map
    * @param ctrlPts Array of control points of type HEX  = color value
@@ -1087,6 +1116,7 @@ export default class VolumeRenderer3d {
   setTransferFuncColors(ctrlPtsColorsHex) {
     this.volumeUpdater.setTransferFuncColors(ctrlPtsColorsHex);
   }
+
   /**
    * Creates transfer function color map
    * @param ctrlPts Array of Vector2 where (x,y) = x coordinate in [0, 1], alpha value in [0, 1]
@@ -1095,6 +1125,7 @@ export default class VolumeRenderer3d {
   updateTransferFuncTexture(intensities, opacities) {
     return this.volumeUpdater.updateTransferFuncTexture(intensities, opacities);
   }
+
   /**
    * Create 2D texture containing selected ROIs
    * @param selectedROIs 256 byte roi values
@@ -1104,6 +1135,7 @@ export default class VolumeRenderer3d {
   }  /**
    * Rotate Cut Plane (Rotation is inverse to the object)
    */
+
   updateCutPlanes() {
     if (!this.mesh) {
       return;
@@ -1139,6 +1171,7 @@ export default class VolumeRenderer3d {
       this.matFF.uniforms.PlaneZ.value.w = -centerPt.dot(zAxis);
     }
   }
+
   /**
    * Rotate light direction (Rotation is inverse to the object)
    */
@@ -1164,6 +1197,7 @@ export default class VolumeRenderer3d {
     this.matVolumeRender.uniforms.lightDir.value = lightDir;
     this.matVolumeRender.uniforms.lightDir.needsUpdate = true;
   }
+
   /** Check is scene ready to render */
   isReadyToRender() {
     if (this.sceneReadyCounter !== SCENE_READY_COUNTER_OK) {
@@ -1176,6 +1210,7 @@ export default class VolumeRenderer3d {
     }
     return true;
   }
+
   /** Render 3d scene */
   render() {
     /*if (this.sceneReadyCounter !== SCENE_READY_COUNTER_OK) {
@@ -1255,6 +1290,7 @@ export default class VolumeRenderer3d {
       this.renderCounter++;
     }
   }
+
   setStepsize(sliderValue) {
     const A = 100.0;
     const B = 700.0;
@@ -1268,6 +1304,7 @@ export default class VolumeRenderer3d {
       this.matVolumeRender.uniforms.needsUpdate = true;
     }
   }
+
   /**
   * Get object's vertex (3d) projection on screen, using current object transformation
   *
@@ -1294,6 +1331,7 @@ export default class VolumeRenderer3d {
     // return vProj.z;
     return vPrj.z;
   }
+
   setEraserMode(isOn) {
     this.isEraseMode = isOn;
     this.orbitControl.setEraserMode(isOn);
@@ -1317,12 +1355,15 @@ export default class VolumeRenderer3d {
       this.setMaskFlag(0);
     }
   }
+
   undoEraser() {
     this.volumeUpdater.eraser.undoLastErasing();
   }
+
   setEraserStart(isOn) {
     this.eraserStart = isOn;
   }
+
   onMouseDown(xx, yy) {
     if (this.Tool23D) {
       this.graphics23d.onMouseDown(xx / this.windowWidth, yy / this.windowHeight);
@@ -1340,6 +1381,7 @@ export default class VolumeRenderer3d {
       this.volumeUpdater.eraser.eraseStart(xx, yy, this.windowWidth, this.matVolumeRender.uniforms.isoThreshold.value, true);
     }
   }
+
   onMouseMove(xx, yy) {
     //this.tools23d.onMouseMove(xx / this.windowWidth, yy / this.windowHeight);
     if (this.Tool23D) {
@@ -1357,6 +1399,7 @@ export default class VolumeRenderer3d {
       this.volumeUpdater.eraser.eraseStart(xx, yy, this.windowWidth, this.matVolumeRender.uniforms.isoThreshold.value, false);
     }
   }
+
   onMouseUp( xx, yy ) {
     if (this.Tool23D) {
       this.graphics23d.onMouseUp(xx / this.windowWidth, yy / this.windowHeight);
@@ -1371,6 +1414,7 @@ export default class VolumeRenderer3d {
     this.eraserMouseDown = false;
     this.renderState = this.RENDER_STATE.ONCE;
   }
+
   onMouseWheel(e) {
     //const e = window.event || event; // old IE support
     const delta = Math.max(-1, Math.min(1, (e.deltaY || -e.detail)));

@@ -35,6 +35,7 @@ class UiModalText extends React.Component {
       text: ''
     };
   } // end constr
+
   onTextEntered() {
     const store = this.props;
     const gra = store.graphics2d;
@@ -42,6 +43,7 @@ class UiModalText extends React.Component {
     toolText.setText(this.state.text);
     this.setState({ text: '' });
   }
+
   /**
    * When user press OK button
    */
@@ -50,16 +52,19 @@ class UiModalText extends React.Component {
     this.m_hideFunc();
     this.onTextEntered();
   }
+
   handleFormSubmit(evt) {
     evt.preventDefault();
     this.m_hideFunc();
     this.onTextEntered();
   }
+
   onTexChange(evt) {
     const strText = evt.target.value;
     // console.log(`onTexChange. text = ${strText}`);
     this.setState({ text: strText });
   }
+
   render() {
     const stateVis = this.props.stateVis;
     const onHideFunc = this.props.onHide;

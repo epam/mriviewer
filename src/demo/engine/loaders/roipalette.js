@@ -694,6 +694,7 @@ export default class RoiPalette {
     ];
     this.createBytePalette256();
   }
+
   /**
   * Transform array of objects into uint32 color array with 256 entries
   */
@@ -728,12 +729,14 @@ export default class RoiPalette {
       this.m_palette256[ind + OFFS_3] = aCol;
     }
   }
+
   /**
   * Return palette array of objects
   */
   getPalette() {
     return this.m_palette;
   }
+
   /**
   * Return array of uints8 with 256 entries * 4
   */

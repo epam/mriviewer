@@ -35,27 +35,33 @@ class UiSkelAni extends React.Component {
     this.m_frameId = null;
 
   }
+
   animate() {
     this.renderWithCtx();
     this.m_frameId = window.requestAnimationFrame(this.animate);
   }
+
   start() {
     if (this.m_frameId === null) {
       this.m_frameId = requestAnimationFrame(this.animate);
     }
   }
+
   stop() {
     cancelAnimationFrame(this.m_frameId);
     this.m_frameId = null;
   }
+
   componentDidMount() {
     // console.log('UiSkelAni. start animations');
     this.start();
   }
+
   componentWillUnmount() {
     // console.log('UiSkelAni. stop animations');
     this.stop();
   }
+
   /**
    * Main component render func callback
    */
@@ -66,6 +72,7 @@ class UiSkelAni extends React.Component {
     const jsxAni = <canvas className="img-responsive" style={strStyle} ref={ (mount) => {this.m_mount = mount} } min-width="240px" width="240px" height="200px" />
     return jsxAni;
   } // end render
+
   /**
    * Draw center part of lungs pixtre
    * 
@@ -153,6 +160,7 @@ class UiSkelAni extends React.Component {
     ctx.stroke();
     ctx.fill();
   } // draw central
+
   /**
    * Transform pic coords to screen coords with current object center (xHeart, yHeart) ,
    * scale and mirror feature
@@ -173,6 +181,7 @@ class UiSkelAni extends React.Component {
     vec.x = xHeart + (xRelCenter * scale);
     vec.y = yHeart + (yRelCenter * scale);
   }
+
   /**
    * Draw small leave near line segment of blood vessel
    * 
@@ -199,6 +208,7 @@ class UiSkelAni extends React.Component {
     ctx.lineTo(Math.floor(xc + vx * MULT), Math.floor(yc + vy * MULT));
     ctx.stroke();
   }
+
   /**
    * Render single heart
    * 
@@ -374,6 +384,7 @@ class UiSkelAni extends React.Component {
     } // for (v) all vessels
 
   } // draw heart
+
   /**
    * Render scene on canvas
    */

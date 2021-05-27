@@ -13,21 +13,25 @@ class UiModalDicomSeries extends React.Component {
 
     this.onClickRow = this.onClickRow.bind(this);
   }
+
   onClickRow(evt, row, rowIndex) {
     // console.log(`clicked row = ${rowIndex}`);
     this.m_onHide();
     this.m_onSelect(rowIndex);
   }
+
   // special code to fix bootstrap table 
   // clippimng problem
   componentWillUpdate(){
     // document.querySelector('.react-bs-table-container').style.height = "auto";
     this.m_strStyle = 'auto';
   }
+
   componentDidUpdate(){
     // document.querySelector('.react-bs-table-container').style.height = "100%";
     this.m_strStyle = '100%';
-  }  
+  }
+  
   render() {
     const isVisible = this.props.stateVis;
     const store = this.props;

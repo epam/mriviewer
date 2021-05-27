@@ -35,6 +35,7 @@ class LoaderDcmDaikon {
   constructor(){ 
     this.m_loaderDicom = null;
   }
+
   //
   // see example read
   // https://github.com/mbarnig/dumpDICOMDIRarchive/blob/master/dumpDICOMDIR.js
@@ -79,6 +80,7 @@ class LoaderDcmDaikon {
     } // if dir rec found
     return LoadResult.SUCCESS;
   }
+
   // load single slice, using file index
   loadSingleSlice(fileIndex, fileName, strContent) {
     // console.log("loadSingleSlice [" + fileIndex.toString() + "]");
@@ -434,6 +436,7 @@ class LoaderDcmDaikon {
     volSlice.m_yDim = yDim;
     return LoadResult.SUCCESS;
   } // end load single slice
+
   //
   // read 1 slice during reading multiple dcm files
   //
@@ -442,6 +445,7 @@ class LoaderDcmDaikon {
     const ret = this.loadSingleSlice(fileIndex, fileName, strContent);
     return ret;
   }
+
   // read 1 slice
   readSingleSlice(store, loader, fileIndex, fileName, strContent) {
     this.m_loaderDicom = loader;

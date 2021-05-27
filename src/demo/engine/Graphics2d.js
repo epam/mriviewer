@@ -102,6 +102,7 @@ class Graphics2d extends React.Component {
     store.dispatch({ type: StoreActionType.SET_GRAPHICS_2D, graphics2d: this });
 
   }
+
   /*
   start() {
     if (this.m_frameId === null) {
@@ -134,15 +135,18 @@ class Graphics2d extends React.Component {
       this.setState({ hRender: h });
     }
   }
+
   componentWillUnmount() {
     this.m_isMounted = false;
   }
+
   componentDidUpdate() {
     // this.prepareImageForRender();
     if (this.m_isMounted) {
       this.renderReadyImage();
     }
   }
+
   /**
    * Get screenshot
    * 
@@ -158,6 +162,7 @@ class Graphics2d extends React.Component {
     const dataUrl = objCanvas.toDataURL();
     return dataUrl;
   }
+
   /**
    * Render text info about volume
    * 
@@ -227,6 +232,7 @@ class Graphics2d extends React.Component {
     }
       
   }
+
   prepareImageForRender(volIndexArg) {
     // console.log('prepareImageForRender ...');
     const objCanvas = this.m_mount;
@@ -598,6 +604,7 @@ class Graphics2d extends React.Component {
       this.segm2d.setImageData(imgData);
     } // if vol not null
   } // prepareImageForRender
+
   renderReadyImage() {
     // console.log('renderReadyImage ...');
     if (!this.m_isMounted) {
@@ -641,6 +648,7 @@ class Graphics2d extends React.Component {
     this.m_toolEdit.render(ctx, store);
     this.m_toolDelete.render(ctx, store);
   }
+
   onMouseWheel(evt) {
     const store = this.props;
     const indexTools2d = store.indexTools2d;
@@ -648,6 +656,7 @@ class Graphics2d extends React.Component {
       this.m_toolZoom.onMouseWheel(store, evt);
     }
   }
+
   onMouseUp(evt) {
     const store = this.props;
     const indexTools2d = store.indexTools2d;
@@ -697,6 +706,7 @@ class Graphics2d extends React.Component {
       this.m_toolDelete.onMouseUp(xScr, yScr, store);
     }
   }
+
   onMouseMove(evt) {
     const store = this.props;
     const indexTools2d = store.indexTools2d;
@@ -728,6 +738,7 @@ class Graphics2d extends React.Component {
       this.m_toolDelete.onMouseMove(xScr, yScr, store);
     }
   }
+
   onMouseDown(evt) {
     const box = this.m_mount.getBoundingClientRect();
     const xContainer = evt.clientX - box.left;
@@ -775,6 +786,7 @@ class Graphics2d extends React.Component {
     // force update
     this.forceUpdate();
   } // onMouseDown
+
   /**
    * Invoke clear all tools
    */
@@ -787,6 +799,7 @@ class Graphics2d extends React.Component {
     this.m_toolEdit.clear();
     this.m_toolDelete.clear();
   }
+
   /**
    * Invoke forced rendering, after some tool visual changes
    */
@@ -803,12 +816,14 @@ class Graphics2d extends React.Component {
       this.forceRender();
     } // if not segmented image
   }
+
   forceRender() {
     if (this.m_isMounted) {
       // console.log('forceRender ...');
       this.setState({ state: this.state });
     }
   }
+
   /**
    * Main component render func callback
    */

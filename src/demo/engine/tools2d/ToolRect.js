@@ -36,18 +36,22 @@ class ToolRect {
     this.onMouseMove = this.onMouseMove.bind(this);
     this.render = this.render.bind(this);
   }
+
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
   }
+
   setPixelSize(xs, ys) {
     this.m_xPixelSize = xs;
     this.m_yPixelSize = ys;
   }
+
   clear() {
     this.m_rects = [];
     this.m_inCreateMode = false;
   }
+
   getDistMm(vs, ve) {
     const dx = vs.x - ve.x;
     const dy = vs.y - ve.y;
@@ -55,6 +59,7 @@ class ToolRect {
       dy * dy * this.m_yPixelSize * this.m_yPixelSize);
     return dist;
   }
+
   /**
    * Determine intersection with points in rect set.
    * Input - screen coordinates of pick point
@@ -82,6 +87,7 @@ class ToolRect {
     }
     return null;
   }
+
   /**
    * Move edited point into new pos
    * 
@@ -94,6 +100,7 @@ class ToolRect {
     // update line len
     this.getRectArea(this.m_objEdit, this.m_store);
   }
+
   /**
    * Remove highlighted object
    * 
@@ -106,6 +113,7 @@ class ToolRect {
       }
     }
   }
+
   getRectArea(objRect, store) {
     const volSet = store.volumeSet;
     const volIndex = store.volumeIndex;
@@ -136,6 +144,7 @@ class ToolRect {
     const dy = Math.abs(objRect.vMax.y - objRect.vMin.y); 
     objRect.area = xScale * yScale * dx * dy; 
   }
+
   onMouseDown(xScr, yScr, store) {
     this.m_store = store;
     const vTex = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
@@ -159,6 +168,7 @@ class ToolRect {
       this.m_inCreateMode = false;
     }
   }
+
   onMouseMove(xScr, yScr, store) {
     if (this.m_inCreateMode) {
       const vTex = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
@@ -170,8 +180,10 @@ class ToolRect {
       this.m_objGraphics2d.forceUpdate();
     } // if in create rect mode
   }
+
   onMouseUp() { // ommitred args: xScr, yScr, store
   }
+
   /**
    * Render all areas on screen in 2d mode
    * 

@@ -58,6 +58,7 @@ class VolumeSet extends React.Component {
     /** text with physican name */
     this.m_physicansName = '';
   }
+
   /**
    * Add volume to set
    * 
@@ -69,6 +70,7 @@ class VolumeSet extends React.Component {
     this.m_volumes.push(vol);
     this.m_numVolumes++;
   }
+
   /**
    * Get number of volumes in st
    * 
@@ -77,6 +79,7 @@ class VolumeSet extends React.Component {
   getNumVolumes() {
     return this.m_numVolumes;
   }
+
   /**
    * Get volume by its index
    * @param {number} idx - index of volume in set
@@ -91,10 +94,12 @@ class VolumeSet extends React.Component {
     }
     return this.m_volumes[idx];
   }
+
   // do nothing. But we need to implement render() to run Volume tests
   render() {
     return <p>></p>;
   }
+
   // ********************************************
   // Read metyhods. From Ktx, Dicom, ..
   // ********************************************
@@ -112,35 +117,41 @@ class VolumeSet extends React.Component {
     const vol = this.getVolume(0);
     const ret = loader.readFromBuffer(vol, arrBuf, callbackProgress, callbackComplete);
     return ret;
-  }  
+  }
+  
   readFromKtxUrl(strUrl, callbackProgress, callbackComplete) {
     const loader = new LoaderKtx();
     const vol = this.getVolume(0);
     loader.readFromUrl(vol, strUrl, callbackProgress, callbackComplete);
   }
+
   readFromNiiUrl(strUrl, callbackProgress, callbackComplete) {
     const loader = new LoaderNifti();
     const vol = this.getVolume(0);
     const ret = loader.readFromUrl(vol, strUrl, callbackProgress, callbackComplete);
     return ret;
   }
+
   readFromDicomUrl(strUrl, callbackProgress, callbackComplete) {
     const NUM_FILES = 0; // will be filled later
     const loader = new LoaderDicom(NUM_FILES);
     const ret = loader.readFromUrl(this, strUrl, callbackProgress, callbackComplete);
     return ret;
   }
+
   readFromHdrUrl(strUrl, callbackProgress, callbackComplete) {
     const loader = new LoaderHdr();
     const ret = loader.readFromUrl(this, strUrl, callbackProgress, callbackComplete);
     return ret;
   }
+
   readFromNifti(arrBuf, callbackProgress, callbackComplete) {
     const loader = new LoaderNifti();
     const vol = this.getVolume(0);
     const ret = loader.readFromBuffer(vol, arrBuf, callbackProgress, callbackComplete);
     return ret;
   }
+
   readFromDicom(loader, arrBuf, callbackProgress, callbackComplete) {
     const indexFile = 0;
     const fileName = 'file???';
@@ -149,6 +160,7 @@ class VolumeSet extends React.Component {
     const ret = loader.readFromBuffer(indexFile, fileName, ratio, arrBuf, callbackProgress, callbackComplete);
     return ret;
   }
+
   readSingleSliceFromDicom(loader, indexFile, fileName, ratioLoaded, arrBuf, callbackProgress, callbackComplete) {
     const ret = loader.readFromBuffer(indexFile, fileName, ratioLoaded, arrBuf, callbackProgress, callbackComplete);
     return ret;

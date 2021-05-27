@@ -33,6 +33,7 @@ class UiModalAlert extends React.Component {
       text: '',
     };
   } // end constr
+
   /**
    * When user press OK button
    */
@@ -40,6 +41,7 @@ class UiModalAlert extends React.Component {
     // console.log('on button OK');
     this.m_hideFunc();
   }
+
   render() {
     const stateVis = this.props.stateVis;
     const onHideFunc = this.props.onHide;

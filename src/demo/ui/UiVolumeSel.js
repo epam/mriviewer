@@ -39,6 +39,7 @@ class UiVolumeSel extends React.Component {
     //   index: 0,
     // };
   }
+
   setVolumeIndex(indexSelected) {
     const store = this.props;
     // const series = store.dicomSeries;
@@ -85,6 +86,7 @@ class UiVolumeSel extends React.Component {
 
     } // if vol data not null
   }
+
   onClickRow(ind) {
     console.assert(typeof(ind) == 'number');
     const store = this.props;
@@ -94,6 +96,7 @@ class UiVolumeSel extends React.Component {
       this.setVolumeIndex(ind);
     }
   }
+
   render() {
     const store = this.props;
     const volumeSet = store.volumeSet;

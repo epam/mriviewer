@@ -52,6 +52,7 @@ class UiModalBilateral extends React.Component {
     this.m_koefDist = 3.0;
     this.m_koefVal = 0.1;
   } // end constr
+
   //
   //
   //
@@ -105,6 +106,7 @@ class UiModalBilateral extends React.Component {
     const UPDATE_DELAY_MSEC = 150;
     this.m_timerId = setTimeout(this.onBilateralCallback, UPDATE_DELAY_MSEC);
   }
+
   //
   // callback for periodicallt invoke sobel 3d volume filtering
   //
@@ -162,18 +164,22 @@ class UiModalBilateral extends React.Component {
       this.m_timerId = setTimeout(this.onBilateralCallback, UPDATE_DELAY_MSEC);
     }
   } // end onBilateralCallback
+
   //
   onModalShow() {
     this.setState({ showModalGauss: true });
   }
+
   onModalHide() {
     this.setState({ showModalGauss: false });
   }
+
   handleFormSubmit(evt) {
     evt.preventDefault();
     this.m_hideFunc();
     // this.onSaveNifti();
   }
+
   onChangeSliderKoefDist() {
     if (this.refs === undefined) {
       return;
@@ -186,6 +192,7 @@ class UiModalBilateral extends React.Component {
       this.m_koefDist = val;
     }
   }
+
   onChangeSliderKoefVal() {
     if (this.refs === undefined) {
       return;
@@ -198,6 +205,7 @@ class UiModalBilateral extends React.Component {
       this.m_koefVal = val;
     }
   }
+
   //
   render() {
     const stateVis = this.props.stateVis;

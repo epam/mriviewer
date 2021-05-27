@@ -42,32 +42,39 @@ class UiTF extends React.Component {
     this.onUndo = this.onUndo.bind(this); 
     this.onSave = this.onSave.bind(this); 
   }
+
   onAO() {
     const store = this.props;
     const isoThreshold = store.sliderIsosurface;//this.refs.sliderIsosurface.slider.get();
     store.volumeRenderer.setAmbientTextureMode(isoThreshold);
   }
+
   offAO() {
     const store = this.props;
     store.volumeRenderer.offAmbientTextureMode();
   }
+
   onStartEr() {
     const store = this.props;
     store.volumeRenderer.setEraserStart(true);
   }
+
   onStopEr() {
     const store = this.props;
     store.volumeRenderer.setEraserStart(false);
   }
+
   onUndo() {
     const store = this.props;
     store.volumeRenderer.undoEraser();
   }
+
   onSave() {
     const store = this.props;
     store.volumeRenderer.volumeUpdater.updateVolumeTextureWithMask();
     console.log(`onSave`);
   }
+
   onChangeSliderTF() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderTF.slider.get();
@@ -76,6 +83,7 @@ class UiTF extends React.Component {
     store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: Number.parseFloat(aval[1]) });
     store.dispatch({ type: StoreActionType.SET_SLIDER_3DB, slider3d_b: Number.parseFloat(aval[2]) });
   }
+
   shouldComponentUpdate(nextProps) {
     //return this.m_updateEnable;
     let flag = this.m_updateEnable;
@@ -85,36 +93,42 @@ class UiTF extends React.Component {
     return flag;
     //return true;
   }
+
   onChangeSliderOpacity() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderOpacity.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, sliderOpacity: Number.parseFloat(aval) });
   }
+
   onChangeSliderIsosurface() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderIsosurface.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, sliderIsosurface: Number.parseFloat(aval) });
   }
+
   onChangeSliderErRadius() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderErRadius.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_ErRadius, sliderErRadius: Number.parseFloat(aval) });
   }
+
   onChangeSliderErDepth() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderErDepth.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_ErDepth, sliderErDepth: Number.parseFloat(aval) });
   }
+
   transferFuncCallback(transfFuncObj) {
     const i = transfFuncObj.m_indexMoved;
     const x = transfFuncObj.m_handleX[i];
     const y = transfFuncObj.m_handleY[i];
     console.log(`moved point[${i}] = ${x}, ${y}  `);
   }
+
   /**
    * Main component render func callback
    */

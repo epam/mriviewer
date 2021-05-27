@@ -36,6 +36,7 @@ class DicomSlice {
     this.m_xDim = 0;
     this.m_yDim = 0;
   }
+
   buildHash() {
     const strMix = this.m_patientName + this.m_studyDescr +
     this.m_studyDate + this.m_seriesTime + 

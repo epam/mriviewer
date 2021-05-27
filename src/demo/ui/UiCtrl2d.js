@@ -45,6 +45,7 @@ class UiCtrl2d extends React.Component {
     this.onMode = this.onMode.bind(this);
     this.m_updateEnable = true;
   }
+
   onMode(indexMode) {
     const store = this.props;
     const gra2d = store.graphics2d;
@@ -63,15 +64,19 @@ class UiCtrl2d extends React.Component {
     // render just builded image
     gra2d.forceRender();
   }
+
   onModeSaggital() {
     this.onMode(Modes2d.SAGGITAL);
   }
+
   onModeCoronal() {
     this.onMode(Modes2d.CORONAL);
   }
+
   onModeTransverse() {
     this.onMode(Modes2d.TRANSVERSE);
   }
+
   onChangeSliderSlice() {
     if (this.refs === undefined) {
       return;
@@ -116,11 +121,13 @@ class UiCtrl2d extends React.Component {
       gra2d.forceRender();
     }
   }
+
   shouldComponentUpdate() {
     // return false;
     // return true;
     return this.m_updateEnable;
   }
+
   /**
    * Main component render func callback
    */

@@ -37,18 +37,23 @@ export default class CanvasText {
     this.m_canvas = document.createElement('canvas');
     this.m_ctx = this.m_canvas.getContext('2d');
   }
+
   get width() {
     return this.m_canvas.width;
   }
+
   get height() {
     return this.m_canvas.height;
   }
+
   get textWidth() {
     return this.m_textWidth;
   }
+
   get textHeight() {
     return this.m_textHeight;
   }
+
   static getFontHeight(strFont) {
     const body = document.getElementsByTagName('body')[0];
     const dummy = document.createElement('div');
@@ -61,6 +66,7 @@ export default class CanvasText {
     body.removeChild(dummy);
     return result;
   }
+
   /**
   * Returns the smallest power of 2 that is greater than or equal to val.
   * @param (number) val - value to search closest power of 2.
@@ -77,6 +83,7 @@ export default class CanvasText {
     }
     return FAIL;
   }
+
   /**
   * Initialize Canvas text renderer
   * @param (strint) strTextToRender - text to render

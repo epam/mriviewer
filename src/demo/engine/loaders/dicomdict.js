@@ -759,6 +759,7 @@ export default class DicomDictionary {
       /* eslint-enable */
     ];
   } // constructor
+
   /**
   * Get vr string code from group + element codes
   * @param {number} group - group of the tag
@@ -778,6 +779,7 @@ export default class DicomDictionary {
     }
     return vr;
   } // get VR
+
   /**
   * Get descripotion string  from group + element codes
   * @param {number} group - group of the tag

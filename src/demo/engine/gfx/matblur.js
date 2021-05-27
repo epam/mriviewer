@@ -67,6 +67,7 @@ export default class MaterialBlur {
       useWebGL2: 1,
     };
   }
+
   /** Backface material constructor
   * @return {object} Three.js material with this shader
   */

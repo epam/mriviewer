@@ -49,6 +49,7 @@ export default class MaterialInterpolation {
       isoRenderFlag: 0,
     };
   }
+
   /** Simple material constructor
   * @return {object} Three.js material with this shader
   */

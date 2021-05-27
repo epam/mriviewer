@@ -36,14 +36,17 @@ class ToolText {
     this.render = this.render.bind(this);
     this.setText = this.setText.bind(this);
   }
+
   setScreenDim(wScr, hScr) {
     this.m_wScreen = wScr;
     this.m_hScreen = hScr;
   }
+
   setPixelSize(xs, ys) {
     this.m_xPixelSize = xs;
     this.m_yPixelSize = ys;
   }
+
   /**
    * Determine intersection with points in all texts.
    * Input - screen coordinates of pick point
@@ -65,6 +68,7 @@ class ToolText {
     }
     return null;
   }
+
   /**
    * Move edited point into new pos
    * 
@@ -76,6 +80,7 @@ class ToolText {
     vVolOld.y = vVolNew.y;
     // update info about text
   }
+
   /**
    * Remove highlighted object
    * 
@@ -88,6 +93,7 @@ class ToolText {
       }
     }
   }
+
   getDistMm(vs, ve) {
     const dx = vs.x - ve.x;
     const dy = vs.y - ve.y;
@@ -95,6 +101,7 @@ class ToolText {
       dy * dy * this.m_yPixelSize * this.m_yPixelSize);
     return dist;
   }
+
   setText(str) {
     this.m_text = str;
     console.log(`set text = ${str}`);
@@ -109,9 +116,11 @@ class ToolText {
     // invoke render
     this.m_objGraphics2d.forceUpdate();
   }
+
   clear() {
     this.m_texts = [];
   }
+
   /**
    * When mouse pressed down
    * 
@@ -126,10 +135,13 @@ class ToolText {
     const uiApp = store.uiApp;
     uiApp.onShowModalText();
   }
+
   onMouseMove() { // args ommited: xScr, yScr, store
   }
+
   onMouseUp() { // args ommited: xScr, yScr, store
   }
+
   /**
    * Render all areas on screen in 2d mode
    * 

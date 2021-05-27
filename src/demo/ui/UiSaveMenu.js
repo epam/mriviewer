@@ -39,16 +39,20 @@ class UiSaveMenu extends React.Component {
       showModalSaveNifti: false,
     };
   }
+
   // invoked after render
   componentDidMount() {
   }
+
   onModalSaveNiftiShow() {
     this.setState({ showModalSaveNifti: true });
   }
+
   onModalSaveNiftiHide() {
     this.setState({ showModalSaveNifti: false });
     // console.log('onModalSaveNiftiHide...');
   }
+
   //
   // render
   //

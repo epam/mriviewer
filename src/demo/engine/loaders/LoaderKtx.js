@@ -59,6 +59,7 @@ export default class LoaderKtx {
       z: 0.0
     };
   } // constructor
+
   //
   static readInt(bufBytes, bufOff) {
     let iVal = 0;
@@ -71,6 +72,7 @@ export default class LoaderKtx {
     }
     return iVal;
   }
+
   //
   static readFloat(buf, off) {
     const BYTES_IN_FLOAT = 4;
@@ -86,6 +88,7 @@ export default class LoaderKtx {
     const res = dataArray.getFloat32(0, IS_LITTLE_ENDIAN);
     return res;
   } // readFloat
+
   //
   //
   //
@@ -316,6 +319,7 @@ export default class LoaderKtx {
     }
     return LoadResult.SUCCESS;
   } // end readFromBuffer
+
   /**
   *
   * Read Ktx file from URL

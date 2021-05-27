@@ -45,6 +45,7 @@ export default class MaterialClipPlane {
       texBF: { type: 't' },
     };
   }
+
   /** Frontface material constructor
   * @return {object} Three.js material with this shader
   */

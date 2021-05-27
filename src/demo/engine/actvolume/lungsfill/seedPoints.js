@@ -18,6 +18,7 @@ export default class SeedPoints {
     this.m_zDim = zDim;
     this.m_volTexSrc = volume;
   }
+
   findSeedPointOnCentralSlice(vSeed) {
     const TWO = 2;
     const zCenter = Math.floor(this.m_zDim / TWO);
@@ -140,6 +141,7 @@ export default class SeedPoints {
     vSeed.z = zCenter;
     return 0;
   } //findSeedPointOnCentralSlice
+
   findSeedPointOnFirstSlice(vSeed) {
     const pixelsSrc = this.m_volTexSrc;
     const VAL_BLACK_BARRIER = 50;

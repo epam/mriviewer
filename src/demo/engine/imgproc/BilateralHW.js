@@ -103,9 +103,11 @@ export default class BilateralHW {
       useWebGL2: 1,
     };
   } // end constructor
+
   getImageDst() {
     return this.m_bufferTextureCPU;
   }
+
   // check is iters finished
   isFinished() {
     if (this.m_z >= this.m_zDim) {
@@ -113,6 +115,7 @@ export default class BilateralHW {
     }    
     return false;
   }
+
   update() {
     const zDim = this.m_zDim;
     const STEP = (zDim > 16 ) ? 24 : 2;
@@ -142,6 +145,7 @@ export default class BilateralHW {
     this.m_iter += 1;
     this.m_z = zNext;
   }
+
   // before iterative renders
   setVolumeTextureWebGL2(distSigma, valSigma) {
     this.m_material.uniforms.distSigma.value = distSigma;
@@ -155,6 +159,7 @@ export default class BilateralHW {
     this.m_frameBuf = new Uint8Array(VAL_4 * this.m_xDim * this.m_yDim);
     this.gl = this.rendererBlur.getContext();
   }
+
   // create camera , context
   initRenderer(distSigma, valSigma) {
     this.sceneBlur = new THREE.Scene();
@@ -186,6 +191,7 @@ export default class BilateralHW {
     // render with blur and copy pixels back to this.bufferRgba
     this.setVolumeTextureWebGL2(distSigma, valSigma);
   }
+
   // create renderer
   // koefDist in 0.5 .. 3.0
   // koefVal in 0.1 .. 4.0

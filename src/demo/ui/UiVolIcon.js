@@ -22,6 +22,7 @@ class UiVolIcon extends React.Component {
     super(props);
     this.m_volIndex = -1;
   }
+
   componentDidMount() {
     // console.log("UiVlIcon.componentDidMount");
     const store = this.props;
@@ -71,6 +72,7 @@ class UiVolIcon extends React.Component {
     }
     ctx.putImageData(imgData, 0, 0);
   }
+
   // render on screen
   render() {
     const side = VOLUME_ICON_SIDE;

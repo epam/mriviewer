@@ -36,9 +36,11 @@ export default class SobelEdgeDetector {
     this.m_pixelsDst = null;
     this.m_sqrtTable = null;
   }
+
   getPixelsDst() {
     return this.m_pixelsDst;
   }
+
   start(vol) {
     console.assert(vol != null);
     console.assert(vol.m_dataArray !== null);
@@ -55,6 +57,7 @@ export default class SobelEdgeDetector {
       this.m_sqrtTable[i] = Math.sqrt(i);
     }
   }
+
   normalizeDstImage() {
     let valMax = 0.0;
     const xyzDim = this.m_vol.m_xDim * this.m_vol.m_yDim * this.m_vol.m_zDim;
@@ -68,16 +71,19 @@ export default class SobelEdgeDetector {
       this.m_pixelsDst[i] = Math.floor(this.m_pixelsDst[i] * scl);
     } // for i
   }
+
   stop() {
     this.m_pixelsDst = null;
     this.m_sqrtTable = null;
   }
+
   // return ratio in [0..1]
   getRatio() {
     const zDim = this.m_vol.m_zDim;
     const ratio01 = this.m_z / zDim;
     return ratio01;
   }
+
   isFinished() {
     console.assert(this.m_z >= 0);
     const zDim = this.m_vol.m_zDim;
@@ -86,6 +92,7 @@ export default class SobelEdgeDetector {
     }
     return false;
   }
+
   // invoked several times externally, until entire image processed
   update() {
     console.assert(this.m_z >= 0);

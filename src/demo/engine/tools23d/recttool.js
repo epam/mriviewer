@@ -63,6 +63,7 @@ export default class RectTool {
     /** @property {Object} m_textBgColor - text background color */
     this.m_textBgColor = 'rgb(65, 65, 65)';
   }
+
   /**
    * Remove all area lines from scene
    */
@@ -79,6 +80,7 @@ export default class RectTool {
     this.m_runningState = false;
     this.m_vertexes = [];
   }
+
   /**
    * Redraw all lines
    */
@@ -122,6 +124,7 @@ export default class RectTool {
       this.m_scene.add(this.m_areas[i].text);
     }
   }
+
   /**
    * Set pixel size in mm
    * @param (float) xPixelSize - canvas pixel size in mm for x axis
@@ -131,6 +134,7 @@ export default class RectTool {
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }
+
   /**
    * Return running state
    * @return {boolean} True if last line has not been fixed yet
@@ -138,6 +142,7 @@ export default class RectTool {
   isRunning() {
     return this.m_runningState;
   }
+
   /**
    * Mouse down events handler
    * @param (float) x - mouse x coordinate
@@ -173,6 +178,7 @@ export default class RectTool {
       this.m_yStart = -1;
     }
   }
+
   /**
    * Mouse move events handler
    * @param (float) x - mouse x coordinate

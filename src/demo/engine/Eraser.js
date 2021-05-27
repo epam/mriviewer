@@ -27,6 +27,7 @@ export default class Eraser {
     this.resetflag = false;
     this.bufferTextureCPU = null;
   }
+
   createUpdatableVolumeMask(params, buff) {
     this.xDim = params.xDim;
     this.yDim = params.yDim;
@@ -56,6 +57,7 @@ export default class Eraser {
     this.updatableTextureMask.needsUpdate = true;
     return this.updatableTextureMask;
   }
+
   eraseStart(xx, yy, windowWidth, isoThreshold, startflag) {
     this.isoThreshold = isoThreshold;
     const x = Math.round(xx);
@@ -87,18 +89,22 @@ export default class Eraser {
     this.erasePixels(vX, vY, vZ, vDir, startflag, dist);
     this.updatableTextureMask.needsUpdate = true;
   }
+
   onMouseUp() {
     this.orbitControl.onMouseUp();
     this.lockEraserBuffersUpdating = false;
     this.eraserMouseDown = false;
     this.renderState = this.RENDER_STATE.ONCE;
   }
+
   setEraserRadius(radius) {
     this.radius = radius;
   }
+
   setEraserDepth(depth) {
     this.depth = depth;
   }
+
   erasePixels(x_, y_, z_, vDir, startflag, length) {
     const targetX = Math.floor(x_ * this.xDim);
     const targetY = Math.floor(y_ * this.yDim);
@@ -205,6 +211,7 @@ export default class Eraser {
       }
     }
   }
+
   undoLastErasing() {
     if (this.lastSize.length === 0) {
       return;

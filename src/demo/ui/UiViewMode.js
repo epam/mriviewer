@@ -49,33 +49,42 @@ class UiViewMode extends React.Component {
     this.onTool3d = this.onTool3d.bind(this);
     this.onView3d = this.onView3d.bind(this);
   }
+
   onMode(indexMode) {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: indexMode });
   }
+
   onTool_View(isOn) {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_IS_TOOL3D, isTool3D: isOn });
     store.dispatch({ type: StoreActionType.SET_SLIDER_Contrast3D, sliderContrast3D: 0 });    
   }
+
   onModeMpr() {
     this.onMode(ModeView.VIEW_MPR);
   }
+
   onMode2d() {
     this.onMode(ModeView.VIEW_2D);
   }
+
   onMode3dLight() {
     this.onMode(ModeView.VIEW_3D_LIGHT);
   }
+
   onMode3d() {
     this.onMode(ModeView.VIEW_3D);
   }
+
   onTool3d() {
     this.onTool_View(true);
   }
+
   onView3d() {
     this.onTool_View(false);
   }
+
   logObject(strTitle, obj) {
     let str = '';
     for (let prp in obj) {
@@ -86,6 +95,7 @@ class UiViewMode extends React.Component {
     }
     console.log(`${strTitle}\n${str}`);
   }
+
   render() {
     const store = this.props;
     // this.logObject('UiViewMode this props: ', store);

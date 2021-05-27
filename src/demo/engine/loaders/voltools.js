@@ -50,6 +50,7 @@ export default class VolumeTools {
   constructor() {
     this.m_gaussWeights = new Float32Array(GAUSS_SMOOTH_MAX_SIDE * GAUSS_SMOOTH_MAX_SIDE * GAUSS_SMOOTH_MAX_SIDE);
   }
+
   /**
   * Smooth volume (3d matrix) with given parameters
   * @param {object} volBuffer - source volume
@@ -179,6 +180,7 @@ export default class VolumeTools {
     // console.log(`End Gauss smoothing`);
     return 1;
   }
+
   /**
   * Smooth 1d histogram function
   * @param {object} histSrc - source histogram
@@ -244,6 +246,7 @@ export default class VolumeTools {
     } // for i all entries
     return 1;
   } // buildSmoothedHistogram
+
   /**
   * Scale down xy plane twice
   * @param {object} loader - Loader object
@@ -289,6 +292,7 @@ export default class VolumeTools {
     }
     return dataNew;
   }
+
   /**
   * Scale down
   * @param {object} loader - Loader object
@@ -358,6 +362,7 @@ export default class VolumeTools {
     loader.m_zDim = zDimDst;
     return pixelsDst;
   }  // end of scaleTextureDown
+
   /**
   * Scale down
   * @param {array} pixelSrc - source volume pixels
@@ -402,6 +407,7 @@ export default class VolumeTools {
       } // for (y)
     } // for (z)
   }
+
   /**
   * Contrast enhance by unsharpen mask
   *
@@ -540,6 +546,7 @@ export default class VolumeTools {
 
     return VolumeTools.VOLTOOLS_ERROR_OK;
   }
+
   /**
   * Make texture size (z dimension) even number.
   * Odd numbers are lead to render artifacts during 3d texture packing into 2d texture.
@@ -584,6 +591,7 @@ export default class VolumeTools {
     console.log(`modified texture size is: ${xDimNew} * ${yDimNew} * ${zDimNew}`);
     return pixelsDst;
   } // makeTextureSizeEven
+
   /**
   * Extract 2d texture from normal 3d array
   * @param {number} xDim - volume dimension x
@@ -675,6 +683,7 @@ export default class VolumeTools {
       } // for (y)
     } // if z slice
   } // end of extract2dSliceFrom3dTexture
+
   /**
   * Get 2d coordinate in tiled texture from original 3d coordinate
   * @param {number} xDim - volume dimension x
@@ -705,6 +714,7 @@ export default class VolumeTools {
     vec2coord.x = x;
     vec2coord.y = y;
   }
+
   /**
   * Extract 2d texture from normal 3d array
   * @param {number} xDim - volume dimension x
@@ -842,6 +852,7 @@ export default class VolumeTools {
       }
     } // if z slice
   }
+
   /**
   * Test int value: is this 2^N
   * @param {number} val - tested value
@@ -857,6 +868,7 @@ export default class VolumeTools {
     }
     return false;
   }
+
   /**
   * Get closest power of 2: greater or equal then imput argument
   * @param {number} val - tested value
@@ -876,6 +888,7 @@ export default class VolumeTools {
     }
     return -1;
   }
+
   /**
   * Get closest power of 2: less or equal then imput argument
   * @param {number} val - tested value
@@ -895,6 +908,7 @@ export default class VolumeTools {
     }
     return -1;
   }
+
   /**
   * Make texture size equal to power of 2 for x, y dimensions
   * @param {array} pixelsSrc - source volume pixels
@@ -978,6 +992,7 @@ export default class VolumeTools {
     }
     return pixelsDst;
   } // end of makeTextureSizePowerOfTwoUp
+
   /**
    *
   * Make texture size equal to power of 2 for x, y dimensions
@@ -1120,6 +1135,7 @@ export default class VolumeTools {
     } // for (z)
     */
   }
+
   /**
   * Scan volume for non-empty box (with non-zero voxels)
   * fill resul in [0..1] range. Use 8 as "black" color barrier
