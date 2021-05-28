@@ -1,8 +1,3 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 /**
  * @fileOverview Graphics3d
  * @author Epam
@@ -16,7 +11,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import ViewModes from '../store/ViewModes';
+import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
 import StoreActionType from '../store/ActionTypes';
 import VolumeRenderer3d from './VolumeRenderer3d'
@@ -171,7 +166,7 @@ class Graphics3d extends React.Component {
       const modeView = store.modeView; 
       //let tst = 0;
       //if (this.volume.m_zDim < 4)
-      if (modeView === ViewModes.VIEW_3D) {
+      if (modeView === ModeView.VIEW_3D) {
         this.m_volumeRenderer3D.initWithVolume(this.volume, this.volume.m_boxSize, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, true);
       } else {
         this.m_volumeRenderer3D.initWithVolume(this.volume, this.volume.m_boxSize, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, false);
@@ -322,7 +317,7 @@ class Graphics3d extends React.Component {
     if (this.m_volumeRenderer3D !== null) {
       // console.log(`Graphics3d . mode = ${mode3d}`);
       this.m_volumeRenderer3D.switchToTool23D(store.isTool3D);
-      if (modeView !== ViewModes.VIEW_3D) {
+      if (modeView !== ModeView.VIEW_3D) {
         if (mode3d === Modes3d.RAYCAST) {
           //if (this.m_prevMode === Modes3d.EREASER) {
           //this.m_volumeRenderer3D.setEraserMode(false);

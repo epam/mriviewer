@@ -1,9 +1,27 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * @fileOverview Texture3D
+ * @author Epam
+ * @version 1.0.0
  */
+
+// ********************************************************
+// Imports
+// ********************************************************
+
 import * as THREE from 'three';
 
+
+// ********************************************************
+// Const
+// ********************************************************
+
+// ********************************************************
+// Class
+// ********************************************************
+
+/**
+ * Class Texture3D  some text later...
+ */
 export default class Texture3D {
   constructor() {
     this.m_texture = -1;

@@ -11,7 +11,7 @@
 
 import React from 'react';
 
-import TransfFunc from '../demo/engine/TransFunc';
+import TransfFunc from '../engine/TransFunc';
 
 // ********************************************************
 // Const

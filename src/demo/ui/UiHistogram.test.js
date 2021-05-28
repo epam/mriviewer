@@ -8,7 +8,7 @@
 // ********************************************************
  
 import UiHistogram from './UiHistogram';
-import { Volume } from '../demo/engine/Volume';
+import { Volume } from '../engine/Volume';
 
 // ********************************************************
 // Tests

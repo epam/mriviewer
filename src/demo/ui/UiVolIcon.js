@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { VOLUME_ICON_SIDE } from '../demo/engine/Volume';
+import { VOLUME_ICON_SIDE } from '../engine/Volume';
 
 // ********************************************************
 // Class

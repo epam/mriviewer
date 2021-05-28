@@ -1,7 +1,6 @@
 /**
 * Shader for render to texture
 */
-#version 300 es
 //precision mediump float;
 //precision mediump int;
 precision highp float;

@@ -1,8 +1,3 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import MaterialAO from './gfx/matAO';
 import TetrahedronGenerator from './actvolume/tetra';
 import * as THREE from 'three';

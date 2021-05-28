@@ -5,7 +5,7 @@
 
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import Texture3D from '../../demo/engine/Texture3D';
+import Texture3D from '../../engine/Texture3D';
 
 import { ReactComponent as OpenLocalFolderIcon } from "../icons/folder.svg";
 import { ReactComponent as OpenLinkIcon } from "../icons/link.svg";
@@ -17,8 +17,8 @@ import css from './UiOpenMenu.module.css';
 import { Context } from "../../context/Context";
 import { unzipGzip } from "./ungzip";
 import { UIButton } from "../Button/Button";
-import { Volume } from "../../demo/engine/Volume";
-import { LoadKtxFromBuffer } from "../../demo/engine/loaders/LoaderKtx";
+import { Volume } from "../../engine/Volume";
+import { LoadKtxFromBuffer } from "../../engine/loaders/LoaderKtx";
 
 export const UiOpenMenu = () => {
     const fileInput = useRef(null)

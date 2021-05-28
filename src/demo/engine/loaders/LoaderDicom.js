@@ -1,22 +1,33 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * @fileOverview LoaderDicom
+ * @author Epam
+ * @version 1.0.0
  */
 
-import LoadResult from './LoadResult';
 
-import DicomDictionary from '../../demo/engine/loaders/dicomdict';
-import DicomInfo from '../../demo/engine/loaders/dicominfo';
-import DicomTag from '../../demo/engine/loaders/dicomtag';
-import DicomSlice from '../../demo/engine/loaders/dicomslice';
-import DicomSlicesVolume from '../../demo/engine/loaders/dicomslicesvolume';
-import DicomSliceInfo from '../../demo/engine/loaders/dicomsliceinfo';
-import DicomTagInfo from '../../demo/engine/loaders/dicomtaginfo';
+// ********************************************************
+// Imports
+// ********************************************************
+
+// import gdcm from 'gdcm-js';
+
+// import jpeg from 'jpeg-lossless-decoder-js';
+
+import LoadResult from '../LoadResult';
+
+import DicomDictionary from './dicomdict';
+import DicomInfo from './dicominfo';
+import DicomTag from './dicomtag';
+import DicomSlice from './dicomslice';
+import DicomSlicesVolume from './dicomslicesvolume';
+import DicomSliceInfo from './dicomsliceinfo';
+import DicomTagInfo from './dicomtaginfo';
 import FileTools from './FileTools';
-import { FileLoader } from '../OpenFile/FileLoader';
+import FileLoader from './FileLoader';
 
 // import Volume from '../Volume';
-import { Volume } from '../../demo/engine/Volume';
+import VolumeSet from '../VolumeSet';
+import Volume from '../Volume';
 
 // ********************************************************
 // Const
@@ -114,6 +125,7 @@ class LoaderDicom{
     this.m_yDim = -1;
     this.m_zDim = numFiles;
     this.m_needScaleDownTexture = needScaleDownTexture;
+    /** @property {object} m_fileLoader - low level file loader */
     this.m_folder = null;
     /** @property {boolean} m_isLoadedSuccessfull - Loaded flag: success o not */
     this.m_isLoadedSuccessfull = false;
@@ -247,6 +259,12 @@ class LoaderDicom{
    * @return {LoadResult} LoadResult.SUCCESS if success
    */
  createVolumeFromSlices(volSet, indexSelected, hashSelected) {
+  // check arguments
+  console.assert(volSet != null, "Null volume");
+  console.assert(volSet instanceof VolumeSet, "Should be volume set");
+  console.assert(typeof(indexSelected) === "number", "index should be number");
+  console.assert(typeof(hashSelected) === "number", "index should be number");
+
   let volDst = null;
   if (indexSelected < volSet.getNumVolumes()) {
     volDst = volSet.getVolume(indexSelected);
@@ -1843,6 +1861,15 @@ class LoaderDicom{
   } // end readFromBuffer
 
   readFromUrl(volSet, strUrl, callbackProgress, callbackComplete) {
+    // check arguments
+    console.assert(volSet != null, "Null volume");
+    console.assert(volSet instanceof VolumeSet, "Should be volume set");
+    console.assert(strUrl != null, "Null string url");
+    
+    // console.log(`typeof(strUrl) - ${typeof(strUrl)}`);
+    console.assert(typeof(strUrl) === 'string', "Should be string in url");
+    
+    // replace file name to 'file_list.txt'
     const ft = new FileTools();
     const isValidUrl = ft.isValidUrl(strUrl);
     if (!isValidUrl) {
@@ -1851,18 +1878,33 @@ class LoaderDicom{
     }
     this.m_folder = ft.getFolderNameFromUrl(strUrl);
     const urlFileList = this.m_folder + '/file_list.txt';
-    const fileLoader = new FileLoader({url: urlFileList});
+    console.log(`readFromUrl: load file = ${urlFileList} `);
+
+    const fileLoader = new FileLoader(urlFileList);
+    this.m_callbackComplete = callbackComplete;
+    this.m_callbackProgress = callbackProgress;
     this.m_fileListCounter = 0;
     fileLoader.readFile((arrBuf) => {
       this.m_fileListCounter += 1;
       if (this.m_fileListCounter === 1) {
-        return this.readReadyFileList(volSet, arrBuf, callbackProgress, callbackComplete);
+        const okRead = this.readReadyFileList(volSet, arrBuf, callbackProgress, callbackComplete);
+        return okRead;
       }
       return true;
-    });
+    }, (errMsg) => {
+      console.log(`Error read file: ${errMsg}`);
+      callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
+      return false;
+    }); // get file from server
     return true;
   }
   readReadyFileList(volSet, arrBuf, callbackProgress, callbackComplete) {
+    // check arguments
+    console.assert(volSet != null, "Null volume");
+    console.assert(volSet instanceof VolumeSet, "Should be volume set");
+    console.assert(arrBuf != null, "Null array");
+    console.assert(arrBuf.constructor.name === "ArrayBuffer", "Should be ArrayBuf in arrBuf");
+
     const uint8Arr = new Uint8Array(arrBuf);
     // const strFileContent = new TextDecoder('utf-8').decode(uint8Arr);
     const strFileContent = String.fromCharCode.apply(null, uint8Arr);
@@ -1931,7 +1973,19 @@ class LoaderDicom{
 
     for (let i = 0; (i < this.m_numLoadedFiles) && (this.m_numFailsLoad < 1); i++) {
       const urlFile = `${this.m_folder}/${arrFileNames[i]}`;
-      this.runLoader(volSet, arrFileNames[i], loader, i, callbackProgress, callbackComplete, NOT_FROM_GOOGLE);
+      // console.log(`Loading (${i})-th url: ${urlFile}`);
+      this.m_loaders[i] = new FileLoader(urlFile);
+      const loader = this.m_loaders[i];
+      const NOT_FROM_GOOGLE = false;
+      // let volDst = volSet.getVolume(0);
+      //if (volDst === null) {
+      //  volDst = new Volume();
+      //  volSet.addVolume(volDst);
+      // } 
+      const okLoader = this.runLoader(volSet, arrFileNames[i], loader, i, callbackProgress, callbackComplete, NOT_FROM_GOOGLE);
+      if (!okLoader) {
+        return false;
+      }
     }  // for i all files-slices in folder
     return true;
   } // end readReadyFileList(arrBuf)
@@ -1949,7 +2003,7 @@ class LoaderDicom{
   runLoader(volSet, fileName, loader, i, callbackProgress, callbackComplete, fromGoogle) {
     this.m_fromGoogle = fromGoogle;
     // console.log(`Loading url: ${fileName}`);
-    loadFile((fileArrBu) => {
+    loader.readFile((fileArrBu) => {
       const ratioLoaded = this.m_filesLoadedCounter / this.m_numLoadedFiles;
       const VAL_MASK = 7;
       if ((callbackProgress !== undefined) && ((this.m_filesLoadedCounter & VAL_MASK) === 0)) {
@@ -2042,3 +2096,4 @@ class LoaderDicom{
 
 export default LoaderDicom;
 
+ 

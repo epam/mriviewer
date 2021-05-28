@@ -1,10 +1,5 @@
 
 
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 class DicomSerieDescr {
   constructor() {
     this.m_numSlices = 0;

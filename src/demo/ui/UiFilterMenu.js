@@ -11,15 +11,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { NavDropdown } from 'react-bootstrap';
-import LungsFillTool from '../demo/engine/actvolume/lungsfill/lft';
+import LungsFillTool from '../engine/actvolume/lungsfill/lft';
 
-import ActiveVolume from '../demo/engine/actvolume/actvol';
+import ActiveVolume from '../engine/actvolume/actvol';
 import StoreActionType from '../store/ActionTypes';
-import Texture3D from '../demo/engine/Texture3D';
+import Texture3D from '../engine/Texture3D';
 import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
 
-import SobelEdgeDetector from '../demo/engine/imgproc/Sobel';
+import SobelEdgeDetector from '../engine/imgproc/Sobel';
 import UiModalBilateral from './UiModalBilateral';
 
 

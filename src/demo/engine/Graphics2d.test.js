@@ -1,11 +1,21 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * @fileOverview Graphics2d.test
+ * @author Epam
+ * @version 1.0.0
  */
+
+// ********************************************************
+// Imports
+// ********************************************************
 
 import ToolArea from './tools2d/ToolArea';
 import Graphics2d from './Graphics2d';
-import { Volume } from './Volume';
+import VolumeSet from './VolumeSet';
+import Volume from './Volume';
+
+// ********************************************************
+// Tests
+// ********************************************************
 
 describe('ToolArea. test line intersect', () => {
   it('ToolArea. test line intersect no 0', () => {
@@ -116,6 +126,12 @@ describe('ToolArea. test line intersect', () => {
     const vol = new Volume();
     vol.m_xDim = vol.m_yDim = vol.m_zDim = 100.0;
     vol.m_boxSize.x = vol.m_boxSize.y = vol.m_boxSize.z = 10.0; 
+    const volSet = new VolumeSet();
+    volSet.addVolume(vol);
+    const store = {
+      volumeSet: volSet,
+      volumeIndex: 0,
+    };
     const gra = new Graphics2d(store);
     const toolArea = new ToolArea(gra);
     toolArea.setScreenDim(100.0, 100.0);

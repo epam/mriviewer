@@ -1,9 +1,4 @@
 
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 /**
  * 3D volume processing engine: blur, contrast filter
  * @module lib/scripts/graphics3d/volumeFilter3d
