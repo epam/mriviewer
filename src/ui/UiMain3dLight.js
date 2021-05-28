@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 
 import UiCtrl3dLight from './UiCtrl3dLight';
 import UiCtrl3d from './UiCtrl3d';
-import Graphics3d from '../engine/Graphics3d';
+import Graphics3d from '../demo/engine/Graphics3d';
 import 'nouislider/distribute/nouislider.css';
 
 import Nouislider from 'react-nouislider';

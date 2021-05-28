@@ -5,18 +5,18 @@
 
 import LoadResult from './LoadResult';
 
-import DicomDictionary from '../../engine/loaders/dicomdict';
-import DicomInfo from '../../engine/loaders/dicominfo';
-import DicomTag from '../../engine/loaders/dicomtag';
-import DicomSlice from '../../engine/loaders/dicomslice';
-import DicomSlicesVolume from '../../engine/loaders/dicomslicesvolume';
-import DicomSliceInfo from '../../engine/loaders/dicomsliceinfo';
-import DicomTagInfo from '../../engine/loaders/dicomtaginfo';
+import DicomDictionary from '../../demo/engine/loaders/dicomdict';
+import DicomInfo from '../../demo/engine/loaders/dicominfo';
+import DicomTag from '../../demo/engine/loaders/dicomtag';
+import DicomSlice from '../../demo/engine/loaders/dicomslice';
+import DicomSlicesVolume from '../../demo/engine/loaders/dicomslicesvolume';
+import DicomSliceInfo from '../../demo/engine/loaders/dicomsliceinfo';
+import DicomTagInfo from '../../demo/engine/loaders/dicomtaginfo';
 import FileTools from './FileTools';
 import { FileLoader } from '../OpenFile/FileLoader';
 
 // import Volume from '../Volume';
-import { Volume } from '../../engine/Volume';
+import { Volume } from '../../demo/engine/Volume';
 
 // ********************************************************
 // Const

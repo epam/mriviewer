@@ -17,7 +17,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import UiModalDicomTags from './UiModalDicomTags';
-import Screenshot from '../engine/utils/Screenshot';
+import Screenshot from '../demo/engine/utils/Screenshot';
 import ViewModes from '../store/ViewModes';
 
 // ********************************************************

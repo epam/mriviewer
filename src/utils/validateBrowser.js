@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import BrowserDetector from "../engine/utils/BrowserDetector";
+import BrowserDetector from "../demo/engine/utils/BrowserDetector";
 
 export function validateBrowser() {
     const browserDetector = new BrowserDetector();

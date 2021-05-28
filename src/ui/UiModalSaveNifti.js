@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 
 import { Modal, Table, Button, Form, Row, Col } from 'react-bootstrap';
 
-import SaverNifti from '../engine/savers/SaverNifti';
+import SaverNifti from '../demo/engine/savers/SaverNifti';
 
 // ********************************************************
 // Class

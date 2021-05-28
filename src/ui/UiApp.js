@@ -14,7 +14,7 @@ import UIProgressBar from "./ProgressBar/UIProgressBar";
 import { UiOpenMenu } from "./OpenFile/UiOpenMenu";
 // import UiMain3dLight from "./UiMain3dLight";
 
-import Graphics2d from "../engine/Graphics2d";
+import Graphics2d from "../demo/engine/Graphics2d";
 
 import { ButtonsDemo } from "./Button/ButtonsDemo";
 

@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import { Form, Card } from 'react-bootstrap';
 import { Row, Col } from 'react-bootstrap';
 
-import RoiPalette from '../engine/loaders/roipalette';
+import RoiPalette from '../demo/engine/loaders/roipalette';
 
 
 // ********************************************************

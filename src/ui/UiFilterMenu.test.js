@@ -7,9 +7,9 @@
 // Imports
 // ********************************************************
  
-import { Volume } from '../engine/Volume';
-import SobelEdgeDetector from '../engine/imgproc/Sobel';
-import GaussSmoother from '../engine/imgproc/Gauss';
+import { Volume } from '../demo/engine/Volume';
+import SobelEdgeDetector from '../demo/engine/imgproc/Sobel';
+import GaussSmoother from '../demo/engine/imgproc/Gauss';
 
 // ********************************************************
 // Tests

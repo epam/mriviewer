@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 
 
 import StoreActionType from '../store/ActionTypes';
-import Texture3D from '../engine/Texture3D';
+import Texture3D from '../demo/engine/Texture3D';
 import UiVolIcon from './UiVolIcon';
 const NEED_TEXTURE_SIZE_4X = true;
 class UiVolumeSel extends React.Component {
