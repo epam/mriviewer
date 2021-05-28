@@ -1,23 +1,35 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * @fileOverview UiModalBilateral
+ * @author Epam
+ * @version 1.0.0
  */
+
+// ********************************************************
+// Imports
+// ********************************************************
 
 import React from 'react';
 import { connect } from 'react-redux';
+
+import { Modal, Button, Form, Row, Col, Table } from 'react-bootstrap';
 import Nouislider from 'react-nouislider';
 
 import GaussSmoother from '../engine/imgproc/Gauss';
 
 import StoreActionType from '../store/ActionTypes';
 import Texture3D from '../engine/Texture3D';
-import ViewModes from '../store/ViewModes';
+import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
 
-import { Context } from "../context/Context";
 
+// ********************************************************
+// Class
+// ********************************************************
 
 class UiModalBilateral extends React.Component {
+  /**
+   * @param {object} props - props from up level object
+   */
   constructor(props) {
     super(props);
     this.onModalShow = this.onModalShow.bind(this);
@@ -39,43 +51,11 @@ class UiModalBilateral extends React.Component {
     this.m_kernelSize = 10;
     this.m_koefDist = 3.0;
     this.m_koefVal = 0.1;
-  }
+  } // end constr
 
- // end constr
   //
-
-  showProgressBar(text = "", value = 0) {
-    this.context.setContext(prev => ({
-      ...prev,
-      progress: {
-        show: true,
-        value,
-        text,
-      }
-    }));
-  }
-
-  updateProgressBar(newVal) {
-    this.context.setContext(prev => ({
-      ...prev,
-      progress: {
-        ...prev.progress,
-        value: newVal,
-      }
-    }));
-  }
-
-  hideProgressBar() {
-    this.context.setContext(prev => ({
-      ...prev,
-      progress: {
-        show: false,
-        value: 0,
-        text: "",
-      }
-    }))
-  }
-
+  //
+  //
   onButtonStart() {
     console.log('on button start Bilateral with kernel = ' + this.m_kernelSize.toString());
     this.m_hideFunc();
@@ -119,7 +99,9 @@ class UiModalBilateral extends React.Component {
     gauss.start(vol, kernelSize, this.m_koefDist, this.m_koefVal);
     this.m_gauss = gauss;
 
-    this.showProgressBar('Apply bilateral filter...');
+    const uiApp = store.uiApp;
+    uiApp.doShowProgressBar('Apply bilateral filter...');
+    uiApp.doSetProgressBarRatio(0.0);
 
     const UPDATE_DELAY_MSEC = 150;
     this.m_timerId = setTimeout(this.onBilateralCallback, UPDATE_DELAY_MSEC);
@@ -139,14 +121,14 @@ class UiModalBilateral extends React.Component {
     ratioUpdate = Math.floor(ratioUpdate);
     // console.log('ratio = ' + ratioUpdate.toString() );
 
-
-    this.updateProgressBar(ratioUpdate);
+    const uiApp = store.uiApp;
+    uiApp.doSetProgressBarRatio(ratioUpdate);
 
     const isFinished = this.m_gauss.isFinished();
 
     if (isFinished) {
       console.log('onBilateralCallback: iters finished!');
-      this.hideProgressBar();
+      uiApp.doHideProgressBar();
 
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
@@ -171,7 +153,7 @@ class UiModalBilateral extends React.Component {
       const tex3d = new Texture3D();
       tex3d.createFromRawVolume(vol);
       store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ViewModes.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     } // if finished
     // update render
@@ -181,9 +163,8 @@ class UiModalBilateral extends React.Component {
       const UPDATE_DELAY_MSEC = 150;
       this.m_timerId = setTimeout(this.onBilateralCallback, UPDATE_DELAY_MSEC);
     }
-  }
+  } // end onBilateralCallback
 
- // end onBilateralCallback
   //
   onModalShow() {
     this.setState({ showModalGauss: true });
@@ -330,8 +311,6 @@ class UiModalBilateral extends React.Component {
   } // end render
 
 } // end class
-
-UiModalBilateral.contextType = Context;
 
 export default connect(store => store)(UiModalBilateral);
 

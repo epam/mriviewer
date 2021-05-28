@@ -1,8 +1,3 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 // ********************************************************
 // Imports
 // ********************************************************
@@ -57,9 +52,8 @@ class DicomSlicesVolume {
     // add slice to serie
     const ser = this.m_series[indSerie];
     ser.addSlice(slice);
-  }
+  } // end add slice
 
- // end add slice
   getSerieIndex(slice) {
     const numSeries = this.m_series.length;
     for (let i = 0; i < numSeries; i++) {

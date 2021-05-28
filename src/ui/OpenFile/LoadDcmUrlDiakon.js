@@ -1,15 +1,28 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
+//
+//
+//
 
-import LoadResult from './LoadResult';
+// **********************************************
+// Import
+// **********************************************
+
+import VolumeSet from '../VolumeSet';
+import LoadResult from '../LoadResult';
 import FileTools from './FileTools';
-import FileLoaderSingleton from '../OpenFile/FileLoader';
+import FileLoader from './FileLoader';
 import LoaderDcmDaikon from './LoaderDcmDaikon';
 import LoaderDicom from './LoaderDicom';
+// import DicomSlicesVolume from './dicomslicesvolume';
+
+// **********************************************
+// Const
+// **********************************************
 
 const DEBUG_PRINT_TAGS_INFO = false;
+
+// **********************************************
+// Class
+// **********************************************
 
 class LoaderDcmUrlDaikon {
   constructor() {
@@ -37,7 +50,7 @@ class LoaderDcmUrlDaikon {
 
     callbackProgress(0.0);
     
-    const fileLoader = new FileLoaderSingleton(urlFileList);
+    const fileLoader = new FileLoader(urlFileList);
     this.m_fileListCounter = 0;
     fileLoader.readFile((arrBuf) => {
       this.m_fileListCounter += 1;
@@ -52,9 +65,8 @@ class LoaderDcmUrlDaikon {
       return false;
     }); // get file from server
     return true;
-  }
+  } // end read from url
 
- // end read from url
   //
   readReadyFileList(volSet, arrBuf, callbackComplete, callbackProgress) {
     const uint8Arr = new Uint8Array(arrBuf);
@@ -135,7 +147,7 @@ class LoaderDcmUrlDaikon {
       const urlFile = `${this.m_folder}/${arrFileNames[i]}`;
       // console.log(`trying read file ${urlFile} from web`);
 
-      this.m_loaders[i] = new FileLoaderSingleton(urlFile);
+      this.m_loaders[i] = new FileLoader(urlFile);
       const loader = this.m_loaders[i];
       loader.readFile((fileArrBu) => {
         const ratioLoaded = this.m_filesLoadedCounter / this.m_numLoadedFiles;

@@ -1,8 +1,3 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 /**
  * @fileOverview TransfFunc
  * @author Epam
@@ -55,9 +50,8 @@ class TransfFunc {
     if (this.m_handleColors.length !== this.m_numHandles) {
       console.log(`Wrong array this.m_handleColors: ${this.m_handleColors.length} !== ${this.m_numHandles}`);
     }
-  }
+  } // end constructor
 
- // end constructor
   render(ctx, xMin, yMin, wScreen, hScreen) {
 
     this.m_xMin = xMin;
@@ -112,9 +106,8 @@ class TransfFunc {
       ctx.stroke();
     } // for (i) all handle points
 
-  }
+  } // end render
 
- // end render
   onMouseDown(xScr, yScr) {
     for (let i = 0; i < this.m_numHandles; i++) {
       const dx = xScr - this.m_proj[i].x;

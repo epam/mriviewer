@@ -1,8 +1,3 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 /**
  * @fileOverview MaterialTex2d
  * @author Epam
@@ -69,7 +64,7 @@ export default class MaterialTex2d  {
         gl_Position = vec4(position, 1.0);
       }
     `;
-    this.m_strShaderFragment = `#version 300 es
+    this.m_strShaderFragment = `
       precision highp float;
       precision highp int;
       
@@ -209,9 +204,8 @@ export default class MaterialTex2d  {
         gl_FragColor = vec4(BIFICOBR,BIFICOBR,BIFICOBR, 1.0);
       } // end of main
     `;
-  }
+  } // end construrot
 
- // end construrot
   /** Create material for 2d texture display
   * @param {object} tex - texture with 2d layout of 3d source
   * @param {int} xDim - 3d texture dimension on x

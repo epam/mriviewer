@@ -1,18 +1,35 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * @fileOverview UiModalWinCW
+ * @author Epam
+ * @version 1.0.0
  */
 
+
+// ********************************************************
+// Imports
+// ********************************************************
+
+// special css for NoUiSlioder
 import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { Modal, Container, Row, Col, Button, ListGroup } from 'react-bootstrap';
+
 import Nouislider from 'react-nouislider';
+
+// ********************************************************
+// Const
+// ********************************************************
 
 const LARGE_NUMBER = 0x3FFFFFFF;
 const DEFAULT_WIN_MIN = 650 - 2000 / 2;
 const DEFAULT_WIN_MAX = 650 + 2000 / 2;
+
+// ********************************************************
+// Class
+// ********************************************************
 
 class UiModalWindowCenterWidth extends React.Component {
   constructor(props) {
@@ -30,9 +47,8 @@ class UiModalWindowCenterWidth extends React.Component {
       windowMin: DEFAULT_WIN_MIN,
       windowMax: DEFAULT_WIN_MAX, 
     };
-  }
+  } // end constructor
 
- // end constructor
   onModalHide() {
     this.setState({ showModalWindowCenterWidth: false });
   }
@@ -223,9 +239,8 @@ class UiModalWindowCenterWidth extends React.Component {
       } // for x
     } // for y
     ctx.putImageData(imgData, 0, 0);
-  }
+  } // end draw slice
 
- // end draw slice
   //
   // render preview window with slice and selected window properties
   //
@@ -277,9 +292,8 @@ class UiModalWindowCenterWidth extends React.Component {
       return;
     }
     this.drawSlice(ctx, wScreen, hScreen, imgData, dataDst, series, loaderDicom);
-  }
+  } // end render preview
 
- // end render preview
   //
   // callbakc on user change window range (min, max)
   //
@@ -326,9 +340,8 @@ class UiModalWindowCenterWidth extends React.Component {
     this.m_dataMin = minVal;
     this.m_dataMax = maxVal;
     // console.log(`data min max ready`);
-  }
+  } // end get data min max
 
- // end get data min max
   //
   // Invoked from parent component once
   // to initialize window range (if found in dicom tags)
@@ -352,9 +365,8 @@ class UiModalWindowCenterWidth extends React.Component {
       }
       this.getDataMinMax(store, loaderDicom);
     } // if loader dicom ready
-  }
+  } // end init
 
- // end init
   // render 
   render() {
 

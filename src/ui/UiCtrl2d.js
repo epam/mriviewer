@@ -1,19 +1,42 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * @fileOverview UiCtrl2d
+ * @author Epam
+ * @version 1.0.0
  */
 
+
+// ********************************************************
+// Imports
+// ********************************************************
+
+// special css for NoUiSlioder
 import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { Card, ButtonGroup, Button } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import Nouislider from 'react-nouislider';
 
 import Modes2d from '../store/Modes2d';
 import StoreActionType from '../store/ActionTypes';
 
+// ********************************************************
+// Const
+// ********************************************************
+
+// ********************************************************
+// Class
+// ********************************************************
+
+/**
+ * Class UiCtrl2d some text later...
+ */
 class UiCtrl2d extends React.Component {
+  /**
+   * @param {object} props - props from up level object
+   */
   constructor(props) {
     super(props);
     this.onModeSaggital = this.onModeSaggital.bind(this);
@@ -23,7 +46,7 @@ class UiCtrl2d extends React.Component {
     this.m_updateEnable = true;
   }
 
-  onMode(indexMode) { // todo: mode to 2d-context (v-if 2d, 3d)
+  onMode(indexMode) {
     const store = this.props;
     const gra2d = store.graphics2d;
 
@@ -115,6 +138,10 @@ class UiCtrl2d extends React.Component {
 
     const strSlider1 = 'slider1';
 
+    const varSag = (mode2d === Modes2d.SAGGITAL) ? 'primary' : 'secondary';
+    const varCor = (mode2d === Modes2d.CORONAL) ? 'primary' : 'secondary';
+    const varTra = (mode2d === Modes2d.TRANSVERSE) ? 'primary' : 'secondary';
+
     let xDim = 0, yDim = 0, zDim = 0;
     const volSet = store.volumeSet;
     if (volSet.getNumVolumes() > 0) {
@@ -170,31 +197,49 @@ class UiCtrl2d extends React.Component {
       </ul> : <p></p>;
 
     const jsxSliceSelector = (slideRangeMax > 0) ?
-      <div>
-        Hint:
+      <Card.Body>
+        <ButtonGroup className="mr-2" aria-label="Ctrl2d group">
+          <OverlayTrigger key="zx" placement="bottom" overlay={
+            <Tooltip>
               Show slices along x axis
-        <button onClick={this.onModeSaggital} >
+            </Tooltip>
+          }>
+            <Button variant={varSag} onClick={this.onModeSaggital} >
               Saggital
-        </button>
-Hint: Show slices along y axis
-        <button onClick={this.onModeCoronal} >
+            </Button>
+          </OverlayTrigger>
+
+          <OverlayTrigger key="zy" placement="bottom" overlay={
+            <Tooltip>
+              Show slices along y axis
+            </Tooltip>
+          }>
+            <Button variant={varCor} onClick={this.onModeCoronal} >
               Coronal
-        </button>
+            </Button>
+          </OverlayTrigger>
 
-          Hint:
+          <OverlayTrigger key="za" placement="bottom" overlay={
+            <Tooltip>
               Show slices along z axis
-        <button onClick={this.onModeTransverse} >
+            </Tooltip>
+          }>
+            <Button variant={varTra} onClick={this.onModeTransverse} >
               Transverse
-        </button>
-      </div> : <p></p>
+            </Button>
+          </OverlayTrigger>
+        </ButtonGroup>
+      </Card.Body> : <p></p>
 
-    return <div>
-      <h3>
-        Plane (slice) view
-      </h3>
-      {jsxSliceSelector}
-      {jsxSlider}
-    </div>;
+    const jsxRenderControls =
+      <Card>
+        <Card.Header>
+          Plane (slice) view
+        </Card.Header>
+        {jsxSliceSelector}
+        {jsxSlider}
+      </Card>
+    return jsxRenderControls;
   }
 }
 

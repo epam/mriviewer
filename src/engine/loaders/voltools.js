@@ -1,7 +1,21 @@
 /*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+*/
 
 /**
 * Math volume processing tools
@@ -231,9 +245,8 @@ export default class VolumeTools {
       histDst[i] = Math.floor(sum);
     } // for i all entries
     return 1;
-  }
+  } // buildSmoothedHistogram
 
- // buildSmoothedHistogram
   /**
   * Scale down xy plane twice
   * @param {object} loader - Loader object
@@ -348,9 +361,8 @@ export default class VolumeTools {
     loader.m_yDim = yDimDst;
     loader.m_zDim = zDimDst;
     return pixelsDst;
-  }
+  }  // end of scaleTextureDown
 
-  // end of scaleTextureDown
   /**
   * Scale down
   * @param {array} pixelSrc - source volume pixels
@@ -578,9 +590,8 @@ export default class VolumeTools {
 
     console.log(`modified texture size is: ${xDimNew} * ${yDimNew} * ${zDimNew}`);
     return pixelsDst;
-  }
+  } // makeTextureSizeEven
 
- // makeTextureSizeEven
   /**
   * Extract 2d texture from normal 3d array
   * @param {number} xDim - volume dimension x
@@ -671,9 +682,8 @@ export default class VolumeTools {
         } // for (x)
       } // for (y)
     } // if z slice
-  }
+  } // end of extract2dSliceFrom3dTexture
 
- // end of extract2dSliceFrom3dTexture
   /**
   * Get 2d coordinate in tiled texture from original 3d coordinate
   * @param {number} xDim - volume dimension x
@@ -981,9 +991,8 @@ export default class VolumeTools {
       } // for (z) source
     }
     return pixelsDst;
-  }
+  } // end of makeTextureSizePowerOfTwoUp
 
- // end of makeTextureSizePowerOfTwoUp
   /**
    *
   * Make texture size equal to power of 2 for x, y dimensions

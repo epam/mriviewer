@@ -1,8 +1,3 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 /**
 * Lungs fill tool
 * @module lib/scripts/actvolume/lungsfill/seedPoints
@@ -145,9 +140,8 @@ export default class SeedPoints {
     vSeed.y = y;
     vSeed.z = zCenter;
     return 0;
-  }
+  } //findSeedPointOnCentralSlice
 
- //findSeedPointOnCentralSlice
   findSeedPointOnFirstSlice(vSeed) {
     const pixelsSrc = this.m_volTexSrc;
     const VAL_BLACK_BARRIER = 50;

@@ -10,13 +10,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        with: 
+        with:
           persist-credentials: false
 
-      - name: Use Node.js 16
+      - name: Use Node.js 12
         uses: actions/setup-node@v1
         with:
-          node-version: 16.x
+          node-version: 12.x
 
       - name: Reconfigure git to use HTTP authentication
         run: >

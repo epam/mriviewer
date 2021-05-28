@@ -1,8 +1,3 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 /**
  * @fileOverview LoaderUrlDicom
  * @author Epam
@@ -15,14 +10,14 @@
 // ********************************************************
 
 import FileTools from './FileTools';
-import LoadResult from './LoadResult';
-import { Volume } from '../../engine/Volume';
-import FileLoaderSingleton from '../OpenFile/FileLoader';
+import LoadResult from '../LoadResult';
+import Volume from '../Volume';
+import FileLoader from './FileLoader';
 import LoaderDicom from './LoaderDicom';
 
-import Texture3D from '../../engine/Texture3D';
+import Texture3D from '../Texture3D';
 import StoreActionType from '../../store/ActionTypes';
-import ViewModes from '../../store/ViewModes';
+import ModeView from '../../store/ModeView';
 import Modes3d from '../../store/Modes3d';
 
 
@@ -69,9 +64,8 @@ class LoaderUrlDicom {
     } else {
       uiapp.doSetProgressBarRatio(ratioPrc);
     }
-  }
+  } // callback progress
 
- // callback progress
   /**
    * Invoked after read finished (or may be with error)
    * 
@@ -130,7 +124,7 @@ class LoaderUrlDicom {
       const tex3d = new Texture3D();
       tex3d.createFromRawVolume(vol);
       store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ViewModes.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     }
   }
@@ -189,7 +183,7 @@ class LoaderUrlDicom {
       }
 
       // create loader for cur file
-      this.m_loaders[i] = new FileLoaderSingleton(fileNameUrl);
+      this.m_loaders[i] = new FileLoader(fileNameUrl);
       const loader = this.m_loaders[i];
       const okLoader = this.m_loaderDicom.runLoader(this.m_volume, fileNameUrl,
         loader, i, callbackProgress, callbackComplete, fromGoogle);

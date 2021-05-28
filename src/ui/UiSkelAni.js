@@ -1,11 +1,27 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * @fileOverview UiSkelAni
+ * @author Epam
+ * @version 1.0.0
  */
+
+// ********************************************************
+// Imports
+// ********************************************************
 
 import React from 'react';
 import { connect } from 'react-redux';
 
+// ********************************************************
+// Const
+// ********************************************************
+
+// ********************************************************
+// Class
+// ********************************************************
+
+/**
+ * Class UiSkelAni some text later...
+ */
 class UiSkelAni extends React.Component {
   /**
    * @param {object} props - props from up level object
@@ -55,9 +71,8 @@ class UiSkelAni extends React.Component {
     };
     const jsxAni = <canvas className="img-responsive" style={strStyle} ref={ (mount) => {this.m_mount = mount} } min-width="240px" width="240px" height="200px" />
     return jsxAni;
-  }
+  } // end render
 
- // end render
   /**
    * Draw center part of lungs pixtre
    * 
@@ -144,9 +159,8 @@ class UiSkelAni extends React.Component {
     }
     ctx.stroke();
     ctx.fill();
-  }
+  } // draw central
 
- // draw central
   /**
    * Transform pic coords to screen coords with current object center (xHeart, yHeart) ,
    * scale and mirror feature
@@ -369,9 +383,8 @@ class UiSkelAni extends React.Component {
 
     } // for (v) all vessels
 
-  }
+  } // draw heart
 
- // draw heart
   /**
    * Render scene on canvas
    */

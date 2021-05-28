@@ -1,7 +1,21 @@
 /*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+*/
 
 /**
 * Tetrahedron generator
@@ -101,9 +115,8 @@ export default class TetrahedronGenerator {
     // this.saveGeoToObjFile(TEST_FILE_NAME);
 
     return 1;
-  }
+  } // create
 
- // create
   getNumTriangles() {
     return this.m_triangleSet.m_numTriangles;
   }
@@ -175,9 +188,8 @@ export default class TetrahedronGenerator {
     const eventGen = document.createEvent('MouseEvents');
     eventGen.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
     linkGen.dispatchEvent(eventGen);
-  }
+  } // saveGeoToPlyFile
 
- // saveGeoToPlyFile
   /**
   * Save tetrahedron geometry into given file (OBJ type)
   */
@@ -233,9 +245,8 @@ export default class TetrahedronGenerator {
     const eventGen = document.createEvent('MouseEvents');
     eventGen.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
     linkGen.dispatchEvent(eventGen);
-  }
+  } // saveGeoToObjFile
 
- // saveGeoToObjFile
   /*
   * Sub divide source mesh
   * @param {number} numSubdividesOfOrigTetra number of sub divides

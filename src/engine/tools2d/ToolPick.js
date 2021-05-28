@@ -1,8 +1,3 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 /**
  * @fileOverview ToolPick
  * @author Epam
@@ -141,9 +136,8 @@ class ToolPick {
     this.m_timeStart = Date.now();
     setTimeout(this.onTimerEnd, 1500);
 
-  }
+  } // end onMouseDown
 
- // end onMouseDown
   onTimerEnd() {
     this.m_objGraphics2d.forceUpdate();
   }

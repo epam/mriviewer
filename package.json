@@ -2,7 +2,7 @@
   "name": "med3web",
   "fullName": "Med3web 2d/3d Dicom and other medical formats web viewer/editor",
   "description": "Med3web is unique 2d/3d medical volume data web viewer application. You can inspect data both in 2d and 3d modes.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "EPAM Systems <mri@epam.com>",
   "year": "2021",
   "license": "Apache-2.0",
@@ -18,15 +18,17 @@
   "homepage": "https://med3web.opensource.epam.com/",
   "private": false,
   "dependencies": {
-    "@babel/core": "7.14.3",
     "@tensorflow/tfjs": "^3.6.0",
     "classnames": "^2.3.1",
     "daikon": "^1.2.42",
+    "eslint": "^7.27.0",
     "filereader-stream": "^2.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-nouislider": "^2.0.1",
-    "react-scripts": "^4.0.3",
+    "react-redux": "^6.0.0",
+    "react-scripts": "4.0.3",
+    "redux": "^4.0.5",
     "three": "0.101.1",
     "zlib": "1.x.x"
   },
@@ -35,23 +37,31 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "lint": "eslint src/**/*.js",
-    "docker": "docker run --name med3web -v $INIT_CWD/build:/usr/share/nginx/html:ro -d -p 8080:80 nginx"
+    "docker": "npm run build && docker run --name med3web -v ./build:/usr/share/nginx/html:ro -d -p 8080:80 nginx",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.js": "npm run lint"
   },
   "eslintConfig": {
     "extends": "react-app"
   },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie > 1",
+    "not op_mini all"
+  ],
   "devDependencies": {
+    "@babel/core": "7.14.3",
     "canvas": "^2.6.1",
     "eslint-plugin-react": "7.x.x",
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
     "node-pre-gyp": "^0.14.0"
   },
-  "browserslist": [
-    "edge >=79",
-    "firefox >=51",
-    "chrome >=56"
-  ],
   "engines": {
-    "node": "16.x.x",
-    "npm": "7.x.x"
+    "node": ">=12.16.1",
+    "npm": ">=6.13.4"
   }
 }

@@ -1,8 +1,3 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 /**
  * @fileOverview LoaderHdr
  * @author Epam
@@ -13,10 +8,11 @@
 // Imports
 // ********************************************************
 
-import LoadResult from './LoadResult';
+import LoadResult from '../LoadResult';
 import FileTools from './FileTools';
 import LoadFilePromise from './LoadPromise';
-import { Volume } from '../../engine/Volume';
+import Volume from '../Volume';
+import VolumeSet from '../VolumeSet';
 
 
 // ********************************************************
@@ -332,9 +328,8 @@ class LoaderHdr {
     volumeDst.m_arrBuf = arrBuf;
     console.log(`readFromBufferImage complete with ${bufLen} bytes in image `);
     return true;
-  }
+  } // end readFromBufferImage
 
- // end readFromBufferImage
   //
   // create volume from 2 components
   //
@@ -436,9 +431,8 @@ class LoaderHdr {
     volDst.m_bytesPerVoxel = FOUR;
     console.log('createRoiVolumeFromHeaderAndImage: success');
     return true;
-  }
+  } //
 
- //
   /**
    * Read hdr (h + img) files from URL
    * 
@@ -484,9 +478,8 @@ class LoaderHdr {
     const ok = this.readFromUrls(arrUrls, volSet, callbackProgress, callbackComplete);
 
     return ok;
-  }
+  } // end of readFromUrl
 
- // end of readFromUrl
   /**
    * 
    * @param {object} arrUrls  - array of strings urls
@@ -495,6 +488,12 @@ class LoaderHdr {
    * @param {*} callbackComplete - callback after end fo read
    */
   readFromUrls(arrUrls, volSet, callbackProgress, callbackComplete) {
+
+    // check arguments
+    console.assert(volSet != null, "Null volume set");
+    console.assert(volSet instanceof VolumeSet, "Should be volume set");
+    
+
     const numUrls = arrUrls.length;
     const NUM_URLS_IN_SET = 2;
     const NUM_FILES_VOL_INT_ROI = 4;

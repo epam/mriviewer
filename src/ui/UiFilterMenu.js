@@ -1,23 +1,41 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * @fileOverview UiFilterMenu
+ * @author Epam
+ * @version 1.0.0
  */
+
+// ********************************************************
+// Imports
+// ********************************************************
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { NavDropdown } from 'react-bootstrap';
 import LungsFillTool from '../engine/actvolume/lungsfill/lft';
 
 import ActiveVolume from '../engine/actvolume/actvol';
 import StoreActionType from '../store/ActionTypes';
 import Texture3D from '../engine/Texture3D';
-import ViewModes from '../store/ViewModes';
+import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
 
 import SobelEdgeDetector from '../engine/imgproc/Sobel';
-import { Context } from "../context/Context";
-// import UiModalBilateral from './UiModalBilateral';
+import UiModalBilateral from './UiModalBilateral';
 
+
+// ********************************************************
+// Const
+// ********************************************************
+
+// ********************************************************
+// Class
+// ********************************************************
+
+/**
+ * Class UiFilterMenu some text later...
+ */
 class UiFilterMenu extends React.Component {
+  // invoked after render
   constructor(props) {
     super(props);
     this.onButtonLungsSeg = this.onButtonLungsSeg.bind(this);
@@ -55,39 +73,6 @@ class UiFilterMenu extends React.Component {
     }
   } // callback progress
   */
-
-  showProgressBar(text = "", value = 0) {
-    this.context.setContext(prev => ({
-      ...prev,
-      progress: {
-        show: true,
-        value,
-        text,
-      }
-    }));
-  }
-
-  updateProgressBar(newVal) {
-    this.context.setContext(prev => ({
-      ...prev,
-      progress: {
-        ...prev.progress,
-        value: newVal,
-      }
-    }));
-  }
-
-  hideProgressBar() {
-    this.context.setContext(prev => ({
-      ...prev,
-      progress: {
-        show: false,
-        value: 0,
-        text: "",
-      }
-    }))
-  }
-
   onButtonLungsSeg() {
     //evt.preventDefault();
     const store = this.props;
@@ -115,7 +100,9 @@ class UiFilterMenu extends React.Component {
     this.lungsFiller = new LungsFillTool(vol);
     //const callbackProgress = this.callbackProgressFun;
     //lungsFiller.run(callbackProgress);
-    this.showProgressBar('lungsFiller...');
+    const uiApp = store.uiApp;
+    uiApp.doShowProgressBar('lungsFiller...');
+    uiApp.doSetProgressBarRatio(0.0);
     const SK_REM_DELAY_MSEC = 200;
     this.m_timerId = setTimeout(this.onLungsFillerCallback, SK_REM_DELAY_MSEC);
     //store.volumeRenderer.volumeUpdater.createUpdatableVolumeTex(store.volume, false, null);
@@ -125,13 +112,14 @@ class UiFilterMenu extends React.Component {
     const store = this.props;
     const ratioUpdate = this.lungsFiller.m_ratioUpdate;
     console.log(`onLungsFillerCallback: iter counter = ${ratioUpdate}`);
-    this.updateProgressBar(ratioUpdate)
+    const uiApp = store.uiApp;
+    uiApp.doSetProgressBarRatio(ratioUpdate);
 
     const isFinished = this.lungsFiller.run();
-
+ 
     if (isFinished) {
       console.log('`onSkullRemoveCallback: iters finished!');
-      this.hideProgressBar();
+      uiApp.doHideProgressBar();
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
       // store.graphics2d.renderScene();
@@ -181,14 +169,15 @@ class UiFilterMenu extends React.Component {
     sobel.start(vol);
     this.m_sobel = sobel;
 
-    this.showProgressBar('Apply sobel edge detector...');
+    const uiApp = store.uiApp;
+    uiApp.doShowProgressBar('Apply sobel edge detector...');
+    uiApp.doSetProgressBarRatio(0.0);
 
     const SOBEL_UPDATE_DELAY_MSEC = 150;
     this.m_timerId = setTimeout(this.onSobelCallback, SOBEL_UPDATE_DELAY_MSEC);
 
-  }
+  } // end onButtonSobel
 
- // end onButtonSobel
   // callback for periodicallt invoke sobel 3d volume filtering
   onSobelCallback() {
     this.m_sobel.update();
@@ -201,14 +190,14 @@ class UiFilterMenu extends React.Component {
     ratioUpdate = Math.floor(ratioUpdate);
     // console.log('ratio = ' + ratioUpdate.toString() );
 
-    this.updateProgressBar(ratioUpdate);
+    const uiApp = store.uiApp;
+    uiApp.doSetProgressBarRatio(ratioUpdate);
 
     const isFinished = this.m_sobel.isFinished();
 
     if (isFinished) {
       console.log('`onSobelCallback: iters finished!');
-      // uiApp.doHideProgressBar();
-      this.hideProgressBar();
+      uiApp.doHideProgressBar();
 
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
@@ -237,7 +226,7 @@ class UiFilterMenu extends React.Component {
       const tex3d = new Texture3D();
       tex3d.createFromRawVolume(vol);
       store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ViewModes.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     } // if finished
     // update render
@@ -247,9 +236,8 @@ class UiFilterMenu extends React.Component {
       const SOBEL_UPDATE_DELAY_MSEC = 150;
       this.m_timerId = setTimeout(this.onSobelCallback, SOBEL_UPDATE_DELAY_MSEC);
     }
-  }
+  } // end onSobelCallback
 
- // end onSobelCallback
   //
   // on Bilateral
   //
@@ -310,7 +298,9 @@ class UiFilterMenu extends React.Component {
     const actVolume = new ActiveVolume();
     this.m_actVolume = actVolume;
 
-    this.showProgressBar('Remove skull...')
+    const uiApp = store.uiApp;
+    uiApp.doShowProgressBar('Remove skull...');
+    uiApp.doSetProgressBarRatio(0.0);
 
     this.m_geoRender = actVolume.skullRemoveStart(xDim, yDim, zDim,
       volTextureSrc, volTextureDst, CREATE_TYPE, NEED_LOG);
@@ -370,15 +360,15 @@ class UiFilterMenu extends React.Component {
     ratioUpdate = (ratioUpdate < 1.0) ? ratioUpdate : 1.0;
     ratioUpdate *= 100;
 
-    this.updateProgressBar(ratioUpdate);
+    const uiApp = store.uiApp;
+    uiApp.doSetProgressBarRatio(ratioUpdate);
 
     const isFinished = this.m_actVolume.skullRemoveUpdate(this.m_geoRender);
-
+ 
     if (isFinished) {
       console.log('`onSkullRemoveCallback: iters finished!');
 
-
-      this.hideProgressBar();
+      uiApp.doHideProgressBar();
 
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
@@ -397,7 +387,7 @@ class UiFilterMenu extends React.Component {
       const tex3d = new Texture3D();
       tex3d.createFromRawVolume(vol);
       store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ViewModes.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     }
     // update render
@@ -423,33 +413,39 @@ class UiFilterMenu extends React.Component {
 
   //
   render() {
+    const store = this.props;
+    const isLoaded = store.isLoaded;
+
+    const strDisabled = (isLoaded) ? false : true;
     const jsxFilterMenu =
-      <div>
-        <div style={{ display: 'inline-block' }}>
-          <i className="fas fa-broom"></i>
+      <NavDropdown id="save-nav-dropdown" 
+        disabled={strDisabled}
+        title={
+          <div style={{ display: 'inline-block' }}> 
+            <i className="fas fa-broom"></i>
             Filter
-        </div>
-        <div onClick={evt => this.onButtonLungsSeg(evt)}>
+          </div>
+        } >
+        <NavDropdown.Item href="#actionLungsSeg" onClick={evt => this.onButtonLungsSeg(evt)}>
           <i className="fas fa-cloud"></i>
           Lungs segmentation
-        </div>
-        <div onClick={evt => this.onButtonDetectBrain(evt)}>
+        </NavDropdown.Item>
+        <NavDropdown.Item href="#actionDataectBrain" onClick={evt => this.onButtonDetectBrain(evt)}>
           <i className="fas fa-brain"></i>
           Auto detect brain
-        </div>
-        <div onClick={evt => this.onButtonSobel(evt)}>
+        </NavDropdown.Item>
+        <NavDropdown.Item href="#actionSobel" onClick={evt => this.onButtonSobel(evt)}>
           Sobel filter
-        </div>
-        <div onClick={evt => this.onButtonBilateral(evt)}>
+        </NavDropdown.Item>
+        <NavDropdown.Item href="#actionBilateral" onClick={evt => this.onButtonBilateral(evt)}>
           Bilateral (denoise or smooth)
-        </div>
-        {/*<UiModalBilateral stateVis={this.state.showModalBilateral} onHide={this.hideModalBilateral} />*/}
-      </div>
+        </NavDropdown.Item>
+        <UiModalBilateral stateVis={this.state.showModalBilateral} onHide={this.hideModalBilateral} />
+      </NavDropdown>;
 
     return jsxFilterMenu;
   }
 }
-
-UiFilterMenu.contextType = Context;
-
+ 
 export default connect(store => store)(UiFilterMenu);
+

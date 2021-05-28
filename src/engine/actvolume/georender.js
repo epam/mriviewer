@@ -1,7 +1,21 @@
 /*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+*/
 
 /**
 * Geometry for render
@@ -71,9 +85,8 @@ export default class GeoRender {
       this.m_indices[j + NUM_2] = triIndices[NUM_2];
     } // for (i) all triangles
     return GEO_ERROR_OK;
-  }
+  } // create tetra
 
- // create tetra
   fromBufferGeometry(geoBuffered) {
     const geo = new THREE.Geometry();
     geo.fromBufferGeometry(geoBuffered);
@@ -167,9 +180,8 @@ export default class GeoRender {
         ind += INDICES_IN_TRI;
       } // for (i)
     } // for (i)
-  }
+  } // createFromEllipse
 
- // createFromEllipse
   getNumVertices() {
     return this.m_numVertices;
   }
@@ -251,9 +263,8 @@ export default class GeoRender {
     const eventGen = document.createEvent('MouseEvents');
     eventGen.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
     linkGen.dispatchEvent(eventGen);
-  }
+  } // saveGeoToObjFile
 
- // saveGeoToObjFile
   /**
   * Calculate vertices normals, based on triangle normals
   */

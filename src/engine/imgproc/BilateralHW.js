@@ -1,8 +1,3 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 //
 // Bilateral filter for 3d iamge using render and shader 
 // 
@@ -20,7 +15,7 @@ void main() {
 }
 `;
 
-const s_shaderFragment = `#version 300 es
+const s_shaderFragment = `
 varying vec2 texCoord;
 precision highp sampler3D;
 uniform sampler3D texVolume;
@@ -107,9 +102,8 @@ export default class BilateralHW {
     this.m_defines = {
       useWebGL2: 1,
     };
-  }
+  } // end constructor
 
- // end constructor
   getImageDst() {
     return this.m_bufferTextureCPU;
   }

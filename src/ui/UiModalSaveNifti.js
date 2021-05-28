@@ -1,15 +1,28 @@
-
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * @fileOverview UiModalSaveNifti
+ * @author Epam
+ * @version 1.0.0
  */
+
+// ********************************************************
+// Imports
+// ********************************************************
 
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { Modal, Table, Button, Form, Row, Col } from 'react-bootstrap';
+
 import SaverNifti from '../engine/savers/SaverNifti';
 
+// ********************************************************
+// Class
+// ********************************************************
+
 class UiModalSaveNifti extends React.Component {
+  /**
+   * @param {object} props - props from up level object
+   */
   constructor(props) {
     super(props);
     this.onModalShow = this.onModalShow.bind(this);
@@ -25,9 +38,8 @@ class UiModalSaveNifti extends React.Component {
       showModalSaveNifti: false,
       text: 'dump'
     };
-  }
+  } // end constr
 
- // end constr
   onButtonSave() {
     // console.log('on button save');
     this.m_hideFunc();
@@ -101,9 +113,8 @@ class UiModalSaveNifti extends React.Component {
     document.body.appendChild(downloadLink);
 
     downloadLink.click();
-  }
+  } // end on save nifti
 
- // end on save nifti
   render() {
     const stateVis = this.props.stateVis;
     const onHideFunc = this.props.onHide;

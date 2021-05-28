@@ -1,8 +1,3 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 /**
  * @fileOverview UiHistogram
  * @author Epam
@@ -139,9 +134,8 @@ export default class UiHistogram extends React.Component {
     }
     return i;
 
-  }
+  } // end get last max index
 
- // end get last max index
   //
   //
   getMaxPeak() {
@@ -205,9 +199,8 @@ export default class UiHistogram extends React.Component {
         this.m_histogram[i] = newHist[i];
       } // for (i)
     }
-  }
+  } // smoothHistogram
 
- // smoothHistogram
   onMouseDown(evt) {
     if ((this.m_transfFuncCallback === undefined) ||
       (this.m_transfFuncUpdateCallback === undefined)) {
@@ -380,9 +373,8 @@ export default class UiHistogram extends React.Component {
       (this.m_transfFuncUpdateCallback !== undefined)) {
       this.m_transfFunc.render(ctx, xMin, yMin, wRect, hRect);
     }
-  }
+  } // end update canvas
 
- // end update canvas
   forceRender() {
     this.setState({ state: this.state });
     if (this.m_transfFuncCallback !== undefined) {
