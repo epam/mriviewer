@@ -1,22 +1,49 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * @fileOverview UiMain3dLight
+ * @author Epam
+ * @version 1.0.0
  */
+
+
+// ********************************************************
+// Imports
+// ********************************************************
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { Row, Col } from 'react-bootstrap';
 
 import UiCtrl3dLight from './UiCtrl3dLight';
 import UiCtrl3d from './UiCtrl3d';
 import Graphics3d from '../engine/Graphics3d';
 import 'nouislider/distribute/nouislider.css';
 
+import { ListGroup } from 'react-bootstrap';
+
 import Nouislider from 'react-nouislider';
 
+//import Modes3d from '../store/Modes3d';
+
 import StoreActionType from '../store/ActionTypes';
-import ViewModes from '../store/ViewModes';
+import ModeView from '../store/ModeView';
 import UiTools2d from './UiTools2d';
+
+
+// ********************************************************
+// Const
+// ********************************************************
+
+// ********************************************************
+// Class
+// ********************************************************
+
+/**
+ * Class UiMain3dLight some text later...
+ */
 class UiMain3dLight extends React.Component {
+  /**
+   * Main component render func callback
+   */
   constructor(props) {
     super(props);
     this.m_updateEnable = true;
@@ -50,12 +77,20 @@ class UiMain3dLight extends React.Component {
     store.dispatch({ type: StoreActionType.SET_SLIDER_Contrast3D, sliderContrast3D: Number.parseFloat(aval) });    
   }
 
+  /*
+  shouldComponentUpdate() {
+    //return this.m_updateEnable;
+    return true;
+  }
+  */
   shouldComponentUpdate(nextProps) {
+    //return this.m_updateEnable;
     let flag = this.m_updateEnable;
     if (this.props.isTool3D !== nextProps.isTool3D || this.props.modeView !== nextProps.modeView) {
       flag = true;
     }
     return flag;
+    //return true;
   }
 
   //{(store.isTool3D === false) ? jsxView : jsxTool}
@@ -70,42 +105,67 @@ class UiMain3dLight extends React.Component {
     const wArrBrightness = [sliderBrightness];
     const wArrCut = [sliderCut];
     const wArrQuality = [sliderQuality];
-    const jsx3dLight = <UiCtrl3dLight />;
-    const jsx3d = <UiCtrl3d />;
+    const jsx3dLight = <UiCtrl3dLight></UiCtrl3dLight>;
+    const jsx3d = <UiCtrl3d></UiCtrl3d>;
 
-    const jsxArray = new Array(ViewModes.VIEW_COUNT);
-    jsxArray[ViewModes.VIEW_3D_LIGHT] = jsx3dLight ;
-    jsxArray[ViewModes.VIEW_3D] = jsx3d;
+    const jsxArray = new Array(ModeView.VIEW_COUNT);
+    jsxArray[ModeView.VIEW_3D_LIGHT] = jsx3dLight ;
+    jsxArray[ModeView.VIEW_3D] = jsx3d;
     const jsxRet = jsxArray[modeViewIndex];
-    const jsxView = <div>
-      <p> Brightness </p>
-      <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={'sliderBrightness'}
-        range={{ min: 0.0, max: 1.0 }}
-        overflow-scroll={'true'}
-        start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true} />
-      <p> Quality </p>
-      <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={'sliderQuality'}
-        range={{ min: 0.0, max: 1.0 }}
-        overflow-scroll={'true'}
-        start={wArrQuality} connect={[false, false]} step={0.02} tooltips={true} />
-    </div>
-    const jsxTool = <div>
-      <p> Cut plane opacity </p>
-      <Nouislider onSlide={this.onChangeSliderContrast3D.bind(this)} ref={'sliderContrast3D'}
-        range={{ min: 0.0, max: 1.0 }}
-        overflow-scroll={'true'}
-        start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true} />
-      <UiTools2d />
-    </div>
+    const jsxView =
+      <ListGroup as="ul" variant="flush">
+        <ListGroup.Item>
+          <p> Brightness </p>
+          <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={'sliderBrightness'}
+            range={{ min: 0.0, max: 1.0 }}
+            overflow-scroll={'true'}
+            start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true} />
+        </ListGroup.Item>
+        <ListGroup.Item>
+          <p> Quality </p>
+          <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={'sliderQuality'}
+            range={{ min: 0.0, max: 1.0 }}
+            overflow-scroll={'true'}
+            start={wArrQuality} connect={[false, false]} step={0.02} tooltips={true} />
+        </ListGroup.Item>
 
-    return <div>{jsxRet}
-      <p> Cut </p>
-      <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={'sliderCut'}
-        range={{ min: 0.0, max: 1.0 }}
-        overflow-scroll={'true'}
-        start={wArrCut} connect={[false, false]} step={0.01} tooltips={true} />
-      {(store.isTool3D === false) ? jsxView : jsxTool}
-      <Graphics3d  /></div>
+      </ListGroup>
+    const jsxTool =
+    <ListGroup as="ul" variant="flush">
+      <ListGroup.Item>
+        <p> Cut plane opacity </p>
+        <Nouislider onSlide={this.onChangeSliderContrast3D.bind(this)} ref={'sliderContrast3D'}
+          range={{ min: 0.0, max: 1.0 }}
+          overflow-scroll={'true'}
+          start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true} />
+      </ListGroup.Item>
+      <UiTools2d />
+    </ListGroup>
+    const MIN_HEIGHT = 882;
+    const strMinHeight = {
+      minHeight: MIN_HEIGHT.toString() + 'px'
+    };
+
+
+    const jsxMain3dLight = 
+      <Row>
+        <Col xs={12} sm md lg={4}  >
+          {jsxRet}
+          <ListGroup.Item as="ul" variant="flush">
+            <p> Cut </p>
+            <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={'sliderCut'}
+              range={{ min: 0.0, max: 1.0 }}
+              overflow-scroll={'true'}
+              start={wArrCut} connect={[false, false]} step={0.01} tooltips={true} />
+          </ListGroup.Item>
+          {(store.isTool3D === false) ? jsxView : jsxTool}
+        </Col>
+        <Col xs={12} sm md lg={8} style={strMinHeight}  >
+          <Graphics3d  />
+        </Col>
+      </Row> ; 
+    
+    return jsxMain3dLight;
   };
 }
 

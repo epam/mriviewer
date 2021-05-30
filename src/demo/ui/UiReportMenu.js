@@ -1,8 +1,3 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 /**
  * @fileOverview UiReportMenu
  * @author Epam
@@ -15,10 +10,11 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { NavDropdown } from 'react-bootstrap';
 
 import UiModalDicomTags from './UiModalDicomTags';
 import Screenshot from '../engine/utils/Screenshot';
-import ViewModes from '../store/ViewModes';
+import ModeView from '../store/ModeView';
 
 // ********************************************************
 // Const
@@ -59,10 +55,10 @@ class UiReportMenu extends React.Component {
 
     const store = this.props;
     const modeView = store.modeView;
-    if (modeView === ViewModes.VIEW_2D) {
+    if (modeView === ModeView.VIEW_2D) {
       const gra2d = store.graphics2d;
       Screenshot.makeScreenshot(gra2d, SHOT_W, SHOT_H);
-    } else if ((modeView === ViewModes.VIEW_3D) || (modeView === ViewModes.VIEW_3D_LIGHT)) {
+    } else if ((modeView === ModeView.VIEW_3D) || (modeView === ModeView.VIEW_3D_LIGHT)) {
       const volRender = store.volumeRenderer;
       Screenshot.makeScreenshot(volRender, SHOT_W, SHOT_H);
     } else {

@@ -1,13 +1,18 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-import App from './app/App';
-
 import './index.css';
+import { Provider } from 'react-redux'
 
-ReactDOM.render(<App />,  document.getElementById('root'));
+import { createStore } from 'redux';
+import rootReducer from './demo/store/Store';
+import App from './demo/App';
+
+const rootElement = document.getElementById('root');
+
+const store = createStore(rootReducer);
+
+ReactDOM.render(<Provider store={store}>
+  <App />
+</Provider>,
+rootElement);
+

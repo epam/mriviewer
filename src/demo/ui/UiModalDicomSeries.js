@@ -1,10 +1,8 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React from 'react';
 import { connect } from 'react-redux';
+import { Modal } from 'react-bootstrap';
+
+import BootstrapTable from 'react-bootstrap-table-next';
 
 class UiModalDicomSeries extends React.Component {
   constructor(props) {

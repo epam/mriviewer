@@ -1,21 +1,51 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * @fileOverview UiErrConsole
+ * @author Epam
+ * @version 1.0.0
  */
+
+
+// ********************************************************
+// Imports
+// ********************************************************
 
 import React from 'react';
 import { connect } from 'react-redux';
 
-const UiErrConsole = props => {
-  const store = props;
-  const arrErr = store.arrErrors;
-  return <div>
-    Errors during read
-    {arrErr.map((d) => {
-      const strErr = d;
-      return  { strErr };
-    })}
-  </div>;
-};
+import { Container, ListGroup } from 'react-bootstrap';
 
+
+
+// ********************************************************
+// Const
+// ********************************************************
+
+
+// ********************************************************
+// Class
+// ********************************************************
+
+/**
+ * Class UiErrConsole some text later...
+ */
+class UiErrConsole extends React.Component {
+  /**
+   * Main component render func callback
+   */
+  render() {
+    const store = this.props;
+    const arrErr = store.arrErrors;
+    const jsx = <Container>
+      Errors during read
+      <ListGroup>
+        {arrErr.map((d, i) => {
+          const strErr = d;
+          const strKey = `key_${i}`;
+          return <ListGroup.Item key={strKey} > {strErr} </ListGroup.Item>;
+        })}
+      </ListGroup>
+    </Container>;
+    return jsx;
+  }
+}
 export default connect(store => store)(UiErrConsole);

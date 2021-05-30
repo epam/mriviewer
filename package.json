@@ -24,6 +24,7 @@
     "eslint": "^7.27.0",
     "filereader-stream": "^2.0.0",
     "react": "^16.13.1",
+    "react-bootstrap": "^1.6.0",
     "react-dom": "^16.13.1",
     "react-nouislider": "^2.0.1",
     "react-redux": "^6.0.0",

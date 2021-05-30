@@ -1,8 +1,3 @@
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
- */
-
 /**
  * @fileOverview UiSaveMenu
  * @author Epam
@@ -15,6 +10,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { NavDropdown } from 'react-bootstrap';
 
 import UiModalSaveNifti from './UiModalSaveNifti';
 

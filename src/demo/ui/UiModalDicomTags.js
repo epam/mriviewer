@@ -1,12 +1,30 @@
-
-/*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
- * SPDX-License-Identifier: Apache-2.0
+/**
+ * @fileOverview UiModalDicomTags
+ * @author Epam
+ * @version 1.0.0
  */
+
+
+// ********************************************************
+// Imports
+// ********************************************************
 
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { Modal, Table, Form } from 'react-bootstrap';
+
+// ********************************************************
+// Const
+// ********************************************************
+
+// ********************************************************
+// Class
+// ********************************************************
+
+/**
+ * Class UiModalDicomTags some text later...
+ */
 class UiModalDicomTags extends React.Component {
   /**
    * @param {object} props - props from up level object
