@@ -18,9 +18,12 @@ export const UIButton = ({ icon, caption, handler, active, rounded, type = "butt
             type={type}
             className={ cx(css.button, active && css.active, rounded && css.rounded, modeStyle) }
             onClick={ handler }
+            caption={ icon && caption }
         >
             { icon ? <SVG name={ icon } title={ caption }/> : caption }
         </button>
     )
 }
 
+export const buttonsBuilder = (buttons, options = { activeButton: null }) =>
+    buttons.map(button => <UIButton {...button} key={ button.icon || button.caption } active={ button.icon === options.activeButton }/>);
