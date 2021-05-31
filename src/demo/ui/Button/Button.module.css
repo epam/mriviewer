@@ -19,6 +19,10 @@
   -moz-appearance: none;
 }
 
+.button:focus {
+  outline: none;
+}
+
 .rounded {
   overflow: hidden;
   border-radius: 50%;
@@ -28,7 +32,8 @@
   fill: var(--white);
 }
 
-.button:hover {
+.button:hover,
+.button:focus {
   background-color: var(--dark-gray);
 }
 
@@ -53,7 +58,8 @@
   color: var(--red);
 }
 
-.button.light:hover {
+.button.light:hover,
+.button.light:focus {
   background-color: var(--light);
   filter: brightness(85%);
 }
@@ -67,7 +73,8 @@
   fill: var(--white);
 }
 
-.button.accent:hover {
+.button.accent:hover,
+.button.accent:focus {
   background-color: var(--red);
   filter: brightness(85%);
 }

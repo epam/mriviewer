@@ -125,7 +125,7 @@ class UiApp extends React.Component {
   }
 
   /**
-   * 
+   *
    * @param {number} ratio - in [0..99] range
    */
   doSetProgressBarRatio(ratio) {
@@ -154,7 +154,7 @@ class UiApp extends React.Component {
 
     const strProgressMsg = this.state.strProgressMessage;
 
-    const objPrgBarVis = 
+    const objPrgBarVis =
       <Row>
         <Col xs xl sm md lg="12" style={{ width: '100%' } }>
           {strProgressMsg}
@@ -164,7 +164,7 @@ class UiApp extends React.Component {
       </Row>
     const objProgressBar = (this.state.showProgressBar) ? objPrgBarVis : <p></p>;
 
-    const jsxNavBarReact = 
+    const jsxNavBarReact =
       <Container fluid="true" style={{ height:'100%', minHeight:'100%' }}  >
         <Navbar bg="light" variant="light" expand="lg" >
           <Navbar.Brand>
@@ -194,7 +194,7 @@ class UiApp extends React.Component {
         <UiModalText stateVis={this.state.showModalText}
           onHide={this.onHideModalText} onShow={this.onShowModalText} />
         <UiModalAlert stateVis={this.state.showModalAlert}
-          onHide={this.onHideModalAlert} onShow={this.onShowModalAlert} 
+          onHide={this.onHideModalAlert} onShow={this.onShowModalAlert}
           title={this.state.strAlertTitle} text={this.state.strAlertText} />
       </Container>;
 

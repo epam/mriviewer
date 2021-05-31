@@ -1,0 +1,21 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.container {
+    display: inline-flex;
+    flex-wrap: wrap;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.vertical {
+    flex-direction: column;
+    width: 50px;
+}
+
+.horizontal {
+    flex-direction: row;
+    height: 50px;
+}
