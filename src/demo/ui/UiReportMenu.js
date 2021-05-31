@@ -10,11 +10,11 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { NavDropdown } from 'react-bootstrap';
 
 import UiModalDicomTags from './UiModalDicomTags';
 import Screenshot from '../engine/utils/Screenshot';
 import ModeView from '../store/ModeView';
+import { UIButton } from "./Button/Button";
 
 // ********************************************************
 // Const
@@ -66,40 +66,21 @@ class UiReportMenu extends React.Component {
     }
   }
 
-  // invoked after render
-  componentDidMount() {
-  }
-
   render() {
     const store = this.props;
     const isLoaded = store.isLoaded;
 
-    const strDisabled = (isLoaded) ? false : true;
-    const jsxReportMenu = 
-      <NavDropdown id="save-nav-dropdown" 
-        disabled={strDisabled}
-        title={
-          <div style={{ display: 'inline-block' }}> 
-            <i className="fas fa-book"></i>
-            Report
-          </div>
-        } >
-        <NavDropdown.Item onClick={this.onModalDicomTagsShow} >
-          <i className="fas fa-clipboard-list"></i>
-          Show tags
-        </NavDropdown.Item>
+    const strDisabled = (!isLoaded);
+    return <>
+      <UIButton caption="Show tags" icon="report" rounded mode="light" disabled={strDisabled}
+                handler={this.onModalDicomTagsShow}/>
+      <UIButton caption="Screenshot" icon="camera" rounded mode="light" disabled={strDisabled}
+                handler={this.onModalScreenshot}/>
 
-        <NavDropdown.Item onClick={this.onModalScreenshot} >
-          <i className="fas fa-camera"></i>
-          Screenshot
-        </NavDropdown.Item>
+      <UiModalDicomTags stateVis={this.state.showModalDicomTags}
+                        onHide={this.onModalDicomTagsHide}/>
 
-        <UiModalDicomTags stateVis={this.state.showModalDicomTags}
-          onHide={this.onModalDicomTagsHide} />
-
-      </NavDropdown>;    
-
-    return jsxReportMenu;
+    </>;
   }
 }
 

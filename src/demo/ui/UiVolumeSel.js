@@ -12,7 +12,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Card, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { ListGroup, ListGroupItem } from 'react-bootstrap';
 
 import StoreActionType from '../store/ActionTypes';
 // import LoaderDicom from '../engine/loaders/LoaderDicom';
@@ -110,11 +110,8 @@ class UiVolumeSel extends React.Component {
     // const slices = store.dicomInfo.m_sliceInfo;
 
     const jsx = 
-    <Card>
-      <Card.Header>
+    <>
         {strTitle}
-      </Card.Header>
-      <Card.Body>
         <ListGroup>
           {vols.map( (vol, i) => {
             const numSlices = vol.m_zDim;
@@ -129,9 +126,7 @@ class UiVolumeSel extends React.Component {
             return jsxListItem;
           })}
         </ListGroup>
-
-      </Card.Body>
-    </Card>
+    </>
     return jsx;
   }
 }

@@ -15,9 +15,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
+  color: var(--red);
   background-color: black;
-  color: white;
   height: 100vh;
 }
 
@@ -51,4 +50,5 @@ svg {
   vertical-align: middle;
   width: 25px;
   height: 25px;
+  color: var(--white);
 }

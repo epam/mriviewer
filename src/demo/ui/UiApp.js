@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Nav, Navbar, Container, ProgressBar, Row, Col } from 'react-bootstrap';
+import { ProgressBar, Row, Col } from 'react-bootstrap';
 import StoreActionType from '../store/ActionTypes';
 
 import UiMain from './UiMain';
@@ -156,47 +156,31 @@ class UiApp extends React.Component {
 
     const objPrgBarVis =
       <Row>
-        <Col xs xl sm md lg="12" style={{ width: '100%' } }>
+        <Col xs xl sm md lg="12" style={{ width: '100%' }}>
           {strProgressMsg}
           <ProgressBar animated variant="success"
-            now={this.state.progressBarRatio} label={`${this.state.progressBarRatio}%`}  />
+                       now={this.state.progressBarRatio} label={`${this.state.progressBarRatio}%`}/>
         </Col>
       </Row>
     const objProgressBar = (this.state.showProgressBar) ? objPrgBarVis : <p></p>;
 
-    const jsxNavBarReact =
-      <Container fluid="true" style={{ height:'100%', minHeight:'100%' }}  >
-        <Navbar expand="lg" >
-          <Navbar.Brand>
-            <UiAbout />
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="mr-auto">
+    const jsxNavBarReact = <>
+      <UiAbout/>
+      {strMessageOnMenu}
+      <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>
 
-              <Navbar.Text className="d-none d-sm-block">
-                {strMessageOnMenu}
-              </Navbar.Text>
-
-              <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad} />
-
-              <UiSaveMenu />
-              <UiReportMenu />
-              {(store.modeView === ModeView.VIEW_2D) ? <UiFilterMenu /> : <p></p>}
-              {(isLoaded && this.isWebGl20supported) ? <UiViewMode /> : <p></p>}
-            </Nav>
-          </Navbar.Collapse>
-
-        </Navbar>
-        {objProgressBar}
-        {(isLoaded) ? <UiMain /> : <p></p>}
-        {(arrErrorsLoadedd.length > 0) ? <UiErrConsole /> : <p></p>}
-        <UiModalText stateVis={this.state.showModalText}
-          onHide={this.onHideModalText} onShow={this.onShowModalText} />
-        <UiModalAlert stateVis={this.state.showModalAlert}
-          onHide={this.onHideModalAlert} onShow={this.onShowModalAlert}
-          title={this.state.strAlertTitle} text={this.state.strAlertText} />
-      </Container>;
+      <UiSaveMenu/>
+      <UiReportMenu/>
+      {(store.modeView === ModeView.VIEW_2D) ? <UiFilterMenu/> : <p></p>}
+      {(isLoaded && this.isWebGl20supported) ? <UiViewMode/> : <p></p>}
+      {objProgressBar}
+      {(isLoaded) ? <UiMain/> : <p></p>}
+      {(arrErrorsLoadedd.length > 0) ? <UiErrConsole/> : <p></p>}
+      <UiModalText stateVis={this.state.showModalText}
+                   onHide={this.onHideModalText} onShow={this.onShowModalText}/>
+      <UiModalAlert stateVis={this.state.showModalAlert}
+                    onHide={this.onHideModalAlert} onShow={this.onShowModalAlert}
+                    title={this.state.strAlertTitle} text={this.state.strAlertText}/></>
 
     return jsxNavBarReact;
   }

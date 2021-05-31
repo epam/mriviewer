@@ -14,7 +14,7 @@ import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Card, ListGroup, Button, ButtonGroup } from 'react-bootstrap';
+import { ListGroup, ButtonGroup } from 'react-bootstrap';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 //import Nouislider from 'react-nouislider';
@@ -25,6 +25,7 @@ import StoreActionType from '../store/ActionTypes';
 import UiTF from './UiTF';
 import UiTFroi from './UiTFroi';
 import UiRoiSelect from './UiRoiSelect';
+import { UIButton } from "./Button/Button";
 
 // ********************************************************
 // Const
@@ -99,7 +100,7 @@ class UiCtrl3dLight extends React.Component {
 
   /**
    * Callback, invoked after any ROI setup array change
-   * 
+   *
    * @param {object} arrayRoi - array of objects with props: id, name, selected, see (UiRoiSelect)
    */
   setRoi(arrayRoi) {
@@ -131,68 +132,52 @@ class UiCtrl3dLight extends React.Component {
     const mode3d = store.mode3d;
     // const mode3droi = store.mode3droi;
 
-    const strA = (mode3d === Modes3d.ISO) ? 'primary' : 'secondary';
-    const strB = (mode3d === Modes3d.RAYCAST) ? 'primary' : 'secondary';
-    const strC = (mode3d === Modes3d.RAYFAST) ? 'primary' : 'secondary';
-    const strD = (mode3d === Modes3d.ERASER) ? 'primary' : 'secondary';
-    // const strAroi = (mode3droi === Modes3droi.ISO) ? 'primary' : 'secondary';
-    // const strBroi = (mode3droi === Modes3droi.RAYCAST) ? 'primary' : 'secondary';
+    const strA = (mode3d === Modes3d.ISO);
+    const strB = (mode3d === Modes3d.RAYCAST);
+    const strC = (mode3d === Modes3d.RAYFAST);
+    const strD = (mode3d === Modes3d.ERASER);
+    // const strAroi = (mode3droi === Modes3droi.ISO);
+    // const strBroi = (mode3droi === Modes3droi.RAYCAST);
 
     const jsxRenderControls =
-      <div>
-        <Card>
-          <Card.Title>
-            3d mode selection
-          </Card.Title>
-          <Card.Body>
+      <>
+        3d mode selection
+        <ButtonGroup>
+          <OverlayTrigger key="iso" placement="bottom" overlay={
+            <Tooltip>
+              Show just barrier value surface, 1st ray intersection
+            </Tooltip>
+          }>
+            <UIButton active={strA} handler={this.onModeA} caption="Iso" icon="I"/>
+          </OverlayTrigger>
 
-            <ButtonGroup>
-              <OverlayTrigger key="iso" placement="bottom" overlay={
-                <Tooltip>
-                  Show just barrier value surface, 1st ray intersection
-                </Tooltip>
-              }>
-                <Button variant={strA} onClick={this.onModeA}  >
-                  Iso
-                </Button>
-              </OverlayTrigger>
+          <OverlayTrigger key="vre" placement="bottom" overlay={
+            <Tooltip>
+              Show complete 3D volumetric rendering
+            </Tooltip>
+          }>
+            <UIButton active={strB} handler={this.onModeB} caption="Vol" icon="V"/>
+          </OverlayTrigger>
 
-              <OverlayTrigger key="vre" placement="bottom" overlay={
-                <Tooltip>
-                  Show complete 3d volumetric rendering
-                </Tooltip>
-              }>
-                <Button variant={strB} onClick={this.onModeB} >
-                  Vol
-                </Button>
-              </OverlayTrigger>
+          <OverlayTrigger key="maxproj" placement="bottom" overlay={
+            <Tooltip>
+              Show maximum projection rendering
+            </Tooltip>
+          }>
+            <UIButton active={strC} handler={this.onModeC} caption="MaxPrj" icon="M"/>
+          </OverlayTrigger>
 
-              <OverlayTrigger key="maxproj" placement="bottom" overlay={
-                <Tooltip>
-                  Show maximum projection rendering
-                </Tooltip>
-              }>
-                <Button variant={strC} onClick={this.onModeC} >
-                  MaxPrj
-                </Button>
-              </OverlayTrigger>
+          <OverlayTrigger key="volera" placement="bottom" overlay={
+            <Tooltip>
+              Special volume eraser tool
+            </Tooltip>
+          }>
+            <UIButton active={strD} handler={this.onModeD} caption="Eraser" icon="E"/>
+          </OverlayTrigger>
 
-              <OverlayTrigger key="volera" placement="bottom" overlay={
-                <Tooltip>
-                  Special volume eraser tool
-                </Tooltip>
-              }>
-                <Button variant={strD} onClick={this.onModeD} >
-                  Eraser
-                </Button>
-              </OverlayTrigger>
-
-            </ButtonGroup>
-
-          </Card.Body>
-        </Card>
-        <UiTF />
-      </div>
+        </ButtonGroup>
+        <UiTF/>
+      </>
 
     const jsxROI =
       <ListGroup as="ul" variant="flush">

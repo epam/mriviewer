@@ -10,13 +10,13 @@
 // ********************************************************
 
 import React from 'react';
-import { Button } from 'react-bootstrap';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Nav, Modal } from 'react-bootstrap'
+import { Modal } from 'react-bootstrap'
 
 import packageJson from '../../../package.json';
 import UiSkelAni from './UiSkelAni';
 import { SVG } from "./Button/SVG";
+import { UIButton } from "./Button/Button";
 
 // ********************************************************
 // Class
@@ -69,7 +69,7 @@ export default class UiAbout extends React.Component {
 
 
     const strAbout = 
-    <Nav.Item>
+    <>
 
       {strBtnDynamic}
 
@@ -94,13 +94,11 @@ export default class UiAbout extends React.Component {
         </Modal.Header>
 
         <Modal.Footer>
-          <Button onClick={this.onHide} variant="secondary">
-            Close
-          </Button>
+          <UIButton handler={this.onHide} icon="square" />
         </Modal.Footer>
 
       </Modal>
-    </Nav.Item>
+    </>
     return strAbout;
 
   }

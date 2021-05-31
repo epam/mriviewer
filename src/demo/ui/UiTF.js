@@ -207,39 +207,27 @@ class UiTF extends React.Component {
         </li>
       </ul>
     const jsxEreaser =
-      <div className="card">
-        <div className="card-header">
+      <>
           Press Control + Mouse Down [+ Mouse Move] for erease
-        </div>
-        <ul className="list-group list-group-flush">
-          <li className="list-group-item">
             <p> Radius </p>
             <Nouislider onSlide={this.onChangeSliderErRadius.bind(this)} ref={'sliderErRadius'}
               range={{ min: 1.0, max: 100.0 }}
               start={wArrErRadius} connect={[true, false]} step={0.02} tooltips={true} />
-          </li>
-          <li className="list-group-item">
             <p> Depth </p>
             <Nouislider onSlide={this.onChangeSliderErDepth.bind(this)} ref={'sliderErDepth'}
               range={{ min: 1.0, max: 100.0 }}
               start={wArrErDepth} connect={[true, false]} step={0.02} tooltips={true} />
-          </li>
-          <li className="list-group-item">
             <p> Isosurface </p>
             <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
               range={{ min: 0.0, max: 1.0 }}
               start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true} />
-          </li>
-          <li className="list-group-item">
             <button type="button" className={'btn btn-outline-dark'} onClick={this.onUndo} >
               Undo
             </button>
             <button type="button" className={'btn btn-outline-dark'} onClick={this.onSave} >
               Save
             </button>
-          </li>
-        </ul>
-      </div>
+      </>
 
     const jsxRayfastTF = null
 

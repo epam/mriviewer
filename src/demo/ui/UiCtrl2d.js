@@ -14,13 +14,13 @@ import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Card, ButtonGroup, Button } from 'react-bootstrap';
+import { ButtonGroup } from 'react-bootstrap';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-
-import Nouislider from 'react-nouislider';
 
 import Modes2d from '../store/Modes2d';
 import StoreActionType from '../store/ActionTypes';
+import { UIButton } from "./Button/Button";
+import Range from "react-onsenui/src/components/Range";
 
 // ********************************************************
 // Const
@@ -77,13 +77,13 @@ class UiCtrl2d extends React.Component {
     this.onMode(Modes2d.TRANSVERSE);
   }
 
-  onChangeSliderSlice() {
+  onChangeSliderSlice(e) {
     if (this.refs === undefined) {
       return;
     }
     this.m_updateEnable = false;
     let val = 0.0;
-    const aval = this.refs.slider1.slider.get();
+    const aval = e.target.value;
     if (typeof (aval) === 'string') {
       val = Number.parseFloat(aval);
       // console.log(`onSlider. val = ${val}`);
@@ -136,11 +136,9 @@ class UiCtrl2d extends React.Component {
     const valSlider = store.slider2d;
     const mode2d = store.mode2d;
 
-    const strSlider1 = 'slider1';
-
-    const varSag = (mode2d === Modes2d.SAGGITAL) ? 'primary' : 'secondary';
-    const varCor = (mode2d === Modes2d.CORONAL) ? 'primary' : 'secondary';
-    const varTra = (mode2d === Modes2d.TRANSVERSE) ? 'primary' : 'secondary';
+    const varSag = mode2d === Modes2d.SAGGITAL
+    const varCor = mode2d === Modes2d.CORONAL
+    const varTra = mode2d === Modes2d.TRANSVERSE
 
     let xDim = 0, yDim = 0, zDim = 0;
     const volSet = store.volumeSet;
@@ -162,51 +160,42 @@ class UiCtrl2d extends React.Component {
     } else if (mode2d === Modes2d.TRANSVERSE) {
       slideRangeMax = zDim - 1;
     }
-    const rangeDescr = {
-      'min': 0,
-      'max': slideRangeMax
-    };
 
     const wArr = [Math.floor(valSlider * slideRangeMax)];
-    const valToolTps = true;
-    // special formatter interface for show only intefer numbers
-    // in slider: 
-    // provide two conversion functions:
-    // to (int -> string)
-    // from (string -> int)
-    const formatterInt = {
-      to(valNum) {
-        const i = Math.floor(valNum);
-        return i.toString();
-      },
-      from(valStr) {
-        return parseInt(valStr);
-      }
-    };
+    // // special formatter interface for show only intefer numbers
+    // // in slider:
+    // // provide two conversion functions:
+    // // to (int -> string)
+    // // from (string -> int)
+    // const formatterInt = {
+    //   to(valNum) {
+    //     const i = Math.floor(valNum);
+    //     return i.toString();
+    //   },
+    //   from(valStr) {
+    //     return parseInt(valStr);
+    //   }
+    // };
 
     const jsxSlider = (slideRangeMax > 0) ?
-      <ul className="list-group list-group-flush">
-        <li className="list-group-item">
-          <p> Select </p>
-          < Nouislider onSlide={this.onChangeSliderSlice.bind(this)} ref={strSlider1}
-            range={rangeDescr}
-            start={wArr} step={1}
-            format={formatterInt}
-            tooltips={valToolTps} />
-        </li>
-      </ul> : <p></p>;
+        <>
+          <Range onChange={this.onChangeSliderSlice.bind(this)}
+                 min={0}
+                 max={slideRangeMax}
+                 value={wArr[0]}
+            step={1} />
+        </>
+       : null;
 
     const jsxSliceSelector = (slideRangeMax > 0) ?
-      <Card.Body>
+      <>
         <ButtonGroup className="mr-2" aria-label="Ctrl2d group">
           <OverlayTrigger key="zx" placement="bottom" overlay={
             <Tooltip>
               Show slices along x axis
             </Tooltip>
           }>
-            <Button variant={varSag} onClick={this.onModeSaggital} >
-              Saggital
-            </Button>
+            <UIButton handler={this.onModeSaggital} active={varSag} icon="saggital" />
           </OverlayTrigger>
 
           <OverlayTrigger key="zy" placement="bottom" overlay={
@@ -214,9 +203,7 @@ class UiCtrl2d extends React.Component {
               Show slices along y axis
             </Tooltip>
           }>
-            <Button variant={varCor} onClick={this.onModeCoronal} >
-              Coronal
-            </Button>
+            <UIButton handler={this.onModeCoronal} active={varCor} icon="coronal" />
           </OverlayTrigger>
 
           <OverlayTrigger key="za" placement="bottom" overlay={
@@ -224,21 +211,16 @@ class UiCtrl2d extends React.Component {
               Show slices along z axis
             </Tooltip>
           }>
-            <Button variant={varTra} onClick={this.onModeTransverse} >
-              Transverse
-            </Button>
+            <UIButton handler={this.onModeTransverse} active={varTra} icon="transverse" />
           </OverlayTrigger>
         </ButtonGroup>
-      </Card.Body> : <p></p>
+      </> : null
 
     const jsxRenderControls =
-      <Card>
-        <Card.Header>
-          Plane (slice) view
-        </Card.Header>
+      <>
         {jsxSliceSelector}
         {jsxSlider}
-      </Card>
+      </>
     return jsxRenderControls;
   }
 }

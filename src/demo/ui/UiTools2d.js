@@ -78,11 +78,8 @@ class UiTools2d extends React.Component {
     const indexCur = store.indexTools2d;
 
     const jsx = 
-    <div className="card" >
-      <div className="card-header">
+    <>
         {strTitle}
-      </div>
-      <div className="card-body">
         <div className="btn-group row">
 
           {this.state.data.map(d => 
@@ -105,8 +102,7 @@ class UiTools2d extends React.Component {
           })}
 
         </div>
-      </div>
-    </div>
+    </>
     return jsx;
   }
 }

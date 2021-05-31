@@ -10,9 +10,9 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { NavDropdown } from 'react-bootstrap';
 
 import UiModalSaveNifti from './UiModalSaveNifti';
+import { UIButton } from "./Button/Button";
 
 // ********************************************************
 // Const
@@ -57,28 +57,10 @@ class UiSaveMenu extends React.Component {
   // render
   //
   render() {
-    const store = this.props;
-    const isLoaded = store.isLoaded;
-    const strDisabled = (isLoaded) ? false : true;
-   
-    const jsxSaveMenu =
-      <NavDropdown id="save-nav-dropdown" 
-        disabled={strDisabled}
-        title={
-          <div style={{ display: 'inline-block' }}> 
-            <i className="fas fa-save"></i>
-            Save
-          </div>
-        } >
-        <NavDropdown.Item onClick={evt => this.onModalSaveNiftiShow(evt)}  >
-          <i className="fas fa-globe"></i>
-          Save to Nifti
-        </NavDropdown.Item>
-        <UiModalSaveNifti stateVis={this.state.showModalSaveNifti} onHide={this.onModalSaveNiftiHide} />
-      </NavDropdown>;
-
-
-    return jsxSaveMenu;
+    return <>
+      <UIButton rounded icon="download" handler={evt => this.onModalSaveNiftiShow(evt)} mode={this.props.isLoaded ? "accent" : ""} />
+      <UiModalSaveNifti stateVis={this.state.showModalSaveNifti} onHide={this.onModalSaveNiftiHide} />
+      </>
   }
 }
 

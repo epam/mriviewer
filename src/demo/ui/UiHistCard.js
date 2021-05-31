@@ -10,7 +10,6 @@
 // ********************************************************
 
 import React from 'react';
-import { Card } from 'react-bootstrap';
 
 import UiHistogram from './UiHistogram';
 
@@ -52,12 +51,8 @@ class UiHistCard extends React.Component {
     // const cw = this.state.width;
     // const ch = this.state.height;
 
-    const jsxHistCard = 
-      <Card>
-        <Card.Body>
-          <Card.Title>
+    const jsxHistCard = <>
             {strMsg}
-          </Card.Title>
           <UiHistogram volume={vol}
             transfFunc={transfFuncCallback} transfFuncUpdate={transfFuncUpdateCallback}  />
           { /*
@@ -66,8 +61,7 @@ class UiHistCard extends React.Component {
               onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onMouseMove={this.onMouseMove} />
           </div>
           */ }
-        </Card.Body>
-      </Card>
+      </>
     return jsxHistCard;
   } // end render
 

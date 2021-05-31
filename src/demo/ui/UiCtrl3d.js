@@ -14,9 +14,10 @@ import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
 import UiHistogram from './UiHistogram';
+import Range from "react-onsenui/src/components/Range";
+import { SVG } from "./Button/SVG";
 
 /**
  * Class UiCtrl3dLight some text later...
@@ -27,15 +28,16 @@ class UiCtrl3d extends React.Component {
    */
   constructor(props) {
     super(props);
+    this.aval = 0;
     this.transferFuncCallback = this.transferFuncCallback.bind(this);
     this.m_updateEnable = true;
   }
 
-  onChangeSliderOpacity() {
+  onChangeSliderOpacity(e) {
     this.m_updateEnable = false;
-    const aval = this.refs.sliderOpacity.slider.get();
+    this.aval = e.target.value;
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, sliderOpacity: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, sliderOpacity: Number.parseFloat(this.aval) });
   }
 
   shouldComponentUpdate() {
@@ -58,7 +60,8 @@ class UiCtrl3d extends React.Component {
   render() {
     const store = this.props;
     const sliderOpacity = store.sliderOpacity;
-    const wArrOpacity = [sliderOpacity];
+    this.aval = sliderOpacity;
+    // const wArrOpacity = [sliderOpacity];
 
     const volSet = store.volumeSet;
     const volIndex = store.volumeIndex;
@@ -66,7 +69,7 @@ class UiCtrl3d extends React.Component {
 
     const NEED_TANSF_FUNC = true;
     const funcTra = (NEED_TANSF_FUNC) ? this.transferFuncCallback : undefined;
-    const funcTrTex = (store.volumeRenderer === null) ? null : store.volumeRenderer;    
+    const funcTrTex = (store.volumeRenderer === null) ? null : store.volumeRenderer;
     //const store = this.props;
     //const mode3d = store.mode3d;
 
@@ -75,20 +78,16 @@ class UiCtrl3d extends React.Component {
 
     // btn-default active
 
-    const jsxRenderControls =
-    <ul className="list-group" >
-      <li className="list-group-item">
-        <UiHistogram volume={vol}  transfFunc={funcTra} transfFuncUpdate={funcTrTex}/>
-      </li>
-      <li className="list-group-item">
-        <p> Opacity </p>
-        <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
-          range={{ min: 0.0, max: 1.0 }}
-          start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true} />
-      </li>
-    </ul>
-    return jsxRenderControls;
-
+    return <>
+      <UiHistogram volume={vol} transfFunc={funcTra} transfFuncUpdate={funcTrTex}/>
+      <p> Opacity </p>
+      <SVG name="opacity"/>
+      <Range onChange={this.onChangeSliderOpacity.bind(this)}
+             value={this.aval}
+             min={0.0} max={1.0}
+             step={0.02}/>
+      <p>Value: {this.aval}</p>
+    </>
   }
 }
 

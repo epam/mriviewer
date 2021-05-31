@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 
 // import StoreActionType from '../store/ActionTypes';
 // import Tools2dType from '../engine/tools2d/ToolTypes';
-import { Form, Card, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 // ********************************************************
 // Class
@@ -55,13 +55,9 @@ class UiSegm2d extends React.Component {
   // render UI for 2d segmentation on screen
   render() {
     const strTitle = 'Segmentation 2d (brain only)';
-    const jsx = 
-    <Card>
-      <Card.Header>
+    const jsx = <>
         {strTitle}
-      </Card.Header>
-      <Card.Body>
-        <OverlayTrigger 
+        <OverlayTrigger
           key="about"
           placement="bottom"
           overlay = {
@@ -76,13 +72,8 @@ class UiSegm2d extends React.Component {
           </Form>
 
         </OverlayTrigger>
-
-        <Card.Text>
           Switch checker above on and see segmentation result on right
-        </Card.Text>
-
-      </Card.Body>
-    </Card>
+    </>
     return jsx;
   }
 }

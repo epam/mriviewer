@@ -7,18 +7,25 @@ import React from "react";
 
 import { UIButton } from "./Button"
 
-const icons = ["logo", "file", "folder", "link", "grid",
+const icons = { logo, file, folder, link, grid, download, report, camera,
 
+  "2D": "2D", "3D": "3D", lightning,
 
-    "2D", "3D", "angle", "area", "back", "brain", "brightness", "camera", "clear",
-        "collapse", "coronal", "cursor", "download", "edge-detection", "eraser", "expand",
-         "forth",  "I", "isosurface", "lightning", "line",  "lungs", "noise-reduction",
-        "opacity", "report", "roll-up", "saggital", "scissors", "settings", "square", "target", "transverse",
-        "triangle", "zoom-in", "zoom-out", "D", "E", "M", "T", "V",
-];
+    transverse, saggital, coronal,
+
+  isosurface, E, M, T, V, I,
+
+    opacity,
+
+     angle, area, back, brain, brightness,  clear,
+        collapse,  cursor,  "edge-detection": "edge-detection", eraser, expand,
+         forth,   line,  lungs, "noise-reduction": "noise-reduction",
+         "roll-up": "roll-up",  scissors, settings, square, target,
+        triangle, "zoom-in": "zoom-in", "zoom-out": "zoom-out", D,
+};
 
 export const ButtonsDemo = () => (
     <div style={{ padding: 20 }}>
-            { icons.map(icon =><UIButton icon={icon} key={icon}  />) }
+            { Object.keys(icons).map(icon =><UIButton icon={icon} key={icon}  />) }
     </div>
 );
