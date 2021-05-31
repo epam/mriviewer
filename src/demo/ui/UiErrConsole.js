@@ -12,7 +12,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Container, ListGroup } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 
 
 
@@ -37,13 +37,10 @@ class UiErrConsole extends React.Component {
     const arrErr = store.arrErrors;
     const jsx = <Container>
       Errors during read
-      <ListGroup>
-        {arrErr.map((d, i) => {
+        {arrErr.map((d) => {
           const strErr = d;
-          const strKey = `key_${i}`;
-          return <ListGroup.Item key={strKey} > {strErr} </ListGroup.Item>;
+          return { strErr };
         })}
-      </ListGroup>
     </Container>;
     return jsx;
   }

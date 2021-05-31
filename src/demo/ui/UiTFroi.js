@@ -84,28 +84,22 @@ class UiTFroi extends React.Component {
     const wArrIsosurface = [sliderIsosurface];
 
     const jsxVolumeTF =
-      <ul className="list-group" >
-        <li className="list-group-item">
+      <>
           <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
             range={{ min: 0.0, max: 1.0 }}
             start={wArr} connect={[false, true, false]} step={0.02} tooltips={true} />
-        </li>
-        <li className="list-group-item">
           <p> Opacity </p>
           <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
             range={{ min: 0.0, max: 1.0 }}
             start={wArrOpacity} connect={[false, true]} step={0.02} tooltips={true} />
-        </li>
-      </ul>
+      </>
     const jsxIsoTF =
-      <ul className="list-group">
-        <li className="list-group-item">
+      <>
           <p> Isosurface </p>
           <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
             range={{ min: 0.0, max: 1.0 }}
             start={wArrIsosurface} connect={[false, true]} step={0.02} tooltips={true} />
-        </li>
-      </ul>
+      </>
     const jsxArray = [jsxIsoTF, jsxVolumeTF];
     const jsxRet = jsxArray[1];
     return jsxRet;

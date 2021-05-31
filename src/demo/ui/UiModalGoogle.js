@@ -12,7 +12,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Modal, ListGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 // ********************************************************
 // Const
@@ -104,8 +104,6 @@ class UiModalGoogle extends React.Component {
         </Modal.Header>
         <Modal.Body>
 
-          <ListGroup>
-
             {arrMenu.map( (d, i) => {
               const strId = `id_${i}`;
               const strTooltip = d.tooltip;
@@ -119,13 +117,11 @@ class UiModalGoogle extends React.Component {
                   </Tooltip>
                 }
               >
-                <ListGroup.Item key={strId} onClick={this.onClick}  > 
+                <p key={strId} onClick={this.onClick}  >
                   {d.text}
-                </ListGroup.Item>
+                </p>
               </OverlayTrigger>
             })}
-
-          </ListGroup>
 
         </Modal.Body>
       </Modal>;

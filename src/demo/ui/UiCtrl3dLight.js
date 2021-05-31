@@ -14,7 +14,7 @@ import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { ListGroup, ButtonGroup } from 'react-bootstrap';
+import { ButtonGroup } from 'react-bootstrap';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 //import Nouislider from 'react-nouislider';
@@ -180,14 +180,10 @@ class UiCtrl3dLight extends React.Component {
       </>
 
     const jsxROI =
-      <ListGroup as="ul" variant="flush">
-
-        <ListGroup.Item as="li">
+      <>
           <UiRoiSelect setRoiFunc={this.setRoi}/>
-        </ListGroup.Item>
-
         <UiTFroi/>
-      </ListGroup>
+      </>
     let indx = 0;
 
     const volSet = store.volumeSet;

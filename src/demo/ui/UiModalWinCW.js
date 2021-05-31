@@ -15,7 +15,7 @@ import 'nouislider/distribute/nouislider.css';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Modal, Container, Row, Col, Button, ListGroup } from 'react-bootstrap';
+import { Modal, Container, Row, Col, Button } from 'react-bootstrap';
 
 import Nouislider from 'react-nouislider';
 
@@ -419,19 +419,13 @@ class UiModalWindowCenterWidth extends React.Component {
               </Col>
             </Row>
 
-            <ListGroup>
-              <ListGroup.Item>
-                Window range <p> </p>
-              </ListGroup.Item>
-              <ListGroup.Item>
+                Window range
                 <Nouislider onSlide={this.onSliderWindowRange.bind(this)} ref={'sliderRange'}
                   range={rangeTwo}
                   start={wArr}
                   step={valStep}
                   connect={true}
                   tooltips={valToolTps} />
-              </ListGroup.Item>
-            </ListGroup>
 
             <Row>
               <Col xs md lg="5">

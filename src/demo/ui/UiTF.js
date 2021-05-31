@@ -13,7 +13,6 @@
 import 'nouislider/distribute/nouislider.css';
 import React from 'react';
 import { connect } from 'react-redux';
-import { ListGroup } from 'react-bootstrap';
 
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
@@ -39,8 +38,8 @@ class UiTF extends React.Component {
     this.offAO = this.offAO.bind(this);
     this.onStartEr = this.onStartEr.bind(this);
     this.onStopEr = this.onStopEr.bind(this);
-    this.onUndo = this.onUndo.bind(this); 
-    this.onSave = this.onSave.bind(this); 
+    this.onUndo = this.onUndo.bind(this);
+    this.onSave = this.onSave.bind(this);
   }
 
   onAO() {
@@ -164,69 +163,57 @@ class UiTF extends React.Component {
     };
     */
     const jsxVolumeTF =
-    <ListGroup>
-      <ListGroup.Item>
-        <UiHistogram volume={vol} transfFunc={funcTra} />
-      </ListGroup.Item>
-      <ListGroup.Item>
+      <>
+        <UiHistogram volume={vol} transfFunc={funcTra}/>
         <p> Set </p>
         <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
-          range={{ min: 0.0, max: 1.0 }}
-          start={wArr} connect={[false, true, false, true]} step={0.02} tooltips={true} />
-      </ListGroup.Item>
-      <ListGroup.Item>
+                    range={{ min: 0.0, max: 1.0 }}
+                    start={wArr} connect={[false, true, false, true]} step={0.02} tooltips={true}/>
         <p> Opacity </p>
         <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
-          range={{ min: 0.0, max: 1.0 }}
-          start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true} />
-      </ListGroup.Item>
-    </ListGroup>;
+                    range={{ min: 0.0, max: 1.0 }}
+                    start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true}/>
+      </>;
 
     const jsxIsoTF =
-      <ul className="list-group">
-        <li className="list-group-item">
-          <UiHistogram volume={vol} transfFunc={funcTra}  />
-        </li>
-        <li className="list-group-item">
-          <p> Isosurface </p>
-          <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
-            range={{ min: 0.0, max: 1.0 }}
-            start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true} />
-        </li>
-        <li className="list-group-item">
-          Ambient Oclusion -> 
-          <button type="button" className={'btn btn-outline-dark'} onClick={this.onAO} >
-            On
-          </button>
-          <button type="button" className={'btn btn-outline-dark'} onClick={this.offAO} >
-            Off
-          </button>
-          <button type="button" className={'btn btn-outline-dark'} onClick={this.onAO} >
-            Reset
-          </button>
-        </li>
-      </ul>
+      <>
+        <UiHistogram volume={vol} transfFunc={funcTra}/>
+        <p> Isosurface </p>
+        <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
+                    range={{ min: 0.0, max: 1.0 }}
+                    start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true}/>
+        Ambient Oclusion ->
+        <button type="button" className={'btn btn-outline-dark'} onClick={this.onAO}>
+          On
+        </button>
+        <button type="button" className={'btn btn-outline-dark'} onClick={this.offAO}>
+          Off
+        </button>
+        <button type="button" className={'btn btn-outline-dark'} onClick={this.onAO}>
+          Reset
+        </button>
+      </>
     const jsxEreaser =
       <>
-          Press Control + Mouse Down [+ Mouse Move] for erease
-            <p> Radius </p>
-            <Nouislider onSlide={this.onChangeSliderErRadius.bind(this)} ref={'sliderErRadius'}
-              range={{ min: 1.0, max: 100.0 }}
-              start={wArrErRadius} connect={[true, false]} step={0.02} tooltips={true} />
-            <p> Depth </p>
-            <Nouislider onSlide={this.onChangeSliderErDepth.bind(this)} ref={'sliderErDepth'}
-              range={{ min: 1.0, max: 100.0 }}
-              start={wArrErDepth} connect={[true, false]} step={0.02} tooltips={true} />
-            <p> Isosurface </p>
-            <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
-              range={{ min: 0.0, max: 1.0 }}
-              start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true} />
-            <button type="button" className={'btn btn-outline-dark'} onClick={this.onUndo} >
-              Undo
-            </button>
-            <button type="button" className={'btn btn-outline-dark'} onClick={this.onSave} >
-              Save
-            </button>
+        Press Control + Mouse Down [+ Mouse Move] for erease
+        <p> Radius </p>
+        <Nouislider onSlide={this.onChangeSliderErRadius.bind(this)} ref={'sliderErRadius'}
+                    range={{ min: 1.0, max: 100.0 }}
+                    start={wArrErRadius} connect={[true, false]} step={0.02} tooltips={true}/>
+        <p> Depth </p>
+        <Nouislider onSlide={this.onChangeSliderErDepth.bind(this)} ref={'sliderErDepth'}
+                    range={{ min: 1.0, max: 100.0 }}
+                    start={wArrErDepth} connect={[true, false]} step={0.02} tooltips={true}/>
+        <p> Isosurface </p>
+        <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
+                    range={{ min: 0.0, max: 1.0 }}
+                    start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true}/>
+        <button type="button" className={'btn btn-outline-dark'} onClick={this.onUndo}>
+          Undo
+        </button>
+        <button type="button" className={'btn btn-outline-dark'} onClick={this.onSave}>
+          Save
+        </button>
       </>
 
     const jsxRayfastTF = null

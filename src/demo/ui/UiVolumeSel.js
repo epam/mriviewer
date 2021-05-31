@@ -12,8 +12,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { ListGroup, ListGroupItem } from 'react-bootstrap';
-
 import StoreActionType from '../store/ActionTypes';
 // import LoaderDicom from '../engine/loaders/LoaderDicom';
 import Texture3D from '../engine/Texture3D';
@@ -112,20 +110,18 @@ class UiVolumeSel extends React.Component {
     const jsx = 
     <>
         {strTitle}
-        <ListGroup>
           {vols.map( (vol, i) => {
             const numSlices = vol.m_zDim;
             const strSer = vol.m_seriesDescr;
             const strVo = `vol ${strSer} [${numSlices}] slices`;
             let jsxListItem;
             if (i === volumeIndex) {
-              jsxListItem = <ListGroupItem key={i} onClick={() => {this.onClickRow(i)} } active>{strVo} <UiVolIcon index={i} /> </ListGroupItem>;
+              jsxListItem = <p key={i} onClick={() => {this.onClickRow(i)} } active>{strVo} <UiVolIcon index={i} /> </p>;
             } else {
-              jsxListItem = <ListGroupItem key={i} onClick={() => {this.onClickRow(i)} }>{strVo} <UiVolIcon index={i} /> </ListGroupItem>;
+              jsxListItem = <p key={i} onClick={() => {this.onClickRow(i)} }>{strVo} <UiVolIcon index={i} /> </p>;
             }
             return jsxListItem;
           })}
-        </ListGroup>
     </>
     return jsx;
   }
