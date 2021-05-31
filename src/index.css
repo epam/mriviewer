@@ -16,7 +16,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  background-color: #000;
+  background-color: black;
+  color: white;
   height: 100vh;
 }
 
@@ -29,11 +30,11 @@ code {
   /* Primary colors */
   --red: #DC5E47;
   --green: #438F56;
-  --black: #18191B;
+  --black: #18191b;
 
   /* Additional colors */
   --gray: #636666;
-  --dark-gray: #282A2D;
+  --dark-gray: #282a2d;
   --light: #CBD2D2;
   --white: #fff;
 
@@ -43,4 +44,11 @@ code {
   box-sizing: border-box;
 
   padding: 30px 6px;
+}
+
+svg {
+  display: inline-block;
+  vertical-align: middle;
+  width: 25px;
+  height: 25px;
 }

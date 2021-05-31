@@ -166,7 +166,7 @@ class UiApp extends React.Component {
 
     const jsxNavBarReact = 
       <Container fluid="true" style={{ height:'100%', minHeight:'100%' }}  >
-        <Navbar bg="light" variant="light" expand="lg" >
+        <Navbar expand="lg" >
           <Navbar.Brand>
             <UiAbout />
           </Navbar.Brand>

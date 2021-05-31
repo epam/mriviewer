@@ -16,6 +16,7 @@ import { Nav, Modal } from 'react-bootstrap'
 
 import packageJson from '../../../package.json';
 import UiSkelAni from './UiSkelAni';
+import { SVG } from "./Button/SVG";
 
 // ********************************************************
 // Class
@@ -50,12 +51,8 @@ export default class UiAbout extends React.Component {
     const strAuthor = packageJson.author;
     const strYear = packageJson.year;
 
-    const strButtonOnly = 
-    <Button onClick={this.onShow} variant="secondary">
-      <i className="fa fa-question-circle"></i>
-      About 
-    </Button>;
-    const strButtonWithTrigger = 
+    const strButtonOnly =  <SVG onClick={this.onShow} name="logo" title="Logo"/>
+    const strButtonWithTrigger =
     <OverlayTrigger 
       key="about"
       placement="bottom"
@@ -65,10 +62,7 @@ export default class UiAbout extends React.Component {
         </Tooltip>
       }
     >
-      <Button onClick={this.onShow} variant="secondary">
-        <i className="fa fa-question-circle"></i>
-        About 
-      </Button>
+      {strButtonOnly}
     </OverlayTrigger>;
 
     const strBtnDynamic = (this.state.modalShow) ? strButtonOnly : strButtonWithTrigger;
