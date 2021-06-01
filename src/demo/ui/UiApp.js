@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { ProgressBar, Row, Col } from 'react-bootstrap';
+import { ProgressBar } from 'react-bootstrap';
 import StoreActionType from '../store/ActionTypes';
 
 import UiMain from './UiMain';
@@ -17,6 +17,7 @@ import UiErrConsole from './UiErrConsole';
 import ModeView from '../store/ModeView';
 
 import BrowserDetector from '../engine/utils/BrowserDetector';
+import { ExploreTools } from "./Tollbars/ExploreTools";
 
 class UiApp extends React.Component {
   constructor(props) {
@@ -28,22 +29,15 @@ class UiApp extends React.Component {
     this.onShowModalAlert = this.onShowModalAlert.bind(this);
     this.onHideModalAlert = this.onHideModalAlert.bind(this);
 
-    this.doShowProgressBar = this.doShowProgressBar.bind(this);
-    this.doHideProgressBar = this.doHideProgressBar.bind(this);
-    this.doSetProgressBarRatio = this.doSetProgressBarRatio.bind(this);
-
     this.m_modalText = null;
     this.m_store = null;
     this.m_fileNameOnLoad = '';
 
     this.state = {
       showModalText: false,
-      showProgressBar: false,
-      progressBarRatio: 55,
       showModalAlert: false,
       strAlertTitle: '???',
       strAlertText: '???',
-      strProgressMessage: 'Loading...',
     };
   }
 
@@ -75,7 +69,8 @@ class UiApp extends React.Component {
     if (store === null) {
       console.log('UiApp. componentDidMount. store is NULL');
     }
-    store.dispatch({ type: StoreActionType.SET_UI_APP, uiApp: this });
+
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
 
     // browser detector
     const browserDetector = new BrowserDetector();
@@ -110,36 +105,6 @@ class UiApp extends React.Component {
     this.setState({ showModalAlert: false });
   }
 
-  doShowProgressBar(strProgressMsg) {
-    if ((strProgressMsg === undefined) || (strProgressMsg === null)) {
-      console.log('doShowProgressBar: need argument - strProgressMsg');
-      return;
-    }
-    this.setState({ strProgressMessage: strProgressMsg });
-    this.setState({ showProgressBar: true });
-  }
-
-  doHideProgressBar() {
-    // console.log('doHideProgressBar');
-    this.setState({ showProgressBar: false });
-  }
-
-  /**
-   *
-   * @param {number} ratio - in [0..99] range
-   */
-  doSetProgressBarRatio(ratio) {
-    // console.log(`doSetProgressBarRatio: ${ratio}`);
-
-    // show progress bar if it was hidden but need to show some non-0, non-100 progress
-    if ((ratio >= 0) && (ratio <= 99)) {
-      if (this.state.showProgressBar === false) {
-        this.setState({ showProgressBar: true });
-      }
-    }
-    this.setState({ progressBarRatio: ratio });
-  }
-
   /**
    * Main component render func callback
    */
@@ -152,19 +117,16 @@ class UiApp extends React.Component {
 
     const strMessageOnMenu = (isLoaded) ? 'File: ' + fileName : 'Press Open button to load scene';
 
-    const strProgressMsg = this.state.strProgressMessage;
+    const objProgressBar = (this.m_store.progress) ?
+      <ProgressBar
+        animated variant="success"
 
-    const objPrgBarVis =
-      <Row>
-        <Col xs xl sm md lg="12" style={{ width: '100%' }}>
-          {strProgressMsg}
-          <ProgressBar animated variant="success"
-                       now={this.state.progressBarRatio} label={`${this.state.progressBarRatio}%`}/>
-        </Col>
-      </Row>
-    const objProgressBar = (this.state.showProgressBar) ? objPrgBarVis : <p></p>;
+        now={this.m_store.progress}
+        label={`${this.m_store.progress}%`}/>
+      : null;
 
-    const jsxNavBarReact = <>
+    return <>
+      {objProgressBar}
       <UiAbout/>
       {strMessageOnMenu}
       <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>
@@ -173,16 +135,16 @@ class UiApp extends React.Component {
       <UiReportMenu/>
       {(store.modeView === ModeView.VIEW_2D) ? <UiFilterMenu/> : <p></p>}
       {(isLoaded && this.isWebGl20supported) ? <UiViewMode/> : <p></p>}
-      {objProgressBar}
+
+
+      <ExploreTools/>
       {(isLoaded) ? <UiMain/> : <p></p>}
       {(arrErrorsLoadedd.length > 0) ? <UiErrConsole/> : <p></p>}
       <UiModalText stateVis={this.state.showModalText}
                    onHide={this.onHideModalText} onShow={this.onShowModalText}/>
       <UiModalAlert stateVis={this.state.showModalAlert}
                     onHide={this.onHideModalAlert} onShow={this.onShowModalAlert}
-                    title={this.state.strAlertTitle} text={this.state.strAlertText}/></>
-
-    return jsxNavBarReact;
+                    title={this.state.strAlertTitle} text={this.state.strAlertText}/></>;
   }
 }
 

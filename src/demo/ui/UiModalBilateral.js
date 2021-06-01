@@ -98,11 +98,7 @@ class UiModalBilateral extends React.Component {
     const kernelSize = this.m_kernelSize;
     gauss.start(vol, kernelSize, this.m_koefDist, this.m_koefVal);
     this.m_gauss = gauss;
-
-    const uiApp = store.uiApp;
-    uiApp.doShowProgressBar('Apply bilateral filter...');
-    uiApp.doSetProgressBarRatio(0.0);
-
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
     const UPDATE_DELAY_MSEC = 150;
     this.m_timerId = setTimeout(this.onBilateralCallback, UPDATE_DELAY_MSEC);
   }
@@ -121,14 +117,12 @@ class UiModalBilateral extends React.Component {
     ratioUpdate = Math.floor(ratioUpdate);
     // console.log('ratio = ' + ratioUpdate.toString() );
 
-    const uiApp = store.uiApp;
-    uiApp.doSetProgressBarRatio(ratioUpdate);
-
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioUpdate })
     const isFinished = this.m_gauss.isFinished();
 
     if (isFinished) {
       console.log('onBilateralCallback: iters finished!');
-      uiApp.doHideProgressBar();
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
 
       clearInterval(this.m_timerId);
       this.m_timerId = 0;

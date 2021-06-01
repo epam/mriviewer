@@ -171,26 +171,18 @@ class UiOpenMenu extends React.Component {
     store.dispatch({ type: StoreActionType.SET_VOLUME_SET, volume: null });
     store.dispatch({ type: StoreActionType.SET_ERR_ARRAY, arrErrors: arrErrors });
     store.dispatch({ type: StoreActionType.SET_FILENAME, fileName: fileNameIn });
-
-    const uiapp = store.uiApp;
-    uiapp.doHideProgressBar();
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
   }
 
   callbackReadProgress(ratio01) {
     // console.log(`callbackReadProgress = ${ratio01}`);
     const ratioPrc = Math.floor(ratio01 * 100);
     const store = this.props;
-    const uiapp = store.uiApp;
-    if (uiapp !== null) {
-      if (ratioPrc === 0) {
-        uiapp.doShowProgressBar('Loading...');
-      }
-      if (ratioPrc >= 99) {
-        // console.log(`callbackReadProgress. hide on = ${ratio01}`);
-        uiapp.doHideProgressBar();
-      } else {
-        uiapp.doSetProgressBarRatio(ratioPrc);
-      }
+    if (ratioPrc >= 99) {
+      // console.log(`callbackReadProgress. hide on = ${ratio01}`);
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+    } else {
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioPrc })
     }
   } // callback progress
 
@@ -204,10 +196,7 @@ class UiOpenMenu extends React.Component {
       }
     }
     const store = this.props;
-    const uiapp = store.uiApp;
-    // console.log(`callbackReadComplete wiyth err = ${loadErrorCode}`);
-    uiapp.doHideProgressBar();
-
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
     if (errCode === LoadResult.SUCCESS) {
       // console.log('callbackReadComplete finished OK');
       this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
@@ -591,16 +580,14 @@ class UiOpenMenu extends React.Component {
           const gunzip = zlib.createGunzip();
           createReadStream(file).pipe(gunzip);
           gunzip.on('data', (data) => {
-            // progress
-            const uiapp = store.uiApp;
             if (this.m_unzippedBuffer == null) {
-              uiapp.doShowProgressBar('Read gzip...');
+              store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
             } else {
               const readSize = this.m_unzippedBuffer.length;
               const allSize = file.size;
               const KOEF_DEFLATE = 0.28;
               const ratio100 = Math.floor(readSize * 100.0 * KOEF_DEFLATE / allSize);
-              uiapp.doSetProgressBarRatio(ratio100);
+              store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratio100 })
             }
 
             // read the data chunk-by-chunk
@@ -624,10 +611,7 @@ class UiOpenMenu extends React.Component {
           });
 
           gunzip.on('end', () => {
-            // close progress
-            const uiapp = store.uiApp;
-            uiapp.doHideProgressBar();
-
+            store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
             // now all chunks are read. Need to check raw ungzipped buffer
             const sizeBuffer = this.m_unzippedBuffer.length;
             if (sizeBuffer < 128) {

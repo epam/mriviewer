@@ -54,15 +54,11 @@ class LoaderUrlDicom {
   callbackReadProgress(ratio01) {
     const ratioPrc = Math.floor(ratio01 * 100);
     const store = this.m_store;
-    const uiapp = store.uiApp;
-    if (ratioPrc === 0) {
-      uiapp.doShowProgressBar('Loading...');
-    }
     if (ratioPrc >= 99) {
       // console.log(`callbackReadProgress. hide on = ${ratio01}`);
-      uiapp.doHideProgressBar();
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
     } else {
-      uiapp.doSetProgressBarRatio(ratioPrc);
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioPrc })
     }
   } // callback progress
 
@@ -99,8 +95,7 @@ class LoaderUrlDicom {
     store.dispatch({ type: StoreActionType.SET_VOLUME, volume: null });
     store.dispatch({ type: StoreActionType.SET_ERR_ARRAY, arrErrors: arrErrors });
     store.dispatch({ type: StoreActionType.SET_FILENAME, fileName: fileNameIn });
-    const uiapp = store.uiApp;
-    uiapp.doHideProgressBar();
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
   }
 
   /**

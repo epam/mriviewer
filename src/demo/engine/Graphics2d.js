@@ -26,7 +26,7 @@ import ToolEdit from './tools2d/ToolEdit';
 import ToolDelete from './tools2d/ToolDelete';
 
 import Tools2dType from './tools2d/ToolTypes';
-import Segm2d  from './Segm2d';
+import Segm2d from './Segm2d';
 
 import RoiPalette from './loaders/roipalette';
 
@@ -98,8 +98,7 @@ class Graphics2d extends React.Component {
     this.m_roiPalette = new RoiPalette();
 
     // store
-    const store = props;
-    store.dispatch({ type: StoreActionType.SET_GRAPHICS_2D, graphics2d: this });
+    props.dispatch({ type: StoreActionType.SET_GRAPHICS_2D, graphics2d: this });
 
   }
 
@@ -834,15 +833,18 @@ class Graphics2d extends React.Component {
     this.m_mode2d = this.props.mode2d;
 
     const styleObj = {
-      width: '100%',
-      height: '100%',
+      width: '100vw',
+      height: '100vw',
+      position: 'absolute',
+      display: 'block',
+      zIndex: '-1',
+      top: '0'
     };
 
     const jsxGrapNonSized = <canvas ref={ (mount) => {this.m_mount = mount} } style={styleObj} />
-    const jsxGrapSized = <canvas ref={ (mount) => {this.m_mount = mount} } width={this.state.wRender} height={this.state.hRender}
+    const jsxGrapSized = <canvas ref={ (mount) => {this.m_mount = mount} } style={styleObj} width={this.state.wRender} height={this.state.hRender}
       onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onMouseMove={this.onMouseMove} onWheel={this.onMouseWheel} />
-    const jsx = (this.state.wRender > 0) ? jsxGrapSized : jsxGrapNonSized;
-    return jsx;
+    return (this.state.wRender > 0) ? jsxGrapSized : jsxGrapNonSized;
   }
 }
 

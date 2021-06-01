@@ -56,23 +56,6 @@ class UiFilterMenu extends React.Component {
     //this.callbackProgressFun = this.callbackProgressFun.bind(this);
   }
 
-  /*
-  callbackProgressFun(ratio01) {
-    // console.log(`callbackReadProgress = ${ratio01}`);
-    const store = this.props;
-    const uiapp = store.uiApp;
-    const ratioPrc = Math.floor(ratio01 * 100);
-    if (ratioPrc === 0) {
-      uiapp.doShowProgressBar('reading...');
-    }
-    if (ratioPrc >= 99) {
-      // console.log(`callbackReadProgress. hide on = ${ratio01}`);
-      uiapp.doHideProgressBar();
-    } else {
-      uiapp.doSetProgressBarRatio(ratioPrc);
-    }
-  } // callback progress
-  */
   onButtonLungsSeg() {
     //evt.preventDefault();
     const store = this.props;
@@ -100,9 +83,9 @@ class UiFilterMenu extends React.Component {
     this.lungsFiller = new LungsFillTool(vol);
     //const callbackProgress = this.callbackProgressFun;
     //lungsFiller.run(callbackProgress);
-    const uiApp = store.uiApp;
-    uiApp.doShowProgressBar('lungsFiller...');
-    uiApp.doSetProgressBarRatio(0.0);
+
+    store.dispatch({ type: StoreActionType.SET_PROGRESS_CAPTION, caption: 'lungsFilter...' })
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
     const SK_REM_DELAY_MSEC = 200;
     this.m_timerId = setTimeout(this.onLungsFillerCallback, SK_REM_DELAY_MSEC);
     //store.volumeRenderer.volumeUpdater.createUpdatableVolumeTex(store.volume, false, null);
@@ -112,14 +95,12 @@ class UiFilterMenu extends React.Component {
     const store = this.props;
     const ratioUpdate = this.lungsFiller.m_ratioUpdate;
     console.log(`onLungsFillerCallback: iter counter = ${ratioUpdate}`);
-    const uiApp = store.uiApp;
-    uiApp.doSetProgressBarRatio(ratioUpdate);
-
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioUpdate })
     const isFinished = this.lungsFiller.run();
  
     if (isFinished) {
       console.log('`onSkullRemoveCallback: iters finished!');
-      uiApp.doHideProgressBar();
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
       // store.graphics2d.renderScene();
@@ -169,9 +150,7 @@ class UiFilterMenu extends React.Component {
     sobel.start(vol);
     this.m_sobel = sobel;
 
-    const uiApp = store.uiApp;
-    uiApp.doShowProgressBar('Apply sobel edge detector...');
-    uiApp.doSetProgressBarRatio(0.0);
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
 
     const SOBEL_UPDATE_DELAY_MSEC = 150;
     this.m_timerId = setTimeout(this.onSobelCallback, SOBEL_UPDATE_DELAY_MSEC);
@@ -190,15 +169,13 @@ class UiFilterMenu extends React.Component {
     ratioUpdate = Math.floor(ratioUpdate);
     // console.log('ratio = ' + ratioUpdate.toString() );
 
-    const uiApp = store.uiApp;
-    uiApp.doSetProgressBarRatio(ratioUpdate);
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioUpdate })
 
     const isFinished = this.m_sobel.isFinished();
 
     if (isFinished) {
       console.log('`onSobelCallback: iters finished!');
-      uiApp.doHideProgressBar();
-
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
 
@@ -298,9 +275,7 @@ class UiFilterMenu extends React.Component {
     const actVolume = new ActiveVolume();
     this.m_actVolume = actVolume;
 
-    const uiApp = store.uiApp;
-    uiApp.doShowProgressBar('Remove skull...');
-    uiApp.doSetProgressBarRatio(0.0);
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
 
     this.m_geoRender = actVolume.skullRemoveStart(xDim, yDim, zDim,
       volTextureSrc, volTextureDst, CREATE_TYPE, NEED_LOG);
@@ -360,15 +335,12 @@ class UiFilterMenu extends React.Component {
     ratioUpdate = (ratioUpdate < 1.0) ? ratioUpdate : 1.0;
     ratioUpdate *= 100;
 
-    const uiApp = store.uiApp;
-    uiApp.doSetProgressBarRatio(ratioUpdate);
-
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioUpdate })
     const isFinished = this.m_actVolume.skullRemoveUpdate(this.m_geoRender);
  
     if (isFinished) {
       console.log('`onSkullRemoveCallback: iters finished!');
-
-      uiApp.doHideProgressBar();
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
 
       clearInterval(this.m_timerId);
       this.m_timerId = 0;

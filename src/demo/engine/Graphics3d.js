@@ -17,17 +17,6 @@ import StoreActionType from '../store/ActionTypes';
 import VolumeRenderer3d from './VolumeRenderer3d'
 //import DistanceTool from '../tools23d/distancetool'
 
-// ********************************************************
-// Const
-// ********************************************************
-
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class Graphics2d some text later...
- */
 class Graphics3d extends React.Component {
   /**
    * @param {object} props - props from up level object
@@ -365,8 +354,12 @@ class Graphics3d extends React.Component {
     }
 
     const styleObj = {
-      width: '100%',
-      height: '100%',
+      width: '100vw',
+      height: '100vw',
+      position: 'absolute',
+      display: 'block',
+      zIndex: '-1',
+      top: '0'
     };
 
     const jsxCanvasNonSized = <div
@@ -381,6 +374,7 @@ class Graphics3d extends React.Component {
       onClick={this.onClick.bind(this)}
       onWheel={this._onWheel.bind(this)} />
     const jsxCanvasSized = <div
+      style={styleObj}
       width={this.state.wRender} height={this.state.hRender}
       ref={ (mount) => {this.m_mount = mount} }
       onMouseMove={this._onMouseMove.bind(this)} 
@@ -394,8 +388,7 @@ class Graphics3d extends React.Component {
       onKeyDown={(evt) => this.onKeyDown(evt)}
       onKeyUp={(evt) => this.onKeyUp(evt)}
       onWheel={this._onWheel.bind(this)} />
-    const jsx = (this.state.wRender > 0) ? jsxCanvasSized : jsxCanvasNonSized;
-    return jsx;
+    return (this.state.wRender > 0) ? jsxCanvasSized : jsxCanvasNonSized;
   }
 }
 

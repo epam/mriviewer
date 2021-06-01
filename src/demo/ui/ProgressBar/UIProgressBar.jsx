@@ -3,14 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useContext } from "react";
-
-import { Context } from "../../context/Context";
+import React from "react";
 
 import css from "./UIprogressBar.module.css";
+import { connect } from "react-redux";
 
 const UIProgressBar = () => {
-    const { context: { progress: { show, text, value } } } = useContext(Context);
+    const { context: { progress: { show, text, value } } } = this.props;
 
     return show && (
         <>
@@ -29,4 +28,4 @@ const UIProgressBar = () => {
     );
 };
 
-export default UIProgressBar;
+export default connect(store => store)(UIProgressBar);

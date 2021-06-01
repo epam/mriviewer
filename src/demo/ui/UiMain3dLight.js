@@ -11,7 +11,6 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col } from 'react-bootstrap';
 
 import UiCtrl3dLight from './UiCtrl3dLight';
 import UiCtrl3d from './UiCtrl3d';
@@ -19,12 +18,11 @@ import Graphics3d from '../engine/Graphics3d';
 import 'nouislider/distribute/nouislider.css';
 
 import Nouislider from 'react-nouislider';
-
-//import Modes3d from '../store/Modes3d';
-
 import StoreActionType from '../store/ActionTypes';
 import ModeView from '../store/ModeView';
 import UiTools2d from './UiTools2d';
+
+//import Modes3d from '../store/Modes3d';
 
 
 // ********************************************************
@@ -103,8 +101,8 @@ class UiMain3dLight extends React.Component {
     const wArrBrightness = [sliderBrightness];
     const wArrCut = [sliderCut];
     const wArrQuality = [sliderQuality];
-    const jsx3dLight = <UiCtrl3dLight></UiCtrl3dLight>;
-    const jsx3d = <UiCtrl3d></UiCtrl3d>;
+    const jsx3dLight = <UiCtrl3dLight/>;
+    const jsx3d = <UiCtrl3d/>;
 
     const jsxArray = new Array(ModeView.VIEW_COUNT);
     jsxArray[ModeView.VIEW_3D_LIGHT] = jsx3dLight;
@@ -130,29 +128,17 @@ class UiMain3dLight extends React.Component {
                   start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true}/>
       <UiTools2d/>
     </>
-    const MIN_HEIGHT = 882;
-    const strMinHeight = {
-      minHeight: MIN_HEIGHT.toString() + 'px'
-    };
 
-
-    const jsxMain3dLight =
-      <Row>
-        <Col xs={12} sm md lg={4}>
-          {jsxRet}
-            <p> Cut </p>
-            <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={'sliderCut'}
-                        range={{ min: 0.0, max: 1.0 }}
-                        overflow-scroll={'true'}
-                        start={wArrCut} connect={[false, false]} step={0.01} tooltips={true}/>
-          {(store.isTool3D === false) ? jsxView : jsxTool}
-        </Col>
-        <Col xs={12} sm md lg={8} style={strMinHeight}>
-          <Graphics3d/>
-        </Col>
-      </Row>;
-
-    return jsxMain3dLight;
+    return <>
+      {jsxRet}
+      <p> Cut </p>
+      <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={'sliderCut'}
+                  range={{ min: 0.0, max: 1.0 }}
+                  overflow-scroll={'true'}
+                  start={wArrCut} connect={[false, false]} step={0.01} tooltips={true}/>
+      {(store.isTool3D === false) ? jsxView : jsxTool}
+      <Graphics3d/>
+    </>;
   };
 }
 

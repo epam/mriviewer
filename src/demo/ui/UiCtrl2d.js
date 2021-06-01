@@ -20,23 +20,8 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Modes2d from '../store/Modes2d';
 import StoreActionType from '../store/ActionTypes';
 import { UIButton } from "./Button/Button";
-import Range from "react-onsenui/src/components/Range";
 
-// ********************************************************
-// Const
-// ********************************************************
-
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class UiCtrl2d some text later...
- */
 class UiCtrl2d extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
     this.onModeSaggital = this.onModeSaggital.bind(this);
@@ -179,7 +164,8 @@ class UiCtrl2d extends React.Component {
 
     const jsxSlider = (slideRangeMax > 0) ?
         <>
-          <Range onChange={this.onChangeSliderSlice.bind(this)}
+          <input type="range"
+                        onChange={this.onChangeSliderSlice.bind(this)}
                  min={0}
                  max={slideRangeMax}
                  value={wArr[0]}

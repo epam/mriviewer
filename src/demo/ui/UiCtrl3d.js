@@ -16,7 +16,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import StoreActionType from '../store/ActionTypes';
 import UiHistogram from './UiHistogram';
-import Range from "react-onsenui/src/components/Range";
 import { SVG } from "./Button/SVG";
 
 /**
@@ -82,10 +81,8 @@ class UiCtrl3d extends React.Component {
       <UiHistogram volume={vol} transfFunc={funcTra} transfFuncUpdate={funcTrTex}/>
       <p> Opacity </p>
       <SVG name="opacity"/>
-      <Range onChange={this.onChangeSliderOpacity.bind(this)}
-             value={this.aval}
-             min={0.0} max={1.0}
-             step={0.02}/>
+      <input type="range" onChange={this.onChangeSliderOpacity.bind(this)}
+             value={this.aval} max={1} step={0.02}/>
       <p>Value: {this.aval}</p>
     </>
   }

@@ -52,3 +52,9 @@ svg {
   height: 25px;
   color: var(--white);
 }
+
+#canvas {
+  display: block;
+  z-index: -1;
+  position: absolute;
+}
