@@ -115,6 +115,10 @@ const medReducer = (state = initialState, action) => {
     return Object.assign({}, state, { dicomSeries: action.dicomSeries });
   case StoreActionType.SET_LOADER_DICOM:
     return Object.assign({}, state, { loaderDicom: action.loaderDicom });
+  case StoreActionType.SET_MODAL_TEXT:
+    return Object.assign({}, state, { showModalText: action.showModalText });
+  case StoreActionType.SET_MODAL_ALERT:
+    return Object.assign({}, state, { showModalAlert: action.showModalAlert });
   default:
     return state;
   }

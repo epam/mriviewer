@@ -84,7 +84,6 @@ class UiFilterMenu extends React.Component {
     //const callbackProgress = this.callbackProgressFun;
     //lungsFiller.run(callbackProgress);
 
-    store.dispatch({ type: StoreActionType.SET_PROGRESS_CAPTION, caption: 'lungsFilter...' })
     store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
     const SK_REM_DELAY_MSEC = 200;
     this.m_timerId = setTimeout(this.onLungsFillerCallback, SK_REM_DELAY_MSEC);

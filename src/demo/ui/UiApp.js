@@ -23,19 +23,10 @@ class UiApp extends React.Component {
   constructor(props) {
     super(props);
 
-    this.onShowModalText = this.onShowModalText.bind(this);
-    this.onHideModalText = this.onHideModalText.bind(this);
-
-    this.onShowModalAlert = this.onShowModalAlert.bind(this);
-    this.onHideModalAlert = this.onHideModalAlert.bind(this);
-
-    this.m_modalText = null;
     this.m_store = null;
     this.m_fileNameOnLoad = '';
 
     this.state = {
-      showModalText: false,
-      showModalAlert: false,
       strAlertTitle: '???',
       strAlertText: '???',
     };
@@ -78,31 +69,31 @@ class UiApp extends React.Component {
     if (!this.isWebGl20supported) {
       this.setState({ strAlertTitle: 'Browser compatibility problem detected' });
       this.setState({ strAlertText: 'This browser not supported WebGL 2.0. Application functinality is decreased and app can be unstable' });
-      this.onShowModalAlert();
+      store.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true })
     } else {
       const isValidBro = browserDetector.checkValidBrowser();
       if (!isValidBro) {
         this.setState({ strAlertTitle: 'Browser compatibility problem detected' });
         this.setState({ strAlertText: 'App is specially designed for Chrome/Firefox/Opera/Safari browsers' });
-        this.onShowModalAlert();
+        store.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true })
       }
     }
   }
 
   onShowModalText() {
-    this.setState({ showModalText: true });
+    store.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true })
   }
 
   onHideModalText() {
-    this.setState({ showModalText: false });
+    store.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: false  })
   }
 
   onShowModalAlert() {
-    this.setState({ showModalAlert: true });
+    store.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: true })
   }
 
   onHideModalAlert() {
-    this.setState({ showModalAlert: false });
+    store.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: false })
   }
 
   /**
@@ -140,9 +131,9 @@ class UiApp extends React.Component {
       <ExploreTools/>
       {(isLoaded) ? <UiMain/> : <p></p>}
       {(arrErrorsLoadedd.length > 0) ? <UiErrConsole/> : <p></p>}
-      <UiModalText stateVis={this.state.showModalText}
+      <UiModalText stateVis={this.m_store.showModalText}
                    onHide={this.onHideModalText} onShow={this.onShowModalText}/>
-      <UiModalAlert stateVis={this.state.showModalAlert}
+      <UiModalAlert stateVis={this.m_store.showModalAlert}
                     onHide={this.onHideModalAlert} onShow={this.onShowModalAlert}
                     title={this.state.strAlertTitle} text={this.state.strAlertText}/></>;
   }

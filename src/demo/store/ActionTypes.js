@@ -35,5 +35,7 @@ const StoreActionType = {
   SET_MODE_3Droi: 30,
   SET_DICOM_SERIES: 31,
   SET_LOADER_DICOM: 32,
+  SET_MODAL_TEXT: 33,
+  SET_MODAL_ALERT: 34,
 };
 export default StoreActionType;

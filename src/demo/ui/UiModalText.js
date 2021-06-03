@@ -11,7 +11,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
+import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 
 // ********************************************************
 // Class
@@ -73,8 +73,7 @@ class UiModalText extends React.Component {
     this.m_showFunc = onShowFunc;
     // console.log(`UiModalText. setup funcs: ${this.m_showFunc}, ${this.m_hideFunc}`);
 
-    const jsxModalText =
-    <Modal show={stateVis} onHide={onHideFunc} >
+    return <Modal show={stateVis} onHide={onHideFunc}>
 
       <Modal.Body>
 
@@ -82,19 +81,19 @@ class UiModalText extends React.Component {
           Input text
         </Modal.Title>
 
-        <Form onSubmit={evt => this.handleFormSubmit(evt)} >
+        <Form onSubmit={evt => this.handleFormSubmit(evt)}>
           <Form.Control required type="text" placeholder=""
-            defaultValue={this.state.text} onChange={this.onTexChange} autoFocus={true}  />
+                        defaultValue={this.state.text} onChange={this.onTexChange} autoFocus={true}/>
         </Form>
         <Row>
           <Col lg xl="2">
-            <Button onClick={onHideFunc} >
+            <Button onClick={onHideFunc}>
               Cancel
             </Button>
           </Col>
 
           <Col lg xl="2">
-            <Button onClick={this.onButtonOk} >
+            <Button onClick={this.onButtonOk}>
               Ok
             </Button>
           </Col>
@@ -106,8 +105,7 @@ class UiModalText extends React.Component {
 
       </Modal.Body>
 
-    </Modal>
-    return jsxModalText;
+    </Modal>;
   } // end render
 
 } // end class

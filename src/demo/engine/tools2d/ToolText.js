@@ -10,6 +10,7 @@
 // **********************************************
 
 import ToolDistance from './ToolDistance';
+import StoreActionType from "../../store/ActionTypes";
 // import UiModalText from '../../ui/UiModalText';
 
 // **********************************************
@@ -131,9 +132,8 @@ class ToolText {
   onMouseDown(xScr, yScr, store) {
     const vTex = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
     this.m_pointPressed = vTex;
-
-    const uiApp = store.uiApp;
-    uiApp.onShowModalText();
+    
+    store.dispatch({ type: StoreActionType.SET_MODAL_TEXT, setModalText: true })
   }
 
   onMouseMove() { // args ommited: xScr, yScr, store
