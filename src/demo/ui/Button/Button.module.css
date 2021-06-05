@@ -3,25 +3,31 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-.button {
+.reset {
   display: inline-block;
   border: none;
   margin: 0;
   text-decoration: none;
-  background-color: var(--black);
-  padding: 12px 13px;
-  color: var(--white);
-  font-family: inherit;
+  background-color: transparent;
+  padding: 0;
   cursor: pointer;
-  text-align: center;
   transition: all 250ms ease-in-out, transform 150ms ease;
   -webkit-appearance: none;
   -moz-appearance: none;
 }
 
-.button:focus {
+.reset:focus {
   outline: none;
 }
+
+.button {
+  background-color: var(--black);
+  padding: 12px 13px;
+  color: var(--white);
+  font-family: inherit;
+  text-align: center;
+}
+
 
 .rounded {
   overflow: hidden;

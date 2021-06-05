@@ -18,6 +18,7 @@
   "homepage": "https://med3web.opensource.epam.com/",
   "private": false,
   "dependencies": {
+    "@popperjs/core": "^2.9.2",
     "@tensorflow/tfjs": "^3.6.0",
     "classnames": "^2.3.1",
     "daikon": "^1.2.42",
@@ -26,7 +27,9 @@
     "react": "16.14.0",
     "react-bootstrap": "1.6.0",
     "react-dom": "16.14.0",
+    "react-modal": "^3.14.2",
     "react-nouislider": "^2.0.1",
+    "react-popper": "^2.2.5",
     "react-redux": "7.2.4",
     "react-scripts": "4.0.3",
     "redux": "4.1.0",

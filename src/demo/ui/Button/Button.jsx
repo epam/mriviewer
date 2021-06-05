@@ -11,18 +11,31 @@ import { SVG } from "./SVG";
 import css from "./Button.module.css";
 
 
-export const UIButton = ({ icon, caption, handler, active, rounded, type = "button", mode }) => {
+export const ButtonContainer = ({ children, onClick, type = "button", caption, cx : styles }) => (
+    <button
+        type={ type }
+        className={ cx(css.reset, styles)}
+        onClick={ onClick }
+        caption={ caption }
+    >
+        { children}
+    </button>
+)
+
+
+export const UIButton = ({ icon, caption, handler, active, rounded, type, mode }) => {
     const modeStyle = (mode === "light" && css.light) ||  (mode === "accent" && css.accent)
+
     return (
-        <button
+        <ButtonContainer
             type={type}
-            className={ cx(css.button, active && css.active, rounded && css.rounded, modeStyle) }
+            cx={ cx(css.button, active && css.active, rounded && css.rounded, modeStyle) }
             onClick={ handler }
             caption={ icon && caption }
         >
             { icon ? <SVG name={ icon } title={ caption }/> : caption }
-        </button>
-    )
+        </ButtonContainer>
+    );
 }
 
 export const buttonsBuilder = (buttons, options = { activeButton: null }) =>

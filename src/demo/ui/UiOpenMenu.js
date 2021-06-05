@@ -21,7 +21,7 @@ import VolumeSet from '../engine/VolumeSet';
 import Volume from '../engine/Volume';
 import Texture3D from '../engine/Texture3D';
 
-import UiModalDemo from './UiModalDemo';
+import UiModalDemo from "./Modals/ModalDemo";
 import UiModalGoogle from './UiModalGoogle';
 import UiModalWindowCenterWidth from './UiModalWinCW';
 // import UiModalDicomSeries from './UiModalDicomSeries';

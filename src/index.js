@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import 'onsenui/css/onsenui.css';
-import 'onsenui/css/onsen-css-components.css';
 import './index.css';
 
 import { Provider } from 'react-redux'
