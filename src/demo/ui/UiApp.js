@@ -17,7 +17,7 @@ import UiErrConsole from './UiErrConsole';
 import ModeView from '../store/ModeView';
 
 import BrowserDetector from '../engine/utils/BrowserDetector';
-import { ExploreTools } from "./Tollbars/ExploreTools";
+import ExploreTools from "./Tollbars/ExploreTools";
 
 class UiApp extends React.Component {
   constructor(props) {

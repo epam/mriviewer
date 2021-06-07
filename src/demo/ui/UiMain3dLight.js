@@ -20,22 +20,8 @@ import 'nouislider/distribute/nouislider.css';
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
 import ModeView from '../store/ModeView';
-import UiTools2d from './UiTools2d';
+import ExploreTools from "./Tollbars/ExploreTools";
 
-//import Modes3d from '../store/Modes3d';
-
-
-// ********************************************************
-// Const
-// ********************************************************
-
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class UiMain3dLight some text later...
- */
 class UiMain3dLight extends React.Component {
   /**
    * Main component render func callback
@@ -126,7 +112,7 @@ class UiMain3dLight extends React.Component {
                   range={{ min: 0.0, max: 1.0 }}
                   overflow-scroll={'true'}
                   start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true}/>
-      <UiTools2d/>
+      <ExploreTools/>
     </>
 
     return <>

@@ -26,14 +26,7 @@ class UiTools2d extends React.Component {
     this.onClickButtonTools = this.onClickButtonTools.bind(this);
     this.state = {
       data: [
-        { img: 'images/icon_tools2d_intensity.png', txt: 'intensity', msgTp: 'Get voxel intensity' },
-        { img: 'images/icon_tools2d_distance.png', txt: 'distance', msgTp: 'Measure distance between voxels' },
-        { img: 'images/icon_tools2d_angle.png', txt: 'angle', msgTp: 'Measure angle between lines' },
-        { img: 'images/icon_tools2d_area.png', txt: 'area', msgTp: 'Calculate arbitrary area' },
-        { img: 'images/icon_tools2d_rect.png', txt: 'rect', msgTp: 'Calculate rectangular area' },
-        { img: 'images/icon_tools2d_text.png', txt: 'text', msgTp: 'Add annotation text' },
         { img: 'images/icon_tools2d_edit.png', txt: 'edit', msgTp: 'Move annotation text' },
-        { img: 'images/icon_tools2d_delete.png', txt: 'delete', msgTp: 'Delete annotation object' },
         { img: 'images/icon_tools2d_clear.png', txt: 'clear', msgTp: 'Clear all objects' },
         { img: 'images/icon_tools2d_zoom.png', txt: 'zoom', msgTp: 'Zoom in/out' },
         { img: 'images/icon_tools2d_default.png', txt: 'default', msgTp: 'Zoom to default' },
@@ -52,7 +45,7 @@ class UiTools2d extends React.Component {
       const store = this.props;
       store.dispatch({ type: StoreActionType.SET_2D_TOOLS_INDEX, indexTools2d: idx });
       // console.log(`UiTools2d. onClickButton index = ${idx}`);
-      if( idx === Tools2dType.DEFAULT) {
+      if( idx === Tools2dType.ZOOM_100) {
         store.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: 1.0 });
         store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: 0.0 });
         store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: 0.0 });

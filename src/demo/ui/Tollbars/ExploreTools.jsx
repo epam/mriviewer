@@ -8,22 +8,40 @@ import React, { useState } from "react";
 import { Container } from "./Container";
 import { buttonsBuilder } from "../Button/Button";
 import Tools2dType from "../../engine/tools2d/ToolTypes";
+import StoreActionType from "../../store/ActionTypes";
+import { connect } from "react-redux";
 
 
-export const ExploreTools = () => {
-  const [activeButton, setActiveButton] = useState("cursor");
+const ExploreTools = props => {
+  const [activeButton, setActiveButton] = useState(Tools2dType.ZOOM_100);
   
-  const mockedHandler = (icon) => {
-    setActiveButton(icon);
-    console.log(`${icon} button clicked`);
+  const mockedHandler = (id) => {
+    setActiveButton(id);
+    console.log(`${id} button clicked`);
+    props.dispatch({ type: StoreActionType.SET_2D_TOOLS_INDEX, indexTools2d: id });
+  
+    if (id === Tools2dType.ZOOM_100) {
+      props.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: 1.0 });
+      props.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: 0.0 });
+      props.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: 0.0 });
+    
+      const gra = props.graphics2d;
+      gra.forceUpdate();
+      gra.forceRender();
+    }
+    if( id === Tools2dType.CLEAR) {
+      const gra2d = props.graphics2d;
+      if (gra2d !== null) {
+        gra2d.clear();
+      }
+    }
   }
-  
   
   const buttons = [
     {
-      id: Tools2dType.DEFAULT,
+      id: Tools2dType.ZOOM_100,
       icon: "cursor",
-      handler: mockedHandler.bind(null, Tools2dType.DEFAULT)
+      handler: mockedHandler.bind(null, Tools2dType.ZOOM_100)
     },
     {
       icon: "target",
@@ -71,7 +89,9 @@ export const ExploreTools = () => {
   
   return (
     <Container direction="horizontal">
-      {buttonsBuilder(buttons, { activeButton })}
+      { buttonsBuilder(buttons, { activeButton }) }
     </Container>
   )
 };
+
+export default connect(store => store)(ExploreTools);

@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
 
 import UiCtrl2d from './UiCtrl2d';
 import Graphics2d from '../engine/Graphics2d';
-import UiTools2d from './UiTools2d';
 import UiSegm2d from './UiSegm2d';
 import UiVolumeSel from './UiVolumeSel'
 
@@ -38,7 +37,6 @@ class UiMain2d extends React.Component {
 
     return <>
       <UiCtrl2d/>
-      <UiTools2d/>
       <UiSegm2d/>
       {(numVols > 1) ? <UiVolumeSel /> : <br />}
       <Graphics2d/>

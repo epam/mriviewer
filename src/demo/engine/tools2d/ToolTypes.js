@@ -15,7 +15,7 @@ const Tools2dType = {
   DELETE: 7,
   CLEAR: 8,
   ZOOM: 9,
-  DEFAULT: 10,
+  ZOOM_100: 10,
   FILTER: 11,
   NONE: 12,
 };
