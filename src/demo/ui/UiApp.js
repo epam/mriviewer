@@ -22,16 +22,16 @@ import { ExploreTools } from "./Tollbars/ExploreTools";
 class UiApp extends React.Component {
   constructor(props) {
     super(props);
-
+    
     this.m_store = null;
     this.m_fileNameOnLoad = '';
-
+    
     this.state = {
       strAlertTitle: '???',
       strAlertText: '???',
     };
   }
-
+  
   UNSAFE_componentWillMount() {
     let fileNameOnLoad = '';
     const strSearch = window.location.search;
@@ -54,15 +54,15 @@ class UiApp extends React.Component {
       this.m_fileNameOnLoad = fileNameOnLoad;
     }
   }
-
+  
   componentDidMount() {
     const store = this.m_store;
     if (store === null) {
       console.log('UiApp. componentDidMount. store is NULL');
     }
-
+    
     store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
-
+    
     // browser detector
     const browserDetector = new BrowserDetector();
     this.isWebGl20supported = browserDetector.checkWebGlSupported();
@@ -79,23 +79,23 @@ class UiApp extends React.Component {
       }
     }
   }
-
+  
   onShowModalText() {
-    store.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true })
+    this.props.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true })
   }
-
+  
   onHideModalText() {
-    store.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: false  })
+    this.props.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: false })
   }
-
+  
   onShowModalAlert() {
-    store.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: true })
+    this.props.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: true })
   }
-
+  
   onHideModalAlert() {
-    store.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: false })
+    this.props.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: false })
   }
-
+  
   /**
    * Main component render func callback
    */
@@ -105,37 +105,38 @@ class UiApp extends React.Component {
     const isLoaded = store.isLoaded;
     const fileName = store.fileName;
     const arrErrorsLoadedd = store.arrErrors;
-
+    
     const strMessageOnMenu = (isLoaded) ? 'File: ' + fileName : 'Press Open button to load scene';
-
-    const objProgressBar = (this.m_store.progress) ?
+    
+    const objProgressBar = (this.props.progress) ?
       <ProgressBar
         animated variant="success"
-
-        now={this.m_store.progress}
-        label={`${this.m_store.progress}%`}/>
+        
+        now={this.props.progress}
+        label={`${this.props.progress}%`}/>
       : null;
-
+    
     return <>
       {objProgressBar}
       <UiAbout/>
       {strMessageOnMenu}
       <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>
-
       <UiSaveMenu/>
       <UiReportMenu/>
-      {(store.modeView === ModeView.VIEW_2D) ? <UiFilterMenu/> : <p></p>}
-      {(isLoaded && this.isWebGl20supported) ? <UiViewMode/> : <p></p>}
-
-
+      {(store.modeView === ModeView.VIEW_2D) ? <UiFilterMenu/> : null}
+      {(isLoaded && this.isWebGl20supported) ? <UiViewMode/> : null}
       <ExploreTools/>
-      {(isLoaded) ? <UiMain/> : <p></p>}
-      {(arrErrorsLoadedd.length > 0) ? <UiErrConsole/> : <p></p>}
-      <UiModalText stateVis={this.m_store.showModalText}
-                   onHide={this.onHideModalText} onShow={this.onShowModalText}/>
-      <UiModalAlert stateVis={this.m_store.showModalAlert}
-                    onHide={this.onHideModalAlert} onShow={this.onShowModalAlert}
-                    title={this.state.strAlertTitle} text={this.state.strAlertText}/></>;
+      {(isLoaded) ? <UiMain/> : null}
+      {(arrErrorsLoadedd.length > 0) ? <UiErrConsole/> : null}
+      <UiModalText stateVis={this.props.showModalText}
+                   onHide={this.onHideModalText}
+                   onShow={this.onShowModalText}/>
+      <UiModalAlert stateVis={this.props.showModalAlert}
+                    onHide={this.onHideModalAlert}
+                    onShow={this.onShowModalAlert}
+                    title={this.props.strAlertTitle}
+                    text={this.props.strAlertText}/>
+    </>;
   }
 }
 

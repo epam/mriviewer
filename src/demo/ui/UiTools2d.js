@@ -26,19 +26,19 @@ class UiTools2d extends React.Component {
     this.onClickButtonTools = this.onClickButtonTools.bind(this);
     this.state = {
       data: [
-        { img: 'images/icon_tools2d_intensity.png', txt: 'intensity', ke: Tools2dType.INTENSITY, msgTp: 'Get voxel intensity' },
-        { img: 'images/icon_tools2d_distance.png', txt: 'distance', ke: Tools2dType.DISTANCE, msgTp: 'Measure distance between voxels' },
-        { img: 'images/icon_tools2d_angle.png', txt: 'angle', ke: Tools2dType.ANGLE, msgTp: 'Measure angle between lines' },
-        { img: 'images/icon_tools2d_area.png', txt: 'area', ke: Tools2dType.AREA, msgTp: 'Calculate arbitrary area' },
-        { img: 'images/icon_tools2d_rect.png', txt: 'rect', ke: Tools2dType.RECT, msgTp: 'Calculate rectangular area' },
-        { img: 'images/icon_tools2d_text.png', txt: 'text', ke: Tools2dType.TEXT, msgTp: 'Add annotation text' },
-        { img: 'images/icon_tools2d_edit.png', txt: 'edit', ke: Tools2dType.EDIT, msgTp: 'Move annotation text' },
-        { img: 'images/icon_tools2d_delete.png', txt: 'delete', ke: Tools2dType.DELETE, msgTp: 'Delete annotation object' },
-        { img: 'images/icon_tools2d_clear.png', txt: 'clear', ke: Tools2dType.CLEAR, msgTp: 'Clear all objects' },
-        { img: 'images/icon_tools2d_zoom.png', txt: 'zoom', ke: Tools2dType.ZOOM, msgTp: 'Zoom in/out' },
-        { img: 'images/icon_tools2d_default.png', txt: 'default', ke: Tools2dType.DEFAULT, msgTp: 'Zoom to default' },
-        // { img: 'images/icon_tools2d_filter.png', txt: 'filter', ke: Tools2dType.FILTER },
-        { img: 'images/icon_tools2d_empty.png', txt: 'none', ke: Tools2dType.NONE, msgTp: 'Empty' },
+        { img: 'images/icon_tools2d_intensity.png', txt: 'intensity', msgTp: 'Get voxel intensity' },
+        { img: 'images/icon_tools2d_distance.png', txt: 'distance', msgTp: 'Measure distance between voxels' },
+        { img: 'images/icon_tools2d_angle.png', txt: 'angle', msgTp: 'Measure angle between lines' },
+        { img: 'images/icon_tools2d_area.png', txt: 'area', msgTp: 'Calculate arbitrary area' },
+        { img: 'images/icon_tools2d_rect.png', txt: 'rect', msgTp: 'Calculate rectangular area' },
+        { img: 'images/icon_tools2d_text.png', txt: 'text', msgTp: 'Add annotation text' },
+        { img: 'images/icon_tools2d_edit.png', txt: 'edit', msgTp: 'Move annotation text' },
+        { img: 'images/icon_tools2d_delete.png', txt: 'delete', msgTp: 'Delete annotation object' },
+        { img: 'images/icon_tools2d_clear.png', txt: 'clear', msgTp: 'Clear all objects' },
+        { img: 'images/icon_tools2d_zoom.png', txt: 'zoom', msgTp: 'Zoom in/out' },
+        { img: 'images/icon_tools2d_default.png', txt: 'default', msgTp: 'Zoom to default' },
+        // { img: 'images/icon_tools2d_filter.png', txt: 'filter',
+        { img: 'images/icon_tools2d_empty.png', txt: 'none', msgTp: 'Empty' },
       ],
     };
   }
