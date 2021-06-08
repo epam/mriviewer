@@ -52,7 +52,7 @@ class LoaderUrlDicom {
    * @param {number ratio01 - ratio in range [0..1]
    */
   callbackReadProgress(ratio01) {
-    const ratioPrc = Math.floor(ratio01 * 100);
+    const ratioPrc = Math.floor(ratio01);
     const store = this.m_store;
     if (ratioPrc >= 99) {
       // console.log(`callbackReadProgress. hide on = ${ratio01}`);
