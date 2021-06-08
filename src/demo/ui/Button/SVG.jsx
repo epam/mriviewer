@@ -8,7 +8,7 @@ import React from "react";
 const DEFAULT_SIZE = 25;
 
 
-export const SVG = ({ name, size = DEFAULT_SIZE, title }) => {
+export const SVG = ({ name, size = DEFAULT_SIZE, title, color = DEFAULT_COLOR }) => {
     return (
         <svg
             fill={ color }
