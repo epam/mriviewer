@@ -11,7 +11,7 @@ const DEFAULT_SIZE = 25;
 export const SVG = ({ name, size = DEFAULT_SIZE, title }) => {
     return (
         <svg
-            fill="currentColor"
+            fill={ color }
             viewBox="0 0 25 25"
             width={ size }
             height={ size }
