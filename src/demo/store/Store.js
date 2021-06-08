@@ -36,7 +36,7 @@ export const initialState = {
   render2dxPos: 0.0,
   render2dyPos: 0.0,
   graphics2d: null,
-  progressValue: 0, // 0 to 1
+  progress: 0, // 0 to 1
   dicomInfo: null,
   isTool3D: false,
   sliderContrast3D: 0.0,
