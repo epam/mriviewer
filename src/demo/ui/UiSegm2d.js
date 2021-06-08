@@ -55,26 +55,25 @@ class UiSegm2d extends React.Component {
   // render UI for 2d segmentation on screen
   render() {
     const strTitle = 'Segmentation 2d (brain only)';
-    const jsx = <>
-        {strTitle}
-        <OverlayTrigger
-          key="about"
-          placement="bottom"
-          overlay = {
-            <Tooltip>
-              You can use automatic 2d image segmentation only for brain-like data
-            </Tooltip>
-          }
-        >
-          <Form>
-            <Form.Check inline type="checkbox" label="Segmentation 2d" id="idseg2d" onChange={this.onChangeSegm2d} >
-            </Form.Check>
-          </Form>
-
-        </OverlayTrigger>
-          Switch checker above on and see segmentation result on right
-    </>
-    return jsx;
+    return <>
+      {strTitle}
+      <OverlayTrigger
+        key="about"
+        placement="bottom"
+        overlay={
+          <Tooltip>
+            You can use automatic 2d image segmentation only for brain-like data
+          </Tooltip>
+        }
+      >
+        <Form>
+          <Form.Check inline type="checkbox" label="Segmentation 2d" id="idseg2d" onChange={this.onChangeSegm2d}>
+          </Form.Check>
+        </Form>
+  
+      </OverlayTrigger>
+      Switch checker above on and see segmentation result on right
+    </>;
   }
 }
 

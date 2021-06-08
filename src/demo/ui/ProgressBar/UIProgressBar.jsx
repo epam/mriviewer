@@ -8,22 +8,21 @@ import React from "react";
 import css from "./UIprogressBar.module.css";
 import { connect } from "react-redux";
 
-const UIProgressBar = () => {
-    const { context: { progress: { show, text, value } } } = this.props;
-
-    return show && (
+const UIProgressBar = (props) => {
+    return props.progress &&
+      (
         <>
             <div className={ css.progress }>
                 <div
                     className={ css.progressBar }
-                    style={ { width: `${value}%` } }
+                    style={ { width: `${props.progress * 100}%` } }
                     role="progressbar"
-                    aria-valuenow={ value }
+                    aria-valuenow={ props.progress }
                     aria-valuemin="0"
-                    aria-valuemax="100"
+                    aria-valuemax="1"
                 />
             </div>
-            <span className={ css.label }>{text}</span>
+            {/*<span className={ css.label }>{text}</span>*/}
         </>
     );
 };

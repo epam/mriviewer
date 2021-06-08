@@ -1,13 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { ProgressBar } from 'react-bootstrap';
 import StoreActionType from '../store/ActionTypes';
 
 import UiMain from './UiMain';
 import UiOpenMenu from './UiOpenMenu';
 import UiViewMode from './UiViewMode';
-import UiAbout from './UiAbout';
 import UiSaveMenu from './UiSaveMenu';
 import UiReportMenu from './UiReportMenu';
 import UiFilterMenu from './UiFilterMenu';
@@ -18,6 +16,8 @@ import ModeView from '../store/ModeView';
 
 import BrowserDetector from '../engine/utils/BrowserDetector';
 import ExploreTools from "./Tollbars/ExploreTools";
+import UIProgressBar from "./ProgressBar/UIProgressBar";
+import UiAbout from "./UiAbout";
 
 class UiApp extends React.Component {
   constructor(props) {
@@ -57,10 +57,6 @@ class UiApp extends React.Component {
   
   componentDidMount() {
     const store = this.m_store;
-    if (store === null) {
-      console.log('UiApp. componentDidMount. store is NULL');
-    }
-    
     store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
     
     // browser detector
@@ -102,31 +98,28 @@ class UiApp extends React.Component {
   render() {
     const store = this.props;
     this.m_store = store;
-    const isLoaded = store.isLoaded;
     const fileName = store.fileName;
     const arrErrorsLoadedd = store.arrErrors;
     
-    const strMessageOnMenu = (isLoaded) ? 'File: ' + fileName : 'Press Open button to load scene';
+    const isReady = store.isLoaded && this.isWebGl20supported
     
-    const objProgressBar = (this.props.progress) ?
-      <ProgressBar
-        animated variant="success"
-        
-        now={this.props.progress}
-        label={`${this.props.progress}%`}/>
-      : null;
+    const strMessageOnMenu = (isReady) ? 'File: ' + fileName : 'Press Open button to load scene';
     
     return <>
-      {objProgressBar}
+      {(this.props.progress) ?
+        <UIProgressBar active={this.props.progress}
+          progress={this.props.progress}/>
+        : null}
+      
       <UiAbout/>
       {strMessageOnMenu}
       <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>
       <UiSaveMenu/>
       <UiReportMenu/>
       {(store.modeView === ModeView.VIEW_2D) ? <UiFilterMenu/> : null}
-      {(isLoaded && this.isWebGl20supported) ? <UiViewMode/> : null}
+      {(isReady) ? <UiViewMode/> : null}
       <ExploreTools/>
-      {(isLoaded) ? <UiMain/> : null}
+      {(isReady) ? <UiMain/> : null}
       {(arrErrorsLoadedd.length > 0) ? <UiErrConsole/> : null}
       <UiModalText stateVis={this.props.showModalText}
                    onHide={this.onHideModalText}

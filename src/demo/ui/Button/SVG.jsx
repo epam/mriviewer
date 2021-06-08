@@ -5,14 +5,13 @@
 
 import React from "react";
 
-const DEFAULT_FILL = "#ffffff";
 const DEFAULT_SIZE = 25;
 
 
-export const SVG = ({ name, fill = DEFAULT_FILL, size = DEFAULT_SIZE, title }) => {
+export const SVG = ({ name, size = DEFAULT_SIZE, title }) => {
     return (
         <svg
-            fill={ fill }
+            fill="currentColor"
             viewBox="0 0 25 25"
             width={ size }
             height={ size }

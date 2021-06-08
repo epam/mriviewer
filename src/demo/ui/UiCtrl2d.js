@@ -14,8 +14,7 @@ import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { ButtonGroup } from 'react-bootstrap';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import Modes2d from '../store/Modes2d';
 import StoreActionType from '../store/ActionTypes';
@@ -202,12 +201,10 @@ class UiCtrl2d extends React.Component {
         </ButtonGroup>
       </> : null
 
-    const jsxRenderControls =
-      <>
-        {jsxSliceSelector}
-        {jsxSlider}
-      </>
-    return jsxRenderControls;
+    return <>
+      {jsxSliceSelector}
+      {jsxSlider}
+    </>;
   }
 }
 

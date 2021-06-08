@@ -1,31 +1,12 @@
-/**
- * @fileOverview UiAbout
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Modal } from 'react-bootstrap'
+import { Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import packageJson from '../../../package.json';
 import UiSkelAni from './UiSkelAni';
-import { SVG } from "./Button/SVG";
 import { UIButton } from "./Button/Button";
+import { connect } from "react-redux";
 
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class UiAbout dialog
- */
-export default class UiAbout extends React.Component {
+class UiLogoAbout extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,6 +17,7 @@ export default class UiAbout extends React.Component {
   }
 
   onShow() {
+    this.props.graphics2d?.clear()
     this.setState({ modalShow: true });
   }
 
@@ -51,7 +33,11 @@ export default class UiAbout extends React.Component {
     const strAuthor = packageJson.author;
     const strYear = packageJson.year;
 
-    const strButtonOnly =  <SVG onClick={this.onShow} name="logo" title="Logo"/>
+    const strButtonOnly = <UIButton
+      icon="logo"
+      type="reset"
+      style="color: black"
+      handler={this.state.modalShow ? this.onHide : this.onShow} />
     const strButtonWithTrigger =
     <OverlayTrigger 
       key="about"
@@ -68,18 +54,17 @@ export default class UiAbout extends React.Component {
     const strBtnDynamic = (this.state.modalShow) ? strButtonOnly : strButtonWithTrigger;
 
 
-    const strAbout = 
-    <>
-
+    return <>
+  
       {strBtnDynamic}
-
-      <Modal show={this.state.modalShow} onHide={this.onHide} >
+  
+      <Modal show={this.state.modalShow} onHide={this.onHide} style="backgroundColor: black">
         <Modal.Title>
-          {strName}
+          <center>{strName}</center>
         </Modal.Title>
         <Modal.Header>
           <Modal.Body className="text-center">
-            <UiSkelAni />
+            <UiSkelAni/>
             <p>
               {strDescription}
             </p>
@@ -89,18 +74,18 @@ export default class UiAbout extends React.Component {
             <p>
               <b>Copyright: </b> {strYear} {strAuthor}
             </p>
-
+      
           </Modal.Body>
         </Modal.Header>
-
+    
         <Modal.Footer>
-          <UIButton handler={this.onHide} icon="square" />
+          <UIButton handler={this.onHide} icon="triangle" type="submit" mode="accent" />
         </Modal.Footer>
-
+  
       </Modal>
-    </>
-    return strAbout;
+    </>;
 
   }
 }
 
+export default connect(store => store)(UiLogoAbout);
