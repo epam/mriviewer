@@ -54,7 +54,7 @@ class LoaderUrlDicom {
   callbackReadProgress(ratio01) {
     const ratioPrc = Math.floor(ratio01);
     const store = this.m_store;
-    if (ratioPrc >= 99) {
+    if (ratioPrc >= .99) {
       // console.log(`callbackReadProgress. hide on = ${ratio01}`);
       store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
     } else {
