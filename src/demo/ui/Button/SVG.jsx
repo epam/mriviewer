@@ -6,7 +6,7 @@
 import React from "react";
 
 const DEFAULT_SIZE = 25;
-const DEFAULT_SIZE = "#ffffff";
+const DEFAULT_COLOR = "#ffffff";
 
 export const SVG = ({ name, size = DEFAULT_SIZE, title, color = DEFAULT_COLOR }) => {
     return (

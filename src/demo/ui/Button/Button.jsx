@@ -23,13 +23,13 @@ export const ButtonContainer = ({ children, onClick, type = "button", caption, c
 )
 
 
-export const UIButton = ({ icon, caption, handler, active, rounded, type, mode }) => {
+export const UIButton = ({ icon, caption, handler, active, rounded, type, mode, cx: customStyle }) => {
     const modeStyle = (mode === "light" && css.light) ||  (mode === "accent" && css.accent)
 
     return (
         <ButtonContainer
             type={type}
-            cx={ cx(css.button, active && css.active, rounded && css.rounded, modeStyle) }
+            cx={ cx(css.button, active && css.active, rounded && css.rounded, modeStyle, customStyle) }
             onClick={ handler }
             caption={ icon && caption }
         >

@@ -20,7 +20,6 @@ export const Modal = ({ isOpen, close, children }) => {
             className={ css.modal }
             overlayClassName={ css.overlay }
             onRequestClose={ close }
-
         >
             { children }
         </ReactModal>

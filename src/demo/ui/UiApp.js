@@ -10,7 +10,7 @@ import UiSaveMenu from './UiSaveMenu';
 import UiReportMenu from './UiReportMenu';
 import UiFilterMenu from './UiFilterMenu';
 import UiModalText from './UiModalText';
-import UiModalAlert from './UiModalAlert';
+import UiModalAlert from './Modals/ModalAlert';
 import UiErrConsole from './UiErrConsole';
 import ModeView from '../store/ModeView';
 
@@ -22,16 +22,16 @@ import UiAbout from "./UiAbout";
 class UiApp extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.m_store = null;
     this.m_fileNameOnLoad = '';
-    
+
     this.state = {
       strAlertTitle: '???',
       strAlertText: '???',
     };
   }
-  
+
   UNSAFE_componentWillMount() {
     let fileNameOnLoad = '';
     const strSearch = window.location.search;
@@ -54,11 +54,11 @@ class UiApp extends React.Component {
       this.m_fileNameOnLoad = fileNameOnLoad;
     }
   }
-  
+
   componentDidMount() {
     const store = this.m_store;
     store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
-    
+
     // browser detector
     const browserDetector = new BrowserDetector();
     this.isWebGl20supported = browserDetector.checkWebGlSupported();
@@ -75,23 +75,23 @@ class UiApp extends React.Component {
       }
     }
   }
-  
+
   onShowModalText() {
     this.props.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true })
   }
-  
+
   onHideModalText() {
     this.props.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: false })
   }
-  
+
   onShowModalAlert() {
     this.props.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: true })
   }
-  
+
   onHideModalAlert() {
     this.props.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: false })
   }
-  
+
   /**
    * Main component render func callback
    */
@@ -100,17 +100,17 @@ class UiApp extends React.Component {
     this.m_store = store;
     const fileName = store.fileName;
     const arrErrorsLoadedd = store.arrErrors;
-    
+
     const isReady = store.isLoaded && this.isWebGl20supported
-    
+
     const strMessageOnMenu = (isReady) ? 'File: ' + fileName : 'Press Open button to load scene';
-    
+
     return <>
       {(this.props.progress) ?
         <UIProgressBar active={this.props.progress}
           progress={this.props.progress}/>
         : null}
-      
+
       <UiAbout/>
       {strMessageOnMenu}
       <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>

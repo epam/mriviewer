@@ -4,7 +4,6 @@
  */
 
 import React, { useCallback } from "react";
-import { connect } from 'react-redux';
 
 import { Modal, ModalHeader, ModalBody } from "./ModalBase";
 import { ButtonContainer } from "../Button/Button";
@@ -54,4 +53,4 @@ const DemoItem = ({ tooltip, image, alt, onClick }) => {
     )
 };
 
-export default connect(store => store)(ModalDemo);
+export default ModalDemo;

@@ -12,7 +12,6 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Modal, InputGroup, FormControl, } from 'react-bootstrap';
 // import { gzip, ungzip } from 'node-gzip';
 import zlib from 'zlib';
 import createReadStream from 'filereader-stream';
@@ -22,6 +21,7 @@ import Volume from '../engine/Volume';
 import Texture3D from '../engine/Texture3D';
 
 import UiModalDemo from "./Modals/ModalDemo";
+import UIModalUrl from "./Modals/ModalUrl";
 import UiModalGoogle from './UiModalGoogle';
 import UiModalWindowCenterWidth from './UiModalWinCW';
 // import UiModalDicomSeries from './UiModalDicomSeries';
@@ -41,7 +41,6 @@ import LoaderDcmUrlDaikon from '../engine//loaders/LoadDcmUrlDiakon';
 
 import config from '../config/config';
 import { UIButton } from "./Button/Button";
-// import { ButtonsDemo } from "./Button/ButtonsDemo";
 
 // ********************************************************
 // Const
@@ -106,7 +105,6 @@ class UiOpenMenu extends React.Component {
     this.m_fileIndex = 0;
     this.m_fileReader = null;
     this.state = {
-      strUrl: '',
       showModalUrl: false,
       showModalDemo: false,
       showModalGoogle: false,
@@ -713,20 +711,12 @@ class UiOpenMenu extends React.Component {
 
   //
   onModalUrlShow() {
-    console.log(`onModalUrlShow`);
-    this.setState({ strUrl: '' });
     this.setState({ showModalUrl: true });
   }
 
   onModalUrlHide() {
     console.log(`onModalUrlHide`);
     this.setState({ showModalUrl: false });
-  }
-
-  onChangeUrlString(evt) {
-    const str = evt.target.value;
-    this.setState({ strUrl: str });
-    // console.log(`onChangeUrlString. str = ${str}`)
   }
 
   callbackReadCompleteUrlKtxNii(codeResult) {
@@ -796,9 +786,8 @@ class UiOpenMenu extends React.Component {
     }
   }
 
-  onClickLoadUrl() {
+  onClickLoadUrl(strUrl) {
     this.setState({ showModalUrl: false });
-    const strUrl = this.state.strUrl;
     console.log(`onClickLoadUrl with strUrl = ${strUrl}`);
     this.loadFromUrl(strUrl);
   }
@@ -1023,34 +1012,11 @@ class UiOpenMenu extends React.Component {
         null}
       <UIButton icon="g" caption="g" handler={this.onModalGoogleShow}/>
 
-      <Modal show={this.state.showModalUrl} onHide={this.onModalUrlHide}>
-        <Modal.Title>
-          Load data from external source
-        </Modal.Title>
-
-        <Modal.Header closeButton>
-          <Modal.Body>
-
-            <InputGroup className="mb-3">
-              <InputGroup.Prepend>
-                <InputGroup.Text id="inputGroup-sizing-default">
-                  Input URL to open
-                </InputGroup.Text>
-              </InputGroup.Prepend>
-              <FormControl
-                placeholder="Enter URL here"
-                aria-label="Default"
-                aria-describedby="inputGroup-sizing-default"
-                onChange={this.onChangeUrlString.bind(this)}/>
-              <InputGroup.Append>
-                <UIButton icon="triangle" rounded handler={this.onClickLoadUrl}/>
-              </InputGroup.Append>
-            </InputGroup>
-
-          </Modal.Body>
-        </Modal.Header>
-      </Modal>
-
+      <UIModalUrl
+          stateVis={this.state.showModalUrl}
+          onHide={this.onModalUrlHide}
+          loadUrl={this.onClickLoadUrl}
+      />
       <UiModalDemo stateVis={this.state.showModalDemo}
                    onHide={this.onModalDemoOpenHide} onSelectDemo={this.onDemoSelected}/>
       <UiModalGoogle stateVis={this.state.showModalGoogle}
