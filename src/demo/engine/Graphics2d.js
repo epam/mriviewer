@@ -842,7 +842,8 @@ class Graphics2d extends React.Component {
     };
 
     const jsxGrapNonSized = <canvas ref={ (mount) => {this.m_mount = mount} } style={styleObj} />
-    const jsxGrapSized = <canvas ref={ (mount) => {this.m_mount = mount} } style={styleObj} width={this.state.wRender} height={this.state.hRender}
+    const jsxGrapSized = <canvas
+      ref={ (mount) => {this.m_mount = mount} } style={styleObj} width={this.state.wRender} height={this.state.hRender}
       onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onMouseMove={this.onMouseMove} onWheel={this.onMouseWheel} />
     return (this.state.wRender > 0) ? jsxGrapSized : jsxGrapNonSized;
   }

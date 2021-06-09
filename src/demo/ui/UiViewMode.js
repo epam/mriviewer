@@ -12,12 +12,12 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { ButtonToolbar, ButtonGroup } from 'react-bootstrap';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import ModeView from '../store/ModeView';
 import StoreActionType from '../store/ActionTypes';
 import { UIButton } from "./Button/Button";
+import { Container } from "./Tollbars/Container";
 
 // ********************************************************
 // Class
@@ -164,31 +164,25 @@ class UiViewMode extends React.Component {
       }
     } // if more 0 volumes
     const test = true;
-    const jsxOut = 
-      <ButtonToolbar ria-label="Toolbar with button groups">
-        <ButtonGroup className="mr-2" aria-label="Top group">
- 
-          <OverlayTrigger key="2d" placement="bottom" overlay={
-            <Tooltip>
-              Show volume in 2d mode per slice on selected orientation
-            </Tooltip>
-          }>
-            <UIButton handler={this.onMode2d} active={str2d} icon="2D" />
-          </OverlayTrigger>
-
-          <OverlayTrigger key="3dLight" placement="bottom" overlay={
-            <Tooltip>
-              Show volume in 3d mode with fast rendering
-            </Tooltip>
-          }>
-            <UIButton handler={this.onMode3dLight} active={str3dLight} icon="lightning" />
-          </OverlayTrigger>
-          {(needShow3d) ? jsx3d : ''}
-        </ButtonGroup>
-        {(viewMode === ModeView.VIEW_3D_LIGHT && test) ? jsxViewTool : ''}
-      </ButtonToolbar>
-
-    return jsxOut;
+    return <Container direction="vertical">
+      <OverlayTrigger key="2d" placement="bottom" overlay={
+        <Tooltip>
+          Show volume in 2d mode per slice on selected orientation
+        </Tooltip>
+      }>
+        <UIButton handler={this.onMode2d} active={str2d} icon="2D"/>
+      </OverlayTrigger>
+  
+      <OverlayTrigger key="3dLight" placement="bottom" overlay={
+        <Tooltip>
+          Show volume in 3d mode with fast rendering
+        </Tooltip>
+      }>
+        <UIButton handler={this.onMode3dLight} active={str3dLight} icon="lightning"/>
+      </OverlayTrigger>
+      {(needShow3d) ? jsx3d : ''}
+      {(viewMode === ModeView.VIEW_3D_LIGHT && test) ? jsxViewTool : ''}
+    </Container>;
   }
 }
 

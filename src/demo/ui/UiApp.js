@@ -6,8 +6,6 @@ import StoreActionType from '../store/ActionTypes';
 import UiMain from './UiMain';
 import UiOpenMenu from './UiOpenMenu';
 import UiViewMode from './UiViewMode';
-import UiSaveMenu from './UiSaveMenu';
-import UiReportMenu from './UiReportMenu';
 import UiFilterMenu from './UiFilterMenu';
 import UiModalText from './UiModalText';
 import UiModalAlert from './Modals/ModalAlert';
@@ -18,6 +16,8 @@ import BrowserDetector from '../engine/utils/BrowserDetector';
 import ExploreTools from "./Tollbars/ExploreTools";
 import UIProgressBar from "./ProgressBar/UIProgressBar";
 import UiAbout from "./UiAbout";
+import css from "./UiApp.module.css";
+import { Container } from "./Tollbars/Container";
 
 class UiApp extends React.Component {
   constructor(props) {
@@ -98,28 +98,29 @@ class UiApp extends React.Component {
   render() {
     const store = this.props;
     this.m_store = store;
-    const fileName = store.fileName;
     const arrErrorsLoadedd = store.arrErrors;
 
     const isReady = store.isLoaded && this.isWebGl20supported
-
-    const strMessageOnMenu = (isReady) ? 'File: ' + fileName : 'Press Open button to load scene';
-
+    
     return <>
       {(this.props.progress) ?
         <UIProgressBar active={this.props.progress}
-          progress={this.props.progress}/>
+                       progress={this.props.progress}/>
         : null}
-
-      <UiAbout/>
-      {strMessageOnMenu}
-      <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>
-      <UiSaveMenu/>
-      <UiReportMenu/>
+<div className={css["header"]}>
+        <UiAbout active={false}/>
+        
+        <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>
+      </div>
       {(store.modeView === ModeView.VIEW_2D) ? <UiFilterMenu/> : null}
-      {(isReady) ? <UiViewMode/> : null}
-      <ExploreTools/>
-      {(isReady) ? <UiMain/> : null}
+      {(isReady) ? <>
+        <Container direction="vertical">
+          <UiViewMode/>
+          <UiMain/>
+        </Container>
+        <ExploreTools/>
+      </> : null}
+      
       {(arrErrorsLoadedd.length > 0) ? <UiErrConsole/> : null}
       <UiModalText stateVis={this.props.showModalText}
                    onHide={this.onHideModalText}
@@ -131,6 +132,7 @@ class UiApp extends React.Component {
                     text={this.props.strAlertText}/>
     </>;
   }
+  
 }
 
 export default connect(store => store)(UiApp);

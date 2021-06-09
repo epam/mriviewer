@@ -14,11 +14,12 @@ import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import Modes2d from '../store/Modes2d';
 import StoreActionType from '../store/ActionTypes';
 import { UIButton } from "./Button/Button";
+import { Container } from "./Tollbars/Container";
 
 class UiCtrl2d extends React.Component {
   constructor(props) {
@@ -174,7 +175,7 @@ class UiCtrl2d extends React.Component {
 
     const jsxSliceSelector = (slideRangeMax > 0) ?
       <>
-        <ButtonGroup className="mr-2" aria-label="Ctrl2d group">
+        <Container direction="vertical">
           <OverlayTrigger key="zx" placement="bottom" overlay={
             <Tooltip>
               Show slices along x axis
@@ -198,7 +199,7 @@ class UiCtrl2d extends React.Component {
           }>
             <UIButton handler={this.onModeTransverse} active={varTra} icon="transverse" />
           </OverlayTrigger>
-        </ButtonGroup>
+        </Container>
       </> : null
 
     return <>

@@ -13,9 +13,11 @@
 .vertical {
     flex-direction: column;
     width: 50px;
+    margin-top: 25px;
 }
 
 .horizontal {
     flex-direction: row;
     height: 50px;
+    margin-left: 25px;
 }
