@@ -62,7 +62,7 @@ class Graphics2d extends React.Component {
     this.m_zoom = 1;
     this.m_xPos = 0;
     this.m_yPos = 0;
-    
+
     // mounted
     this.m_isMounted = false;
 
@@ -148,7 +148,7 @@ class Graphics2d extends React.Component {
 
   /**
    * Get screenshot
-   * 
+   *
    * @param {nuimber} wShot - x size of screenshot
    * @param {nuimber} hShot - y size of screenshot
    */
@@ -164,7 +164,7 @@ class Graphics2d extends React.Component {
 
   /**
    * Render text info about volume
-   * 
+   *
    * @param {object} ctx - render context
    * @param {VolumeSet} volSet - volume set to rener
    */
@@ -178,8 +178,8 @@ class Graphics2d extends React.Component {
     ctx.textBaseline = 'top';
     ctx.fillStyle = 'grey';
 
-    strMsg = 'volume dim = ' + vol.m_xDim.toString() + ' * ' + 
-      vol.m_yDim.toString() + ' * ' + 
+    strMsg = 'volume dim = ' + vol.m_xDim.toString() + ' * ' +
+      vol.m_yDim.toString() + ' * ' +
       vol.m_zDim.toString();
     ctx.fillText(strMsg, xText, yText);
     yText += FONT_SZ;
@@ -187,15 +187,15 @@ class Graphics2d extends React.Component {
     const xSize = Math.floor(vol.m_boxSize.x);
     const ySize = Math.floor(vol.m_boxSize.y);
     const zSize = Math.floor(vol.m_boxSize.z);
-    strMsg = 'vol phys size = ' + xSize.toString() + ' * ' + 
-      ySize.toString() + ' * ' + 
+    strMsg = 'vol phys size = ' + xSize.toString() + ' * ' +
+      ySize.toString() + ' * ' +
       zSize.toString();
     ctx.fillText(strMsg, xText, yText);
     yText += FONT_SZ;
 
     const patName = volSet.m_patientName;
     if (patName.length > 1) {
-      strMsg = 'patient name = ' + patName; 
+      strMsg = 'patient name = ' + patName;
       ctx.fillText(strMsg, xText, yText);
       yText += FONT_SZ;
     }
@@ -229,7 +229,7 @@ class Graphics2d extends React.Component {
       ctx.fillText(strMsg, xText, yText);
       yText += FONT_SZ;
     }
-      
+
   }
 
   prepareImageForRender(volIndexArg) {
@@ -268,7 +268,7 @@ class Graphics2d extends React.Component {
           j += 4;
         } // for (x)
       } // for (y)
-      ctx.putImageData(imgData, 0, 0); 
+      ctx.putImageData(imgData, 0, 0);
     }
 
     const volSet = store.volumeSet;
@@ -360,7 +360,7 @@ class Graphics2d extends React.Component {
         if (dataDst.length !== wScreen * hScreen * 4) {
           console.log(`Bad dst data len = ${dataDst.length}, but expect ${wScreen}*${hScreen}*4`);
         }
-  
+
         // z slice
         let zSlice = Math.floor(zDim * sliceRatio);
         zSlice = (zSlice < zDim) ? zSlice : (zDim - 1);
@@ -397,7 +397,7 @@ class Graphics2d extends React.Component {
               const rCol = roiPal256[val4 + 0];
               const gCol = roiPal256[val4 + 1];
               const bCol = roiPal256[val4 + 2];
-  
+
               dataDst[j + 0] = bCol;
               dataDst[j + 1] = gCol;
               dataDst[j + 2] = rCol;
@@ -833,12 +833,9 @@ class Graphics2d extends React.Component {
     this.m_mode2d = this.props.mode2d;
 
     const styleObj = {
-      width: '100vw',
-      height: '100vw',
-      position: 'absolute',
+      width: '100%',
+      height: '100%',
       display: 'block',
-      zIndex: '-1',
-      top: '0'
     };
 
     const jsxGrapNonSized = <canvas ref={ (mount) => {this.m_mount = mount} } style={styleObj} />

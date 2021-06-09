@@ -43,6 +43,9 @@ code {
   box-sizing: border-box;
 
   padding: 30px 5px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 svg {
@@ -51,10 +54,4 @@ svg {
   width: 25px;
   height: 25px;
   color: var(--white);
-}
-
-#canvas {
-  display: block;
-  z-index: -1;
-  position: absolute;
 }

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 /**
  * @fileOverview UiViewMode
  * @author Epam
@@ -14,10 +19,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-import ModeView from '../store/ModeView';
-import StoreActionType from '../store/ActionTypes';
-import { UIButton } from "./Button/Button";
-import { Container } from "./Tollbars/Container";
+import ModeView from '../../store/ModeView';
+import StoreActionType from '../../store/ActionTypes';
+import { UIButton } from "../Button/Button";
+import { Container } from "./Container";
 
 // ********************************************************
 // Class
@@ -59,7 +64,7 @@ class UiViewMode extends React.Component {
   onTool_View(isOn) {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_IS_TOOL3D, isTool3D: isOn });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Contrast3D, sliderContrast3D: 0 });    
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Contrast3D, sliderContrast3D: 0 });
   }
 
   onModeMpr() {
@@ -172,7 +177,6 @@ class UiViewMode extends React.Component {
       }>
         <UIButton handler={this.onMode2d} active={str2d} icon="2D"/>
       </OverlayTrigger>
-  
       <OverlayTrigger key="3dLight" placement="bottom" overlay={
         <Tooltip>
           Show volume in 3d mode with fast rendering

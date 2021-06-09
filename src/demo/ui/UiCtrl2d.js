@@ -84,7 +84,7 @@ class UiCtrl2d extends React.Component {
         yDim = vol.m_yDim;
         zDim = vol.m_zDim;
       }
-  
+
       let slideRangeMax = 0;
       if (mode2d === Modes2d.SAGGITAL) {
         slideRangeMax = xDim;
@@ -93,7 +93,7 @@ class UiCtrl2d extends React.Component {
       } else if (mode2d === Modes2d.TRANSVERSE) {
         slideRangeMax = zDim;
       }
-      const valNormalizedTo01 = val / slideRangeMax; 
+      const valNormalizedTo01 = val / slideRangeMax;
       store.dispatch({ type: StoreActionType.SET_SLIDER_2D, slider2d: valNormalizedTo01 });
       // clear all 2d tools
       const gra2d = store.graphics2d;
@@ -162,15 +162,16 @@ class UiCtrl2d extends React.Component {
     //   }
     // };
 
+    // TODO: move jsxSlider to separate component
     const jsxSlider = (slideRangeMax > 0) ?
-        <>
+        <div style={ { width: 20 }}>
           <input type="range"
                         onChange={this.onChangeSliderSlice.bind(this)}
                  min={0}
                  max={slideRangeMax}
                  value={wArr[0]}
             step={1} />
-        </>
+        </div>
        : null;
 
     const jsxSliceSelector = (slideRangeMax > 0) ?

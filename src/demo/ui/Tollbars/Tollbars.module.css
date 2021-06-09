@@ -13,11 +13,17 @@
 .vertical {
     flex-direction: column;
     width: 50px;
+}
+
+.vertical:not(:first-child) {
     margin-top: 25px;
 }
 
 .horizontal {
     flex-direction: row;
     height: 50px;
+}
+
+.horizontal:not(:first-child) {
     margin-left: 25px;
 }

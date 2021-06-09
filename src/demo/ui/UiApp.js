@@ -3,21 +3,23 @@ import { connect } from 'react-redux';
 
 import StoreActionType from '../store/ActionTypes';
 
-import UiMain from './UiMain';
+import UiMain from './Tollbars/UiMain';
 import UiOpenMenu from './UiOpenMenu';
-import UiViewMode from './UiViewMode';
+import UiViewMode from './Tollbars/UiViewMode';
 import UiFilterMenu from './UiFilterMenu';
 import UiModalText from './UiModalText';
 import UiModalAlert from './Modals/ModalAlert';
 import UiErrConsole from './UiErrConsole';
 import ModeView from '../store/ModeView';
+import Graphics2d from "../engine/Graphics2d";
+import UiCtrl2d from "./UiCtrl2d";
 
 import BrowserDetector from '../engine/utils/BrowserDetector';
 import ExploreTools from "./Tollbars/ExploreTools";
 import UIProgressBar from "./ProgressBar/UIProgressBar";
 import UiAbout from "./UiAbout";
+
 import css from "./UiApp.module.css";
-import { Container } from "./Tollbars/Container";
 
 class UiApp extends React.Component {
   constructor(props) {
@@ -101,38 +103,50 @@ class UiApp extends React.Component {
     const arrErrorsLoadedd = store.arrErrors;
 
     const isReady = store.isLoaded && this.isWebGl20supported
-    
-    return <>
-      {(this.props.progress) ?
-        <UIProgressBar active={this.props.progress}
-                       progress={this.props.progress}/>
-        : null}
-<div className={css["header"]}>
-        <UiAbout active={false}/>
-        
-        <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>
-      </div>
-      {(store.modeView === ModeView.VIEW_2D) ? <UiFilterMenu/> : null}
-      {(isReady) ? <>
-        <Container direction="vertical">
-          <UiViewMode/>
-          <UiMain/>
-        </Container>
-        <ExploreTools/>
-      </> : null}
-      
-      {(arrErrorsLoadedd.length > 0) ? <UiErrConsole/> : null}
-      <UiModalText stateVis={this.props.showModalText}
-                   onHide={this.onHideModalText}
-                   onShow={this.onShowModalText}/>
-      <UiModalAlert stateVis={this.props.showModalAlert}
-                    onHide={this.onHideModalAlert}
-                    onShow={this.onShowModalAlert}
-                    title={this.props.strAlertTitle}
-                    text={this.props.strAlertText}/>
-    </>;
+
+    return (
+      <>
+        {this.props.progress > 0 && (
+            <UIProgressBar 
+              active={this.props.progress}
+              progress={this.props.progress}
+            />
+        )}
+        <div className={css.header}>
+          <UiAbout active={false}/>
+          <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>
+        </div>
+        {store.modeView === ModeView.VIEW_2D && <UiFilterMenu/>}
+        {isReady && (
+            <div className={ css.main }>
+              <div className={ css.left }>
+                <UiViewMode/>
+                {(store.modeView === ModeView.VIEW_2D) && <UiCtrl2d/>}
+              </div>
+              <div className={ css.top }>
+                <ExploreTools/>
+              </div>
+              <div className={ css.center }>
+                <Graphics2d/>
+              </div>
+              <div className={ css.segmentation }>
+                <UiMain/>
+              </div>
+            </div>
+        )}
+        {arrErrorsLoadedd.length > 0 && <UiErrConsole/>}
+        <UiModalText stateVis={this.props.showModalText}
+                    onHide={this.onHideModalText}
+                    onShow={this.onShowModalText}/>
+        <UiModalAlert stateVis={this.props.showModalAlert}
+                      onHide={this.onHideModalAlert}
+                      onShow={this.onShowModalAlert}
+                      title={this.props.strAlertTitle}
+                      text={this.props.strAlertText}/>
+      </>
+    );
   }
-  
+
 }
 
 export default connect(store => store)(UiApp);

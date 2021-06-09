@@ -1,11 +1,16 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React from 'react';
 import { connect } from 'react-redux';
 
-import UiMainMpr from './UiMainMpr';
-import UiMain2d from './UiMain2d';
-import UiMain3dLight from './UiMain3dLight';
+import UiMainMpr from '../UiMainMpr';
+import UiMain2d from '../UiMain2d';
+import UiMain3dLight from '../UiMain3dLight';
 
-import ModeView from '../store/ModeView';
+import ModeView from '../../store/ModeView';
 
 class UiMain extends React.Component {
   render() {
