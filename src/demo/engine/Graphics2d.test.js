@@ -1,23 +1,15 @@
-/**
- * @fileOverview Graphics2d.test
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import ToolArea from './tools2d/ToolArea';
-import Graphics2d from './Graphics2d';
 import VolumeSet from './VolumeSet';
 import Volume from './Volume';
-
-// ********************************************************
-// Tests
-// ********************************************************
+import Graphics2d from "./Graphics2d";
+jest.mock("./Graphics2d", () => jest.fn(() => {}));
 
 describe('ToolArea. test line intersect', () => {
+  beforeEach(() => {
+    // Clear all instances and calls to constructor and all methods:
+    Graphics2d.mockClear();
+  });
+  
   it('ToolArea. test line intersect no 0', () => {
     // const gra = new Graphics2d();
     // const toolArea = new ToolArea(gra);
@@ -121,7 +113,6 @@ describe('ToolArea. test line intersect', () => {
     const bHas = ToolArea.hasSelfIntersection(points);
     expect(bHas === true).toBeTruthy();
   });
-
   it('ToolArea. test check area', () => {
     const vol = new Volume();
     vol.m_xDim = vol.m_yDim = vol.m_zDim = 100.0;

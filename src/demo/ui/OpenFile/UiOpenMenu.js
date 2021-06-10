@@ -1,14 +1,7 @@
-/**
- * @fileOverview UiOpenMenu
- * @author Epam
- * @version 1.0.0
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
  */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -16,39 +9,35 @@ import { connect } from 'react-redux';
 import zlib from 'zlib';
 import createReadStream from 'filereader-stream';
 
-import VolumeSet from '../engine/VolumeSet';
-import Volume from '../engine/Volume';
-import Texture3D from '../engine/Texture3D';
+import VolumeSet from '../../engine/VolumeSet';
+import Volume from '../../engine/Volume';
+import Texture3D from '../../engine/Texture3D';
 
-import UiModalDemo from "./Modals/ModalDemo";
-import UIModalUrl from "./Modals/ModalUrl";
-import UiModalGoogle from './UiModalGoogle';
-import UiModalWindowCenterWidth from './UiModalWinCW';
+import UiModalDemo from "../Modals/ModalDemo";
+import UIModalUrl from "../Modals/ModalUrl";
+import UiModalGoogle from '../UiModalGoogle';
+import UiModalWindowCenterWidth from '../UiModalWinCW';
 // import UiModalDicomSeries from './UiModalDicomSeries';
-import StoreActionType from '../store/ActionTypes';
-import ModeView from '../store/ModeView';
-import Modes3d from '../store/Modes3d';
+import StoreActionType from '../../store/ActionTypes';
+import ModeView from '../../store/ModeView';
+import Modes3d from '../../store/Modes3d';
 
 // import { timingSafeEqual } from 'crypto';
-import LoadResult from '../engine/LoadResult';
-import FileTools from '../engine/loaders/FileTools';
-import LoaderDicom from '../engine/loaders/LoaderDicom';
-import LoaderHdr from '../engine/loaders/LoaderHdr';
+import LoadResult from '../../engine/LoadResult';
+import FileTools from '../../engine/loaders/FileTools';
+import LoaderDicom from '../../engine/loaders/LoaderDicom';
+import LoaderHdr from '../../engine/loaders/LoaderHdr';
 
-import LoaderUrlDicom from '../engine/loaders/LoaderUrlDicom';
-import LoaderDcmDaikon from '../engine/loaders/LoaderDcmDaikon';
-import LoaderDcmUrlDaikon from '../engine//loaders/LoadDcmUrlDiakon';
+import LoaderUrlDicom from '../../engine/loaders/LoaderUrlDicom';
+import LoaderDcmDaikon from '../../engine/loaders/LoaderDcmDaikon';
+import LoaderDcmUrlDaikon from '../../engine/loaders/LoadDcmUrlDiakon';
 
-import config from '../config/config';
-import { UIButton } from "./Button/Button";
+import config from '../../config/config';
+import { UIButton } from "../Button/Button";
 import css from "./UiOpenMenu.module.css";
-import UiSaveMenu from "./UiSaveMenu";
-import UiReportMenu from "./UiReportMenu";
+import UiSaveMenu from "../UiSaveMenu";
+import UiReportMenu from "../UiReportMenu";
 // import { ButtonsDemo } from "./Button/ButtonsDemo";
-
-// ********************************************************
-// Const
-// ********************************************************
 
 /** Need to have demo menu */
 const NEED_DEMO_MENU = true;
@@ -64,13 +53,7 @@ const READ_DICOM_VIA_DAIKON = true;
 // ********************************************************
 
 
-/**
- * Class UiOpenMenu some text later...
- */
 class UiOpenMenu extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
     this.onButtonLocalFile = this.onButtonLocalFile.bind(this);
