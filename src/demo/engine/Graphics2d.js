@@ -158,8 +158,7 @@ class Graphics2d extends React.Component {
     //const ctx = objCanvas.getContext('2d');
     //const imageData = ctx.getImageData(0, 0, wShot, hShot);
     //console.log(`image data: ${imageData}`);
-    const dataUrl = objCanvas.toDataURL();
-    return dataUrl;
+    return objCanvas.toDataURL();
   }
 
   /**
@@ -252,7 +251,7 @@ class Graphics2d extends React.Component {
     // console.log(`render scene 2d. screen = ${w} * ${h}`);
 
     // Test draw chessboard
-    const NEED_TEST_RAINBOW = false;
+    const NEED_TEST_RAINBOW = true;
     if (NEED_TEST_RAINBOW) {
       const wImg = 800;
       const hImg = 600;

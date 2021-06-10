@@ -35,8 +35,6 @@ class UiLogoAbout extends React.Component {
 
     const strButtonOnly = <UIButton
       icon="logo"
-      type="reset"
-      style="color: black"
       handler={this.state.modalShow ? this.onHide : this.onShow} />
     const strButtonWithTrigger =
     <OverlayTrigger 

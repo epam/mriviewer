@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import StoreActionType from '../store/ActionTypes';
 
 import UiMain from './Tollbars/UiMain';
-import UiOpenMenu from './UiOpenMenu';
+import UiOpenMenu from './OpenFile/UiOpenMenu';
 import UiViewMode from './Tollbars/UiViewMode';
 import UiFilterMenu from './UiFilterMenu';
 import UiModalText from './UiModalText';
@@ -135,10 +135,13 @@ class UiApp extends React.Component {
               </div>
             </div>
         )}
+        
         {arrErrorsLoadedd.length > 0 && <UiErrConsole/>}
+        
         <UiModalText stateVis={this.props.showModalText}
                     onHide={this.onHideModalText}
                     onShow={this.onShowModalText}/>
+        
         <UiModalAlert stateVis={this.props.showModalAlert}
                       onHide={this.onHideModalAlert}
                       onShow={this.onShowModalAlert}
