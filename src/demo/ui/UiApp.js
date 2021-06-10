@@ -20,6 +20,7 @@ import UIProgressBar from "./ProgressBar/UIProgressBar";
 import UiAbout from "./UiAbout";
 
 import css from "./UiApp.module.css";
+import Graphics3d from "../engine/Graphics3d";
 
 class UiApp extends React.Component {
   constructor(props) {
@@ -127,7 +128,7 @@ class UiApp extends React.Component {
                 <ExploreTools/>
               </div>
               <div className={ css.center }>
-                <Graphics2d/>
+                { ModeView.VIEW_2D === store.modeView ? <Graphics2d/> : <Graphics3d/> }
               </div>
               <div className={ css.segmentation }>
                 <UiMain/>

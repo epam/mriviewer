@@ -14,13 +14,11 @@ import { connect } from 'react-redux';
 
 import UiCtrl3dLight from './UiCtrl3dLight';
 import UiCtrl3d from './UiCtrl3d';
-import Graphics3d from '../engine/Graphics3d';
 import 'nouislider/distribute/nouislider.css';
 
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
 import ModeView from '../store/ModeView';
-import ExploreTools from "./Tollbars/ExploreTools";
 
 class UiMain3dLight extends React.Component {
   /**
@@ -112,7 +110,6 @@ class UiMain3dLight extends React.Component {
                   range={{ min: 0.0, max: 1.0 }}
                   overflow-scroll={'true'}
                   start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true}/>
-      <ExploreTools/>
     </>
 
     return <>
@@ -123,7 +120,6 @@ class UiMain3dLight extends React.Component {
                   overflow-scroll={'true'}
                   start={wArrCut} connect={[false, false]} step={0.01} tooltips={true}/>
       {(store.isTool3D === false) ? jsxView : jsxTool}
-      <Graphics3d/>
     </>;
   };
 }

@@ -14,27 +14,27 @@ import { connect } from "react-redux";
 
 const ExploreTools = props => {
   const [activeButton, setActiveButton] = useState(Tools2dType.ZOOM_100);
-  
+
   const mediator = (buttonId) => {
     setActiveButton(buttonId);
     console.log(`${buttonId} button clicked`);
     props.dispatch({ type: StoreActionType.SET_2D_TOOLS_INDEX, indexTools2d: buttonId });
-  
+
     if (buttonId === Tools2dType.ZOOM_100) {
       props.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: 1.0 });
       props.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: 0.0 });
       props.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: 0.0 });
-    
+
       props.graphics2d.forceUpdate();
       props.graphics2d.forceRender();
     }
   }
-  
+
   const buttons = [
     {
-      id: Tools2dType.ZOOM_100,
+      id: Tools2dType.NONE,
       icon: "cursor",
-      handler: mediator.bind(null, Tools2dType.ZOOM_100)
+      handler: mediator.bind(null, Tools2dType.NONE)
     },
     {
       icon: "target",
@@ -73,16 +73,38 @@ const ExploreTools = props => {
       id: Tools2dType.TEXT,
     },
     {
+      icon: "edit",
+      caption: 'Move annotation text',
+      handler: mediator.bind(null, Tools2dType.EDIT),
+      id: Tools2dType.EDIT
+    },
+    {
+      icon: "clear",
+      caption: "Clear all objects",
+      handler: mediator.bind(null, Tools2dType.CLEAR),
+      id: Tools2dType.CLEAR
+    },
+    {
+      icon: "zoom", caption: "Zoom in/out",
+      handler: mediator.bind(null, Tools2dType.ZOOM),
+      id: Tools2dType.ZOOM
+    },
+    {
+      icon: "zoom_100", caption: "Zoom to default",
+      handler: mediator.bind(null, Tools2dType.ZOOM_100),
+      id: Tools2dType.ZOOM_100
+    },
+    {
       icon: "eraser",
       caption: "Delete annotation object",
       handler: mediator.bind(null, Tools2dType.DELETE),
       id: Tools2dType.DELETE,
     }
   ];
-  
+
   return (
     <Container direction="horizontal">
-      { buttonsBuilder(buttons, { activeButton }) }
+      {buttonsBuilder(buttons, { activeButton })}
     </Container>
   )
 };

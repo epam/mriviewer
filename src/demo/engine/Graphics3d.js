@@ -354,12 +354,9 @@ class Graphics3d extends React.Component {
     }
 
     const styleObj = {
-      width: '100vw',
-      height: '100vw',
-      position: 'absolute',
+      width: '100%',
+      height: '100%',
       display: 'block',
-      zIndex: '-1',
-      top: '0'
     };
 
     const jsxCanvasNonSized = <div

@@ -3,40 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @fileOverview UiViewMode
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import ModeView from '../../store/ModeView';
 import StoreActionType from '../../store/ActionTypes';
 import { UIButton } from "../Button/Button";
 import { Container } from "./Container";
 
-// ********************************************************
-// Class
-// ********************************************************
-
-
-
-/**
- * Class UiViewMode some text later...
- */
 class UiViewMode extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
 
@@ -138,7 +114,7 @@ class UiViewMode extends React.Component {
     </OverlayTrigger>
 
     const jsxViewTool =
-    <ButtonGroup className="mr-2" aria-label="Top group">
+    <Container direction="vertical">
       <OverlayTrigger key="view" placement="bottom" overlay={
         <Tooltip>
           Show volume in 3d mode with simple toolset
@@ -153,7 +129,7 @@ class UiViewMode extends React.Component {
       }>
         <UIButton handler={this.onTool3d} active={strTool3Don} icon="T" />
       </OverlayTrigger>
-    </ButtonGroup>
+    </Container>
 
     const FOUR = 4;
     let needShow3d = false;
