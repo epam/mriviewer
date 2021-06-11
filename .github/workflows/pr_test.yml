@@ -44,8 +44,8 @@ jobs:
       - run: npm test
 
       - name: Upload Artifact
-          uses: actions/upload-artifact@v2
-          with:
-            name: med3web_${{env.GITHUB_RUN_ID}}
-            path: build
-            retention-days: 5
+        uses: actions/upload-artifact@v2
+        with:
+          name: med3web_${{env.GITHUB_RUN_ID}}
+          path: build
+          retention-days: 5
