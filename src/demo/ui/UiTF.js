@@ -17,6 +17,7 @@ import { connect } from 'react-redux';
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
 import UiHistogram from './UiHistogram';
+import { SVG } from "./Button/SVG";
 
 
 // ********************************************************
@@ -169,7 +170,7 @@ class UiTF extends React.Component {
         <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
                     range={{ min: 0.0, max: 1.0 }}
                     start={wArr} connect={[false, true, false, true]} step={0.02} tooltips={true}/>
-        <p> Opacity </p>
+        <SVG name="opacity" title="Opacity"/>
         <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
                     range={{ min: 0.0, max: 1.0 }}
                     start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true}/>

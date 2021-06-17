@@ -33,9 +33,9 @@ class UiCtrl3d extends React.Component {
     this.m_updateEnable = true;
   }
 
-  onChangeSliderOpacity(e) {
+  onChangeSliderOpacity() {
     this.m_updateEnable = false;
-    this.aval = e.target.value;
+    this.aval = this.refs.sliderOpacity.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, sliderOpacity: Number.parseFloat(this.aval) });
   }
@@ -79,11 +79,10 @@ class UiCtrl3d extends React.Component {
 
     return <>
       <UiHistogram volume={vol} transfFunc={funcTra} transfFuncUpdate={funcTrTex}/>
-      <SVG name="opacity"/>
+      <SVG name="opacity" title="Opacity"/>
       <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
                   range={{ min: 0.0, max: 1.0 }}
                   start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true} />
-      <p>Value: {this.aval}</p>
     </>
   }
 }

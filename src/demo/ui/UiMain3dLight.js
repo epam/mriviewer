@@ -19,6 +19,7 @@ import 'nouislider/distribute/nouislider.css';
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
 import ModeView from '../store/ModeView';
+import { SVG } from "./Button/SVG";
 
 class UiMain3dLight extends React.Component {
   /**
@@ -114,7 +115,7 @@ class UiMain3dLight extends React.Component {
 
     return <>
       {jsxRet}
-      <p> Cut </p>
+      <SVG name="scissors" title="Cut" />
       <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={'sliderCut'}
                   range={{ min: 0.0, max: 1.0 }}
                   overflow-scroll={'true'}

@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
+import { SVG } from "./Button/SVG";
 
 
 // ********************************************************
@@ -33,7 +34,7 @@ class UiTFroi extends React.Component {
     super(props);
     this.m_updateEnable = true;
   }
-
+  
   shouldComponentUpdate(nextProps) {
     //return this.m_updateEnable;
     let flag = this.m_updateEnable;
@@ -42,7 +43,7 @@ class UiTFroi extends React.Component {
     }
     return flag;
   }
-
+  
   onChangeSliderTF() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderTF.slider.get();
@@ -50,24 +51,24 @@ class UiTFroi extends React.Component {
     store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3d_r: Number.parseFloat(aval[0]) });
     store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: Number.parseFloat(aval[1]) });
   }
-
+  
   onChangeSliderOpacity() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderOpacity.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, sliderOpacity: Number.parseFloat(aval) });
   }
-
+  
   onChangeSliderIsosurface() {
     this.m_updateEnable = false;
     const aval = this.refs.sliderIsosurface.slider.get();
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, sliderIsosurface: Number.parseFloat(aval) });
   }
-
+  
   /**
    * Main component render func callback
-    const jsxRet = jsxArray[mode3d];
+   const jsxRet = jsxArray[mode3d];
    */
   render() {
     const store = this.props;
@@ -82,23 +83,23 @@ class UiTFroi extends React.Component {
     const sliderIsosurface = store.sliderIsosurface;
     const wArrOpacity = [sliderOpacity];
     const wArrIsosurface = [sliderIsosurface];
-
+    
     const jsxVolumeTF =
       <>
-          <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
-            range={{ min: 0.0, max: 1.0 }}
-            start={wArr} connect={[false, true, false]} step={0.02} tooltips={true} />
-          <p> Opacity </p>
-          <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
-            range={{ min: 0.0, max: 1.0 }}
-            start={wArrOpacity} connect={[false, true]} step={0.02} tooltips={true} />
+        <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
+                    range={{ min: 0.0, max: 1.0 }}
+                    start={wArr} connect={[false, true, false]} step={0.02} tooltips={true}/>
+        <SVG name="opacity" title="Opacity"/>
+        <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
+                    range={{ min: 0.0, max: 1.0 }}
+                    start={wArrOpacity} connect={[false, true]} step={0.02} tooltips={true}/>
       </>
     const jsxIsoTF =
       <>
-          <p> Isosurface </p>
-          <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
-            range={{ min: 0.0, max: 1.0 }}
-            start={wArrIsosurface} connect={[false, true]} step={0.02} tooltips={true} />
+        <p> Isosurface </p>
+        <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
+                    range={{ min: 0.0, max: 1.0 }}
+                    start={wArrIsosurface} connect={[false, true]} step={0.02} tooltips={true}/>
       </>
     const jsxArray = [jsxIsoTF, jsxVolumeTF];
     const jsxRet = jsxArray[1];
