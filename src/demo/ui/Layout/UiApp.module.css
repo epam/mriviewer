@@ -62,3 +62,14 @@
     bottom: 25px;
     z-index: 1000;
 }
+
+
+
+
+
+.noUi-handle {
+    border: none;
+    background: #000;
+    cursor: col-resize;
+    box-shadow: none;
+}

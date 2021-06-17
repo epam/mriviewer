@@ -2,6 +2,7 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
+import '../../../nouislider-custom.css';
 
 import React from 'react';
 import { connect } from 'react-redux';

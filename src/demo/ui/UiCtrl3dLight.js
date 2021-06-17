@@ -14,8 +14,6 @@
 // Imports
 // ********************************************************
 
-// special css for NoUiSlioder
-import 'nouislider/distribute/nouislider.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
