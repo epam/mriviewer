@@ -79,7 +79,6 @@ class UiCtrl3d extends React.Component {
 
     return <>
       <UiHistogram volume={vol} transfFunc={funcTra} transfFuncUpdate={funcTrTex}/>
-      <p> Opacity </p>
       <SVG name="opacity"/>
       <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
                   range={{ min: 0.0, max: 1.0 }}
