@@ -1,3 +1,8 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // This optional code is used to register a service worker.
 // register() is not called by default.
 

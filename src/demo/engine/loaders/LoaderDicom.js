@@ -1,3 +1,8 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 /**
  * @fileOverview LoaderDicom
  * @author Epam
@@ -2096,4 +2101,3 @@ class LoaderDicom{
 
 export default LoaderDicom;
 
- 

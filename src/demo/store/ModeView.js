@@ -1,3 +1,8 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 const ModeView = {
   VIEW_NA: -1,
   VIEW_MPR: 0,
