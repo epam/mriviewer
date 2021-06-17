@@ -129,7 +129,7 @@ class UiApp extends React.Component {
                 {(store.modeView === ModeView.VIEW_2D) && <UiCtrl2d/>}
               </div>
               <div className={css.top}>
-                <ExploreTools/>
+                {store.modeView === ModeView.VIEW_2D && <ExploreTools/>}
               </div>
               <div className={css.center}>
                 {ModeView.VIEW_2D === store.modeView ? <Graphics2d/> : <Graphics3d/>}
