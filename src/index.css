@@ -42,8 +42,6 @@ code {
   width: 100vw;
   box-sizing: border-box;
 
-  padding: 30px 5px;
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
 }

@@ -151,7 +151,7 @@ class Graphics3d extends React.Component {
       const volIndex = store.volumeIndex;
       const vol = volSet.getVolume(volIndex);
       const FOUR = 4;
-      const isIso = (vol.m_bytesPerVoxel === FOUR) ? true : false;    
+      const isIso = (vol.m_bytesPerVoxel === FOUR);
       const modeView = store.modeView; 
       //let tst = 0;
       //if (this.volume.m_zDim < 4)

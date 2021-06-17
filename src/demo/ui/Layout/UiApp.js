@@ -1,40 +1,46 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React from 'react';
 import { connect } from 'react-redux';
 
-import StoreActionType from '../store/ActionTypes';
+import StoreActionType from '../../store/ActionTypes';
 
-import UiMain from './Tollbars/UiMain';
-import UiOpenMenu from './OpenFile/UiOpenMenu';
-import UiViewMode from './Tollbars/UiViewMode';
-import UiFilterMenu from './UiFilterMenu';
-import UiModalText from './UiModalText';
-import UiModalAlert from './Modals/ModalAlert';
-import UiErrConsole from './UiErrConsole';
-import ModeView from '../store/ModeView';
-import Graphics2d from "../engine/Graphics2d";
-import UiCtrl2d from "./UiCtrl2d";
+import UiSettings from '../Tollbars/UiMain';
+import UiOpenMenu from '../OpenFile/UiOpenMenu';
+import UiViewMode from '../Tollbars/UiViewMode';
+import UiFilterMenu from '../UiFilterMenu';
+import UiModalText from '../UiModalText';
+import UiModalAlert from '../Modals/ModalAlert';
+import UiErrConsole from '../UiErrConsole';
+import ModeView from '../../store/ModeView';
+import Graphics2d from "../../engine/Graphics2d";
+import UiCtrl2d from "../UiCtrl2d";
 
-import BrowserDetector from '../engine/utils/BrowserDetector';
-import ExploreTools from "./Tollbars/ExploreTools";
-import UIProgressBar from "./ProgressBar/UIProgressBar";
-import UiAbout from "./UiAbout";
+import BrowserDetector from '../../engine/utils/BrowserDetector';
+import ExploreTools from "../Tollbars/ExploreTools";
+import UIProgressBar from "../ProgressBar/UIProgressBar";
+import UiAbout from "../UiAbout";
 
 import css from "./UiApp.module.css";
-import Graphics3d from "../engine/Graphics3d";
+import Graphics3d from "../../engine/Graphics3d";
 
 class UiApp extends React.Component {
   constructor(props) {
     super(props);
-
+    
     this.m_store = null;
     this.m_fileNameOnLoad = '';
-
+    
     this.state = {
       strAlertTitle: '???',
       strAlertText: '???',
     };
+    
   }
-
+  
   UNSAFE_componentWillMount() {
     let fileNameOnLoad = '';
     const strSearch = window.location.search;
@@ -57,11 +63,11 @@ class UiApp extends React.Component {
       this.m_fileNameOnLoad = fileNameOnLoad;
     }
   }
-
+  
   componentDidMount() {
     const store = this.m_store;
     store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
-
+    
     // browser detector
     const browserDetector = new BrowserDetector();
     this.isWebGl20supported = browserDetector.checkWebGlSupported();
@@ -78,23 +84,23 @@ class UiApp extends React.Component {
       }
     }
   }
-
+  
   onShowModalText() {
     this.props.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true })
   }
-
+  
   onHideModalText() {
     this.props.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: false })
   }
-
+  
   onShowModalAlert() {
     this.props.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: true })
   }
-
+  
   onHideModalAlert() {
     this.props.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: false })
   }
-
+  
   /**
    * Main component render func callback
    */
@@ -102,55 +108,53 @@ class UiApp extends React.Component {
     const store = this.props;
     this.m_store = store;
     const arrErrorsLoadedd = store.arrErrors;
-
+    
     const isReady = store.isLoaded && this.isWebGl20supported
-
+    
     return (
       <>
-        {this.props.progress > 0 && (
-            <UIProgressBar 
+          {this.props.progress > 0 && (
+            <UIProgressBar
               active={this.props.progress}
               progress={this.props.progress}
-            />
-        )}
-        <div className={css.header}>
-          <UiAbout active={false}/>
-          <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>
-        </div>
-        {store.modeView === ModeView.VIEW_2D && <UiFilterMenu/>}
-        {isReady && (
-            <div className={ css.main }>
-              <div className={ css.left }>
+            />)}
+          <div className={css.header}>
+            <UiAbout />
+            <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>
+          </div>
+          {isReady && (<>
+              <div className={css.left}>
                 <UiViewMode/>
                 {(store.modeView === ModeView.VIEW_2D) && <UiCtrl2d/>}
               </div>
-              <div className={ css.top }>
+              <div className={css.top}>
                 <ExploreTools/>
               </div>
-              <div className={ css.center }>
-                { ModeView.VIEW_2D === store.modeView ? <Graphics2d/> : <Graphics3d/> }
+              <div className={css.center}>
+                {ModeView.VIEW_2D === store.modeView ? <Graphics2d/> : <Graphics3d/>}
               </div>
-              <div className={ css.segmentation }>
-                <UiMain/>
+              <div className={css.segmentation}>
+                {store.modeView === ModeView.VIEW_2D && <UiFilterMenu/>}
+                <UiSettings/>
               </div>
-            </div>
-        )}
+            </>
+          )}
         
         {arrErrorsLoadedd.length > 0 && <UiErrConsole/>}
         
         <UiModalText stateVis={this.props.showModalText}
-                    onHide={this.onHideModalText}
-                    onShow={this.onShowModalText}/>
+                     onHide={this.onHideModalText.bind(this)}
+                     onShow={this.onShowModalText.bind(this)}/>
         
         <UiModalAlert stateVis={this.props.showModalAlert}
-                      onHide={this.onHideModalAlert}
-                      onShow={this.onShowModalAlert}
+                      onHide={this.onHideModalAlert.bind(this)}
+                      onShow={this.onShowModalAlert.bind(this)}
                       title={this.props.strAlertTitle}
                       text={this.props.strAlertText}/>
       </>
     );
   }
-
+  
 }
 
 export default connect(store => store)(UiApp);

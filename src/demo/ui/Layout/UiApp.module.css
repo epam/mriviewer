@@ -8,30 +8,29 @@
     flex-wrap: nowrap;
     flex-direction: row;
     align-items: center;
-}
-
-
-.main {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    position: relative;
-    flex-grow: 1;
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    z-index: 1000;
+    margin-bottom: 25px;
+    width: calc(100% - 50px);
 }
 
 .top {
-    display: flex;
-    flex-direction: row;
-    padding-left: 25px;
-    position: relative;
+    /*display: flex;*/
+    /*flex-direction: row;*/
+    /*padding-left: 25px;*/
+    position: absolute;
     z-index: 10;
 }
 
 .left {
     display: flex;
     flex-direction: column;
-    position: relative;
-    z-index: 10;
+    position: absolute;
+    left: 25px;
+    top: 100px;
+    z-index: 1000;
 }
 
 .center {
@@ -40,11 +39,17 @@
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 10;
 }
 
 .segmentation {
     display: flex;
     flex-direction: column;
-    position: relative;
     z-index: 10;
+    position: absolute;
+    right: 25px;
+    top: 100px;
+    background-color: var(--dark-gray);
+    padding: 25px;
+    width: 400px;
 }

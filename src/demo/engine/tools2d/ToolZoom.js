@@ -81,7 +81,7 @@ class ToolZoom {
 
   onMouseWheel(store, evt) {
     const delta = Math.max(-1, Math.min(1, (evt.deltaY || -evt.detail)));
-    const MULT_STEP = 0.04;
+    const MULT_STEP = 1;
     const step = -delta * MULT_STEP;
     // console.log(`onMouseWheel. step = ${step}`);
 
