@@ -130,10 +130,9 @@ class ToolText {
    * @param {object} store - global storage
    */  
   onMouseDown(xScr, yScr, store) {
-    const vTex = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
-    this.m_pointPressed = vTex;
+    this.m_pointPressed = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
     
-    store.dispatch({ type: StoreActionType.SET_MODAL_TEXT, setModalText: true })
+    store.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true })
   }
 
   onMouseMove() { // args ommited: xScr, yScr, store
