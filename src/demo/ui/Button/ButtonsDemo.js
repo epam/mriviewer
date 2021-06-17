@@ -13,15 +13,19 @@ const icons = { logo, file, folder, link, grid, download, report, camera,
 
     transverse, saggital, coronal,
 
-  isosurface, E, M, T, V, I,
+  isosurface, E, M, V, I,
 
     opacity,
+  
+  cursor, target, line, angle, area, square, T, edit, clear, eraser,
+  
+  "zoom": "zoom", "zoom_100": "zoom_100",
 
-     angle, area, back, brain, brightness,  clear,
-        collapse,  cursor,  "edge-detection": "edge-detection", eraser, expand,
-         forth,   line,  lungs, "noise-reduction": "noise-reduction",
-         "roll-up": "roll-up",  scissors, settings, square, target,
-        triangle, "zoom-in": "zoom-in", "zoom-out": "zoom-out", D,
+      back, brain, brightness,   expand,
+        collapse,    "edge-detection": "edge-detection",
+         forth,     lungs, "noise-reduction": "noise-reduction",
+         "roll-up": "roll-up",  scissors, settings,
+        triangle,  D,
 };
 
 export const ButtonsDemo = () => (

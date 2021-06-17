@@ -55,3 +55,10 @@
     padding: 25px;
     width: 400px;
 }
+
+.bottleft {
+    position: absolute;
+    left: 25px;
+    bottom: 25px;
+    z-index: 1000;
+}

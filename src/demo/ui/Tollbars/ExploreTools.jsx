@@ -85,16 +85,6 @@ const ExploreTools = props => {
       id: Tools2dType.CLEAR
     },
     {
-      icon: "zoom", caption: "Zoom in/out",
-      handler: mediator.bind(null, Tools2dType.ZOOM),
-      id: Tools2dType.ZOOM
-    },
-    {
-      icon: "zoom_100", caption: "Zoom to default",
-      handler: mediator.bind(null, Tools2dType.ZOOM_100),
-      id: Tools2dType.ZOOM_100
-    },
-    {
       icon: "eraser",
       caption: "Delete annotation object",
       handler: mediator.bind(null, Tools2dType.DELETE),
