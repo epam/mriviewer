@@ -61,7 +61,7 @@ class UiLogoAbout extends React.Component {
   
       {strBtnDynamic}
   
-      <Modal show={this.state.modalShow} onHide={this.onHide} style="backgroundColor: black">
+      <Modal show={this.state.modalShow} onHide={this.onHide}>
         <Modal.Title>
           <center>{strName}</center>
         </Modal.Title>
