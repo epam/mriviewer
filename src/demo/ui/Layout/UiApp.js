@@ -135,7 +135,7 @@ class UiApp extends React.Component {
                 {ModeView.VIEW_2D === store.modeView ? <Graphics2d/> : <Graphics3d/>}
               </div>
               <div className={css.bottleft}>
-                <ZoomTools/>
+                {store.modeView === ModeView.VIEW_2D && <ZoomTools/>}
               </div>
               <div className={css.segmentation}>
                 {store.modeView === ModeView.VIEW_2D && <UiFilterMenu/>}
