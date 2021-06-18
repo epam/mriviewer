@@ -64,7 +64,7 @@ class UiMain2d extends React.Component {
     const aval = this.slider.current.slider.get()
     if (typeof (aval) === 'string') {
       val = +aval;
-      console.log(`onSlider. val = ${val}`);
+      // console.log(`onSlider. val = ${val}`);
       // convert slider value from [0.. ?dim] to [0..1]
       const valNormalizedTo01 = val / this.slideRangeMax;
       const store = this.props;

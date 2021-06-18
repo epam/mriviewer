@@ -32,25 +32,8 @@
 
 }
 
-.left {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-content: center;
-    justify-content: flex-start;
-    align-items: center;
-}
-
 .filename {
     margin-left: .5em;
 }
 
-.right {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-content: center;
-    justify-content: flex-end;
-    align-items: center;
-}
 

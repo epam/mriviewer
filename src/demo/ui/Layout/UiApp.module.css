@@ -54,6 +54,7 @@
     background-color: var(--dark-gray);
     padding: 25px;
     width: 400px;
+    opacity: .8;
 }
 
 .bottleft {
@@ -63,13 +64,3 @@
     z-index: 1000;
 }
 
-
-
-
-
-.noUi-handle {
-    border: none;
-    background: #000;
-    cursor: col-resize;
-    box-shadow: none;
-}
