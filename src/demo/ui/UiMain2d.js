@@ -51,7 +51,7 @@ class UiMain2d extends React.Component {
     const y = transfFuncObj.m_handleY[i];
     console.log(`moved point[${i}] = ${x}, ${y}  `);
   }
-  
+
   shouldComponentUpdate() {
     return this.m_updateEnable;
   }

@@ -130,8 +130,8 @@ class Graphics2d extends React.Component {
   /**
    * Get screenshot
    *
-   * @param {nuimber} wShot - x size of screenshot
-   * @param {nuimber} hShot - y size of screenshot
+   * @param {number} wShot - x size of screenshot
+   * @param {number} hShot - y size of screenshot
    */
   screenshot(wShot, hShot) {
     console.log(`get screenshot from 2d canvas: ${wShot}*${hShot}`);
@@ -146,7 +146,8 @@ class Graphics2d extends React.Component {
    * Render text info about volume
    *
    * @param {object} ctx - render context
-   * @param {VolumeSet} volSet - volume set to rener
+   * @param {VolumeSet} volSet - volume set to render
+   * @param vol
    */
   renderTextInfo(ctx, volSet, vol) {
     let strMsg;

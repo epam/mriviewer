@@ -6,7 +6,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import UiApp from './ui/Layout/UiApp';
+import UiApp from './ui/UiApp';
 
 class App extends React.Component {
   render() {

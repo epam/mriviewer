@@ -2,32 +2,32 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-import '../../../nouislider-custom.css';
+import '../../nouislider-custom.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
 
-import StoreActionType from '../../store/ActionTypes';
+import StoreActionType from '../store/ActionTypes';
 
-import UiSettings from '../Tollbars/UiMain';
-import UiOpenMenu from '../OpenFile/UiOpenMenu';
-import UiViewMode from '../Tollbars/UiViewMode';
-import UiFilterMenu from '../UiFilterMenu';
-import UiModalText from '../UiModalText';
-import UiModalAlert from '../Modals/ModalAlert';
-import UiErrConsole from '../UiErrConsole';
-import ModeView from '../../store/ModeView';
-import Graphics2d from "../../engine/Graphics2d";
-import UiCtrl2d from "../UiCtrl2d";
+import UiSettings from './Tollbars/UiMain';
+import UiOpenMenu from './OpenFile/UiOpenMenu';
+import UiViewMode from './Tollbars/UiViewMode';
+import UiFilterMenu from './UiFilterMenu';
+import UiModalText from './UiModalText';
+import UiModalAlert from './Modals/ModalAlert';
+import UiErrConsole from './UiErrConsole';
+import ModeView from '../store/ModeView';
+import Graphics2d from "../engine/Graphics2d";
+import UiCtrl2d from "./UiCtrl2d";
 
-import BrowserDetector from '../../engine/utils/BrowserDetector';
-import ExploreTools from "../Tollbars/ExploreTools";
-import UIProgressBar from "../ProgressBar/UIProgressBar";
-import UiAbout from "../UiAbout";
+import BrowserDetector from '../engine/utils/BrowserDetector';
+import ExploreTools from "./Tollbars/ExploreTools";
+import UIProgressBar from "./ProgressBar/UIProgressBar";
+import UiAbout from "./UiAbout";
 
 import css from "./UiApp.module.css";
-import Graphics3d from "../../engine/Graphics3d";
-import ZoomTools from "../ZoomTools";
+import Graphics3d from "../engine/Graphics3d";
+import ZoomTools from "./ZoomTools";
 
 class UiApp extends React.Component {
   constructor(props) {
@@ -127,19 +127,19 @@ class UiApp extends React.Component {
           {isReady && (<>
               <div className={css.left}>
                 <UiViewMode/>
-                {(store.modeView === ModeView.VIEW_2D) && <UiCtrl2d/>}
+                {store.modeView === ModeView.VIEW_2D && <UiCtrl2d/>}
               </div>
               <div className={css.top}>
                 {store.modeView === ModeView.VIEW_2D && <ExploreTools/>}
+                {store.modeView === ModeView.VIEW_2D && <UiFilterMenu/>}
               </div>
               <div className={css.center}>
-                {ModeView.VIEW_2D === store.modeView ? <Graphics2d/> : <Graphics3d/>}
+                {store.modeView === ModeView.VIEW_2D ? <Graphics2d/> : <Graphics3d/>}
               </div>
               <div className={css.bottleft}>
                 {store.modeView === ModeView.VIEW_2D && <ZoomTools/>}
               </div>
               <div className={css.segmentation}>
-                {store.modeView === ModeView.VIEW_2D && <UiFilterMenu/>}
                 <UiSettings/>
               </div>
             </>
@@ -147,19 +147,18 @@ class UiApp extends React.Component {
         
         {arrErrorsLoadedd.length > 0 && <UiErrConsole/>}
         
-        <UiModalText stateVis={this.props.showModalText}
+        {this.props.showModalText && <UiModalText stateVis={this.props.showModalText}
                      onHide={this.onHideModalText.bind(this)}
-                     onShow={this.onShowModalText.bind(this)}/>
+                     onShow={this.onShowModalText.bind(this)}/>}
         
-        <UiModalAlert stateVis={this.props.showModalAlert}
+        {this.props.showModalAlert && <UiModalAlert stateVis={this.props.showModalAlert}
                       onHide={this.onHideModalAlert.bind(this)}
                       onShow={this.onShowModalAlert.bind(this)}
                       title={this.props.strAlertTitle}
-                      text={this.props.strAlertText}/>
+                      text={this.props.strAlertText}/>}
       </>
     );
   }
-  
 }
 
 export default connect(store => store)(UiApp);
