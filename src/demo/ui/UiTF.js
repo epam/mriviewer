@@ -20,7 +20,7 @@ import { connect } from 'react-redux';
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
 import UiHistogram from './UiHistogram';
-import { SVG } from "./Button/SVG";
+import { SliderCaption, SliderRow } from "./Layout";
 
 
 // ********************************************************
@@ -169,23 +169,29 @@ class UiTF extends React.Component {
     const jsxVolumeTF =
       <>
         <UiHistogram volume={vol} transfFunc={funcTra}/>
-        <p> Set </p>
-        <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
-                    range={{ min: 0.0, max: 1.0 }}
-                    start={wArr} connect={[false, true, false, true]} step={0.02} tooltips={true}/>
-        <SVG name="opacity" title="Opacity"/>
-        <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
-                    range={{ min: 0.0, max: 1.0 }}
-                    start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true}/>
+        <SliderCaption caption="Set" />
+          <SliderRow >
+            <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
+                        range={{ min: 0.0, max: 1.0 }}
+                        start={wArr} connect={[false, true, false, true]} step={0.02} tooltips={true}/>
+          </SliderRow>
+        <SliderRow icon="opacity" title="Opacity">
+          <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
+                      range={{ min: 0.0, max: 1.0 }}
+                      start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true}/>
+        </SliderRow>
       </>;
 
     const jsxIsoTF =
       <>
         <UiHistogram volume={vol} transfFunc={funcTra}/>
-        <p> Isosurface </p>
-        <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
-                    range={{ min: 0.0, max: 1.0 }}
-                    start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true}/>
+        <SliderCaption caption="Isosurface" />
+        <SliderRow>
+          <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
+                      range={{ min: 0.0, max: 1.0 }}
+                      start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true}/>
+        </SliderRow>
+
         Ambient Oclusion ->
         <button type="button" className={'btn btn-outline-dark'} onClick={this.onAO}>
           On
@@ -200,18 +206,25 @@ class UiTF extends React.Component {
     const jsxEreaser =
       <>
         Press Control + Mouse Down [+ Mouse Move] for erease
-        <p> Radius </p>
-        <Nouislider onSlide={this.onChangeSliderErRadius.bind(this)} ref={'sliderErRadius'}
-                    range={{ min: 1.0, max: 100.0 }}
-                    start={wArrErRadius} connect={[true, false]} step={0.02} tooltips={true}/>
-        <p> Depth </p>
-        <Nouislider onSlide={this.onChangeSliderErDepth.bind(this)} ref={'sliderErDepth'}
-                    range={{ min: 1.0, max: 100.0 }}
-                    start={wArrErDepth} connect={[true, false]} step={0.02} tooltips={true}/>
-        <p> Isosurface </p>
-        <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
-                    range={{ min: 0.0, max: 1.0 }}
-                    start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true}/>
+        <SliderCaption caption="Radius" />
+        <SliderRow>
+          <Nouislider onSlide={this.onChangeSliderErRadius.bind(this)} ref={'sliderErRadius'}
+                      range={{ min: 1.0, max: 100.0 }}
+                      start={wArrErRadius} connect={[true, false]} step={0.02} tooltips={true}/>
+        </SliderRow>
+        <SliderCaption caption="Depth" />
+        <SliderRow>
+          <Nouislider onSlide={this.onChangeSliderErDepth.bind(this)} ref={'sliderErDepth'}
+                      range={{ min: 1.0, max: 100.0 }}
+                      start={wArrErDepth} connect={[true, false]} step={0.02} tooltips={true}/>
+        </SliderRow>
+        <SliderCaption caption="Isosurface" />
+        <SliderRow>
+          <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
+                      range={{ min: 0.0, max: 1.0 }}
+                      start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true}/>
+        </SliderRow>
+
         <button type="button" className={'btn btn-outline-dark'} onClick={this.onUndo}>
           Undo
         </button>

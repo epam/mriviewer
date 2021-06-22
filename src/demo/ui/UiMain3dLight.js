@@ -23,7 +23,7 @@ import UiCtrl3d from './UiCtrl3d';
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
 import ModeView from '../store/ModeView';
-import { SVG } from "./Button/SVG";
+import { SliderRow } from "./Layout";
 
 class UiMain3dLight extends React.Component {
   /**
@@ -98,32 +98,37 @@ class UiMain3dLight extends React.Component {
     jsxArray[ModeView.VIEW_3D] = jsx3d;
     const jsxRet = jsxArray[modeViewIndex];
     const jsxView = <>
-      <p> Brightness </p>
-      <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={'sliderBrightness'}
-                  range={{ min: 0.0, max: 1.0 }}
-                  overflow-scroll={'true'}
-                  start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true}/>
-      <p> Quality </p>
-      <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={'sliderQuality'}
-                  range={{ min: 0.0, max: 1.0 }}
-                  overflow-scroll={'true'}
-                  start={wArrQuality} connect={[false, false]} step={0.02} tooltips={true}/>
+      <SliderRow icon={"brightness"} title={"Brightness"}>
+        <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={'sliderBrightness'}
+                    range={{ min: 0.0, max: 1.0 }}
+                    overflow-scroll={'true'}
+                    start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true}/>
+      </SliderRow>
+      <SliderRow icon="triangle" title="Quality">
+        <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={'sliderQuality'}
+                    range={{ min: 0.0, max: 1.0 }}
+                    overflow-scroll={'true'}
+                    start={wArrQuality} connect={[false, false]} step={0.02} tooltips={true}/>
+      </SliderRow>
     </>
+
     const jsxTool = <>
-      <p> Cut plane opacity </p>
-      <Nouislider onSlide={this.onChangeSliderContrast3D.bind(this)} ref={'sliderContrast3D'}
-                  range={{ min: 0.0, max: 1.0 }}
-                  overflow-scroll={'true'}
-                  start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true}/>
+      <SliderRow title="Cut plane opacity">
+        <Nouislider onSlide={this.onChangeSliderContrast3D.bind(this)} ref={'sliderContrast3D'}
+                    range={{ min: 0.0, max: 1.0 }}
+                    overflow-scroll={'true'}
+                    start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true}/>
+      </SliderRow>
     </>
 
     return <>
       {jsxRet}
-      <SVG name="scissors" title="Cut" />
-      <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={'sliderCut'}
-                  range={{ min: 0.0, max: 1.0 }}
-                  overflow-scroll={'true'}
-                  start={wArrCut} connect={[false, false]} step={0.01} tooltips={true}/>
+      <SliderRow icon="scissors" title="Cut">
+        <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={'sliderCut'}
+                    range={{ min: 0.0, max: 1.0 }}
+                    overflow-scroll={'true'}
+                    start={wArrCut} connect={[false, false]} step={0.01} tooltips={true}/>
+      </SliderRow>
       {(store.isTool3D === false) ? jsxView : jsxTool}
     </>;
   };

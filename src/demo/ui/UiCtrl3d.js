@@ -18,8 +18,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import StoreActionType from '../store/ActionTypes';
 import UiHistogram from './UiHistogram';
-import { SVG } from "./Button/SVG";
 import Nouislider from 'react-nouislider';
+import { SliderRow } from "./Layout";
 
 /**
  * Class UiCtrl3dLight some text later...
@@ -81,10 +81,11 @@ class UiCtrl3d extends React.Component {
 
     return <>
       <UiHistogram volume={vol} transfFunc={funcTra} transfFuncUpdate={funcTrTex}/>
-      <SVG name="opacity" title="Opacity"/>
-      <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
-                  range={{ min: 0.0, max: 1.0 }}
-                  start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true} />
+      <SliderRow icon="opacity" title="Opacity">
+        <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
+                    range={{ min: 0.0, max: 1.0 }}
+                    start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true} />
+      </SliderRow>
     </>
   }
 }

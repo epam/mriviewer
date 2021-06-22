@@ -16,15 +16,12 @@ class UiMain extends React.Component {
   render() {
     const store = this.props;
     const modeViewIndex = store.modeView;
-    const jsxMainMpr = <UiMainMpr/>;
-    const jsxMain2d = <UiMain2d/>;
-    const jsxMain3dLight = <UiMain3dLight/>;
 
     const jsxArray = new Array(ModeView.VIEW_COUNT);
-    jsxArray[ModeView.VIEW_MPR] = jsxMainMpr;
-    jsxArray[ModeView.VIEW_2D] = jsxMain2d;
-    jsxArray[ModeView.VIEW_3D_LIGHT] = jsxMain3dLight ;
-    jsxArray[ModeView.VIEW_3D] = jsxMain3dLight;
+    jsxArray[ModeView.VIEW_MPR] = <UiMainMpr/>;
+    jsxArray[ModeView.VIEW_2D] =  <UiMain2d/>;
+    jsxArray[ModeView.VIEW_3D_LIGHT] = <UiMain3dLight/> ;
+    jsxArray[ModeView.VIEW_3D] = <UiMain3dLight/>;
     return jsxArray[modeViewIndex];
   };
 }

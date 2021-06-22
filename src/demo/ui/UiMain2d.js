@@ -11,6 +11,8 @@ import UiVolumeSel from './UiVolumeSel'
 import Nouislider from "react-nouislider";
 import Modes2d from "../store/Modes2d";
 import StoreActionType from "../store/ActionTypes";
+import { SliderCaption, SliderRow } from "./Layout";
+
 
 class UiMain2d extends React.Component {
   constructor(props) {
@@ -28,8 +30,8 @@ class UiMain2d extends React.Component {
         zDim = vol.m_zDim;
       }
     } // if more 0 volumes
-  
-  
+
+
     // slider maximum value is depend on current x or y or z 2d mode selection
     this.slideRangeMax = 0;
     if (store.mode2d === Modes2d.SAGGITAL) {
@@ -39,12 +41,12 @@ class UiMain2d extends React.Component {
     } else if (store.mode2d === Modes2d.TRANSVERSE) {
       this.slideRangeMax = zDim - 1;
     }
-    
+
     this.slider = React.createRef();
     this.m_updateEnable = true;
     this.onChangeSliderSlice = this.onChangeSliderSlice.bind(this);
   }
-  
+
   transferFuncCallback(transfFuncObj) {
     const i = transfFuncObj.m_indexMoved;
     const x = transfFuncObj.m_handleX[i];
@@ -55,8 +57,8 @@ class UiMain2d extends React.Component {
   shouldComponentUpdate() {
     return this.m_updateEnable;
   }
-  
-  
+
+
   onChangeSliderSlice() {
     if (!this.slider.current) return;
     this.m_updateEnable = false;
@@ -72,15 +74,15 @@ class UiMain2d extends React.Component {
       // clear all 2d tools
       const gra2d = store.graphics2d;
       gra2d.clear();
-      
+
       // re-render (and rebuild segm if present)
       gra2d.forceUpdate();
-      
+
       // render just builded image
       gra2d.forceRender();
     }
   }
-  
+
   /*
    *
    * Main component render func callback
@@ -88,14 +90,14 @@ class UiMain2d extends React.Component {
   render() {
     const store = this.props;
     const valSlider = store.slider2d;
-    
+
     const wArr = [Math.floor(valSlider * this.slideRangeMax)];
     // special formatter interface for show only intefer numbers
     // in slider:
     // provide two conversion functions:
     // to (int -> string)
     // from (string -> int)
-  
+
     const formatterInt = {
       to(valNum) {
         const i = Math.floor(valNum);
@@ -107,12 +109,15 @@ class UiMain2d extends React.Component {
     };
 
     return <>
-      <Nouislider onUpdate={this.onChangeSliderSlice}
-                  ref={this.slider}
-                  range={{ min: 0, max: this.slideRangeMax }}
-                  start={wArr} step={1}
-                  format={formatterInt}
-                  tooltips={true} />
+      <SliderCaption caption="Slider" />
+      <SliderRow icon="transverse">
+        <Nouislider onUpdate={this.onChangeSliderSlice}
+                    ref={this.slider}
+                    range={{ min: 0, max: this.slideRangeMax }}
+                    start={wArr} step={1}
+                    format={formatterInt}
+                    tooltips={true} />
+      </SliderRow>
       <UiSegm2d />
       {(store.volumeSet.m_volumes.length > 1) ? <UiVolumeSel /> : <br />}
     </>;
