@@ -44,10 +44,10 @@
     z-index: 10;
 }
 
-.segmentation {
+.settings {
     display: flex;
     flex-direction: column;
-    z-index: 10;
+    z-index: 1002;
     position: absolute;
     right: 25px;
     top: 100px;

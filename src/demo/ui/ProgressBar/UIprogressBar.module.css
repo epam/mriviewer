@@ -31,4 +31,5 @@
     font-style: italic;
     letter-spacing: 0.2px;
     color: var(--gray);
+    z-index: 1001;
 }

@@ -3,44 +3,28 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @fileOverview UiModalText
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
-
-import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
-
-// ********************************************************
-// Class
-// ********************************************************
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "./ModalBase";
+import { UIButton } from "../Button/Button"
+import css from "./Modals.module.css";
 
 class UiModalText extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
     this.onButtonOk = this.onButtonOk.bind(this);
     this.onTexChange = this.onTexChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
     // this.onSaveNifti = this.onSaveNifti.bind(this);
-
+    
     this.m_showFunc = null;
     this.m_hideFunc = null;
-
+    
     this.state = {
       text: ''
     };
   } // end constr
-
+  
   onTextEntered() {
     const store = this.props;
     const gra = store.graphics2d;
@@ -48,7 +32,7 @@ class UiModalText extends React.Component {
     toolText.setText(this.state.text);
     this.setState({ text: '' });
   }
-
+  
   /**
    * When user press OK button
    */
@@ -57,19 +41,19 @@ class UiModalText extends React.Component {
     this.m_hideFunc();
     this.onTextEntered();
   }
-
+  
   handleFormSubmit(evt) {
     evt.preventDefault();
     this.m_hideFunc();
     this.onTextEntered();
   }
-
+  
   onTexChange(evt) {
     const strText = evt.target.value;
     // console.log(`onTexChange. text = ${strText}`);
     this.setState({ text: strText });
   }
-
+  
   render() {
     const stateVis = this.props.stateVis;
     const onHideFunc = this.props.onHide;
@@ -77,42 +61,20 @@ class UiModalText extends React.Component {
     this.m_hideFunc = onHideFunc;
     this.m_showFunc = onShowFunc;
     // console.log(`UiModalText. setup funcs: ${this.m_showFunc}, ${this.m_hideFunc}`);
-
-    return <Modal show={stateVis} onHide={onHideFunc}>
-
-      <Modal.Body>
-
-        <Modal.Title>
-          Input text
-        </Modal.Title>
-
-        <Form onSubmit={evt => this.handleFormSubmit(evt)}>
-          <Form.Control required type="text" placeholder=""
-                        defaultValue={this.state.text} onChange={this.onTexChange} autoFocus={true}/>
-        </Form>
-        <Row>
-          <Col lg xl="2">
-            <Button onClick={onHideFunc}>
-              Cancel
-            </Button>
-          </Col>
-
-          <Col lg xl="2">
-            <Button onClick={this.onButtonOk}>
-              Ok
-            </Button>
-          </Col>
-
-          <Col lg xl="8">
-          </Col>
-
-        </Row>
-
-      </Modal.Body>
-
-    </Modal>;
-  } // end render
-
-} // end class
+    
+    return <Modal isOpen={stateVis} close={onHideFunc}>
+      <ModalHeader title="Input text" close={ onHideFunc } />
+      <ModalBody>
+        <input required type="text" placeholder="" style={{ width: "70%" }}
+               className={css.input}
+               value={this.state.text} onChange={this.onTexChange} autoFocus={true}/>
+      </ModalBody>
+      <ModalFooter>
+        <UIButton handler={onHideFunc} caption="Cancel"/>
+        <UIButton handler={this.handleFormSubmit} caption="Apply"/>
+      </ModalFooter>
+    </Modal>
+  }
+}
 
 export default connect(store => store)(UiModalText);

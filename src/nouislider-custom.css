@@ -109,7 +109,7 @@
 }
 
 .noUi-connect {
-    background: var(--green);
+    background: var(--red);
     -webkit-transition: background 450ms;
     transition: background 450ms;
 }
@@ -135,10 +135,10 @@
 }
 
 .noUi-handle {
-    border: 1px solid var(--red);
+    border: 1px solid var(--white);
     border-radius: 5px;
-    background: var(--red);
-    cursor: default;
+    background: var(--white);
+    cursor: col-resize;
 }
 
 .noUi-active {

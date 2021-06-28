@@ -13,7 +13,7 @@ import ModeView from '../store/ModeView';
 import Modes3d from '../store/Modes3d';
 
 import SobelEdgeDetector from '../engine/imgproc/Sobel';
-import UiModalBilateral from './UiModalBilateral';
+import UiModalBilateral from './Modals/UiModalBilateral';
 import { Container } from "./Tollbars/Container";
 import { UIButton } from "./Button/Button";
 import { connect } from "react-redux";
@@ -41,6 +41,8 @@ class UiFilterMenu extends React.Component {
   
   onButtonLungsSeg() {
     //evt.preventDefault();
+    this.clearButtonState();
+  
     const store = this.props;
     const volSet = store.volumeSet;
     const volIndex = store.volumeIndex;
@@ -98,6 +100,8 @@ class UiFilterMenu extends React.Component {
   
   // on sobel
   onButtonSobel() {
+    this.clearButtonState();
+  
     // get globals
     const store = this.props;
     
@@ -201,6 +205,7 @@ class UiFilterMenu extends React.Component {
   // on Bilateral
   //
   onButtonBilateral() {
+    this.clearButtonState();
     this.showModalBilateral();
   }
   
@@ -208,6 +213,8 @@ class UiFilterMenu extends React.Component {
   // detect brain segmentation
   //
   onButtonDetectBrain() {
+    this.clearButtonState();
+  
     // get globals
     const store = this.props;
     
@@ -356,12 +363,21 @@ class UiFilterMenu extends React.Component {
   componentDidMount() {
   }
   
+  clearButtonState() {
+    this.m_sobel = null;
+    this.m_geoRender = null;
+    this.lungsFiller = null;
+    this.m_bilateral_applied = false;
+  }
+  
   showModalBilateral() {
+    this.clearButtonState();
     this.setState({ showModalBilateral: true });
   }
   
   hideModalBilateral() {
     this.setState({ showModalBilateral: false });
+    this.m_bilateral_applied = true;
     // console.log('onModalSaveNiftiHide...');
   }
   
@@ -371,10 +387,10 @@ class UiFilterMenu extends React.Component {
     const isLoaded = store.isLoaded;
     
     return isLoaded && (<Container direction="horizontal">
-      <UIButton handler={this.onButtonLungsSeg} icon="lungs" caption="Lungs segmentation"/>
-      <UIButton handler={this.onButtonDetectBrain} icon="brain" caption="Auto detect brain"/>
-      <UIButton handler={this.onButtonSobel} icon="edge-detection" caption="Sobel filter"/>
-      <UIButton handler={this.onButtonBilateral} icon="noise-reduction" caption="Bilateral (denoise or smooth)"/>
+      <UIButton active={this.lungsFiller} handler={this.onButtonLungsSeg} icon="lungs" caption="Lungs segmentation"/>
+      <UIButton active={this.m_geoRender} handler={this.onButtonDetectBrain} icon="brain" caption="Auto detect brain"/>
+      <UIButton active={this.m_sobel} handler={this.onButtonSobel} icon="edge-detection" caption="Sobel filter"/>
+      <UIButton active={this.m_bilateral_applied} handler={this.onButtonBilateral} icon="noise-reduction" caption="Bilateral (denoise or smooth)"/>
       
       {this.state.showModalBilateral &&
       <UiModalBilateral

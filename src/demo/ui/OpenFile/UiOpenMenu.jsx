@@ -3,9 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+// import { gzip, ungzip } from 'node-gzip';
+// import UiModalDicomSeries from './UiModalDicomSeries';
+
 import React from 'react';
 import { connect } from 'react-redux';
-// import { gzip, ungzip } from 'node-gzip';
 import zlib from 'zlib';
 import createReadStream from 'filereader-stream';
 
@@ -15,9 +17,8 @@ import Texture3D from '../../engine/Texture3D';
 
 import UiModalDemo from "../Modals/ModalDemo";
 import UIModalUrl from "../Modals/ModalUrl";
-import UiModalGoogle from '../UiModalGoogle';
-import UiModalWindowCenterWidth from '../UiModalWinCW';
-// import UiModalDicomSeries from './UiModalDicomSeries';
+import UiModalGoogle from '../Modals/UiModalGoogle';
+import UiModalWindowCenterWidth from '../Modals/UiModalWinCW';
 import StoreActionType from '../../store/ActionTypes';
 import ModeView from '../../store/ModeView';
 import Modes3d from '../../store/Modes3d';
@@ -47,11 +48,6 @@ const NEED_TEXTURE_SIZE_4X = true;
 
 // use daikon parser for Dicom (*dcm) file loading
 const READ_DICOM_VIA_DAIKON = true;
-
-// ********************************************************
-// Class
-// ********************************************************
-
 
 class UiOpenMenu extends React.Component {
   constructor(props) {
@@ -202,9 +198,6 @@ class UiOpenMenu extends React.Component {
       // save dicom loader to store
       store.dispatch({ type: StoreActionType.SET_LOADER_DICOM, loaderDicom: this.m_loader });
       
-      // setup modal: window min, max
-      this.childModalWindowCenterWidth.initWindowRange();
-      
       // show modal: select window center, width
       this.setState({ showModalWindowCW: true });
       return; // do nothing immediately after: wait for dialog
@@ -253,8 +246,7 @@ class UiOpenMenu extends React.Component {
   // strContent is ArrayBuffer
   readSliceDicomViaDaikon(fileIndex, fileName, ratioLoad, strContent) {
     const loaderDaikon = new LoaderDcmDaikon();
-    const ret = loaderDaikon.readSlice(this.m_loader, fileIndex, fileName, strContent);
-    return ret;
+    return loaderDaikon.readSlice(this.m_loader, fileIndex, fileName, strContent);
   } // end read single slice via daikon
   
   //
@@ -382,7 +374,7 @@ class UiOpenMenu extends React.Component {
     }
     
     // read header or image from src files
-    let readOk = false;
+    let readOk;
     if (isHdr) {
       readOk = this.m_loader.readFromBufferHeader(volDst, strContent, callbackProgress, callbackComplete);
     } else {
@@ -477,8 +469,6 @@ class UiOpenMenu extends React.Component {
       // stop show loading progress bar
       this.callbackReadProgress(1.0);
       this.callbackReadComplete(LoadResult.SUCCESS);
-      
-      this.childModalWindowCenterWidth.initWindowRange();
       
       // show modal: select window center, width
       this.setState({ showModalWindowCW: true });
@@ -707,7 +697,6 @@ class UiOpenMenu extends React.Component {
   }
   
   
-  
   callbackReadCompleteUrlKtxNii(codeResult) {
     if (codeResult !== LoadResult.SUCCESS) {
       console.log(`onCompleteFromUrlKtx. Bad result: ${codeResult}`);
@@ -716,7 +705,6 @@ class UiOpenMenu extends React.Component {
       const strErr = LoadResult.getResultString(codeResult);
       arrErrors.push(strErr);
       this.finalizeFailedLoadedVolume(this.m_volumeSet, this.m_fileName, arrErrors);
-      return;
     } else {
       this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
       this.callbackReadComplete(LoadResult.SUCCESS, null, 0, null);
@@ -748,8 +736,7 @@ class UiOpenMenu extends React.Component {
       } else if (strUrl.endsWith('.dcm')) {
         if (READ_DICOM_VIA_DAIKON) {
           const loaderUrlDcm = new LoaderDcmUrlDaikon();
-          const ret = loaderUrlDcm.readFromUrl(this.m_volumeSet, strUrl, this.callbackReadCompleteUrlKtxNii, this.callbackReadProgress);
-          return ret;
+          return loaderUrlDcm.readFromUrl(this.m_volumeSet, strUrl, this.callbackReadCompleteUrlKtxNii, this.callbackReadProgress);
         }
         
         const callbackProgress = this.callbackReadProgress;
@@ -990,40 +977,45 @@ class UiOpenMenu extends React.Component {
     return <>
       {/*<ButtonsDemo/>*/}
       <div className={css["open-file__area"]}>
-        <div className="left">
-          <UIButton icon="file" handler={evt => this.onButtonLocalFile(evt)} />
+        <div className={css["left"]}>
+          <UIButton icon="file" handler={evt => this.onButtonLocalFile(evt)}/>
           <span className="filename">{this.props.fileNameOnLoad || 'file_name_displayed_here.dicom'}</span>
         </div>
-        <div className="right">
-        <UIButton icon="folder" handler={evt => this.onButtonLocalFile(evt)}/>
-        <UIButton icon="link" handler={this.onModalUrlShow}/>
-        {(NEED_DEMO_MENU) ?
-          <UIButton icon="grid" handler={this.onModalDemoOpenShow}/>
-          :
-          null}
-        <UIButton caption="G" handler={this.onModalGoogleShow}/>
+        <div className={css["right"]}>
+          <UIButton icon="folder" handler={evt => this.onButtonLocalFile(evt)}/>
+          <UIButton icon="link" handler={this.onModalUrlShow}/>
+          {(NEED_DEMO_MENU) ?
+            <UIButton icon="grid" handler={this.onModalDemoOpenShow}/>
+            :
+            null}
+          <UIButton caption="G" handler={this.onModalGoogleShow}/>
         </div>
       </div>
       
       <div className={css["save-file__area"]}>
-        <UiSaveMenu />
-        <UiReportMenu />
+        <UiSaveMenu/>
+        <UiReportMenu/>
       </div>
       
       <UIModalUrl
-          stateVis={this.state.showModalUrl}
-          onHide={this.onModalUrlHide}
-          loadUrl={this.onClickLoadUrl}
+        stateVis={this.state.showModalUrl}
+        onHide={this.onModalUrlHide}
+        loadUrl={this.onClickLoadUrl}
       />
       
       <UiModalDemo stateVis={this.state.showModalDemo}
-                   onHide={this.onModalDemoOpenHide} onSelectDemo={this.onDemoSelected}/>
+                   onHide={this.onModalDemoOpenHide}
+                   onSelectDemo={this.onDemoSelected}
+      />
+      {this.state.showModalWindowCW && <UiModalWindowCenterWidth
+        stateVis={this.state.showModalWindowCW}
+        volSet={this.m_volumeSet}
+        onHide={this.onModalWindowCWHide}
+      />}
+      
       <UiModalGoogle stateVis={this.state.showModalGoogle}
                      onHide={this.onModalGoogleHide} onSelectDemo={this.onGoogleSelected}
                      arrMenu={config.arrMenuGoogle}/>
-      <UiModalWindowCenterWidth stateVis={this.state.showModalWindowCW} volSet={this.m_volumeSet}
-                                onHide={this.onModalWindowCWHide}
-                                onRef={ref => (this.childModalWindowCenterWidth = ref)}/>
     </>;
   }
 }

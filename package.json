@@ -26,6 +26,8 @@
     "filereader-stream": "^2.0.0",
     "react": "16.14.0",
     "react-bootstrap": "1.6.0",
+    "react-dnd": "^14.0.2",
+    "react-dnd-html5-backend": "^14.0.0",
     "react-dom": "16.14.0",
     "react-modal": "^3.14.2",
     "react-nouislider": "^2.0.1",

@@ -26,8 +26,8 @@
   color: var(--white);
   font-family: inherit;
   text-align: center;
+  font-size: 21px;
 }
-
 
 .rounded {
   overflow: hidden;

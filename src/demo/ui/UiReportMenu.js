@@ -16,7 +16,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import UiModalDicomTags from './UiModalDicomTags';
+import UiModalDicomTags from './Modals/UiModalDicomTags';
 import Screenshot from '../engine/utils/Screenshot';
 import ModeView from '../store/ModeView';
 import { UIButton } from "./Button/Button";

@@ -267,15 +267,13 @@ class Segm2d
   }
 
   getStageString() {
-    const msgArr = [
+    return [
       'Wait. Model is not loaded', // const STAGE_MODEL_NOT_LOADED = 0;
       'Wait. Model is loading ...',  // const STAGE_MODEL_IS_LOADING = 1;
       'Model is ready', // const STAGE_MODEL_READY = 2;
       'Image is processed ...',  // const STAGE_IMAGE_PROCESSED = 3;
       'Segmentation is ready', // const STAGE_SEGMENTATION_READY = 4;
-    ];
-    const strMessage = msgArr[this.stage];
-    return strMessage;
+    ][this.stage];
   }
 
   setImageData(imgData) {

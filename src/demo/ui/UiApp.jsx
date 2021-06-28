@@ -13,7 +13,7 @@ import UiSettings from './Tollbars/UiMain';
 import UiOpenMenu from './OpenFile/UiOpenMenu';
 import UiViewMode from './Tollbars/UiViewMode';
 import UiFilterMenu from './UiFilterMenu';
-import UiModalText from './UiModalText';
+import UiModalText from './Modals/UiModalText';
 import UiModalAlert from './Modals/ModalAlert';
 import UiErrConsole from './UiErrConsole';
 import ModeView from '../store/ModeView';
@@ -28,6 +28,8 @@ import UiAbout from "./UiAbout";
 import css from "./UiApp.module.css";
 import Graphics3d from "../engine/Graphics3d";
 import ZoomTools from "./ZoomTools";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { DndProvider } from "react-dnd";
 
 class UiApp extends React.Component {
   constructor(props) {
@@ -75,14 +77,14 @@ class UiApp extends React.Component {
     this.isWebGl20supported = browserDetector.checkWebGlSupported();
     if (!this.isWebGl20supported) {
       this.setState({ strAlertTitle: 'Browser compatibility problem detected' });
-      this.setState({ strAlertText: 'This browser not supported WebGL 2.0. Application functinality is decreased and app can be unstable' });
-      store.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true })
+      this.setState({ strAlertText: 'This browser not supported WebGL 2.0. Application functionality is decreased and app can be unstable' });
+      this.onShowModalAlert();
     } else {
       const isValidBro = browserDetector.checkValidBrowser();
       if (!isValidBro) {
         this.setState({ strAlertTitle: 'Browser compatibility problem detected' });
         this.setState({ strAlertText: 'App is specially designed for Chrome/Firefox/Opera/Safari browsers' });
-        store.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true })
+        this.onShowModalAlert();
       }
     }
   }
@@ -114,7 +116,7 @@ class UiApp extends React.Component {
     const isReady = store.isLoaded && this.isWebGl20supported
     
     return (
-      <>
+      <DndProvider backend={HTML5Backend}>
           {this.props.progress > 0 && (
             <UIProgressBar
               active={this.props.progress}
@@ -139,7 +141,7 @@ class UiApp extends React.Component {
               <div className={css.bottleft}>
                 {store.modeView === ModeView.VIEW_2D && <ZoomTools/>}
               </div>
-              <div className={css.segmentation}>
+              <div className={css.settings}>
                 <UiSettings/>
               </div>
             </>
@@ -156,7 +158,7 @@ class UiApp extends React.Component {
                       onShow={this.onShowModalAlert.bind(this)}
                       title={this.props.strAlertTitle}
                       text={this.props.strAlertText}/>}
-      </>
+      </DndProvider>
     );
   }
 }

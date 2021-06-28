@@ -19,12 +19,12 @@ import { connect } from 'react-redux';
 import { Modal, Button, Form, Row, Col, Table } from 'react-bootstrap';
 import Nouislider from 'react-nouislider';
 
-import GaussSmoother from '../engine/imgproc/Gauss';
+import GaussSmoother from '../../engine/imgproc/Gauss';
 
-import StoreActionType from '../store/ActionTypes';
-import Texture3D from '../engine/Texture3D';
-import ModeView from '../store/ModeView';
-import Modes3d from '../store/Modes3d';
+import StoreActionType from '../../store/ActionTypes';
+import Texture3D from '../../engine/Texture3D';
+import ModeView from '../../store/ModeView';
+import Modes3d from '../../store/Modes3d';
 
 
 // ********************************************************

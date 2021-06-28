@@ -3,25 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @fileOverview UiCtrl3dLight
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { ButtonGroup } from 'react-bootstrap';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 //import Nouislider from 'react-nouislider';
-
 import Modes3d from '../store/Modes3d';
 import Modes3droi from '../store/Modes3droi';
 import StoreActionType from '../store/ActionTypes';
@@ -30,21 +16,7 @@ import UiTFroi from './UiTFroi';
 import UiRoiSelect from './UiRoiSelect';
 import { UIButton } from "./Button/Button";
 
-// ********************************************************
-// Const
-// ********************************************************
-
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class UiCtrl3dLight some text later...
- */
 class UiCtrl3dLight extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
     this.onModeA = this.onModeA.bind(this);
@@ -144,7 +116,7 @@ class UiCtrl3dLight extends React.Component {
 
     const jsxRenderControls =
       <>
-        3d mode selection
+        <p>3D mode selection</p>
         <ButtonGroup>
           <OverlayTrigger key="iso" placement="bottom" overlay={
             <Tooltip>
@@ -200,8 +172,7 @@ class UiCtrl3dLight extends React.Component {
       }
     } // end if more 0 volumes
     const jsxArray = [jsxRenderControls, jsxROI];
-    const jsxRet = jsxArray[indx];
-    return jsxRet;
+    return jsxArray[indx];
 
   }
 }

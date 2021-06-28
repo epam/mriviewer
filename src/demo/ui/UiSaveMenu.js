@@ -16,7 +16,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import UiModalSaveNifti from './UiModalSaveNifti';
+import UiModalSaveNifti from './Modals/UiModalSaveNifti';
 import { UIButton } from "./Button/Button";
 
 // ********************************************************
