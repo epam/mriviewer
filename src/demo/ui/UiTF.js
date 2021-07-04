@@ -38,7 +38,7 @@ class UiTF extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      AO: true,
+      AO: false,
     }
     //this.onUndo = this.onUndo.bind(this);
     this.m_updateEnable = true;

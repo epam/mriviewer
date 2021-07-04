@@ -19,7 +19,8 @@ import { connect } from 'react-redux';
 
 // import StoreActionType from '../store/ActionTypes';
 // import Tools2dType from '../engine/tools2d/ToolTypes';
-import { Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Switch, SwitchRow } from "./Form";
 
 // ********************************************************
 // Class
@@ -61,7 +62,6 @@ class UiSegm2d extends React.Component {
   render() {
     const strTitle = 'Segmentation 2d (brain only)';
     return <>
-      {strTitle}
       <OverlayTrigger
         key="about"
         placement="bottom"
@@ -71,11 +71,10 @@ class UiSegm2d extends React.Component {
           </Tooltip>
         }
       >
-        <Form>
-          <Form.Check inline type="checkbox" label="Segmentation 2d" id="idseg2d" onChange={this.onChangeSegm2d}>
-          </Form.Check>
-        </Form>
-  
+        <SwitchRow>
+          { strTitle }
+          <Switch value={ this.state.isSegmented } onValueChange={ this.onChangeSegm2d }/>
+        </SwitchRow>
       </OverlayTrigger>
       Switch checker above on and see segmentation result on right
     </>;

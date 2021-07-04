@@ -11,6 +11,8 @@ import UiSkelAni from './UiSkelAni';
 import { UIButton } from "./Button/Button";
 import { connect } from "react-redux";
 
+import css from "./UiAbout.module.css";
+
 class UiLogoAbout extends React.Component {
   constructor(props) {
     super(props);
@@ -40,9 +42,10 @@ class UiLogoAbout extends React.Component {
 
     const strButtonOnly = <UIButton
       icon="logo"
+      cx={ css.logo }
       handler={this.state.modalShow ? this.onHide : this.onShow} />
     const strButtonWithTrigger =
-    <OverlayTrigger 
+    <OverlayTrigger
       key="about"
       placement="bottom"
       overlay = {
@@ -58,9 +61,9 @@ class UiLogoAbout extends React.Component {
 
 
     return <>
-  
+
       {strBtnDynamic}
-  
+
       <Modal show={this.state.modalShow} onHide={this.onHide}>
         <Modal.Title>
           <center>{strName}</center>
@@ -77,14 +80,14 @@ class UiLogoAbout extends React.Component {
             <p>
               <b>Copyright: </b> {strYear} {strAuthor}
             </p>
-      
+
           </Modal.Body>
         </Modal.Header>
-    
+
         <Modal.Footer>
           <UIButton handler={this.onHide} icon="triangle" type="submit" mode="accent" />
         </Modal.Footer>
-  
+
       </Modal>
     </>;
 
