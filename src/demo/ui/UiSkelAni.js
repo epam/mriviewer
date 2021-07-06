@@ -404,9 +404,8 @@ class UiSkelAni extends React.Component {
     if (w * h === 0) {
       return;
     }
-    // console.log(`UiSkelAni. renderCtx. screen = ${w} * ${h}`);
-    // clerar all screen
-    ctx.fillStyle = 'rgb(250, 250, 250)';
+    
+    ctx.fillStyle = 'rgb(40, 42, 45)';
     ctx.fillRect(0,0, w, h);
 
     const timeCur = Date.now();
