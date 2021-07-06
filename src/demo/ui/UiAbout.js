@@ -9,8 +9,7 @@ import packageJson from '../../../package.json';
 import UiSkelAni from './UiSkelAni';
 import { UIButton } from "./Button/Button";
 import { connect } from "react-redux";
-import { Modal, ModalBody, ModalFooter } from "./Modals/ModalBase";
-import ModalHeader from "react-bootstrap/ModalHeader";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "./Modals/ModalBase";
 
 class UiLogoAbout extends React.Component {
   constructor(props) {
@@ -46,7 +45,7 @@ class UiLogoAbout extends React.Component {
         caption="See detailed information about this app"
         handler={this.state.modalShow ? this.onHide : this.onShow}/>
       <Modal isOpen={this.state.modalShow} close={this.onHide}>
-        <ModalHeader title={strName}/>
+        <ModalHeader title={strName} />
         <ModalBody>
           <center>
             <UiSkelAni/>
