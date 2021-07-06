@@ -19,7 +19,7 @@ import { connect } from 'react-redux';
 
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
-import { SliderCaption, SliderRow } from "./Layout";
+import { SliderCaption, SliderRow } from "./Form";
 
 
 // ********************************************************

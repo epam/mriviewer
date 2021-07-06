@@ -5,3 +5,5 @@
 
 export * from "./SliderCaption";
 export * from "./SliderRow";
+export * from "./Switch";
+export * from "./SwitchRow";

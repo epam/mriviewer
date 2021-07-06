@@ -11,7 +11,7 @@ import UiVolumeSel from './UiVolumeSel'
 import Nouislider from "react-nouislider";
 import Modes2d from "../store/Modes2d";
 import StoreActionType from "../store/ActionTypes";
-import { SliderCaption, SliderRow } from "./Layout";
+import { SliderCaption, SliderRow } from "./Form";
 
 
 class UiMain2d extends React.Component {

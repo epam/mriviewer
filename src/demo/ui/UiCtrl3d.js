@@ -19,7 +19,7 @@ import { connect } from 'react-redux';
 import StoreActionType from '../store/ActionTypes';
 import UiHistogram from './UiHistogram';
 import Nouislider from 'react-nouislider';
-import { SliderRow } from "./Layout";
+import { SliderRow } from "./Form";
 
 /**
  * Class UiCtrl3dLight some text later...

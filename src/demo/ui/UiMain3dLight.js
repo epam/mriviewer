@@ -12,7 +12,7 @@ import UiCtrl3d from './UiCtrl3d';
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
 import ModeView from '../store/ModeView';
-import { SliderRow } from "./Layout";
+import { SliderRow } from "./Form";
 
 class UiMain3dLight extends React.Component {
   /**

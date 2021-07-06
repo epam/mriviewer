@@ -20,7 +20,8 @@ import { connect } from 'react-redux';
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
 import UiHistogram from './UiHistogram';
-import { SliderCaption, SliderRow } from "./Layout";
+import { SliderCaption, SliderRow, SwitchRow } from "./Form";
+import { Switch } from "./Form/Switch";
 
 
 // ********************************************************
@@ -36,14 +37,23 @@ import { SliderCaption, SliderRow } from "./Layout";
 class UiTF extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      AO: false,
+    }
     //this.onUndo = this.onUndo.bind(this);
     this.m_updateEnable = true;
+    this.toggleAO = this.toggleAO.bind(this);
     this.onAO = this.onAO.bind(this);
     this.offAO = this.offAO.bind(this);
     this.onStartEr = this.onStartEr.bind(this);
     this.onStopEr = this.onStopEr.bind(this);
     this.onUndo = this.onUndo.bind(this);
     this.onSave = this.onSave.bind(this);
+  }
+
+  toggleAO(newVal) {
+    newVal ? this.onAO() : this.offAO();
+    this.setState({ AO: newVal });
   }
 
   onAO() {
@@ -191,17 +201,10 @@ class UiTF extends React.Component {
                       range={{ min: 0.0, max: 1.0 }}
                       start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true}/>
         </SliderRow>
-
-        Ambient Oclusion ->
-        <button type="button" className={'btn btn-outline-dark'} onClick={this.onAO}>
-          On
-        </button>
-        <button type="button" className={'btn btn-outline-dark'} onClick={this.offAO}>
-          Off
-        </button>
-        <button type="button" className={'btn btn-outline-dark'} onClick={this.onAO}>
-          Reset
-        </button>
+        <SwitchRow>
+          Ambient Occlusion
+          <Switch value={ this.state.AO } onValueChange={ this.toggleAO }/>
+        </SwitchRow>
       </>
     const jsxEreaser =
       <>
