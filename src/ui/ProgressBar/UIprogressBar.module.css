@@ -1,0 +1,35 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.progress {
+    position: absolute;
+    top: 5px;
+    left: 6px;
+    right: 6px;
+    height: 5px;
+    display: flex;
+    align-items: stretch;
+    background-color: var(--gray);
+    overflow: hidden;
+    border-radius: 100px;
+    z-index: 1001;
+}
+
+.progressBar {
+    background-color: var(--red);
+    border-radius: 100px;
+}
+
+.label {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    font-style: italic;
+    letter-spacing: 0.2px;
+    color: var(--gray);
+    z-index: 1001;
+}

@@ -1,0 +1,163 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1003;
+}
+
+.modal {
+    z-index: 1004;
+
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    max-height: 80vh;
+    color: var(--white);
+    border-radius: 5px;
+    background-color: var(--dark-gray);
+    transition: 1s ease-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.header,
+.body,
+.footer {
+    padding: 15px 20px;
+}
+
+.header,
+.footer {
+    display: flex;
+    align-items: center;
+}
+
+.header {
+    box-sizing: content-box;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--gray);
+    min-height: 36px;
+}
+
+.footer {
+    justify-content: flex-end;
+    border-top: 1px solid var(--gray);
+}
+
+.body {
+    position: relative;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gray);
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.body::-webkit-scrollbar-track {
+    opacity: 0;
+}
+
+.body::-webkit-scrollbar-thumb {
+    background-color: var(--gray);
+    border-radius: 4px;
+}
+
+.title {
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+}
+
+.close:hover svg,
+.close:focus svg {
+    fill: var(--gray);
+}
+
+.cards {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-columns: repeat(auto-fill, 128px);
+}
+
+.card {
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.card:hover,
+.card:focus {
+    box-shadow: 0px 2px 10px 4px rgba(255, 255, 255, 0.2) ;
+}
+
+.row {
+    display: flex;
+}
+
+.row *:not(:first-child) {
+    margin-left: 5px;
+}
+
+.label {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.input {
+    flex-grow: 1;
+    border: 1px solid var(--dark-gray);
+    background-color: var(--gray);
+    border-radius: 5px;
+    padding: 5px;
+    font: inherit;
+    color: inherit;
+}
+
+.input::placeholder {
+    color: inherit;
+    font: inherit;
+}
+
+.input:focus {
+    outline-color: var(--light);
+}
+
+.button {
+    background-color: transparent;
+    border-radius: 5px;
+    border: 1px solid var(--light);
+    padding: 5px 10px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    font-size: 16px;
+}
+
+.button:hover {
+    background-color: var(--light);
+    color: var(--dark-gray);
+}
+
+.text {
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--white);
+}
