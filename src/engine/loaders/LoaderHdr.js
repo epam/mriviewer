@@ -469,9 +469,9 @@ class LoaderHdr {
     const namePrefix = arrGrp[1];
     //console.log(`readFromUrl: name prefix = ${namePrefix}, grpLen = ${arrGrp.length}`);
 
-    const fileNameIntensityHeader = this.m_folder + '/' + namePrefix + '_intn.h';
+    const fileNameIntensityHeader = this.m_folder + '/' + namePrefix + '_intn.hdr';
     const fileNameIntensityImage = this.m_folder + '/' + namePrefix + '_intn.img';
-    const fileNameMaskHeader = this.m_folder + '/' + namePrefix + '_mask.h';
+    const fileNameMaskHeader = this.m_folder + '/' + namePrefix + '_mask.hdr';
     const fileNameMaskImage = this.m_folder + '/' + namePrefix + '_mask.img';
 
 
@@ -507,11 +507,7 @@ class LoaderHdr {
       let urlImg = arrUrls[1];
       const loaderHdr = new LoadFilePromise();
       const loaderImg = new LoadFilePromise();
-      let indPointH = urlHdr.indexOf('.h');
-      if (indPointH === -1) {
-        indPointH = urlHdr.indexOf('.hdr');
-      }
-      if (indPointH === -1) {
+      if (urlHdr.indexOf('.hdr') === -1) {
         const strCopy = urlHdr;
         urlHdr = urlImg;
         urlImg = strCopy;

@@ -742,7 +742,7 @@ class UiOpenMenu extends React.Component {
         this.callbackReadProgress(0.0);
         this.m_volumeSet.readFromDicomUrl(strUrl, callbackProgress, callbackComplete);
         // if Dicom
-      } else if (strUrl.endsWith('.h')) {
+      } else if (strUrl.endsWith('.hdr')) {
         const callbackProgress = this.callbackReadProgress;
         const callbackComplete = this.callbackReadCompleteUrlKtxNii;
         this.callbackReadProgress(0.0);
