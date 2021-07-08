@@ -943,10 +943,10 @@ class UiOpenMenu extends React.Component {
         </div>
       </div>
       
-      {this.props.fileNameOnLoad && <div className={css["save-file__area"]}>
+      <div className={css["save-file__area"]}>
         <UiSaveMenu/>
         <UiReportMenu/>
-      </div>}
+      </div>
       
       <UIModalUrl
         stateVis={this.state.showModalUrl}
