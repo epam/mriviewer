@@ -12,7 +12,8 @@
     height: 40px;
 }
 
-.logo:hover {
+.logo:hover,
+.logo:focus {
     background: transparent;
 }
 

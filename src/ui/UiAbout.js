@@ -4,12 +4,14 @@
  */
 
 import React from 'react';
+import { connect } from "react-redux";
 
 import packageJson from '../../package.json';
 import UiSkelAni from './UiSkelAni';
 import { UIButton } from "./Button/Button";
-import { connect } from "react-redux";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "./Modals/ModalBase";
+
+import css from "./UiAbout.module.css";
 
 class UiLogoAbout extends React.Component {
   constructor(props) {
@@ -31,8 +33,7 @@ class UiLogoAbout extends React.Component {
   }
   
   render() {
-    
-    const strVer = packageJson.version;
+        const strVer = packageJson.version;
     const strName = packageJson.name;
     const strDescription = packageJson.description;
     const strAuthor = packageJson.author;
@@ -40,10 +41,11 @@ class UiLogoAbout extends React.Component {
     
     return <>
       <UIButton
-        style={{ opacity: 0.8, backgroundColor: "black" }}
+        cx={ css.logo }
         icon="logo"
         caption="See detailed information about this app"
-        handler={this.state.modalShow ? this.onHide : this.onShow}/>
+        handler={this.onShow}/>
+      {this.state.modalShow && (
       <Modal isOpen={this.state.modalShow} close={this.onHide}>
         <ModalHeader title={strName} />
         <ModalBody>
@@ -64,6 +66,7 @@ class UiLogoAbout extends React.Component {
           <UIButton handler={this.onHide} caption="Ok" type="submit" mode="accent"/>
         </ModalFooter>
       </Modal>
+      )}
     </>;
   }
 }
