@@ -806,7 +806,7 @@ class UiOpenMenu extends React.Component {
       return;
     }
     
-    const DEMO_URL = "http://m3w.s3-website.eu-central-1.amazonaws.com/";
+    const DEMO_URL = "http://m3w.s3-website.eu-central-1.amazonaws.com/demo/";
     
     let fileName = DEMO_URL + [
       "01_lungs/20101108.ktx",
@@ -815,10 +815,9 @@ class UiOpenMenu extends React.Component {
       "04_woman_pelvis/file_list.txt",
       "05_lungs_00cba/file_list.txt",
       "06_ct_256/ct_256_256_256.ktx",
-      "07_lungs_256/lungs_256_256_256.ktx"
+      "07_lungs_256/lungs_256_256_256.ktx",
+      "08_brain_with_roi/set_intn.hdr"
     ][index] || console.log(`onDemoSelected. not implemented for index = ${index}`);
-    
-    
     
     if (fileName === "04_woman_pelvis/file_list.txt") {
       const numUrls = config.demoWomanPelvisUrls.length;
