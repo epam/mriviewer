@@ -132,7 +132,7 @@ class LoaderUrlDicom {
   /**
    * 
    * @param {object} arrFileNames - array of file names (with URL) 
-   * @param {bool} fromGoogle - true if use google headers
+   * @param {boolean} fromGoogle - true if use google headers
    * 
    */
   loadFromUrlArray(arrFileNames, fromGoogle) {

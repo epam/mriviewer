@@ -805,38 +805,24 @@ class UiOpenMenu extends React.Component {
       this.loadFromUrl(fileName);
       return;
     }
-    let fileName = '';
-    if (index === 0) {
-      // 20101108.ktx
-      // const FN_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/31212219.luy';
-      const FN_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/31212219.luy';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_ENCODED);
-      // console.log(`onDemoSelected. enc = ${fileName}`);
-    } else if (index === 1) {
-      // set00.ktx
-      // const FN_ENCO = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/tfu11.luy';
-      const FN_ENCO = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/tfu11.luy';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_ENCO);
-      // console.log(`onDemoSelected. enc = ${fileName}`);
-    } else if (index === 2) {
-      // gm3 nii
-      // const FN_GM_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ojguj/hn4_623_623_276.ojj';
-      const FN_GM_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/hn4_623_623_276.ojj';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_GM_ENCODED);
-      // fileName = ft.encodeUrl(FN_GM_DECODED);
-      // console.log(`onDemoSelected. enc = ${fileName}`);
-    } else if (index === 3) {
+    
+    const DEMO_URL = "http://m3w.s3-website.eu-central-1.amazonaws.com/";
+    
+    let fileName = DEMO_URL + [
+      "01_lungs/20101108.ktx",
+      "02_brain_set/brain256.ktx",
+      "03_grandmother_gm3/gm3_512_512_165.nii",
+      "04_woman_pelvis/file_list.txt",
+      "05_lungs_00cba/file_list.txt",
+      "06_ct_256/ct_256_256_256.ktx",
+      "07_lungs_256/lungs_256_256_256.ktx"
+    ][index] || console.log(`onDemoSelected. not implemented for index = ${index}`);
+    
+    
+    
+    if (fileName === "04_woman_pelvis/file_list.txt") {
       const numUrls = config.demoWomanPelvisUrls.length;
-      if (numUrls === 0) {
-        // woman pelvis
-        // const FN_WOMM_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ejdpn/xpnbo_qfmwjt/wig.:12.edn';
-        const FN_WOMM_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/xpnbo_qfmwjt/wig.:12.edn';
-        const ft = new FileTools();
-        fileName = ft.decodeUrl(FN_WOMM_ENCODED);
-      } else {
+      if (numUrls > 0) {
         const strPrefix = config.demoWomanPelvisPrefix;
         // console.log(`config. prefix = ${strPrefix}`);
         const arrFileNames = [];
@@ -851,17 +837,11 @@ class UiOpenMenu extends React.Component {
         loader.loadFromUrlArray(arrFileNames, GOOGLE_HEADER);
         return;
       }
-    } else if (index === 4) {
+    }
+    if (fileName === "05_lungs_00cba/file_list.txt") {
       const numUrls = config.demoLungsUrls.length;
-      if (numUrls === 0) {
-        // lungs dicom 00cba..957e.dcm
-        // const FN_OCB_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ejdpn/11dcb1:2gb5be73dd4311b768bfc:68f/145784245dcfg6fb26gg:f1d91:1611b.edn';
-        const FN_OCB_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/11dcb1:2gb5be73dd4311b768bfc:68f/145784245dcfg6fb26gg:f1d91:1611b.edn';
-        const ft = new FileTools();
-        fileName = ft.decodeUrl(FN_OCB_ENCODED);
-      } else {
+      if (numUrls > 0) {
         const strPrefix = config.demoLungsPrefix;
-        console.log(`config. Lungs prefix = ${strPrefix}`);
         const arrFileNames = [];
         for (let i = 0; i < numUrls; i++) {
           const strFn = config.demoLungsUrls[i];
@@ -874,32 +854,9 @@ class UiOpenMenu extends React.Component {
         loader.loadFromUrlArray(arrFileNames, GOOGLE_HEADER);
         return;
       }
-    } else if (index === 5) {
-      // ct_256_256_256.ktx
-      // const FN_CT256_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/du_367_367_367.luy';
-      const FN_CT256_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/du_367_367_367.luy';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_CT256_ENCODED);
-      // fileName = ft.encodeUrl(FN_CT256_DECODED);
-      // console.log(`onDemoSelected. enc = ${fileName}`);
-    } else if (index === 6) {
-      // lungs_256_256_256.ktx
-      // const FN_LUNGS256_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/luy/mvoht_367_367_367.luy';
-      const FN_LUNGS256_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/mvoht_367_367_367.luy';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_LUNGS256_ENCODED);
-      // fileName = ft.encodeUrl(FN_LUNGS256_DECODED);
-      // console.log(`onDemoSelected. enc = ${fileName}`);
-    } else if (index === 7) {
-      // hdr set (roi)
-      // const FN_HDRSET_ENCODED = 'http://www.e-joufs.sv/qsjwbuf/nfe4xfc/ebub/ies/tfu_jouo.i';
-      const FN_HDRSET_ENCODED = 'https://med3web.pqfotpvsdf.fqbn.dpn/nfe4xfc3131/ies/tfu_jouo.i';
-      const ft = new FileTools();
-      fileName = ft.decodeUrl(FN_HDRSET_ENCODED);
-    } else {
-      console.log(`onDemoSelected. not implemented for index = ${index}`);
     }
     if (fileName.length > 0) {
+      console.log(`onDemoSelected. enc = ${fileName}`);
       this.loadFromUrl(fileName);
     }
   }
