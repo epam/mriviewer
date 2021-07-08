@@ -943,7 +943,7 @@ class UiOpenMenu extends React.Component {
         </div>
       </div>
       
-      {this.isLoaded && <div className={css["save-file__area"]}>
+      {this.props.fileNameOnLoad && <div className={css["save-file__area"]}>
         <UiSaveMenu/>
         <UiReportMenu/>
       </div>}
