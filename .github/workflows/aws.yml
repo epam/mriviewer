@@ -1,4 +1,4 @@
-name: aws
+name: Build + deploy aws
 
 on:
   pull_request:
