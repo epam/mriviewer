@@ -1,7 +1,7 @@
 name: Build + deploy aws
 
 on:
-  pull_request:
+  push:
     branches: [ aws_test ]
 
 jobs:
