@@ -16,7 +16,13 @@ jobs:
           node-version: 12.x
       - run: node --version
       - run: npm --version
+
+      - name: Reconfigure git to use HTTP authentication
+          run: >
+            git config --global url."https://github.com/".insteadOf
+            ssh://git@github.com/
       - run: npm ci
+
       - run: npm audit --audit-level=critical
       - run: npm run build
       - run: npm test
