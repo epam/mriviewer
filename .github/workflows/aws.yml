@@ -1,4 +1,4 @@
-name: PR
+name: aws
 
 on:
   pull_request:
