@@ -42,4 +42,4 @@ jobs:
           aws-region: us-east-1
       - name: Copy files to the test website with the AWS CLI
         run: |
-          aws s3 sync ./build/ s3://my-s3-test-website-bucket
+          aws s3 sync ./build/ s3://${{ secrets.TEST_AWS_BUCKET }}
