@@ -34,3 +34,12 @@ jobs:
       - run: npm test
         env:
           CI: true
+      - name: Configure AWS credentials from Test account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.TEST_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.TEST_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Copy files to the test website with the AWS CLI
+        run: |
+          aws s3 sync ./build/ s3://my-s3-test-website-bucket
