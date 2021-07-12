@@ -42,7 +42,7 @@ jobs:
           aws-region: eu-central-1
       - name: Copy files to the test website with the AWS CLI
         run: |
-          aws s3 sync ./build/ s3://${{ secrets.AWS_BUCKET_NAME }}
+          aws s3 sync ./build/ s3://med3web
       - name: Invalidate cache with the AWS CLI
         run: |
           aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUD_FRONT_ID }} --paths "/*"
