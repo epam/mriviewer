@@ -52,7 +52,7 @@ Links to publications that contain **med3web** references
 * [Belyaev, S., Smirnov, P., Shubnikov, V., Smirnova, N. Adaptive algorithm for accelerating direct isosurface rendering on GPU](https://www.scopus.com/record/display.uri?eid=2-s2.0-85059228722&doi=10.11989%2fJEST.1674-862X.71013102&origin=inward&txGid=a917c3aa38d38f5b6e1b5add9aa3bb29)
 
 ## Demo app
-[Here](https://med3web.opensource.epam.com/) you can find a demo app.
+[Here](https://epa.ms/mri) you can find a demo app.
 
 ## Contribution
 [CONTRIBUTING.md](CONTRIBUTING.md)
