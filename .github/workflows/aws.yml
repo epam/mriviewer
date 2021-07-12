@@ -1,8 +1,8 @@
 name: Build + deploy aws
 
 on:
-  push:
-    branches: [ aws_test ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
@@ -46,3 +46,4 @@ jobs:
       - name: Invalidate cache with the AWS CLI
         run: |
           aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUD_FRONT_ID }} --paths "/*"
+          
