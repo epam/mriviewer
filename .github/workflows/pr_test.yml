@@ -46,6 +46,18 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: med3web_${{env.GITHUB_RUN_ID}}
+          name: med3web_${{runner.GITHUB_RUN_ID}}
           path: build
-          retention-days: 5
+          retention-days: 2
+      - name: Configure AWS credentials from Test account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+      - name: Copy files to the test website with the AWS CLI
+        run: |
+          aws s3 sync ./build/ s3://${{ secrets.AWS_BUCKET_NAME }}
+      - name: Invalidate cache with the AWS CLI
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUD_FRONT_ID }} --paths "/*"
