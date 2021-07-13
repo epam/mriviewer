@@ -954,10 +954,10 @@ class UiOpenMenu extends React.Component {
         loadUrl={this.onClickLoadUrl}
       />
       
-      <UiModalDemo stateVis={this.state.showModalDemo}
-                   onHide={this.onModalDemoOpenHide}
-                   onSelectDemo={this.onDemoSelected}
-      />
+      {this.state.showModalDemo && <UiModalDemo stateVis={this.state.showModalDemo}
+                                                onHide={this.onModalDemoOpenHide}
+                                                onSelectDemo={this.onDemoSelected}
+      />}
       {this.state.showModalWindowCW && <UiModalWindowCenterWidth
         stateVis={this.state.showModalWindowCW}
         volSet={this.m_volumeSet}
