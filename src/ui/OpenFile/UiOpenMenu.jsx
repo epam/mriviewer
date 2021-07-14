@@ -806,7 +806,7 @@ class UiOpenMenu extends React.Component {
       return;
     }
     
-    const DEMO_URL = "http://m3w.s3-website.eu-central-1.amazonaws.com/demo/";
+    const DEMO_URL = "http://med3web.s3-website.eu-central-1.amazonaws.com/demo/";
     
     let fileName = DEMO_URL + [
       "01_lungs/20101108.ktx",
