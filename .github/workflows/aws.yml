@@ -42,8 +42,8 @@ jobs:
           aws-region: eu-central-1
       - name: Copy files to the test website with the AWS CLI
         run: |
-          aws s3 cp ./build/demo/ s3://med3web/demo/ --recursive
-          aws s3 sync ./build/ s3://med3web --delete true --exclude "*demo/*"
+          aws s3 cp ./build/demo/ s3://med3web/demo/ --recursive true
+          aws s3 sync ./build/ s3://med3web --delete --exclude "*demo/*"
       - name: Invalidate cache with the AWS CLI
         run: |
           aws cloudfront create-invalidation --distribution-id ESRGIUPNHEYPX --paths "/*"
