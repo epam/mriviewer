@@ -33,6 +33,8 @@ code {
     --light: #CBD2D2;
     --white: #fff;
 
+    --opacity: 0.5;
+
     color: var(--white);
     background-color: black;
 

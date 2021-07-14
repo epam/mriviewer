@@ -54,7 +54,7 @@
     background-color: var(--dark-gray);
     padding: 25px;
     width: 400px;
-    opacity: .8;
+    opacity: var(--opacity);
 }
 
 .bottleft {

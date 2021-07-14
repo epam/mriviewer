@@ -16,7 +16,7 @@
 .open-file__area {
     height: 50px;
     background: #18191B;
-    opacity: .8;
+    opacity: var(--opacity);
     border-radius: 10px;
     margin: 0 25px 0 10px;
     display: flex;
