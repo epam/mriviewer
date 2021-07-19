@@ -210,30 +210,6 @@ class UiOpenMenu extends React.Component {
     }
   }
 
-  onFileReadSingleUncompressedFile(strContent, callbackProgress, callbackComplete, callbackCompleteSingleDicom) {
-    if (this.m_fileName.endsWith('.ktx') || this.m_fileName.endsWith('.KTX')) {
-      // if read ktx
-      this.m_volumeSet.readFromKtx(strContent, callbackProgress, callbackComplete);
-    } else if (this.m_fileName.endsWith('.nii') || this.m_fileName.endsWith('.NII')) {
-      this.m_volumeSet.readFromNifti(strContent, callbackProgress, callbackComplete);
-    } else if (this.m_fileName.endsWith('.dcm') || this.m_fileName.endsWith('.DCM')) {
-      this.m_loader = new LoaderDicom();
-      this.m_loader.m_zDim = 1;
-      this.m_loader.m_numFiles = 1;
-      this.m_volumeSet.readFromDicom(this.m_loader, strContent, callbackProgress, callbackCompleteSingleDicom);
-    } else if (this.m_fileName.endsWith('.hdr') || this.m_fileName.endsWith('.HDR')) {
-      // readOk = vol.readFromHdrHeader(strContent, callbackProgress, callbackComplete);
-      console.log(`cant read single hdr file: ${this.m_fileName}`);
-      // readStatus = LoadResult.BAD_HEADER;
-    } else if (this.m_fileName.endsWith('.img') || this.m_fileName.endsWith('.IMG')) {
-      // readOk = vol.readFromHdrImage(strContent, callbackProgress, callbackComplete);
-      console.log(`cant read single img file: ${this.m_fileName}`);
-      // readStatus = LoadResult.BAD_HEADER;
-    } else {
-      console.log(`onFileContentReadSingleFile: unknown file type: ${this.m_fileName}`);
-    }
-  }
-
   onFileContentReadSingleFile() {
     let strContent = this.m_fileReader.result;
     this.onFileReadSingleBuffer(strContent);
