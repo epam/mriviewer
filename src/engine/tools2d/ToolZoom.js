@@ -58,8 +58,8 @@ class ToolZoom {
       // check new 2d transform is valid (not clipped)
       if ((xPos >= 0.0) && (xPos + zoom <= 1.0) &&
         (yPos >= 0.0) && (yPos + zoom <= 1.0)) {
-        store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: xPos });
-        store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: yPos });
+        // store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: xPos });
+        // store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: yPos });
         const gra = store.graphics2d;
         gra.forceUpdate();
       }
@@ -67,10 +67,10 @@ class ToolZoom {
   }
   
   onMouseWheel(store, evt) {
-    const delta = evt.deltaY < 0 ? 2 : -2;
-    const MULT_STEP = 0.001;
-    const step = -delta * MULT_STEP;
-    // console.log(`onMouseWheel. step = ${step}`);
+    const step = evt.deltaY * 2 ** (-16);
+
+    console.log(`onMouseWheel.evt = ${{ evt }}`);
+    console.log(`onMouseWheel.store = ${{ store }}`);
     
     const zoom = store.render2dZoom;
     let zoomNew = zoom + step;
@@ -78,13 +78,13 @@ class ToolZoom {
     const yPos = store.render2dyPos;
     const xPosNew = xPos - step;
     const yPosNew = yPos - step;
-    console.log(`onMouseWheel. zoom = ${zoom} zoomNew = ${zoomNew}, xyPos = ${xPosNew},${yPosNew}`);
+    // console.log(`onMouseWheel. zoom = ${zoom} zoomNew = ${zoomNew}, xyPos = ${xPosNew},${yPosNew}`);
     if (Math.abs(zoomNew) > 1) {
       return;
     }
     store.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: zoomNew });
-    store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: xPosNew });
-    store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: yPosNew });
+    store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: xPosNew - step / 2 });
+    store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: yPosNew - step / 2 });
     
     store.graphics2d.forceUpdate();
   } // end on mouse wheel

@@ -7,10 +7,11 @@
 // Action type for redux reducer
 //
 const StoreActionType = {
-  SET_IS_LOADED: 0,
+  SET_IS_LOADED: 0, // boolean (progress = 100%)
   SET_FILENAME: 1,
   SET_VOLUME_SET: 2,
   SET_VOLUME_INDEX: 3,
+  
   SET_TEXTURE3D: 4,
   SET_MODE_VIEW: 5,
   SET_MODE_2D: 6,
@@ -27,6 +28,7 @@ const StoreActionType = {
   SET_SLIDER_ErRadius: 17,
   SET_SLIDER_ErDepth: 18,
   SET_VOLUME_Renderer: 19,
+  
   SET_2D_TOOLS_INDEX: 20,
   SET_2D_ZOOM: 21,
   SET_2D_X_POS: 22,
