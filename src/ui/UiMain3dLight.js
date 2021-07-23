@@ -55,23 +55,14 @@ class UiMain3dLight extends React.Component {
     store.dispatch({ type: StoreActionType.SET_SLIDER_Contrast3D, sliderContrast3D: Number.parseFloat(aval) });
   }
 
-  /*
-  shouldComponentUpdate() {
-    //return this.m_updateEnable;
-    return true;
-  }
-  */
   shouldComponentUpdate(nextProps) {
-    //return this.m_updateEnable;
     let flag = this.m_updateEnable;
     if (this.props.isTool3D !== nextProps.isTool3D || this.props.modeView !== nextProps.modeView) {
       flag = true;
     }
     return flag;
-    //return true;
   }
 
-  //{(store.isTool3D === false) ? jsxView : jsxTool}
   render() {
     const store = this.props;
     const modeViewIndex = store.modeView;
@@ -95,13 +86,13 @@ class UiMain3dLight extends React.Component {
         <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={this.sliderBrightness}
                     range={{ min: 0.0, max: 1.0 }}
                     overflow-scroll={'true'}
-                    start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true}/>
+                    start={wArrBrightness} connect={[false, false]} step={0.00001} tooltips={true}/>
       </SliderRow>
       <SliderRow icon="triangle" title="Quality">
         <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={this.sliderQuality}
                     range={{ min: 0.0, max: 1.0 }}
                     overflow-scroll={'true'}
-                    start={wArrQuality} connect={[false, false]} step={0.02} tooltips={true}/>
+                    start={wArrQuality} connect={[false, false]} step={0.00001} tooltips={true}/>
       </SliderRow>
     </>
 
@@ -110,7 +101,7 @@ class UiMain3dLight extends React.Component {
         <Nouislider onSlide={this.onChangeSliderContrast3D.bind(this)} ref={this.sliderContrast3D}
                     range={{ min: 0.0, max: 1.0 }}
                     overflow-scroll={'true'}
-                    start={wArrBrightness} connect={[false, false]} step={0.02} tooltips={true}/>
+                    start={wArrBrightness} connect={[false, false]} step={0.00001} tooltips={true}/>
       </SliderRow>
     </>
 
@@ -120,7 +111,7 @@ class UiMain3dLight extends React.Component {
         <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={this.sliderCut}
                     range={{ min: 0.0, max: 1.0 }}
                     overflow-scroll={'true'}
-                    start={wArrCut} connect={[false, false]} step={0.01} tooltips={true}/>
+                    start={wArrCut} connect={[false, false]} step={0.00001} tooltips={true}/>
       </SliderRow>
       {(store.isTool3D === false) ? jsxView : jsxTool}
     </>;

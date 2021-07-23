@@ -183,12 +183,12 @@ class UiTF extends React.Component {
           <SliderRow >
             <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
                         range={{ min: 0.0, max: 1.0 }}
-                        start={wArr} connect={[false, true, false, true]} step={0.02} tooltips={true}/>
+                        start={wArr} connect={[false, true, false, true]} step={0.00001} tooltips={true}/>
           </SliderRow>
         <SliderRow icon="opacity" title="Opacity">
           <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
                       range={{ min: 0.0, max: 1.0 }}
-                      start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true}/>
+                      start={wArrOpacity} connect={[true, false]} step={0.00001} tooltips={true}/>
         </SliderRow>
       </>;
 
@@ -199,7 +199,7 @@ class UiTF extends React.Component {
         <SliderRow>
           <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
                       range={{ min: 0.0, max: 1.0 }}
-                      start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true}/>
+                      start={wArrIsosurface} connect={[true, false]} step={0.00001} tooltips={true}/>
         </SliderRow>
         <SwitchRow>
           Ambient Occlusion
@@ -213,19 +213,19 @@ class UiTF extends React.Component {
         <SliderRow>
           <Nouislider onSlide={this.onChangeSliderErRadius.bind(this)} ref={'sliderErRadius'}
                       range={{ min: 1.0, max: 100.0 }}
-                      start={wArrErRadius} connect={[true, false]} step={0.02} tooltips={true}/>
+                      start={wArrErRadius} connect={[true, false]} step={0.00001} tooltips={true}/>
         </SliderRow>
         <SliderCaption caption="Depth" />
         <SliderRow>
           <Nouislider onSlide={this.onChangeSliderErDepth.bind(this)} ref={'sliderErDepth'}
                       range={{ min: 1.0, max: 100.0 }}
-                      start={wArrErDepth} connect={[true, false]} step={0.02} tooltips={true}/>
+                      start={wArrErDepth} connect={[true, false]} step={0.00001} tooltips={true}/>
         </SliderRow>
         <SliderCaption caption="Isosurface" />
         <SliderRow>
           <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
                       range={{ min: 0.0, max: 1.0 }}
-                      start={wArrIsosurface} connect={[true, false]} step={0.02} tooltips={true}/>
+                      start={wArrIsosurface} connect={[true, false]} step={0.00001} tooltips={true}/>
         </SliderRow>
 
         <button type="button" className={'btn btn-outline-dark'} onClick={this.onUndo}>
