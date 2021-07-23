@@ -21,7 +21,7 @@ import * as THREE from 'three';
 const CONTROL_CAMERA_MIN_ZOOM = 0.3;
 const CONTROL_CAMERA_MAX_ZOOM = 2.5;
 const CONTROL_CAMERA_ROTATION_SPEED = 0.008;
-const CONTROL_CAMERA_ZOOM_SPEED = 0.2;
+const CONTROL_CAMERA_ZOOM_SPEED = 0.5;
 
 // ******************************************************************
 // class

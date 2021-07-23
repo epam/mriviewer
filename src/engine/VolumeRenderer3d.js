@@ -167,12 +167,9 @@ export default class VolumeRenderer3d {
     // the cutting plane and the direction vector onto the light source
     // this.orbitControl = new OrbitControl(root3dContainer, this.camera, this.scene, this.meshSphere, () => {
     this.orbitControl = new OrbitControl(this.renderer.domElement, this.camera, this.scene, this.mesh, () => {
-      if (true) {
-      //  if (this.checkFrameBufferMode === CHECK_MODE_RESULT_OK) {
-        this.updateCutPlanes();
-        this.updateLightDir();
-        //this.updateMeshSphere();
-      }
+       //  if (this.checkFrameBufferMode === CHECK_MODE_RESULT_OK) {
+      this.updateCutPlanes();
+      this.updateLightDir();
     });
     //this.orbitControl.addCallbacks();
 
@@ -1401,15 +1398,12 @@ export default class VolumeRenderer3d {
     this.renderState = this.RENDER_STATE.ONCE;
   }
 
-  onMouseWheel(e) {
-    //const e = window.event || event; // old IE support
-    const delta = Math.max(-1, Math.min(1, (e.deltaY || -e.detail)));
-    // console.log(`mouse wheel event . delta = ${delta}`);
-    this.orbitControl.onZoom(-delta);
+  onMouseWheel({ deltaY }) {
+    const delta = deltaY < 0 ? 1 : -1;
+    this.orbitControl.onZoom(delta);
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return;
     }
     this.renderState = this.RENDER_STATE.ONCE;
-    // e.preventDefault();
   }
 } // class Graphics3d

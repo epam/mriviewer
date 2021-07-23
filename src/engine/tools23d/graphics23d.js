@@ -376,7 +376,7 @@ export default class Graphics23d {
    * Mouse events handler
    * xScr, yScr in [0..1] is normalized mouse coordinate in screen
    */
-  onMouseWheel(wheelDeltaY) {
+  onMouseWheel() {
     switch (this.m_toolType) {
     case tools2d.DISTANCE:
       break;
@@ -393,9 +393,7 @@ export default class Graphics23d {
     case tools2d.BIFI:
       break;
     case tools2d.ZOOM:
-      this.m_zoomTool.onMouseWheel(wheelDeltaY);
       this.updateZoom();
-      this.createMarkLinesAndText();
       break;
     case tools2d.DELETE:
       break;
@@ -405,16 +403,6 @@ export default class Graphics23d {
       console.log('Unexpected 2d tool');
       break;
     }
-  }
-
-  updateLines() {
-    this.m_distanceTool.updateLines(this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
-    this.m_angleTool.updateLines(this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
-    this.m_rectTool.updateLines(this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
-    this.m_textTool.updateAll(this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
-    this.m_areaTool.updateLines(this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
-    this.m_deleteTool.updateLines(this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
-    this.m_editTool.updateLines(this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
   }
 
   updateMove(xt, yt) {
@@ -442,13 +430,11 @@ export default class Graphics23d {
       this.m_posY = 0;
       this.m_materialsTex2d.m_uniforms.posY.value = this.m_posY;
     }
-    this.updateLines();
   }
 
   updateZoom() {
     const TWICE = 2;
     this.m_materialsTex2d.m_uniforms.zoom.value = this.m_zoomTool.m_zoom;
-    this.m_zoom = this.m_zoomTool.m_zoom;
     const delta = (TWICE - TWICE * this.m_zoom);
     if (this.m_posX > delta) {
       this.m_posX = delta;

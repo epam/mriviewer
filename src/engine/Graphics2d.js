@@ -83,31 +83,11 @@ class Graphics2d extends React.Component {
 
   }
 
-  /*
-  start() {
-    if (this.m_frameId === null) {
-      this.m_frameId = requestAnimationFrame(this.animate);
-    }
-  }
-  stop() {
-    cancelAnimationFrame(this.m_frameId);
-    this.m_frameId = null;
-  }
-  animate() {
-    // this.renderScene();
-    // this.m_frameId = window.requestAnimationFrame(this.animate);
-  }
-  */
   componentDidMount() {
     this.m_isMounted = true;
-    // this.start();
-    // this.renderScene();
-
     this.prepareImageForRender();
     this.renderReadyImage();
-
-
-    // detect actual render window dims
+    
     const w = this.m_mount.current.clientWidth;
     const h = this.m_mount.current.clientHeight;
     if (this.state.wRender === 0) {
@@ -121,25 +101,13 @@ class Graphics2d extends React.Component {
   }
 
   componentDidUpdate() {
-    // this.prepareImageForRender();
     if (this.m_isMounted) {
       this.renderReadyImage();
     }
   }
 
-  /**
-   * Get screenshot
-   *
-   * @param {number} wShot - x size of screenshot
-   * @param {number} hShot - y size of screenshot
-   */
-  screenshot(wShot, hShot) {
-    console.log(`get screenshot from 2d canvas: ${wShot}*${hShot}`);
-    const objCanvas = this.m_mount.current;
-    //const ctx = objCanvas.getContext('2d');
-    //const imageData = ctx.getImageData(0, 0, wShot, hShot);
-    //console.log(`image data: ${imageData}`);
-    return objCanvas.toDataURL();
+  screenshot() {
+    return this.m_mount.current.toDataURL();
   }
 
   /**
@@ -214,7 +182,8 @@ class Graphics2d extends React.Component {
   }
 
   prepareImageForRender(volIndexArg) {
-    // console.log('prepareImageForRender ...');
+    
+    //TODO: center the image by click
     const objCanvas = this.m_mount.current;
     if (objCanvas === null) {
       return;
@@ -230,359 +199,338 @@ class Graphics2d extends React.Component {
 
     ctx.fillStyle = 'rgb(64, 64, 64)';
     ctx.fillRect(0, 0, w, h);
-    // console.log(`render scene 2d. screen = ${w} * ${h}`);
-
-    // Test draw chessboard
-    const NEED_TEST_RAINBOW = false;
-    if (NEED_TEST_RAINBOW) {
-      const wImg = 800;
-      const hImg = 600;
-      const imgData = ctx.createImageData(wImg, hImg);
-      const dataDst = imgData.data;
-      let j = 0;
-      for (let y = 0; y < hImg; y++) {
-        for (let x = 0; x < wImg; x++) {
-          dataDst[j + 0] = Math.floor(255 * x / wImg);
-          dataDst[j + 1] = Math.floor(255 * y / hImg);
-          dataDst[j + 2] = 120;
-          dataDst[j + 3] = 255;
-          j += 4;
-        } // for (x)
-      } // for (y)
-      ctx.putImageData(imgData, 0, 0);
-    }
-
-    const volSet = store.volumeSet;
-    // const volIndex = this.m_volumeIndex;
-    const volIndex = (volIndexArg !== undefined) ? volIndexArg : store.volumeIndex;
-
-    const vol = volSet.getVolume(volIndex);
-    const mode2d = this.m_mode2d;
-    const sliceRatio = store.slider2d;
-
-    if (vol !== null) {
-      if (vol.m_dataArray === null) {
-        console.log('Graphics2d. Volume has no data array');
-        return;
-      }
-      const xDim = vol.m_xDim;
-      const yDim = vol.m_yDim;
-      const zDim = vol.m_zDim;
-      const xyDim = xDim * yDim;
-      const dataSrc = vol.m_dataArray; // 1 or 4 bytes array of pixels
-      if (dataSrc.length !== xDim * yDim * zDim * vol.m_bytesPerVoxel) {
-        console.log(`Bad src data len = ${dataSrc.length}, but expect ${xDim}*${yDim}*${zDim}`);
-      }
-
-      // console.log(`Graphics2d. prepareImageForRender. mode= ${mode2d}`);
-
-      const ONE = 1;
-      const FOUR = 4;
-      const OFF_3 = 3;
-
-      let imgData = null;
-      let dataDst = null;
-
-      const roiPal256 = this.m_roiPalette.getPalette256();
-
-      // determine actual render square (not w * h - viewport)
-      // calculate area using physical volume dimension
-      const TOO_SMALL = 1.0e-5;
-      const pbox = vol.m_boxSize;
-      if (pbox.x * pbox.y * pbox.z < TOO_SMALL) {
-        console.log(`Bad physical dimensions for rendered volume = ${pbox.x}*${pbox.y}*${pbox.z} `);
-      }
-      let wScreen = 0, hScreen = 0;
-
-      const xPos = store.render2dxPos;
-      const yPos = store.render2dyPos;
-      const zoom = store.render2dZoom;
-      // console.log(`Gra2d. RenderScene. zoom=${zoom}, xyPos=${xPos}, ${yPos}`);
-      if (mode2d === Modes2d.TRANSVERSE) {
-        // calc screen rect based on physics volume slice size (z slice)
-        const xyRratio = pbox.x / pbox.y;
-        wScreen = w;
-        hScreen = Math.floor(w / xyRratio);
-        if (hScreen > h) {
-          hScreen = h;
-          wScreen = Math.floor(h * xyRratio);
-          if (wScreen > w) {
-            console.log(`logic error! wScreen * hScreen = ${wScreen} * ${hScreen}`);
+  
+      const volSet = store.volumeSet;
+      // const volIndex = this.m_volumeIndex;
+      const volIndex = (volIndexArg !== undefined) ? volIndexArg : store.volumeIndex;
+  
+      const vol = volSet.getVolume(volIndex);
+      const mode2d = this.m_mode2d;
+      const sliceRatio = store.slider2d;
+  
+      if (vol !== null) {
+        if (vol.m_dataArray === null) {
+          console.log('Graphics2d. Volume has no data array');
+          return;
+        }
+        const xDim = vol.m_xDim;
+        const yDim = vol.m_yDim;
+        const zDim = vol.m_zDim;
+        const xyDim = xDim * yDim;
+        const dataSrc = vol.m_dataArray; // 1 or 4 bytes array of pixels
+        if (dataSrc.length !== xDim * yDim * zDim * vol.m_bytesPerVoxel) {
+          console.log(`Bad src data len = ${dataSrc.length}, but expect ${xDim}*${yDim}*${zDim}`);
+        }
+    
+        // console.log(`Graphics2d. prepareImageForRender. mode= ${mode2d}`);
+    
+        const ONE = 1;
+        const FOUR = 4;
+        const OFF_3 = 3;
+    
+        let imgData = null;
+        let dataDst = null;
+    
+        const roiPal256 = this.m_roiPalette.getPalette256();
+    
+        // determine actual render square (not w * h - viewport)
+        // calculate area using physical volume dimension
+        const TOO_SMALL = 1.0e-5;
+        const pbox = vol.m_boxSize;
+        if (pbox.x * pbox.y * pbox.z < TOO_SMALL) {
+          console.log(`Bad physical dimensions for rendered volume = ${pbox.x}*${pbox.y}*${pbox.z} `);
+        }
+        let wScreen = 0, hScreen = 0;
+    
+        const xPos = store.render2dxPos;
+        const yPos = store.render2dyPos;
+        const zoom = store.render2dZoom;
+        // console.log(`Gra2d. RenderScene. zoom=${zoom}, xyPos=${xPos}, ${yPos}`);
+        if (mode2d === Modes2d.TRANSVERSE) {
+          // calc screen rect based on physics volume slice size (z slice)
+          const xyRratio = pbox.x / pbox.y;
+          wScreen = w;
+          hScreen = Math.floor(w / xyRratio);
+          if (hScreen > h) {
+            hScreen = h;
+            wScreen = Math.floor(h * xyRratio);
+            if (wScreen > w) {
+              console.log(`logic error! wScreen * hScreen = ${wScreen} * ${hScreen}`);
+            }
           }
-        }
-        hScreen = (hScreen > 0) ? hScreen : 1;
-        // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
-
-        this.m_toolPick.setScreenDim(wScreen, hScreen);
-        this.m_toolZoom.setScreenDim(wScreen, hScreen);
-        this.m_toolDistance.setScreenDim(wScreen, hScreen);
-        this.m_toolAngle.setScreenDim(wScreen, hScreen);
-        this.m_toolArea.setScreenDim(wScreen, hScreen);
-        this.m_toolRect.setScreenDim(wScreen, hScreen);
-        this.m_toolText.setScreenDim(wScreen, hScreen);
-        this.m_toolEdit.setScreenDim(wScreen, hScreen);
-        this.m_toolDelete.setScreenDim(wScreen, hScreen);
-
-        // setup pixel size for 2d tools
-        const xPixelSize = vol.m_boxSize.x / xDim;
-        const yPixelSize = vol.m_boxSize.y / yDim;
-        // console.log(`xyPixelSize = ${xPixelSize} * ${yPixelSize}`);
-        this.m_toolDistance.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolAngle.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolArea.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolRect.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolText.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolEdit.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolDelete.setPixelSize(xPixelSize, yPixelSize);
-
-        // create image data
-        imgData = ctx.createImageData(wScreen, hScreen);
-        dataDst = imgData.data;
-        if (dataDst.length !== wScreen * hScreen * 4) {
-          console.log(`Bad dst data len = ${dataDst.length}, but expect ${wScreen}*${hScreen}*4`);
-        }
-
-        // z slice
-        let zSlice = Math.floor(zDim * sliceRatio);
-        zSlice = (zSlice < zDim) ? zSlice : (zDim - 1);
-        const zOff = zSlice * xyDim;
-        const xStep = zoom * xDim / wScreen;
-        const yStep = zoom * yDim / hScreen;
-        let j = 0;
-        let ay = yPos * yDim;
-        if (vol.m_bytesPerVoxel === ONE) {
-          for (let y = 0; y < hScreen; y++, ay += yStep) {
-            const ySrc = Math.floor(ay);
-            const yOff = ySrc * xDim;
-            let ax = xPos * xDim;
-            for (let x = 0; x < wScreen; x++, ax += xStep) {
-              const xSrc = Math.floor(ax);
-              const val = dataSrc[zOff + yOff + xSrc];
-              dataDst[j + 0] = val;
-              dataDst[j + 1] = val;
-              dataDst[j + 2] = val;
-              dataDst[j + 3] = 255; // opacity
-              j += 4;
-            } // for (x)
-          } // for (y)
-
-        } else if (vol.m_bytesPerVoxel === FOUR) {
-          for (let y = 0; y < hScreen; y++, ay += yStep) {
-            const ySrc = Math.floor(ay);
-            const yOff = ySrc * xDim;
-            let ax = xPos * xDim;
-            for (let x = 0; x < wScreen; x++, ax += xStep) {
-              const xSrc = Math.floor(ax);
-              const val = dataSrc[(zOff + yOff + xSrc) * FOUR + OFF_3];
-              const val4 = val * FOUR;
-              const rCol = roiPal256[val4 + 0];
-              const gCol = roiPal256[val4 + 1];
-              const bCol = roiPal256[val4 + 2];
-
-              dataDst[j + 0] = bCol;
-              dataDst[j + 1] = gCol;
-              dataDst[j + 2] = rCol;
-              dataDst[j + 3] = 255;
-              j += 4;
-            } // for (x)
-          } // for (y)
-
-        } // if 4 bpp
-
-      } else if (mode2d === Modes2d.SAGGITAL) {
-        // calc screen rect based on physics volume slice size (x slice)
-        const yzRatio = pbox.y / pbox.z;
-        wScreen = w;
-        hScreen = Math.floor(w / yzRatio);
-        if (hScreen > h) {
-          hScreen = h;
-          wScreen = Math.floor(h * yzRatio);
-          if (wScreen > w) {
-            console.log(`logic error! wScreen * hScreen = ${wScreen} * ${hScreen}`);
+          hScreen = (hScreen > 0) ? hScreen : 1;
+          // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
+      
+          this.m_toolPick.setScreenDim(wScreen, hScreen);
+          this.m_toolZoom.setScreenDim(wScreen, hScreen);
+          this.m_toolDistance.setScreenDim(wScreen, hScreen);
+          this.m_toolAngle.setScreenDim(wScreen, hScreen);
+          this.m_toolArea.setScreenDim(wScreen, hScreen);
+          this.m_toolRect.setScreenDim(wScreen, hScreen);
+          this.m_toolText.setScreenDim(wScreen, hScreen);
+          this.m_toolEdit.setScreenDim(wScreen, hScreen);
+          this.m_toolDelete.setScreenDim(wScreen, hScreen);
+      
+          // setup pixel size for 2d tools
+          const xPixelSize = vol.m_boxSize.x / xDim;
+          const yPixelSize = vol.m_boxSize.y / yDim;
+          // console.log(`xyPixelSize = ${xPixelSize} * ${yPixelSize}`);
+          this.m_toolDistance.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolAngle.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolArea.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolRect.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolText.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolEdit.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolDelete.setPixelSize(xPixelSize, yPixelSize);
+      
+          // create image data
+          imgData = ctx.createImageData(wScreen, hScreen);
+          dataDst = imgData.data;
+          if (dataDst.length !== wScreen * hScreen * 4) {
+            console.log(`Bad dst data len = ${dataDst.length}, but expect ${wScreen}*${hScreen}*4`);
           }
-        }
-        hScreen = (hScreen > 0) ? hScreen : 1;
-        // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
-
-        this.m_toolPick.setScreenDim(wScreen, hScreen);
-        this.m_toolZoom.setScreenDim(wScreen, hScreen);
-        this.m_toolDistance.setScreenDim(wScreen, hScreen);
-        this.m_toolAngle.setScreenDim(wScreen, hScreen);
-        this.m_toolArea.setScreenDim(wScreen, hScreen);
-        this.m_toolRect.setScreenDim(wScreen, hScreen);
-        this.m_toolText.setScreenDim(wScreen, hScreen);
-        this.m_toolEdit.setScreenDim(wScreen, hScreen);
-        this.m_toolDelete.setScreenDim(wScreen, hScreen);
-
-        // setup pixel size for 2d tools
-        const xPixelSize = vol.m_boxSize.y / yDim;
-        const yPixelSize = vol.m_boxSize.z / zDim;
-        // console.log(`xyPixelSize = ${xPixelSize} * ${yPixelSize}`);
-        this.m_toolDistance.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolAngle.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolArea.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolRect.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolText.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolEdit.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolDelete.setPixelSize(xPixelSize, yPixelSize);
-
-        // create image data
-        imgData = ctx.createImageData(wScreen, hScreen);
-        dataDst = imgData.data;
-        if (dataDst.length !== wScreen * hScreen * 4) {
-          console.log(`Bad dst data len = ${dataDst.length}, but expect ${wScreen}*${hScreen}*4`);
-        }
-
-        // x slice
-        let xSlice = Math.floor(xDim * sliceRatio);
-        xSlice = (xSlice < xDim) ? xSlice : (xDim - 1);
-
-        const yStep = zoom * yDim / wScreen;
-        const zStep = zoom * zDim / hScreen;
-        let j = 0;
-        let az = yPos * zDim;
-        if (vol.m_bytesPerVoxel === ONE) {
-          for (let y = 0; y < hScreen; y++, az += zStep) {
-            const zSrc = Math.floor(az);
-            const zOff = zSrc * xDim * yDim;
-            let ay = xPos * yDim;
-            for (let x = 0; x < wScreen; x++, ay += yStep) {
+      
+          // z slice
+          let zSlice = Math.floor(zDim * sliceRatio);
+          zSlice = (zSlice < zDim) ? zSlice : (zDim - 1);
+          const zOff = zSlice * xyDim;
+          const xStep = zoom * xDim / wScreen;
+          const yStep = zoom * yDim / hScreen;
+          let j = 0;
+          let ay = yPos * yDim;
+          if (vol.m_bytesPerVoxel === ONE) {
+            for (let y = 0; y < hScreen; y++, ay += yStep) {
               const ySrc = Math.floor(ay);
               const yOff = ySrc * xDim;
-              const val = dataSrc[zOff + yOff + xSlice];
-
-              dataDst[j + 0] = val;
-              dataDst[j + 1] = val;
-              dataDst[j + 2] = val;
-              dataDst[j + 3] = 255; // opacity
-
-              j += 4;
-            } // for (x)
-          } // for (y)
-        } else if (vol.m_bytesPerVoxel === FOUR) {
-          for (let y = 0; y < hScreen; y++, az += zStep) {
-            const zSrc = Math.floor(az);
-            const zOff = zSrc * xDim * yDim;
-            let ay = xPos * yDim;
-            for (let x = 0; x < wScreen; x++, ay += yStep) {
+              let ax = xPos * xDim;
+              for (let x = 0; x < wScreen; x++, ax += xStep) {
+                const xSrc = Math.floor(ax);
+                const val = dataSrc[zOff + yOff + xSrc];
+                dataDst[j + 0] = val;
+                dataDst[j + 1] = val;
+                dataDst[j + 2] = val;
+                dataDst[j + 3] = 255; // opacity
+                j += 4;
+              } // for (x)
+            } // for (y)
+        
+          } else if (vol.m_bytesPerVoxel === FOUR) {
+            for (let y = 0; y < hScreen; y++, ay += yStep) {
               const ySrc = Math.floor(ay);
               const yOff = ySrc * xDim;
-              const val = dataSrc[(zOff + yOff + xSlice) * FOUR + OFF_3];
-              const val4 = val * FOUR;
-              const rCol = roiPal256[val4 + 0];
-              const gCol = roiPal256[val4 + 1];
-              const bCol = roiPal256[val4 + 2];
-
-              dataDst[j + 0] = bCol;
-              dataDst[j + 1] = gCol;
-              dataDst[j + 2] = rCol;
-              dataDst[j + 3] = 255; // opacity
-
-              j += 4;
-            } // for (x)
-          } // for (y)
-        } // if 4 bppp
-      } else if (mode2d === Modes2d.CORONAL) {
-        // calc screen rect based on physics volume slice size (y slice)
-        const xzRatio = pbox.x / pbox.z;
-        wScreen = w;
-        hScreen = Math.floor(w / xzRatio);
-        if (hScreen > h) {
-          hScreen = h;
-          wScreen = Math.floor(h * xzRatio);
-          if (wScreen > w) {
-            console.log(`logic error! wScreen * hScreen = ${wScreen} * ${hScreen}`);
+              let ax = xPos * xDim;
+              for (let x = 0; x < wScreen; x++, ax += xStep) {
+                const xSrc = Math.floor(ax);
+                const val = dataSrc[(zOff + yOff + xSrc) * FOUR + OFF_3];
+                const val4 = val * FOUR;
+                const rCol = roiPal256[val4 + 0];
+                const gCol = roiPal256[val4 + 1];
+                const bCol = roiPal256[val4 + 2];
+            
+                dataDst[j + 0] = bCol;
+                dataDst[j + 1] = gCol;
+                dataDst[j + 2] = rCol;
+                dataDst[j + 3] = 255;
+                j += 4;
+              } // for (x)
+            } // for (y)
+        
+          } // if 4 bpp
+      
+        } else if (mode2d === Modes2d.SAGGITAL) {
+          // calc screen rect based on physics volume slice size (x slice)
+          const yzRatio = pbox.y / pbox.z;
+          wScreen = w;
+          hScreen = Math.floor(w / yzRatio);
+          if (hScreen > h) {
+            hScreen = h;
+            wScreen = Math.floor(h * yzRatio);
+            if (wScreen > w) {
+              console.log(`logic error! wScreen * hScreen = ${wScreen} * ${hScreen}`);
+            }
           }
+          hScreen = (hScreen > 0) ? hScreen : 1;
+          // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
+      
+          this.m_toolPick.setScreenDim(wScreen, hScreen);
+          this.m_toolZoom.setScreenDim(wScreen, hScreen);
+          this.m_toolDistance.setScreenDim(wScreen, hScreen);
+          this.m_toolAngle.setScreenDim(wScreen, hScreen);
+          this.m_toolArea.setScreenDim(wScreen, hScreen);
+          this.m_toolRect.setScreenDim(wScreen, hScreen);
+          this.m_toolText.setScreenDim(wScreen, hScreen);
+          this.m_toolEdit.setScreenDim(wScreen, hScreen);
+          this.m_toolDelete.setScreenDim(wScreen, hScreen);
+      
+          // setup pixel size for 2d tools
+          const xPixelSize = vol.m_boxSize.y / yDim;
+          const yPixelSize = vol.m_boxSize.z / zDim;
+          // console.log(`xyPixelSize = ${xPixelSize} * ${yPixelSize}`);
+          this.m_toolDistance.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolAngle.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolArea.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolRect.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolText.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolEdit.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolDelete.setPixelSize(xPixelSize, yPixelSize);
+      
+          // create image data
+          imgData = ctx.createImageData(wScreen, hScreen);
+          dataDst = imgData.data;
+          if (dataDst.length !== wScreen * hScreen * 4) {
+            console.log(`Bad dst data len = ${dataDst.length}, but expect ${wScreen}*${hScreen}*4`);
+          }
+      
+          // x slice
+          let xSlice = Math.floor(xDim * sliceRatio);
+          xSlice = (xSlice < xDim) ? xSlice : (xDim - 1);
+      
+          const yStep = zoom * yDim / wScreen;
+          const zStep = zoom * zDim / hScreen;
+          let j = 0;
+          let az = yPos * zDim;
+          if (vol.m_bytesPerVoxel === ONE) {
+            for (let y = 0; y < hScreen; y++, az += zStep) {
+              const zSrc = Math.floor(az);
+              const zOff = zSrc * xDim * yDim;
+              let ay = xPos * yDim;
+              for (let x = 0; x < wScreen; x++, ay += yStep) {
+                const ySrc = Math.floor(ay);
+                const yOff = ySrc * xDim;
+                const val = dataSrc[zOff + yOff + xSlice];
+            
+                dataDst[j + 0] = val;
+                dataDst[j + 1] = val;
+                dataDst[j + 2] = val;
+                dataDst[j + 3] = 255; // opacity
+            
+                j += 4;
+              } // for (x)
+            } // for (y)
+          } else if (vol.m_bytesPerVoxel === FOUR) {
+            for (let y = 0; y < hScreen; y++, az += zStep) {
+              const zSrc = Math.floor(az);
+              const zOff = zSrc * xDim * yDim;
+              let ay = xPos * yDim;
+              for (let x = 0; x < wScreen; x++, ay += yStep) {
+                const ySrc = Math.floor(ay);
+                const yOff = ySrc * xDim;
+                const val = dataSrc[(zOff + yOff + xSlice) * FOUR + OFF_3];
+                const val4 = val * FOUR;
+                const rCol = roiPal256[val4 + 0];
+                const gCol = roiPal256[val4 + 1];
+                const bCol = roiPal256[val4 + 2];
+            
+                dataDst[j + 0] = bCol;
+                dataDst[j + 1] = gCol;
+                dataDst[j + 2] = rCol;
+                dataDst[j + 3] = 255; // opacity
+            
+                j += 4;
+              } // for (x)
+            } // for (y)
+          } // if 4 bppp
+        } else if (mode2d === Modes2d.CORONAL) {
+          // calc screen rect based on physics volume slice size (y slice)
+          const xzRatio = pbox.x / pbox.z;
+          wScreen = w;
+          hScreen = Math.floor(w / xzRatio);
+          if (hScreen > h) {
+            hScreen = h;
+            wScreen = Math.floor(h * xzRatio);
+            if (wScreen > w) {
+              console.log(`logic error! wScreen * hScreen = ${wScreen} * ${hScreen}`);
+            }
+          }
+          hScreen = (hScreen > 0) ? hScreen : 1;
+          // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
+      
+          this.m_toolPick.setScreenDim(wScreen, hScreen);
+          this.m_toolZoom.setScreenDim(wScreen, hScreen);
+          this.m_toolDistance.setScreenDim(wScreen, hScreen);
+          this.m_toolAngle.setScreenDim(wScreen, hScreen);
+          this.m_toolArea.setScreenDim(wScreen, hScreen);
+          this.m_toolRect.setScreenDim(wScreen, hScreen);
+          this.m_toolText.setScreenDim(wScreen, hScreen);
+          this.m_toolEdit.setScreenDim(wScreen, hScreen);
+          this.m_toolDelete.setScreenDim(wScreen, hScreen);
+      
+          // setup pixel size for 2d tools
+          const xPixelSize = vol.m_boxSize.x / xDim;
+          const yPixelSize = vol.m_boxSize.z / zDim;
+          // console.log(`xyPixelSize = ${xPixelSize} * ${yPixelSize}`);
+          this.m_toolDistance.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolAngle.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolArea.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolRect.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolText.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolEdit.setPixelSize(xPixelSize, yPixelSize);
+          this.m_toolDelete.setPixelSize(xPixelSize, yPixelSize);
+      
+          // create image data
+          imgData = ctx.createImageData(wScreen, hScreen);
+          dataDst = imgData.data;
+          if (dataDst.length !== wScreen * hScreen * 4) {
+            console.log(`Bad dst data len = ${dataDst.length}, but expect ${wScreen}*${hScreen}*4`);
+          }
+      
+          // y slice
+          let ySlice = Math.floor(yDim * sliceRatio);
+          ySlice = (ySlice < yDim) ? ySlice : (yDim - 1);
+          const yOff = ySlice * xDim;
+      
+          const xStep = zoom * xDim / wScreen;
+          const zStep = zoom * zDim / hScreen;
+          let j = 0;
+          let az = yPos * zDim;
+          if (vol.m_bytesPerVoxel === ONE) {
+            for (let y = 0; y < hScreen; y++, az += zStep) {
+              const zSrc = Math.floor(az);
+              const zOff = zSrc * xDim * yDim;
+              let ax = xPos * xDim;
+              for (let x = 0; x < wScreen; x++, ax += xStep) {
+                const xSrc = Math.floor(ax);
+                const val = dataSrc[zOff + yOff + xSrc];
+            
+                dataDst[j + 0] = val;
+                dataDst[j + 1] = val;
+                dataDst[j + 2] = val;
+                dataDst[j + 3] = 255; // opacity
+            
+                j += 4;
+              } // for (x)
+            } // for (y)
+          } else if (vol.m_bytesPerVoxel === FOUR) {
+            for (let y = 0; y < hScreen; y++, az += zStep) {
+              const zSrc = Math.floor(az);
+              const zOff = zSrc * xDim * yDim;
+              let ax = xPos * xDim;
+              for (let x = 0; x < wScreen; x++, ax += xStep) {
+                const xSrc = Math.floor(ax);
+                const val = dataSrc[(zOff + yOff + xSrc) * FOUR + OFF_3];
+                const val4 = val * FOUR;
+                const rCol = roiPal256[val4 + 0];
+                const gCol = roiPal256[val4 + 1];
+                const bCol = roiPal256[val4 + 2];
+            
+                dataDst[j + 0] = bCol;
+                dataDst[j + 1] = gCol;
+                dataDst[j + 2] = rCol;
+                dataDst[j + 3] = 255; // opacity
+            
+                j += 4;
+              } // for (x)
+            } // for (y)
+          } // end if 4 bpp
         }
-        hScreen = (hScreen > 0) ? hScreen : 1;
-        // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
-
-        this.m_toolPick.setScreenDim(wScreen, hScreen);
-        this.m_toolZoom.setScreenDim(wScreen, hScreen);
-        this.m_toolDistance.setScreenDim(wScreen, hScreen);
-        this.m_toolAngle.setScreenDim(wScreen, hScreen);
-        this.m_toolArea.setScreenDim(wScreen, hScreen);
-        this.m_toolRect.setScreenDim(wScreen, hScreen);
-        this.m_toolText.setScreenDim(wScreen, hScreen);
-        this.m_toolEdit.setScreenDim(wScreen, hScreen);
-        this.m_toolDelete.setScreenDim(wScreen, hScreen);
-
-        // setup pixel size for 2d tools
-        const xPixelSize = vol.m_boxSize.x / xDim;
-        const yPixelSize = vol.m_boxSize.z / zDim;
-        // console.log(`xyPixelSize = ${xPixelSize} * ${yPixelSize}`);
-        this.m_toolDistance.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolAngle.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolArea.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolRect.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolText.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolEdit.setPixelSize(xPixelSize, yPixelSize);
-        this.m_toolDelete.setPixelSize(xPixelSize, yPixelSize);
-
-        // create image data
-        imgData = ctx.createImageData(wScreen, hScreen);
-        dataDst = imgData.data;
-        if (dataDst.length !== wScreen * hScreen * 4) {
-          console.log(`Bad dst data len = ${dataDst.length}, but expect ${wScreen}*${hScreen}*4`);
-        }
-
-        // y slice
-        let ySlice = Math.floor(yDim * sliceRatio);
-        ySlice = (ySlice < yDim) ? ySlice : (yDim - 1);
-        const yOff = ySlice * xDim;
-
-        const xStep = zoom * xDim / wScreen;
-        const zStep = zoom * zDim / hScreen;
-        let j = 0;
-        let az = yPos * zDim;
-        if (vol.m_bytesPerVoxel === ONE) {
-          for (let y = 0; y < hScreen; y++, az += zStep) {
-            const zSrc = Math.floor(az);
-            const zOff = zSrc * xDim * yDim;
-            let ax = xPos * xDim;
-            for (let x = 0; x < wScreen; x++, ax += xStep) {
-              const xSrc = Math.floor(ax);
-              const val = dataSrc[zOff + yOff + xSrc];
-
-              dataDst[j + 0] = val;
-              dataDst[j + 1] = val;
-              dataDst[j + 2] = val;
-              dataDst[j + 3] = 255; // opacity
-
-              j += 4;
-            } // for (x)
-          } // for (y)
-        } else if (vol.m_bytesPerVoxel === FOUR) {
-          for (let y = 0; y < hScreen; y++, az += zStep) {
-            const zSrc = Math.floor(az);
-            const zOff = zSrc * xDim * yDim;
-            let ax = xPos * xDim;
-            for (let x = 0; x < wScreen; x++, ax += xStep) {
-              const xSrc = Math.floor(ax);
-              const val = dataSrc[(zOff + yOff + xSrc) * FOUR + OFF_3];
-              const val4 = val * FOUR;
-              const rCol = roiPal256[val4 + 0];
-              const gCol = roiPal256[val4 + 1];
-              const bCol = roiPal256[val4 + 2];
-
-              dataDst[j + 0] = bCol;
-              dataDst[j + 1] = gCol;
-              dataDst[j + 2] = rCol;
-              dataDst[j + 3] = 255; // opacity
-
-              j += 4;
-            } // for (x)
-          } // for (y)
-        } // end if 4 bpp
-      }
-
-      // check is segmentation 2d mode is active
-      // const isSegm = store.graphics2dModeSegmentation;
-      // console.log("Segm2d mode = " + isSegm);
-
-      this.imgData = imgData;
-      this.segm2d.setImageData(imgData);
-    } // if vol not null
+    
+        // check is segmentation 2d mode is active
+        // const isSegm = store.graphics2dModeSegmentation;
+        // console.log("Segm2d mode = " + isSegm);
+    
+        this.imgData = imgData;
+        this.segm2d.setImageData(imgData);
+      } // if vol not null
   } // prepareImageForRender
 
   fillBackground(ctx) {
@@ -592,7 +540,6 @@ class Graphics2d extends React.Component {
   }
 
   renderReadyImage() {
-    // console.log('renderReadyImage ...');
     if (!this.m_isMounted) {
       return;
     }
