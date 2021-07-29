@@ -99,20 +99,6 @@ const TagsList = ({ tags }) => (
     </table>
 );
 
-const mockedSlices  = [
-    { m_sliceName: "Slice 0", m_fileName: "file0", m_tags: [
-            { m_tag: "(#005500, #452211)", m_attrName: "?desc" || "", m_attrValue: "(Sequence Data)" || "" },
-            { m_tag: "(#ffffff, #452211)", m_attrName:  "", m_attrValue: "" }
-        ] },
-    { m_sliceName: "Slice 1", m_fileName: "file1", m_tags: [
-            { m_tag: "(#sdv0, #4csdc)", m_attrName: "?dvdf", m_attrValue: "(Sequence Data)" },
-            { m_tag: "(#1353, #45684)", m_attrName: "?vds", m_attrValue: "lorem10 data data tsafdskf ewfqwef" },
-            { m_tag: "(#ddccs, #fsadc)", m_attrName: "?decsdc", m_attrValue: "(Sequence Data)" },
-        ] },
-    { m_sliceName: "Slice 2", m_fileName: "file2", m_tags: [] },
-    { m_sliceName: "Slice 3", m_fileName: "file3", m_tags: [] },
-];
-
 const ModalInfo = (props) => {
     const { stateVis, onHide, store: { dicomInfo, volumeSet, volumeIndex } } = props;
     const [currentSlice, setCurrentSlice] = useState(0);
@@ -127,7 +113,7 @@ const ModalInfo = (props) => {
         return getVolInfo(volumeSet, volume);
     }, [volumeSet, volumeIndex]);
 
-    const slicesInfo = dicomInfo?.m_sliceInfo || mockedSlices || [];
+    const slicesInfo = dicomInfo?.m_sliceInfo || [];
     const tagsList = slicesInfo[currentSlice]?.m_tags || [];
 
     return (

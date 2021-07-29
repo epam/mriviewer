@@ -27,11 +27,18 @@
   font-family: inherit;
   text-align: center;
   font-size: 21px;
+  border-radius: 5px;
 }
 
 .rounded {
   overflow: hidden;
   border-radius: 50%;
+}
+
+.captionButton {
+  padding: 5px 10px;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 .button svg {
@@ -67,7 +74,7 @@
 .button.light:hover,
 .button.light:focus {
   background-color: var(--light);
-  filter: brightness(85%);
+  filter: brightness(80%);
 }
 
 .button.accent {

@@ -22,6 +22,8 @@ import StoreActionType from '../store/ActionTypes';
 import UiHistogram from './UiHistogram';
 import { SliderCaption, SliderRow, SwitchRow } from "./Form";
 import { Switch } from "./Form/Switch";
+import { UIButton } from "./Button/Button";
+import { FlexRow } from "./Layout/FlexRow";
 
 
 // ********************************************************
@@ -227,13 +229,10 @@ class UiTF extends React.Component {
                       range={{ min: 0.0, max: 1.0 }}
                       start={wArrIsosurface} connect={[true, false]} step={0.00001} tooltips={true}/>
         </SliderRow>
-
-        <button type="button" className={'btn btn-outline-dark'} onClick={this.onUndo}>
-          Undo
-        </button>
-        <button type="button" className={'btn btn-outline-dark'} onClick={this.onSave}>
-          Save
-        </button>
+        <FlexRow>
+          <UIButton caption="Undo" mode="light" onClick={this.onUndo}/>
+          <UIButton caption="Save" mode="accent" onClick={this.onSave} />
+        </FlexRow>
       </>
 
     const jsxRayfastTF = null
