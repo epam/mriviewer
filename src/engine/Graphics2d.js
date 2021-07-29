@@ -84,6 +84,7 @@ class Graphics2d extends React.Component {
     this.prepareImageForRender();
     this.renderReadyImage();
     
+
     const w = this.m_mount.current.clientWidth;
     const h = this.m_mount.current.clientHeight;
     if (this.state.wRender === 0) {
@@ -104,77 +105,6 @@ class Graphics2d extends React.Component {
 
   screenshot() {
     return this.m_mount.current.toDataURL();
-  }
-
-  /**
-   * Render text info about volume
-   *
-   * @param {object} ctx - render context
-   * @param {VolumeSet} volSet - volume set to render
-   * @param vol
-   */
-  renderTextInfo(ctx, volSet, vol) {
-    let strMsg;
-    let xText = 4;
-    let yText = 4;
-    const FONT_SZ = 16;
-    ctx.font = FONT_SZ.toString() + 'px Arial';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'top';
-    ctx.fillStyle = 'grey';
-
-    strMsg = 'volume dim = ' + vol.m_xDim.toString() + ' * ' +
-      vol.m_yDim.toString() + ' * ' +
-      vol.m_zDim.toString();
-    ctx.fillText(strMsg, xText, yText);
-    yText += FONT_SZ;
-
-    const xSize = Math.floor(vol.m_boxSize.x);
-    const ySize = Math.floor(vol.m_boxSize.y);
-    const zSize = Math.floor(vol.m_boxSize.z);
-    strMsg = 'vol phys size = ' + xSize.toString() + ' * ' +
-      ySize.toString() + ' * ' +
-      zSize.toString();
-    ctx.fillText(strMsg, xText, yText);
-    yText += FONT_SZ;
-
-    const patName = volSet.m_patientName;
-    if (patName.length > 1) {
-      strMsg = 'patient name = ' + patName;
-      ctx.fillText(strMsg, xText, yText);
-      yText += FONT_SZ;
-    }
-    const patBirth = volSet.m_patientBirth;
-    if (patBirth.length > 1) {
-      strMsg = 'patient birth = ' + patBirth;
-      ctx.fillText(strMsg, xText, yText);
-      yText += FONT_SZ;
-    }
-    const seriesDescr = volSet.m_seriesDescr;
-    if (seriesDescr.length > 1) {
-      strMsg = 'series descr = ' + seriesDescr;
-      ctx.fillText(strMsg, xText, yText);
-      yText += FONT_SZ;
-    }
-    const institutionName = volSet.m_institutionName;
-    if (institutionName.length > 1) {
-      strMsg = 'institution name = ' + institutionName;
-      ctx.fillText(strMsg, xText, yText);
-      yText += FONT_SZ;
-    }
-    const operatorsName = volSet.m_operatorsName;
-    if (operatorsName.length > 1) {
-      strMsg = 'operators name = ' + operatorsName;
-      ctx.fillText(strMsg, xText, yText);
-      yText += FONT_SZ;
-    }
-    const physicansName = volSet.m_physicansName;
-    if (physicansName.length > 1) {
-      strMsg = 'physicans name = ' + physicansName;
-      ctx.fillText(strMsg, xText, yText);
-      yText += FONT_SZ;
-    }
-
   }
 
   prepareImageForRender(volIndexArg) {
@@ -566,9 +496,7 @@ class Graphics2d extends React.Component {
       ctx.putImageData(this.imgData, 0, 0);
     }
 
-    // render text info
-    this.renderTextInfo(ctx, volSet, vol);
-    // render all tools
+   // render all tools
     this.m_toolPick.render(ctx);
     this.m_toolDistance.render(ctx, store);
     this.m_toolAngle.render(ctx, store);
