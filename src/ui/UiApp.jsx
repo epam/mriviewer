@@ -27,9 +27,9 @@ import UiAbout from "./UiAbout";
 
 import css from "./UiApp.module.css";
 import Graphics3d from "../engine/Graphics3d";
-import ZoomTools from "./ZoomTools";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
+import ZoomTools from "./ZoomTools";
 
 class UiApp extends React.Component {
   constructor(props) {

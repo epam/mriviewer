@@ -10,23 +10,7 @@
 
 import * as THREE from 'three';
 
-// import MaterialTex2d from '../gfx/mattex2d';
-// import MaterialColor2d from '../gfx/matcolor2d';
-// import MeshText2D from './meshtext2d';
-// import Line2D from './line2d';
-// import Circle2D from './circle2d';
 import DistanceTool from './distancetool';
-// import AngleTool from './angletool';
-// import AreaTool from './areatool';
-// import ZoomTool from './zoomtool';
-// import RectTool from './recttool';
-// import MoveTool from './movetool';
-// import DeleteTool from './deletetool';
-// import EditTool from './edittool';
-// import TextTool from './texttool';
-
-/**  @constant {number} SCENE_3D_BACKGROUND_COLOR - backgroudn color for 3d window */
-// const SCENE_2D_BACKGROUND_COLOR = 0xbbbbff; // 0x00
 
 /** Possible 2d tools */
 const tools2d = {
@@ -87,18 +71,8 @@ export default class Graphics23d {
     this.m_textTime = -1000;
     this.m_text = null;
     this.m_toolType = tools2d.DISTANCE;
-    //this.m_toolType = tools2d.INTENSITY;
     this.m_distanceTool = new DistanceTool(this.m_scene, this.m_lineWidth);
-    /*this.m_angleTool = new AngleTool(this.m_scene, this.m_lineWidth);
-    this.m_areaTool = new AreaTool(this.m_scene, this.m_lineWidth);
-    this.m_rectTool = new RectTool(this.m_scene, this.m_lineWidth);
-    this.m_textTool = new TextTool(this.m_scene);
-    this.m_zoomTool = new ZoomTool(this.m_zoom);
-    this.m_moveTool = new MoveTool(this.m_zoom, this.m_posX, this.m_posY);
-    this.m_deleteTool = new DeleteTool(this.m_scene, this.m_lineWidth);
-    this.m_editTool = new EditTool(this.m_scene, this.m_lineWidth);
-    */
-    //this.m_distanceTool.test();
+
   } // end of constructor
 
   set2dToolType(toolType) {
@@ -449,18 +423,5 @@ export default class Graphics23d {
 
   updateText() {
     //this.m_pickTool.update();
-  }
-
-  static shortenString(str) {
-    const MAX_ITEM_LEN = 20;
-    const SHORT_ITEM_PART = 5;
-    let strRet = str;
-    const pnl = str.length;
-    if (pnl > MAX_ITEM_LEN) {
-      const strBegin = str.substring(0, SHORT_ITEM_PART + 1);
-      const strEnd = str.substring(pnl - SHORT_ITEM_PART, pnl);
-      strRet = `${strBegin}...${strEnd}`;
-    }
-    return strRet;
   }
 }

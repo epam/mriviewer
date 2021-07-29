@@ -9,9 +9,7 @@ import { connect } from 'react-redux';
 import Modes2d from '../store/Modes2d';
 import StoreActionType from '../store/ActionTypes';
 import ToolPick from './tools2d/ToolPick';
-import ToolZoom from './tools2d/ToolZoom';
 import ToolDistance from './tools2d/ToolDistance';
-import ToolClear from './tools2d/ToolClear';
 import ToolAngle from './tools2d/ToolAngle';
 import ToolArea from './tools2d/ToolArea';
 import ToolRect from './tools2d/ToolRect';
@@ -66,8 +64,6 @@ class Graphics2d extends React.Component {
     // tools2d
     this.m_toolPick = new ToolPick(this);
     this.m_toolDistance = new ToolDistance(this);
-    this.m_toolZoom = new ToolZoom(this);
-    this.m_toolClear = new ToolClear(this);
     this.m_toolAngle = new ToolAngle(this);
     this.m_toolArea = new ToolArea(this);
     this.m_toolRect = new ToolRect(this);
@@ -262,7 +258,6 @@ class Graphics2d extends React.Component {
           // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
       
           this.m_toolPick.setScreenDim(wScreen, hScreen);
-          this.m_toolZoom.setScreenDim(wScreen, hScreen);
           this.m_toolDistance.setScreenDim(wScreen, hScreen);
           this.m_toolAngle.setScreenDim(wScreen, hScreen);
           this.m_toolArea.setScreenDim(wScreen, hScreen);
@@ -353,7 +348,6 @@ class Graphics2d extends React.Component {
           // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
       
           this.m_toolPick.setScreenDim(wScreen, hScreen);
-          this.m_toolZoom.setScreenDim(wScreen, hScreen);
           this.m_toolDistance.setScreenDim(wScreen, hScreen);
           this.m_toolAngle.setScreenDim(wScreen, hScreen);
           this.m_toolArea.setScreenDim(wScreen, hScreen);
@@ -446,7 +440,6 @@ class Graphics2d extends React.Component {
           // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
       
           this.m_toolPick.setScreenDim(wScreen, hScreen);
-          this.m_toolZoom.setScreenDim(wScreen, hScreen);
           this.m_toolDistance.setScreenDim(wScreen, hScreen);
           this.m_toolAngle.setScreenDim(wScreen, hScreen);
           this.m_toolArea.setScreenDim(wScreen, hScreen);
@@ -588,18 +581,31 @@ class Graphics2d extends React.Component {
 
   onMouseWheel(evt) {
     const store = this.props;
-    const indexTools2d = store.indexTools2d;
-    if (indexTools2d === Tools2dType.ZOOM) {
-      this.m_toolZoom.onMouseWheel(store, evt);
+    const step = evt.deltaY * 2 ** (-16);
+  
+    console.log(`onMouseWheel.evt = ${{ evt }}`);
+    console.log(`onMouseWheel.store = ${{ store }}`);
+  
+    const zoom = store.render2dZoom;
+    let zoomNew = zoom + step;
+    const xPos = store.render2dxPos;
+    const yPos = store.render2dyPos;
+    const xPosNew = xPos - step;
+    const yPosNew = yPos - step;
+    // console.log(`onMouseWheel. zoom.puml = ${zoom.puml} zoomNew = ${zoomNew}, xyPos = ${xPosNew},${yPosNew}`);
+    if (Math.abs(zoomNew) > 1) {
+      return;
     }
+    store.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: zoomNew });
+    store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: xPosNew - step / 2 });
+    store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: yPosNew - step / 2 });
+  
+    store.graphics2d.forceUpdate();
   }
 
   onMouseUp(evt) {
     const store = this.props;
     const indexTools2d = store.indexTools2d;
-    if (indexTools2d === Tools2dType.ZOOM) {
-      this.m_toolZoom.onMouseUp();
-    }
     if (indexTools2d === Tools2dType.DISTANCE) {
       const store = this.props;
       const box = this.m_mount.current.getBoundingClientRect();
@@ -653,9 +659,6 @@ class Graphics2d extends React.Component {
     const xScr = xContainer;
     const yScr = yContainer;
 
-    if (indexTools2d === Tools2dType.ZOOM) {
-      this.m_toolZoom.onMouseMove(store, xScr, yScr);
-    }
     if (indexTools2d === Tools2dType.DISTANCE) {
       this.m_toolDistance.onMouseMove(xScr, yScr, store);
     }
@@ -695,9 +698,6 @@ class Graphics2d extends React.Component {
       break;
     case Tools2dType.DISTANCE:
       this.m_toolDistance.onMouseDown(xScr, yScr, store);
-      break;
-    case Tools2dType.ZOOM:
-      this.m_toolZoom.onMouseDown(xScr, yScr);
       break;
     case Tools2dType.ANGLE:
       this.m_toolAngle.onMouseDown(xScr, yScr, store);
@@ -775,17 +775,16 @@ class Graphics2d extends React.Component {
       height: '100%',
       display: 'block',
     };
-    const jsxGrapNonSized = <div style={styleObj}>
-      <canvas ref={this.m_mount} style={styleObj}/>
-    </div>
-    const jsxGrapSized = <div style={styleObj}>
+    return <div style={styleObj}>
       <canvas
         ref={this.m_mount}
         style={styleObj}
         width={this.state.wRender} height={this.state.hRender}
-        onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onMouseMove={this.onMouseMove} onWheel={this.onMouseWheel}/>
+        onMouseDown={this.onMouseDown}
+        onMouseUp={this.onMouseUp}
+        onMouseMove={this.onMouseMove}
+        onWheel={this.onMouseWheel}/>
     </div>
-    return (this.state.wRender > 0) ? jsxGrapSized : jsxGrapNonSized;
   }
 }
 

@@ -84,7 +84,7 @@ class UiCtrl3d extends React.Component {
       <SliderRow icon="opacity" title="Opacity">
         <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
                     range={{ min: 0.0, max: 1.0 }}
-                    start={wArrOpacity} connect={[true, false]} step={0.02} tooltips={true} />
+                    start={wArrOpacity} connect={[true, false]} step={2 ** (-8)} tooltips={true} />
       </SliderRow>
     </>
   }

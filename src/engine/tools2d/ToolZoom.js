@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import StoreActionType from '../../store/ActionTypes';
-
 class ToolZoom {
   constructor(objGra) {
     this.m_objGraphics2d = objGra;
@@ -65,30 +63,6 @@ class ToolZoom {
       }
     }
   }
-  
-  onMouseWheel(store, evt) {
-    const step = evt.deltaY * 2 ** (-16);
-
-    console.log(`onMouseWheel.evt = ${{ evt }}`);
-    console.log(`onMouseWheel.store = ${{ store }}`);
-    
-    const zoom = store.render2dZoom;
-    let zoomNew = zoom + step;
-    const xPos = store.render2dxPos;
-    const yPos = store.render2dyPos;
-    const xPosNew = xPos - step;
-    const yPosNew = yPos - step;
-    // console.log(`onMouseWheel. zoom = ${zoom} zoomNew = ${zoomNew}, xyPos = ${xPosNew},${yPosNew}`);
-    if (Math.abs(zoomNew) > 1) {
-      return;
-    }
-    store.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: zoomNew });
-    store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: xPosNew - step / 2 });
-    store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: yPosNew - step / 2 });
-    
-    store.graphics2d.forceUpdate();
-  } // end on mouse wheel
-  
 }
 
 // export default connect(store => store)(ToolZoom);

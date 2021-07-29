@@ -5,7 +5,6 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import Modes2d from '../store/Modes2d';
 import StoreActionType from '../store/ActionTypes';
@@ -67,38 +66,15 @@ class UiCtrl2d extends React.Component {
     const varSag = mode2d === Modes2d.SAGGITAL
     const varCor = mode2d === Modes2d.CORONAL
     const varTra = mode2d === Modes2d.TRANSVERSE
-    
-    const jsxSliceSelector =
-      <>
-        <Container direction="vertical">
-          <OverlayTrigger key="zx" placement="bottom" overlay={
-            <Tooltip>
-              Show slices along x axis
-            </Tooltip>
-          }>
-            <UIButton handler={this.onModeSaggital} active={varSag} icon="saggital" />
-          </OverlayTrigger>
-
-          <OverlayTrigger key="zy" placement="bottom" overlay={
-            <Tooltip>
-              Show slices along y axis
-            </Tooltip>
-          }>
-            <UIButton handler={this.onModeCoronal} active={varCor} icon="coronal" />
-          </OverlayTrigger>
-
-          <OverlayTrigger key="za" placement="bottom" overlay={
-            <Tooltip>
-              Show slices along z axis
-            </Tooltip>
-          }>
-            <UIButton handler={this.onModeTransverse} active={varTra} icon="transverse" />
-          </OverlayTrigger>
-        </Container>
-      </>
 
     return <>
-      {jsxSliceSelector}
+      <Container direction="vertical">
+        <UIButton handler={this.onModeSaggital} active={varSag} icon="saggital" caption="Show slices along x axis" />
+    
+        <UIButton handler={this.onModeCoronal} active={varCor} icon="coronal" caption="Show slices along y axis" />
+    
+        <UIButton handler={this.onModeTransverse} active={varTra} icon="transverse" caption="Show slices along z axis" />
+      </Container>
     </>;
   }
 }
