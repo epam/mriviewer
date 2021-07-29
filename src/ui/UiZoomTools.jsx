@@ -12,7 +12,7 @@ import { buttonsBuilder } from "./Button/Button";
 import { Container } from "./Tollbars/Container";
 
 
-const ZoomTools = props => {
+const UiZoomTools = props => {
   const [activeButton, setActiveButton] = useState(Tools2dType.NONE);
   
   const mediator = (buttonId) => {
@@ -51,4 +51,4 @@ const ZoomTools = props => {
   )
 };
 
-export default connect(store => store)(ZoomTools);
+export default connect(store => store)(UiZoomTools);

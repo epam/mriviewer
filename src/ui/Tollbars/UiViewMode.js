@@ -5,7 +5,6 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import ModeView from '../../store/ModeView';
 import StoreActionType from '../../store/ActionTypes';
@@ -105,30 +104,12 @@ class UiViewMode extends React.Component {
     const strTool3Doff = (viewMode === ModeView.VIEW_3D_LIGHT && isTool3D === false);
 
     const jsx3d =
-    <OverlayTrigger key="3d" placement="bottom" overlay={
-      <Tooltip>
-        Show volume in 3d mode with old rendering
-      </Tooltip>
-    }>
-      <UIButton handler={this.onMode3d} active={str3d} icon="3D" />
-    </OverlayTrigger>
+      <UIButton handler={this.onMode3d} active={str3d} icon="3D" caption="Show volume in 3d mode with old rendering" />
 
     const jsxViewTool =
     <Container direction="vertical">
-      <OverlayTrigger key="view" placement="bottom" overlay={
-        <Tooltip>
-          Show volume in 3d mode with simple toolset
-        </Tooltip>
-      }>
-        <UIButton handler={this.onView3d} active={strTool3Doff} icon="V" />
-      </OverlayTrigger>
-      <OverlayTrigger key="tool" placement="bottom" overlay={
-        <Tooltip>
-          Show volume in 2d mode per slice on selected orientation
-        </Tooltip>
-      }>
-        <UIButton handler={this.onTool3d} active={strTool3Don} icon="T" />
-      </OverlayTrigger>
+        <UIButton handler={this.onView3d} active={strTool3Doff} icon="V" caption="Show volume in 3d mode with simple toolset" />
+        <UIButton handler={this.onTool3d} active={strTool3Don} icon="T" caption="Show volume in 2d mode per slice on selected orientation" />
     </Container>
 
     const FOUR = 4;
@@ -146,20 +127,8 @@ class UiViewMode extends React.Component {
     } // if more 0 volumes
     const test = true;
     return <Container direction="vertical">
-      <OverlayTrigger key="2d" placement="bottom" overlay={
-        <Tooltip>
-          Show volume in 2d mode per slice on selected orientation
-        </Tooltip>
-      }>
-        <UIButton handler={this.onMode2d} active={str2d} icon="2D"/>
-      </OverlayTrigger>
-      <OverlayTrigger key="3dLight" placement="bottom" overlay={
-        <Tooltip>
-          Show volume in 3d mode with fast rendering
-        </Tooltip>
-      }>
-        <UIButton handler={this.onMode3dLight} active={str3dLight} icon="lightning"/>
-      </OverlayTrigger>
+        <UIButton handler={this.onMode2d} active={str2d} icon="2D" caption="Show volume in 2d mode per slice on selected orientation"/>
+        <UIButton handler={this.onMode3dLight} active={str3dLight} icon="lightning" caption="Show volume in 3d mode with fast rendering"/>
       {(needShow3d) ? jsx3d : ''}
       {(viewMode === ModeView.VIEW_3D_LIGHT && test) ? jsxViewTool : ''}
     </Container>;

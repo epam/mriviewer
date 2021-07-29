@@ -17,9 +17,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-// import StoreActionType from '../store/ActionTypes';
-// import Tools2dType from '../engine/tools2d/ToolTypes';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Switch, SwitchRow } from "./Form";
 
 // ********************************************************
@@ -60,22 +57,12 @@ class UiSegm2d extends React.Component {
 
   // render UI for 2d segmentation on screen
   render() {
-    const strTitle = 'Segmentation 2d (brain only)';
     return <>
-      <OverlayTrigger
-        key="about"
-        placement="bottom"
-        overlay={
-          <Tooltip>
-            You can use automatic 2d image segmentation only for brain-like data
-          </Tooltip>
-        }
-      >
+      You can use automatic 2d image segmentation only for brain-like data
         <SwitchRow>
-          { strTitle }
+          Segmentation 2d (brain only)
           <Switch value={ this.state.isSegmented } onValueChange={ this.onChangeSegm2d }/>
         </SwitchRow>
-      </OverlayTrigger>
       Switch checker above on and see segmentation result on right
     </>;
   }

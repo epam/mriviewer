@@ -5,9 +5,6 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
-
-//import Nouislider from 'react-nouislider';
 import Modes3d from '../store/Modes3d';
 import Modes3droi from '../store/Modes3droi';
 import StoreActionType from '../store/ActionTypes';
@@ -15,6 +12,7 @@ import UiTF from './UiTF';
 import UiTFroi from './UiTFroi';
 import UiRoiSelect from './UiRoiSelect';
 import { UIButton } from "./Button/Button";
+import { Container } from "./Tollbars/Container";
 
 class UiCtrl3dLight extends React.Component {
   constructor(props) {
@@ -117,40 +115,12 @@ class UiCtrl3dLight extends React.Component {
     const jsxRenderControls =
       <>
         <p>3D mode selection</p>
-        <ButtonGroup>
-          <OverlayTrigger key="iso" placement="bottom" overlay={
-            <Tooltip>
-              Show just barrier value surface, 1st ray intersection
-            </Tooltip>
-          }>
-            <UIButton active={strA} handler={this.onModeA} caption="Iso" icon="I"/>
-          </OverlayTrigger>
-
-          <OverlayTrigger key="vre" placement="bottom" overlay={
-            <Tooltip>
-              Show complete 3D volumetric rendering
-            </Tooltip>
-          }>
-            <UIButton active={strB} handler={this.onModeB} caption="Vol" icon="V"/>
-          </OverlayTrigger>
-
-          <OverlayTrigger key="maxproj" placement="bottom" overlay={
-            <Tooltip>
-              Show maximum projection rendering
-            </Tooltip>
-          }>
-            <UIButton active={strC} handler={this.onModeC} caption="MaxPrj" icon="M"/>
-          </OverlayTrigger>
-
-          <OverlayTrigger key="volera" placement="bottom" overlay={
-            <Tooltip>
-              Special volume eraser tool
-            </Tooltip>
-          }>
-            <UIButton active={strD} handler={this.onModeD} caption="Eraser" icon="E"/>
-          </OverlayTrigger>
-
-        </ButtonGroup>
+        <Container direction="horizontal">
+            <UIButton active={strA} handler={this.onModeA} caption="Show just barrier value surface, 1st ray intersection" icon="I"/>
+            <UIButton active={strB} handler={this.onModeB} caption="Show complete 3D volumetric rendering" icon="V"/>
+            <UIButton active={strC} handler={this.onModeC} caption="Show maximum projection rendering" icon="M"/>
+            <UIButton active={strD} handler={this.onModeD} caption="Special volume eraser tool" icon="E"/>
+        </Container>
         <UiTF/>
       </>
 

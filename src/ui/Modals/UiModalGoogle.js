@@ -16,20 +16,8 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { Modal, ModalHeader } from "./ModalBase";
 
-import { Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
-
-// ********************************************************
-// Const
-// ********************************************************
-
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class UiModalGoogle some text later...
- */
 class UiModalGoogle extends React.Component {
   /**
    * @param {object} props - props from up level object
@@ -102,13 +90,8 @@ class UiModalGoogle extends React.Component {
 
     const jsxModalDemo = 
       <Modal show={stateVis} onHide={this.m_onHideFunc} >
-        <Modal.Header closeButton>
-          <Modal.Title>
-            Load from Google cloud
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-
+        <ModalHeader title="Load from Google cloud" />
+        <ModalBody>
             {arrMenu.map( (d, i) => {
               const strId = `id_${i}`;
               const strTooltip = d.tooltip;
@@ -128,7 +111,7 @@ class UiModalGoogle extends React.Component {
               </OverlayTrigger>
             })}
 
-        </Modal.Body>
+        </ModalBody>
       </Modal>;
 
     return jsxModalDemo;

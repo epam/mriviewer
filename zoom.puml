@@ -1,0 +1,6 @@
+@startuml
+Actor User
+User -> Window.onwheel : WheelDelta(+|-)
+
+
+@enduml

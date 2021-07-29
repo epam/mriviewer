@@ -56,8 +56,6 @@ class ToolZoom {
       // check new 2d transform is valid (not clipped)
       if ((xPos >= 0.0) && (xPos + zoom <= 1.0) &&
         (yPos >= 0.0) && (yPos + zoom <= 1.0)) {
-        // store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: xPos });
-        // store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: yPos });
         const gra = store.graphics2d;
         gra.forceUpdate();
       }

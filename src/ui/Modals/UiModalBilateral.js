@@ -16,7 +16,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Modal, Button, Form, Row, Col, Table } from 'react-bootstrap';
 import Nouislider from 'react-nouislider';
 
 import GaussSmoother from '../../engine/imgproc/Gauss';
@@ -25,6 +24,8 @@ import StoreActionType from '../../store/ActionTypes';
 import Texture3D from '../../engine/Texture3D';
 import ModeView from '../../store/ModeView';
 import Modes3d from '../../store/Modes3d';
+import { Modal, ModalBody, ModalHeader } from "./ModalBase";
+import { UIButton } from "../Button/Button";
 
 
 // ********************************************************
@@ -221,89 +222,31 @@ class UiModalBilateral extends React.Component {
     const valToolTps = true;
 
     const jsxModalGauss =
-    <Modal show={stateVis} onHide={onHideFunc} >
+    <Modal isOpen={stateVis} close={onHideFunc} >
+      <ModalHeader title="Bilateral filtration"></ModalHeader>
 
-      <Modal.Title>
-        Bilateral filtration
-      </Modal.Title>
-
-      <Modal.Body>
-
-        <Table>
-          <tbody>
-
-            <tr>
-              <td style={{ paddingBottom: '32px' }}>
+      <ModalBody>
                 Select koefficient distance (kd)
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-
-                <Row>
-                  <Col>
                     <Form onSubmit={evt => this.handleFormSubmit(evt)}>
                       <Nouislider onSlide={this.onChangeSliderKoefDist.bind(this)} ref={strSlider1}
                         range={{ min: 0.5, max: 3.0 }}
                         start={wArrDist} step={0.2} tooltips={valToolTps} />
                     </Form>
-                  </Col>
-                </Row>
 
-              </td>
-            </tr>
-
-            <tr>
-              <td style={{ paddingBottom: '32px' }}>
                 Select koefficient value (kv)
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-
-                <Row>
-                  <Col>
+              
                     <Form onSubmit={evt => this.handleFormSubmit(evt)}>
                       <Nouislider onSlide={this.onChangeSliderKoefVal.bind(this)} ref={strSlider2}
                         range={{ min: 0.1, max: 4.0 }}
                         start={wArrVal} step={0.2} tooltips={valToolTps} />
                     </Form>
-                  </Col>
-                </Row>
-
-              </td>
-            </tr>
-
-            <tr>
-              <td>
                 <b>Hints to setup values:</b> <br />
                 kd = 0.5, kv = 0.1 => original image <br />
                 kd = 3.0, kv = 0.1 => denoise image <br />
                 kd = 3.0, kv = 4.0 => image blur
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <Row>
-                  <Col lg xl="2">
-                    <Button onClick={this.onButtonStart} >
-                      Start
-                    </Button>
-                  </Col>
-
-                  <Col lg xl="10">
-                  </Col>
-
-                </Row>
-              </td>
-            </tr>
-          </tbody>
-        </Table>
-
-      </Modal.Body>
+              
+                    <UIButton handler={this.onButtonStart} caption="Start" />
+      </ModalBody>
 
     </Modal>
     return jsxModalGauss;
