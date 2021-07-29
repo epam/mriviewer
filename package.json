@@ -18,6 +18,7 @@
   "homepage": "https://med3web.opensource.epam.com/",
   "private": false,
   "dependencies": {
+    "@popperjs/core": "^2.9.2",
     "@tensorflow/tfjs": "^3.6.0",
     "classnames": "^2.3.1",
     "daikon": "^1.2.42",
