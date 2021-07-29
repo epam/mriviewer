@@ -16,10 +16,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import UiModalDicomTags from './Modals/UiModalDicomTags';
 import Screenshot from '../engine/utils/Screenshot';
 import ModeView from '../store/ModeView';
 import { UIButton } from "./Button/Button";
+import UiModalInfo from "./Modals/ModalInfo";
 
 // ********************************************************
 // Const
@@ -81,10 +81,12 @@ class UiReportMenu extends React.Component {
                 handler={this.onModalDicomTagsShow}/>
       <UIButton caption="Screenshot" icon="camera" rounded mode="light" disabled={strDisabled}
                 handler={this.onModalScreenshot}/>
-
-      <UiModalDicomTags stateVis={this.state.showModalDicomTags}
-                        onHide={this.onModalDicomTagsHide}/>
-
+      { this.state.showModalDicomTags && (
+          <UiModalInfo
+              stateVis={this.state.showModalDicomTags}
+              onHide={this.onModalDicomTagsHide}
+          />
+      ) }
     </>;
   }
 }

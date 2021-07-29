@@ -87,7 +87,7 @@ class Graphics2d extends React.Component {
     this.m_isMounted = true;
     this.prepareImageForRender();
     this.renderReadyImage();
-    
+
     const w = this.m_mount.current.clientWidth;
     const h = this.m_mount.current.clientHeight;
     if (this.state.wRender === 0) {
@@ -110,79 +110,7 @@ class Graphics2d extends React.Component {
     return this.m_mount.current.toDataURL();
   }
 
-  /**
-   * Render text info about volume
-   *
-   * @param {object} ctx - render context
-   * @param {VolumeSet} volSet - volume set to render
-   * @param vol
-   */
-  renderTextInfo(ctx, volSet, vol) {
-    let strMsg;
-    let xText = 4;
-    let yText = 4;
-    const FONT_SZ = 16;
-    ctx.font = FONT_SZ.toString() + 'px Arial';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'top';
-    ctx.fillStyle = 'grey';
-
-    strMsg = 'volume dim = ' + vol.m_xDim.toString() + ' * ' +
-      vol.m_yDim.toString() + ' * ' +
-      vol.m_zDim.toString();
-    ctx.fillText(strMsg, xText, yText);
-    yText += FONT_SZ;
-
-    const xSize = Math.floor(vol.m_boxSize.x);
-    const ySize = Math.floor(vol.m_boxSize.y);
-    const zSize = Math.floor(vol.m_boxSize.z);
-    strMsg = 'vol phys size = ' + xSize.toString() + ' * ' +
-      ySize.toString() + ' * ' +
-      zSize.toString();
-    ctx.fillText(strMsg, xText, yText);
-    yText += FONT_SZ;
-
-    const patName = volSet.m_patientName;
-    if (patName.length > 1) {
-      strMsg = 'patient name = ' + patName;
-      ctx.fillText(strMsg, xText, yText);
-      yText += FONT_SZ;
-    }
-    const patBirth = volSet.m_patientBirth;
-    if (patBirth.length > 1) {
-      strMsg = 'patient birth = ' + patBirth;
-      ctx.fillText(strMsg, xText, yText);
-      yText += FONT_SZ;
-    }
-    const seriesDescr = volSet.m_seriesDescr;
-    if (seriesDescr.length > 1) {
-      strMsg = 'series descr = ' + seriesDescr;
-      ctx.fillText(strMsg, xText, yText);
-      yText += FONT_SZ;
-    }
-    const institutionName = volSet.m_institutionName;
-    if (institutionName.length > 1) {
-      strMsg = 'institution name = ' + institutionName;
-      ctx.fillText(strMsg, xText, yText);
-      yText += FONT_SZ;
-    }
-    const operatorsName = volSet.m_operatorsName;
-    if (operatorsName.length > 1) {
-      strMsg = 'operators name = ' + operatorsName;
-      ctx.fillText(strMsg, xText, yText);
-      yText += FONT_SZ;
-    }
-    const physicansName = volSet.m_physicansName;
-    if (physicansName.length > 1) {
-      strMsg = 'physicans name = ' + physicansName;
-      ctx.fillText(strMsg, xText, yText);
-      yText += FONT_SZ;
-    }
-
-  }
-
   prepareImageForRender(volIndexArg) {
-    
     //TODO: center the image by click
     const objCanvas = this.m_mount.current;
     if (objCanvas === null) {
@@ -199,15 +127,15 @@ class Graphics2d extends React.Component {
 
     ctx.fillStyle = 'rgb(64, 64, 64)';
     ctx.fillRect(0, 0, w, h);
-  
+
       const volSet = store.volumeSet;
       // const volIndex = this.m_volumeIndex;
       const volIndex = (volIndexArg !== undefined) ? volIndexArg : store.volumeIndex;
-  
+
       const vol = volSet.getVolume(volIndex);
       const mode2d = this.m_mode2d;
       const sliceRatio = store.slider2d;
-  
+
       if (vol !== null) {
         if (vol.m_dataArray === null) {
           console.log('Graphics2d. Volume has no data array');
@@ -221,18 +149,18 @@ class Graphics2d extends React.Component {
         if (dataSrc.length !== xDim * yDim * zDim * vol.m_bytesPerVoxel) {
           console.log(`Bad src data len = ${dataSrc.length}, but expect ${xDim}*${yDim}*${zDim}`);
         }
-    
+
         // console.log(`Graphics2d. prepareImageForRender. mode= ${mode2d}`);
-    
+
         const ONE = 1;
         const FOUR = 4;
         const OFF_3 = 3;
-    
+
         let imgData = null;
         let dataDst = null;
-    
+
         const roiPal256 = this.m_roiPalette.getPalette256();
-    
+
         // determine actual render square (not w * h - viewport)
         // calculate area using physical volume dimension
         const TOO_SMALL = 1.0e-5;
@@ -241,7 +169,7 @@ class Graphics2d extends React.Component {
           console.log(`Bad physical dimensions for rendered volume = ${pbox.x}*${pbox.y}*${pbox.z} `);
         }
         let wScreen = 0, hScreen = 0;
-    
+
         const xPos = store.render2dxPos;
         const yPos = store.render2dyPos;
         const zoom = store.render2dZoom;
@@ -260,7 +188,7 @@ class Graphics2d extends React.Component {
           }
           hScreen = (hScreen > 0) ? hScreen : 1;
           // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
-      
+
           this.m_toolPick.setScreenDim(wScreen, hScreen);
           this.m_toolZoom.setScreenDim(wScreen, hScreen);
           this.m_toolDistance.setScreenDim(wScreen, hScreen);
@@ -270,7 +198,7 @@ class Graphics2d extends React.Component {
           this.m_toolText.setScreenDim(wScreen, hScreen);
           this.m_toolEdit.setScreenDim(wScreen, hScreen);
           this.m_toolDelete.setScreenDim(wScreen, hScreen);
-      
+
           // setup pixel size for 2d tools
           const xPixelSize = vol.m_boxSize.x / xDim;
           const yPixelSize = vol.m_boxSize.y / yDim;
@@ -282,14 +210,14 @@ class Graphics2d extends React.Component {
           this.m_toolText.setPixelSize(xPixelSize, yPixelSize);
           this.m_toolEdit.setPixelSize(xPixelSize, yPixelSize);
           this.m_toolDelete.setPixelSize(xPixelSize, yPixelSize);
-      
+
           // create image data
           imgData = ctx.createImageData(wScreen, hScreen);
           dataDst = imgData.data;
           if (dataDst.length !== wScreen * hScreen * 4) {
             console.log(`Bad dst data len = ${dataDst.length}, but expect ${wScreen}*${hScreen}*4`);
           }
-      
+
           // z slice
           let zSlice = Math.floor(zDim * sliceRatio);
           zSlice = (zSlice < zDim) ? zSlice : (zDim - 1);
@@ -313,7 +241,7 @@ class Graphics2d extends React.Component {
                 j += 4;
               } // for (x)
             } // for (y)
-        
+
           } else if (vol.m_bytesPerVoxel === FOUR) {
             for (let y = 0; y < hScreen; y++, ay += yStep) {
               const ySrc = Math.floor(ay);
@@ -326,7 +254,7 @@ class Graphics2d extends React.Component {
                 const rCol = roiPal256[val4 + 0];
                 const gCol = roiPal256[val4 + 1];
                 const bCol = roiPal256[val4 + 2];
-            
+
                 dataDst[j + 0] = bCol;
                 dataDst[j + 1] = gCol;
                 dataDst[j + 2] = rCol;
@@ -334,9 +262,9 @@ class Graphics2d extends React.Component {
                 j += 4;
               } // for (x)
             } // for (y)
-        
+
           } // if 4 bpp
-      
+
         } else if (mode2d === Modes2d.SAGGITAL) {
           // calc screen rect based on physics volume slice size (x slice)
           const yzRatio = pbox.y / pbox.z;
@@ -351,7 +279,7 @@ class Graphics2d extends React.Component {
           }
           hScreen = (hScreen > 0) ? hScreen : 1;
           // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
-      
+
           this.m_toolPick.setScreenDim(wScreen, hScreen);
           this.m_toolZoom.setScreenDim(wScreen, hScreen);
           this.m_toolDistance.setScreenDim(wScreen, hScreen);
@@ -361,7 +289,7 @@ class Graphics2d extends React.Component {
           this.m_toolText.setScreenDim(wScreen, hScreen);
           this.m_toolEdit.setScreenDim(wScreen, hScreen);
           this.m_toolDelete.setScreenDim(wScreen, hScreen);
-      
+
           // setup pixel size for 2d tools
           const xPixelSize = vol.m_boxSize.y / yDim;
           const yPixelSize = vol.m_boxSize.z / zDim;
@@ -373,18 +301,18 @@ class Graphics2d extends React.Component {
           this.m_toolText.setPixelSize(xPixelSize, yPixelSize);
           this.m_toolEdit.setPixelSize(xPixelSize, yPixelSize);
           this.m_toolDelete.setPixelSize(xPixelSize, yPixelSize);
-      
+
           // create image data
           imgData = ctx.createImageData(wScreen, hScreen);
           dataDst = imgData.data;
           if (dataDst.length !== wScreen * hScreen * 4) {
             console.log(`Bad dst data len = ${dataDst.length}, but expect ${wScreen}*${hScreen}*4`);
           }
-      
+
           // x slice
           let xSlice = Math.floor(xDim * sliceRatio);
           xSlice = (xSlice < xDim) ? xSlice : (xDim - 1);
-      
+
           const yStep = zoom * yDim / wScreen;
           const zStep = zoom * zDim / hScreen;
           let j = 0;
@@ -398,12 +326,12 @@ class Graphics2d extends React.Component {
                 const ySrc = Math.floor(ay);
                 const yOff = ySrc * xDim;
                 const val = dataSrc[zOff + yOff + xSlice];
-            
+
                 dataDst[j + 0] = val;
                 dataDst[j + 1] = val;
                 dataDst[j + 2] = val;
                 dataDst[j + 3] = 255; // opacity
-            
+
                 j += 4;
               } // for (x)
             } // for (y)
@@ -420,12 +348,12 @@ class Graphics2d extends React.Component {
                 const rCol = roiPal256[val4 + 0];
                 const gCol = roiPal256[val4 + 1];
                 const bCol = roiPal256[val4 + 2];
-            
+
                 dataDst[j + 0] = bCol;
                 dataDst[j + 1] = gCol;
                 dataDst[j + 2] = rCol;
                 dataDst[j + 3] = 255; // opacity
-            
+
                 j += 4;
               } // for (x)
             } // for (y)
@@ -444,7 +372,7 @@ class Graphics2d extends React.Component {
           }
           hScreen = (hScreen > 0) ? hScreen : 1;
           // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
-      
+
           this.m_toolPick.setScreenDim(wScreen, hScreen);
           this.m_toolZoom.setScreenDim(wScreen, hScreen);
           this.m_toolDistance.setScreenDim(wScreen, hScreen);
@@ -454,7 +382,7 @@ class Graphics2d extends React.Component {
           this.m_toolText.setScreenDim(wScreen, hScreen);
           this.m_toolEdit.setScreenDim(wScreen, hScreen);
           this.m_toolDelete.setScreenDim(wScreen, hScreen);
-      
+
           // setup pixel size for 2d tools
           const xPixelSize = vol.m_boxSize.x / xDim;
           const yPixelSize = vol.m_boxSize.z / zDim;
@@ -466,19 +394,19 @@ class Graphics2d extends React.Component {
           this.m_toolText.setPixelSize(xPixelSize, yPixelSize);
           this.m_toolEdit.setPixelSize(xPixelSize, yPixelSize);
           this.m_toolDelete.setPixelSize(xPixelSize, yPixelSize);
-      
+
           // create image data
           imgData = ctx.createImageData(wScreen, hScreen);
           dataDst = imgData.data;
           if (dataDst.length !== wScreen * hScreen * 4) {
             console.log(`Bad dst data len = ${dataDst.length}, but expect ${wScreen}*${hScreen}*4`);
           }
-      
+
           // y slice
           let ySlice = Math.floor(yDim * sliceRatio);
           ySlice = (ySlice < yDim) ? ySlice : (yDim - 1);
           const yOff = ySlice * xDim;
-      
+
           const xStep = zoom * xDim / wScreen;
           const zStep = zoom * zDim / hScreen;
           let j = 0;
@@ -491,12 +419,12 @@ class Graphics2d extends React.Component {
               for (let x = 0; x < wScreen; x++, ax += xStep) {
                 const xSrc = Math.floor(ax);
                 const val = dataSrc[zOff + yOff + xSrc];
-            
+
                 dataDst[j + 0] = val;
                 dataDst[j + 1] = val;
                 dataDst[j + 2] = val;
                 dataDst[j + 3] = 255; // opacity
-            
+
                 j += 4;
               } // for (x)
             } // for (y)
@@ -512,22 +440,22 @@ class Graphics2d extends React.Component {
                 const rCol = roiPal256[val4 + 0];
                 const gCol = roiPal256[val4 + 1];
                 const bCol = roiPal256[val4 + 2];
-            
+
                 dataDst[j + 0] = bCol;
                 dataDst[j + 1] = gCol;
                 dataDst[j + 2] = rCol;
                 dataDst[j + 3] = 255; // opacity
-            
+
                 j += 4;
               } // for (x)
             } // for (y)
           } // end if 4 bpp
         }
-    
+
         // check is segmentation 2d mode is active
         // const isSegm = store.graphics2dModeSegmentation;
         // console.log("Segm2d mode = " + isSegm);
-    
+
         this.imgData = imgData;
         this.segm2d.setImageData(imgData);
       } // if vol not null
@@ -573,8 +501,6 @@ class Graphics2d extends React.Component {
       ctx.putImageData(this.imgData, 0, 0);
     }
 
-    // render text info
-    this.renderTextInfo(ctx, volSet, vol);
     // render all tools
     this.m_toolPick.render(ctx);
     this.m_toolDistance.render(ctx, store);
