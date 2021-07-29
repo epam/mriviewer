@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import RoiPalette from '../engine/loaders/roipalette';
+import { connect } from "react-redux";
 
 class UiRoiSelect extends React.Component {
   constructor(props) {
