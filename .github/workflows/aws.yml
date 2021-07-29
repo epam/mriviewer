@@ -28,7 +28,7 @@ jobs:
             ${{ runner.OS }}-
       - run: node --version
       - run: npm --version
-      - run: npm ci
+      - run: npm ci --no-optional
       - run: npm audit --audit-level=critical
       - run: npm run build
       - run: npm test
