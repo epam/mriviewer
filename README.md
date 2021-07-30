@@ -1,5 +1,3 @@
-![](https://img.shields.io/github/workflow/status/epam/med3web/PR?style=for-the-badge)
-![](https://img.shields.io/github/v/release/epam/med3web?style=for-the-badge)
 # Med3Web DICOM 2D/3D web viewer.
 
 Copyright (c) 2015–2021 [EPAM Systems, Inc.](https://www.epam.com/)
