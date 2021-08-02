@@ -9,7 +9,7 @@ import { Modal, ModalHeader, ModalBody } from "./ModalBase";
 import { ButtonContainer } from "../Button/Button";
 import { Tooltip } from "../Tooltip/Tooltip";
 
-import { demoData } from "../../config/demoData";
+import { demoData } from "./demoData";
 
 import css from "./Modals.module.css";
 
