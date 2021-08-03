@@ -10,7 +10,6 @@ class ToolZoom {
     this.m_hScreen = 0;
     
     this.setScreenDim = this.setScreenDim.bind(this);
-    this.onMouseWheel = this.onMouseWheel.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -46,12 +45,12 @@ class ToolZoom {
       this.state.yMouse = yScr;
       
       
-      const zoom = store.render2dZoom;
+      const zoom = store.zoom2d;
       const dxMove = (dx / this.m_wScreen) * zoom;
       const dyMove = (dy / this.m_hScreen) * zoom;
       // console.log(`dxyMove = ${dxMove}, ${dyMove}`);
-      const xPos = store.render2dxPos - dxMove;
-      const yPos = store.render2dyPos - dyMove;
+      const xPos = -dxMove;
+      const yPos = -dyMove;
       
       // check new 2d transform is valid (not clipped)
       if ((xPos >= 0.0) && (xPos + zoom <= 1.0) &&

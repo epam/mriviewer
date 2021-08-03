@@ -116,9 +116,7 @@ class ToolDistance {
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
-    const zoom = store.render2dZoom;
-    const xPos = store.render2dxPos;
-    const yPos = store.render2dyPos;
+    const zoom = store.zoom2d;
 
     const vTex = {
       x: 0.0,
@@ -153,9 +151,7 @@ class ToolDistance {
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
-    const zoom = store.render2dZoom;
-    const xPos = store.render2dxPos;
-    const yPos = store.render2dyPos;
+    const zoom = store.zoom2d;
     if (mode2d === Modes2d.TRANSVERSE) {
       // z const
       vScr.x = ((xTex / xDim) - xPos) / zoom;
@@ -179,9 +175,8 @@ class ToolDistance {
   getDistMm(vs, ve) {
     const dx = vs.x - ve.x;
     const dy = vs.y - ve.y;
-    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize +
+    return Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize +
       dy * dy * this.m_yPixelSize * this.m_yPixelSize);
-    return dist;
   }
 
   onMouseDown(xScr, yScr, store) {

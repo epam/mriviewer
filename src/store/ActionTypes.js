@@ -31,8 +31,6 @@ const StoreActionType = {
   
   SET_2D_TOOLS_INDEX: 20,
   SET_2D_ZOOM: 21,
-  SET_2D_X_POS: 22,
-  SET_2D_Y_POS: 23,
   SET_GRAPHICS_2D: 24,
   SET_PROGRESS: 25,
   SET_DICOM_INFO: 26,
