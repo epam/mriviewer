@@ -3,13 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
-* 2d simplest graphics engine
-* @module app/scripts/graphics2d/graphics23d
-*/
-
 import * as THREE from 'three';
-
 import DistanceTool from './distancetool';
 
 /** Possible 2d tools */
@@ -28,7 +22,6 @@ const tools2d = {
   EDIT: 'edit',
 };
 
-/** Class Graphics2d is used for simple debug style 2d render */
 export default class Graphics23d {
 
   /**

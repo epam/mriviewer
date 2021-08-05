@@ -124,18 +124,18 @@ class ToolDistance {
     };
     if (mode2d === Modes2d.TRANSVERSE) {
       // z const
-      vTex.x = Math.floor((xPos + xRel * zoom) * xDim);
-      vTex.y = Math.floor((yPos + yRel * zoom) * yDim);
+      vTex.x = Math.floor((xRel * zoom) * xDim);
+      vTex.y = Math.floor((yRel * zoom) * yDim);
     }
     if (mode2d === Modes2d.SAGGITAL) {
       // x const
-      vTex.x = Math.floor((xPos + xRel * zoom) * yDim);
-      vTex.y = Math.floor((yPos + yRel * zoom) * zDim);
+      vTex.x = Math.floor((xRel * zoom) * yDim);
+      vTex.y = Math.floor((yRel * zoom) * zDim);
     }
     if (mode2d === Modes2d.CORONAL) {
       // y const
-      vTex.x = Math.floor((xPos + xRel * zoom) * xDim);
-      vTex.y = Math.floor((yPos + yRel * zoom) * zDim);
+      vTex.x = Math.floor((xRel * zoom) * xDim);
+      vTex.y = Math.floor((yRel * zoom) * zDim);
     }
     return vTex;
   }

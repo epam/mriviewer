@@ -12,8 +12,8 @@ import { buttonsBuilder } from "./Button/Button";
 import { Container } from "./Tollbars/Container";
 
 
-const UiZoomTools = props => {
-  const [activeButton, setActiveButton] = useState(Tools2dType.NONE);
+const UiZoomButtons = props => {
+  const [activeButton, setActiveButton] = useState(Tools2dType.ZOOM);
   
   const mediator = (buttonId) => {
     setActiveButton(buttonId);
@@ -21,8 +21,6 @@ const UiZoomTools = props => {
     
     if (buttonId === Tools2dType.ZOOM_100) {
       props.dispatch({ type: StoreActionType.SET_2D_ZOOM, zoom2d: 1.0 });
-      
-      props.graphics2d.forceUpdate();
       props.graphics2d.forceRender();
     }
   }
@@ -49,4 +47,4 @@ const UiZoomTools = props => {
   )
 };
 
-export default connect(store => store)(UiZoomTools);
+export default connect(store => store)(UiZoomButtons);
