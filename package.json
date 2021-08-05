@@ -41,7 +41,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest",
+    "debug": "NODE_ENV=debug npm test",
     "lint": "eslint src/**/*.js",
     "docker": "npm run build && docker run --name med3web -v ./build:/usr/share/nginx/html:ro -d -p 8080:80 nginx",
     "prepare": "husky install"
@@ -62,9 +63,13 @@
     "@babel/core": "7.14.3",
     "canvas": "^2.6.1",
     "eslint-plugin-react": "7.x.x",
+    "faker": "^5.5.3",
     "husky": "^6.0.0",
+    "jest": "^26.6.0",
+    "jest-cli": "^26.6.3",
     "lint-staged": "^11.0.0",
-    "node-pre-gyp": "^0.14.0"
+    "node-pre-gyp": "^0.14.0",
+    "puppeteer": "^10.1.0"
   },
   "engines": {
     "node": ">=12.20.1",

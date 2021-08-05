@@ -105,7 +105,12 @@ class Graphics2d extends React.Component {
 	}
 	
 	clearCanvas() {
-		const canvas = this.canvasRef.current;
+		const canvas =
+			// "OffscreenCanvas" in window
+			// 	? this.canvasRef.current.transferControlToOffscreen()
+			// 	:
+		this.canvasRef.current;
+		
 		if (canvas === null) {
 			return;
 		}
@@ -459,11 +464,16 @@ class Graphics2d extends React.Component {
 			return;
 		}
 		
-		const objCanvas = this.canvasRef.current;
-		if (objCanvas === null) {
+		const canvas =
+			// "OffscreenCanvas" in window
+			// 	? this.canvasRef.current.transferControlToOffscreen()
+			// 	:
+				this.canvasRef.current;
+		
+		if (canvas === null) {
 			return;
 		}
-		const ctx = objCanvas.getContext('2d');
+		const ctx = canvas.getContext('2d');
 		// prepare canvas
 		this.fillBackground(ctx);
 		
