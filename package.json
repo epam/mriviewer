@@ -6,6 +6,7 @@
   "author": "EPAM Systems <mri@epam.com>",
   "year": "2021",
   "license": "Apache-2.0",
+  "proxy": "http://localhost:3000",
   "licenses": [
     {
       "type": "Apache-2.0",
@@ -17,6 +18,7 @@
   },
   "homepage": "https://med3web.opensource.epam.com/",
   "private": false,
+
   "dependencies": {
     "@popperjs/core": "^2.9.2",
     "@tensorflow/tfjs": "^3.6.0",
