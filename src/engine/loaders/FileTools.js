@@ -4,12 +4,16 @@
  */
 
 class FileTools {
-  isValidUrl(strUrl) {
-    const regA = /^((ftp|http|https):\/\/)?(([\S]+)\.)?([\S]+)\.([A-z]{2,})(:\d{1,6})?\/[\S]+/;
-    const regB = /(ftp|http|https):\/\/([\d]+)\.([\d]+)\.([\d]+)\.([\d]+)(:([\d]+))?\/([\S]+)/;
-    const isValidA = strUrl.match(regA);
-    const isValidB = strUrl.match(regB);
-    return !((isValidA === null) && (isValidB === null));
+  isValidUrl(string) {
+    let url;
+  
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;
+    }
+  
+    return url.protocol === "http:" || url.protocol === "https:";
   }
 
   getFileNameFromUrl(strUrl) {
