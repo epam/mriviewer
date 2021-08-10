@@ -1400,7 +1400,7 @@ export default class VolumeRenderer3d {
 
   onMouseWheel({ deltaY }) {
     const delta = deltaY < 0 ? 1 : -1;
-    this.orbitControl.onZoom(delta);
+    this.orbitControl.onZoom(delta * 2 ** (-5));
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return;
     }
