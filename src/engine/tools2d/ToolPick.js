@@ -3,7 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/**
+ * @fileOverview ToolPick
+ * @author Epam
+ * @version 1.0.0
+ */
+
+
+// **********************************************
+// Imports
+// **********************************************
 import Modes2d from '../../store/Modes2d';
+
+// **********************************************
+// Class
+// **********************************************
 
 class ToolPick {
   constructor(objGra) {
@@ -45,24 +59,26 @@ class ToolPick {
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
-    const zoom = store.zoom2d;
+    const zoom = store.render2dZoom;
+    const xPos = store.render2dxPos;
+    const yPos = store.render2dyPos;
     if (mode2d === Modes2d.TRANSVERSE) {
       // z: const
-      vTex.x = Math.floor((xScr * zoom) * xDim);
-      vTex.y = Math.floor((yScr * zoom) * yDim);
+      vTex.x = Math.floor((xPos + xScr * zoom) * xDim);
+      vTex.y = Math.floor((yPos + yScr * zoom) * yDim);
       vTex.z = Math.floor(sliderPosition * zDim);
     }
     if (mode2d === Modes2d.SAGGITAL) {
       // x: const
       vTex.x = Math.floor(sliderPosition * xDim);
-      vTex.y = Math.floor((xScr * zoom) * yDim);
-      vTex.z = Math.floor((yScr * zoom) * zDim);
+      vTex.y = Math.floor((xPos + xScr * zoom) * yDim);
+      vTex.z = Math.floor((yPos + yScr * zoom) * zDim);
     }
     if (mode2d === Modes2d.CORONAL) {
       // y: const
-      vTex.x = Math.floor((xScr * zoom) * xDim);
+      vTex.x = Math.floor((xPos + xScr * zoom) * xDim);
       vTex.y = Math.floor(sliderPosition * yDim);
-      vTex.z = Math.floor((yScr * zoom) * zDim);
+      vTex.z = Math.floor((yPos + yScr * zoom) * zDim);
     }
     return vTex;
   }
@@ -85,6 +101,26 @@ class ToolPick {
     const vol = volSet.getVolume(store.volumeIndex);
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
+    /*
+    if (mode2d === Modes2d.SAGGITAL) {
+      // x
+      xVol = Math.floor(sliderPosition * (this.m_volume.m_xDim - 1));
+      yVol = Math.floor(xRatioImage * (this.m_volume.m_yDim - 1));
+      zVol = Math.floor(yRatioImage * (this.m_volume.m_zDim - 1));
+    } else if (mode2d === Modes2d.CORONAL) {
+      // y
+      xVol = Math.floor(xRatioImage * (this.m_volume.m_xDim - 1));
+      yVol = Math.floor(sliderPosition * (this.m_volume.m_yDim - 1));
+      zVol = Math.floor(yRatioImage * (this.m_volume.m_zDim - 1));
+    } else if (mode2d === Modes2d.TRANSVERSE) {
+      // z
+      xVol = Math.floor(xRatioImage * (this.m_volume.m_xDim - 1));
+      yVol = Math.floor(yRatioImage * (this.m_volume.m_yDim - 1));
+      zVol = Math.floor(sliderPosition * (this.m_volume.m_zDim - 1));
+    }
+    const off = xVol + (yVol * this.m_volume.m_xDim) + (zVol * this.m_volume.m_xDim * this.m_volume.m_yDim);
+    */
+
     const ONE = 1;
     const FOUR = 4;
     const bpp = vol.m_bytesPerVoxel;

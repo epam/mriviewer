@@ -30,7 +30,9 @@ class UiCtrl2d extends React.Component {
     gra2d.m_mode2d = indexMode;
     gra2d.clear();
 
-    store.dispatch({ type: StoreActionType.SET_2D_ZOOM, zoom2d: 1.0 });
+    store.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: 1.0 });
+    store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: 0.0 });
+    store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: 0.0 });
 
     // build render image
     gra2d.forceUpdate();

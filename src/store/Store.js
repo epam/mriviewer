@@ -16,7 +16,7 @@ import Modes3droi from './Modes3droi';
 //
 export const initialState = {
   isLoaded: false,
-  fileName: 'filename',
+  fileName: 'brain.ktx',
   volumeSet: null,
   volumeIndex: 0,
   texture3d: null,
@@ -37,7 +37,9 @@ export const initialState = {
   sliderErDepth: 50.0,
   volumeRenderer: null,
   indexTools2d: 0,
-  zoom2d: 1.0,
+  render2dZoom: 1.0,
+  render2dxPos: 0.0,
+  render2dyPos: 0.0,
   graphics2d: null,
   progress: 0, // 0 to 1
   dicomInfo: null,
@@ -97,7 +99,11 @@ const medReducer = (state = initialState, action) => {
   case StoreActionType.SET_2D_TOOLS_INDEX:
     return Object.assign({}, state, { indexTools2d: action.indexTools2d });
   case StoreActionType.SET_2D_ZOOM:
-    return Object.assign({}, state, { zoom2d: action.zoom2d });
+    return Object.assign({}, state, { render2dZoom: action.render2dZoom });
+  case StoreActionType.SET_2D_X_POS:
+    return Object.assign({}, state, { render2dxPos: action.render2dxPos });
+  case StoreActionType.SET_2D_Y_POS:
+    return Object.assign({}, state, { render2dyPos: action.render2dyPos });
   case StoreActionType.SET_GRAPHICS_2D:
     return Object.assign({}, state, { graphics2d: action.graphics2d });
   case StoreActionType.SET_PROGRESS:
