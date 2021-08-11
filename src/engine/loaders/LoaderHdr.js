@@ -450,14 +450,12 @@ class LoaderHdr {
   readFromUrl(volSet, strUrl, callbackProgress, callbackComplete) {
     console.log(`readFromUrl. going to read from ${strUrl} ...`);
 
-    const ft = new FileTools();
-    const isValidUrl = ft.isValidUrl(strUrl);
-    if (!isValidUrl) {
+    if (!FileTools.isValidUrl(strUrl)) {
       console.log(`readFromUrl: not vaild URL = = ${strUrl} `);
       return false;
     }
-    this.m_folder = ft.getFolderNameFromUrl(strUrl);
-    const fileName = ft.getFileNameFromUrl(strUrl);
+    this.m_folder = FileTools.getFolderNameFromUrl(strUrl);
+    const fileName = FileTools.getFileNameFromUrl(strUrl);
     // console.log(`readFromUrl: folder =  ${this.m_folder} filename = ${fileName}`);
 
     const regExp = /(\w+)_intn.(h|hdr)/;

@@ -1874,14 +1874,11 @@ class LoaderDicom{
     // console.log(`typeof(strUrl) - ${typeof(strUrl)}`);
     console.assert(typeof(strUrl) === 'string', "Should be string in url");
     
-    // replace file name to 'file_list.txt'
-    const ft = new FileTools();
-    const isValidUrl = ft.isValidUrl(strUrl);
-    if (!isValidUrl) {
+    if (!FileTools.isValidUrl(strUrl)) {
       console.log(`readFromUrl: not vaild URL = = ${strUrl} `);
       return false;
     }
-    this.m_folder = ft.getFolderNameFromUrl(strUrl);
+    this.m_folder = FileTools.getFolderNameFromUrl(strUrl);
     const urlFileList = this.m_folder + '/file_list.txt';
     console.log(`readFromUrl: load file = ${urlFileList} `);
 
