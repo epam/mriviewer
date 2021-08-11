@@ -651,8 +651,10 @@ class UiOpenMenu extends React.Component {
   buildFileSelector() {
     const fileSelector = document.createElement('input');
     fileSelector.setAttribute('type', 'file');
+    fileSelector.setAttribute('hidden', 'true');
     fileSelector.setAttribute('accept', '.txt,.ktx,.dcm,.nii,.hdr,.h,.img,.gz');
-    fileSelector.setAttribute('multiple', '');
+    fileSelector.setAttribute('multiple', 'true');
+    document.body.appendChild(fileSelector);
     fileSelector.onchange = this.handleFileSelected;
     return fileSelector;
   }
@@ -689,12 +691,10 @@ class UiOpenMenu extends React.Component {
   }
 
   loadFromUrl(strUrl) {
-    const fileTools = new FileTools();
-    const isValid = fileTools.isValidUrl(strUrl);
-    if (isValid) {
+    if (FileTools.isValidUrl(strUrl)) {
       this.m_url = strUrl;
 
-      this.m_fileName = fileTools.getFileNameFromUrl(strUrl);
+      this.m_fileName = FileTools.getFileNameFromUrl(strUrl);
       this.m_volumeSet = new VolumeSet();
       this.m_volumeSet.addVolume(new Volume());
 
