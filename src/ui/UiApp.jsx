@@ -30,6 +30,7 @@ import Graphics3d from "../engine/Graphics3d";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import ZoomTools from "./UiZoomTools";
+import FileTools from "../engine/loaders/FileTools";
 
 class UiApp extends React.Component {
   constructor(props) {
@@ -56,11 +57,8 @@ class UiApp extends React.Component {
         return;
       }
       fileNameOnLoad = arr[1];
-      const regA = /^((ftp|http|https):\/\/)?(([\S]+)\.)?([\S]+)\.([A-z]{2,})(:\d{1,6})?\/[\S]+/;
-      const regB = /(ftp|http|https):\/\/([\d]+)\.([\d]+)\.([\d]+)\.([\d]+)(:([\d]+))?\/([\S]+)/;
-      const isValidA = fileNameOnLoad.match(regA);
-      const isValidB = fileNameOnLoad.match(regB);
-      if ((isValidA === null) && (isValidB === null)) {
+      
+      if (!FileTools.isValidUrl(fileNameOnLoad)) {
         console.log(`Not valid URL = ${fileNameOnLoad}`);
         return;
       }
