@@ -2,37 +2,36 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-import '../nouislider-custom.css';
 
 import React from 'react';
 import { connect } from 'react-redux';
-
-import StoreActionType from '../store/ActionTypes';
-
-import UiSettings from './Tollbars/UiMain';
-import UiOpenMenu from './OpenFile/UiOpenMenu';
-import UiViewMode from './Tollbars/UiViewMode';
-import UiFilterMenu from './UiFilterMenu';
-import UiModalText from './Modals/UiModalText';
-import UiModalAlert from './Modals/ModalAlert';
-import UiErrConsole from './UiErrConsole';
-import ViewMode from '../store/ViewMode';
-import Graphics2d from "../engine/Graphics2d";
-import UiCtrl2d from "./UiCtrl2d";
-
-import BrowserDetector from '../engine/utils/BrowserDetector';
-import ExploreTools from "./Tollbars/ExploreTools";
-import UIProgressBar from "./ProgressBar/UIProgressBar";
-import UiAbout from "./UiAbout";
-
-import css from "./UiApp.module.css";
-import Graphics3d from "../engine/Graphics3d";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
-import ZoomTools from "./UiZoomTools";
-import FileTools from "../engine/loaders/FileTools";
 
-class UiApp extends React.Component {
+import StoreActionType from './store/ActionTypes';
+import ViewMode from './store/ViewMode';
+import Graphics2d from "./engine/Graphics2d";
+import BrowserDetector from './engine/utils/BrowserDetector';
+import Graphics3d from "./engine/Graphics3d";
+import FileTools from "./engine/loaders/FileTools";
+
+import UiSettings from './ui/Tollbars/UiMain';
+import UiOpenMenu from './ui/OpenFile/UiOpenMenu';
+import UiViewMode from './ui/Tollbars/UiViewMode';
+import UiFilterMenu from './ui/UiFilterMenu';
+import UiModalText from './ui/Modals/UiModalText';
+import UiModalAlert from './ui/Modals/ModalAlert';
+import UiErrConsole from './ui/UiErrConsole';
+import UiCtrl2d from "./ui/UiCtrl2d";
+import ExploreTools from "./ui/Tollbars/ExploreTools";
+import ZoomTools from "./ui//UiZoomTools";
+import UIProgressBar from "./ui/ProgressBar/UIProgressBar";
+import UiAbout from "./ui/UiAbout";
+import FullScreen from './ui/Tollbars/FullScreen';
+
+import css from "./App.module.css";
+
+class App extends React.Component {
   constructor(props) {
     super(props);
     
@@ -42,6 +41,7 @@ class UiApp extends React.Component {
     this.state = {
       strAlertTitle: '???',
       strAlertText: '???',
+      isFullMode: false,
     };
     
   }
@@ -102,6 +102,10 @@ class UiApp extends React.Component {
   onHideModalAlert() {
     this.props.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: false })
   }
+
+  handleFullMode() {
+    this.setState(prev => ({ isFullMode: !prev.isFullMode }));
+  }
   
   /**
    * Main component render func callback
@@ -110,6 +114,7 @@ class UiApp extends React.Component {
     const store = this.props;
     this.m_store = store;
     const arrErrorsLoadedd = store.arrErrors;
+    const { isFullMode } = this.state;
     
     const isReady = store.isLoaded && this.isWebGl20supported
     
@@ -132,6 +137,7 @@ class UiApp extends React.Component {
               <div className={css.top}>
                 {store.viewMode === ViewMode.VIEW_2D && <ExploreTools/>}
                 {store.viewMode === ViewMode.VIEW_2D && <UiFilterMenu/>}
+                <FullScreen isFullMode={ isFullMode } handler={() => this.handleFullMode() } />
               </div>
               <div className={css.center}>
                 {store.viewMode === ViewMode.VIEW_2D ? <Graphics2d/> : <Graphics3d/>}
@@ -161,4 +167,4 @@ class UiApp extends React.Component {
   }
 }
 
-export default connect(store => store)(UiApp);
+export default connect(store => store)(App);
