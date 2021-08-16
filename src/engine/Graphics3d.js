@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import ModeView from '../store/ModeView';
+import ViewMode from '../store/ViewMode';
 import Modes3d from '../store/Modes3d';
 import StoreActionType from '../store/ActionTypes';
 import VolumeRenderer3d from './VolumeRenderer3d'
@@ -157,10 +157,10 @@ class Graphics3d extends React.Component {
       const vol = volSet.getVolume(volIndex);
       const FOUR = 4;
       const isIso = (vol.m_bytesPerVoxel === FOUR);
-      const modeView = store.modeView; 
+      const viewMode = store.viewMode; 
       //let tst = 0;
       //if (this.volume.m_zDim < 4)
-      if (modeView === ModeView.VIEW_3D) {
+      if (viewMode === ViewMode.VIEW_3D) {
         this.m_volumeRenderer3D.initWithVolume(this.volume, this.volume.m_boxSize, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, true);
       } else {
         this.m_volumeRenderer3D.initWithVolume(this.volume, this.volume.m_boxSize, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, false);
@@ -307,11 +307,11 @@ class Graphics3d extends React.Component {
     }
     const ZCUTSHIFT = 0.5;
     const mode3d = store.mode3d;
-    const modeView = store.modeView;
+    const viewMode = store.viewMode;
     if (this.m_volumeRenderer3D !== null) {
       // console.log(`Graphics3d . mode = ${mode3d}`);
       this.m_volumeRenderer3D.switchToTool23D(store.isTool3D);
-      if (modeView !== ModeView.VIEW_3D) {
+      if (viewMode !== ViewMode.VIEW_3D) {
         if (mode3d === Modes3d.RAYCAST) {
           //if (this.m_prevMode === Modes3d.EREASER) {
           //this.m_volumeRenderer3D.setEraserMode(false);
@@ -364,18 +364,7 @@ class Graphics3d extends React.Component {
       display: 'block',
     };
 
-    const jsxCanvasNonSized = <div
-      style={styleObj}
-      ref={ (mount) => {this.m_mount = mount} }
-      onMouseMove={this._onMouseMove.bind(this)} 
-      onMouseDown={this._onMouseDown.bind(this)} 
-      onMouseUp={this._onMouseUp.bind(this)} 
-      onTouchStart={this.onTouchStart.bind(this)}
-      onTouchEnd={this.onTouchEnd.bind(this)}
-      onTouchMove={this.onTouchMove.bind(this)}
-      onClick={this.onClick.bind(this)}
-      onWheel={this._onWheel.bind(this)} />
-    const jsxCanvasSized = <div
+    return <div
       style={styleObj}
       width={this.state.wRender} height={this.state.hRender}
       ref={ (mount) => {this.m_mount = mount} }
@@ -390,7 +379,6 @@ class Graphics3d extends React.Component {
       onKeyDown={(evt) => this.onKeyDown(evt)}
       onKeyUp={(evt) => this.onKeyUp(evt)}
       onWheel={this._onWheel.bind(this)} />
-    return (this.state.wRender > 0) ? jsxCanvasSized : jsxCanvasNonSized;
   }
 }
 

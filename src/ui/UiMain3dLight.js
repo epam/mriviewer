@@ -11,7 +11,7 @@ import UiCtrl3d from './UiCtrl3d';
 
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
-import ModeView from '../store/ModeView';
+import ViewMode from '../store/ViewMode';
 import { SliderRow } from "./Form";
 
 class UiMain3dLight extends React.Component {
@@ -57,7 +57,7 @@ class UiMain3dLight extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     let flag = this.m_updateEnable;
-    if (this.props.isTool3D !== nextProps.isTool3D || this.props.modeView !== nextProps.modeView) {
+    if (this.props.isTool3D !== nextProps.isTool3D || this.props.viewMode !== nextProps.viewMode) {
       flag = true;
     }
     return flag;
@@ -65,7 +65,7 @@ class UiMain3dLight extends React.Component {
 
   render() {
     const store = this.props;
-    const modeViewIndex = store.modeView;
+    const viewModeIndex = store.viewMode;
 
     const sliderBrightness = store.sliderBrightness;
     const sliderCut = store.sliderCut;
@@ -77,10 +77,10 @@ class UiMain3dLight extends React.Component {
     const jsx3dLight = <UiCtrl3dLight/>;
     const jsx3d = <UiCtrl3d/>;
 
-    const jsxArray = new Array(ModeView.VIEW_COUNT);
-    jsxArray[ModeView.VIEW_3D_LIGHT] = jsx3dLight;
-    jsxArray[ModeView.VIEW_3D] = jsx3d;
-    const jsxRet = jsxArray[modeViewIndex];
+    const jsxArray = new Array(ViewMode.VIEW_COUNT);
+    jsxArray[ViewMode.VIEW_3D_LIGHT] = jsx3dLight;
+    jsxArray[ViewMode.VIEW_3D] = jsx3d;
+    const jsxRet = jsxArray[viewModeIndex];
     const jsxView = <>
       <SliderRow icon={"brightness"} title={"Brightness"}>
         <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={this.sliderBrightness}

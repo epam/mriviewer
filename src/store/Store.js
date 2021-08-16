@@ -6,7 +6,7 @@
 //
 
 import StoreActionType from './ActionTypes';
-import ModeView from './ModeView';
+import ViewMode from './ViewMode';
 import Modes2d from './Modes2d';
 import Modes3d from './Modes3d';
 import Modes3droi from './Modes3droi';
@@ -20,7 +20,7 @@ export const initialState = {
   volumeSet: null,
   volumeIndex: 0,
   texture3d: null,
-  modeView: ModeView.VIEW_2D,
+  viewMode: ViewMode.VIEW_2D,
   mode2d: Modes2d.TRANSVERSE,
   slider2d: 0.5,
   slider3d_r: 0.09,
@@ -65,7 +65,7 @@ const medReducer = (state = initialState, action) => {
   case StoreActionType.SET_TEXTURE3D:
     return Object.assign({}, state, { texture3d: action.texture3d });
   case StoreActionType.SET_MODE_VIEW:
-    return Object.assign({}, state, { modeView: action.modeView });
+    return Object.assign({}, state, { viewMode: action.viewMode });
   case StoreActionType.SET_MODE_2D:
     return Object.assign({}, state, { mode2d: action.mode2d });
   case StoreActionType.SET_SLIDER_2D:

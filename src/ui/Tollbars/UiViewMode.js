@@ -6,7 +6,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import ModeView from '../../store/ModeView';
+import ViewMode from '../../store/ViewMode';
 import StoreActionType from '../../store/ActionTypes';
 import { UIButton } from "../Button/Button";
 import { Container } from "./Container";
@@ -33,7 +33,7 @@ class UiViewMode extends React.Component {
 
   onMode(indexMode) {
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: indexMode });
+    store.dispatch({ type: StoreActionType.SET_MODE_VIEW, viewMode: indexMode });
   }
 
   onTool_View(isOn) {
@@ -43,19 +43,19 @@ class UiViewMode extends React.Component {
   }
 
   onModeMpr() {
-    this.onMode(ModeView.VIEW_MPR);
+    this.onMode(ViewMode.VIEW_MPR);
   }
 
   onMode2d() {
-    this.onMode(ModeView.VIEW_2D);
+    this.onMode(ViewMode.VIEW_2D);
   }
 
   onMode3dLight() {
-    this.onMode(ModeView.VIEW_3D_LIGHT);
+    this.onMode(ViewMode.VIEW_3D_LIGHT);
   }
 
   onMode3d() {
-    this.onMode(ModeView.VIEW_3D);
+    this.onMode(ViewMode.VIEW_3D);
   }
 
   onTool3d() {
@@ -80,28 +80,28 @@ class UiViewMode extends React.Component {
   render() {
     const store = this.props;
     // this.logObject('UiViewMode this props: ', store);
-    let viewMode = store.modeView;
+    let viewMode = store.viewMode;
     let isTool3D = store.isTool3D;
-    if ((viewMode === ModeView.VIEW_MPR) && (!this.m_needModeMpr)) {
-      viewMode = ModeView.VIEW_2D;
+    if ((viewMode === ViewMode.VIEW_MPR) && (!this.m_needModeMpr)) {
+      viewMode = ViewMode.VIEW_2D;
     }
-    if ((viewMode === ModeView.VIEW_3D_LIGHT) && (!this.m_needMode3dLight)) {
-      viewMode = ModeView.VIEW_2D;
+    if ((viewMode === ViewMode.VIEW_3D_LIGHT) && (!this.m_needMode3dLight)) {
+      viewMode = ViewMode.VIEW_2D;
     }
-    if ((viewMode === ModeView.VIEW_3D) && (!this.m_needMode3d)) {
-      viewMode = ModeView.VIEW_2D;
+    if ((viewMode === ViewMode.VIEW_3D) && (!this.m_needMode3d)) {
+      viewMode = ViewMode.VIEW_2D;
     }
-    if ((viewMode === ModeView.VIEW_2D) && (!this.m_needMode2d)) {
-      viewMode = ModeView.VIEW_3D;
+    if ((viewMode === ViewMode.VIEW_2D) && (!this.m_needMode2d)) {
+      viewMode = ViewMode.VIEW_3D;
     }
 
-    // const strMpr = (viewMode === ModeView.VIEW_MPR) ? 'primary' : 'secondary';
-    const str2d = (viewMode === ModeView.VIEW_2D);
-    const str3dLight = (viewMode === ModeView.VIEW_3D_LIGHT);
-    const str3d = (viewMode === ModeView.VIEW_3D);
+    // const strMpr = (viewMode === ViewMode.VIEW_MPR) ? 'primary' : 'secondary';
+    const str2d = (viewMode === ViewMode.VIEW_2D);
+    const str3dLight = (viewMode === ViewMode.VIEW_3D_LIGHT);
+    const str3d = (viewMode === ViewMode.VIEW_3D);
 
-    const strTool3Don = (viewMode === ModeView.VIEW_3D_LIGHT && isTool3D === true);
-    const strTool3Doff = (viewMode === ModeView.VIEW_3D_LIGHT && isTool3D === false);
+    const strTool3Don = (viewMode === ViewMode.VIEW_3D_LIGHT && isTool3D === true);
+    const strTool3Doff = (viewMode === ViewMode.VIEW_3D_LIGHT && isTool3D === false);
 
     const jsx3d =
       <UIButton handler={this.onMode3d} active={str3d} icon="3D" caption="Show volume in 3d mode with old rendering" />
@@ -130,7 +130,7 @@ class UiViewMode extends React.Component {
         <UIButton handler={this.onMode2d} active={str2d} icon="2D" caption="Show volume in 2d mode per slice on selected orientation"/>
         <UIButton handler={this.onMode3dLight} active={str3dLight} icon="lightning" caption="Show volume in 3d mode with fast rendering"/>
       {(needShow3d) ? jsx3d : ''}
-      {(viewMode === ModeView.VIEW_3D_LIGHT && test) ? jsxViewTool : ''}
+      {(viewMode === ViewMode.VIEW_3D_LIGHT && test) ? jsxViewTool : ''}
     </Container>;
   }
 }

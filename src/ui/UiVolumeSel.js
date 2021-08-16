@@ -20,7 +20,7 @@ import { connect } from 'react-redux';
 import StoreActionType from '../store/ActionTypes';
 // import LoaderDicom from '../engine/loaders/LoaderDicom';
 import Texture3D from '../engine/Texture3D';
-// import ModeView from '../store/ModeView';
+// import ViewMode from '../store/ViewMode';
 // import Modes3d from '../store/Modes3d';
 
 import UiVolIcon from './UiVolIcon';
@@ -78,7 +78,7 @@ class UiVolumeSel extends React.Component {
       const tex3d = new Texture3D();
       tex3d.createFromRawVolume(vol);
       store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      // store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+      // store.dispatch({ type: StoreActionType.SET_MODE_VIEW, viewMode: ViewMode.VIEW_2D });
       // store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
       store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
 

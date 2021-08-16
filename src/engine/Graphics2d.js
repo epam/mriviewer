@@ -134,7 +134,8 @@ class Graphics2d extends React.Component {
 		const mode2d = this.m_mode2d;
 		const sliceRatio = store.slider2d;
 		
-		if (vol !== null) {
+		if (vol === null) return;
+		
 			if (vol.m_dataArray === null) {
 				console.log('Graphics2d. Volume has no data array');
 				return;
@@ -171,7 +172,8 @@ class Graphics2d extends React.Component {
 			const xPos = store.render2dxPos;
 			const yPos = store.render2dyPos;
 			const zoom = store.render2dZoom;
-			// console.log(`Gra2d. RenderScene. zoom=${zoom}, xyPos=${xPos}, ${yPos}`);
+			
+			
 			if (mode2d === Modes2d.TRANSVERSE) {
 				// calc screen rect based on physics volume slice size (z slice)
 				const xyRratio = pbox.x / pbox.y;
@@ -453,7 +455,6 @@ class Graphics2d extends React.Component {
 			
 			this.imgData = imgData;
 			this.segm2d.setImageData(imgData);
-		} // if vol not null
 	} // prepareImageForRender
 	
 	fillBackground(ctx) {

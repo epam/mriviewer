@@ -9,7 +9,7 @@ import LungsFillTool from '../engine/actvolume/lungsfill/lft';
 import ActiveVolume from '../engine/actvolume/actvol';
 import StoreActionType from '../store/ActionTypes';
 import Texture3D from '../engine/Texture3D';
-import ModeView from '../store/ModeView';
+import ViewMode from '../store/ViewMode';
 import Modes3d from '../store/Modes3d';
 
 import SobelEdgeDetector from '../engine/imgproc/Sobel';
@@ -189,7 +189,7 @@ class UiFilterMenu extends React.Component {
       const tex3d = new Texture3D();
       tex3d.createFromRawVolume(vol);
       store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, viewMode: ViewMode.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     } // if finished
     // update render
@@ -306,7 +306,7 @@ class UiFilterMenu extends React.Component {
     const tex3d = new Texture3D();
     tex3d.createFromRawVolume(vol);
     store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-    store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+    store.dispatch({ type: StoreActionType.SET_MODE_VIEW, viewMode: ViewMode.VIEW_2D });
     store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
 
     // update render
@@ -348,7 +348,7 @@ class UiFilterMenu extends React.Component {
       const tex3d = new Texture3D();
       tex3d.createFromRawVolume(vol);
       store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, viewMode: ViewMode.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     }
     // update render

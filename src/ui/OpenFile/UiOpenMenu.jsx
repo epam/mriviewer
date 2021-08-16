@@ -19,7 +19,7 @@ import UiModalDemo from "../Modals/ModalDemo";
 import UIModalUrl from "../Modals/ModalUrl";
 import UiModalWindowCenterWidth from '../Modals/UiModalWinCW';
 import StoreActionType from '../../store/ActionTypes';
-import ModeView from '../../store/ModeView';
+import ViewMode from '../../store/ViewMode';
 import Modes3d from '../../store/Modes3d';
 
 // import { timingSafeEqual } from 'crypto';
@@ -50,7 +50,7 @@ const READ_DICOM_VIA_DAIKON = true;
 class UiOpenMenu extends React.Component {
   constructor(props) {
     super(props);
-    this.onButtonLocalFile = this.onButtonLocalFile.bind(this);
+    this.onButtonOpenLocalFileClick = this.onButtonOpenLocalFileClick.bind(this);
     this.handleFileSelected = this.handleFileSelected.bind(this);
     this.onFileContentReadSingleFile = this.onFileContentReadSingleFile.bind(this);
     this.onFileContentReadMultipleDicom = this.onFileContentReadMultipleDicom.bind(this);
@@ -128,7 +128,7 @@ class UiOpenMenu extends React.Component {
       const tex3d = new Texture3D();
       tex3d.createFromRawVolume(vol);
       store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, viewMode: ViewMode.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     }
   }
@@ -659,7 +659,7 @@ class UiOpenMenu extends React.Component {
     return fileSelector;
   }
 
-  onButtonLocalFile(evt) {
+  onButtonOpenLocalFileClick(evt) {
     // console.log('onButtonLocalFile started');
     evt.preventDefault();
     this.m_fileSelector.click();
@@ -899,20 +899,16 @@ class UiOpenMenu extends React.Component {
 
   // render
   render() {
-    const fileNameOnLoad = this.props.fileNameOnLoad;
-    this.m_fileNameOnLoad = fileNameOnLoad;
-    if (fileNameOnLoad.length > 2) {
-      return null;
-    }
+    this.m_fileNameOnLoad = this.props.fileNameOnLoad;
 
     return <>
       <div className={css["open-file__area"]}>
         <div className={css["left"]}>
-          <UIButton icon="file" handler={evt => this.onButtonLocalFile(evt)}/>
+          <UIButton icon="file" handler={evt => this.onButtonOpenLocalFileClick(evt)}/>
           <span className="filename">{this.props.fileNameOnLoad || 'file_name_displayed_here.dicom'}</span>
         </div>
         <div className={css["right"]}>
-          <UIButton icon="folder" handler={evt => this.onButtonLocalFile(evt)}/>
+          <UIButton icon="folder" handler={evt => this.onButtonOpenLocalFileClick(evt)}/>
           <UIButton icon="link" handler={this.onModalUrlShow}/>
           {(NEED_DEMO_MENU) ?
             <UIButton icon="grid" handler={this.onModalDemoOpenShow}/>

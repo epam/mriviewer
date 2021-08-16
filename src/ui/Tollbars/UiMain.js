@@ -10,19 +10,19 @@ import UiMainMpr from '../UiMainMpr';
 import UiMain2d from '../UiMain2d';
 import UiMain3dLight from '../UiMain3dLight';
 
-import ModeView from '../../store/ModeView';
+import ViewMode from '../../store/ViewMode';
 
 class UiMain extends React.Component {
   render() {
     const store = this.props;
-    const modeViewIndex = store.modeView;
+    const viewModeIndex = store.viewMode;
 
-    const jsxArray = new Array(ModeView.VIEW_COUNT);
-    jsxArray[ModeView.VIEW_MPR] = <UiMainMpr/>;
-    jsxArray[ModeView.VIEW_2D] =  <UiMain2d/>;
-    jsxArray[ModeView.VIEW_3D_LIGHT] = <UiMain3dLight/> ;
-    jsxArray[ModeView.VIEW_3D] = <UiMain3dLight/>;
-    return jsxArray[modeViewIndex];
+    const jsxArray = new Array(ViewMode.VIEW_COUNT);
+    jsxArray[ViewMode.VIEW_MPR] = <UiMainMpr/>;
+    jsxArray[ViewMode.VIEW_2D] =  <UiMain2d/>;
+    jsxArray[ViewMode.VIEW_3D_LIGHT] = <UiMain3dLight/> ;
+    jsxArray[ViewMode.VIEW_3D] = <UiMain3dLight/>;
+    return jsxArray[viewModeIndex];
   };
 }
 

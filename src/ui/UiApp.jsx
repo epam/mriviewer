@@ -16,7 +16,7 @@ import UiFilterMenu from './UiFilterMenu';
 import UiModalText from './Modals/UiModalText';
 import UiModalAlert from './Modals/ModalAlert';
 import UiErrConsole from './UiErrConsole';
-import ModeView from '../store/ModeView';
+import ViewMode from '../store/ViewMode';
 import Graphics2d from "../engine/Graphics2d";
 import UiCtrl2d from "./UiCtrl2d";
 
@@ -127,17 +127,17 @@ class UiApp extends React.Component {
           {isReady && (<>
               <div className={css.left}>
                 <UiViewMode/>
-                {store.modeView === ModeView.VIEW_2D && <UiCtrl2d/>}
+                {store.viewMode === ViewMode.VIEW_2D && <UiCtrl2d/>}
               </div>
               <div className={css.top}>
-                {store.modeView === ModeView.VIEW_2D && <ExploreTools/>}
-                {store.modeView === ModeView.VIEW_2D && <UiFilterMenu/>}
+                {store.viewMode === ViewMode.VIEW_2D && <ExploreTools/>}
+                {store.viewMode === ViewMode.VIEW_2D && <UiFilterMenu/>}
               </div>
               <div className={css.center}>
-                {store.modeView === ModeView.VIEW_2D ? <Graphics2d/> : <Graphics3d/>}
+                {store.viewMode === ViewMode.VIEW_2D ? <Graphics2d/> : <Graphics3d/>}
               </div>
               <div className={css.bottleft}>
-                {store.modeView === ModeView.VIEW_2D && <ZoomTools/>}
+                {store.viewMode === ViewMode.VIEW_2D && <ZoomTools/>}
               </div>
               <div className={css.settings}>
                 <UiSettings/>
