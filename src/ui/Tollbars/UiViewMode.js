@@ -10,6 +10,7 @@ import ViewMode from '../../store/ViewMode';
 import StoreActionType from '../../store/ActionTypes';
 import { UIButton } from "../Button/Button";
 import { Container } from "./Container";
+import { Tooltip } from "../Tooltip/Tooltip";
 
 class UiViewMode extends React.Component {
   constructor(props) {
@@ -103,13 +104,21 @@ class UiViewMode extends React.Component {
     const strTool3Don = (viewMode === ViewMode.VIEW_3D_LIGHT && isTool3D === true);
     const strTool3Doff = (viewMode === ViewMode.VIEW_3D_LIGHT && isTool3D === false);
 
-    const jsx3d =
-      <UIButton handler={this.onMode3d} active={str3d} icon="3D" caption="Show volume in 3d mode with old rendering" />
+    const jsx3d = (
+        <Tooltip content="Show volume in 3d mode with old rendering" placement="left">
+          <UIButton handler={this.onMode3d} active={str3d} icon="3D" />
+        </Tooltip>
+    );
+
 
     const jsxViewTool =
     <Container direction="vertical">
-        <UIButton handler={this.onView3d} active={strTool3Doff} icon="V" caption="Show volume in 3d mode with simple toolset" />
-        <UIButton handler={this.onTool3d} active={strTool3Don} icon="T" caption="Show volume in 2d mode per slice on selected orientation" />
+      <Tooltip content="Show volume in 3d mode with simple toolset" placement="left">
+        <UIButton handler={this.onView3d} active={strTool3Doff} icon="V" />
+      </Tooltip>
+      <Tooltip content="Show volume in 2d mode per slice on selected orientation" placement="left">
+        <UIButton handler={this.onTool3d} active={strTool3Don} icon="T" />
+      </Tooltip>
     </Container>
 
     const FOUR = 4;
@@ -127,8 +136,12 @@ class UiViewMode extends React.Component {
     } // if more 0 volumes
     const test = true;
     return <Container direction="vertical">
-        <UIButton handler={this.onMode2d} active={str2d} icon="2D" caption="Show volume in 2d mode per slice on selected orientation"/>
-        <UIButton handler={this.onMode3dLight} active={str3dLight} icon="lightning" caption="Show volume in 3d mode with fast rendering"/>
+      <Tooltip content="Show volume in 2d mode per slice on selected orientation" placement="left">
+        <UIButton handler={this.onMode2d} active={str2d} icon="2D" />
+      </Tooltip>
+      <Tooltip content="Show volume in 3d mode with fast rendering" placement="left">
+        <UIButton handler={this.onMode3dLight} active={str3dLight} icon="lightning" />
+      </Tooltip>
       {(needShow3d) ? jsx3d : ''}
       {(viewMode === ViewMode.VIEW_3D_LIGHT && test) ? jsxViewTool : ''}
     </Container>;

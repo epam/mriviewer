@@ -18,6 +18,7 @@ import { connect } from 'react-redux';
 
 import UiModalSaveNifti from './Modals/UiModalSaveNifti';
 import { UIButton } from "./Button/Button";
+import { Tooltip } from './Tooltip/Tooltip';
 
 // ********************************************************
 // Const
@@ -63,7 +64,9 @@ class UiSaveMenu extends React.Component {
   //
   render() {
     return <>
-      <UIButton rounded icon="download" handler={evt => this.onModalSaveNiftiShow(evt)} mode={this.props.isLoaded ? "accent" : ""} />
+      <Tooltip content="Save Nifti">
+        <UIButton rounded icon="download" handler={evt => this.onModalSaveNiftiShow(evt)} mode={this.props.isLoaded ? "accent" : ""} />
+      </Tooltip>
       <UiModalSaveNifti stateVis={this.state.showModalSaveNifti} onHide={this.onModalSaveNiftiHide} />
       </>
   }

@@ -7,6 +7,7 @@ import React from "react";
 import cx from "classnames";
 
 import { SVG } from "./SVG";
+import { Tooltip } from "../Tooltip/Tooltip";
 
 import css from "./Button.module.css";
 
@@ -39,5 +40,9 @@ export const UIButton = ({ icon, caption, handler, active, rounded, type, mode, 
     );
 }
 
-export const buttonsBuilder = (buttons, options = { activeButton: null }) =>
-    buttons.map(button => <UIButton {...button} key={ button.id } active={ button.id === options.activeButton }/>);
+export const buttonsBuilder = (buttons, options = { activeButton: null }, tooltipPosition) =>
+    buttons.map(({ id, caption, ...props }) => (
+        <Tooltip content={ caption } placement={ tooltipPosition}>
+            <UIButton {...props} key={ id } active={ id === options.activeButton }/>
+        </Tooltip>
+    ));

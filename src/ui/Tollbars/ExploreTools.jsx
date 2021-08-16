@@ -34,6 +34,7 @@ const ExploreTools = props => {
     {
       id: Tools2dType.NONE,
       icon: "cursor",
+      caption: "Explore model",
       handler: mediator.bind(null, Tools2dType.NONE)
     },
     {

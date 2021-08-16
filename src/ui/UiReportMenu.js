@@ -18,6 +18,7 @@ import { connect } from 'react-redux';
 
 import Screenshot from '../engine/utils/Screenshot';
 import ViewMode from '../store/ViewMode';
+import { Tooltip } from './Tooltip/Tooltip';
 import { UIButton } from "./Button/Button";
 import UiModalInfo from "./Modals/ModalInfo";
 
@@ -77,10 +78,15 @@ class UiReportMenu extends React.Component {
 
     const strDisabled = (!isLoaded);
     return <>
-      <UIButton caption="Show tags" icon="report" rounded mode="light" disabled={strDisabled}
-                handler={this.onModalDicomTagsShow}/>
-      <UIButton caption="Screenshot" icon="camera" rounded mode="light" disabled={strDisabled}
-                handler={this.onModalScreenshot}/>
+            <Tooltip content="Show tags">
+              <UIButton icon="report" rounded mode="light" disabled={strDisabled}
+                          handler={this.onModalDicomTagsShow}/>
+            </Tooltip>
+          <Tooltip content="Screenshot">
+          <UIButton icon="camera" rounded mode="light" disabled={strDisabled}
+                          handler={this.onModalScreenshot}/>
+          </Tooltip>
+
       { this.state.showModalDicomTags && (
           <UiModalInfo
               stateVis={this.state.showModalDicomTags}
