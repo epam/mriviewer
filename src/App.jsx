@@ -27,25 +27,26 @@ import ExploreTools from "./ui/Tollbars/ExploreTools";
 import ZoomTools from "./ui//UiZoomTools";
 import UIProgressBar from "./ui/ProgressBar/UIProgressBar";
 import UiAbout from "./ui/UiAbout";
-import FullScreen from './ui/Tollbars/FullScreen';
+import FullScreenToggle from './ui/Tollbars/FullScreen';
 
 import css from "./App.module.css";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.m_store = null;
     this.m_fileNameOnLoad = '';
-    
+
     this.state = {
       strAlertTitle: '???',
       strAlertText: '???',
       isFullMode: false,
     };
-    
+
+    this.appRef = React.createRef();
   }
-  
+
   UNSAFE_componentWillMount() {
     let fileNameOnLoad = '';
     const strSearch = window.location.search;
@@ -57,7 +58,7 @@ class App extends React.Component {
         return;
       }
       fileNameOnLoad = arr[1];
-      
+
       if (!FileTools.isValidUrl(fileNameOnLoad)) {
         console.log(`Not valid URL = ${fileNameOnLoad}`);
         return;
@@ -65,11 +66,11 @@ class App extends React.Component {
       this.m_fileNameOnLoad = fileNameOnLoad;
     }
   }
-  
+
   componentDidMount() {
     const store = this.m_store;
     store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
-    
+
     // browser detector
     const browserDetector = new BrowserDetector();
     this.isWebGl20supported = browserDetector.checkWebGlSupported();
@@ -85,28 +86,59 @@ class App extends React.Component {
         this.onShowModalAlert();
       }
     }
+    document.addEventListener("fullscreenchange", this.onFullScreenChange);
   }
-  
+
+  componentWillUnmount() {
+    document.removeEventListener("fullscreenchange", this.onFullScreenChange);
+  }
+
   onShowModalText() {
     this.props.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true })
   }
-  
+
   onHideModalText() {
     this.props.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: false })
   }
-  
+
   onShowModalAlert() {
     this.props.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: true })
   }
-  
+
   onHideModalAlert() {
     this.props.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: false })
   }
 
-  handleFullMode() {
+  startFullMode = () => {
+    return this.appRef.current.requestFullscreen()
+        .then(() => {
+          // TODO: add notification for user
+          console.log(`%cFullscreen entered`, "color:green");
+        })
+  }
+
+  endFullMode = () => {
+   return document.exitFullscreen()
+       .then(() => {
+         // TODO: add notification for user
+         console.log(`%cFullscreen exited`, "color:green");
+       })
+  }
+
+  handleFullMode = () => {
+    const { isFullMode } = this.state;
+    const fn = isFullMode ? this.endFullMode : this.startFullMode;
+    fn()
+        .catch(err => {
+          // TODO: add notification for user
+          console.log(`%cFullscreen error: ${err.message}`, "color:red");
+        })
+  }
+
+  onFullScreenChange = () => {
     this.setState(prev => ({ isFullMode: !prev.isFullMode }));
   }
-  
+
   /**
    * Main component render func callback
    */
@@ -115,53 +147,58 @@ class App extends React.Component {
     this.m_store = store;
     const arrErrorsLoadedd = store.arrErrors;
     const { isFullMode } = this.state;
-    
+
     const isReady = store.isLoaded && this.isWebGl20supported
-    
+
     return (
       <DndProvider backend={HTML5Backend}>
+        <div ref={ this.appRef }>
           {this.props.progress > 0 && (
-            <UIProgressBar
-              active={this.props.progress}
-              progress={this.props.progress}
-            />)}
-          <div className={css.header}>
-            <UiAbout />
-            <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>
-          </div>
-          {isReady && (<>
-              <div className={css.left}>
-                <UiViewMode/>
-                {store.viewMode === ViewMode.VIEW_2D && <UiCtrl2d/>}
+              <UIProgressBar
+                  active={this.props.progress}
+                  progress={this.props.progress}
+              />)}
+          {!isFullMode && (
+              <div className={css.header}>
+                <UiAbout/>
+                <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad}/>
               </div>
-              <div className={css.top}>
-                {store.viewMode === ViewMode.VIEW_2D && <ExploreTools/>}
-                {store.viewMode === ViewMode.VIEW_2D && <UiFilterMenu/>}
-                <FullScreen isFullMode={ isFullMode } handler={() => this.handleFullMode() } />
-              </div>
-              <div className={css.center}>
-                {store.viewMode === ViewMode.VIEW_2D ? <Graphics2d/> : <Graphics3d/>}
-              </div>
-              <div className={css.bottleft}>
-                {store.viewMode === ViewMode.VIEW_2D && <ZoomTools/>}
-              </div>
-              <div className={css.settings}>
-                <UiSettings/>
-              </div>
-            </>
           )}
-        
-        {arrErrorsLoadedd.length > 0 && <UiErrConsole/>}
-        
-        {this.props.showModalText && <UiModalText stateVis={this.props.showModalText}
-                     onHide={this.onHideModalText.bind(this)}
-                     onShow={this.onShowModalText.bind(this)}/>}
-        
-        {this.props.showModalAlert && <UiModalAlert stateVis={this.props.showModalAlert}
-                      onHide={this.onHideModalAlert.bind(this)}
-                      onShow={this.onShowModalAlert.bind(this)}
-                      title={this.props.strAlertTitle}
-                      text={this.props.strAlertText}/>}
+          {isReady && (
+              <div className={ isFullMode && css.fullscreen }>
+                <div className={ css.left }>
+                  <UiViewMode/>
+                  {store.viewMode === ViewMode.VIEW_2D && <UiCtrl2d/>}
+                </div>
+                <div className={css.top}>
+                  {store.viewMode === ViewMode.VIEW_2D && <ExploreTools/>}
+                  {store.viewMode === ViewMode.VIEW_2D && <UiFilterMenu/>}
+                  <FullScreenToggle isFullMode={ isFullMode } handler={() => this.handleFullMode() } />
+                </div>
+                <div className={css.center}>
+                  {store.viewMode === ViewMode.VIEW_2D ? <Graphics2d/> : <Graphics3d/>}
+                </div>
+                <div className={css.bottleft}>
+                  {store.viewMode === ViewMode.VIEW_2D && <ZoomTools/>}
+                </div>
+                <div className={css.settings}>
+                  <UiSettings/>
+                </div>
+              </div>
+          )}
+
+          {arrErrorsLoadedd.length > 0 && <UiErrConsole/>}
+
+          {this.props.showModalText && <UiModalText stateVis={this.props.showModalText}
+            onHide={this.onHideModalText.bind(this)}
+            onShow={this.onShowModalText.bind(this)}/>}
+
+          {this.props.showModalAlert && <UiModalAlert stateVis={this.props.showModalAlert}
+            onHide={this.onHideModalAlert.bind(this)}
+            onShow={this.onShowModalAlert.bind(this)}
+            title={this.props.strAlertTitle}
+            text={this.props.strAlertText}/>}
+        </div>
       </DndProvider>
     );
   }
