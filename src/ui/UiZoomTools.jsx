@@ -14,21 +14,21 @@ import { Container } from "./Tollbars/Container";
 
 const UiZoomTools = props => {
   const [activeButton, setActiveButton] = useState(Tools2dType.NONE);
-  
+
   const mediator = (buttonId) => {
     setActiveButton(buttonId);
     props.dispatch({ type: StoreActionType.SET_2D_TOOLS_INDEX, indexTools2d: buttonId });
-    
+
     if (buttonId === Tools2dType.ZOOM_100) {
       props.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: 1.0 });
       props.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: 0.0 });
       props.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: 0.0 });
-      
+
       props.graphics2d.forceUpdate();
       props.graphics2d.forceRender();
     }
   }
-  
+
   const buttons = [
     {
       icon: "zoom",
@@ -43,10 +43,10 @@ const UiZoomTools = props => {
       id: Tools2dType.ZOOM_100
     },
   ];
-  
+
   return (
     <Container direction="vertical">
-      {buttonsBuilder(buttons, { activeButton })}
+      {buttonsBuilder(buttons, { activeButton }, "left")}
     </Container>
   )
 };

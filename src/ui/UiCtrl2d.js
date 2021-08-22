@@ -10,6 +10,7 @@ import Modes2d from '../store/Modes2d';
 import StoreActionType from '../store/ActionTypes';
 import { UIButton } from "./Button/Button";
 import { Container } from "./Tollbars/Container";
+import { Tooltip } from "./Tooltip/Tooltip";
 
 class UiCtrl2d extends React.Component {
   constructor(props) {
@@ -67,11 +68,15 @@ class UiCtrl2d extends React.Component {
 
     return <>
       <Container direction="vertical">
-        <UIButton handler={this.onModeSaggital} active={varSag} icon="saggital" caption="Show slices along x axis" />
-    
-        <UIButton handler={this.onModeCoronal} active={varCor} icon="coronal" caption="Show slices along y axis" />
-    
-        <UIButton handler={this.onModeTransverse} active={varTra} icon="transverse" caption="Show slices along z axis" />
+        <Tooltip content="Show slices along x axis" placement="left">
+          <UIButton handler={this.onModeSaggital} active={varSag} icon="saggital" />
+        </Tooltip>
+        <Tooltip content="Show slices along y axis" placement="left">
+          <UIButton handler={this.onModeCoronal} active={varCor} icon="coronal" />
+        </Tooltip>
+        <Tooltip content="Show slices along z axis" placement="left">
+        <UIButton handler={this.onModeTransverse} active={varTra} icon="transverse" />
+        </Tooltip>
       </Container>
     </>;
   }

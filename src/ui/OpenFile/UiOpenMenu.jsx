@@ -36,6 +36,7 @@ import { UIButton } from "../Button/Button";
 import css from "./UiOpenMenu.module.css";
 import UiSaveMenu from "../UiSaveMenu";
 import UiReportMenu from "../UiReportMenu";
+import { Tooltip } from "../Tooltip/Tooltip";
 
 /** Need to have demo menu */
 const NEED_DEMO_MENU = true;
@@ -904,12 +905,17 @@ class UiOpenMenu extends React.Component {
           <span className="filename">{this.props.fileNameOnLoad || 'file_name_displayed_here.dicom'}</span>
         </div>
         <div className={css["right"]}>
-          <UIButton icon="folder" handler={evt => this.onButtonOpenLocalFileClick(evt)}/>
-          <UIButton icon="link" handler={this.onModalUrlShow}/>
-          {(NEED_DEMO_MENU) ?
-            <UIButton icon="grid" handler={this.onModalDemoOpenShow}/>
-            :
-            null}
+          <Tooltip content="Open file or folder">
+            <UIButton icon="folder" handler={evt => this.onButtonOpenLocalFileClick(evt)}/>
+          </Tooltip>
+          <Tooltip content="Open external URL">
+            <UIButton icon="link" handler={this.onModalUrlShow}/>
+          </Tooltip>
+          {(NEED_DEMO_MENU) && (
+              <Tooltip content="Open demo data">
+                <UIButton icon="grid" handler={this.onModalDemoOpenShow}/>
+              </Tooltip>
+          )}
           {/*<UIButton caption="G" handler={this.onModalGoogleShow}/>*/}
         </div>
       </div>

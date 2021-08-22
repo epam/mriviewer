@@ -7,11 +7,54 @@
   display: inline-block;
 }
 
-.body {
+.tooltip {
   display: flex;
-  flex-direction: column;
+  z-index: 100000;
   border-radius: 5px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.14);
-  padding: 5px 10px;
-  background-color: var(--gray);
+  padding: 10px 15px;
+  background-color: #282A2D;
+  display: flex;
+}
+
+.body {
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--white);
+  white-space: pre;
+}
+
+.arrow,
+.arrow:before {
+  position: absolute;
+  background: #282A2D;
+  width: 15px;
+  height: 15px;
+}
+
+.arrow {
+  visibility: hidden;
+}
+
+.arrow::before {
+  visibility: visible;
+  content: '';
+  transform: rotate(45deg);
+}
+
+
+.tooltip[data-popper-placement^='top'] > .arrow {
+  bottom: -6px;
+}
+
+.tooltip[data-popper-placement^='bottom'] > .arrow {
+  top: -6px;
+}
+
+.tooltip[data-popper-placement^='left'] > .arrow {
+  right: -6px;
+}
+
+.tooltip[data-popper-placement^='right'] > .arrow {
+  left: -6px;
 }
