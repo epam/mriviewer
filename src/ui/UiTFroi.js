@@ -57,16 +57,16 @@ class UiTFroi extends React.Component {
 
   onChangeSliderOpacity() {
     this.m_updateEnable = false;
-    const aval = this.refs.sliderOpacity.slider.get();
+    const aval = this.refs.opacityValue3D.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, sliderOpacity: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, opacityValue3D: Number.parseFloat(aval) });
   }
 
   onChangeSliderIsosurface() {
     this.m_updateEnable = false;
-    const aval = this.refs.sliderIsosurface.slider.get();
+    const aval = this.refs.isoThresholdValue.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, sliderIsosurface: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, isoThresholdValue: Number.parseFloat(aval) });
   }
 
   render() {
@@ -74,8 +74,8 @@ class UiTFroi extends React.Component {
     const slider3dr = store.slider3d_r;
     const slider3dg = store.slider3d_g;
     const wArr = [slider3dr, slider3dg];
-    const sliderOpacity = store.sliderOpacity;
-    const wArrOpacity = [sliderOpacity];
+    const opacityValue3D = store.opacityValue3D;
+    const wArrOpacity = [opacityValue3D];
 
     return <>
       <SliderRow>
@@ -84,7 +84,7 @@ class UiTFroi extends React.Component {
                     start={wArr} connect={[false, true, false]} step={0.00001} tooltips={true}/>
       </SliderRow>
       <SliderRow icon="opacity" title="Opacity">
-        <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
+        <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'opacityValue3D'}
                     range={{ min: 0.0, max: 1.0 }}
                     start={wArrOpacity} connect={[false, true]} step={0.00001} tooltips={true}/>
       </SliderRow>

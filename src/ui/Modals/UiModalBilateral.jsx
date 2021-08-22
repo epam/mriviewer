@@ -11,7 +11,6 @@ import Nouislider from 'react-nouislider';
 import GaussSmoother from '../../engine/imgproc/Gauss';
 
 import StoreActionType from '../../store/ActionTypes';
-import Texture3D from '../../engine/Texture3D';
 import ViewMode from '../../store/ViewMode';
 import Modes3d from '../../store/Modes3d';
 import { Modal, ModalBody, ModalHeader } from "./ModalBase";
@@ -127,9 +126,6 @@ class UiModalBilateral extends React.Component {
 			// rebuild 3d data
 			store.dispatch({ type: StoreActionType.SET_VOLUME_SET, volumeSet: volSet });
 			store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
-			const tex3d = new Texture3D();
-			tex3d.createFromRawVolume(vol);
-			store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
 			store.dispatch({ type: StoreActionType.SET_MODE_VIEW, viewMode: ViewMode.VIEW_2D });
 			store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
 		} // if finished

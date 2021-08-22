@@ -18,22 +18,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import StoreActionType from '../store/ActionTypes';
-// import LoaderDicom from '../engine/loaders/LoaderDicom';
-import Texture3D from '../engine/Texture3D';
-// import ViewMode from '../store/ViewMode';
-// import Modes3d from '../store/Modes3d';
 
 import UiVolIcon from './UiVolIcon';
 
-// ********************************************************
-// Const
-// ********************************************************
-
 const NEED_TEXTURE_SIZE_4X = true;
 
-// ********************************************************
-// Class
-// ********************************************************
 class UiVolumeSel extends React.Component {
   constructor(props) {
     super(props);
@@ -73,13 +62,6 @@ class UiVolumeSel extends React.Component {
 
       store.dispatch({ type: StoreActionType.SET_VOLUME_SET, volumeSet: volumeSet });
       store.dispatch({ type: StoreActionType.SET_VOLUME_INDEX, volumeIndex: indexSelected });
-      // store.dispatch({ type: StoreActionType.SET_FILENAME, fileName: fileNameIn });
-      // store.dispatch({ type: StoreActionType.SET_ERR_ARRAY, arrErrors: [] });
-      const tex3d = new Texture3D();
-      tex3d.createFromRawVolume(vol);
-      store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      // store.dispatch({ type: StoreActionType.SET_MODE_VIEW, viewMode: ViewMode.VIEW_2D });
-      // store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
       store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
 
       const gra = store.graphics2d;

@@ -3,18 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @fileOverview Eraser
- * @author Epam
- * @version 1.0.0
- */
-// ********************************************************
-// Imports
-// ********************************************************/**
+
 import * as THREE from 'three';
-// ********************************************************
-// Class Eraser is used for erasing of volume data part
-// ********************************************************
 export default class Eraser {
   constructor() {
     this.bufferBF = null;

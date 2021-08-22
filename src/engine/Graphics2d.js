@@ -132,7 +132,7 @@ class Graphics2d extends React.Component {
 		
 		const vol = volSet.getVolume(volIndex);
 		const mode2d = this.m_mode2d;
-		const sliceRatio = store.slider2d;
+		const sliceRatio = store.sliceRatio;
 		
 		if (vol === null) return;
 		

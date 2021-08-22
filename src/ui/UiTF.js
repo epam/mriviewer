@@ -60,7 +60,7 @@ class UiTF extends React.Component {
 
   onAO() {
     const store = this.props;
-    const isoThreshold = store.sliderIsosurface;//this.refs.sliderIsosurface.slider.get();
+    const isoThreshold = store.isoThresholdValue;//this.refs.isoThresholdValue.slider.get();
     store.volumeRenderer.setAmbientTextureMode(isoThreshold);
   }
 
@@ -111,16 +111,16 @@ class UiTF extends React.Component {
 
   onChangeSliderOpacity() {
     this.m_updateEnable = false;
-    const aval = this.refs.sliderOpacity.slider.get();
+    const aval = this.refs.opacityValue3D.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, sliderOpacity: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, opacityValue3D: Number.parseFloat(aval) });
   }
 
   onChangeSliderIsosurface() {
     this.m_updateEnable = false;
-    const aval = this.refs.sliderIsosurface.slider.get();
+    const aval = this.refs.isoThresholdValue.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, sliderIsosurface: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, isoThresholdValue: Number.parseFloat(aval) });
   }
 
   onChangeSliderErRadius() {
@@ -153,13 +153,13 @@ class UiTF extends React.Component {
     const slider3dr = store.slider3d_r;
     const slider3dg = store.slider3d_g;
     const slider3db = store.slider3d_b;
-    const sliderOpacity = store.sliderOpacity;
-    const sliderIsosurface = store.sliderIsosurface;
+    const opacityValue3D = store.opacityValue3D;
+    const isoThresholdValue = store.isoThresholdValue;
     const sliderErRadius = store.sliderErRadius;
     const sliderErDepth = store.sliderErDepth;
     const wArr = [slider3dr, slider3dg, slider3db];
-    const wArrOpacity = [sliderOpacity];
-    const wArrIsosurface = [sliderIsosurface];
+    const wArrOpacity = [opacityValue3D];
+    const wArrIsosurface = [isoThresholdValue];
     const wArrErRadius = [sliderErRadius];
     const wArrErDepth = [sliderErDepth];
 
@@ -188,7 +188,7 @@ class UiTF extends React.Component {
                         start={wArr} connect={[false, true, false, true]} step={0.00001} tooltips={true}/>
           </SliderRow>
         <SliderRow icon="opacity" title="Opacity">
-          <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
+          <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'opacityValue3D'}
                       range={{ min: 0.0, max: 1.0 }}
                       start={wArrOpacity} connect={[true, false]} step={0.00001} tooltips={true}/>
         </SliderRow>
@@ -199,7 +199,7 @@ class UiTF extends React.Component {
         <UiHistogram volume={vol} transfFunc={funcTra}/>
         <SliderCaption caption="Isosurface" />
         <SliderRow>
-          <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
+          <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'isoThresholdValue'}
                       range={{ min: 0.0, max: 1.0 }}
                       start={wArrIsosurface} connect={[true, false]} step={0.00001} tooltips={true}/>
         </SliderRow>
@@ -225,7 +225,7 @@ class UiTF extends React.Component {
         </SliderRow>
         <SliderCaption caption="Isosurface" />
         <SliderRow>
-          <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
+          <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'isoThresholdValue'}
                       range={{ min: 0.0, max: 1.0 }}
                       start={wArrIsosurface} connect={[true, false]} step={0.00001} tooltips={true}/>
         </SliderRow>

@@ -70,7 +70,7 @@ class UiMain2d extends React.Component {
       // convert slider value from [0.. ?dim] to [0..1]
       const valNormalizedTo01 = val / this.slideRangeMax;
       const store = this.props;
-      store.dispatch({ type: StoreActionType.SET_SLIDER_2D, slider2d: valNormalizedTo01 });
+      store.dispatch({ type: StoreActionType.SET_SLIDER_2D, sliceRatio: valNormalizedTo01 });
       // clear all 2d tools
       const gra2d = store.graphics2d;
       gra2d.clear();
@@ -89,7 +89,7 @@ class UiMain2d extends React.Component {
    */
   render() {
     const store = this.props;
-    const valSlider = store.slider2d;
+    const valSlider = store.sliceRatio;
 
     const wArr = [Math.floor(valSlider * this.slideRangeMax)];
     // special formatter interface for show only intefer numbers

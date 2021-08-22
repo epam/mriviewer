@@ -3,17 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @fileOverview Graphics3d
- * @author Epam
- * @version 1.0.0
- */
-
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
 import ViewMode from '../store/ViewMode';
@@ -23,9 +12,6 @@ import VolumeRenderer3d from './VolumeRenderer3d'
 //import DistanceTool from '../tools23d/distancetool'
 
 class Graphics3d extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
     this.onMode = this.onMode.bind(this);
@@ -68,14 +54,14 @@ class Graphics3d extends React.Component {
   setVolRenderToStore(VolRender) {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_VOLUME_Renderer, volumeRenderer: VolRender });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3d_r: Number.parseFloat(0.09) });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: Number.parseFloat(0.3) });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_3DB, slider3d_b: Number.parseFloat(0.46) });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, sliderOpacity: Number.parseFloat(0.53) });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, sliderIsosurface: Number.parseFloat(0.46) });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Brightness, sliderBrightness: Number.parseFloat(0.56) });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Cut, sliderCut: Number.parseFloat(1.0) });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Quality, sliderQuality: Number.parseFloat(0.35) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3d_r: 0.09 });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: 0.3 });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DB, slider3d_b: 0.46 });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, opacityValue3D: 0.53 });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, isoThresholdValue: 0.46 });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Brightness, brightness3DValue: 0.56 });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Cut, cut3DRatio: 1.0 });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Quality, quality3DStepSize: 0.35 });
   }
 
   start() {
@@ -326,7 +312,7 @@ class Graphics3d extends React.Component {
           //}
           this.m_prevMode = Modes3d.ISO;
           this.m_volumeRenderer3D.switchToIsosurfRender();      
-          this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
+          this.m_volumeRenderer3D.setIsoThresholdValue(store.isoThresholdValue);
         }
         if (mode3d === Modes3d.RAYFAST) {
           //if (this.m_prevMode === Modes3d.EREASER) {
@@ -341,17 +327,17 @@ class Graphics3d extends React.Component {
           //}
           this.m_prevMode = Modes3d.RAYFAST;
           this.m_volumeRenderer3D.switchToIsosurfRender();     
-          this.m_volumeRenderer3D.setIsoThresholdValue(store.sliderIsosurface);
+          this.m_volumeRenderer3D.setIsoThresholdValue(store.isoThresholdValue);
           this.m_volumeRenderer3D.volumeUpdater.eraser.setEraserRadius(store.sliderErRadius);
           this.m_volumeRenderer3D.volumeUpdater.eraser.setEraserDepth(store.sliderErDepth);
         }
       } else {
         this.m_volumeRenderer3D.switchToFullVolumeRender() 
       }
-      this.m_volumeRenderer3D.setOpacityBarrier(store.sliderOpacity);
-      this.m_volumeRenderer3D.updateBrightness(store.sliderBrightness);
-      this.m_volumeRenderer3D.updateZCutPlane(store.sliderCut - ZCUTSHIFT);
-      this.m_volumeRenderer3D.setStepsize(store.sliderQuality);
+      this.m_volumeRenderer3D.setOpacityBarrier(store.opacityValue3D);
+      this.m_volumeRenderer3D.updateBrightness(store.brightness3DValue);
+      this.m_volumeRenderer3D.updateZCutPlane(store.cut3DRatio - ZCUTSHIFT);
+      this.m_volumeRenderer3D.setStepsize(store.quality3DStepSize);
       this.m_volumeRenderer3D.updateContrast(store.sliderContrast3D);
     }
     if (this.m_volumeRenderer3D !== null) {

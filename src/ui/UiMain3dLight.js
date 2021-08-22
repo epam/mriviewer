@@ -21,31 +21,31 @@ class UiMain3dLight extends React.Component {
   constructor(props) {
     super(props);
     this.m_updateEnable = true;
-    this.sliderCut = React.createRef();
-    this.sliderBrightness = React.createRef();
-    this.sliderQuality = React.createRef();
+    this.cut3DRatio = React.createRef();
+    this.brightness3DValue = React.createRef();
+    this.quality3DStepSize = React.createRef();
     this.sliderContrast3D = React.createRef();
   }
 
   onChangeSliderBrightness() {
     this.m_updateEnable = false;
-    const aval = this.sliderBrightness.current.slider.get();
+    const aval = this.brightness3DValue.current.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Brightness, sliderBrightness: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Brightness, brightness3DValue: Number.parseFloat(aval) });
   }
 
   onChangeSliderCut() {
     this.m_updateEnable = false;
-    const aval = this.sliderCut.current.slider.get();
+    const aval = this.cut3DRatio.current.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Cut, sliderCut: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Cut, cut3DRatio: Number.parseFloat(aval) });
   }
 
   onChangeSliderQuality() {
     this.m_updateEnable = false;
-    const aval = this.sliderQuality.current.slider.get();
+    const aval = this.quality3DStepSize.current.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Quality, sliderQuality: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Quality, quality3DStepSize: Number.parseFloat(aval) });
   }
 
   onChangeSliderContrast3D() {
@@ -67,13 +67,13 @@ class UiMain3dLight extends React.Component {
     const store = this.props;
     const viewModeIndex = store.viewMode;
 
-    const sliderBrightness = store.sliderBrightness;
-    const sliderCut = store.sliderCut;
-    const sliderQuality = store.sliderQuality;
+    const brightness3DValue = store.brightness3DValue;
+    const cut3DRatio = store.cut3DRatio;
+    const quality3DStepSize = store.quality3DStepSize;
 
-    const wArrBrightness = [sliderBrightness];
-    const wArrCut = [sliderCut];
-    const wArrQuality = [sliderQuality];
+    const wArrBrightness = [brightness3DValue];
+    const wArrCut = [cut3DRatio];
+    const wArrQuality = [quality3DStepSize];
     const jsx3dLight = <UiCtrl3dLight/>;
     const jsx3d = <UiCtrl3d/>;
 
@@ -83,13 +83,13 @@ class UiMain3dLight extends React.Component {
     const jsxRet = jsxArray[viewModeIndex];
     const jsxView = <>
       <SliderRow icon={"brightness"} title={"Brightness"}>
-        <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={this.sliderBrightness}
+        <Nouislider onSlide={this.onChangeSliderBrightness.bind(this)} ref={this.brightness3DValue}
                     range={{ min: 0.0, max: 1.0 }}
                     overflow-scroll={'true'}
                     start={wArrBrightness} connect={[false, false]} step={0.00001} tooltips={true}/>
       </SliderRow>
       <SliderRow icon="triangle" title="Quality">
-        <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={this.sliderQuality}
+        <Nouislider onSlide={this.onChangeSliderQuality.bind(this)} ref={this.quality3DStepSize}
                     range={{ min: 0.0, max: 1.0 }}
                     overflow-scroll={'true'}
                     start={wArrQuality} connect={[false, false]} step={0.00001} tooltips={true}/>
@@ -108,7 +108,7 @@ class UiMain3dLight extends React.Component {
     return <>
       {jsxRet}
       <SliderRow icon="scissors" title="Cut">
-        <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={this.sliderCut}
+        <Nouislider onSlide={this.onChangeSliderCut.bind(this)} ref={this.cut3DRatio}
                     range={{ min: 0.0, max: 1.0 }}
                     overflow-scroll={'true'}
                     start={wArrCut} connect={[false, false]} step={0.00001} tooltips={true}/>

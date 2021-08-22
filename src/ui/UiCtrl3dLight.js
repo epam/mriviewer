@@ -6,7 +6,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Modes3d from '../store/Modes3d';
-import Modes3droi from '../store/Modes3droi';
 import StoreActionType from '../store/ActionTypes';
 import UiTF from './UiTF';
 import UiTFroi from './UiTFroi';
@@ -22,7 +21,6 @@ class UiCtrl3dLight extends React.Component {
     this.onModeC = this.onModeC.bind(this);
     this.onModeD = this.onModeD.bind(this);
     this.onMode = this.onMode.bind(this);
-    this.onModeroi = this.onModeroi.bind(this);
     this.m_updateEnable = true;
   }
 
@@ -51,19 +49,6 @@ class UiCtrl3dLight extends React.Component {
   onModeD() {
     this.onMode(Modes3d.EREASER);
     this.props.volumeRenderer.setEraserMode(true);
-  }
-
-  onModeroi(indexMode) {
-    this.m_updateEnable = true;
-    this.props.dispatch({ type: StoreActionType.SET_MODE_3Droi, mode3droi: indexMode });
-  }
-
-  onModeAroi() {
-    this.onModeroi(Modes3droi.ISO);
-  }
-
-  onModeBroi() {
-    this.onModeroi(Modes3droi.RAYCAST);
   }
 
   shouldComponentUpdate() {
@@ -103,14 +88,11 @@ class UiCtrl3dLight extends React.Component {
   render() {
     const store = this.props;
     const mode3d = store.mode3d;
-    // const mode3droi = store.mode3droi;
 
     const strA = (mode3d === Modes3d.ISO);
     const strB = (mode3d === Modes3d.RAYCAST);
     const strC = (mode3d === Modes3d.RAYFAST);
     const strD = (mode3d === Modes3d.ERASER);
-    // const strAroi = (mode3droi === Modes3droi.ISO);
-    // const strBroi = (mode3droi === Modes3droi.RAYCAST);
 
     const jsxRenderControls =
       <>

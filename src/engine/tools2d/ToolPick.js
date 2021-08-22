@@ -50,7 +50,7 @@ class ToolPick {
       z: 0.0,
     };
     const mode2d = store.mode2d;
-    const sliderPosition = store.slider2d;
+    const sliderPosition = store.sliceRatio;
 
     const volSet = store.volumeSet;
     const volIndex = store.volumeIndex;

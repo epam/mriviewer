@@ -13,7 +13,6 @@ import createReadStream from 'filereader-stream';
 
 import VolumeSet from '../../engine/VolumeSet';
 import Volume from '../../engine/Volume';
-import Texture3D from '../../engine/Texture3D';
 
 import UiModalDemo from "../Modals/ModalDemo";
 import UIModalUrl from "../Modals/ModalUrl";
@@ -125,9 +124,6 @@ class UiOpenMenu extends React.Component {
       store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
       store.dispatch({ type: StoreActionType.SET_FILENAME, fileName: fileNameIn });
       store.dispatch({ type: StoreActionType.SET_ERR_ARRAY, arrErrors: [] });
-      const tex3d = new Texture3D();
-      tex3d.createFromRawVolume(vol);
-      store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
       store.dispatch({ type: StoreActionType.SET_MODE_VIEW, viewMode: ViewMode.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     }

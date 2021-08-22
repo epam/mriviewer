@@ -9,32 +9,29 @@ import StoreActionType from './ActionTypes';
 import ViewMode from './ViewMode';
 import Modes2d from './Modes2d';
 import Modes3d from './Modes3d';
-import Modes3droi from './Modes3droi';
 
 //
 // Global app settings with initial configuration
 //
 export const initialState = {
-  isLoaded: false,
-  fileName: 'brain.ktx',
-  volumeSet: null,
-  volumeIndex: 0,
-  texture3d: null,
-  viewMode: ViewMode.VIEW_2D,
-  mode2d: Modes2d.TRANSVERSE,
-  slider2d: 0.5,
-  slider3d_r: 0.09,
-  slider3d_g: 0.3,
-  slider3d_b: 0.46,
-  mode3d: Modes3d.RAYCAST,
-  mode3droi: Modes3droi.RAYCAST,
-  sliderOpacity: 0.53,
-  sliderIsosurface: 0.46,
-  sliderBrightness: 0.56,
-  sliderCut: 1.0,
-  sliderQuality: 0.35,
-  sliderErRadius: 50.0,
-  sliderErDepth: 50.0,
+  isLoaded: false,              // true when file is loaded
+  fileName: 'brain.ktx',        // file name
+  volumeSet: null,              // Volume[]
+  volumeIndex: 0,               // Index of volume (usually 0)
+  viewMode: ViewMode.VIEW_2D,   // 2D or 3D
+  mode2d: Modes2d.TRANSVERSE,   // 2D planar slice direction
+  sliceRatio: 0.5,              // current slice number / slices amount
+  slider3d_r: 0.09,             // 3D slicer Red
+  slider3d_g: 0.3,              // 3D slicer Green
+  slider3d_b: 0.46,             // 3D slicer Blue
+  mode3d: Modes3d.RAYCAST,      // 3D rendering mode
+  opacityValue3D: 0.53,         // 3D Opacity value
+  isoThresholdValue: 0.46,      // Surface ISO threshold value
+  brightness3DValue: 0.56,      // 3D brightness
+  cut3DRatio: 1.0,              // Slice 3D ratio
+  quality3DStepSize: 0.35,      // 3D quality
+  sliderErRadius: 50.0,         // 3D eraser radius
+  sliderErDepth: 50.0,          // 3D eraser depth
   volumeRenderer: null,
   indexTools2d: 0,
   render2dZoom: 1.0,
@@ -69,11 +66,9 @@ const medReducer = (state = initialState, action) => {
   case StoreActionType.SET_MODE_2D:
     return Object.assign({}, state, { mode2d: action.mode2d });
   case StoreActionType.SET_SLIDER_2D:
-    return Object.assign({}, state, { slider2d: action.slider2d });
+    return Object.assign({}, state, { sliceRatio: action.sliceRatio });
   case StoreActionType.SET_MODE_3D:
     return Object.assign({}, state, { mode3d: action.mode3d });
-  case StoreActionType.SET_MODE_3Droi:
-    return Object.assign({}, state, { mode3droi: action.mode3droi });
   case StoreActionType.SET_SLIDER_3DR:
     return Object.assign({}, state, { slider3d_r: action.slider3d_r });
   case StoreActionType.SET_SLIDER_3DG:
@@ -81,9 +76,9 @@ const medReducer = (state = initialState, action) => {
   case StoreActionType.SET_SLIDER_3DB:
     return Object.assign({}, state, { slider3d_b: action.slider3d_b });
   case StoreActionType.SET_SLIDER_Opacity:
-    return Object.assign({}, state, { sliderOpacity: action.sliderOpacity });
+    return Object.assign({}, state, { opacityValue3D: action.opacityValue3D });
   case StoreActionType.SET_SLIDER_Isosurface:
-    return Object.assign({}, state, { sliderIsosurface: action.sliderIsosurface });
+    return Object.assign({}, state, { isoThresholdValue: action.isoThresholdValue });
   case StoreActionType.SET_SLIDER_ErRadius:
     return Object.assign({}, state, { sliderErRadius: action.sliderErRadius });
   case StoreActionType.SET_SLIDER_ErDepth:
@@ -91,11 +86,11 @@ const medReducer = (state = initialState, action) => {
   case StoreActionType.SET_VOLUME_Renderer:
     return Object.assign({}, state, { volumeRenderer: action.volumeRenderer });
   case StoreActionType.SET_SLIDER_Brightness:
-    return Object.assign({}, state, { sliderBrightness: action.sliderBrightness });
+    return Object.assign({}, state, { brightness3DValue: action.brightness3DValue });
   case StoreActionType.SET_SLIDER_Cut:
-    return Object.assign({}, state, { sliderCut: action.sliderCut });
+    return Object.assign({}, state, { cut3DRatio: action.cut3DRatio });
   case StoreActionType.SET_SLIDER_Quality:
-    return Object.assign({}, state, { sliderQuality: action.sliderQuality });
+    return Object.assign({}, state, { quality3DStepSize: action.quality3DStepSize });
   case StoreActionType.SET_2D_TOOLS_INDEX:
     return Object.assign({}, state, { indexTools2d: action.indexTools2d });
   case StoreActionType.SET_2D_ZOOM:

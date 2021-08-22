@@ -37,9 +37,9 @@ class UiCtrl3d extends React.Component {
 
   onChangeSliderOpacity() {
     this.m_updateEnable = false;
-    this.aval = this.refs.sliderOpacity.slider.get();
+    this.aval = this.refs.opacityValue3D.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, sliderOpacity: Number.parseFloat(this.aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, opacityValue3D: Number.parseFloat(this.aval) });
   }
 
   shouldComponentUpdate() {
@@ -61,8 +61,8 @@ class UiCtrl3d extends React.Component {
    */
   render() {
     const store = this.props;
-    const sliderOpacity = store.sliderOpacity;
-    const wArrOpacity = [sliderOpacity];    // const wArrOpacity = [sliderOpacity];
+    const opacityValue3D = store.opacityValue3D;
+    const wArrOpacity = [opacityValue3D];    // const wArrOpacity = [opacityValue3D];
 
     const volSet = store.volumeSet;
     const volIndex = store.volumeIndex;
@@ -82,7 +82,7 @@ class UiCtrl3d extends React.Component {
     return <>
       <UiHistogram volume={vol} transfFunc={funcTra} transfFuncUpdate={funcTrTex}/>
       <SliderRow icon="opacity" title="Opacity">
-        <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
+        <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'opacityValue3D'}
                     range={{ min: 0.0, max: 1.0 }}
                     start={wArrOpacity} connect={[true, false]} step={2 ** (-8)} tooltips={true} />
       </SliderRow>

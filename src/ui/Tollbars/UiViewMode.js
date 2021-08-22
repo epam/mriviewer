@@ -6,10 +6,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import ViewMode from '../../store/ViewMode';
 import StoreActionType from '../../store/ActionTypes';
 import { UIButton } from "../Button/Button";
 import { Container } from "./Container";
+import ViewMode from "../../store/ViewMode";
 
 class UiViewMode extends React.Component {
   constructor(props) {
