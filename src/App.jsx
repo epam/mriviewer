@@ -30,6 +30,7 @@ import UiAbout from "./ui/UiAbout";
 import FullScreenToggle from './ui/Tollbars/FullScreen';
 
 import css from "./App.module.css";
+import cx from "classnames";
 
 class App extends React.Component {
   constructor(props) {
@@ -165,7 +166,7 @@ class App extends React.Component {
               </div>
           )}
           {isReady && (
-              <div className={ isFullMode && css.fullscreen }>
+              <div className={ cx(isFullMode && css.fullscreen) }>
                 <div className={ css.left }>
                   <UiViewMode/>
                   {store.viewMode === ViewMode.VIEW_2D && <UiCtrl2d/>}
