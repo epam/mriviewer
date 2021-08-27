@@ -66,7 +66,8 @@
     "eslint-plugin-react": "7.x.x",
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
-    "node-pre-gyp": "^0.14.0"
+    "node-pre-gyp": "^0.14.0",
+    "puppeteer": "^10.2.0"
   },
   "engines": {
     "node": ">=12.20.1",
