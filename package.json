@@ -42,7 +42,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --detectOpenHandles",
     "debugtest": "DEBUG=true react-scripts test",
     "lint": "eslint src/**/*.js",
     "docker": "npm run build && docker run --name med3web -v ./build:/usr/share/nginx/html:ro -d -p 8080:80 nginx",
