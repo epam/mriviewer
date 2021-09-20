@@ -22,6 +22,6 @@ describe('on page load', () => {
 		const pageTitle = await page.title();
 
 		expect(pageTitle).toBe('Med3Web DICOM 2D/3D browser')
-	}, 10000)
+	}, 500)
 })
 
