@@ -49,8 +49,10 @@
     "docker": "npm run build && docker run --name med3web -v ./build:/usr/share/nginx/html:ro -d -p 8080:80 nginx",
     "prepare": "husky install"
   },
-  "lint-staged": {
-    "*.js": "npm run lint"
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run format && npm run lint"
+    }
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -76,10 +78,5 @@
   "engines": {
     "node": ">=12.20.1",
     "npm": ">=7.0.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run format && npm run lint"
-    }
   }
 }
