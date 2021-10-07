@@ -27,23 +27,22 @@ class LoaderUrlDicom {
   callbackReadProgress(ratio01) {
     const ratioPrc = Math.floor(ratio01);
     const store = this.m_store;
-    if (ratioPrc >= .99) {
+    if (ratioPrc >= 0.99) {
       // console.log(`callbackReadProgress. hide on = ${ratio01}`);
-      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
     } else {
-      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioPrc })
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioPrc });
     }
   } // callback progress
 
   /**
    * On the end of success loading dicom folder
-   * 
+   *
    * @param {object} volume - destination volume
    * @param {string} fileNameIn - short file name for readed
    */
   finalizeSuccessLoadedVolume(volume, fileNameIn) {
-    if (volume.m_dataArray !== null)
-    {
+    if (volume.m_dataArray !== null) {
       if (NEED_TEXTURE_SIZE_4X) {
         volume.makeDimensions4x();
       }
@@ -57,8 +56,6 @@ class LoaderUrlDicom {
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     }
   }
-
-
 } // end class LoaderUrlDicom
 
 export default LoaderUrlDicom;

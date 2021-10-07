@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
@@ -10,14 +9,13 @@
 
 import Hash from '../utils/Hash';
 
-
 // ********************************************************
 // Class
 // ********************************************************
 
 /**
-* Class DicomSlice Single slice with info, used to detect series
-*/
+ * Class DicomSlice Single slice with info, used to detect series
+ */
 
 class DicomSlice {
   constructor() {
@@ -43,9 +41,8 @@ class DicomSlice {
   }
 
   buildHash() {
-    const strMix = this.m_patientName + this.m_studyDescr +
-    this.m_studyDate + this.m_seriesTime + 
-    this.m_seriesDescr + this.m_bodyPartExamined;
+    const strMix =
+      this.m_patientName + this.m_studyDescr + this.m_studyDate + this.m_seriesTime + this.m_seriesDescr + this.m_bodyPartExamined;
     this.m_hash = Hash.getHash(strMix);
   } // end build hash
 } // end class DicomSlice

@@ -4,9 +4,9 @@
  */
 
 /**
-* 3d volume clipping
-* @module lib/scripts/actvolume/volclip
-*/
+ * 3d volume clipping
+ * @module lib/scripts/actvolume/volclip
+ */
 
 // absolute imports
 import * as THREE from 'three';
@@ -16,9 +16,9 @@ import ActiveVolume from './actvol';
 
 // const
 const NUM_VOXELS_DEG = 5;
-const NUM_VOXELS_SIDE = (1 << NUM_VOXELS_DEG);
-const NUM_VOXELS_MASK = (NUM_VOXELS_SIDE - 1);
-const NUM_VOXELS_ALL = (NUM_VOXELS_SIDE * NUM_VOXELS_SIDE * NUM_VOXELS_SIDE);
+const NUM_VOXELS_SIDE = 1 << NUM_VOXELS_DEG;
+const NUM_VOXELS_MASK = NUM_VOXELS_SIDE - 1;
+const NUM_VOXELS_ALL = NUM_VOXELS_SIDE * NUM_VOXELS_SIDE * NUM_VOXELS_SIDE;
 
 const MAX_INTERSECTIONS_PER_LINE = 16;
 
@@ -33,14 +33,13 @@ function compareV3fOnX(va, vb) {
 }
 
 /**
-* Class VolumeClipper perform volume clip by non convex geo
-* @class VolumeClipper
-*/
+ * Class VolumeClipper perform volume clip by non convex geo
+ * @class VolumeClipper
+ */
 export default class VolumeClipper {
-
   static addIntersectionToArray(vaIntersections, numIntersections, maxIntersections, vIntPoint) {
     let found = false;
-    for (let i = 0; (i < numIntersections) && !found; i++) {
+    for (let i = 0; i < numIntersections && !found; i++) {
       const dist = vIntPoint.distanceToSquared(vaIntersections[i]);
       const MIN_VAL = 1.0e-12;
       if (dist * dist < MIN_VAL) {
@@ -70,7 +69,7 @@ export default class VolumeClipper {
     // int *voxList = triVoxelList + numTrianglesInVoxelApprox * voxInd;
     let i;
     let isFound = false;
-    for (i = 0; (i < numTrianglesInVoxelApprox) && !isFound; i++) {
+    for (i = 0; i < numTrianglesInVoxelApprox && !isFound; i++) {
       if (triVoxelList[i + offList] === -1) {
         break;
       }
@@ -90,12 +89,11 @@ export default class VolumeClipper {
   }
 
   /**
-  *
-  * Find intersection of ray (looking in x direction) and triangle
-  * return null, if no intersection. or Vector3 object
-  */
+   *
+   * Find intersection of ray (looking in x direction) and triangle
+   * return null, if no intersection. or Vector3 object
+   */
   static getIntersectXRayTri(vRayStart, va, vb, vc) {
-
     // get triangle normal
     const vAB = new THREE.Vector3();
     const vBC = new THREE.Vector3();
@@ -132,16 +130,22 @@ export default class VolumeClipper {
     const p2 = new THREE.Vector3(0.0, 0.0, 0.0);
     const p = new THREE.Vector3(0.0, 0.0, 0.0);
 
-    p1.set((vb.x - va.x) * xAxis.x + (vb.y - va.y) * xAxis.y + (vb.z - va.z) * xAxis.z,
+    p1.set(
+      (vb.x - va.x) * xAxis.x + (vb.y - va.y) * xAxis.y + (vb.z - va.z) * xAxis.z,
       (vb.x - va.x) * yAxis.x + (vb.y - va.y) * yAxis.y + (vb.z - va.z) * yAxis.z,
-      0.0);
-    p2.set((vc.x - va.x) * xAxis.x + (vc.y - va.y) * xAxis.y + (vc.z - va.z) * xAxis.z,
+      0.0
+    );
+    p2.set(
+      (vc.x - va.x) * xAxis.x + (vc.y - va.y) * xAxis.y + (vc.z - va.z) * xAxis.z,
       (vc.x - va.x) * yAxis.x + (vc.y - va.y) * yAxis.y + (vc.z - va.z) * yAxis.z,
-      0.0);
+      0.0
+    );
 
-    p.set((vInter.x - va.x) * xAxis.x + (vInter.y - va.y) * xAxis.y + (vInter.z - va.z) * xAxis.z,
+    p.set(
+      (vInter.x - va.x) * xAxis.x + (vInter.y - va.y) * xAxis.y + (vInter.z - va.z) * xAxis.z,
       (vInter.x - va.x) * yAxis.x + (vInter.y - va.y) * yAxis.y + (vInter.z - va.z) * yAxis.z,
-      0.0);
+      0.0
+    );
 
     // check point s in inside triangle a, b, c
     //
@@ -154,22 +158,22 @@ export default class VolumeClipper {
     const beta = koefArea * (p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y);
     const gama = 1.0 - alfa - beta;
     const TOO_SMALL = 1.0e-7;
-    if ((alfa > -TOO_SMALL) && (beta > -TOO_SMALL) && (gama > -TOO_SMALL)) {
+    if (alfa > -TOO_SMALL && beta > -TOO_SMALL && gama > -TOO_SMALL) {
       return vInter;
     }
     return null;
   }
 
   /**
-  * Clip volumetric texture with given non-convex geometry (triangle mesh)
-  * @param {array} volTexSrc source volume texture
-  * @param {number} xDim Dimension on x
-  * @param {number} yDim Dimension on y
-  * @param {number} zDim Dimension on z
-  * @param {array} volTexDst destination volumetric texture (output)
-  * @param {object} geo geometry, used for clipping
-  * @param {number} CreateType How to clip: remove skull or create brain mask
-  */
+   * Clip volumetric texture with given non-convex geometry (triangle mesh)
+   * @param {array} volTexSrc source volume texture
+   * @param {number} xDim Dimension on x
+   * @param {number} yDim Dimension on y
+   * @param {number} zDim Dimension on z
+   * @param {array} volTexDst destination volumetric texture (output)
+   * @param {object} geo geometry, used for clipping
+   * @param {number} CreateType How to clip: remove skull or create brain mask
+   */
   static clipVolumeByNonConvexGeo(volTexSrc, xDim, yDim, zDim, volTexDst, geo, createType) {
     let i, i4;
 
@@ -200,8 +204,8 @@ export default class VolumeClipper {
     for (i = 0, i4 = 0; i < numVertices; i++, i4 += NUM_COMPS_IN_VERTEX) {
       const v = new THREE.Vector3(vertices[i4 + OFF_0], vertices[i4 + OFF_1], vertices[i4 + OFF_2]);
       const dist = v.distanceTo(vCentroid);
-      radiusMin = (dist < radiusMin) ? dist : radiusMin;
-      radiusMax = (dist > radiusMax) ? dist : radiusMax;
+      radiusMin = dist < radiusMin ? dist : radiusMin;
+      radiusMax = dist > radiusMax ? dist : radiusMax;
     }
     // console.log(`clipVolumeByNonConvexGeo. rad min, max = ${radiusMin}, ${radiusMax}`);
     const verts = new Array(numVertices);
@@ -232,7 +236,7 @@ export default class VolumeClipper {
       // assert(ix < NUM_VOXELS_SIDE);
       // assert(iy < NUM_VOXELS_SIDE);
       // assert(iz < NUM_VOXELS_SIDE);
-      vertVoxels[i] = ix + (iy * NUM_VOXELS_SIDE) + (iz * NUM_VOXELS_SIDE * NUM_VOXELS_SIDE);
+      vertVoxels[i] = ix + iy * NUM_VOXELS_SIDE + iz * NUM_VOXELS_SIDE * NUM_VOXELS_SIDE;
     }
 
     let i3;
@@ -246,9 +250,12 @@ export default class VolumeClipper {
       indTri[OFF_0] = indices[i3 + OFF_0];
       indTri[OFF_1] = indices[i3 + OFF_1];
       indTri[OFF_2] = indices[i3 + OFF_2];
-      const va = new THREE.Vector3(); va.set(verts[indTri[OFF_0]].x, verts[indTri[OFF_0]].y, verts[indTri[OFF_0]].z);
-      const vb = new THREE.Vector3(); vb.set(verts[indTri[OFF_1]].x, verts[indTri[OFF_1]].y, verts[indTri[OFF_1]].z);
-      const vc = new THREE.Vector3(); vc.set(verts[indTri[OFF_2]].x, verts[indTri[OFF_2]].y, verts[indTri[OFF_2]].z);
+      const va = new THREE.Vector3();
+      va.set(verts[indTri[OFF_0]].x, verts[indTri[OFF_0]].y, verts[indTri[OFF_0]].z);
+      const vb = new THREE.Vector3();
+      vb.set(verts[indTri[OFF_1]].x, verts[indTri[OFF_1]].y, verts[indTri[OFF_1]].z);
+      const vc = new THREE.Vector3();
+      vc.set(verts[indTri[OFF_2]].x, verts[indTri[OFF_2]].y, verts[indTri[OFF_2]].z);
       let dist;
       dist = va.distanceTo(vb);
       distAve += dist;
@@ -256,7 +263,7 @@ export default class VolumeClipper {
       distAve += dist;
     }
     const TWO = 2.0;
-    distAve /= (TWO * NUM_TRIS_FOR_APPROX_LEN);
+    distAve /= TWO * NUM_TRIS_FOR_APPROX_LEN;
     const xVoxLen = Math.floor(0 + xDim / NUM_VOXELS_SIDE);
     const yVoxLen = Math.floor(0 + yDim / NUM_VOXELS_SIDE);
     const zVoxLen = Math.floor(0 + zDim / NUM_VOXELS_SIDE);
@@ -295,16 +302,22 @@ export default class VolumeClipper {
       voxTri[OFF_0] = new THREE.Vector3();
       voxTri[OFF_1] = new THREE.Vector3();
       voxTri[OFF_2] = new THREE.Vector3();
-      voxTri[0].x = voxTriInd[0] & NUM_VOXELS_MASK; voxTriInd[0] >>= NUM_VOXELS_DEG;
-      voxTri[0].y = voxTriInd[0] & NUM_VOXELS_MASK; voxTriInd[0] >>= NUM_VOXELS_DEG;
+      voxTri[0].x = voxTriInd[0] & NUM_VOXELS_MASK;
+      voxTriInd[0] >>= NUM_VOXELS_DEG;
+      voxTri[0].y = voxTriInd[0] & NUM_VOXELS_MASK;
+      voxTriInd[0] >>= NUM_VOXELS_DEG;
       voxTri[0].z = voxTriInd[0] & NUM_VOXELS_MASK;
 
-      voxTri[1].x = voxTriInd[1] & NUM_VOXELS_MASK; voxTriInd[1] >>= NUM_VOXELS_DEG;
-      voxTri[1].y = voxTriInd[1] & NUM_VOXELS_MASK; voxTriInd[1] >>= NUM_VOXELS_DEG;
+      voxTri[1].x = voxTriInd[1] & NUM_VOXELS_MASK;
+      voxTriInd[1] >>= NUM_VOXELS_DEG;
+      voxTri[1].y = voxTriInd[1] & NUM_VOXELS_MASK;
+      voxTriInd[1] >>= NUM_VOXELS_DEG;
       voxTri[1].z = voxTriInd[1] & NUM_VOXELS_MASK;
 
-      voxTri[2].x = voxTriInd[2] & NUM_VOXELS_MASK; voxTriInd[2] >>= NUM_VOXELS_DEG;
-      voxTri[2].y = voxTriInd[2] & NUM_VOXELS_MASK; voxTriInd[2] >>= NUM_VOXELS_DEG;
+      voxTri[2].x = voxTriInd[2] & NUM_VOXELS_MASK;
+      voxTriInd[2] >>= NUM_VOXELS_DEG;
+      voxTri[2].y = voxTriInd[2] & NUM_VOXELS_MASK;
+      voxTriInd[2] >>= NUM_VOXELS_DEG;
       voxTri[2].z = voxTriInd[2] & NUM_VOXELS_MASK;
 
       const voxMin = new THREE.Vector3();
@@ -312,23 +325,23 @@ export default class VolumeClipper {
       voxMin.set(voxTri[0].x, voxTri[0].y, voxTri[0].z);
       voxMax.set(voxTri[0].x, voxTri[0].y, voxTri[0].z);
 
-      voxMin.x = (voxTri[1].x < voxMin.x) ? voxTri[1].x : voxMin.x;
-      voxMin.x = (voxTri[2].x < voxMin.x) ? voxTri[2].x : voxMin.x;
+      voxMin.x = voxTri[1].x < voxMin.x ? voxTri[1].x : voxMin.x;
+      voxMin.x = voxTri[2].x < voxMin.x ? voxTri[2].x : voxMin.x;
 
-      voxMin.y = (voxTri[1].y < voxMin.y) ? voxTri[1].y : voxMin.y;
-      voxMin.y = (voxTri[2].y < voxMin.y) ? voxTri[2].y : voxMin.y;
+      voxMin.y = voxTri[1].y < voxMin.y ? voxTri[1].y : voxMin.y;
+      voxMin.y = voxTri[2].y < voxMin.y ? voxTri[2].y : voxMin.y;
 
-      voxMin.z = (voxTri[1].z < voxMin.z) ? voxTri[1].z : voxMin.z;
-      voxMin.z = (voxTri[2].z < voxMin.z) ? voxTri[2].z : voxMin.z;
+      voxMin.z = voxTri[1].z < voxMin.z ? voxTri[1].z : voxMin.z;
+      voxMin.z = voxTri[2].z < voxMin.z ? voxTri[2].z : voxMin.z;
 
-      voxMax.x = (voxTri[1].x > voxMax.x) ? voxTri[1].x : voxMax.x;
-      voxMax.x = (voxTri[2].x > voxMax.x) ? voxTri[2].x : voxMax.x;
+      voxMax.x = voxTri[1].x > voxMax.x ? voxTri[1].x : voxMax.x;
+      voxMax.x = voxTri[2].x > voxMax.x ? voxTri[2].x : voxMax.x;
 
-      voxMax.y = (voxTri[1].y > voxMax.y) ? voxTri[1].y : voxMax.y;
-      voxMax.y = (voxTri[2].y > voxMax.y) ? voxTri[2].y : voxMax.y;
+      voxMax.y = voxTri[1].y > voxMax.y ? voxTri[1].y : voxMax.y;
+      voxMax.y = voxTri[2].y > voxMax.y ? voxTri[2].y : voxMax.y;
 
-      voxMax.z = (voxTri[1].z > voxMax.z) ? voxTri[1].z : voxMax.z;
-      voxMax.z = (voxTri[2].z > voxMax.z) ? voxTri[2].z : voxMax.z;
+      voxMax.z = voxTri[1].z > voxMax.z ? voxTri[1].z : voxMax.z;
+      voxMax.z = voxTri[2].z > voxMax.z ? voxTri[2].z : voxMax.z;
 
       // convert voxMin (Vector3) into v3d (int components)
       const vMinX = Math.floor(voxMin.x);
@@ -343,10 +356,10 @@ export default class VolumeClipper {
         for (iy = vMinY; iy <= vMaxY; iy++) {
           for (ix = vMinX; ix <= vMaxX; ix++) {
             VolumeClipper.addTriangleToVoxel(triVoxelList, numTrianglesInVoxelApprox, NUM_VOXELS_SIDE, ix, iy, iz, i);
-          }   // for (ix)
-        }     // for (iy)
-      }       // for (iz)
-    }         // for (i) all triangles
+          } // for (ix)
+        } // for (iy)
+      } // for (iz)
+    } // for (i) all triangles
 
     const vaIntersections = new Array(MAX_INTERSECTIONS_PER_LINE);
     for (i = 0; i < MAX_INTERSECTIONS_PER_LINE; i++) {
@@ -387,7 +400,8 @@ export default class VolumeClipper {
         const dz = z - vCentroid.z;
         const det = radiusMin * radiusMin - dy * dy - dz * dz;
 
-        let ixMin = -1, ixMax = -1;
+        let ixMin = -1,
+          ixMax = -1;
 
         if (det < 0.0) {
           // completely out of small circle
@@ -414,7 +428,7 @@ export default class VolumeClipper {
 
         if (USE_VOXELS_FOR_TRIANGLE_INTERSECTION_SEARCH) {
           for (let xInd = 0; xInd < NUM_VOXELS_SIDE; xInd++) {
-            if ((xInd >= ixMin) && (xInd <= ixMax)) {
+            if (xInd >= ixMin && xInd <= ixMax) {
               continue;
             }
 
@@ -442,16 +456,18 @@ export default class VolumeClipper {
               const vIntersection = VolumeClipper.getIntersectXRayTri(vRayStart, va, vb, vc);
               if (vIntersection !== null) {
                 const numIntersectsBefore = numIntersections;
-                numIntersections = VolumeClipper.addIntersectionToArray(vaIntersections, numIntersectsBefore,
-                  MAX_INTERSECTIONS_PER_LINE, vIntersection);
+                numIntersections = VolumeClipper.addIntersectionToArray(
+                  vaIntersections,
+                  numIntersectsBefore,
+                  MAX_INTERSECTIONS_PER_LINE,
+                  vIntersection
+                );
                 if (numIntersections <= 0) {
                   console.log('addIntersectionToArray: array overflow !');
                   console.log(`!!!! cur line is y = ${y}, z = ${z}`);
                 }
-
               }
             } // for (j) all triangles
-
           } // for (xInd) all voxels on x
           // if (USE_VOXELS_FOR_TRIANGLE_INTERSECTION_SEARCH)
         } else {
@@ -470,8 +486,12 @@ export default class VolumeClipper {
             const vIntersection = VolumeClipper.getIntersectXRayTri(vRayStart, va, vb, vc);
             if (vIntersection !== null) {
               const numIntersectsBefore = numIntersections;
-              numIntersections = VolumeClipper.addIntersectionToArray(vaIntersections, numIntersectsBefore,
-                MAX_INTERSECTIONS_PER_LINE, vIntersection);
+              numIntersections = VolumeClipper.addIntersectionToArray(
+                vaIntersections,
+                numIntersectsBefore,
+                MAX_INTERSECTIONS_PER_LINE,
+                vIntersection
+              );
             }
           }
         }
@@ -500,7 +520,7 @@ export default class VolumeClipper {
           const VAL_255 = 255;
           let indInter = 0;
           let isVis = 0;
-          for (x = 0; (x < xDim) && (indInter < numIntersections); x++) {
+          for (x = 0; x < xDim && indInter < numIntersections; x++) {
             // change visibility of hor line on the intersection points
             while (x === Math.floor(vaIntsSlice[indInter].x)) {
               isVis = VAL_255 - isVis;
@@ -520,17 +540,15 @@ export default class VolumeClipper {
           if (createType === ActiveVolume.CREATE_MASK) {
             for (; x < xDim; x++) {
               pixelsDst[x + yzOff] = isVis;
-            }  // for (x)
+            } // for (x)
           } else if (createType === ActiveVolume.REMOVE_SKULL) {
             for (; x < xDim; x++) {
               pixelsDst[x + yzOff] = pixelsSrc[x + yzOff] & isVis;
-            }  // for (x)
+            } // for (x)
           } // if build mask
-
-        }       // if (have sorted array of intersections
-
-      }     // for (y)
-    }       // for (z)
+        } // if (have sorted array of intersections
+      } // for (y)
+    } // for (z)
     return 1;
   } // clipVolumeByNonConvexGeo
 }

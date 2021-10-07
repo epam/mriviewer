@@ -4,13 +4,13 @@
  */
 
 /**
-* Dicom info
-* @module lib/scripts/loaders/dicominfo
-*/
+ * Dicom info
+ * @module lib/scripts/loaders/dicominfo
+ */
 
 /**
-* Class @class DicomInfo for volume some important text data render
-*/
+ * Class @class DicomInfo for volume some important text data render
+ */
 class DicomInfo {
   constructor() {
     this.m_patientName = '';

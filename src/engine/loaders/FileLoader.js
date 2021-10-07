@@ -4,9 +4,9 @@
  */
 
 /**
-* Common binary file loader
-* @module src/demo/engine/loaders/FileLoader
-*/
+ * Common binary file loader
+ * @module src/demo/engine/loaders/FileLoader
+ */
 
 // ******************************************************************
 // File loader
@@ -18,8 +18,8 @@ let GInstanceFileLoader = null;
 /** Class FileLoader for load binary files */
 export default class FileLoader {
   /** Create empty loader
-  * @param {string} strUrl - URL for loaded file
-  */
+   * @param {string} strUrl - URL for loaded file
+   */
   constructor(strUrl) {
     if (!GInstanceFileLoader) {
       GInstanceFileLoader = this;
@@ -32,8 +32,8 @@ export default class FileLoader {
   }
 
   /** Read file
-  * @param {object} doneCallback - invoked callback
-  */
+   * @param {object} doneCallback - invoked callback
+   */
   readFile(doneCallback, rejectCallback) {
     const METHOD = 'GET';
     this.m_request = new XMLHttpRequest();
@@ -44,44 +44,52 @@ export default class FileLoader {
       // this.m_request.withCredentials = true;
       const NEED_ASYNC = true;
       this.m_request.open(METHOD, this.m_url, NEED_ASYNC);
-    // } else if (typeof XDomainRequest !== 'undefined') {
-    //   console.log('HttpRequest: XDomainRequest will be used');
-    //   this.m_request = new XDomainRequest();
-    //   this.m_request.open(METHOD, this.m_url);
+      // } else if (typeof XDomainRequest !== 'undefined') {
+      //   console.log('HttpRequest: XDomainRequest will be used');
+      //   this.m_request = new XDomainRequest();
+      //   this.m_request.open(METHOD, this.m_url);
     } else {
       this.m_request = null;
       console.log('This browser cant support CORS requests');
       return;
     }
 
-    this.m_request.responseType = 'arraybuffer';  // "blob"
-    this.m_request.addEventListener('load', (event) => {
-      const arrBuf = event.target.response;
-      if (arrBuf === null) {
-        console.log('Bad response type. Expect object type in response.');
-      } else if (doneCallback) {
-        // console.log(`FileFromServer response received. url = ${this.m_url}`);
+    this.m_request.responseType = 'arraybuffer'; // "blob"
+    this.m_request.addEventListener(
+      'load',
+      (event) => {
+        const arrBuf = event.target.response;
+        if (arrBuf === null) {
+          console.log('Bad response type. Expect object type in response.');
+        } else if (doneCallback) {
+          // console.log(`FileFromServer response received. url = ${this.m_url}`);
 
-        // check wrong buffer content
-        const enc = new TextDecoder("utf-8");
-        let sz = arrBuf.byteLength;
-        if (sz > 4000) {
-          sz = 4000;
+          // check wrong buffer content
+          const enc = new TextDecoder('utf-8');
+          let sz = arrBuf.byteLength;
+          if (sz > 4000) {
+            sz = 4000;
+          }
+          const bufHead = arrBuf.slice(0, sz);
+          const strBuf = enc.decode(bufHead);
+          if (strBuf.substr(0, 9) === '<!DOCTYPE') {
+            console.log('Error load data from URL. Read result is ' + strBuf);
+          }
+          doneCallback(arrBuf);
         }
-        const bufHead = arrBuf.slice(0, sz);
-        const strBuf = enc.decode(bufHead);
-        if (strBuf.substr(0, 9) === "<!DOCTYPE") {
-          console.log("Error load data from URL. Read result is " + strBuf);
-        }
-        doneCallback(arrBuf);
-      }
-    }, false);
+      },
+      false
+    );
 
-    this.m_request.addEventListener('error', () => {
-      // console.log(`Error event happend for XMLHttpRequest: loaded = ${event.loaded}, total = ${event.total}`);
-      const errMsg = `Error accessing file ${this.m_url}`;
-      rejectCallback(errMsg);
-    }, false);
+    this.m_request.addEventListener(
+      'error',
+      () => {
+        // console.log(`Error event happend for XMLHttpRequest: loaded = ${event.loaded}, total = ${event.total}`);
+        const errMsg = `Error accessing file ${this.m_url}`;
+        rejectCallback(errMsg);
+      },
+      false
+    );
 
     this.m_request.send();
     const RES_FAIL_404 = 404;

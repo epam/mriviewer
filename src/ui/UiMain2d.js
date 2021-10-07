@@ -7,12 +7,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import UiSegm2d from './UiSegm2d';
-import UiVolumeSel from './UiVolumeSel'
-import Nouislider from "react-nouislider";
-import Modes2d from "../store/Modes2d";
-import StoreActionType from "../store/ActionTypes";
-import { SliderCaption, SliderRow } from "./Form";
-
+import UiVolumeSel from './UiVolumeSel';
+import Nouislider from 'react-nouislider';
+import Modes2d from '../store/Modes2d';
+import StoreActionType from '../store/ActionTypes';
+import { SliderCaption, SliderRow } from './Form';
 
 class UiMain2d extends React.Component {
   constructor(props) {
@@ -20,7 +19,9 @@ class UiMain2d extends React.Component {
     const store = this.props;
     const volSet = store.volumeSet;
     const vols = volSet.m_volumes;
-    let xDim = 0, yDim = 0, zDim = 0;
+    let xDim = 0,
+      yDim = 0,
+      zDim = 0;
     if (vols.length > 0) {
       const volIndex = store.volumeIndex;
       const vol = volSet.getVolume(volIndex);
@@ -30,7 +31,6 @@ class UiMain2d extends React.Component {
         zDim = vol.m_zDim;
       }
     } // if more 0 volumes
-
 
     // slider maximum value is depend on current x or y or z 2d mode selection
     this.slideRangeMax = 0;
@@ -58,13 +58,12 @@ class UiMain2d extends React.Component {
     return this.m_updateEnable;
   }
 
-
   onChangeSliderSlice() {
     if (!this.slider.current) return;
     this.m_updateEnable = false;
     let val = 0.0;
-    const aval = this.slider.current.slider.get()
-    if (typeof (aval) === 'string') {
+    const aval = this.slider.current.slider.get();
+    if (typeof aval === 'string') {
       val = +aval;
       // console.log(`onSlider. val = ${val}`);
       // convert slider value from [0.. ?dim] to [0..1]
@@ -105,23 +104,28 @@ class UiMain2d extends React.Component {
       },
       from(valStr) {
         return parseInt(valStr);
-      }
+      },
     };
 
-    return <>
-      <SliderCaption caption="Slider" />
-      <SliderRow icon="transverse">
-        <Nouislider onUpdate={this.onChangeSliderSlice}
-                    ref={this.slider}
-                    range={{ min: 0, max: this.slideRangeMax }}
-                    start={wArr} step={1}
-                    format={formatterInt}
-                    tooltips={true} />
-      </SliderRow>
-      <UiSegm2d />
-      {(store.volumeSet.m_volumes.length > 1) ? <UiVolumeSel /> : <br />}
-    </>;
-  };
+    return (
+      <>
+        <SliderCaption caption="Slider" />
+        <SliderRow icon="transverse">
+          <Nouislider
+            onUpdate={this.onChangeSliderSlice}
+            ref={this.slider}
+            range={{ min: 0, max: this.slideRangeMax }}
+            start={wArr}
+            step={1}
+            format={formatterInt}
+            tooltips={true}
+          />
+        </SliderRow>
+        <UiSegm2d />
+        {store.volumeSet.m_volumes.length > 1 ? <UiVolumeSel /> : <br />}
+      </>
+    );
+  }
 }
 
-export default connect(store => store)(UiMain2d);
+export default connect((store) => store)(UiMain2d);

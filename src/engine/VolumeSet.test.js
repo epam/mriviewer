@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
@@ -22,7 +21,7 @@ describe('VolumeSetTests', () => {
   const _writeInt = (arrBuf, offs, valInt) => {
     let offsNew = offs;
     let val = valInt;
-    for(let i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
       const bt = val & 0xff;
       val >>= 8;
       arrBuf[offsNew++] = bt;
@@ -42,17 +41,17 @@ describe('VolumeSetTests', () => {
     const SHIFT_16 = 16;
     const SHIFT_24 = 24;
 
-    const VAL_DWORD = ((VAL_0) | (VAL_1 << SHIFT_8) | (VAL_2 << SHIFT_16) | (VAL_3 << SHIFT_24));
+    const VAL_DWORD = VAL_0 | (VAL_1 << SHIFT_8) | (VAL_2 << SHIFT_16) | (VAL_3 << SHIFT_24);
     // console.log(`test. dword = ${VAL_DWORD.toString(16)}`);
     _writeInt(bufBytes, 0, VAL_DWORD);
     // console.log(`test. array0 = ${bufBytes[0].toString(16)}`);
     // console.log(`test. array1 = ${bufBytes[1].toString(16)}`);
     // console.log(`test. array2 = ${bufBytes[2].toString(16)}`);
     // console.log(`test. array3 = ${bufBytes[3].toString(16)}`);
-    const isOk0 = (bufBytes[0] === VAL_0);
-    const isOk1 = (bufBytes[1] === VAL_1);
-    const isOk2 = (bufBytes[2] === VAL_2);
-    const isOk3 = (bufBytes[3] === VAL_3);
+    const isOk0 = bufBytes[0] === VAL_0;
+    const isOk1 = bufBytes[1] === VAL_1;
+    const isOk2 = bufBytes[2] === VAL_2;
+    const isOk3 = bufBytes[3] === VAL_3;
     expect(isOk0).toBeTruthy();
     expect(isOk1).toBeTruthy();
     expect(isOk2).toBeTruthy();
@@ -67,7 +66,7 @@ describe('VolumeSetTests', () => {
     const callbackProgress = undefined;
     const callbackComplete = undefined;
     const volSet = new VolumeSet();
-    volSet.addVolume(new Volume() );
+    volSet.addVolume(new Volume());
     const readOk = volSet.readFromKtx(bufTest, callbackProgress, callbackComplete);
     expect(readOk === true).toBeFalsy();
   });
@@ -77,7 +76,7 @@ describe('VolumeSetTests', () => {
     let i;
     let iDst = 0;
     // write header
-    const arrayHeaderSign = [0xAB, 0x4B, 0x54, 0x58, 0x20, 0x31, 0x31, 0xBB, 0x0D, 0x0A, 0x1A, 0x0A];
+    const arrayHeaderSign = [0xab, 0x4b, 0x54, 0x58, 0x20, 0x31, 0x31, 0xbb, 0x0d, 0x0a, 0x1a, 0x0a];
     const lenHeaderSign = arrayHeaderSign.length;
 
     for (i = 0; i < lenHeaderSign; i++) {
@@ -89,7 +88,7 @@ describe('VolumeSetTests', () => {
     const callbackProgress = undefined;
     const callbackComplete = undefined;
     const volSet = new VolumeSet();
-    volSet.addVolume(new Volume() );
+    volSet.addVolume(new Volume());
     const readOk = volSet.readFromKtx(bufTest, callbackProgress, callbackComplete);
     expect(readOk === true).toBeFalsy();
   });
@@ -99,7 +98,7 @@ describe('VolumeSetTests', () => {
     let i;
     let iDst = 0;
     // write header
-    const arrayHeaderSign = [0xAB, 0x4B, 0x54, 0x58, 0x20, 0x31, 0x31, 0xBB, 0x0D, 0x0A, 0x1A, 0x0A];
+    const arrayHeaderSign = [0xab, 0x4b, 0x54, 0x58, 0x20, 0x31, 0x31, 0xbb, 0x0d, 0x0a, 0x1a, 0x0a];
     const lenHeaderSign = arrayHeaderSign.length;
 
     for (i = 0; i < lenHeaderSign; i++) {
@@ -119,7 +118,7 @@ describe('VolumeSetTests', () => {
     const callbackProgress = undefined;
     const callbackComplete = undefined;
     const volSet = new VolumeSet();
-    volSet.addVolume(new Volume() );
+    volSet.addVolume(new Volume());
     const readOk = volSet.readFromKtx(bufTest, callbackProgress, callbackComplete);
     expect(readOk === true).toBeFalsy();
   });
@@ -130,7 +129,7 @@ describe('VolumeSetTests', () => {
     let i;
     let iDst = 0;
     // write header
-    const arrayHeaderSign = [0xAB, 0x4B, 0x54, 0x58, 0x20, 0x31, 0x31, 0xBB, 0x0D, 0x0A, 0x1A, 0x0A];
+    const arrayHeaderSign = [0xab, 0x4b, 0x54, 0x58, 0x20, 0x31, 0x31, 0xbb, 0x0d, 0x0a, 0x1a, 0x0a];
     const lenHeaderSign = arrayHeaderSign.length;
 
     for (i = 0; i < lenHeaderSign; i++) {
@@ -158,7 +157,7 @@ describe('VolumeSetTests', () => {
     const callbackProgress = undefined;
     const callbackComplete = undefined;
     const volSet = new VolumeSet();
-    volSet.addVolume(new Volume() );
+    volSet.addVolume(new Volume());
     const readOk = volSet.readFromKtx(bufTest, callbackProgress, callbackComplete);
     // console.log(`Test. Vol dim = ${vol.m_xDim} * ${vol.m_yDim} * ${vol.m_zDim} `);
     expect(readOk === true).toBeFalsy();
@@ -170,7 +169,7 @@ describe('VolumeSetTests', () => {
     let i;
     let iDst = 0;
     // write header
-    const arrayHeaderSign = [0xAB, 0x4B, 0x54, 0x58, 0x20, 0x31, 0x31, 0xBB, 0x0D, 0x0A, 0x1A, 0x0A];
+    const arrayHeaderSign = [0xab, 0x4b, 0x54, 0x58, 0x20, 0x31, 0x31, 0xbb, 0x0d, 0x0a, 0x1a, 0x0a];
     const lenHeaderSign = arrayHeaderSign.length;
 
     for (i = 0; i < lenHeaderSign; i++) {
@@ -211,18 +210,17 @@ describe('VolumeSetTests', () => {
 
     // write data
     for (i = 0; i < DTSIZE; i++) {
-      bufTest[iDst++] = (i & 0xff);
+      bufTest[iDst++] = i & 0xff;
     }
 
     const callbackProgress = undefined;
     const callbackComplete = undefined;
     const volSet = new VolumeSet();
-    volSet.addVolume(new Volume() );
+    volSet.addVolume(new Volume());
     const readOk = volSet.readFromKtx(bufTest, callbackProgress, callbackComplete);
     // console.log(`Test. Vol dim = ${vol.m_xDim} * ${vol.m_yDim} * ${vol.m_zDim} `);
     expect(readOk === LoadResult.SUCCESS).toBeTruthy();
   });
-
 
   //
   it('testCreateSingleVolume', () => {
@@ -240,6 +238,5 @@ describe('VolumeSetTests', () => {
     expect(volFrom == volume).toBeTruthy();
   });
   //
-  it('testCreateTwoVolumes', () => {
-  });
+  it('testCreateTwoVolumes', () => {});
 });

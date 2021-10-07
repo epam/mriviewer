@@ -4,9 +4,9 @@
  */
 
 /**
-* Triangle set
-* @module lib/scripts/actvolume/triangleset
-*/
+ * Triangle set
+ * @module lib/scripts/actvolume/triangleset
+ */
 
 // absolute imports
 // import TetrahedronGenerator from 'tetra';
@@ -15,14 +15,14 @@
 import TriangleIndices from './triindices';
 
 /**
-* Class TriangleSet define set of trinagles
-* @class TriangleSet
-*/
+ * Class TriangleSet define set of trinagles
+ * @class TriangleSet
+ */
 export default class TriangleSet {
   /**
-  * Init all internal data
-  * @constructs TriangleSet
-  */
+   * Init all internal data
+   * @constructs TriangleSet
+   */
   constructor(numTriangles) {
     this.create(numTriangles);
   } // constructor
@@ -38,17 +38,17 @@ export default class TriangleSet {
   } // create
 
   /**
-  * Get number of triangles
-  * @return {number}
-  */
+   * Get number of triangles
+   * @return {number}
+   */
   getNumTriangles() {
     return this.m_numTriangles;
   }
 
   /**
-  * Add triangle to set
-  * @return 1, if success
-  */
+   * Add triangle to set
+   * @return 1, if success
+   */
   addTriangle(ia, ib, ic) {
     if (this.m_numTriangles >= this.m_numAllocatedTriangles) {
       return -1;

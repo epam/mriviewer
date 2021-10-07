@@ -4,9 +4,9 @@
  */
 
 /**
-* Triangle indices
-* @module lib/scripts/actvolume/triindices
-*/
+ * Triangle indices
+ * @module lib/scripts/actvolume/triindices
+ */
 
 // absolute imports
 // import TetrahedronGenerator from 'tetra';
@@ -15,14 +15,14 @@
 // import TriangleIndices from './triindices';
 
 /**
-* Class TriangleIndices define 3 indices of triangle
-* @class TriangleIndices
-*/
+ * Class TriangleIndices define 3 indices of triangle
+ * @class TriangleIndices
+ */
 export default class TriangleIndices {
   /**
-  * Init all internal data
-  * @constructs TriangleIndices
-  */
+   * Init all internal data
+   * @constructs TriangleIndices
+   */
   constructor(ia, ib, ic) {
     const NUM_VERTS_IN_TRIANGLE = 3;
     this.m_indices = new Int32Array(NUM_VERTS_IN_TRIANGLE);
@@ -30,4 +30,4 @@ export default class TriangleIndices {
     this.m_indices[1] = ib;
     this.m_indices[2] = ic;
   }
-}  // TriangleIndices
+} // TriangleIndices

@@ -62,8 +62,15 @@ export default class TextTool {
       }
       const xText = (this.m_vertexes[i].xZ - posX) / zoom - (1 - 1 / zoom);
       const yText = (this.m_vertexes[i].yZ - posY) / zoom + (1 - 1 / zoom);
-      this.m_textArr[i].updateText(xText, yText, this.m_textWidthScr,
-        MeshText2D.ALIGN_LEFT, MeshText2D.ALIGN_TOP, this.m_textBgColor, this.m_textColor);
+      this.m_textArr[i].updateText(
+        xText,
+        yText,
+        this.m_textWidthScr,
+        MeshText2D.ALIGN_LEFT,
+        MeshText2D.ALIGN_TOP,
+        this.m_textBgColor,
+        this.m_textColor
+      );
       this.m_scene.add(this.m_textArr[i]);
     }
   }
@@ -73,8 +80,15 @@ export default class TextTool {
     this.m_vertexes[i].yZ = (newY - (1 - 1 / zoom)) * zoom + posY;
     const xText = (this.m_vertexes[i].xZ - posX) / zoom - (1 - 1 / zoom);
     const yText = (this.m_vertexes[i].yZ - posY) / zoom + (1 - 1 / zoom);
-    this.m_textArr[i].updateText(xText, yText, this.m_textWidthScr,
-      MeshText2D.ALIGN_LEFT, MeshText2D.ALIGN_TOP, this.m_textBgColor, this.m_textColor);
+    this.m_textArr[i].updateText(
+      xText,
+      yText,
+      this.m_textWidthScr,
+      MeshText2D.ALIGN_LEFT,
+      MeshText2D.ALIGN_TOP,
+      this.m_textBgColor,
+      this.m_textColor
+    );
   }
 
   /**
@@ -82,7 +96,8 @@ export default class TextTool {
    * @param (float) xPixelSize - canvas pixel size in mm for x axis
    * @param (float) yPixelSize - canvas pixel size in mm for y axis
    */
-  setPixelSize(xPixelSize, yPixelSize) { // in mm
+  setPixelSize(xPixelSize, yPixelSize) {
+    // in mm
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }
@@ -105,8 +120,15 @@ export default class TextTool {
     if (this.m_curX !== -1 && this.m_curY !== -1) {
       if (text !== '') {
         const textMesh = new MeshText2D(text);
-        textMesh.updateText(this.m_curX, this.m_curY, this.m_textWidthScr, MeshText2D.ALIGN_LEFT,
-          MeshText2D.ALIGN_TOP, this.m_textBgColor, this.m_textColor);
+        textMesh.updateText(
+          this.m_curX,
+          this.m_curY,
+          this.m_textWidthScr,
+          MeshText2D.ALIGN_LEFT,
+          MeshText2D.ALIGN_TOP,
+          this.m_textBgColor,
+          this.m_textColor
+        );
         this.m_scene.add(textMesh);
         this.m_textArr.push(textMesh);
         const xZ = this.m_curX;
@@ -133,8 +155,7 @@ export default class TextTool {
   removeCurTextByCoords() {
     for (let i = 0; i < this.m_textArr.length; ++i) {
       const mesh = this.m_textArr[i];
-      if (mesh.m_xMin <= this.m_curX && this.m_curX <= mesh.m_xMax
-        && mesh.m_yMin <= this.m_curY && this.m_curY <= mesh.m_yMax) {
+      if (mesh.m_xMin <= this.m_curX && this.m_curX <= mesh.m_xMax && mesh.m_yMin <= this.m_curY && this.m_curY <= mesh.m_yMax) {
         const text = mesh.getText();
         this.m_curX = mesh.m_xMin;
         this.m_curY = mesh.m_yMax;

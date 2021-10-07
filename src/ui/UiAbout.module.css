@@ -4,19 +4,19 @@
  */
 
 .logo {
-    background: transparent;
+  background: transparent;
 }
 
 .logo svg {
-    width: 40px;
-    height: 40px;
+  width: 40px;
+  height: 40px;
 }
 
 .logo:hover,
 .logo:focus {
-    background: transparent;
+  background: transparent;
 }
 
 .logo:hover svg {
-    fill: var(--red);
+  fill: var(--red);
 }

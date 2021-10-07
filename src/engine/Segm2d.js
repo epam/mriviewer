@@ -38,18 +38,15 @@ const STAGE_IMAGE_PROCESSED = 3;
 const STAGE_SEGMENTATION_READY = 4;
 // const STAGE_READY_NEXT_IMAGE = 5;
 
-
 const OUT_W = 240;
 const OUT_H = 160;
 const NUM_CLASSES = 96;
-
 
 // ********************************************************
 // Class
 // ********************************************************
 
-class Segm2d
-{
+class Segm2d {
   constructor(objGraphics2d) {
     this.stage = STAGE_MODEL_NOT_LOADED;
     this.objGraphics2d = objGraphics2d;
@@ -73,11 +70,11 @@ class Segm2d
   printTensor(tensor, numValues = 64 * 3) {
     console.log('tensor shape = ' + tensor.shape);
     const tensorData = tensor.dataSync();
-    let strDebug = ''
+    let strDebug = '';
     for (let i = 0; i < numValues; i++) {
-      strDebug += tensorData[i].toString() + ", ";
+      strDebug += tensorData[i].toString() + ', ';
     }
-    console.log("tensor raw data = " + strDebug);
+    console.log('tensor raw data = ' + strDebug);
   }
 
   // debug
@@ -106,7 +103,7 @@ class Segm2d
     for (let y = 0; y < hDst; y++, ySrcAcc += yScale) {
       const ySrcBase = Math.floor(ySrcAcc);
       const yRem = ySrcAcc - ySrcBase;
-      const ySrcInd = (yRem < 0.5) ? 0 : 1;
+      const ySrcInd = yRem < 0.5 ? 0 : 1;
       const ySrc = ySrcBase + ySrcInd;
       const ySrcOff = ySrc * wSrc;
 
@@ -114,10 +111,9 @@ class Segm2d
       for (let x = 0; x < wDst; x++, xSrcAcc += xScale) {
         const xSrcBase = Math.floor(xSrcAcc);
         const xRem = xSrcAcc - xSrcBase;
-        const xSrcInd = (xRem < 0.5) ? 0 : 1;
+        const xSrcInd = xRem < 0.5 ? 0 : 1;
         const xSrc = xSrcBase + xSrcInd;
         pixelsDst[iDst++] = pixelsSrcInt[xSrc + ySrcOff];
-          
       } // for (x)
     } // for (y)
   }
@@ -129,20 +125,20 @@ class Segm2d
     this.pixels = null;
 
     console.log('Loading tfjs model...');
-    const modelLoaded = await tf.loadLayersModel(PATH_MODEL, { strict: false } );
+    const modelLoaded = await tf.loadLayersModel(PATH_MODEL, { strict: false });
 
     this.model = modelLoaded;
     this.stage = STAGE_MODEL_READY;
 
     // print success model loading
-    console.log("Model is loaded shape = " + modelLoaded.output.shape);
+    console.log('Model is loaded shape = ' + modelLoaded.output.shape);
     //this.objGraphics2d.forceUpdate();
     this.startApplyImage();
   }
 
   async startApplyImage() {
     this.stage = STAGE_IMAGE_PROCESSED;
-    console.log("Start apply segm to image ...");
+    console.log('Start apply segm to image ...');
 
     // prepare tensor
     const imgTensor = tf.browser.fromPixels(this.srcImageData).toFloat();
@@ -154,11 +150,11 @@ class Segm2d
     const imgResized = imgTensor.resizeBilinear([IN_W, IN_H]);
 
     // normalize to [-127..+127]
-    const mean = tf.tensor([123.0, 116.0, 103.0])
+    const mean = tf.tensor([123.0, 116.0, 103.0]);
     const imgNormalized = imgResized.sub(mean);
 
     // reshape tensor => [1, 320, 480, 3]
-    const imgReshaped = imgNormalized.reshape([1, IN_W, IN_H, 3]); 
+    const imgReshaped = imgNormalized.reshape([1, IN_W, IN_H, 3]);
 
     // apply prediction
     const prediction = this.model.predict(imgReshaped);
@@ -201,7 +197,8 @@ class Segm2d
     // generate 96-colors palette
     const palette = new Uint8ClampedArray(256 * 4);
     let i, j;
-    i = 0; j = 0;
+    i = 0;
+    j = 0;
     // fill 5 first elements by hand
     palette[j++] = 0;
     palette[j++] = 0;
@@ -247,7 +244,8 @@ class Segm2d
     const w = this.wSrc;
     const h = this.hSrc;
 
-    i = 0; j = 0;
+    i = 0;
+    j = 0;
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
         const ind = pixelsUpScale[i];
@@ -256,12 +254,13 @@ class Segm2d
         pixels[j + 2] = palette[ind * 4 + 2];
         pixels[j + 3] = 255;
 
-        i++; j += 4;
+        i++;
+        j += 4;
       }
     }
 
     this.stage = STAGE_SEGMENTATION_READY;
-    console.log("Segm complete now ");
+    console.log('Segm complete now ');
 
     this.objGraphics2d.forceRender();
   }
@@ -269,9 +268,9 @@ class Segm2d
   getStageString() {
     return [
       'Wait. Model is not loaded', // const STAGE_MODEL_NOT_LOADED = 0;
-      'Wait. Model is loading ...',  // const STAGE_MODEL_IS_LOADING = 1;
+      'Wait. Model is loading ...', // const STAGE_MODEL_IS_LOADING = 1;
       'Model is ready', // const STAGE_MODEL_READY = 2;
-      'Image is processed ...',  // const STAGE_IMAGE_PROCESSED = 3;
+      'Image is processed ...', // const STAGE_IMAGE_PROCESSED = 3;
       'Segmentation is ready', // const STAGE_SEGMENTATION_READY = 4;
     ][this.stage];
   }
@@ -286,9 +285,9 @@ class Segm2d
     this.hSrc = h;
 
     // debug
-    console.log('Segm2d render. VGG model ' + ((this.model === null) ? 'not loaded' : 'loaded') );
+    console.log('Segm2d render. VGG model ' + (this.model === null ? 'not loaded' : 'loaded'));
     const strMessage = this.getStageString();
-    console.log('Segm2d render. stage = ' + strMessage );
+    console.log('Segm2d render. stage = ' + strMessage);
 
     /*
     // load model
@@ -302,8 +301,8 @@ class Segm2d
       }
     } // if model non null
     */
-    
-    if ((this.stage === STAGE_SEGMENTATION_READY) && (this.pixels !== null)) {
+
+    if (this.stage === STAGE_SEGMENTATION_READY && this.pixels !== null) {
       // draw pixels array on screen
       this.imgData = ctx.createImageData(w, h);
       const pixDst = this.imgData.data;
@@ -316,11 +315,9 @@ class Segm2d
       return;
     }
 
-
-
     // clear screen
     ctx.fillStyle = 'rgb(64, 64, 64)';
-    ctx.fillRect(0,0, w, h);
+    ctx.fillRect(0, 0, w, h);
     // draw cross
     ctx.strokeStyle = '#FF0000';
 
@@ -330,7 +327,7 @@ class Segm2d
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.moveTo(w - 1 , 0);
+    ctx.moveTo(w - 1, 0);
     ctx.lineTo(0, h - 1);
     ctx.stroke();
     // draw wait message

@@ -4,9 +4,9 @@
  */
 
 /**
-* Lungs fill tool
-* @module lib/scripts/lungsfill/lft
-*/
+ * Lungs fill tool
+ * @module lib/scripts/lungsfill/lft
+ */
 // relative imports
 import FloodFillTool from './floodfill';
 import SeedPoints from './seedPoints';
@@ -14,14 +14,14 @@ import SeedPoints from './seedPoints';
 const TOO_MIN_VAL = 40;
 
 /**
-* Class LungsFillTool perform lungs selection (segmentation)
-* @class LungsFillTool
-*/
+ * Class LungsFillTool perform lungs selection (segmentation)
+ * @class LungsFillTool
+ */
 export default class LungsFillTool {
   /**
-  * Init all internal data
-  * @constructs LungsFillTool
-  */
+   * Init all internal data
+   * @constructs LungsFillTool
+   */
   //constructor(xDim, yDim, zDim, volTexSrc, volTexMask, srcData) {
   constructor(volume) {
     this.VESSEL = true;
@@ -50,11 +50,11 @@ export default class LungsFillTool {
     const numBytesPerPixel = 1;
     if (numBytesPerPixel === 1) {
       isEmpty = true;
-      for (x = 0; (x < xDimHalf) && isEmpty; x++) {
+      for (x = 0; x < xDimHalf && isEmpty; x++) {
         // check is empty plane
-        for (y = 0; (y < yDim) && (isEmpty); y++) {
-          for (z = 0; (z < zDim) && (isEmpty); z++) {
-            const off = (z * xyDim) + (y * xDim) + x;
+        for (y = 0; y < yDim && isEmpty; y++) {
+          for (z = 0; z < zDim && isEmpty; z++) {
+            const off = z * xyDim + y * xDim + x;
             if (pixelsSrc[off] > MIN_VAL_BARRIER) {
               isEmpty = false;
             }
@@ -63,11 +63,11 @@ export default class LungsFillTool {
       } // for (x)
       this.xBorderMin = x - 1;
       isEmpty = true;
-      for (x = xDim - 1; (x > xDimHalf) && (isEmpty); x--) {
+      for (x = xDim - 1; x > xDimHalf && isEmpty; x--) {
         // check is empty plane
-        for (y = 0; (y < yDim) && (isEmpty); y++) {
-          for (z = 0; (z < zDim) && (isEmpty); z++) {
-            const off = (z * xyDim) + (y * xDim) + x;
+        for (y = 0; y < yDim && isEmpty; y++) {
+          for (z = 0; z < zDim && isEmpty; z++) {
+            const off = z * xyDim + y * xDim + x;
             if (pixelsSrc[off] > MIN_VAL_BARRIER) {
               isEmpty = false;
             }
@@ -76,11 +76,11 @@ export default class LungsFillTool {
       } // for (x)
       this.xBorderMax = x + 1;
       isEmpty = true;
-      for (y = 0; (y < yDimHalf) && (isEmpty); y++) {
+      for (y = 0; y < yDimHalf && isEmpty; y++) {
         // check is empty plane
-        for (x = 0; (x < xDim) && (isEmpty); x++) {
-          for (z = 0; (z < zDim) && (isEmpty); z++) {
-            const off = (z * xyDim) + (y * xDim) + x;
+        for (x = 0; x < xDim && isEmpty; x++) {
+          for (z = 0; z < zDim && isEmpty; z++) {
+            const off = z * xyDim + y * xDim + x;
             if (pixelsSrc[off] > MIN_VAL_BARRIER) {
               isEmpty = false;
             }
@@ -89,11 +89,11 @@ export default class LungsFillTool {
       } // for (x)
       this.yBorderMin = y - 1;
       isEmpty = true;
-      for (y = yDim - 1; (y > yDimHalf) && (isEmpty); y--) {
+      for (y = yDim - 1; y > yDimHalf && isEmpty; y--) {
         // check is empty plane
-        for (x = 0; (x < xDim) && (isEmpty); x++) {
-          for (z = 0; (z < zDim) && (isEmpty); z++) {
-            const off = (z * xyDim) + (y * xDim) + x;
+        for (x = 0; x < xDim && isEmpty; x++) {
+          for (z = 0; z < zDim && isEmpty; z++) {
+            const off = z * xyDim + y * xDim + x;
             if (pixelsSrc[off] > MIN_VAL_BARRIER) {
               isEmpty = false;
             }
@@ -199,7 +199,7 @@ export default class LungsFillTool {
       this.m_ratioUpdate = 50;
       return false;
     }
-    //now this.m_volTexMask = 255, if lung, else = this.m_volTexSrc[i];  
+    //now this.m_volTexMask = 255, if lung, else = this.m_volTexSrc[i];
     // copy only filled with 255 pixels back and scale them to [0.255]
     if (this.m_ratioUpdate === 50) {
       let x;
@@ -237,7 +237,7 @@ export default class LungsFillTool {
         }
         this.m_volTexMask[x] = val;
       }
-      //now this.m_volTexMask = 255, if lung, else = 0;  
+      //now this.m_volTexMask = 255, if lung, else = 0;
       this.detectNonEmptyBox(this.m_volTexMask, this.m_xDim, this.m_yDim, this.m_zDim);
       // extend this.m_volTexMask to this.m_volTexMask1
       this.delatation();
@@ -247,7 +247,7 @@ export default class LungsFillTool {
       for (let i = 0; i < xyzDim; i++) {
         this.m_volTexMask1[i] = this.m_volTexSrc[i];
       }
-      // airway to this.m_volTexMask1  
+      // airway to this.m_volTexMask1
       const resFind = this.seedPoints.findSeedPointOnFirstSlice(this.vSeed);
       if (resFind) {
         console.log('Airway fill run: seed point not found');
@@ -263,9 +263,9 @@ export default class LungsFillTool {
       this.fillTool.floodFill3dThreshold(this.m_xDim, this.m_yDim, this.m_zDim, this.m_volTexMask1, this.vSeed, this.minv);
       const HALF = 128.0;
       for (let x = 0; x < xyzDim; x++) {
-        let val = 0.5 * this.m_volTexMask[x];//0;
+        let val = 0.5 * this.m_volTexMask[x]; //0;
         if (this.m_volTexMask2[x] - this.m_volTexMask[x] === VIS) {
-          val = HALF + this.m_volTexSrc[x];//0.5 + this.m_srcData;VIS; this.m_volTexSrc[x];this.m_srcData
+          val = HALF + this.m_volTexSrc[x]; //0.5 + this.m_srcData;VIS; this.m_volTexSrc[x];this.m_srcData
         }
         if (this.m_volTexMask1[x] === VIS) {
           val = VIS;

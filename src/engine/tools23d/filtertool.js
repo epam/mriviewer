@@ -9,7 +9,6 @@
  */
 
 export default class FilterTool {
-
   /**
    * Initialize area tool
    * @param (float) m_x - position on x for changing contrast

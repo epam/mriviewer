@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // ********************************************************
 // Imports
 // ********************************************************
@@ -51,7 +50,7 @@ class LoaderNifti {
       m_numberOfArrayElements: 0,
       m_numberOfFaces: 0,
       m_numberOfMipmapLevels: 0,
-      m_bytesOfKeyValueData: 0
+      m_bytesOfKeyValueData: 0,
     };
     this.m_xDim = 0;
     this.m_yDim = 0;
@@ -59,62 +58,64 @@ class LoaderNifti {
     this.m_boxSize = {
       x: 0.0,
       y: 0.0,
-      z: 0.0
+      z: 0.0,
     };
   } // constructor
 
   /**
-  * Read 32 bit integer from input buffer
-  * @param {object} buf - source buffer
-  * @param {number} off - offset in buffer
-  * @return 32 bit integer number
-  */
+   * Read 32 bit integer from input buffer
+   * @param {object} buf - source buffer
+   * @param {number} off - offset in buffer
+   * @return 32 bit integer number
+   */
   readIntFromBuffer(buf, off) {
     let res = 0;
     if (this.m_littleEndian) {
-      res = ((buf[off + 0]) |
+      res =
+        buf[off + 0] |
         // eslint-disable-next-line
         (buf[off + 1] << 8) |
         // eslint-disable-next-line
         (buf[off + 2] << 16) |
         // eslint-disable-next-line
-        (buf[off + 3] << 24));
+        (buf[off + 3] << 24);
     } else {
-      res = ((buf[off + 3]) |
+      res =
+        buf[off + 3] |
         // eslint-disable-next-line
         (buf[off + 2] << 8) |
         // eslint-disable-next-line
         (buf[off + 1] << 16) |
         // eslint-disable-next-line
-        (buf[off + 0] << 24));
+        (buf[off + 0] << 24);
     }
     return res;
   }
 
   /**
-  * Read 16 bit short integer from input buffer
-  * @param {object} buf - source buffer
-  * @param {number} off - offset in buffer
-  * @return 16 bit short integer number
-  */
+   * Read 16 bit short integer from input buffer
+   * @param {object} buf - source buffer
+   * @param {number} off - offset in buffer
+   * @return 16 bit short integer number
+   */
   readShortFromBuffer(buf, off) {
     let res = 0;
     if (this.m_littleEndian) {
       // eslint-disable-next-line
-      res = ((buf[off + 0]) | (buf[off + 1] << 8));
+      res = buf[off + 0] | (buf[off + 1] << 8);
     } else {
       // eslint-disable-next-line
-      res = ((buf[off + 1]) | (buf[off + 0] << 8));
+      res = buf[off + 1] | (buf[off + 0] << 8);
     }
     return res;
   }
 
   /**
-  * Read 32 bit float from input buffer
-  * @param {object} buf - source buffer
-  * @param {number} off - offset in buffer
-  * @return float number, loaded from buffer
-  */
+   * Read 32 bit float from input buffer
+   * @param {object} buf - source buffer
+   * @param {number} off - offset in buffer
+   * @return float number, loaded from buffer
+   */
   readFloatFromBuffer(buf, off) {
     const BYTES_IN_FLOAT = 4;
     const arBuf = new ArrayBuffer(BYTES_IN_FLOAT);
@@ -132,27 +133,27 @@ class LoaderNifti {
   }
 
   /**
-  * Read from local file buffer
-  * @param {object} volDst - Destination volume object to be fiiied
-  * @param {object} arrBuf - source byte buffer
-  * @param {func} callbackProgress - function invoked during read
-  * @param {func} callbackComplete - function invoked after reading
-  * @return true, if success
-  */
+   * Read from local file buffer
+   * @param {object} volDst - Destination volume object to be fiiied
+   * @param {object} arrBuf - source byte buffer
+   * @param {func} callbackProgress - function invoked during read
+   * @param {func} callbackComplete - function invoked after reading
+   * @return true, if success
+   */
   readFromBuffer(volDst, arrBuf, callbackProgress, callbackComplete) {
     const bufBytes = new Uint8Array(arrBuf);
     const bufLen = bufBytes.length;
     const MIN_BUF_SIZE = 8;
-    const MAX_BUF_SIZE = (1024 * 1024 * 230);
+    const MAX_BUF_SIZE = 1024 * 1024 * 230;
     if (bufLen < MIN_BUF_SIZE) {
       if (callbackComplete) {
-        callbackComplete(LoadResult.ERROR_TOO_SMALL_DATA_SIZE , null, 0, null);
+        callbackComplete(LoadResult.ERROR_TOO_SMALL_DATA_SIZE, null, 0, null);
       }
       return false;
     }
     if (bufLen >= MAX_BUF_SIZE) {
       if (callbackComplete) {
-        callbackComplete(LoadResult.ERROR_TOO_LARGE_DATA_SIZE , null, 0, null);
+        callbackComplete(LoadResult.ERROR_TOO_LARGE_DATA_SIZE, null, 0, null);
       }
       return false;
     }
@@ -173,7 +174,7 @@ class LoaderNifti {
 
     let bufOff = 0;
     let headSize = this.readIntFromBuffer(bufBytes, bufOff);
-    if (headSize > (2 << 24)) {
+    if (headSize > 2 << 24) {
       this.m_littleEndian = false;
       headSize = this.readIntFromBuffer(bufBytes, bufOff);
     }
@@ -243,12 +244,11 @@ class LoaderNifti {
     const NIFTI_DATA_TYPE_UINT16 = 512;
 
     let isDataTypeCorrect = 0;
-    isDataTypeCorrect |= (dataType === NIFTI_DATA_TYPE_UINT8);
-    isDataTypeCorrect |= (dataType === NIFTI_DATA_TYPE_INT16);
-    isDataTypeCorrect |= (dataType === NIFTI_DATA_TYPE_FLOAT32);
-    isDataTypeCorrect |= (dataType === NIFTI_DATA_TYPE_INT8);
-    isDataTypeCorrect |= (dataType === NIFTI_DATA_TYPE_UINT16);
-  
+    isDataTypeCorrect |= dataType === NIFTI_DATA_TYPE_UINT8;
+    isDataTypeCorrect |= dataType === NIFTI_DATA_TYPE_INT16;
+    isDataTypeCorrect |= dataType === NIFTI_DATA_TYPE_FLOAT32;
+    isDataTypeCorrect |= dataType === NIFTI_DATA_TYPE_INT8;
+    isDataTypeCorrect |= dataType === NIFTI_DATA_TYPE_UINT16;
 
     if (!isDataTypeCorrect) {
       console.log(`Nifti header read. This data type (${dataType}) is not supported`);
@@ -260,8 +260,7 @@ class LoaderNifti {
     const BIT_PIXELS_8 = 8;
     const BIT_PIXELS_16 = 16;
     const BIT_PIXELS_32 = 32;
-    const isSupported = (bitPix === BIT_PIXELS_8) | 
-      (bitPix === BIT_PIXELS_16) | (bitPix === BIT_PIXELS_32);
+    const isSupported = (bitPix === BIT_PIXELS_8) | (bitPix === BIT_PIXELS_16) | (bitPix === BIT_PIXELS_32);
     if (!isSupported) {
       console.log(`Nifti wrong bitPix: ${bitPix}, but should be 8,16 or 32`);
       if (callbackComplete) {
@@ -308,8 +307,8 @@ class LoaderNifti {
     let isGoodSym = true;
     const CODE_MIN = 20;
     const CODE_MAX = 255;
-    for (let i = 0; (i < MAX_STR_DECS) && isGoodSym; i++) {
-      isGoodSym = ((arrDesc[i] >= CODE_MIN) && (arrDesc[i] < CODE_MAX));
+    for (let i = 0; i < MAX_STR_DECS && isGoodSym; i++) {
+      isGoodSym = arrDesc[i] >= CODE_MIN && arrDesc[i] < CODE_MAX;
       if (isGoodSym) {
         strDescr = strDescr.concat(String.fromCharCode(arrDesc[i]));
       }
@@ -336,11 +335,12 @@ class LoaderNifti {
     const MAG_0 = 110;
     const MAG_1 = 43;
     const MAG_2 = 49;
-    const isCorrectMagic = (bufBytes[bufOff + 0] === MAG_0) &&
+    const isCorrectMagic =
+      bufBytes[bufOff + 0] === MAG_0 &&
       // eslint-disable-next-line
-      (bufBytes[bufOff + 1] === MAG_1) &&
+      bufBytes[bufOff + 1] === MAG_1 &&
       // eslint-disable-next-line
-      (bufBytes[bufOff + 2] === MAG_2);
+      bufBytes[bufOff + 2] === MAG_2;
     if (!isCorrectMagic) {
       // eslint-disable-next-line
       console.log(`Nifti hdr bad magic: ${bufBytes[bufOff + 0]}, ${bufBytes[bufOff + 1]}, ${bufBytes[bufOff + 2]}`);
@@ -358,7 +358,7 @@ class LoaderNifti {
     let pwr2;
     let pwrFinish = false;
     // eslint-disable-next-line
-    for (pwr2 = 29; (pwr2 >= 0) && (!pwrFinish); pwr2--) {
+    for (pwr2 = 29; pwr2 >= 0 && !pwrFinish; pwr2--) {
       const val = 1 << pwr2;
       if (val < numVoxels) {
         pwrFinish = true;
@@ -378,7 +378,7 @@ class LoaderNifti {
     // scan min max in array
     let valMax = 0;
     j = 0;
-    if ((dataType === NIFTI_DATA_TYPE_INT16) || (dataType === NIFTI_DATA_TYPE_UINT16)) {
+    if (dataType === NIFTI_DATA_TYPE_INT16 || dataType === NIFTI_DATA_TYPE_UINT16) {
       for (i = 0; i < numVoxels; i++) {
         const val = this.readShortFromBuffer(bufBytes, dataOff + j);
         // eslint-disable-next-line
@@ -387,22 +387,22 @@ class LoaderNifti {
           valMax = val;
         }
         // progress update
-        if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
+        if (callbackProgress && (i & progressMask) === 0 && i > 0) {
           const ratio = 0.0 + 0.5 * (i / numVoxels);
           callbackProgress(ratio);
         }
       } // for (i) al voxels
     }
-    if ((dataType === NIFTI_DATA_TYPE_INT8) || (dataType === NIFTI_DATA_TYPE_UINT8)) {
+    if (dataType === NIFTI_DATA_TYPE_INT8 || dataType === NIFTI_DATA_TYPE_UINT8) {
       for (i = 0; i < numVoxels; i++) {
         const val = bufBytes[dataOff + j];
         // eslint-disable-next-line
-        j ++;
+        j++;
         if (val > valMax) {
           valMax = val;
         }
         // progress update
-        if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
+        if (callbackProgress && (i & progressMask) === 0 && i > 0) {
           const ratio = 0.0 + 0.5 * (i / numVoxels);
           callbackProgress(ratio);
         }
@@ -418,7 +418,7 @@ class LoaderNifti {
           valMax = val;
         }
         // progress update
-        if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
+        if (callbackProgress && (i & progressMask) === 0 && i > 0) {
           const ratio = 0.0 + 0.5 * (i / numVoxels);
           callbackProgress(ratio);
         }
@@ -434,12 +434,12 @@ class LoaderNifti {
       histArray[i] = 0.0;
     }
     j = 0;
-    if ((dataType === NIFTI_DATA_TYPE_INT16) || (dataType === NIFTI_DATA_TYPE_UINT16)) {
+    if (dataType === NIFTI_DATA_TYPE_INT16 || dataType === NIFTI_DATA_TYPE_UINT16) {
       for (i = 0; i < numVoxels; i++) {
         const val = this.readShortFromBuffer(bufBytes, dataOff + j);
         // eslint-disable-next-line
         j += 2;
-        histArray[val] ++;
+        histArray[val]++;
       }
     } // if
     if (dataType === NIFTI_DATA_TYPE_FLOAT32) {
@@ -447,15 +447,15 @@ class LoaderNifti {
         const val = Math.floor(this.readFloatFromBuffer(bufBytes, dataOff + j));
         // eslint-disable-next-line
         j += 4;
-        histArray[val] ++;
+        histArray[val]++;
       }
     } // if
-    if ((dataType === NIFTI_DATA_TYPE_INT8) || (dataType === NIFTI_DATA_TYPE_UINT8)) {
+    if (dataType === NIFTI_DATA_TYPE_INT8 || dataType === NIFTI_DATA_TYPE_UINT8) {
       for (i = 0; i < numVoxels; i++) {
         const val = bufBytes[dataOff + j];
         // eslint-disable-next-line
-        j ++;
-        histArray[val] ++;
+        j++;
+        histArray[val]++;
       }
     } // if
 
@@ -497,7 +497,7 @@ class LoaderNifti {
       return false;
     }
     j = 0;
-    if ((dataType === NIFTI_DATA_TYPE_INT16) || (dataType === NIFTI_DATA_TYPE_UINT16)) {
+    if (dataType === NIFTI_DATA_TYPE_INT16 || dataType === NIFTI_DATA_TYPE_UINT16) {
       for (i = 0; i < numVoxels; i++) {
         let val = this.readShortFromBuffer(bufBytes, dataOff + j);
         // eslint-disable-next-line
@@ -505,27 +505,27 @@ class LoaderNifti {
         // scale down to [0..255]
         val = (val * scale) >> ACC_DEGREE;
         // check [0..255] range for some voxels out from histogram peak
-        val = (val <= MAX_BYTE) ? val : MAX_BYTE;
+        val = val <= MAX_BYTE ? val : MAX_BYTE;
         dataArray[i] = val;
         // progress update
-        if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
+        if (callbackProgress && (i & progressMask) === 0 && i > 0) {
           const ratio = 0.5 + 0.5 * (i / numVoxels);
           callbackProgress(ratio);
         }
       } // for (i) all voxels
     } // if 16 bit
-    if ((dataType === NIFTI_DATA_TYPE_INT8) || (dataType === NIFTI_DATA_TYPE_UINT8)) {
+    if (dataType === NIFTI_DATA_TYPE_INT8 || dataType === NIFTI_DATA_TYPE_UINT8) {
       for (i = 0; i < numVoxels; i++) {
         let val = bufBytes[dataOff + j];
         // eslint-disable-next-line
-        j ++;
+        j++;
         // scale down to [0..255]
         val = (val * scale) >> ACC_DEGREE;
         // check [0..255] range for some voxels out from histogram peak
-        val = (val <= MAX_BYTE) ? val : MAX_BYTE;
+        val = val <= MAX_BYTE ? val : MAX_BYTE;
         dataArray[i] = val;
         // progress update
-        if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
+        if (callbackProgress && (i & progressMask) === 0 && i > 0) {
           const ratio = 0.5 + 0.5 * (i / numVoxels);
           callbackProgress(ratio);
         }
@@ -539,16 +539,15 @@ class LoaderNifti {
         // scale down to [0..255]
         val = (val * scale) >> ACC_DEGREE;
         // check [0..255] range for some voxels out from histogram peak
-        val = (val <= MAX_BYTE) ? val : MAX_BYTE;
+        val = val <= MAX_BYTE ? val : MAX_BYTE;
         dataArray[i] = val;
         // progress update
-        if (callbackProgress && ((i & progressMask) === 0) && (i > 0)) {
+        if (callbackProgress && (i & progressMask) === 0 && i > 0) {
           const ratio = 0.5 + 0.5 * (i / numVoxels);
           callbackProgress(ratio);
         }
       } // for (i) all voxels
     } // if 16 bit
-
 
     let xyDim = this.m_xDim * this.m_yDim;
     /*
@@ -586,7 +585,8 @@ class LoaderNifti {
     }
     */
     // clear borders
-    let x; let y;
+    let x;
+    let y;
     let z;
     const zOffMin = 0 * xyDim;
     const zOffMax = (this.m_zDim - 1) * xyDim;
@@ -599,16 +599,16 @@ class LoaderNifti {
         off = zOffMax + yOff + x;
         dataArray[off] = 0;
       } // for (x)
-    }   // for (y)
+    } // for (y)
     const xOffMin = 0;
     const xOffMax = this.m_xDim - 1;
     for (z = 0; z < this.m_zDim; z++) {
       const zOff = z * xyDim;
       for (y = 0; y < this.m_yDim; y++) {
         let off;
-        off = zOff + (y * this.m_xDim) + xOffMin;
+        off = zOff + y * this.m_xDim + xOffMin;
         dataArray[off] = 0;
-        off = zOff + (y * this.m_xDim) + xOffMax;
+        off = zOff + y * this.m_xDim + xOffMax;
         dataArray[off] = 0;
       }
     }
@@ -637,7 +637,7 @@ class LoaderNifti {
     volDst.m_boxSize = this.m_boxSize;
 
     console.log(`Nifti header read OK. Volume pixels = ${this.m_xDim} * ${this.m_yDim} * ${this.m_zDim}`);
-    
+
     // Finally invoke user callback after file was read
     const KTX_GL_RED = 0x1903;
     const KTX_UNSIGNED_BYTE = 0x1401;
@@ -662,26 +662,28 @@ class LoaderNifti {
   } // end of readFromBuffer
 
   /**
-  *
-  * Read Nifti file from URL
-  * @param {object} volDst volume to read
-  * @param {string} strUrl from where
-  * @param {Function} callbackProgress invoke during loading
-  * @param {Function} callbackComplete invoke at the end with final success code
-  */
+   *
+   * Read Nifti file from URL
+   * @param {object} volDst volume to read
+   * @param {string} strUrl from where
+   * @param {Function} callbackProgress invoke during loading
+   * @param {Function} callbackComplete invoke at the end with final success code
+   */
   readFromUrl(volDst, strUrl, callbackProgress, callbackComplete) {
     console.log(`LoadedNifti. staring read ${strUrl}`);
     this.m_fileLoader = new FileLoader(strUrl);
-    this.m_fileLoader.readFile((arrBuf) => {
-      const okRead = this.readFromBuffer(volDst, arrBuf, callbackProgress, callbackComplete);
-      return okRead;
-    }, (errMsg) => {
-      console.log(`LoadedNifti. Error read file: ${errMsg}`);
-      callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
-    });
+    this.m_fileLoader.readFile(
+      (arrBuf) => {
+        const okRead = this.readFromBuffer(volDst, arrBuf, callbackProgress, callbackComplete);
+        return okRead;
+      },
+      (errMsg) => {
+        console.log(`LoadedNifti. Error read file: ${errMsg}`);
+        callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
+      }
+    );
     return true;
   } // end of readFromUrl
-
 } // end class LoaderNifti
 
 export default LoaderNifti;

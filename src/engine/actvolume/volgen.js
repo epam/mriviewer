@@ -4,9 +4,9 @@
  */
 
 /**
-* 3d volume generate from 3d polygon mesh
-* @module lib/scripts/actvolume/volgen
-*/
+ * 3d volume generate from 3d polygon mesh
+ * @module lib/scripts/actvolume/volgen
+ */
 
 // absolute imports
 import * as THREE from 'three';
@@ -15,14 +15,13 @@ import * as THREE from 'three';
 import FloodFillTool from './floodfill';
 
 /**
-* Class VolumeGenerator create 3d volumes from polygonal triangle mesh
-* @class VolumeGenerator
-*/
+ * Class VolumeGenerator create 3d volumes from polygonal triangle mesh
+ * @class VolumeGenerator
+ */
 export default class VolumeGenerator {
-
   /**
-  * verts - array of THREE.Vector3
-  */
+   * verts - array of THREE.Vector3
+   */
   static renderTriangle(xDim, yDim, zDim, pixels, verts) {
     const xyDim = xDim * yDim;
 
@@ -47,8 +46,8 @@ export default class VolumeGenerator {
     const dist02 = Math.sqrt(v02.x * v02.x + v02.y * v02.y + v02.z * v02.z);
     const dist12 = Math.sqrt(v12.x * v12.x + v12.y * v12.y + v12.z * v12.z);
 
-    let distMax = (dist01 > dist02) ? dist01 : dist02;
-    distMax = (dist12 > distMax) ? dist12 : distMax;
+    let distMax = dist01 > dist02 ? dist01 : dist02;
+    distMax = dist12 > distMax ? dist12 : distMax;
     const ITERS_ESTIMATE = 1.2;
     const numIters = Math.floor(distMax * ITERS_ESTIMATE);
 
@@ -89,8 +88,8 @@ export default class VolumeGenerator {
         let y = Math.floor(v.y);
         let z = Math.floor(v.z);
 
-        if ((x >= 0) && (y >= 0) && (z >= 0) && (x < xDim) && (y < yDim) && (z < zDim)) {
-          const off = x + (y * xDim) + (z * xyDim);
+        if (x >= 0 && y >= 0 && z >= 0 && x < xDim && y < yDim && z < zDim) {
+          const off = x + y * xDim + z * xyDim;
           pixels[off] = VIS;
         }
 
@@ -98,47 +97,47 @@ export default class VolumeGenerator {
         x = Math.floor(v.x) + 1;
         y = Math.floor(v.y) + 0;
         z = Math.floor(v.z) + 0;
-        if ((x >= 0) && (y >= 0) && (z >= 0) && (x < xDim) && (y < yDim) && (z < zDim)) {
-          const off = x + (y * xDim) + (z * xyDim);
+        if (x >= 0 && y >= 0 && z >= 0 && x < xDim && y < yDim && z < zDim) {
+          const off = x + y * xDim + z * xyDim;
           pixels[off] = VIS;
         }
 
         x = Math.floor(v.x) + 0;
         y = Math.floor(v.y) + 1;
         z = Math.floor(v.z) + 0;
-        if ((x >= 0) && (y >= 0) && (z >= 0) && (x < xDim) && (y < yDim) && (z < zDim)) {
-          const off = x + (y * xDim) + (z * xyDim);
+        if (x >= 0 && y >= 0 && z >= 0 && x < xDim && y < yDim && z < zDim) {
+          const off = x + y * xDim + z * xyDim;
           pixels[off] = VIS;
         }
 
         x = Math.floor(v.x) + 0;
         y = Math.floor(v.y) + 0;
         z = Math.floor(v.z) + 1;
-        if ((x >= 0) && (y >= 0) && (z >= 0) && (x < xDim) && (y < yDim) && (z < zDim)) {
-          const off = x + (y * xDim) + (z * xyDim);
+        if (x >= 0 && y >= 0 && z >= 0 && x < xDim && y < yDim && z < zDim) {
+          const off = x + y * xDim + z * xyDim;
           pixels[off] = VIS;
         }
 
         x = Math.floor(v.x) - 1;
         y = Math.floor(v.y) + 0;
         z = Math.floor(v.z) + 0;
-        if ((x >= 0) && (y >= 0) && (z >= 0) && (x < xDim) && (y < yDim) && (z < zDim)) {
-          const off = x + (y * xDim) + (z * xyDim);
+        if (x >= 0 && y >= 0 && z >= 0 && x < xDim && y < yDim && z < zDim) {
+          const off = x + y * xDim + z * xyDim;
           pixels[off] = VIS;
         }
 
         x = Math.floor(v.x) + 0;
         y = Math.floor(v.y) - 1;
         z = Math.floor(v.z) + 0;
-        if ((x >= 0) && (y >= 0) && (z >= 0) && (x < xDim) && (y < yDim) && (z < zDim)) {
-          const off = x + (y * xDim) + (z * xyDim);
+        if (x >= 0 && y >= 0 && z >= 0 && x < xDim && y < yDim && z < zDim) {
+          const off = x + y * xDim + z * xyDim;
           pixels[off] = VIS;
         }
         x = Math.floor(v.x) + 0;
         y = Math.floor(v.y) + 0;
         z = Math.floor(v.z) - 1;
-        if ((x >= 0) && (y >= 0) && (z >= 0) && (x < xDim) && (y < yDim) && (z < zDim)) {
-          const off = x + (y * xDim) + (z * xyDim);
+        if (x >= 0 && y >= 0 && z >= 0 && x < xDim && y < yDim && z < zDim) {
+          const off = x + y * xDim + z * xyDim;
           pixels[off] = VIS;
         }
         // next v
@@ -158,9 +157,9 @@ export default class VolumeGenerator {
   }
 
   /**
-  *
-  * return true, if success
-  */
+   *
+   * return true, if success
+   */
   static generateFromFaces(xDim, yDim, zDim, pixelsDst, geo, withFillInside) {
     const numTriangles = geo.getNumTriangles();
     const indices = geo.getIndices(); // Uint32 array
@@ -189,17 +188,17 @@ export default class VolumeGenerator {
       const ia = indices[i3 + OFF_0];
       const ib = indices[i3 + OFF_1];
       const ic = indices[i3 + OFF_2];
-      vs[OFF_0].x = vertices[(ia * NUM_COMP_VERTEX) + OFF_0];
-      vs[OFF_0].y = vertices[(ia * NUM_COMP_VERTEX) + OFF_1];
-      vs[OFF_0].z = vertices[(ia * NUM_COMP_VERTEX) + OFF_2];
+      vs[OFF_0].x = vertices[ia * NUM_COMP_VERTEX + OFF_0];
+      vs[OFF_0].y = vertices[ia * NUM_COMP_VERTEX + OFF_1];
+      vs[OFF_0].z = vertices[ia * NUM_COMP_VERTEX + OFF_2];
 
-      vs[OFF_1].x = vertices[(ib * NUM_COMP_VERTEX) + OFF_0];
-      vs[OFF_1].y = vertices[(ib * NUM_COMP_VERTEX) + OFF_1];
-      vs[OFF_1].z = vertices[(ib * NUM_COMP_VERTEX) + OFF_2];
+      vs[OFF_1].x = vertices[ib * NUM_COMP_VERTEX + OFF_0];
+      vs[OFF_1].y = vertices[ib * NUM_COMP_VERTEX + OFF_1];
+      vs[OFF_1].z = vertices[ib * NUM_COMP_VERTEX + OFF_2];
 
-      vs[OFF_2].x = vertices[(ic * NUM_COMP_VERTEX) + OFF_0];
-      vs[OFF_2].y = vertices[(ic * NUM_COMP_VERTEX) + OFF_1];
-      vs[OFF_2].z = vertices[(ic * NUM_COMP_VERTEX) + OFF_2];
+      vs[OFF_2].x = vertices[ic * NUM_COMP_VERTEX + OFF_0];
+      vs[OFF_2].y = vertices[ic * NUM_COMP_VERTEX + OFF_1];
+      vs[OFF_2].z = vertices[ic * NUM_COMP_VERTEX + OFF_2];
 
       VolumeGenerator.renderTriangle(xDim, yDim, zDim, pixelsDst, vs);
     } // for (i) all triangles
@@ -231,8 +230,8 @@ export default class VolumeGenerator {
         const okFill = fillTool.floodFill3d(xDim, yDim, zDim, pixelsFill, vSeed);
         console.log(`VolGen. Result fill = ${okFill}. numDraws = ${fillTool.m_numFilled3d}`);
         const VIS = 255;
-        const OFF_CORNER = 1 + (1 * xDim) + (1 * xDim * yDim);
-        if ((okFill === 1) && (pixelsFill[OFF_CORNER] !== VIS)) {
+        const OFF_CORNER = 1 + 1 * xDim + 1 * xDim * yDim;
+        if (okFill === 1 && pixelsFill[OFF_CORNER] !== VIS) {
           foundGoodFill = true;
           break;
         }
@@ -251,4 +250,3 @@ export default class VolumeGenerator {
     return true;
   }
 }
-

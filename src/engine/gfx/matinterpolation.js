@@ -4,9 +4,9 @@
  */
 
 /**
-* Final isosurface rendering material for CT dataset
-* @module lib/scripts/gfx/matinterpolation
-*/
+ * Final isosurface rendering material for CT dataset
+ * @module lib/scripts/gfx/matinterpolation
+ */
 
 // ******************************************************************
 // imports
@@ -20,10 +20,9 @@ import INTERP_FRAGMENT_SHADER from '../shaders/interpolation.frag';
 
 /** Class @class MaterialVolumeRender for create skull volume render shader material */
 export default class MaterialInterpolation {
-
   /** Simple material constructor
-  * @constructor
-  */
+   * @constructor
+   */
   constructor() {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
@@ -37,8 +36,8 @@ export default class MaterialInterpolation {
   }
 
   /** Simple material constructor
-  * @return {object} Three.js material with this shader
-  */
+   * @return {object} Three.js material with this shader
+   */
   create(renderTexture, callbackMat) {
     // Init uniforms
     this.m_uniforms.texIsoSurface.value = renderTexture;
@@ -66,7 +65,7 @@ export default class MaterialInterpolation {
           defines: this.m_defines,
           vertexShader: this.m_strShaderVertex,
           fragmentShader: this.m_strShaderFragment,
-          side: THREE.BackSide
+          side: THREE.BackSide,
         });
         if (callbackMat) {
           callbackMat(material);

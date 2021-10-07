@@ -4,9 +4,9 @@
  */
 
 /**
-* Active volume algorithm implementation
-* @module lib/scripts/actvolume/actvol
-*/
+ * Active volume algorithm implementation
+ * @module lib/scripts/actvolume/actvol
+ */
 
 // absolute imports
 import * as THREE from 'three';
@@ -48,14 +48,14 @@ const AV_METHOD_ALL = 0xffff;
 // ****************************************************************************
 
 /**
-* Class ActiveVolume perform skull detection and removal
-* @class ActiveVolume
-*/
+ * Class ActiveVolume perform skull detection and removal
+ * @class ActiveVolume
+ */
 export default class ActiveVolume {
   /**
-  * Init all internal data
-  * @constructs ActiveVolume
-  */
+   * Init all internal data
+   * @constructs ActiveVolume
+   */
   constructor() {
     this.m_state = AV_STATE_NA;
     this.m_pixelsSrc = null;
@@ -96,9 +96,9 @@ export default class ActiveVolume {
   }
 
   /**
-  *
-  * Set initial sphere center
-  */
+   *
+   * Set initial sphere center
+   */
   setSphereCenter(xCenter, yCenter, zCenter) {
     this.m_sphereCenter = new THREE.Vector3();
     this.m_sphereCenter.set(xCenter, yCenter, zCenter);
@@ -106,9 +106,9 @@ export default class ActiveVolume {
   }
 
   /**
-  *
-  * Set initial sphere radius
-  */
+   *
+   * Set initial sphere radius
+   */
   setSphereRadius(xRadius, yRadius, zRadius) {
     this.m_sphereRadius = new THREE.Vector3();
     this.m_sphereRadius.set(xRadius, yRadius, zRadius);
@@ -116,28 +116,28 @@ export default class ActiveVolume {
   }
 
   /**
-  *
-  * Get sphere center
-  */
+   *
+   * Get sphere center
+   */
   getSphereCenter() {
     return this.m_sphereCenter;
   }
 
   /**
-  *
-  * Get sphere radius
-  */
+   *
+   * Get sphere radius
+   */
   getSphereRadius() {
     return this.m_sphereRadius;
   }
 
   /**
-  *
-  * Set physical volume dimensions
-  * @param {number} xWorldBox world box size on x
-  * @param {number} yWorldBox world box size on y
-  * @param {number} zWorldBox world box size on z
-  */
+   *
+   * Set physical volume dimensions
+   * @param {number} xWorldBox world box size on x
+   * @param {number} yWorldBox world box size on y
+   * @param {number} zWorldBox world box size on z
+   */
   setupPhysDims(xWorldBox, yWorldBox, zWorldBox) {
     this.m_xWorldBox = xWorldBox;
     this.m_yWorldBox = yWorldBox;
@@ -184,8 +184,7 @@ export default class ActiveVolume {
       volTexDst[i] = 0;
     }
     const WITH_FILL = true;
-    const resBoolFill = VolumeGenerator.generateFromFaces(this.m_xDim, this.m_yDim, this.m_zDim,
-      volTexDst, this.m_geoRender, WITH_FILL);
+    const resBoolFill = VolumeGenerator.generateFromFaces(this.m_xDim, this.m_yDim, this.m_zDim, volTexDst, this.m_geoRender, WITH_FILL);
 
     if (resBoolFill) {
       console.log('perform clip of source volume by generated mask ...');
@@ -203,9 +202,9 @@ export default class ActiveVolume {
   }
 
   /**
-  *
-  * Create internal structures: render sphere
-  */
+   *
+   * Create internal structures: render sphere
+   */
   createGeoSphere() {
     if (this.m_xDim === 0) {
       const ERR_NO_VOLUME = -1;
@@ -239,14 +238,14 @@ export default class ActiveVolume {
     const NUM_1 = 1;
     const NUM_2 = 2;
     const HALF = 0.5;
-    const xScale = (this.m_sphereRadius.x / this.m_xScale) / HALF;
-    const yScale = (this.m_sphereRadius.y / this.m_yScale) / HALF;
-    const zScale = (this.m_sphereRadius.z / this.m_zScale) / HALF;
+    const xScale = this.m_sphereRadius.x / this.m_xScale / HALF;
+    const yScale = this.m_sphereRadius.y / this.m_yScale / HALF;
+    const zScale = this.m_sphereRadius.z / this.m_zScale / HALF;
 
     for (let i = 0, i4 = 0; i < numVertices; i++, i4 += COORDS_IN_VERTEX) {
-      vertices[i4 + NUM_0] = (this.m_sphereCenter.x / this.m_xScale) + vertices[i4 + NUM_0] * xScale;
-      vertices[i4 + NUM_1] = (this.m_sphereCenter.y / this.m_yScale) + vertices[i4 + NUM_1] * yScale;
-      vertices[i4 + NUM_2] = (this.m_sphereCenter.z / this.m_zScale) + vertices[i4 + NUM_2] * zScale;
+      vertices[i4 + NUM_0] = this.m_sphereCenter.x / this.m_xScale + vertices[i4 + NUM_0] * xScale;
+      vertices[i4 + NUM_1] = this.m_sphereCenter.y / this.m_yScale + vertices[i4 + NUM_1] * yScale;
+      vertices[i4 + NUM_2] = this.m_sphereCenter.z / this.m_zScale + vertices[i4 + NUM_2] * zScale;
     } // for (i) all vertices
     // save render geo to obj file
     const NEED_SAVE_INITIAL_GEO = false;
@@ -282,10 +281,10 @@ export default class ActiveVolume {
   }
 
   /**
-  *
-  * Create THREE js geometry (can be rendered in 3d scene)
-  * from current sphere
-  */
+   *
+   * Create THREE js geometry (can be rendered in 3d scene)
+   * from current sphere
+   */
   createThreeJsGeoFromSphere() {
     const geoSrc = this.m_geoRender;
     if (geoSrc === null) {
@@ -331,16 +330,14 @@ export default class ActiveVolume {
    *  Clip volume by geometry sphere
    *
    */
-  clipVolumeBySphere(xDim, yDim, zDim,
-    volTexSrc, volTexDst,
-    geoSphere, box) {
+  clipVolumeBySphere(xDim, yDim, zDim, volTexSrc, volTexDst, geoSphere, box) {
     // check args
     if (volTexDst === null) {
       console.log('`clipVolumeBySphere. volTexDst == null');
       return;
     }
-    let sideMax = (box.x > box.y) ? box.x : box.y;
-    sideMax = (box.z > sideMax) ? box.z : sideMax;
+    let sideMax = box.x > box.y ? box.x : box.y;
+    sideMax = box.z > sideMax ? box.z : sideMax;
     const vBoxVirtX = box.x / sideMax;
     const vBoxVirtY = box.y / sideMax;
     const vBoxVirtZ = box.z / sideMax;
@@ -380,16 +377,13 @@ export default class ActiveVolume {
 
     // Create mask from geometry
     const WITH_FILL = 1;
-    const resFill = VolumeGenerator.generateFromFaces(xDim, yDim, zDim,
-      volMask,
-      geoRender,
-      WITH_FILL);
+    const resFill = VolumeGenerator.generateFromFaces(xDim, yDim, zDim, volMask, geoRender, WITH_FILL);
     if (resFill < 0) {
       console.log(`ActVol. generateFromFaces returned ${resFill} !`);
     }
     // apply  volMask to volSrc
     for (let i = 0; i < xyzDim; i++) {
-      volTexDst[i] = (volMask[i] !== 0) ? volTexSrc[i] : 0;
+      volTexDst[i] = volMask[i] !== 0 ? volTexSrc[i] : 0;
     }
   } // clipVolumeBySphere
 
@@ -397,22 +391,19 @@ export default class ActiveVolume {
    *  Automatic sphere evolve
    *
    */
-  sphereEvolve(xDim, yDim, zDim,
-    volTexSrc, volTexDst,
-    geoSphere, valBarrier01,
-    modeEvolve, sphereCenter, box) {
-    let sideMax = (box.x > box.y) ? box.x : box.y;
-    sideMax = (box.z > sideMax) ? box.z : sideMax;
+  sphereEvolve(xDim, yDim, zDim, volTexSrc, volTexDst, geoSphere, valBarrier01, modeEvolve, sphereCenter, box) {
+    let sideMax = box.x > box.y ? box.x : box.y;
+    sideMax = box.z > sideMax ? box.z : sideMax;
     const vBoxVirtX = box.x / sideMax;
     const vBoxVirtY = box.y / sideMax;
     const vBoxVirtZ = box.z / sideMax;
     const TEX_MIN_SIDE = 8;
-    if ((xDim < TEX_MIN_SIDE) || (yDim < TEX_MIN_SIDE) || (zDim < TEX_MIN_SIDE)) {
+    if (xDim < TEX_MIN_SIDE || yDim < TEX_MIN_SIDE || zDim < TEX_MIN_SIDE) {
       console.log(`sphereEvolve: too small vol dim = ${xDim} * ${yDim} * ${zDim}`);
       return false;
     }
     const TEX_MAX_SIDE = 4095;
-    if ((xDim > TEX_MAX_SIDE) || (yDim > TEX_MAX_SIDE) || (zDim > TEX_MAX_SIDE)) {
+    if (xDim > TEX_MAX_SIDE || yDim > TEX_MAX_SIDE || zDim > TEX_MAX_SIDE) {
       console.log(`sphereEvolve: too large vol dim = ${xDim} * ${yDim} * ${zDim}`);
       return false;
     }
@@ -484,31 +475,31 @@ export default class ActiveVolume {
     const xc = Math.floor(xDim * HALF);
     const yc = Math.floor(yDim * HALF);
     const zc = Math.floor(zDim * HALF);
-    let MAX_DIM = (xDim > yDim) ? xDim : yDim;
-    MAX_DIM = (zDim > MAX_DIM) ? zDim : MAX_DIM;
+    let MAX_DIM = xDim > yDim ? xDim : yDim;
+    MAX_DIM = zDim > MAX_DIM ? zDim : MAX_DIM;
     const xyDim = xDim * yDim;
     // start position for scanning
-    const START_SCAN_RATIO = 0.0;//0.2;
+    const START_SCAN_RATIO = 0.0; //0.2;
     const NUM_2 = 3.0;
     const DIAG_ONE_TRI = Math.sqrt(NUM_2);
     const J_START = Math.floor(0.5 * MAX_DIM * START_SCAN_RATIO);
     const J_END = Math.floor(0.5 * MAX_DIM * DIAG_ONE_TRI);
-    if ((valBarrier01 < 0.0) || (valBarrier01 > 1.0)) {
+    if (valBarrier01 < 0.0 || valBarrier01 > 1.0) {
       console.log(`sphereEvolve. Invalid barrier value: ${valBarrier01}. Should be in [0..1]`);
     }
     // when stop scanning: border value
     const NUM_COLORS = 255;
-    const VAL_MIN_BORDER =  valBarrier01 * NUM_COLORS;
+    const VAL_MIN_BORDER = valBarrier01 * NUM_COLORS;
     console.log(`Autodetect brain shape with barrier range ${VAL_MIN_BORDER}`);
     // for all vertices: move along normal direction
     for (let i = 0; i < numVertices; i++) {
-    //for (let i = 10; i < 11; i++) {
-      const vSrc = new THREE.Vector3(attrVertices.getX(i),
-        attrVertices.getY(i),
-        attrVertices.getZ(i));
-      const vn = new THREE.Vector3(attrNormals.getX(i) - sphereCenter.x,
+      //for (let i = 10; i < 11; i++) {
+      const vSrc = new THREE.Vector3(attrVertices.getX(i), attrVertices.getY(i), attrVertices.getZ(i));
+      const vn = new THREE.Vector3(
+        attrNormals.getX(i) - sphereCenter.x,
         attrNormals.getY(i) - sphereCenter.y,
-        attrNormals.getZ(i) - sphereCenter.z);
+        attrNormals.getZ(i) - sphereCenter.z
+      );
       vn.normalize();
       // scan from out of sphere
       if (modeEvolve === ActiveVolume.SPHERE_EVOLVE_FROM_OUTSIDE) {
@@ -522,21 +513,22 @@ export default class ActiveVolume {
         let valPrev = -1;
         // search for non-zero skull
         let hasFoundMinBorder = false;
-        for (j = J_END; (j >= J_START) && !hasFoundMinBorder; j--) {
+        for (j = J_END; j >= J_START && !hasFoundMinBorder; j--) {
           x = xc + Math.floor(vn.x * j);
           y = yc + Math.floor(vn.y * j);
           z = zc + Math.floor(vn.z * j);
           // skip if outside of volume
-          if ((x < 0) || (y < 0) || (z < 0) || (x >= xDim) || (y >= yDim) || (z >= zDim)) {
+          if (x < 0 || y < 0 || z < 0 || x >= xDim || y >= yDim || z >= zDim) {
             continue;
           }
-          const off = x + (y * xDim) + (z * xyDim);
+          const off = x + y * xDim + z * xyDim;
           const val = volTexSrc[off];
-          if ((valPrev > 0) && (val < valPrev) && (val < VAL_MIN_BORDER)) {
+          if (valPrev > 0 && val < valPrev && val < VAL_MIN_BORDER) {
             hasFoundMinBorder = true;
           }
-          if ((xLocMin < 0) && (val < valPrev)) {
-            xLocMin = x; yLocMin = y;
+          if (xLocMin < 0 && val < valPrev) {
+            xLocMin = x;
+            yLocMin = y;
             zLocMin = z;
           }
 
@@ -545,19 +537,18 @@ export default class ActiveVolume {
         if (!hasFoundMinBorder) {
           // console.log(`sphereEvolve. Min border (${VAL_MIN_BORDER}) not found for ${i} / ${numVertices} point`);
           // continue;
-          x = xLocMin; y = yLocMin;
+          x = xLocMin;
+          y = yLocMin;
           z = zLocMin;
         }
         // place result point in [-0.5 .. +0.5]
-        const xv = (x / xDim) - HALF;
-        const yv = (y / yDim) - HALF;
-        const zv = (z / zDim) - HALF;
+        const xv = x / xDim - HALF;
+        const yv = y / yDim - HALF;
+        const zv = z / zDim - HALF;
         attrVertices.setXYZ(i, xv, yv, zv);
         // attrWireVertices.setXYZ(i, xv, yv, zv);
       }
       if (modeEvolve === ActiveVolume.SPHERE_EVOLVE_FROM_INSIDE) {
-
-
         // scan vol from center
         let j;
         let x, y, z, off;
@@ -567,10 +558,10 @@ export default class ActiveVolume {
         const TWO = 2;
         const SKAL = 0.5;
         for (j = ONE; j < TWO * J_END; j++) {
-          x = vSrc.x + SKAL * vn.x * j / sideMax;
-          y = vSrc.y + SKAL * vn.y * j / sideMax;
-          z = vSrc.z + SKAL * vn.z * j / sideMax;
-          if ((x < -SKAL) || (y < -SKAL) || (z < -SKAL) || (x >= SKAL) || (y >= SKAL) || (z >= SKAL)) {
+          x = vSrc.x + (SKAL * vn.x * j) / sideMax;
+          y = vSrc.y + (SKAL * vn.y * j) / sideMax;
+          z = vSrc.z + (SKAL * vn.z * j) / sideMax;
+          if (x < -SKAL || y < -SKAL || z < -SKAL || x >= SKAL || y >= SKAL || z >= SKAL) {
             console.log(`MysphereEvolve. Stop at exit [${i}] = ${x}, ${y}, ${z}, `);
             // hasFoundVolExit = true;
             break;
@@ -584,14 +575,14 @@ export default class ActiveVolume {
           const dx = xV_ - xV;
           const dy = yV_ - yV;
           const dz = zV_ - zV;
-          off = xV + (yV * xDim) + (zV * xyDim);
+          off = xV + yV * xDim + zV * xyDim;
           let vx1 = (1.0 - dx) * volTexSrc[off] + dx * volTexSrc[off + 1];
-          off = xV + ((yV + 1) * xDim) + (zV * xyDim);
+          off = xV + (yV + 1) * xDim + zV * xyDim;
           let vx2 = (1.0 - dx) * volTexSrc[off] + dx * volTexSrc[off + 1];
           const v1 = (1.0 - dy) * vx1 + dy * vx2;
-          off = xV + (yV * xDim) + ((zV + 1) * xyDim);
+          off = xV + yV * xDim + (zV + 1) * xyDim;
           vx1 = (1.0 - dx) * volTexSrc[off] + dx * volTexSrc[off + 1];
-          off = xV + ((yV + 1) * xDim) + ((zV + 1) * xyDim);
+          off = xV + (yV + 1) * xDim + (zV + 1) * xyDim;
           vx2 = (1.0 - dx) * volTexSrc[off] + dx * volTexSrc[off + 1];
           const v2 = (1.0 - dy) * vx1 + dy * vx2;
           const val = (1.0 - dz) * v1 + dz * v2;
@@ -602,7 +593,6 @@ export default class ActiveVolume {
         } // for (j) all normals extension
         attrVertices.setXYZ(i, x, y, z);
       } // if evolve from inside
-
     } // for (i) all vertices
     geoSphere.getAttribute('position').needsUpdate = true;
 
@@ -641,41 +631,38 @@ export default class ActiveVolume {
 
       // Create mask from geometry
       const WITH_FILL = 1;
-      const resFill = VolumeGenerator.generateFromFaces(xDim, yDim, zDim,
-        volMask,
-        geoRender,
-        WITH_FILL);
+      const resFill = VolumeGenerator.generateFromFaces(xDim, yDim, zDim, volMask, geoRender, WITH_FILL);
       if (resFill < 0) {
         console.log(`ActVol. generateFromFaces returned ${resFill} !`);
       }
       // apply  volMask to volSrc
       for (let i = 0; i < xyzDim; i++) {
-        volTexDst[i] = (volMask[i] !== 0) ? volTexSrc[i] : 0;
+        volTexDst[i] = volMask[i] !== 0 ? volTexSrc[i] : 0;
       }
     }
     return true;
   }
 
   /**
-   * 
-   * @param {*} xDim 
-   * @param {*} yDim 
-   * @param {*} zDim 
-   * @param {*} volTexSrc 
-   * @param {*} volTexDst 
-   * @param {*} createType 
-   * @param {*} needLog 
+   *
+   * @param {*} xDim
+   * @param {*} yDim
+   * @param {*} zDim
+   * @param {*} volTexSrc
+   * @param {*} volTexDst
+   * @param {*} createType
+   * @param {*} needLog
    */
   skullRemoveStart(xDim, yDim, zDim, volTexSrc, volTexDst, createType, needLog) {
     const TOO_MUCH_SIZE = 8192;
-    if ((createType !== ActiveVolume.REMOVE_SKULL) && (createType !== ActiveVolume.CREATE_MASK)) {
+    if (createType !== ActiveVolume.REMOVE_SKULL && createType !== ActiveVolume.CREATE_MASK) {
       console.log('skullRemoveStart: wrong argument createType');
     }
-    if ((xDim >= TOO_MUCH_SIZE) || (yDim >= TOO_MUCH_SIZE) || (zDim >= TOO_MUCH_SIZE)) {
+    if (xDim >= TOO_MUCH_SIZE || yDim >= TOO_MUCH_SIZE || zDim >= TOO_MUCH_SIZE) {
       console.log(`Too bad volume dimension: ${xDim} * ${yDim} * ${zDim}`);
       return -1;
     }
-    if ((xDim <= 1) || (yDim <= 1) || (zDim <= 1)) {
+    if (xDim <= 1 || yDim <= 1 || zDim <= 1) {
       console.log(`Too bad volume dimension: ${xDim} * ${yDim} * ${zDim}`);
       return -1;
     }
@@ -776,12 +763,12 @@ export default class ActiveVolume {
     //   this.updateGeo(geoRender, AV_METHOD_ALL);
     //   isFinished = (this.m_state === AV_STATE_FINISHED);
     // }
-    const isLoopComplete = (this.m_updateCounter >= this.m_numPredSteps) || this.m_isFinished;
+    const isLoopComplete = this.m_updateCounter >= this.m_numPredSteps || this.m_isFinished;
     if (isLoopComplete) {
       return true;
     }
     this.updateGeo(geoRender, AV_METHOD_ALL);
-    this.m_isFinished = (this.m_state === AV_STATE_FINISHED);
+    this.m_isFinished = this.m_state === AV_STATE_FINISHED;
     this.m_updateCounter++;
     return false;
   }
@@ -799,8 +786,7 @@ export default class ActiveVolume {
     if (NEED_SAVE_NONCLIPPED_SLICE_BMP) {
       const TEST_SAVE_VOL_FILE_NAME = 'test_nonclipped_slice.bmp';
       const zSlice = Math.floor(this.m_zDim / NUM_2);
-      ActiveVolume.saveVolumeSliceToFile(this.m_pixelsSrc,
-        this.m_xDim, this.m_yDim, this.m_zDim, zSlice, TEST_SAVE_VOL_FILE_NAME);
+      ActiveVolume.saveVolumeSliceToFile(this.m_pixelsSrc, this.m_xDim, this.m_yDim, this.m_zDim, zSlice, TEST_SAVE_VOL_FILE_NAME);
     }
 
     // create clipped volume
@@ -822,24 +808,18 @@ export default class ActiveVolume {
 
       // create volume mask. 255: visible part, 0 - invisible
       const WITH_FILL = 1;
-      const resFill = VolumeGenerator.generateFromFaces(this.m_xDim, this.m_yDim, this.m_zDim,
-        volMask,
-        geoRender,
-        WITH_FILL);
+      const resFill = VolumeGenerator.generateFromFaces(this.m_xDim, this.m_yDim, this.m_zDim, volMask, geoRender, WITH_FILL);
       if (resFill < 0) {
         console.log(`generateFromFaces returned ${resFill} !`);
       }
       // apply  volMask to volSrc
       for (let i = 0; i < numPixels; i++) {
-        this.m_volTexDst[i] = (volMask[i] !== 0) ? this.m_volTexSrc[i] : 0;
+        this.m_volTexDst[i] = volMask[i] !== 0 ? this.m_volTexSrc[i] : 0;
       }
     } else if (this.m_createType === ActiveVolume.CREATE_MASK) {
       // create volume mask. 255: visible part, 0 - invisible
       const WITH_FILL = 1;
-      const resFill = VolumeGenerator.generateFromFaces(this.m_xDim, this.m_yDim, this.m_zDim,
-        this.m_volTexDst,
-        geoRender,
-        WITH_FILL);
+      const resFill = VolumeGenerator.generateFromFaces(this.m_xDim, this.m_yDim, this.m_zDim, this.m_volTexDst, geoRender, WITH_FILL);
       if (resFill < 0) {
         console.log(`generateFromFaces returned ${resFill} !`);
       }
@@ -850,8 +830,7 @@ export default class ActiveVolume {
     if (this.m_needLog && NEED_SAVE_CLIPPED_SLICE_BMP) {
       const TEST_SLICE_SAVE_FILE_NAME = 'test_clipped_slice.bmp';
       const zSlice = Math.floor(this.m_zDim / NUM_2);
-      ActiveVolume.saveVolumeSliceToFile(this.m_volTexDst,
-        this.m_xDim, this.m_yDim, this.m_zDim, zSlice, TEST_SLICE_SAVE_FILE_NAME);
+      ActiveVolume.saveVolumeSliceToFile(this.m_volTexDst, this.m_xDim, this.m_yDim, this.m_zDim, zSlice, TEST_SLICE_SAVE_FILE_NAME);
     }
 
     /*
@@ -871,27 +850,27 @@ export default class ActiveVolume {
   }
 
   /**
-  * Remove skull
-  * @param {number} xDim volume dimension on x
-  * @param {number} yDim volume dimension on y
-  * @param {number} zDim volume dimension on z
-  * @param {array}  volTexSrc source volume
-  * @param {array}  volTexDst destination volume
-  * @param {number} createType Kind of
-  * @param {boolean} needLog Need intensive log
-  * @param {object} progressCallback callback function for progress
-  * @return {number} 1, if success. <0 if failed
-  */
+   * Remove skull
+   * @param {number} xDim volume dimension on x
+   * @param {number} yDim volume dimension on y
+   * @param {number} zDim volume dimension on z
+   * @param {array}  volTexSrc source volume
+   * @param {array}  volTexDst destination volume
+   * @param {number} createType Kind of
+   * @param {boolean} needLog Need intensive log
+   * @param {object} progressCallback callback function for progress
+   * @return {number} 1, if success. <0 if failed
+   */
   skullRemove(xDim, yDim, zDim, volTexSrc, volTexDst, createType, needLog) {
     const TOO_MUCH_SIZE = 8192;
-    if ((createType !== ActiveVolume.REMOVE_SKULL) && (createType !== ActiveVolume.CREATE_MASK)) {
+    if (createType !== ActiveVolume.REMOVE_SKULL && createType !== ActiveVolume.CREATE_MASK) {
       console.log('skullRemove: wrong argument createType');
     }
-    if ((xDim >= TOO_MUCH_SIZE) || (yDim >= TOO_MUCH_SIZE) || (zDim >= TOO_MUCH_SIZE)) {
+    if (xDim >= TOO_MUCH_SIZE || yDim >= TOO_MUCH_SIZE || zDim >= TOO_MUCH_SIZE) {
       console.log(`Too bad volume dimension: ${xDim} * ${yDim} * ${zDim}`);
       return -1;
     }
-    if ((xDim <= 1) || (yDim <= 1) || (zDim <= 1)) {
+    if (xDim <= 1 || yDim <= 1 || zDim <= 1) {
       console.log(`Too bad volume dimension: ${xDim} * ${yDim} * ${zDim}`);
       return -1;
     }
@@ -979,13 +958,13 @@ export default class ActiveVolume {
 
     let isFinished = false;
     if (numPredSteps > 0) {
-      for (this.m_updateCounter = 0; (this.m_updateCounter < numPredSteps) && !isFinished; this.m_updateCounter++) {
+      for (this.m_updateCounter = 0; this.m_updateCounter < numPredSteps && !isFinished; this.m_updateCounter++) {
         //if (needLogPrintf) {
         //  printf(".");
         // }
         console.log(`skullRemove(${this.m_updateCounter})`);
         this.updateGeo(geoRender, AV_METHOD_ALL);
-        isFinished = (this.m_state === AV_STATE_FINISHED);
+        isFinished = this.m_state === AV_STATE_FINISHED;
       }
     }
 
@@ -1000,8 +979,7 @@ export default class ActiveVolume {
     if (NEED_SAVE_NONCLIPPED_SLICE_BMP) {
       const TEST_SAVE_VOL_FILE_NAME = 'test_nonclipped_slice.bmp';
       const zSlice = Math.floor(this.m_zDim / NUM_2);
-      ActiveVolume.saveVolumeSliceToFile(this.m_pixelsSrc,
-        this.m_xDim, this.m_yDim, this.m_zDim, zSlice, TEST_SAVE_VOL_FILE_NAME);
+      ActiveVolume.saveVolumeSliceToFile(this.m_pixelsSrc, this.m_xDim, this.m_yDim, this.m_zDim, zSlice, TEST_SAVE_VOL_FILE_NAME);
     }
 
     // create clipped volume
@@ -1023,24 +1001,18 @@ export default class ActiveVolume {
 
       // create volume mask. 255: visible part, 0 - invisible
       const WITH_FILL = 1;
-      const resFill = VolumeGenerator.generateFromFaces(this.m_xDim, this.m_yDim, this.m_zDim,
-        volMask,
-        geoRender,
-        WITH_FILL);
+      const resFill = VolumeGenerator.generateFromFaces(this.m_xDim, this.m_yDim, this.m_zDim, volMask, geoRender, WITH_FILL);
       if (resFill < 0) {
         console.log(`generateFromFaces returned ${resFill} !`);
       }
       // apply  volMask to volSrc
       for (let i = 0; i < numPixels; i++) {
-        volTexDst[i] = (volMask[i] !== 0) ? volTexSrc[i] : 0;
+        volTexDst[i] = volMask[i] !== 0 ? volTexSrc[i] : 0;
       }
     } else if (createType === ActiveVolume.CREATE_MASK) {
       // create volume mask. 255: visible part, 0 - invisible
       const WITH_FILL = 1;
-      const resFill = VolumeGenerator.generateFromFaces(this.m_xDim, this.m_yDim, this.m_zDim,
-        volTexDst,
-        geoRender,
-        WITH_FILL);
+      const resFill = VolumeGenerator.generateFromFaces(this.m_xDim, this.m_yDim, this.m_zDim, volTexDst, geoRender, WITH_FILL);
       if (resFill < 0) {
         console.log(`generateFromFaces returned ${resFill} !`);
       }
@@ -1051,8 +1023,7 @@ export default class ActiveVolume {
     if (needLog && NEED_SAVE_CLIPPED_SLICE_BMP) {
       const TEST_SLICE_SAVE_FILE_NAME = 'test_clipped_slice.bmp';
       const zSlice = Math.floor(this.m_zDim / NUM_2);
-      ActiveVolume.saveVolumeSliceToFile(volTexDst,
-        this.m_xDim, this.m_yDim, this.m_zDim, zSlice, TEST_SLICE_SAVE_FILE_NAME);
+      ActiveVolume.saveVolumeSliceToFile(volTexDst, this.m_xDim, this.m_yDim, this.m_zDim, zSlice, TEST_SLICE_SAVE_FILE_NAME);
     }
 
     /*
@@ -1086,34 +1057,34 @@ export default class ActiveVolume {
             continue;
           }
           // update bbox
-          vMin.x = (x < vMin.x) ? x : vMin.x;
-          vMin.y = (y < vMin.y) ? y : vMin.y;
-          vMin.z = (z < vMin.z) ? z : vMin.z;
-          vMax.x = (x > vMax.x) ? x : vMax.x;
-          vMax.y = (y > vMax.y) ? y : vMax.y;
-          vMax.z = (z > vMax.z) ? z : vMax.z;
+          vMin.x = x < vMin.x ? x : vMin.x;
+          vMin.y = y < vMin.y ? y : vMin.y;
+          vMin.z = z < vMin.z ? z : vMin.z;
+          vMax.x = x > vMax.x ? x : vMax.x;
+          vMax.y = y > vMax.y ? y : vMax.y;
+          vMax.z = z > vMax.z ? z : vMax.z;
         } // for (x)
       } // for (y)
     } // for (z)
   }
 
   /**
-  * Save volume slice to BMP file. Only for deep debug
-  * @param {array} pixelsSrc array of source voxels in volume
-  * @param {number} xDim Volume dimension on x
-  * @param {number} yDim Volume dimension on y
-  * @param {number} zDim Volume dimension on z
-  * @param {number} zSlice index of slice in volume
-  * @param {string } fileName save file name
-  */
+   * Save volume slice to BMP file. Only for deep debug
+   * @param {array} pixelsSrc array of source voxels in volume
+   * @param {number} xDim Volume dimension on x
+   * @param {number} yDim Volume dimension on y
+   * @param {number} zDim Volume dimension on z
+   * @param {number} zSlice index of slice in volume
+   * @param {string } fileName save file name
+   */
   static saveVolumeSliceToFile(pixelsSrc, xDim, yDim, zDim, zSlice, fileName) {
     const SIZE_HEADER = 14;
     const SIZE_INFO = 40;
     const COMPS_IN_COLOR = 3;
     const numPixels = xDim * yDim;
-    let pixStride = COMPS_IN_COLOR  * xDim;
-    pixStride = (pixStride + COMPS_IN_COLOR) & (~COMPS_IN_COLOR);
-    const totalBufSize = SIZE_HEADER + SIZE_INFO + (numPixels * COMPS_IN_COLOR);
+    let pixStride = COMPS_IN_COLOR * xDim;
+    pixStride = (pixStride + COMPS_IN_COLOR) & ~COMPS_IN_COLOR;
+    const totalBufSize = SIZE_HEADER + SIZE_INFO + numPixels * COMPS_IN_COLOR;
     const buf = new Uint8Array(totalBufSize);
     for (let j = 0; j < totalBufSize; j++) {
       buf[j] = 0;
@@ -1126,41 +1097,56 @@ export default class ActiveVolume {
     let i = 0;
     // bfType[16]
     buf[i++] = 0x42;
-    buf[i++] = 0x4D;
+    buf[i++] = 0x4d;
     // bfSize[32]
     let bfSize = SIZE_HEADER + SIZE_INFO + pixStride * yDim;
-    buf[i++] = bfSize & BYTE_MASK; bfSize >>= BITS_IN_BYTE;
-    buf[i++] = bfSize & BYTE_MASK; bfSize >>= BITS_IN_BYTE;
-    buf[i++] = bfSize & BYTE_MASK; bfSize >>= BITS_IN_BYTE;
+    buf[i++] = bfSize & BYTE_MASK;
+    bfSize >>= BITS_IN_BYTE;
+    buf[i++] = bfSize & BYTE_MASK;
+    bfSize >>= BITS_IN_BYTE;
+    buf[i++] = bfSize & BYTE_MASK;
+    bfSize >>= BITS_IN_BYTE;
     buf[i++] = bfSize & BYTE_MASK;
     // bfReserved1 + bfReserved2
     i += BYTES_IN_DWORD;
     // bfOffBits[32]
     let bfOffBits = SIZE_HEADER + SIZE_INFO;
-    buf[i++] = bfOffBits & BYTE_MASK; bfOffBits >>= BITS_IN_BYTE;
-    buf[i++] = bfOffBits & BYTE_MASK; bfOffBits >>= BITS_IN_BYTE;
-    buf[i++] = bfOffBits & BYTE_MASK; bfOffBits >>= BITS_IN_BYTE;
+    buf[i++] = bfOffBits & BYTE_MASK;
+    bfOffBits >>= BITS_IN_BYTE;
+    buf[i++] = bfOffBits & BYTE_MASK;
+    bfOffBits >>= BITS_IN_BYTE;
+    buf[i++] = bfOffBits & BYTE_MASK;
+    bfOffBits >>= BITS_IN_BYTE;
     buf[i++] = bfOffBits & BYTE_MASK;
 
     // write info
 
     // biSize[32]
     let biSize = SIZE_INFO;
-    buf[i++] = biSize & BYTE_MASK; biSize >>= BITS_IN_BYTE;
-    buf[i++] = biSize & BYTE_MASK; biSize >>= BITS_IN_BYTE;
-    buf[i++] = biSize & BYTE_MASK; biSize >>= BITS_IN_BYTE;
+    buf[i++] = biSize & BYTE_MASK;
+    biSize >>= BITS_IN_BYTE;
+    buf[i++] = biSize & BYTE_MASK;
+    biSize >>= BITS_IN_BYTE;
+    buf[i++] = biSize & BYTE_MASK;
+    biSize >>= BITS_IN_BYTE;
     buf[i++] = biSize & BYTE_MASK;
     // biWidth[32]
     let biWidth = xDim;
-    buf[i++] = biWidth & BYTE_MASK; biWidth >>= BITS_IN_BYTE;
-    buf[i++] = biWidth & BYTE_MASK; biWidth >>= BITS_IN_BYTE;
-    buf[i++] = biWidth & BYTE_MASK; biWidth >>= BITS_IN_BYTE;
+    buf[i++] = biWidth & BYTE_MASK;
+    biWidth >>= BITS_IN_BYTE;
+    buf[i++] = biWidth & BYTE_MASK;
+    biWidth >>= BITS_IN_BYTE;
+    buf[i++] = biWidth & BYTE_MASK;
+    biWidth >>= BITS_IN_BYTE;
     buf[i++] = biWidth & BYTE_MASK;
     // biHeight[32]
     let biHeight = yDim;
-    buf[i++] = biHeight & BYTE_MASK; biHeight >>= BITS_IN_BYTE;
-    buf[i++] = biHeight & BYTE_MASK; biHeight >>= BITS_IN_BYTE;
-    buf[i++] = biHeight & BYTE_MASK; biHeight >>= BITS_IN_BYTE;
+    buf[i++] = biHeight & BYTE_MASK;
+    biHeight >>= BITS_IN_BYTE;
+    buf[i++] = biHeight & BYTE_MASK;
+    biHeight >>= BITS_IN_BYTE;
+    buf[i++] = biHeight & BYTE_MASK;
+    biHeight >>= BITS_IN_BYTE;
     buf[i++] = biHeight & BYTE_MASK;
     // biPlanes[16]
     buf[i++] = 1;
@@ -1172,9 +1158,12 @@ export default class ActiveVolume {
     i += BYTES_IN_DWORD;
     // biSizeImage[32]
     let biSizeImage = pixStride * yDim;
-    buf[i++] = biSizeImage & BYTE_MASK; biSizeImage >>= BITS_IN_BYTE;
-    buf[i++] = biSizeImage & BYTE_MASK; biSizeImage >>= BITS_IN_BYTE;
-    buf[i++] = biSizeImage & BYTE_MASK; biSizeImage >>= BITS_IN_BYTE;
+    buf[i++] = biSizeImage & BYTE_MASK;
+    biSizeImage >>= BITS_IN_BYTE;
+    buf[i++] = biSizeImage & BYTE_MASK;
+    biSizeImage >>= BITS_IN_BYTE;
+    buf[i++] = biSizeImage & BYTE_MASK;
+    biSizeImage >>= BITS_IN_BYTE;
     buf[i++] = biSizeImage & BYTE_MASK;
     // biXPelsPerMeter[32]
     i += BYTES_IN_DWORD;
@@ -1191,14 +1180,14 @@ export default class ActiveVolume {
     let valMax = 0;
     for (j = 0; j < numPixels; j++) {
       const valGrey = pixelsSrc[offSlice + j];
-      valMax = (valGrey > valMax) ? valGrey : valMax;
+      valMax = valGrey > valMax ? valGrey : valMax;
     } // for (j)
     console.log(`saveVolumeSlice. valMax = ${valMax}`);
 
     // write pixels
     const MAX_COLOR = 255;
     for (j = 0; j < numPixels; j++) {
-      const valGrey = Math.floor(pixelsSrc[offSlice + j] * MAX_COLOR / valMax);
+      const valGrey = Math.floor((pixelsSrc[offSlice + j] * MAX_COLOR) / valMax);
       // write rgb components
       buf[i++] = valGrey;
       buf[i++] = valGrey;
@@ -1221,34 +1210,34 @@ export default class ActiveVolume {
     const hx = this.m_xDim;
     const hy = this.m_yDim;
     const hz = this.m_zDim;
-    const xyMax = (hx > hy) ? hx : hy;
-    const xyzMax = (xyMax > hz) ? xyMax : hz;
+    const xyMax = hx > hy ? hx : hy;
+    const xyzMax = xyMax > hz ? xyMax : hz;
     const SCAN_RAD = 4;
-    const stepsByRad = (xyzMax - SCAN_RAD);
+    const stepsByRad = xyzMax - SCAN_RAD;
     const SOME_ADD_STEPS = 4;
-    const stepsAll = stepsByRad + (TWO * ActiveVolume.ACT_VOL_NUM_SMOOTH_STAGES) + SOME_ADD_STEPS;
+    const stepsAll = stepsByRad + TWO * ActiveVolume.ACT_VOL_NUM_SMOOTH_STAGES + SOME_ADD_STEPS;
     return stepsAll;
   }
 
   /**
-  * Create members for iterations later
-  * @return {number} 1, if success. <0 if failed
-  */
+   * Create members for iterations later
+   * @return {number} 1, if success. <0 if failed
+   */
   create(xDim, yDim, zDim, volTexSrc) {
-    if ((xDim > X_MAX_DIM) || (yDim > Y_MAX_DIM) || (zDim > Z_MAX_DIM)) {
+    if (xDim > X_MAX_DIM || yDim > Y_MAX_DIM || zDim > Z_MAX_DIM) {
       // scale down twice or 4
       this.m_xScale = Math.floor(xDim / X_MAX_DIM);
       this.m_yScale = Math.floor(yDim / Y_MAX_DIM);
       this.m_zScale = Math.floor(zDim / Z_MAX_DIM);
-      let maxScale = (this.m_xScale > this.m_yScale) ? this.m_xScale : this.m_yScale;
-      maxScale = (this.m_zScale > maxScale) ? this.m_zScale : maxScale;
+      let maxScale = this.m_xScale > this.m_yScale ? this.m_xScale : this.m_yScale;
+      maxScale = this.m_zScale > maxScale ? this.m_zScale : maxScale;
       const TWO = 2;
       if (maxScale <= 1) {
         this.m_xScale = this.m_yScale = this.m_zScale = TWO;
       }
-      this.m_xScale = (this.m_xScale >= 1) ? this.m_xScale : 1;
-      this.m_yScale = (this.m_yScale >= 1) ? this.m_yScale : 1;
-      this.m_zScale = (this.m_zScale >= 1) ? this.m_zScale : 1;
+      this.m_xScale = this.m_xScale >= 1 ? this.m_xScale : 1;
+      this.m_yScale = this.m_yScale >= 1 ? this.m_yScale : 1;
+      this.m_zScale = this.m_zScale >= 1 ? this.m_zScale : 1;
 
       const xScaled = Math.floor(xDim / this.m_xScale);
       const yScaled = Math.floor(yDim / this.m_yScale);
@@ -1284,24 +1273,20 @@ export default class ActiveVolume {
   }
 
   /**
-  * Make special unifoirmity image for whole volume
-  */
-  makeUniformityImage(pixelsSrc, xDim, yDim, zDim,
-    zStart, zEnd,
-    pixelsGrad,
-    pixelsDst,
-    koefAlpha) {
+   * Make special unifoirmity image for whole volume
+   */
+  makeUniformityImage(pixelsSrc, xDim, yDim, zDim, zStart, zEnd, pixelsGrad, pixelsDst, koefAlpha) {
     // radius neighbours
     const TWICE = 2;
     const RAD_UNI = 1;
-    const DIA_UNI = (1 + TWICE * RAD_UNI);
+    const DIA_UNI = 1 + TWICE * RAD_UNI;
 
     const SCALE_ALL_ELEMS = 1.0 / (DIA_UNI * DIA_UNI * DIA_UNI);
     // let maxLen = 0.0;
     let cx, cy, cz;
 
-    const zs = (zStart > RAD_UNI) ? zStart : RAD_UNI;
-    const ze = (zEnd < zDim - RAD_UNI) ? zEnd : (zDim - RAD_UNI);
+    const zs = zStart > RAD_UNI ? zStart : RAD_UNI;
+    const ze = zEnd < zDim - RAD_UNI ? zEnd : zDim - RAD_UNI;
 
     for (cz = zs; cz < ze; cz++) {
       const czOff = cz * xDim * yDim;
@@ -1329,9 +1314,9 @@ export default class ActiveVolume {
                 sumDx += val * dx;
                 sumDy += val * dy;
                 sumDz += val * dz;
-              }     // for (dx)
-            }       // for (dy)
-          }         // for (dz)
+              } // for (dx)
+            } // for (dy)
+          } // for (dz)
 
           sumDx *= SCALE_ALL_ELEMS;
           sumDy *= SCALE_ALL_ELEMS;
@@ -1342,16 +1327,15 @@ export default class ActiveVolume {
           const gradLen = Math.sqrt(sumDx * sumDx + sumDy * sumDy + sumDz * sumDz);
           pixelsGrad[cx + cyOff + czOff] = gradLen;
           pixelsDst[cx + cyOff + czOff] = Math.exp(-koefAlpha * gradLen);
-
-        }         // for (cx)
-      }           // for (cy)
-    }             // for (cz)
+        } // for (cx)
+      } // for (cy)
+    } // for (cz)
     // console.log(`makeUniformityImage done for z = ${zs} to ${ze}`);
   }
 
   /**
-  * Start image smoothimg by Gauss convolution
-  */
+   * Start image smoothimg by Gauss convolution
+   */
   startImageSmooth() {
     const numPixels = this.m_xDim * this.m_yDim * this.m_zDim;
     let i;
@@ -1370,8 +1354,8 @@ export default class ActiveVolume {
   }
 
   /**
-  * Stop volume smothing by Gauss
-  */
+   * Stop volume smothing by Gauss
+   */
   stopImageSmooth() {
     this.m_imageGrad = null;
     this.m_imageSrc = null;
@@ -1387,7 +1371,7 @@ export default class ActiveVolume {
     let j = 0;
     if (zStart === 0) {
       const GAUSS_MAX_RAD = 9;
-      const GAUSS_MAX_DIA = (1 + TWICE * GAUSS_MAX_RAD);
+      const GAUSS_MAX_DIA = 1 + TWICE * GAUSS_MAX_RAD;
       this.m_gaussMatrix = new Float32Array(GAUSS_MAX_DIA * GAUSS_MAX_DIA * GAUSS_MAX_DIA);
       let wSum = 0.0;
       for (dz = -rad; dz <= +rad; dz++) {
@@ -1402,7 +1386,7 @@ export default class ActiveVolume {
             wSum += weight;
           }
         }
-      }     // for (dz)
+      } // for (dz)
       // normalize weights
       const numGaussElems = dia * dia * dia;
       const gScale = 1.0 / wSum;
@@ -1415,8 +1399,8 @@ export default class ActiveVolume {
       }
     }
     // apply gauss matrix to source image
-    const zs = (zStart > rad) ? zStart : rad;
-    const ze = (zEnd < this.m_zDim - rad) ? zEnd : (this.m_zDim - rad);
+    const zs = zStart > rad ? zStart : rad;
+    const ze = zEnd < this.m_zDim - rad ? zEnd : this.m_zDim - rad;
     let cx, cy, cz;
     for (cz = zs; cz < ze; cz++) {
       const czOff = cz * this.m_xDim * this.m_yDim;
@@ -1436,23 +1420,23 @@ export default class ActiveVolume {
                 const weight = this.m_gaussMatrix[j++];
                 const val = this.m_imageSrc[x + yOff + zOff];
                 sum += val * weight;
-              }   // for (dx)
-            }     // for (dy)
-          }       // for (dz)
+              } // for (dx)
+            } // for (dy)
+          } // for (dz)
           this.m_imageGauss[cx + cyOff + czOff] = sum;
           // this.m_imageGauss[cx + cyOff + czOff] = 0.0;
-        }     // for (cx)
-      }       // for (cy)
-    }         // for (cz)
+        } // for (cx)
+      } // for (cy)
+    } // for (cz)
   }
 
   /**
-  * Smooth step
-  */
+   * Smooth step
+   */
   static smoothStep(minRange, maxRange, arg) {
     let t = (arg - minRange) / (maxRange - minRange);
-    t = (t > 0.0) ? t : 0.0;
-    t = (t < 1.0) ? t : 1.0;
+    t = t > 0.0 ? t : 0.0;
+    t = t < 1.0 ? t : 1.0;
     const NUM_2 = 2.0;
     const NUM_3 = 3.0;
     const res = t * t * (NUM_3 - NUM_2 * t);
@@ -1460,8 +1444,8 @@ export default class ActiveVolume {
   }
 
   /**
-  * Smooth 1d float array
-  */
+   * Smooth 1d float array
+   */
   static smoothArray(values, numValues, gaussRad, gaussSigma) {
     const dst = new Float32Array(AV_NUM_COLORS);
     const mult = 1.0 / (gaussSigma * gaussSigma);
@@ -1470,8 +1454,8 @@ export default class ActiveVolume {
       let sumWeight = 0.0;
       for (let di = -gaussRad; di <= +gaussRad; di++) {
         let i = ci + di;
-        i = (i >= 0) ? i : 0;
-        i = (i < numValues) ? i : (numValues - 1);
+        i = i >= 0 ? i : 0;
+        i = i < numValues ? i : numValues - 1;
         const t = di / gaussRad;
         const weight = 1.0 / Math.exp(t * t * mult);
         sumWeight += weight;
@@ -1487,9 +1471,9 @@ export default class ActiveVolume {
   }
 
   /**
-  * Get histogram from gaussian smoothed image
-  * and detect "dark" color range
-  */
+   * Get histogram from gaussian smoothed image
+   * and detect "dark" color range
+   */
   getHistogram() {
     const MAX_COLOR = 255;
 
@@ -1516,7 +1500,7 @@ export default class ActiveVolume {
         for (x = 0; x < this.m_xDim; x++) {
           const off = x + yOff + zOff;
           let val = this.m_imageGauss[off];
-          val = (val < MAX_COLOR) ? val : MAX_COLOR;
+          val = val < MAX_COLOR ? val : MAX_COLOR;
           this.m_histogram[Math.floor(val)]++;
           numPixels++;
         } // for (x)
@@ -1591,8 +1575,8 @@ export default class ActiveVolume {
     for (i = 0; i < indBrightColor; i++) {
       let isLocMax = true;
       let isLarger = false;
-      const indScanMin = (i - DIST_DETECT_LOC_MAX >= 0) ? (i - DIST_DETECT_LOC_MAX) : 0;
-      const indScanMax = (i + DIST_DETECT_LOC_MAX <= MAX_COLOR) ? (i + DIST_DETECT_LOC_MAX) : MAX_COLOR;
+      const indScanMin = i - DIST_DETECT_LOC_MAX >= 0 ? i - DIST_DETECT_LOC_MAX : 0;
+      const indScanMax = i + DIST_DETECT_LOC_MAX <= MAX_COLOR ? i + DIST_DETECT_LOC_MAX : MAX_COLOR;
       for (j = indScanMin; j <= indScanMax; j++) {
         if (this.m_colorProbability[i] > this.m_colorProbability[j]) {
           isLarger = true;
@@ -1610,7 +1594,7 @@ export default class ActiveVolume {
     if (indDarkColor === -1) {
       console.log('indDarkColor should not be -1');
     }
-    if (indDarkColor >=  indBrightColor) {
+    if (indDarkColor >= indBrightColor) {
       console.log('indDarkColor should not less then indBrightColor');
     }
     // console.log(`indDarkColor = ${indDarkColor}`);
@@ -1635,8 +1619,8 @@ export default class ActiveVolume {
           const off = x + yOff + zOff;
           const valCur = Math.floor(this.m_imageGauss[off + 0]);
           const valNex = Math.floor(this.m_imageGauss[off + 1]);
-          const isCurGreat = (valCur > indBrightHalf) ? 1 : 0;
-          const isNexLess = (valNex <= indBrightHalf) ? 1 : 0;
+          const isCurGreat = valCur > indBrightHalf ? 1 : 0;
+          const isNexLess = valNex <= indBrightHalf ? 1 : 0;
           if ((isCurGreat & isNexLess) !== 0) {
             isExitFromBrightZoneDetected = true;
             continue;
@@ -1660,7 +1644,7 @@ export default class ActiveVolume {
 
     // get probabilities of each color in histogram
     for (i = 0; i < AV_NUM_COLORS; i++) {
-      const  h = this.m_histogram[i];
+      const h = this.m_histogram[i];
       this.m_colorProbability[i] = h / numPixels;
     }
 
@@ -1674,8 +1658,8 @@ export default class ActiveVolume {
     for (i = 0; i < indBrightColor; i++) {
       let isLocMax = true;
       let isLarger = false;
-      const indScanMin = (i - DIST_DETECT_LOC_MAX >= 0) ? (i - DIST_DETECT_LOC_MAX) : 0;
-      const indScanMax = (i + DIST_DETECT_LOC_MAX <= MAX_COLOR) ? (i + DIST_DETECT_LOC_MAX) : MAX_COLOR;
+      const indScanMin = i - DIST_DETECT_LOC_MAX >= 0 ? i - DIST_DETECT_LOC_MAX : 0;
+      const indScanMax = i + DIST_DETECT_LOC_MAX <= MAX_COLOR ? i + DIST_DETECT_LOC_MAX : MAX_COLOR;
       for (j = indScanMin; j <= indScanMax; j++) {
         if (this.m_colorProbability[i] > this.m_colorProbability[j]) {
           isLarger = true;
@@ -1697,8 +1681,8 @@ export default class ActiveVolume {
     for (i = indDarkColor + 1; i < indBrightColor; i++) {
       let isLocMin = true;
       let isLess = false;
-      const indScanMin = (i - DIST_DETECT_LOC_MAX >= 0) ? (i - DIST_DETECT_LOC_MAX) : 0;
-      const indScanMax = (i + DIST_DETECT_LOC_MAX <= MAX_COLOR) ? (i + DIST_DETECT_LOC_MAX) : MAX_COLOR;
+      const indScanMin = i - DIST_DETECT_LOC_MAX >= 0 ? i - DIST_DETECT_LOC_MAX : 0;
+      const indScanMax = i + DIST_DETECT_LOC_MAX <= MAX_COLOR ? i + DIST_DETECT_LOC_MAX : MAX_COLOR;
       for (j = indScanMin; j <= indScanMax; j++) {
         if (this.m_colorProbability[i] < this.m_colorProbability[j]) {
           isLess = 1;
@@ -1744,11 +1728,11 @@ export default class ActiveVolume {
   }
 
   /**
-  * Update render geo
-  * @param {object} geo RederGeo to modify
-  * @param {number} method Method
-  * @return {number} 1, if success. < 0, if failed
-  */
+   * Update render geo
+   * @param {object} geo RederGeo to modify
+   * @param {number} method Method
+   * @return {number} 1, if success. < 0, if failed
+   */
   updateGeo(geo, method) {
     if (geo === 'undefined') {
       console.log('ActiveVolume. updateGeo: geo undefined');
@@ -1779,8 +1763,8 @@ export default class ActiveVolume {
     if (this.m_state === AV_STATE_PREPARE_GAUSS) {
       const GAUSS_RAD = 2;
       const GAUSS_SIGMA = 1.8;
-      const zStart  = Math.floor(this.m_zDim * (this.m_gaussStage + 0) / ActiveVolume.ACT_VOL_NUM_SMOOTH_STAGES);
-      const zEnd    = Math.floor(this.m_zDim * (this.m_gaussStage + 1) / ActiveVolume.ACT_VOL_NUM_SMOOTH_STAGES);
+      const zStart = Math.floor((this.m_zDim * (this.m_gaussStage + 0)) / ActiveVolume.ACT_VOL_NUM_SMOOTH_STAGES);
+      const zEnd = Math.floor((this.m_zDim * (this.m_gaussStage + 1)) / ActiveVolume.ACT_VOL_NUM_SMOOTH_STAGES);
       this.applyPartGaussSmooth(zStart, zEnd, GAUSS_RAD, GAUSS_SIGMA);
 
       this.m_gaussStage++;
@@ -1792,11 +1776,20 @@ export default class ActiveVolume {
       }
     }
     if (this.m_state === AV_STATE_PREPARE_UNIFORMITY) {
-      const zStart = Math.floor(this.m_zDim * (this.m_uniformityStage + 0) / ActiveVolume.ACT_VOL_NUM_SMOOTH_STAGES);
-      const zEnd   = Math.floor(this.m_zDim * (this.m_uniformityStage + 1) / ActiveVolume.ACT_VOL_NUM_SMOOTH_STAGES);
+      const zStart = Math.floor((this.m_zDim * (this.m_uniformityStage + 0)) / ActiveVolume.ACT_VOL_NUM_SMOOTH_STAGES);
+      const zEnd = Math.floor((this.m_zDim * (this.m_uniformityStage + 1)) / ActiveVolume.ACT_VOL_NUM_SMOOTH_STAGES);
       const KOEF_UNIFORMITY = 0.07;
-      this.makeUniformityImage(this.m_imageGauss, this.m_xDim, this.m_yDim, this.m_zDim,
-        zStart, zEnd, this.m_imageGrad, this.m_imageUniformity, KOEF_UNIFORMITY);
+      this.makeUniformityImage(
+        this.m_imageGauss,
+        this.m_xDim,
+        this.m_yDim,
+        this.m_zDim,
+        zStart,
+        zEnd,
+        this.m_imageGrad,
+        this.m_imageUniformity,
+        KOEF_UNIFORMITY
+      );
       this.m_uniformityStage++;
       if (this.m_uniformityStage >= ActiveVolume.ACT_VOL_NUM_SMOOTH_STAGES) {
         // DEBUG save
@@ -1805,8 +1798,14 @@ export default class ActiveVolume {
           const TEST_SAVE_UNI_FILE_NAME = 'uni.bmp';
           const TWO = 2;
           const zSlice = this.m_zDim / TWO;
-          ActiveVolume.saveVolumeSliceToFile(this.m_imageUniformity,
-            this.m_xDim, this.m_yDim, this.m_zDim, zSlice, TEST_SAVE_UNI_FILE_NAME);
+          ActiveVolume.saveVolumeSliceToFile(
+            this.m_imageUniformity,
+            this.m_xDim,
+            this.m_yDim,
+            this.m_zDim,
+            zSlice,
+            TEST_SAVE_UNI_FILE_NAME
+          );
         }
 
         // finally get image histogram
@@ -1827,11 +1826,11 @@ export default class ActiveVolume {
         this.m_verticesNew = new Float32Array(numVertices * COORDS_IN_VERTREX);
       }
 
-      const updateNormals       = (method & AV_METHOD_NORMALS) !== 0;
-      const updateUniformity    = (method & AV_METHOD_UNIFORMITY) !== 0;
-      const updateColorKoefs    = (method & AV_METHOD_COLOR_KOEFS) !== 0;
+      const updateNormals = (method & AV_METHOD_NORMALS) !== 0;
+      const updateUniformity = (method & AV_METHOD_UNIFORMITY) !== 0;
+      const updateColorKoefs = (method & AV_METHOD_COLOR_KOEFS) !== 0;
 
-      const  SPEED_NORMALS     = 1.1;
+      const SPEED_NORMALS = 1.1;
       if (updateNormals && !updateUniformity) {
         this.updateGeoByVertexNormals(geo, SPEED_NORMALS);
       }
@@ -1866,7 +1865,7 @@ export default class ActiveVolume {
       const y = Math.floor(vertices[i4 + OFF_1]);
       const z = Math.floor(vertices[i4 + OFF_2]);
 
-      const off = x + (y * this.m_xDim) + (z * xyDim);
+      const off = x + y * this.m_xDim + z * xyDim;
       const uni = this.m_imageUniformity[off];
       uniAve += uni;
     }
@@ -1883,10 +1882,10 @@ export default class ActiveVolume {
   }
 
   /**
-  * Update geometry with normals, uniformity map and colors distribution
-  * @param {object} geo RederGeo to modify
-  * @param {number} normalSpeed speed for increase geo size
-  */
+   * Update geometry with normals, uniformity map and colors distribution
+   * @param {object} geo RederGeo to modify
+   * @param {number} normalSpeed speed for increase geo size
+   */
   updateGeoNormalsUniformityColors(geo, normalSpeed) {
     const numVertices = geo.getNumVertices();
     // float array
@@ -1929,7 +1928,7 @@ export default class ActiveVolume {
       let y = Math.floor(vy);
       let z = Math.floor(vz);
 
-      if (DEEP_DEBUG && (i === 0)) {
+      if (DEEP_DEBUG && i === 0) {
         console.log(`v = ${vx}, ${vy}, ${vz}. int xyz = ${x},${y},${z}`);
         console.log(`vn = ${vn.x}, ${vn.y}, ${vn.z}`);
       }
@@ -1960,11 +1959,11 @@ export default class ActiveVolume {
       }
 
       const xyDim = this.m_xDim * this.m_yDim;
-      const off = x + (y * this.m_xDim) + (z * xyDim);
+      const off = x + y * this.m_xDim + z * xyDim;
       const uni = this.m_imageUniformity[off];
       const valGaussCur = this.m_imageGauss[off];
 
-      if (DEEP_DEBUG && (i === 0)) {
+      if (DEEP_DEBUG && i === 0) {
         console.log(`uni = ${uni}, valGaussCur = ${valGaussCur}`);
       }
 
@@ -1975,28 +1974,27 @@ export default class ActiveVolume {
       let ny = Math.floor(vy + vn.y * NEXT_STEP);
       let nz = Math.floor(vz + vn.z * NEXT_STEP);
 
-      if (DEEP_DEBUG && (i === 0)) {
+      if (DEEP_DEBUG && i === 0) {
         console.log(`nx = ${nx}, ny = ${ny}, nz = ${nz}`);
       }
-      if ((nx < 0) || (ny < 0) || (nz < 0) ||
-        (nx >= this.m_xDim) || (ny >= this.m_yDim) || (nz >= this.m_zDim)) {
+      if (nx < 0 || ny < 0 || nz < 0 || nx >= this.m_xDim || ny >= this.m_yDim || nz >= this.m_zDim) {
         sphereTouchEdge = true;
       }
-      nx = (nx >= 0) ? nx : 0;
-      ny = (ny >= 0) ? ny : 0;
-      nz = (nz >= 0) ? nz : 0;
-      nx = (nx < this.m_xDim) ? nx : (this.m_xDim - 1);
-      ny = (ny < this.m_yDim) ? ny : (this.m_yDim - 1);
-      nz = (nz < this.m_zDim) ? nz : (this.m_zDim - 1);
+      nx = nx >= 0 ? nx : 0;
+      ny = ny >= 0 ? ny : 0;
+      nz = nz >= 0 ? nz : 0;
+      nx = nx < this.m_xDim ? nx : this.m_xDim - 1;
+      ny = ny < this.m_yDim ? ny : this.m_yDim - 1;
+      nz = nz < this.m_zDim ? nz : this.m_zDim - 1;
 
-      const nextOff = nx + (ny * this.m_xDim) + (nz * xyDim);
+      const nextOff = nx + ny * this.m_xDim + nz * xyDim;
       const valGaussNext = this.m_imageGauss[nextOff];
       const KOEF_GAUSS_DEC_MULT = 0.3;
       if (valGaussNext > valGaussCur) {
         compSum *= KOEF_GAUSS_DEC_MULT;
       }
 
-      if (DEEP_DEBUG && (i === 0)) {
+      if (DEEP_DEBUG && i === 0) {
         console.log(`valGaussNext = ${valGaussNext}`);
       }
 
@@ -2004,10 +2002,10 @@ export default class ActiveVolume {
       const koef = this.m_colorProbability[Math.floor(valGaussCur)];
       compSum *= koef;
       const COLOR_MATCH = 0.9;
-      const isColorMatch = (koef <= COLOR_MATCH);
+      const isColorMatch = koef <= COLOR_MATCH;
       // numMatchedToColor += (isColorMatch) ? 1 : 0;
 
-      if (DEEP_DEBUG && (i === 0)) {
+      if (DEEP_DEBUG && i === 0) {
         console.log(`koef = ${koef}, isColorMatch = ${isColorMatch}`);
       }
 
@@ -2023,13 +2021,13 @@ export default class ActiveVolume {
       vAddGeo.y = vn.y * compSum * normalSpeed;
       vAddGeo.z = vn.z * compSum * normalSpeed;
 
-      if (DEEP_DEBUG && (i === 0)) {
+      if (DEEP_DEBUG && i === 0) {
         console.log(`vAddSmooth = ${vAddSmooth.x}, ${vAddSmooth.y}, ${vAddSmooth.z}`);
         console.log(`vAddGeo = ${vAddGeo.x}, ${vAddGeo.y}, ${vAddGeo.z}`);
       }
 
       const KOEF_ADD_SMOOTH = 0.3;
-      const KOEF_ADD_GEO = (1.0 - KOEF_ADD_SMOOTH);
+      const KOEF_ADD_GEO = 1.0 - KOEF_ADD_SMOOTH;
 
       if (isColorMatch) {
         // do nothing
@@ -2039,7 +2037,8 @@ export default class ActiveVolume {
         vNew.y = vy + vAddGeo.y * KOEF_ADD_GEO + vAddSmooth.y * KOEF_ADD_SMOOTH;
         vNew.z = vz + vAddGeo.z * KOEF_ADD_GEO + vAddSmooth.z * KOEF_ADD_SMOOTH;
 
-        vx = vNew.x; vy = vNew.y;
+        vx = vNew.x;
+        vy = vNew.y;
         vz = vNew.z;
       }
 
@@ -2075,7 +2074,7 @@ export default class ActiveVolume {
       return true;
     }
     const aveUni = this.getAveUniformityForGeoVertices(geo);
-    const MIN_POSSIBLE_UNIFORMITY = 0.60;
+    const MIN_POSSIBLE_UNIFORMITY = 0.6;
     if (aveUni < MIN_POSSIBLE_UNIFORMITY) {
       this.finalizeUpdatesGeo(geo, DEEP_DEBUG);
       return true;
@@ -2092,7 +2091,6 @@ export default class ActiveVolume {
     }
     return false;
   } // updateGeoNormalsUniformityColors
-
 } // class ActiveVolume
 
 /** Output flags */
@@ -2105,4 +2103,3 @@ ActiveVolume.SPHERE_EVOLVE_FROM_OUTSIDE = 1;
 
 /** num iteration stages */
 ActiveVolume.ACT_VOL_NUM_SMOOTH_STAGES = 64;
-

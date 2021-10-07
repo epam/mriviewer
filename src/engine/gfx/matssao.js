@@ -4,9 +4,9 @@
  */
 
 /**
-* Screen space ambient occlusion posteffect for the isosurface vr
-* @module lib/scripts/gfx/matssao
-*/
+ * Screen space ambient occlusion posteffect for the isosurface vr
+ * @module lib/scripts/gfx/matssao
+ */
 
 // ******************************************************************
 // imports
@@ -19,13 +19,12 @@ import RENDER_TEXTURE_VERTEX_SHADER from '../shaders/ssao.vert';
 import RENDER_TEXTURE_FRAGMENT_SHADER from '../shaders/ssao.frag';
 
 /** Class @class MaterialRenderSSAO for
-* ambient occlusion computation
-*/
+ * ambient occlusion computation
+ */
 export default class MaterialRenderSSAO {
-
   /** Simple material constructor
-  * @constructor
-  */
+   * @constructor
+   */
   constructor() {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
@@ -47,8 +46,8 @@ export default class MaterialRenderSSAO {
   }
 
   /** Simple material constructor
-  * @return {object} Three.js material with this shader
-  */
+   * @return {object} Three.js material with this shader
+   */
   create(texVol2d, texBackface, texFrontface, texIsosurfFrame, texColorFrame, callbackMat) {
     // Init uniforms
     this.m_uniforms.texVolume.value = texVol2d;
@@ -91,7 +90,7 @@ export default class MaterialRenderSSAO {
           // defines: this.m_defines,
           vertexShader: this.m_strShaderVertex,
           fragmentShader: this.m_strShaderFragment,
-          side: THREE.BackSide
+          side: THREE.BackSide,
         });
         if (callbackMat) {
           callbackMat(material);

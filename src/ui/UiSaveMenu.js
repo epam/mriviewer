@@ -17,7 +17,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import UiModalSaveNifti from './Modals/UiModalSaveNifti';
-import { UIButton } from "./Button/Button";
+import { UIButton } from './Button/Button';
 import { Tooltip } from './Tooltip/Tooltip';
 
 // ********************************************************
@@ -47,8 +47,7 @@ class UiSaveMenu extends React.Component {
   }
 
   // invoked after render
-  componentDidMount() {
-  }
+  componentDidMount() {}
 
   onModalSaveNiftiShow() {
     this.setState({ showModalSaveNifti: true });
@@ -63,15 +62,15 @@ class UiSaveMenu extends React.Component {
   // render
   //
   render() {
-    return <>
-      <Tooltip content="Save Nifti">
-        <UIButton rounded icon="download" handler={evt => this.onModalSaveNiftiShow(evt)} mode={this.props.isLoaded ? "accent" : ""} />
-      </Tooltip>
-      <UiModalSaveNifti stateVis={this.state.showModalSaveNifti} onHide={this.onModalSaveNiftiHide} />
+    return (
+      <>
+        <Tooltip content="Save Nifti">
+          <UIButton rounded icon="download" handler={(evt) => this.onModalSaveNiftiShow(evt)} mode={this.props.isLoaded ? 'accent' : ''} />
+        </Tooltip>
+        <UiModalSaveNifti stateVis={this.state.showModalSaveNifti} onHide={this.onModalSaveNiftiHide} />
       </>
+    );
   }
 }
 
-export default connect(store => store)(UiSaveMenu);
-
-
+export default connect((store) => store)(UiSaveMenu);

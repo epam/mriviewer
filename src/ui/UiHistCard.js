@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // ********************************************************
 // Imports
 // ********************************************************
@@ -18,11 +17,9 @@ import React from 'react';
 
 import UiHistogram from './UiHistogram';
 
-
 // ********************************************************
 // Const
 // ********************************************************
-
 
 // ********************************************************
 // Class
@@ -42,7 +39,7 @@ class UiHistCard extends React.Component {
     }
     const transfFuncCallback = this.props.transfFunc;
     const transfFuncUpdateCallback = this.props.transfFuncUpdate;
-    
+
     let strMsg = 'Volume histogram';
     if (vol !== null) {
       const xDim = vol.m_xDim;
@@ -56,20 +53,20 @@ class UiHistCard extends React.Component {
     // const cw = this.state.width;
     // const ch = this.state.height;
 
-    const jsxHistCard = <>
-            {strMsg}
-          <UiHistogram volume={vol}
-            transfFunc={transfFuncCallback} transfFuncUpdate={transfFuncUpdateCallback}  />
-          { /*
+    const jsxHistCard = (
+      <>
+        {strMsg}
+        <UiHistogram volume={vol} transfFunc={transfFuncCallback} transfFuncUpdate={transfFuncUpdateCallback} />
+        {/*
           <div ref={ (mount) => {this.m_canvasOwner = mount} }>
             <canvas ref="canvasHistogram" width={cw} height={ch} 
               onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onMouseMove={this.onMouseMove} />
           </div>
-          */ }
+          */}
       </>
+    );
     return jsxHistCard;
   } // end render
-
 } // end class
 
 export default UiHistCard;

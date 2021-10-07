@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // ********************************************************
 // Imports
 // ********************************************************
@@ -56,12 +55,12 @@ export default class LoaderKtx {
       m_numberOfArrayElements: 0,
       m_numberOfFaces: 0,
       m_numberOfMipmapLevels: 0,
-      m_bytesOfKeyValueData: 0
+      m_bytesOfKeyValueData: 0,
     };
     this.m_boxSize = {
       x: 0.0,
       y: 0.0,
-      z: 0.0
+      z: 0.0,
     };
   } // constructor
 
@@ -83,8 +82,10 @@ export default class LoaderKtx {
     const BYTES_IN_FLOAT = 4;
     const arBuf = new ArrayBuffer(BYTES_IN_FLOAT);
     const dataArray = new DataView(arBuf);
-    const OFF_0 = 0; const OFF_1 = 1;
-    const OFF_2 = 2; const OFF_3 = 3;
+    const OFF_0 = 0;
+    const OFF_1 = 1;
+    const OFF_2 = 2;
+    const OFF_3 = 3;
     dataArray.setUint8(OFF_0, buf[off + OFF_0]);
     dataArray.setUint8(OFF_1, buf[off + OFF_1]);
     dataArray.setUint8(OFF_2, buf[off + OFF_2]);
@@ -115,7 +116,7 @@ export default class LoaderKtx {
     // console.log(`readFromKtx. data = ${bufBytes}`);
 
     // read header
-    const arrayHeaderSign = [0xAB, 0x4B, 0x54, 0x58, 0x20, 0x31, 0x31, 0xBB, 0x0D, 0x0A, 0x1A, 0x0A];
+    const arrayHeaderSign = [0xab, 0x4b, 0x54, 0x58, 0x20, 0x31, 0x31, 0xbb, 0x0d, 0x0a, 0x1a, 0x0a];
     const lenHeaderSign = arrayHeaderSign.length;
     let isHeaderSignCorrect = true;
     let i;
@@ -141,7 +142,8 @@ export default class LoaderKtx {
     const ENDIANNESS_16 = 16;
     const ENDIAN_CONST = 0x04030201;
     // read endianess
-    this.m_header.m_endianness = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
+    this.m_header.m_endianness = LoaderKtx.readInt(bufBytes, bufOff);
+    bufOff += SIZE_DWORD;
     if (this.m_header.m_endianness !== ENDIAN_CONST) {
       const strFoundEndns = this.m_header.m_endianness.toString(ENDIANNESS_16);
       // eslint-disable-next-line
@@ -153,25 +155,34 @@ export default class LoaderKtx {
     }
 
     // read
-    this.m_header.m_glType = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
-    this.m_header.m_glTypeSize = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
-    this.m_header.m_glFormat = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
+    this.m_header.m_glType = LoaderKtx.readInt(bufBytes, bufOff);
+    bufOff += SIZE_DWORD;
+    this.m_header.m_glTypeSize = LoaderKtx.readInt(bufBytes, bufOff);
+    bufOff += SIZE_DWORD;
+    this.m_header.m_glFormat = LoaderKtx.readInt(bufBytes, bufOff);
+    bufOff += SIZE_DWORD;
 
     if (
-      (this.m_header.m_glFormat !== KtxHeader.KTX_GL_RED) &&
-      (this.m_header.m_glFormat !== KtxHeader.KTX_GL_RGB) &&
-      (this.m_header.m_glFormat !== KtxHeader.KTX_GL_RGBA)) {
+      this.m_header.m_glFormat !== KtxHeader.KTX_GL_RED &&
+      this.m_header.m_glFormat !== KtxHeader.KTX_GL_RGB &&
+      this.m_header.m_glFormat !== KtxHeader.KTX_GL_RGBA
+    ) {
       console.log('KTX header.m_glFormat is WRONG');
       if (callbackComplete !== undefined) {
         callbackComplete(LoadResult.UNSUPPORTED_COLOR_FORMAT);
       }
       return LoadResult.UNSUPPORTED_COLOR_FORMAT;
     }
-    this.m_header.m_glInternalFormat = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
-    this.m_header.m_glBaseInternalFormat = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
-    this.m_header.m_pixelWidth = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
-    this.m_header.m_pixelHeight = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
-    this.m_header.m_pixelDepth = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
+    this.m_header.m_glInternalFormat = LoaderKtx.readInt(bufBytes, bufOff);
+    bufOff += SIZE_DWORD;
+    this.m_header.m_glBaseInternalFormat = LoaderKtx.readInt(bufBytes, bufOff);
+    bufOff += SIZE_DWORD;
+    this.m_header.m_pixelWidth = LoaderKtx.readInt(bufBytes, bufOff);
+    bufOff += SIZE_DWORD;
+    this.m_header.m_pixelHeight = LoaderKtx.readInt(bufBytes, bufOff);
+    bufOff += SIZE_DWORD;
+    this.m_header.m_pixelDepth = LoaderKtx.readInt(bufBytes, bufOff);
+    bufOff += SIZE_DWORD;
 
     // save to result volume
     volDst.m_xDim = this.m_header.m_pixelWidth;
@@ -182,17 +193,15 @@ export default class LoaderKtx {
     const head = this.m_header;
     // console.log(`check dim: ${head.m_pixelWidth} * ${head.m_pixelHeight} * ${head.m_pixelDepth}`);
     const MIN_DIM = 4;
-    const MAX_DIM = (1024 * 8);
-    if ((head.m_pixelWidth < MIN_DIM) || (head.m_pixelHeight < MIN_DIM) 
-      || (head.m_pixelDepth < MIN_DIM)) {
+    const MAX_DIM = 1024 * 8;
+    if (head.m_pixelWidth < MIN_DIM || head.m_pixelHeight < MIN_DIM || head.m_pixelDepth < MIN_DIM) {
       console.log(`KTX dims too small: ${head.m_pixelWidth} * ${head.m_pixelHeight} * ${head.m_pixelDepth}`);
       if (callbackComplete !== undefined) {
         callbackComplete(LoadResult.WRONG_IMAGE_DIM_X);
       }
       return LoadResult.WRONG_IMAGE_DIM_X;
     }
-    if ((head.m_pixelWidth > MAX_DIM) || (head.m_pixelHeight > MAX_DIM) 
-      || (head.m_pixelDepth > MAX_DIM)) {
+    if (head.m_pixelWidth > MAX_DIM || head.m_pixelHeight > MAX_DIM || head.m_pixelDepth > MAX_DIM) {
       console.log(`KTX dims too large: ${head.m_pixelWidth} * ${head.m_pixelHeight} * ${head.m_pixelDepth}`);
       if (callbackComplete !== undefined) {
         callbackComplete(LoadResult.WRONG_IMAGE_DIM_X);
@@ -200,10 +209,14 @@ export default class LoaderKtx {
       return LoadResult.WRONG_IMAGE_DIM_X;
     }
 
-    this.m_header.m_numberOfArrayElements = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
-    this.m_header.m_numberOfFaces = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
-    this.m_header.m_numberOfMipmapLevels = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
-    this.m_header.m_bytesOfKeyValueData = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
+    this.m_header.m_numberOfArrayElements = LoaderKtx.readInt(bufBytes, bufOff);
+    bufOff += SIZE_DWORD;
+    this.m_header.m_numberOfFaces = LoaderKtx.readInt(bufBytes, bufOff);
+    bufOff += SIZE_DWORD;
+    this.m_header.m_numberOfMipmapLevels = LoaderKtx.readInt(bufBytes, bufOff);
+    bufOff += SIZE_DWORD;
+    this.m_header.m_bytesOfKeyValueData = LoaderKtx.readInt(bufBytes, bufOff);
+    bufOff += SIZE_DWORD;
 
     let bytesPerVoxel = 0;
     const SIZE_BYTE = 1;
@@ -240,14 +253,20 @@ export default class LoaderKtx {
         console.log(`UDataString = ${str}`);
         // read vector
         if (str === 'fBoxMin') {
-          xMin = LoaderKtx.readFloat(bufBytes, udataOff); udataOff += SIZE_DWORD;
-          yMin = LoaderKtx.readFloat(bufBytes, udataOff); udataOff += SIZE_DWORD;
-          zMin = LoaderKtx.readFloat(bufBytes, udataOff); udataOff += SIZE_DWORD;
+          xMin = LoaderKtx.readFloat(bufBytes, udataOff);
+          udataOff += SIZE_DWORD;
+          yMin = LoaderKtx.readFloat(bufBytes, udataOff);
+          udataOff += SIZE_DWORD;
+          zMin = LoaderKtx.readFloat(bufBytes, udataOff);
+          udataOff += SIZE_DWORD;
           console.log(`vBoxMix = ${xMin} * ${yMin} * ${zMin}`);
         } else if (str === 'fBoxMax') {
-          xMax = LoaderKtx.readFloat(bufBytes, udataOff); udataOff += SIZE_DWORD;
-          yMax = LoaderKtx.readFloat(bufBytes, udataOff); udataOff += SIZE_DWORD;
-          zMax = LoaderKtx.readFloat(bufBytes, udataOff); udataOff += SIZE_DWORD;
+          xMax = LoaderKtx.readFloat(bufBytes, udataOff);
+          udataOff += SIZE_DWORD;
+          yMax = LoaderKtx.readFloat(bufBytes, udataOff);
+          udataOff += SIZE_DWORD;
+          zMax = LoaderKtx.readFloat(bufBytes, udataOff);
+          udataOff += SIZE_DWORD;
           this.m_boxSize.x = xMax - xMin;
           this.m_boxSize.y = yMax - yMin;
           this.m_boxSize.z = zMax - zMin;
@@ -257,11 +276,9 @@ export default class LoaderKtx {
       } // while udata not ended
     } // if have key data
     // read image data size
-    this.m_dataSize = LoaderKtx.readInt(bufBytes, bufOff); bufOff += SIZE_DWORD;
-    const dataSizeCalculated =
-      this.m_header.m_pixelWidth *
-      this.m_header.m_pixelHeight *
-      this.m_header.m_pixelDepth * bytesPerVoxel;
+    this.m_dataSize = LoaderKtx.readInt(bufBytes, bufOff);
+    bufOff += SIZE_DWORD;
+    const dataSizeCalculated = this.m_header.m_pixelWidth * this.m_header.m_pixelHeight * this.m_header.m_pixelDepth * bytesPerVoxel;
     if (this.m_dataSize !== dataSizeCalculated) {
       console.log('!!! not implemented yet');
       if (callbackComplete !== undefined) {
@@ -274,7 +291,7 @@ export default class LoaderKtx {
     let pwr2;
     let pwrFinish = false;
     const MAX_POWER = 29;
-    for (pwr2 = MAX_POWER; (pwr2 >= 0) && (!pwrFinish); pwr2--) {
+    for (pwr2 = MAX_POWER; pwr2 >= 0 && !pwrFinish; pwr2--) {
       const val = 1 << pwr2;
       if (val < this.m_dataSize) {
         pwrFinish = true;
@@ -293,7 +310,7 @@ export default class LoaderKtx {
       this.m_dataArray[i] = bufBytes[bufOff];
       bufOff += 1;
       // progress update
-      if ((callbackProgress !== undefined) && ((i & progressMask) === 0) && (i > 0)) {
+      if (callbackProgress !== undefined && (i & progressMask) === 0 && i > 0) {
         const ratio = i / this.m_dataSize;
         callbackProgress(ratio);
       }
@@ -326,23 +343,26 @@ export default class LoaderKtx {
   } // end readFromBuffer
 
   /**
-  *
-  * Read Ktx file from URL
-  * @param {object} volDst volume to read
-  * @param {string} strUrl from where
-  * @param {Function} callbackProgress invoke during loading
-  * @param {Function} callbackComplete invoke at the end with final success code
-  */
+   *
+   * Read Ktx file from URL
+   * @param {object} volDst volume to read
+   * @param {string} strUrl from where
+   * @param {Function} callbackProgress invoke during loading
+   * @param {Function} callbackComplete invoke at the end with final success code
+   */
   readFromUrl(volDst, strUrl, callbackProgress, callbackComplete) {
     console.log(`LoadedKtx. staring read ${strUrl}`);
     this.m_fileLoader = new FileLoader(strUrl);
-    this.m_fileLoader.readFile((arrBuf) => {
-      this.readFromBuffer(volDst, arrBuf, callbackProgress, callbackComplete);
-      return;
-    }, (errMsg) => {
-      console.log(`LoaderKtx. Error read file: ${errMsg}`);
-      callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
-      return;
-    });
+    this.m_fileLoader.readFile(
+      (arrBuf) => {
+        this.readFromBuffer(volDst, arrBuf, callbackProgress, callbackComplete);
+        return;
+      },
+      (errMsg) => {
+        console.log(`LoaderKtx. Error read file: ${errMsg}`);
+        callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
+        return;
+      }
+    );
   } // end of readFromUrl
 } // end class

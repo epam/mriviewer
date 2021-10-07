@@ -8,7 +8,6 @@
  * @module app/scripts/graphics2d/areatool
  */
 
-
 export default class ZoomTool {
   /**
    * Initialize area tool
@@ -38,7 +37,7 @@ export default class ZoomTool {
     const MAX_ZOOM = 1;
     const MIN_ZOOM = 0.125;
     const TRANSFORM = 0.0001;
-    if ((this.m_zoom + wheelDeltaY * TRANSFORM >= MIN_ZOOM) && (this.m_zoom + wheelDeltaY * TRANSFORM <= MAX_ZOOM)) {
+    if (this.m_zoom + wheelDeltaY * TRANSFORM >= MIN_ZOOM && this.m_zoom + wheelDeltaY * TRANSFORM <= MAX_ZOOM) {
       this.m_zoom = this.m_zoom + wheelDeltaY * TRANSFORM;
     }
   }

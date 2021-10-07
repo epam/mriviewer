@@ -1,29 +1,27 @@
-
 /*
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
 
 /**
-* Detect browser type (Chrome, Firefox, ...) and detect is this mobile device
-* @module src/demo/engine/utils/BrowserDetector
-*/
+ * Detect browser type (Chrome, Firefox, ...) and detect is this mobile device
+ * @module src/demo/engine/utils/BrowserDetector
+ */
 
 // absolute imports
 // import swal from 'sweetalert';
 
 import { createCanvas } from 'canvas';
 
-
 /**
-* Class BrowserDetector preform initial loading browser type detection
-* @class BrowserDetector
-*/
+ * Class BrowserDetector preform initial loading browser type detection
+ * @class BrowserDetector
+ */
 class BrowserDetector {
   /**
-  * Start simple detection
-  * @constructs BrowserDetector
-  */
+   * Start simple detection
+   * @constructs BrowserDetector
+   */
   constructor() {
     this.m_strUserAgent = '';
     this.m_strVendor = '';
@@ -37,28 +35,28 @@ class BrowserDetector {
 
   /**
    * Check support WebGL 2.0
-   * 
+   *
    * * @return {boolean} true, if WebGL 2.0 supported
    */
   checkWebGlSupported() {
     // let canvas = document.createElement('canvas');
     let canvas = createCanvas(640, 480);
     let gl = null;
-    try { 
-      gl = canvas.getContext("webgl2"); 
-    } catch (x) { 
-      gl = null; 
+    try {
+      gl = canvas.getContext('webgl2');
+    } catch (x) {
+      gl = null;
     }
-    const glFound = (gl !== null);
+    const glFound = gl !== null;
     // console.log(`checkWebGlSupported. GL 2.0 = ${glFound}`);
     canvas = undefined;
     return glFound;
   }
 
   /**
-  * Check is this browser valid
-  * @return {boolean} true, if valid for 3d vizualization
-  */
+   * Check is this browser valid
+   * @return {boolean} true, if valid for 3d vizualization
+   */
   checkValidBrowser() {
     /** @property {string} m_strUserAgent - User agent */
     this.m_strUserAgent = navigator.userAgent.toLowerCase();
@@ -67,15 +65,15 @@ class BrowserDetector {
     /** @property {boolean} m_isOpera - Is this opera browser */
     this.m_isOpera = /opr\/|opios/i.test(this.m_strUserAgent);
     /** @property {boolean} m_isFirefox - Is this firefox browser */
-    this.m_isFirefox = (typeof InstallTrigger !== 'undefined');
+    this.m_isFirefox = typeof InstallTrigger !== 'undefined';
     /** @property {boolean} m_isSafari - Is this safari browser */
     // this.m_isSafari = /safari|applewebkit/i.test(this.m_strUserAgent);
-    this.m_isSafari = (this.m_strUserAgent.search('safari') >= 0) && (this.m_strUserAgent.search('chrome') < 0);
+    this.m_isSafari = this.m_strUserAgent.search('safari') >= 0 && this.m_strUserAgent.search('chrome') < 0;
     /** @property {boolean} m_isIE - IE ver 6-11 */
     this.m_isIE = false || !!document.documentMode;
     /** @property {boolean} m_isChrome - Chrome browser */
     this.m_isChrome = /chrome/i.test(navigator.userAgent);
-    this.m_isEdge = (navigator.appVersion.indexOf('Edge') > -1);
+    this.m_isEdge = navigator.appVersion.indexOf('Edge') > -1;
     if (this.m_isEdge) {
       this.m_isChrome = false;
     }
@@ -102,8 +100,7 @@ class BrowserDetector {
       */
     }
     // Mobile or not
-    const mobileArr = ['iphone', 'ipad', 'android', 'blackberry',
-      'nokia', 'opera mini', 'windows mobile', 'windows phone', 'iemobile'];
+    const mobileArr = ['iphone', 'ipad', 'android', 'blackberry', 'nokia', 'opera mini', 'windows mobile', 'windows phone', 'iemobile'];
     this.m_isMobileBrowser = false;
     for (let i = 0; i < mobileArr.length; i++) {
       if (this.m_strUserAgent.indexOf(mobileArr[i].toLowerCase()) > 0) {
@@ -114,7 +111,7 @@ class BrowserDetector {
     // detect mobiu browser by window size
     const MIN_W = 800;
     const MIN_H = 600;
-    if ((window.innerWidth <= MIN_W) || (window.innerHeight <= MIN_H) ) {
+    if (window.innerWidth <= MIN_W || window.innerHeight <= MIN_H) {
       this.m_isMobileBrowser = true;
     }
     if (this.m_isMobileBrowser) {

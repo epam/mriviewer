@@ -4,9 +4,9 @@
  */
 
 /**
-* Tetrahedron generator
-* @module lib/scripts/actvolume/tetra
-*/
+ * Tetrahedron generator
+ * @module lib/scripts/actvolume/tetra
+ */
 
 // absolute imports
 import * as THREE from 'three';
@@ -20,24 +20,24 @@ const NUM_VERTICES_TETRA = 12;
 const NUM_TRIANGLES_TETRA = 20;
 
 /**
-* Class TetrahedronGenerator builds good sphere-looked tri mesh
-* @class TetrahedronGenerator
-*/
+ * Class TetrahedronGenerator builds good sphere-looked tri mesh
+ * @class TetrahedronGenerator
+ */
 export default class TetrahedronGenerator {
   /**
-  * Init all internal data
-  * @constructs TetrahedronGenerator
-  */
+   * Init all internal data
+   * @constructs TetrahedronGenerator
+   */
   constructor() {
     this.m_pointSet = null;
     this.m_triangleSet = null;
   }
 
   /**
-  * Create triangle mesh structure
-  * @param {number} vRadiusEllipse Ellipse radius
-  * @param {number} numSubdividesOfOrigTetra number of sub divides
-  */
+   * Create triangle mesh structure
+   * @param {number} vRadiusEllipse Ellipse radius
+   * @param {number} numSubdividesOfOrigTetra number of sub divides
+   */
   create(vRadiusEllipse, numSubdividesOfOrigTetra) {
     // console.log(`vRadiusEllipse = ${vRadiusEllipse}`);
     // console.log(`numSubdividesOfOrigTetra = ${numSubdividesOfOrigTetra}`);
@@ -47,25 +47,47 @@ export default class TetrahedronGenerator {
     // { 0.0f, Z, X },{ 0.0f, Z, -X },{ 0.0f, -Z, X },{ 0.0f, -Z, -X },
     // { Z, X, 0.0f },{ -Z, X, 0.0f },{ Z, -X, 0.0f },{ -Z, -X, 0.0f }
     const vdata = [
-      -X, 0.0, +Z,
-      +X, 0.0, +Z,
-      -X, 0.0, -Z,
-      +X, 0.0, -Z,
-      0.0, +Z, +X,
-      0.0, +Z, -X,
-      0.0, -Z, +X,
-      0.0, -Z, -X,
-      +Z, +X, 0.0,
-      -Z, +X, 0.0,
-      +Z, -X, 0.0,
-      -Z, -X, 0.0,
+      -X,
+      0.0,
+      +Z,
+      +X,
+      0.0,
+      +Z,
+      -X,
+      0.0,
+      -Z,
+      +X,
+      0.0,
+      -Z,
+      0.0,
+      +Z,
+      +X,
+      0.0,
+      +Z,
+      -X,
+      0.0,
+      -Z,
+      +X,
+      0.0,
+      -Z,
+      -X,
+      +Z,
+      +X,
+      0.0,
+      -Z,
+      +X,
+      0.0,
+      +Z,
+      -X,
+      0.0,
+      -Z,
+      -X,
+      0.0,
     ];
     /*eslint-disable no-magic-numbers*/
     const tindices = [
-      0, 4, 1, 0, 9, 4, 9, 5, 4, 4, 5, 8, 4, 8, 1,
-      8, 10, 1, 8, 3, 10, 5, 3, 8, 5, 2, 3, 2, 7, 3,
-      7, 10, 3, 7, 6, 10, 7, 11, 6, 11, 0, 6, 0, 1, 6,
-      6, 1, 10, 9, 0, 11, 9, 11, 2, 9, 2, 5, 7, 2, 11
+      0, 4, 1, 0, 9, 4, 9, 5, 4, 4, 5, 8, 4, 8, 1, 8, 10, 1, 8, 3, 10, 5, 3, 8, 5, 2, 3, 2, 7, 3, 7, 10, 3, 7, 6, 10, 7, 11, 6, 11, 0, 6, 0,
+      1, 6, 6, 1, 10, 9, 0, 11, 9, 11, 2, 9, 2, 5, 7, 2, 11,
     ];
     this.m_pointSet = new PointSet(NUM_VERTICES_TETRA);
     let i3 = 0;
@@ -120,10 +142,10 @@ export default class TetrahedronGenerator {
   }
 
   /**
-  * Save tetrahedron geometry into given file (PLY type)
-  * see PLY format description here:
-  * https://en.wikipedia.org/wiki/PLY_(file_format)
-  */
+   * Save tetrahedron geometry into given file (PLY type)
+   * see PLY format description here:
+   * https://en.wikipedia.org/wiki/PLY_(file_format)
+   */
   saveGeoToPlyFile(fileName) {
     let strOut = 'ply\nformat ascii 1.0\ncomment tetrahedron mesh\n';
     const numVertices = this.m_pointSet.m_numPoints;
@@ -177,8 +199,8 @@ export default class TetrahedronGenerator {
   } // saveGeoToPlyFile
 
   /**
-  * Save tetrahedron geometry into given file (OBJ type)
-  */
+   * Save tetrahedron geometry into given file (OBJ type)
+   */
   saveGeoToObjFile(fileName) {
     let strOut = '# Tetrahedron test geo\n';
     const numVertices = this.m_pointSet.m_numPoints;
@@ -234,9 +256,9 @@ export default class TetrahedronGenerator {
   } // saveGeoToObjFile
 
   /*
-  * Sub divide source mesh
-  * @param {number} numSubdividesOfOrigTetra number of sub divides
-  */
+   * Sub divide source mesh
+   * @param {number} numSubdividesOfOrigTetra number of sub divides
+   */
   subDivideMesh(numSubdividesOfOrigTetra) {
     if (numSubdividesOfOrigTetra === 0) {
       return 1;
@@ -332,5 +354,4 @@ export default class TetrahedronGenerator {
     }
     return 1;
   }
-
 }

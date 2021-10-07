@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // ********************************************************
 // Imports
 // ********************************************************
@@ -38,15 +37,15 @@ class UiVolumeSel extends React.Component {
     // const serieSelected = series[indexSelected];
     // const hash = serieSelected.m_hash;
     const volumeSet = store.volumeSet;
-    
+
     // const loaderDicom = store.loaderDicom;
 
     // volumes are already created from slices
     // loaderDicom.createVolumeFromSlices(volumeSet, indexSelected, hash);
-    
+
     // finalize load
     const vol = volumeSet.getVolume(indexSelected);
-    console.assert(vol !== null, "setVolumeIndex: vol should be non zero volume");
+    console.assert(vol !== null, 'setVolumeIndex: vol should be non zero volume');
 
     if (vol.m_dataArray !== null) {
       // console.log(`success loaded volume from ${fileNameIn}`);
@@ -54,10 +53,10 @@ class UiVolumeSel extends React.Component {
         vol.makeDimensions4x();
       }
       // invoke notification
-    
+
       // send update (repaint) if was loaded prev model
       if (store.isLoaded) {
-        store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: false });  
+        store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: false });
       }
 
       store.dispatch({ type: StoreActionType.SET_VOLUME_SET, volumeSet: volumeSet });
@@ -68,12 +67,11 @@ class UiVolumeSel extends React.Component {
       gra.clear();
       gra.forceUpdate(indexSelected);
       gra.forceRender();
-
     } // if vol data not null
   }
 
   onClickRow(ind) {
-    console.assert(typeof(ind) == 'number');
+    console.assert(typeof ind == 'number');
     const store = this.props;
     if (ind !== store.volumeIndex) {
       // set global selected volume index
@@ -94,25 +92,44 @@ class UiVolumeSel extends React.Component {
 
     // const slices = store.dicomInfo.m_sliceInfo;
 
-    const jsx = 
-    <>
+    const jsx = (
+      <>
         {strTitle}
-          {vols.map( (vol, i) => {
-            const numSlices = vol.m_zDim;
-            const strSer = vol.m_seriesDescr;
-            const strVo = `vol ${strSer} [${numSlices}] slices`;
-            let jsxListItem;
-            if (i === volumeIndex) {
-              jsxListItem = <p key={i} onClick={() => {this.onClickRow(i)} } active>{strVo} <UiVolIcon index={i} /> </p>;
-            } else {
-              jsxListItem = <p key={i} onClick={() => {this.onClickRow(i)} }>{strVo} <UiVolIcon index={i} /> </p>;
-            }
-            return jsxListItem;
-          })}
-    </>
+        {vols.map((vol, i) => {
+          const numSlices = vol.m_zDim;
+          const strSer = vol.m_seriesDescr;
+          const strVo = `vol ${strSer} [${numSlices}] slices`;
+          let jsxListItem;
+          if (i === volumeIndex) {
+            jsxListItem = (
+              <p
+                key={i}
+                onClick={() => {
+                  this.onClickRow(i);
+                }}
+                active
+              >
+                {strVo} <UiVolIcon index={i} />{' '}
+              </p>
+            );
+          } else {
+            jsxListItem = (
+              <p
+                key={i}
+                onClick={() => {
+                  this.onClickRow(i);
+                }}
+              >
+                {strVo} <UiVolIcon index={i} />{' '}
+              </p>
+            );
+          }
+          return jsxListItem;
+        })}
+      </>
+    );
     return jsx;
   }
 }
 
-export default connect(store => store)(UiVolumeSel);
-
+export default connect((store) => store)(UiVolumeSel);

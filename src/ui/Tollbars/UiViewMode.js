@@ -7,10 +7,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import StoreActionType from '../../store/ActionTypes';
-import { UIButton } from "../Button/Button";
-import { Container } from "./Container";
-import ViewMode from "../../store/ViewMode";
-import { Tooltip } from "../Tooltip/Tooltip";
+import { UIButton } from '../Button/Button';
+import { Container } from './Container';
+import ViewMode from '../../store/ViewMode';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 class UiViewMode extends React.Component {
   constructor(props) {
@@ -83,43 +83,43 @@ class UiViewMode extends React.Component {
     // this.logObject('UiViewMode this props: ', store);
     let viewMode = store.viewMode;
     let isTool3D = store.isTool3D;
-    if ((viewMode === ViewMode.VIEW_MPR) && (!this.m_needModeMpr)) {
+    if (viewMode === ViewMode.VIEW_MPR && !this.m_needModeMpr) {
       viewMode = ViewMode.VIEW_2D;
     }
-    if ((viewMode === ViewMode.VIEW_3D_LIGHT) && (!this.m_needMode3dLight)) {
+    if (viewMode === ViewMode.VIEW_3D_LIGHT && !this.m_needMode3dLight) {
       viewMode = ViewMode.VIEW_2D;
     }
-    if ((viewMode === ViewMode.VIEW_3D) && (!this.m_needMode3d)) {
+    if (viewMode === ViewMode.VIEW_3D && !this.m_needMode3d) {
       viewMode = ViewMode.VIEW_2D;
     }
-    if ((viewMode === ViewMode.VIEW_2D) && (!this.m_needMode2d)) {
+    if (viewMode === ViewMode.VIEW_2D && !this.m_needMode2d) {
       viewMode = ViewMode.VIEW_3D;
     }
 
     // const strMpr = (viewMode === ViewMode.VIEW_MPR) ? 'primary' : 'secondary';
-    const str2d = (viewMode === ViewMode.VIEW_2D);
-    const str3dLight = (viewMode === ViewMode.VIEW_3D_LIGHT);
-    const str3d = (viewMode === ViewMode.VIEW_3D);
+    const str2d = viewMode === ViewMode.VIEW_2D;
+    const str3dLight = viewMode === ViewMode.VIEW_3D_LIGHT;
+    const str3d = viewMode === ViewMode.VIEW_3D;
 
-    const strTool3Don = (viewMode === ViewMode.VIEW_3D_LIGHT && isTool3D === true);
-    const strTool3Doff = (viewMode === ViewMode.VIEW_3D_LIGHT && isTool3D === false);
+    const strTool3Don = viewMode === ViewMode.VIEW_3D_LIGHT && isTool3D === true;
+    const strTool3Doff = viewMode === ViewMode.VIEW_3D_LIGHT && isTool3D === false;
 
     const jsx3d = (
-        <Tooltip content="Show volume in 3d mode with old rendering" placement="left">
-          <UIButton handler={this.onMode3d} active={str3d} icon="3D" />
-        </Tooltip>
+      <Tooltip content="Show volume in 3d mode with old rendering" placement="left">
+        <UIButton handler={this.onMode3d} active={str3d} icon="3D" />
+      </Tooltip>
     );
 
-
-    const jsxViewTool =
-    <Container direction="vertical">
-      <Tooltip content="Show volume in 3d mode with simple toolset" placement="left">
-        <UIButton handler={this.onView3d} active={strTool3Doff} icon="V" />
-      </Tooltip>
-      <Tooltip content="Show volume in 2d mode per slice on selected orientation" placement="left">
-        <UIButton handler={this.onTool3d} active={strTool3Don} icon="T" />
-      </Tooltip>
-    </Container>
+    const jsxViewTool = (
+      <Container direction="vertical">
+        <Tooltip content="Show volume in 3d mode with simple toolset" placement="left">
+          <UIButton handler={this.onView3d} active={strTool3Doff} icon="V" />
+        </Tooltip>
+        <Tooltip content="Show volume in 2d mode per slice on selected orientation" placement="left">
+          <UIButton handler={this.onTool3d} active={strTool3Don} icon="T" />
+        </Tooltip>
+      </Container>
+    );
 
     const FOUR = 4;
     let needShow3d = false;
@@ -135,17 +135,19 @@ class UiViewMode extends React.Component {
       }
     } // if more 0 volumes
     const test = true;
-    return <Container direction="vertical">
-      <Tooltip content="Show volume in 2d mode per slice on selected orientation" placement="left">
-        <UIButton handler={this.onMode2d} active={str2d} icon="2D" />
-      </Tooltip>
-      <Tooltip content="Show volume in 3d mode with fast rendering" placement="left">
-        <UIButton handler={this.onMode3dLight} active={str3dLight} icon="lightning" />
-      </Tooltip>
-      {(needShow3d) ? jsx3d : ''}
-      {(viewMode === ViewMode.VIEW_3D_LIGHT && test) ? jsxViewTool : ''}
-    </Container>;
+    return (
+      <Container direction="vertical">
+        <Tooltip content="Show volume in 2d mode per slice on selected orientation" placement="left">
+          <UIButton handler={this.onMode2d} active={str2d} icon="2D" />
+        </Tooltip>
+        <Tooltip content="Show volume in 3d mode with fast rendering" placement="left">
+          <UIButton handler={this.onMode3dLight} active={str3dLight} icon="lightning" />
+        </Tooltip>
+        {needShow3d ? jsx3d : ''}
+        {viewMode === ViewMode.VIEW_3D_LIGHT && test ? jsxViewTool : ''}
+      </Container>
+    );
   }
 }
 
-export default connect(store => store)(UiViewMode);
+export default connect((store) => store)(UiViewMode);

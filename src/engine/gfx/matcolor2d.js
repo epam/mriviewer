@@ -4,9 +4,9 @@
  */
 
 /**
-* Simple 2d mode material wiithout texture and lighting, only ambient color used
-* @module lib/scripts/gfx/matcolor2d
-*/
+ * Simple 2d mode material wiithout texture and lighting, only ambient color used
+ * @module lib/scripts/gfx/matcolor2d
+ */
 
 // ******************************************************************
 // imports
@@ -18,11 +18,11 @@ import * as THREE from 'three';
 /** Class @class MaterialColor2d for create 2d lines, etc */
 export default class MaterialColor2d {
   /** Simple material constructor
-  * @constructor
-  * @param (float) r - color component(red) in [0..1]
-  * @param (float) g - color component(green) in [0..1]
-  * @param (float) b - color component(blue) in [0..1]
-  */
+   * @constructor
+   * @param (float) r - color component(red) in [0..1]
+   * @param (float) g - color component(green) in [0..1]
+   * @param (float) b - color component(blue) in [0..1]
+   */
   constructor() {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';

@@ -4,9 +4,9 @@
  */
 
 /**
-* Low resolution isosurface rendering material for CT dataset
-* @module lib/scripts/gfx/matrendertotexture
-*/
+ * Low resolution isosurface rendering material for CT dataset
+ * @module lib/scripts/gfx/matrendertotexture
+ */
 
 // ******************************************************************
 // imports
@@ -19,12 +19,12 @@ import RENDER_TEXTURE_VERTEX_SHADER from '../shaders/rendertotexture.vert';
 import RENDER_TEXTURE_FRAGMENT_SHADER from '../shaders/rendertotexture.frag';
 
 /** Class @class MaterialRenderToTexture for
-* rough isosurface computation: a ray-casting optimization
-*/
+ * rough isosurface computation: a ray-casting optimization
+ */
 export default class MaterialRenderToTexture {
   /** Simple material constructor
-  * @constructor
-  */
+   * @constructor
+   */
   constructor() {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
@@ -67,8 +67,8 @@ export default class MaterialRenderToTexture {
   }
 
   /** Simple material constructor
-  * @return {object} Three.js material with this shader
-  */
+   * @return {object} Three.js material with this shader
+   */
   create(texTF, texVol2d, texVolMask, texVolAO, texBackface, texFrontface, offsets, callbackMat) {
     // Init uniforms
     this.m_uniforms.texTF.value = texTF;

@@ -4,18 +4,17 @@
  */
 
 /**
-* Triagle stack
-* @module lib/scripts/actvolume/trianglestack
-*/
-
+ * Triagle stack
+ * @module lib/scripts/actvolume/trianglestack
+ */
 
 // relative imports
 import TriangleSingle from './trianglesingle';
 
 /**
-* Class TriangleStack builds stack for triangles
-* @class TriangleStack
-*/
+ * Class TriangleStack builds stack for triangles
+ * @class TriangleStack
+ */
 export default class TriangleStack {
   constructor() {
     this.m_numAllocated = 0;
@@ -24,9 +23,9 @@ export default class TriangleStack {
   }
 
   /*
-  * Create triangle stack
-  * @param {number} depthLevel number of triangles in stack
-  */
+   * Create triangle stack
+   * @param {number} depthLevel number of triangles in stack
+   */
   create(depthLevel) {
     const ESTIM = 20;
     const MUL_INCREMENT = 4;
@@ -34,36 +33,36 @@ export default class TriangleStack {
     for (let i = 0; i < depthLevel; i++) {
       numTiEstimate *= MUL_INCREMENT;
     }
-    this.m_numAllocated  = numTiEstimate;
-    this.m_stack         = new Array(this.m_numAllocated);
+    this.m_numAllocated = numTiEstimate;
+    this.m_stack = new Array(this.m_numAllocated);
     for (let i = 0; i < this.m_numAllocated; i++) {
       this.m_stack[i] = new TriangleSingle();
     }
-    this.m_numStacked    = 0;
+    this.m_numStacked = 0;
   } // create
 
   /*
-  * Get stack depth
-  * @return {number} number of triangles in stack
-  */
+   * Get stack depth
+   * @return {number} number of triangles in stack
+   */
   getStackDepth() {
     return this.m_numStacked;
   }
 
   /*
-  * Chech is stack empty
-  * @return {boolean} true, if empty
-  */
+   * Chech is stack empty
+   * @return {boolean} true, if empty
+   */
   isEmpty() {
-    return (this.m_numStacked === 0);
+    return this.m_numStacked === 0;
   }
 
   /*
-  * Push triangle onto stack
-  * @param {object} va triangle a (THREE.Vector3)
-  * @param {object} vb triangle b (THREE.Vector3)
-  * @param {object} vc triangle c (THREE.Vector3)
-  */
+   * Push triangle onto stack
+   * @param {object} va triangle a (THREE.Vector3)
+   * @param {object} vb triangle b (THREE.Vector3)
+   * @param {object} vc triangle c (THREE.Vector3)
+   */
   push(va, vb, vc) {
     if (this.m_numStacked >= this.m_numAllocated) {
       return -1;
@@ -76,9 +75,9 @@ export default class TriangleStack {
   } // push triangle
 
   /*
-  * Pop triangle from stack
-  * @return {object} TriangleSingle object
-  */
+   * Pop triangle from stack
+   * @return {object} TriangleSingle object
+   */
   pop() {
     if (this.m_numStacked <= 0) {
       return null;
@@ -86,5 +85,4 @@ export default class TriangleStack {
     this.m_numStacked--;
     return this.m_stack[this.m_numStacked];
   } // pop triangle
-
 }
