@@ -4,19 +4,19 @@
  */
 
 .flexRow {
-    display: flex;
-    justify-content: flex-start;
-    align-items: stretch;
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
 }
 
 .flexRow > *:not(:first-child):not(:last-child) {
-    margin: 0 5px;
+  margin: 0 5px;
 }
 
 .flexRow > *:first-child {
-    margin-right: 5px;
+  margin-right: 5px;
 }
 
 .flexRow > *:last-child {
-    margin-left: 5px;
+  margin-left: 5px;
 }

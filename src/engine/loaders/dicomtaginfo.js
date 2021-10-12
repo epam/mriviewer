@@ -4,13 +4,13 @@
  */
 
 /**
-* Dicom tag info
-* @module lib/scripts/loaders/dicomtaginfo
-*/
+ * Dicom tag info
+ * @module lib/scripts/loaders/dicomtaginfo
+ */
 
 /**
-* Class @class DicomTagInfo tag descr
-*/
+ * Class @class DicomTagInfo tag descr
+ */
 class DicomTagInfo {
   constructor() {
     this.m_tag = '';

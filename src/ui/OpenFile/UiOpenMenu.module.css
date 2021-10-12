@@ -4,43 +4,41 @@
  */
 
 .save-file__area {
-    height: 50px;
-    display: flex;
-    align-content: center;
-    align-items: center;
-    padding: 0 0 0 5px;
-    justify-content: space-between;
-    width: 200px
+  height: 50px;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  padding: 0 0 0 5px;
+  justify-content: space-between;
+  width: 200px;
 }
 
 .open-file__area {
-    height: 50px;
-    background: #18191B;
-    opacity: var(--opacity);
-    border-radius: 10px;
-    margin: 0 25px 0 10px;
-    display: flex;
-    align-content: center;
-    align-items: center;
-    padding: 0;
-    width: calc(100% - 80px);
-    color: #636666;
-    font-family: Inter, sans-serif;
-    font-size: 15px;
-    line-height: 20px;
-    justify-content: space-between;
+  height: 50px;
+  background: #18191b;
+  opacity: var(--opacity);
+  border-radius: 10px;
+  margin: 0 25px 0 10px;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  padding: 0;
+  width: calc(100% - 80px);
+  color: #636666;
+  font-family: Inter, sans-serif;
+  font-size: 15px;
+  line-height: 20px;
+  justify-content: space-between;
 }
 
 .left {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .right {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .filename {
-    margin-left: 10px;
+  margin-left: 10px;
 }
-
-

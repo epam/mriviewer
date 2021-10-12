@@ -13,7 +13,6 @@ import MaterialColor2d from '../gfx/matcolor2d';
 import Line2D from './line2d';
 
 export default class DistanceTool {
-
   /**
    * Initialize distance tool
    * @param (object) scene - scene object
@@ -88,8 +87,15 @@ export default class DistanceTool {
       const yE = (this.m_vertexes[COUNT_POINTS * i + MODULO_1].yZ - posY) / zoom + (1 - 1 / zoom);
       const line = new Line2D(this.m_scene, this.m_lineWidth, xS, yS, xE, yE, this.m_linesMaterial);
       this.m_distances[i].line = line;
-      this.m_distances[i].text.updateText(0.5 * (xS + xE) - 0.00, 0.5 * (yS + yE) - 0.00, this.m_textWidthScr,
-        MeshText2D.ALIGN_CENTER, MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
+      this.m_distances[i].text.updateText(
+        0.5 * (xS + xE) - 0.0,
+        0.5 * (yS + yE) - 0.0,
+        this.m_textWidthScr,
+        MeshText2D.ALIGN_CENTER,
+        MeshText2D.ALIGN_CENTER,
+        this.m_textBgColor,
+        this.m_textColor
+      );
       this.m_scene.add(this.m_distances[i].text);
     }
   }
@@ -106,7 +112,8 @@ export default class DistanceTool {
    * @param (float) xPixelSize - canvas pixel size in mm for x axis
    * @param (float) yPixelSize - canvas pixel size in mm for y axis
    */
-  setPixelSize(xPixelSize, yPixelSize) { // in mm
+  setPixelSize(xPixelSize, yPixelSize) {
+    // in mm
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }
@@ -135,8 +142,7 @@ export default class DistanceTool {
       const line = new Line2D(this.m_scene, this.m_lineWidth, x, y, x, y, this.m_linesMaterial);
       const strMsg = '0 mm';
       const text = new MeshText2D(strMsg);
-      text.updateText(x, y, this.m_textWidthScr, MeshText2D.ALIGN_CENTER,
-        MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
+      text.updateText(x, y, this.m_textWidthScr, MeshText2D.ALIGN_CENTER, MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
       this.m_scene.add(text);
       this.m_distances.push({ line, text });
       this.m_vertexes.push({ xZ, yZ });
@@ -162,13 +168,24 @@ export default class DistanceTool {
       this.m_scene.remove(dist.line.getRenderObject());
       const line = new Line2D(this.m_scene, this.m_lineWidth, this.m_xStart, this.m_yStart, x, y, this.m_linesMaterial);
       this.m_scene.remove(dist.text);
-      const strMsg = `${(zoom * (Math.sqrt((x - this.m_xStart) * (x - this.m_xStart)
-        * this.m_xPixelSize * this.m_xPixelSize +
-        // eslint-disable-next-line
-        (y - this.m_yStart) * (y - this.m_yStart) * this.m_yPixelSize * this.m_yPixelSize))).toFixed(2)} mm`;
+      const strMsg = `${(
+        zoom *
+        Math.sqrt(
+          (x - this.m_xStart) * (x - this.m_xStart) * this.m_xPixelSize * this.m_xPixelSize +
+            // eslint-disable-next-line
+            (y - this.m_yStart) * (y - this.m_yStart) * this.m_yPixelSize * this.m_yPixelSize
+        )
+      ).toFixed(2)} mm`;
       const text = new MeshText2D(strMsg);
-      text.updateText(0.5 * (x + this.m_xStart) - 0.00, 0.5 * (y + this.m_yStart) - 0.00, this.m_textWidthScr,
-        MeshText2D.ALIGN_CENTER, MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
+      text.updateText(
+        0.5 * (x + this.m_xStart) - 0.0,
+        0.5 * (y + this.m_yStart) - 0.0,
+        this.m_textWidthScr,
+        MeshText2D.ALIGN_CENTER,
+        MeshText2D.ALIGN_CENTER,
+        this.m_textBgColor,
+        this.m_textColor
+      );
       this.m_scene.add(text);
       this.m_distances.push({ line, text });
     }

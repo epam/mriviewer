@@ -6,14 +6,14 @@
 class FileTools {
   static isValidUrl(string) {
     let url;
-    
+
     try {
       url = new URL(string);
     } catch (_) {
       return false;
     }
-    
-    return url.protocol === "http:" || url.protocol === "https:";
+
+    return url.protocol === 'http:' || url.protocol === 'https:';
   }
 
   static getFileNameFromUrl(strUrl) {
@@ -27,7 +27,7 @@ class FileTools {
     }
     let strFileName = strUrl.substring(idx + 1);
     const MAX_LEN = 40;
-    strFileName = (strFileName.length <= MAX_LEN) ? strFileName : strFileName.substring(0, MAX_LEN);
+    strFileName = strFileName.length <= MAX_LEN ? strFileName : strFileName.substring(0, MAX_LEN);
     return strFileName;
   }
 
@@ -43,4 +43,4 @@ class FileTools {
     return strUrl.substring(0, idx);
   }
 }
-export default FileTools;  
+export default FileTools;

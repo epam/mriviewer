@@ -4,9 +4,9 @@
  */
 
 /**
-* Render 2d lines in scene
-* @module app/scripts/graphics2d/line2d
-*/
+ * Render 2d lines in scene
+ * @module app/scripts/graphics2d/line2d
+ */
 
 import * as THREE from 'three';
 
@@ -16,15 +16,15 @@ const LINE_2D_Z_COORDINATE = 0.11;
 /** Class LineD is used for render lines in 2d mode */
 export default class Line2D {
   /**
-  * Constructor. Create line 2d mode and add to scene on render
-  * @param (object) scene - Scene where object will be rendered
-  * @param (float) lineWidth - Line width in scale [-1..+1]
-  * @param (float) xs - Line start, x coordinate
-  * @param (float) ys - Line start, y coordinate
-  * @param (float) xe - Line end, x coordinate
-  * @param (float) ye - Line end, y coordinate
-  * @param (object) matColor2d - MaterialColor2d
-  */
+   * Constructor. Create line 2d mode and add to scene on render
+   * @param (object) scene - Scene where object will be rendered
+   * @param (float) lineWidth - Line width in scale [-1..+1]
+   * @param (float) xs - Line start, x coordinate
+   * @param (float) ys - Line start, y coordinate
+   * @param (float) xe - Line end, x coordinate
+   * @param (float) ye - Line end, y coordinate
+   * @param (object) matColor2d - MaterialColor2d
+   */
   constructor(scene, lineWidth, xs, ys, xe, ye, matColor2d) {
     this.createWithMaterial(scene, lineWidth, xs, ys, xe, ye, matColor2d);
     this.m_xS = xs;
@@ -33,10 +33,7 @@ export default class Line2D {
     this.m_yE = ye;
   }
 
-  createWithMaterial(scene,
-    lineWidth,
-    xs, ys, xe, ye,
-    matColor2d) {
+  createWithMaterial(scene, lineWidth, xs, ys, xe, ye, matColor2d) {
     this.m_scene = scene;
     this.m_lineWidth = lineWidth;
 
@@ -90,41 +87,41 @@ export default class Line2D {
   }
 
   /**
-  * Get object for further scene addition. Need to remove old line from scene
-  * @return (object) line object
-  */
+   * Get object for further scene addition. Need to remove old line from scene
+   * @return (object) line object
+   */
   getRenderObject() {
     return this.m_mesh;
   }
 
   /**
-  * Return coordinate x of start point
-  * @return (float) x
-  */
+   * Return coordinate x of start point
+   * @return (float) x
+   */
   getxS() {
     return this.m_xS;
   }
 
   /**
-  * Return coordinate y of start point
-  * @return (float) y
-  */
+   * Return coordinate y of start point
+   * @return (float) y
+   */
   getyS() {
     return this.m_yS;
   }
 
   /**
-  * Return coordinate x of end point
-  * @return (float) x
-  */
+   * Return coordinate x of end point
+   * @return (float) x
+   */
   getxE() {
     return this.m_xE;
   }
 
   /**
-  * Return coordinate y of end point
-  * @return (float) y
-  */
+   * Return coordinate y of end point
+   * @return (float) y
+   */
   getyE() {
     return this.m_yE;
   }

@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // **********************************************
 // Imports
 // **********************************************
@@ -25,7 +24,7 @@ class ToolDistance {
     this.m_objGraphics2d = objGra;
     this.m_wScreen = 0;
     this.m_hScreen = 0;
-  
+
     this.m_pointStart = null;
     this.m_lines = [];
     this.m_mouseDown = false;
@@ -42,9 +41,9 @@ class ToolDistance {
   }
 
   /**
-   * 
+   *
    * @param {number} xs - world units hor / volume pixels (x)
-   * @param {number} ys - world units ver / volume pixels (y) 
+   * @param {number} ys - world units ver / volume pixels (y)
    */
   setPixelSize(xs, ys) {
     this.m_xPixelSize = xs;
@@ -55,7 +54,7 @@ class ToolDistance {
    * Determine intersection with points in lines set.
    * Input - screen coordinates of pick point
    * Output - volume coordinate
-   *  
+   *
    * @param {object} vScr - screen coordinates of poick
    * @param {object} store - global store
    */
@@ -80,9 +79,9 @@ class ToolDistance {
 
   /**
    * Move edited point into new pos
-   * 
-   * @param {object} vVolOld 
-   * @param {object} vVolNew 
+   *
+   * @param {object} vVolOld
+   * @param {object} vVolNew
    */
   moveEditPoint(vVolOld, vVolNew) {
     vVolOld.x = vVolNew.x;
@@ -148,7 +147,7 @@ class ToolDistance {
       y: 0.0,
     };
     const mode2d = store.mode2d;
-    const volSet = store.volumeSet; 
+    const volSet = store.volumeSet;
     const vol = volSet.getVolume(store.volumeIndex);
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
@@ -158,18 +157,18 @@ class ToolDistance {
     const yPos = store.render2dyPos;
     if (mode2d === Modes2d.TRANSVERSE) {
       // z const
-      vScr.x = ((xTex / xDim) - xPos) / zoom;
-      vScr.y = ((yTex / yDim) - yPos) / zoom;
+      vScr.x = (xTex / xDim - xPos) / zoom;
+      vScr.y = (yTex / yDim - yPos) / zoom;
     }
     if (mode2d === Modes2d.SAGGITAL) {
       // x const
-      vScr.x = ((xTex / yDim) - xPos) / zoom;
-      vScr.y = ((yTex / zDim) - yPos) / zoom;
+      vScr.x = (xTex / yDim - xPos) / zoom;
+      vScr.y = (yTex / zDim - yPos) / zoom;
     }
     if (mode2d === Modes2d.CORONAL) {
       // y const
-      vScr.x = ((xTex / xDim) - xPos) / zoom;
-      vScr.y = ((yTex / zDim) - yPos) / zoom;
+      vScr.x = (xTex / xDim - xPos) / zoom;
+      vScr.y = (yTex / zDim - yPos) / zoom;
     }
     vScr.x *= wScr;
     vScr.y *= hScr;
@@ -179,8 +178,7 @@ class ToolDistance {
   getDistMm(vs, ve) {
     const dx = vs.x - ve.x;
     const dy = vs.y - ve.y;
-    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize +
-      dy * dy * this.m_yPixelSize * this.m_yPixelSize);
+    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize + dy * dy * this.m_yPixelSize * this.m_yPixelSize);
     return dist;
   }
 
@@ -192,7 +190,7 @@ class ToolDistance {
     };
     const vEnd = {
       x: vTex.x,
-      y: vTex.y
+      y: vTex.y,
     };
     const objLine = {
       vs: vStart,
@@ -228,7 +226,8 @@ class ToolDistance {
     } // if num lines more 0
   }
 
-  onMouseUp() { // omitted args: xScr, yScr, store
+  onMouseUp() {
+    // omitted args: xScr, yScr, store
     this.m_mouseDown = false;
     const numLines = this.m_lines.length;
     if (numLines > 0) {
@@ -241,7 +240,6 @@ class ToolDistance {
         console.log('ToolDistance: pop last line');
       } // if last line is long enough
     } // if num lines more 0
-
   }
 
   clear() {
@@ -250,7 +248,7 @@ class ToolDistance {
 
   //
   // render lines on screen
-  // 
+  //
   render(ctx, store) {
     const numLines = this.m_lines.length;
     ctx.lineWidth = 2;
@@ -278,7 +276,6 @@ class ToolDistance {
       ctx.fillText(strMsg, xText, yText);
     }
   }
-
 } // end class
 
 export default ToolDistance;

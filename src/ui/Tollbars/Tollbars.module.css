@@ -4,27 +4,27 @@
  */
 
 .container {
-    display: inline-flex;
-    flex-wrap: wrap;
-    border-radius: 10px;
-    overflow: hidden;
-    opacity: var(--opacity);
+  display: inline-flex;
+  flex-wrap: wrap;
+  border-radius: 10px;
+  overflow: hidden;
+  opacity: var(--opacity);
 }
 
 .vertical {
-    flex-direction: column;
-    width: 50px;
+  flex-direction: column;
+  width: 50px;
 }
 
 .vertical:not(:first-child) {
-    margin-top: 25px;
+  margin-top: 25px;
 }
 
 .horizontal {
-    flex-direction: row;
-    height: 50px;
+  flex-direction: row;
+  height: 50px;
 }
 
 .horizontal:not(:first-child) {
-    margin-left: 25px;
+  margin-left: 25px;
 }

@@ -27,7 +27,6 @@ import TetrahedronGenerator from './actvolume/tetra';
 import Graphics23d from './tools23d/graphics23d';
 // import MaterialColor2d from './gfx/matcolor2d';
 
-
 // import GlCheck from './glcheck';
 // import GeoRender from '../actvolume/georender';
 
@@ -70,7 +69,6 @@ const SCENE_TYPE_SPHERE = 1;
 
 /** Class Graphics3d is used for 3d render */
 export default class VolumeRenderer3d {
-
   /**
    * Initialize render
    * @param (object) props - object container for various properties
@@ -134,8 +132,10 @@ export default class VolumeRenderer3d {
     this.isWebGL2 = glSelector.useWebGL2();
     this.canvas3d = glSelector.getCanvas();
     this.renderer = new THREE.WebGLRenderer({
-      antialias: false, canvas: this.canvas3d,
-      preserveDrawingBuffer: true, context: this.context
+      antialias: false,
+      canvas: this.canvas3d,
+      preserveDrawingBuffer: true,
+      context: this.context,
     });
     this.renderer.autoClearStencil = false;
     this.renderer.autoClearColor = false;
@@ -167,7 +167,7 @@ export default class VolumeRenderer3d {
     // the cutting plane and the direction vector onto the light source
     // this.orbitControl = new OrbitControl(root3dContainer, this.camera, this.scene, this.meshSphere, () => {
     this.orbitControl = new OrbitControl(this.renderer.domElement, this.camera, this.scene, this.mesh, () => {
-       //  if (this.checkFrameBufferMode === CHECK_MODE_RESULT_OK) {
+      //  if (this.checkFrameBufferMode === CHECK_MODE_RESULT_OK) {
       this.updateCutPlanes();
       this.updateLightDir();
     });
@@ -180,9 +180,9 @@ export default class VolumeRenderer3d {
     this.renderer.gammaOutput = true;
 
     this.RENDER_STATE = {
-      ENABLED : 0,
-      ONCE : 1,
-      DISABLED : 2
+      ENABLED: 0,
+      ONCE: 1,
+      DISABLED: 2,
     };
 
     this.renderState = this.RENDER_STATE.ENABLED;
@@ -222,7 +222,6 @@ export default class VolumeRenderer3d {
       y: 1.0,
       z: 1.0,
     };
-
   }
 
   setFileDataType(curFileDataType) {
@@ -230,8 +229,8 @@ export default class VolumeRenderer3d {
   }
 
   /**
-  * Special scene with sphere: remove old before adding new one
-  */
+   * Special scene with sphere: remove old before adding new one
+   */
   removeSphereFromSphereScene() {
     if (this.meshSphere !== null) {
       this.sceneSphere.remove(this.meshSphere);
@@ -241,8 +240,8 @@ export default class VolumeRenderer3d {
   }
 
   /**
-  * Special scene with sphere: add new generated Three js geometry (sphere)
-  */
+   * Special scene with sphere: add new generated Three js geometry (sphere)
+   */
   addSphereToSphereScene() {
     const gen = new TetrahedronGenerator();
     const vRadius = new THREE.Vector3(0.5, 0.5, 0.5);
@@ -294,11 +293,11 @@ export default class VolumeRenderer3d {
   }
 
   /**
-  * Special scene with sphere: copy rotated (by mouse) orientation from
-  * main mesh to sphere mesh
-  */
+   * Special scene with sphere: copy rotated (by mouse) orientation from
+   * main mesh to sphere mesh
+   */
   updateMeshSphere() {
-  /*
+    /*
     if (this.meshSphere !== null) {
       const pos = this.mesh.position;
       const quat = this.mesh.quaternion;
@@ -313,7 +312,7 @@ export default class VolumeRenderer3d {
    * Returns true if the maderial for VolumeRender is set
    */
   isVolumeLoaded() {
-    return (this.matVolumeRender !== null);
+    return this.matVolumeRender !== null;
   }
 
   fov2Tan(fov) {
@@ -348,7 +347,7 @@ export default class VolumeRenderer3d {
 
       // screen shot should contain the principal area of interest (a centered square touching screen sides)
       const areaOfInterestSize = Math.min(this.windowWidth, this.windowHeight);
-      const areaOfInterestTanFov2 = originalTanFov2 * areaOfInterestSize / this.windowHeight;
+      const areaOfInterestTanFov2 = (originalTanFov2 * areaOfInterestSize) / this.windowHeight;
 
       // set appropriate camera aspect & FOV
       const shotAspect = width / height;
@@ -390,8 +389,7 @@ export default class VolumeRenderer3d {
     this.Tool23D = isTool23D;
     if (this.Tool23D) {
       this.graphics23d = new Graphics23d(this.scene23D, this.windowWidth, this.windowHeight);
-    }
-    else {
+    } else {
       this.graphics23d = null;
     }
   }
@@ -583,44 +581,82 @@ export default class VolumeRenderer3d {
   setTransferFuncVec3(values, colorFlag) {
     if (this.matRenderToTexture !== null) {
       if (colorFlag === 0) {
-        this.matRenderToTexture.uniforms.t_function1min.value =
-          new THREE.Vector4(VOLUME_COLOR1_MIN_R, VOLUME_COLOR1_MIN_G, VOLUME_COLOR1_MIN_B, values[0]);
+        this.matRenderToTexture.uniforms.t_function1min.value = new THREE.Vector4(
+          VOLUME_COLOR1_MIN_R,
+          VOLUME_COLOR1_MIN_G,
+          VOLUME_COLOR1_MIN_B,
+          values[0]
+        );
       } else {
-        this.matRenderToTexture.uniforms.t_function1min.value =
-          new THREE.Vector4(VOLUME_COLOR3_MIN_R, VOLUME_COLOR3_MIN_G, VOLUME_COLOR3_MIN_B, values[0]);
+        this.matRenderToTexture.uniforms.t_function1min.value = new THREE.Vector4(
+          VOLUME_COLOR3_MIN_R,
+          VOLUME_COLOR3_MIN_G,
+          VOLUME_COLOR3_MIN_B,
+          values[0]
+        );
       }
       this.matRenderToTexture.uniforms.t_function1min.needsUpdate = true;
-      this.matRenderToTexture.uniforms.t_function1max.value =
-        new THREE.Vector4(VOLUME_COLOR1_MAX_R, VOLUME_COLOR1_MAX_G, VOLUME_COLOR1_MAX_B, values[1]);
+      this.matRenderToTexture.uniforms.t_function1max.value = new THREE.Vector4(
+        VOLUME_COLOR1_MAX_R,
+        VOLUME_COLOR1_MAX_G,
+        VOLUME_COLOR1_MAX_B,
+        values[1]
+      );
       this.matRenderToTexture.uniforms.t_function1max.needsUpdate = true;
-      this.matRenderToTexture.uniforms.t_function2min.value =
-        new THREE.Vector4(VOLUME_COLOR2_MIN_R, VOLUME_COLOR2_MIN_G, VOLUME_COLOR2_MIN_B, values[2]);
+      this.matRenderToTexture.uniforms.t_function2min.value = new THREE.Vector4(
+        VOLUME_COLOR2_MIN_R,
+        VOLUME_COLOR2_MIN_G,
+        VOLUME_COLOR2_MIN_B,
+        values[2]
+      );
       this.matRenderToTexture.uniforms.t_function2min.needsUpdate = true;
-      this.matRenderToTexture.uniforms.t_function2max.value =
-        new THREE.Vector4(VOLUME_COLOR2_MAX_R, VOLUME_COLOR2_MAX_G, VOLUME_COLOR2_MAX_B, values[2]);
+      this.matRenderToTexture.uniforms.t_function2max.value = new THREE.Vector4(
+        VOLUME_COLOR2_MAX_R,
+        VOLUME_COLOR2_MAX_G,
+        VOLUME_COLOR2_MAX_B,
+        values[2]
+      );
       this.matRenderToTexture.uniforms.t_function2max.needsUpdate = true;
-      this.matRenderToTexture.uniforms.stepSize.value =
-        new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
+      this.matRenderToTexture.uniforms.stepSize.value = new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
       this.matRenderToTexture.uniforms.stepSize.needsUpdate = true;
       if (colorFlag === 0) {
-        this.matVolumeRender.uniforms.t_function1min.value =
-          new THREE.Vector4(VOLUME_COLOR1_MIN_R, VOLUME_COLOR1_MIN_G, VOLUME_COLOR1_MIN_B, values[0]);
+        this.matVolumeRender.uniforms.t_function1min.value = new THREE.Vector4(
+          VOLUME_COLOR1_MIN_R,
+          VOLUME_COLOR1_MIN_G,
+          VOLUME_COLOR1_MIN_B,
+          values[0]
+        );
       } else {
-        this.matVolumeRender.uniforms.t_function1min.value =
-          new THREE.Vector4(VOLUME_COLOR3_MIN_R, VOLUME_COLOR3_MIN_G, VOLUME_COLOR3_MIN_B, values[0]);
+        this.matVolumeRender.uniforms.t_function1min.value = new THREE.Vector4(
+          VOLUME_COLOR3_MIN_R,
+          VOLUME_COLOR3_MIN_G,
+          VOLUME_COLOR3_MIN_B,
+          values[0]
+        );
       }
       this.matVolumeRender.uniforms.t_function1min.needsUpdate = true;
-      this.matVolumeRender.uniforms.t_function1max.value =
-        new THREE.Vector4(VOLUME_COLOR1_MAX_R, VOLUME_COLOR1_MAX_G, VOLUME_COLOR1_MAX_B, values[1]);
+      this.matVolumeRender.uniforms.t_function1max.value = new THREE.Vector4(
+        VOLUME_COLOR1_MAX_R,
+        VOLUME_COLOR1_MAX_G,
+        VOLUME_COLOR1_MAX_B,
+        values[1]
+      );
       this.matVolumeRender.uniforms.t_function1max.needsUpdate = true;
-      this.matVolumeRender.uniforms.t_function2min.value =
-        new THREE.Vector4(VOLUME_COLOR2_MIN_R, VOLUME_COLOR2_MIN_G, VOLUME_COLOR2_MIN_B, values[2]);
+      this.matVolumeRender.uniforms.t_function2min.value = new THREE.Vector4(
+        VOLUME_COLOR2_MIN_R,
+        VOLUME_COLOR2_MIN_G,
+        VOLUME_COLOR2_MIN_B,
+        values[2]
+      );
       this.matVolumeRender.uniforms.t_function2min.needsUpdate = true;
-      this.matVolumeRender.uniforms.t_function2max.value =
-        new THREE.Vector4(VOLUME_COLOR2_MAX_R, VOLUME_COLOR2_MAX_G, VOLUME_COLOR2_MAX_B, values[2]);
+      this.matVolumeRender.uniforms.t_function2max.value = new THREE.Vector4(
+        VOLUME_COLOR2_MAX_R,
+        VOLUME_COLOR2_MAX_G,
+        VOLUME_COLOR2_MAX_B,
+        values[2]
+      );
       this.matVolumeRender.uniforms.t_function2max.needsUpdate = true;
-      this.matVolumeRender.uniforms.stepSize.value =
-        new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
+      this.matVolumeRender.uniforms.stepSize.value = new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
       this.matVolumeRender.uniforms.stepSize.needsUpdate = true;
     }
   }
@@ -681,11 +717,11 @@ export default class VolumeRenderer3d {
         const vy = this.geometrySphere.getAttribute('position').getY(i);
         const vz = this.geometrySphere.getAttribute('position').getZ(i);
         // eslint-disable-next-line
-        uvw[i * VAL_3 + 0] = -vx / this.vBoxVirt.x;// / this.vBoxVirt.x; //-(vx + this.geo_offset1.x) * this.geo_scale.x  + this.geo_offset2.x;
+        uvw[i * VAL_3 + 0] = -vx / this.vBoxVirt.x; // / this.vBoxVirt.x; //-(vx + this.geo_offset1.x) * this.geo_scale.x  + this.geo_offset2.x;
         // eslint-disable-next-line
-        uvw[i * VAL_3 + 1] = +vy / this.vBoxVirt.y;// / this.vBoxVirt.y; //(vy + this.geo_offset1.y) * this.geo_scale.y  + this.geo_offset2.y;
+        uvw[i * VAL_3 + 1] = +vy / this.vBoxVirt.y; // / this.vBoxVirt.y; //(vy + this.geo_offset1.y) * this.geo_scale.y  + this.geo_offset2.y;
         // eslint-disable-next-line
-        uvw[i * VAL_3 + 2] = +vz / this.vBoxVirt.z;// / this.vBoxVirt.z; //(vz + this.geo_offset1.z) * this.geo_scale.z  + this.geo_offset2.z;
+        uvw[i * VAL_3 + 2] = +vz / this.vBoxVirt.z; // / this.vBoxVirt.z; //(vz + this.geo_offset1.z) * this.geo_scale.z  + this.geo_offset2.z;
       }
       this.geometrySphere.addAttribute('uvw', new THREE.BufferAttribute(uvw, VAL_3));
       this.geometrySphere.getAttribute('uvw').needsUpdate = true;
@@ -695,7 +731,9 @@ export default class VolumeRenderer3d {
     if (NEED_FACE_VERTEX_UVW) {
       this.geometrySphere.faceVertexUvs = [];
       const numVertices = this.geometrySphere.vertices.count;
-      const OFF_0 = 0, OFF_1 = 1, OFF_2 = 2;
+      const OFF_0 = 0,
+        OFF_1 = 1,
+        OFF_2 = 2;
       const uvw = new Float32Array(numVertices * VAL_3);
       let j = 0;
       for (let i = 0; i < numVertices; i++, j += VAL_3) {
@@ -754,7 +792,6 @@ export default class VolumeRenderer3d {
       uvw[i * VAL_3 + 1] = v.y;
       // eslint-disable-next-line
       uvw[i * VAL_3 + 2] = v.z;
-
     }
     this.planeGeometry.addAttribute('uvw', new THREE.BufferAttribute(uvw, VAL_3));
     this.planeGeometry.getAttribute('uvw').needsUpdate = true;
@@ -780,12 +817,12 @@ export default class VolumeRenderer3d {
    * @param (bool) isRoiVolume) - is roi volume
    */
   initWithVolume(volume, box, nonEmptyBoxMin, nonEmptyBoxMax, isRoiVolume, isFULL3D) {
-    let sideMax = (box.x > box.y) ? box.x : box.y;
-    sideMax = (box.z > sideMax) ? box.z : sideMax;
+    let sideMax = box.x > box.y ? box.x : box.y;
+    sideMax = box.z > sideMax ? box.z : sideMax;
     this.vBoxVirt.x = box.x / sideMax;
     this.vBoxVirt.y = box.y / sideMax;
     this.vBoxVirt.z = box.z / sideMax;
-    this.isoThreshold = this.curFileDataType.thresholdIsosurf;    
+    this.isoThreshold = this.curFileDataType.thresholdIsosurf;
     this.volume = volume;
     this.nonEmptyBoxMin = nonEmptyBoxMin;
     this.nonEmptyBoxMax = nonEmptyBoxMax;
@@ -845,7 +882,7 @@ export default class VolumeRenderer3d {
     this.camera.position.set(0.0, 0.0, 1.5);
     // eslint-disable-next-line
     this.camera.lookAt(new THREE.Vector3(0.0, 0.0, 0.0));
-    // Create 3D texture    
+    // Create 3D texture
     const xDim = this.volume.m_xDim;
     const yDim = this.volume.m_yDim;
     const zDim = this.volume.m_zDim;
@@ -912,14 +949,13 @@ export default class VolumeRenderer3d {
       // Create Render Target for front face render
       //this.ffTexture = new THREE.WebGLRenderTarget(this.windowWidth * window.devicePixelRatio,
       //this.windowHeight * window.devicePixelRatio, {
-      this.ffTexture = new THREE.WebGLRenderTarget(this.windowWidth,
-        this.windowHeight, {
-          minFilter: THREE.LinearFilter,
-          magFilter: THREE.LinearFilter,
-          format: THREE.RGBAFormat,
-          type: THREE.FloatType,
-          depthBuffer: true,
-        });
+      this.ffTexture = new THREE.WebGLRenderTarget(this.windowWidth, this.windowHeight, {
+        minFilter: THREE.LinearFilter,
+        magFilter: THREE.LinearFilter,
+        format: THREE.RGBAFormat,
+        type: THREE.FloatType,
+        depthBuffer: true,
+      });
       this.bufferFFTextureCPU = new Float32Array(VAL_4 * this.windowWidth * this.windowHeight);
 
       if (this.renderfTexture) {
@@ -931,14 +967,13 @@ export default class VolumeRenderer3d {
       this.ySmallTexSize = Math.floor(this.windowHeight / VAL_3);
       //this.renderToTexture = new THREE.WebGLRenderTarget((this.windowWidth * window.devicePixelRatio) / VAL_3,
       //(this.windowHeight * window.devicePixelRatio) / VAL_3, {
-      this.renderToTexture = new THREE.WebGLRenderTarget(this.xSmallTexSize,
-        this.ySmallTexSize, {
-          minFilter: THREE.NearestFilter,
-          magFilter: THREE.NearestFilter,
-          format: THREE.RGBAFormat,
-          type: THREE.FloatType,
-          depthBuffer: true,
-        });
+      this.renderToTexture = new THREE.WebGLRenderTarget(this.xSmallTexSize, this.ySmallTexSize, {
+        minFilter: THREE.NearestFilter,
+        magFilter: THREE.NearestFilter,
+        format: THREE.RGBAFormat,
+        type: THREE.FloatType,
+        depthBuffer: true,
+      });
       this.bufferRenderToTextureCPU = new Float32Array(VAL_4 * this.xSmallTexSize * this.ySmallTexSize);
     } else {
       console.log('cant create float texture');
@@ -980,7 +1015,6 @@ export default class VolumeRenderer3d {
     this.orbitControl.setMesh(this.mesh);
     this.orbitControl.setWireMesh(this.meshSphere);
 
-
     // Create material for volume render to texture
     const offsets = [];
     const nOffs = 64;
@@ -991,31 +1025,48 @@ export default class VolumeRenderer3d {
       // eslint-disable-next-line
       const y = Math.random() * 2 - 1;
       // eslint-disable-next-line
-//      const z = Math.random() * 2 - 1;
+      //      const z = Math.random() * 2 - 1;
       const z = -Math.random();
       offsets.push(new THREE.Vector3(x, y, z));
     }
     this.matRenderToTextureThreeGS = new MaterialRenderToTexture();
     this.matRenderToTextureThreeGS.m_uniforms.colorMap1D.value = this.colorMapTexture;
-    this.matRenderToTextureThreeGS.create(this.texTF, this.volTexture,
-      null, this.texVolumeAO, this.bfTexture.texture, this.ffTexture.texture, offsets,
+    this.matRenderToTextureThreeGS.create(
+      this.texTF,
+      this.volTexture,
+      null,
+      this.texVolumeAO,
+      this.bfTexture.texture,
+      this.ffTexture.texture,
+      offsets,
       //this.volTextureMask, this.texVolumeAO, this.bfTexture.texture, this.ffTexture.texture, offsets,
       (mat) => {
-        mat.uniforms.t_function1min.value =
-          new THREE.Vector4(VOLUME_COLOR1_MIN_R, VOLUME_COLOR1_MIN_G, VOLUME_COLOR1_MIN_B,
-            this.curFileDataType.thresholdTissue1);
-        mat.uniforms.t_function1max.value =
-          new THREE.Vector4(VOLUME_COLOR1_MAX_R, VOLUME_COLOR1_MAX_G, VOLUME_COLOR1_MAX_B,
-            this.curFileDataType.thresholdTissue2);
-        mat.uniforms.t_function2min.value =
-          new THREE.Vector4(VOLUME_COLOR2_MIN_R, VOLUME_COLOR2_MIN_G, VOLUME_COLOR2_MIN_B,
-            this.curFileDataType.thresholdIsosurf);
-        mat.uniforms.t_function2max.value =
-          new THREE.Vector4(VOLUME_COLOR2_MAX_R, VOLUME_COLOR2_MAX_G, VOLUME_COLOR2_MAX_B,
-            this.curFileDataType.thresholdIsosurf);
-        mat.uniforms.stepSize.value =
-          new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
-        mat.uniforms.texSize.value = xDim;//this.engine2d.m_volumeHeader.m_pixelWidth;
+        mat.uniforms.t_function1min.value = new THREE.Vector4(
+          VOLUME_COLOR1_MIN_R,
+          VOLUME_COLOR1_MIN_G,
+          VOLUME_COLOR1_MIN_B,
+          this.curFileDataType.thresholdTissue1
+        );
+        mat.uniforms.t_function1max.value = new THREE.Vector4(
+          VOLUME_COLOR1_MAX_R,
+          VOLUME_COLOR1_MAX_G,
+          VOLUME_COLOR1_MAX_B,
+          this.curFileDataType.thresholdTissue2
+        );
+        mat.uniforms.t_function2min.value = new THREE.Vector4(
+          VOLUME_COLOR2_MIN_R,
+          VOLUME_COLOR2_MIN_G,
+          VOLUME_COLOR2_MIN_B,
+          this.curFileDataType.thresholdIsosurf
+        );
+        mat.uniforms.t_function2max.value = new THREE.Vector4(
+          VOLUME_COLOR2_MAX_R,
+          VOLUME_COLOR2_MAX_G,
+          VOLUME_COLOR2_MAX_B,
+          this.curFileDataType.thresholdIsosurf
+        );
+        mat.uniforms.stepSize.value = new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
+        mat.uniforms.texSize.value = xDim; //this.engine2d.m_volumeHeader.m_pixelWidth;
         mat.uniforms.isoThreshold.value = this.curFileDataType.thresholdIsosurf;
         mat.uniforms.brightness3D.value = this.curFileDataType.brightness;
         mat.uniforms.opacityBarrier.value = OPACITY_SCALE * this.curFileDataType.opacityTissue;
@@ -1024,18 +1075,21 @@ export default class VolumeRenderer3d {
         mat.uniforms.xDim.value = xDim;
         mat.uniforms.yDim.value = yDim;
 
-        mat.uniforms.lightDir.value = new THREE.Vector3(this.curFileDataType.lightDirComp,
-          this.curFileDataType.lightDirComp, this.curFileDataType.lightDirComp);
+        mat.uniforms.lightDir.value = new THREE.Vector3(
+          this.curFileDataType.lightDirComp,
+          this.curFileDataType.lightDirComp,
+          this.curFileDataType.lightDirComp
+        );
         mat.uniforms.needsUpdate = true;
         this.matRenderToTexture = mat;
         this.sceneReadyCounter++;
-      });
+      }
+    );
 
     // Create material for interpolation
     matIntetpl = new MaterialInterpolation();
     const VAL_3 = 3.0;
-    matIntetpl.m_uniforms.isoSurfTexel.value = new THREE.Vector2(VAL_3 / this.windowWidth,
-      VAL_3 / this.windowHeight);
+    matIntetpl.m_uniforms.isoSurfTexel.value = new THREE.Vector2(VAL_3 / this.windowWidth, VAL_3 / this.windowHeight);
     matIntetpl.create(this.renderToTexture.texture, (mat) => {
       mat.uniforms.needsUpdate = true;
       //this.matInterpolation = mat;
@@ -1044,27 +1098,44 @@ export default class VolumeRenderer3d {
 
     // Create material for main pass of volume render
     this.matSkullThreeGS = new MaterialVolumeRender();
-    this.matSkullThreeGS.m_uniforms.isoSurfTexel.value = new THREE.Vector2(VAL_3 / this.windowWidth,
-      VAL_3 / this.windowHeight);
+    this.matSkullThreeGS.m_uniforms.isoSurfTexel.value = new THREE.Vector2(VAL_3 / this.windowWidth, VAL_3 / this.windowHeight);
     this.matSkullThreeGS.m_uniforms.colorMap1D.value = this.colorMapTexture;
-    this.matSkullThreeGS.create(this.texTF, this.volTexture,
-      null, this.texVolumeAO, this.bfTexture.texture, this.ffTexture.texture,
+    this.matSkullThreeGS.create(
+      this.texTF,
+      this.volTexture,
+      null,
+      this.texVolumeAO,
+      this.bfTexture.texture,
+      this.ffTexture.texture,
       //this.volTextureMask, this.texVolumeAO, this.bfTexture.texture, this.ffTexture.texture,
-      this.renderToTexture.texture, offsets, (mat) => {
-        mat.uniforms.t_function1min.value =
-          new THREE.Vector4(VOLUME_COLOR1_MIN_R, VOLUME_COLOR1_MIN_G, VOLUME_COLOR1_MIN_B,
-            this.curFileDataType.thresholdTissue1);
-        mat.uniforms.t_function1max.value =
-          new THREE.Vector4(VOLUME_COLOR1_MAX_R, VOLUME_COLOR1_MAX_G, VOLUME_COLOR1_MAX_B,
-            this.curFileDataType.thresholdTissue2);
-        mat.uniforms.t_function2min.value =
-          new THREE.Vector4(VOLUME_COLOR2_MIN_R, VOLUME_COLOR2_MIN_G, VOLUME_COLOR2_MIN_B,
-            this.curFileDataType.thresholdIsosurf);
-        mat.uniforms.t_function2max.value =
-          new THREE.Vector4(VOLUME_COLOR2_MAX_R, VOLUME_COLOR2_MAX_G, VOLUME_COLOR2_MAX_B,
-            this.curFileDataType.thresholdIsosurf);
-        mat.uniforms.stepSize.value =
-          new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
+      this.renderToTexture.texture,
+      offsets,
+      (mat) => {
+        mat.uniforms.t_function1min.value = new THREE.Vector4(
+          VOLUME_COLOR1_MIN_R,
+          VOLUME_COLOR1_MIN_G,
+          VOLUME_COLOR1_MIN_B,
+          this.curFileDataType.thresholdTissue1
+        );
+        mat.uniforms.t_function1max.value = new THREE.Vector4(
+          VOLUME_COLOR1_MAX_R,
+          VOLUME_COLOR1_MAX_G,
+          VOLUME_COLOR1_MAX_B,
+          this.curFileDataType.thresholdTissue2
+        );
+        mat.uniforms.t_function2min.value = new THREE.Vector4(
+          VOLUME_COLOR2_MIN_R,
+          VOLUME_COLOR2_MIN_G,
+          VOLUME_COLOR2_MIN_B,
+          this.curFileDataType.thresholdIsosurf
+        );
+        mat.uniforms.t_function2max.value = new THREE.Vector4(
+          VOLUME_COLOR2_MAX_R,
+          VOLUME_COLOR2_MAX_G,
+          VOLUME_COLOR2_MAX_B,
+          this.curFileDataType.thresholdIsosurf
+        );
+        mat.uniforms.stepSize.value = new THREE.Vector4(STEP_SIZE1, STEP_SIZE2, STEP_SIZE3, STEP_SIZE4);
         mat.uniforms.texSize.value = xDim;
         mat.uniforms.isoThreshold.value = this.curFileDataType.thresholdIsosurf;
         mat.uniforms.brightness3D.value = this.curFileDataType.brightness;
@@ -1074,20 +1145,24 @@ export default class VolumeRenderer3d {
         mat.uniforms.yDim.value = yDim;
 
         mat.uniforms.opacityBarrier.value = OPACITY_SCALE * this.curFileDataType.opacityTissue;
-        mat.uniforms.lightDir.value = new THREE.Vector3(this.curFileDataType.lightDirComp,
-          this.curFileDataType.lightDirComp, this.curFileDataType.lightDirComp);
+        mat.uniforms.lightDir.value = new THREE.Vector3(
+          this.curFileDataType.lightDirComp,
+          this.curFileDataType.lightDirComp,
+          this.curFileDataType.lightDirComp
+        );
         mat.uniforms.needsUpdate = true;
         this.scene.add(this.mesh);
         this.matVolumeRender = mat;
         if (isFULL3D) {
-          this.switchToFullVolumeRender() 
+          this.switchToFullVolumeRender();
         } else {
-          this.switchToVolumeRender();      
+          this.switchToVolumeRender();
         }
         this.mesh.material = this.matVolumeRender;
         this.meshSphere.material = this.matVolumeRender;
         this.sceneReadyCounter++;
-      });
+      }
+    );
     //this.tools23d.set2dToolType(toolType);
     //matSkullThreeGS.m_uniforms.texVolumeMask.value = this.volTextureMask;
   } // callbackCreateCubeVolume
@@ -1115,7 +1190,8 @@ export default class VolumeRenderer3d {
    */
   updateSelectedRoiMap(selectedROIs) {
     this.volumeUpdater.updateSelectedRoiMap(selectedROIs);
-  }  /**
+  }
+  /**
    * Rotate Cut Plane (Rotation is inverse to the object)
    */
 
@@ -1186,8 +1262,7 @@ export default class VolumeRenderer3d {
     if (this.sceneReadyCounter !== SCENE_READY_COUNTER_OK) {
       return false;
     }
-    const matReady = (this.matVolumeRender !== null) && (this.matBF !== null) &&
-      (this.matFF !== null) && (this.matRenderToTexture !== null);
+    const matReady = this.matVolumeRender !== null && this.matBF !== null && this.matFF !== null && this.matRenderToTexture !== null;
     if (!matReady) {
       return false;
     }
@@ -1204,8 +1279,7 @@ export default class VolumeRenderer3d {
     if (!this.isReadyToRender()) {
       return;
     }
-    const matReady = (this.matVolumeRender !== null) && (this.matBF !== null) &&
-      (this.matFF !== null) && (this.matRenderToTexture !== null);
+    const matReady = this.matVolumeRender !== null && this.matBF !== null && this.matFF !== null && this.matRenderToTexture !== null;
     if (!matReady) {
       // do nothing
     } else {
@@ -1219,7 +1293,7 @@ export default class VolumeRenderer3d {
         this.updateLightDir();
         this.updateClipPlaneGeometry();
         this.updateCutPlanes();
-        
+
         this.renderer.setRenderTarget(this.bfTexture);
         this.renderer.clear();
         this.renderer.state.buffers.depth.setClear(0);
@@ -1248,15 +1322,14 @@ export default class VolumeRenderer3d {
         this.scene.overrideMaterial = this.matRenderToTexture;
         this.renderer.render(this.scene, this.camera, this.renderToTexture);
         if (this.isEraseMode && !this.lockEraserBuffersUpdating) {
-          glC.readPixels(0, 0, this.xSmallTexSize, this.ySmallTexSize, glC.RGBA, glC.FLOAT,
-            this.bufferRenderToTextureCPU);
+          glC.readPixels(0, 0, this.xSmallTexSize, this.ySmallTexSize, glC.RGBA, glC.FLOAT, this.bufferRenderToTextureCPU);
         }
         // get a reference to the internal WebGL rendering context
         this.scene.overrideMaterial = null;
         this.renderer.render(this.scene, this.camera);
         // Render wireframe mesh
         this.renderer.autoClearDepth = false;
-        
+
         //this.matWireFrame
         //this.renderer.clear();
         if (this.Tool23D) {
@@ -1289,22 +1362,22 @@ export default class VolumeRenderer3d {
   }
 
   /**
-  * Get object's vertex (3d) projection on screen, using current object transformation
-  *
-  * param vPos(THREE.Vector3) - sphere vertex of object
-  * param vProjScreen(THREE.Vector2) - screen projection of vertex above
-  * return z coordinate of projection on screen. If > 0, then visible
-  */
+   * Get object's vertex (3d) projection on screen, using current object transformation
+   *
+   * param vPos(THREE.Vector3) - sphere vertex of object
+   * param vProjScreen(THREE.Vector2) - screen projection of vertex above
+   * return z coordinate of projection on screen. If > 0, then visible
+   */
   getVertexProjectionToScreen(vPos, vProjScreen) {
     const vProj = vPos.clone();
     vProj.applyMatrix4(this.meshSphere.matrixWorld);
     vProj.project(this.camera);
     const W_HALF = this.windowWidth * 0.5;
     const H_HALF = this.windowHeight * 0.5;
-    const xProj = W_HALF + (W_HALF * vProj.x);
+    const xProj = W_HALF + W_HALF * vProj.x;
     // it should be H_HALF - (...
     // but we have y axis up in mouse coord system
-    const yProj = H_HALF + (H_HALF * vProj.y);
+    const yProj = H_HALF + H_HALF * vProj.y;
     vProjScreen.x = xProj;
     vProjScreen.y = yProj;
 
@@ -1377,13 +1450,12 @@ export default class VolumeRenderer3d {
     this.renderState = this.RENDER_STATE.ENABLED;
     if (!(this.isEraseMode && this.eraserMouseDown && this.eraserStart)) {
       this.orbitControl.onMouseMove(xx, yy);
-    }
-    else {
+    } else {
       this.volumeUpdater.eraser.eraseStart(xx, yy, this.windowWidth, this.matVolumeRender.uniforms.isoThreshold.value, false);
     }
   }
 
-  onMouseUp( xx, yy ) {
+  onMouseUp(xx, yy) {
     if (this.Tool23D) {
       this.graphics23d.onMouseUp(xx / this.windowWidth, yy / this.windowHeight);
       return;
@@ -1400,7 +1472,7 @@ export default class VolumeRenderer3d {
 
   onMouseWheel({ deltaY }) {
     const delta = deltaY < 0 ? 1 : -1;
-    this.orbitControl.onZoom(delta * 2 ** (-5));
+    this.orbitControl.onZoom(delta * 2 ** -5);
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
       return;
     }

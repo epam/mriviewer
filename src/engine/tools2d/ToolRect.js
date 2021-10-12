@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // **********************************************
 // Imports
 // **********************************************
@@ -60,8 +59,7 @@ class ToolRect {
   getDistMm(vs, ve) {
     const dx = vs.x - ve.x;
     const dy = vs.y - ve.y;
-    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize +
-      dy * dy * this.m_yPixelSize * this.m_yPixelSize);
+    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize + dy * dy * this.m_yPixelSize * this.m_yPixelSize);
     return dist;
   }
 
@@ -69,7 +67,7 @@ class ToolRect {
    * Determine intersection with points in rect set.
    * Input - screen coordinates of pick point
    * Output - volume coordinate
-   *  
+   *
    * @param {object} vScr - screen coordinates of pick
    * @param {object} store - global store
    */
@@ -95,9 +93,9 @@ class ToolRect {
 
   /**
    * Move edited point into new pos
-   * 
-   * @param {object} vVolOld 
-   * @param {object} vVolNew 
+   *
+   * @param {object} vVolOld
+   * @param {object} vVolNew
    */
   moveEditPoint(vVolOld, vVolNew) {
     vVolOld.x = vVolNew.x;
@@ -108,7 +106,7 @@ class ToolRect {
 
   /**
    * Remove highlighted object
-   * 
+   *
    */
   deleteObject() {
     if (this.m_objEdit != null) {
@@ -123,7 +121,7 @@ class ToolRect {
     const volSet = store.volumeSet;
     const volIndex = store.volumeIndex;
     const vol = volSet.getVolume(volIndex);
-                                          
+
     const xSize = vol.m_boxSize.x;
     const ySize = vol.m_boxSize.y;
     const zSize = vol.m_boxSize.z;
@@ -131,7 +129,8 @@ class ToolRect {
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
-    let xScale = 0.0, yScale = 0.0;
+    let xScale = 0.0,
+      yScale = 0.0;
     if (mode2d === Modes2d.TRANSVERSE) {
       // z const
       xScale = xSize / xDim;
@@ -145,16 +144,15 @@ class ToolRect {
       xScale = xSize / xDim;
       yScale = zSize / zDim;
     }
-    const dx = Math.abs(objRect.vMax.x - objRect.vMin.x); 
-    const dy = Math.abs(objRect.vMax.y - objRect.vMin.y); 
-    objRect.area = xScale * yScale * dx * dy; 
+    const dx = Math.abs(objRect.vMax.x - objRect.vMin.x);
+    const dy = Math.abs(objRect.vMax.y - objRect.vMin.y);
+    objRect.area = xScale * yScale * dx * dy;
   }
 
   onMouseDown(xScr, yScr, store) {
     this.m_store = store;
     const vTex = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
-    if (!this.m_inCreateMode)
-    {
+    if (!this.m_inCreateMode) {
       this.m_inCreateMode = true;
       // start add rect
       const objRect = {
@@ -186,12 +184,13 @@ class ToolRect {
     } // if in create rect mode
   }
 
-  onMouseUp() { // ommitred args: xScr, yScr, store
+  onMouseUp() {
+    // ommitred args: xScr, yScr, store
   }
 
   /**
    * Render all areas on screen in 2d mode
-   * 
+   *
    * @param {object} ctx - html5 canvas context
    * @param {object} store - global store with app parameters
    */
@@ -223,7 +222,6 @@ class ToolRect {
       const yText = Math.floor((vScrMin.y + vScrMax.y) * 0.5);
       const strMsg = objRect.area.toFixed(2) + ' mm^2';
       ctx.fillText(strMsg, xText, yText);
-
     } // for (i) all rects
   } // end render
 } // end class ToolRect

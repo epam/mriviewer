@@ -101,8 +101,15 @@ export default class AreaTool {
       const line = new Line2D(this.m_scene, this.m_lineWidth, xS, yS, xE, yE, this.m_linesMaterial);
       this.m_distances[i].line = line;
       if (this.m_distances[i].text != null) {
-        this.m_distances[i].text.updateText(0.5 * (xS + xE) - 0.00, 0.5 * (yS + yE) - 0.00, this.m_textWidthScr,
-          MeshText2D.ALIGN_CENTER, MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
+        this.m_distances[i].text.updateText(
+          0.5 * (xS + xE) - 0.0,
+          0.5 * (yS + yE) - 0.0,
+          this.m_textWidthScr,
+          MeshText2D.ALIGN_CENTER,
+          MeshText2D.ALIGN_CENTER,
+          this.m_textBgColor,
+          this.m_textColor
+        );
         this.m_scene.add(this.m_distances[i].text);
       }
     }
@@ -113,7 +120,8 @@ export default class AreaTool {
    * @param (float) xPixelSize - canvas pixel size in mm for x axis
    * @param (float) yPixelSize - canvas pixel size in mm for y axis
    */
-  setPixelSize(xPixelSize, yPixelSize) { // in mm
+  setPixelSize(xPixelSize, yPixelSize) {
+    // in mm
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }
@@ -135,10 +143,14 @@ export default class AreaTool {
    * @return {Array} coordinate point of intersection and information about the belonging point of a straight line
    */
   lineIntersect(point1, point2, point3, point4) {
-    const x1 = point1.x, y1 = point1.y;
-    const x2 = point2.x, y2 = point2.y;
-    const x3 = point3.x, y3 = point3.y;
-    const x4 = point4.x, y4 = point4.y;
+    const x1 = point1.x,
+      y1 = point1.y;
+    const x2 = point2.x,
+      y2 = point2.y;
+    const x3 = point3.x,
+      y3 = point3.y;
+    const x4 = point4.x,
+      y4 = point4.y;
     const denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
     if (denom === 0 || (x2 === x3 && y2 === y3)) {
       return null;
@@ -153,7 +165,7 @@ export default class AreaTool {
       x,
       y,
       seg1,
-      seg2
+      seg2,
     };
   }
 
@@ -172,10 +184,14 @@ export default class AreaTool {
         sum1 += this.m_vertexes[i].x * this.m_vertexes[i + 1].y * this.m_xPixelSize * this.m_yPixelSize;
         sum2 += this.m_vertexes[i + 1].x * this.m_vertexes[i].y * this.m_xPixelSize * this.m_yPixelSize;
       }
-      result = (0.5 * Math.abs(sum1
-        + this.m_vertexes[length - 1].x * this.m_vertexes[this.last_length].y * this.m_xPixelSize * this.m_yPixelSize
-        - sum2 - this.m_vertexes[this.last_length].x * this.m_vertexes[length - 1].y
-        * this.m_xPixelSize * this.m_yPixelSize));
+      result =
+        0.5 *
+        Math.abs(
+          sum1 +
+            this.m_vertexes[length - 1].x * this.m_vertexes[this.last_length].y * this.m_xPixelSize * this.m_yPixelSize -
+            sum2 -
+            this.m_vertexes[this.last_length].x * this.m_vertexes[length - 1].y * this.m_xPixelSize * this.m_yPixelSize
+        );
 
       const endl = length - 1;
       const begin = this.last_length;
@@ -195,12 +211,18 @@ export default class AreaTool {
    * @param (float) yText - y coordinate of text
    */
   drawLine(vertex1, vertex2, str, xText, yText) {
-    const line = new Line2D(this.m_scene, this.m_lineWidth,
-      vertex1.x, vertex1.y, vertex2.x, vertex2.y, this.m_linesMaterial);
+    const line = new Line2D(this.m_scene, this.m_lineWidth, vertex1.x, vertex1.y, vertex2.x, vertex2.y, this.m_linesMaterial);
     const strMsg = str;
     const text = new MeshText2D(strMsg);
-    text.updateText(xText, yText, this.m_textWidthScr,
-      MeshText2D.ALIGN_CENTER, MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
+    text.updateText(
+      xText,
+      yText,
+      this.m_textWidthScr,
+      MeshText2D.ALIGN_CENTER,
+      MeshText2D.ALIGN_CENTER,
+      this.m_textBgColor,
+      this.m_textColor
+    );
     this.m_scene.add(text);
     this.m_distances.push({ line, text });
   }
@@ -225,7 +247,8 @@ export default class AreaTool {
         if (this.connect_line === true) {
           x = this.m_vertexes[this.last_length].x;
           y = this.m_vertexes[this.last_length].y;
-          let xText = x, yText = y;
+          let xText = x,
+            yText = y;
           if (x >= this.m_vertexes[this.last_length].x) {
             xText += INDENTATION;
           } else {
@@ -245,8 +268,13 @@ export default class AreaTool {
           this.m_vertexes.pop();
           length = this.m_vertexes.length;
           this.m_area = this.calculateArea(length) * zoom * zoom;
-          this.drawLine(this.m_vertexes[length - 1], this.m_vertexes[this.last_length],
-            `${this.m_area.toFixed(ACCURACY)} mm^2`, xText, yText);
+          this.drawLine(
+            this.m_vertexes[length - 1],
+            this.m_vertexes[this.last_length],
+            `${this.m_area.toFixed(ACCURACY)} mm^2`,
+            xText,
+            yText
+          );
           this.m_runningState = false;
           this.connect_line = false;
           this.last_length = length;
@@ -257,16 +285,22 @@ export default class AreaTool {
             const xE = (this.m_distances[i].line.getxE() + (1 - 1 / zoom)) * zoom + posX;
             const yE = (this.m_distances[i].line.getyE() - (1 - 1 / zoom)) * zoom + posY;
             this.m_vertexes2.push({
-              xS, yS, xE, yE
+              xS,
+              yS,
+              xE,
+              yE,
             });
           }
         } else {
           /**checking for point of intersection between new line and every line in array*/
-          for (i = this.last_length;
-            i < (length - this.last_length - MINIMUM_LENGTH_OF_VERTEX) + this.last_length; i++) {
+          for (i = this.last_length; i < length - this.last_length - MINIMUM_LENGTH_OF_VERTEX + this.last_length; i++) {
             /** getting result of intersection*/
-            const result = this.lineIntersect(this.m_vertexes[i],
-              this.m_vertexes[i + 1], this.m_vertexes[length - MINIMUM_LENGTH_OF_VERTEX], this.m_vertexes[length - 1]);
+            const result = this.lineIntersect(
+              this.m_vertexes[i],
+              this.m_vertexes[i + 1],
+              this.m_vertexes[length - MINIMUM_LENGTH_OF_VERTEX],
+              this.m_vertexes[length - 1]
+            );
             if (result !== null) {
               if (result.seg1 === true && result.seg2 === true) {
                 x = result.x;
@@ -290,17 +324,30 @@ export default class AreaTool {
                 this.m_area = this.calculateArea(length) * zoom * zoom;
                 /**redraw lines with new coordinates and print area*/
                 for (i = this.last_length; i < length - 1; i++) {
-                  this.drawLine(this.m_vertexes[i], this.m_vertexes[i + 1], ' ',
-                    0.5 * (this.m_vertexes[i + 1].x + this.m_vertexes[i].x)
-                    - 0.00, 0.5 * (this.m_vertexes[i + 1].y + this.m_vertexes[i].y) - 0.00);
+                  this.drawLine(
+                    this.m_vertexes[i],
+                    this.m_vertexes[i + 1],
+                    ' ',
+                    0.5 * (this.m_vertexes[i + 1].x + this.m_vertexes[i].x) - 0.0,
+                    0.5 * (this.m_vertexes[i + 1].y + this.m_vertexes[i].y) - 0.0
+                  );
                 }
                 /** connect first and last point*/
-                this.drawLine(this.m_vertexes[length - 1], this.m_vertexes[this.last_length], ' ',
-                  0.5 * (this.m_vertexes[length - 1].x + this.m_vertexes[this.last_length].x)
-                  - 0.00, 0.5 * (this.m_vertexes[length - 1].y + this.m_vertexes[this.last_length].y) - 0.00);
+                this.drawLine(
+                  this.m_vertexes[length - 1],
+                  this.m_vertexes[this.last_length],
+                  ' ',
+                  0.5 * (this.m_vertexes[length - 1].x + this.m_vertexes[this.last_length].x) - 0.0,
+                  0.5 * (this.m_vertexes[length - 1].y + this.m_vertexes[this.last_length].y) - 0.0
+                );
                 /** drawing size of area on screen*/
-                this.drawLine(this.m_vertexes[length - 1], this.m_vertexes[this.last_length],
-                  `${this.m_area.toFixed(ACCURACY)} mm^2`, x, y);
+                this.drawLine(
+                  this.m_vertexes[length - 1],
+                  this.m_vertexes[this.last_length],
+                  `${this.m_area.toFixed(ACCURACY)} mm^2`,
+                  x,
+                  y
+                );
                 /**ending of intersection*/
                 this.m_runningState = false;
                 this.last_length = length;
@@ -311,7 +358,10 @@ export default class AreaTool {
                   const xE = (this.m_distances[i].line.getxE() + (1 - 1 / zoom)) * zoom + posX;
                   const yE = (this.m_distances[i].line.getyE() - (1 - 1 / zoom)) * zoom + posY;
                   this.m_vertexes2.push({
-                    xS, yS, xE, yE
+                    xS,
+                    yS,
+                    xE,
+                    yE,
                   });
                 }
                 /** delete dublicated last line*/
@@ -353,11 +403,20 @@ export default class AreaTool {
       }
       let line = new Line2D(this.m_scene, this.m_lineWidth, this.m_xStart, this.m_yStart, x, y, this.m_linesMaterial);
       this.m_distances.push({ line });
-      if ((Math.abs(this.m_vertexes[this.last_length].x - x) < this.epsilon) &&
-        (Math.abs(this.m_vertexes[this.last_length].y - y) < this.epsilon) &&
-        this.m_vertexes.length > MINIMUM_LENGTH_OF_VERTEX) {
-        line = new Line2D(this.m_scene, this.m_lineWidth, this.m_vertexes[this.last_length].x
-          , this.m_vertexes[this.last_length].y, x, y, this.m_linesMaterial);
+      if (
+        Math.abs(this.m_vertexes[this.last_length].x - x) < this.epsilon &&
+        Math.abs(this.m_vertexes[this.last_length].y - y) < this.epsilon &&
+        this.m_vertexes.length > MINIMUM_LENGTH_OF_VERTEX
+      ) {
+        line = new Line2D(
+          this.m_scene,
+          this.m_lineWidth,
+          this.m_vertexes[this.last_length].x,
+          this.m_vertexes[this.last_length].y,
+          x,
+          y,
+          this.m_linesMaterial
+        );
         this.m_distances.push({ line });
         this.connect_line = true;
       }
@@ -376,7 +435,10 @@ export default class AreaTool {
       //const y = yS;
       //this.m_vertexes.push({ x, y });
       this.m_vertexes2.push({
-        xS, yS, xE, yE
+        xS,
+        yS,
+        xE,
+        yE,
       });
     }
   }

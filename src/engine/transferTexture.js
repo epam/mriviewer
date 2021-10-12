@@ -11,12 +11,12 @@
 import * as THREE from 'three';
 /** Class for transfer texture computation and rendering */
 export default class TransferTexture {
-  constructor() {    
+  constructor() {
     this.selectedROIs = null;
     this.transferFuncRgba = null;
     this.transferFuncTexture = null;
     this.texRoiColor = null;
-    this.texRoiId = null;    
+    this.texRoiId = null;
     this.numRois = 256;
     this.m_handleColors = [
       { r: 0, g: 0, b: 0 },
@@ -38,7 +38,7 @@ export default class TransferTexture {
    * @param roiColors Array of roi colors in RGBA format
    */
   init(isRoiVolume, roiColors) {
-    const c4 = 4; 
+    const c4 = 4;
     // eslint-disable-next-line
     this.selectedROIs = new Uint8Array(c4 * this.numRois);
     this.numTfPixels = 256;
@@ -48,12 +48,12 @@ export default class TransferTexture {
     if (isRoiVolume) {
       this.texRoiId = this.createSelectedRoiMap();
       this.texRoiColor = this.createRoiColorMap(roiColors);
-    }    
+    }
   }
 
   /**
    * Create 2D texture containing transfer func colors
-  */
+   */
   createTransferFuncTexture() {
     let textureOut = null;
     let alpha = 0;
@@ -94,14 +94,14 @@ export default class TransferTexture {
       // eslint-disable-next-line
       this.transferFuncRgba[pix * FOUR + 1 + 1] = 0;
       // eslint-disable-next-line
-      this.transferFuncRgba[pix * FOUR + 1 + 1 + 1] = SCALE * alpha / SCALE1;
+      this.transferFuncRgba[pix * FOUR + 1 + 1 + 1] = (SCALE * alpha) / SCALE1;
       if (pix > a4) {
         this.transferFuncRgba[pix * FOUR + 0] = COLOR_R;
         // eslint-disable-next-line
         this.transferFuncRgba[pix * FOUR + 1] = COLOR_G;
         // eslint-disable-next-line
         this.transferFuncRgba[pix * FOUR + 1 + 1] = COLOR_B;
-        this.transferFuncRgba[pix * FOUR + 1 + 1 + 1] = SCALE * alpha / SCALE2;
+        this.transferFuncRgba[pix * FOUR + 1 + 1 + 1] = (SCALE * alpha) / SCALE2;
       }
     }
     textureOut = new THREE.DataTexture(this.transferFuncRgba, this.numTfPixels, 1, THREE.RGBAFormat);
@@ -138,7 +138,7 @@ export default class TransferTexture {
       const pixEnd = Math.floor(intensities[curPt + 1]);
       for (let pix = pixStart; pix < pixEnd; pix++) {
         const lerpVal = (pix - pixStart) / (pixEnd - pixStart);
-        const colorX = (1.0 - lerpVal) * this.m_handleColors[curPt].r + lerpVal * this.m_handleColors[curPt + 1].r
+        const colorX = (1.0 - lerpVal) * this.m_handleColors[curPt].r + lerpVal * this.m_handleColors[curPt + 1].r;
         const colorY = (1.0 - lerpVal) * this.m_handleColors[curPt].g + lerpVal * this.m_handleColors[curPt + 1].g;
         const colorZ = (1.0 - lerpVal) * this.m_handleColors[curPt].b + lerpVal * this.m_handleColors[curPt + 1].b;
         // eslint-disable-next-line
@@ -148,8 +148,8 @@ export default class TransferTexture {
         // eslint-disable-next-line
         this.transferFuncRgba[pix * 4 + 2] = colorZ;
         // eslint-disable-next-line
-        const op1 = (opacities[curPt] > 0.0) ? opacities[curPt] : 0.0;
-        const op2 = (opacities[curPt + 1] > 0.0) ? opacities[curPt + 1] : 0.0;
+        const op1 = opacities[curPt] > 0.0 ? opacities[curPt] : 0.0;
+        const op2 = opacities[curPt + 1] > 0.0 ? opacities[curPt + 1] : 0.0;
         this.transferFuncRgba[pix * 4 + 3] = (op2 * lerpVal + (1.0 - lerpVal) * op1) * 255;
       }
     }

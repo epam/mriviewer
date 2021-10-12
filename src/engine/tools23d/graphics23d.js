@@ -4,9 +4,9 @@
  */
 
 /**
-* 2d simplest graphics engine
-* @module app/scripts/graphics2d/graphics23d
-*/
+ * 2d simplest graphics engine
+ * @module app/scripts/graphics2d/graphics23d
+ */
 
 import * as THREE from 'three';
 
@@ -30,14 +30,13 @@ const tools2d = {
 
 /** Class Graphics2d is used for simple debug style 2d render */
 export default class Graphics23d {
-
   /**
-  * Initialize render
-  * @param (object) container - object container for 3d rendering
-  * @param (int) width - 2d canvas width
-  * @param (int) height - 2d canvas height
-  * @return {Object} Intsance of this class (singleton)
-  */
+   * Initialize render
+   * @param (object) container - object container for 3d rendering
+   * @param (int) width - 2d canvas width
+   * @param (int) height - 2d canvas height
+   * @return {Object} Intsance of this class (singleton)
+   */
   constructor(scene, width, height) {
     this.m_width = width;
     this.m_height = height;
@@ -65,14 +64,13 @@ export default class Graphics23d {
     const xw = 1.0 / width;
     const yw = 1.0 / height;
     const TWICE = 2.0;
-    this.m_lineWidth = TWICE * ((xw > yw) ? xw : yw);
+    this.m_lineWidth = TWICE * (xw > yw ? xw : yw);
     this.m_lineWidth = 0.002;
 
     this.m_textTime = -1000;
     this.m_text = null;
     this.m_toolType = tools2d.DISTANCE;
     this.m_distanceTool = new DistanceTool(this.m_scene, this.m_lineWidth);
-
   } // end of constructor
 
   set2dToolType(toolType) {
@@ -125,10 +123,10 @@ export default class Graphics23d {
   }
 
   /**
-  * Keyboard event handler
-  * @param (number) keyCode - keyboard code
-  * @param (Boolean) debug - true if debug false otherwise
-  */
+   * Keyboard event handler
+   * @param (number) keyCode - keyboard code
+   * @param (Boolean) debug - true if debug false otherwise
+   */
   onKeyDown(keyCode, debug) {
     // console.log(`onKeyDown: ${keyCode}`);
     // const KEY_CODE_G = 71;
@@ -140,14 +138,14 @@ export default class Graphics23d {
   }
 
   /**
-  * Mouse events handler
-  * xScr, yScr in [0..1] is normalized mouse coordinate in screen
-  */
+   * Mouse events handler
+   * xScr, yScr in [0..1] is normalized mouse coordinate in screen
+   */
   onMouseDown(xScr, yScr) {
-    if ((this.m_volumeData === null) || (this.m_volumeHeader === null)) {
+    if (this.m_volumeData === null || this.m_volumeHeader === null) {
       return;
     }
-    if ((xScr > this.m_wProjScreen) || (yScr > this.m_hProjScreen)) {
+    if (xScr > this.m_wProjScreen || yScr > this.m_hProjScreen) {
       // out of image
       return;
     }
@@ -161,58 +159,65 @@ export default class Graphics23d {
     //const yt = (1.0 - yScr) * TWICE - 1.0;
 
     switch (this.m_toolType) {
-    case tools2d.DISTANCE:
-      this.m_distanceTool.onMouseDown(xt, yt, this.m_zoom, this.m_posX * (this.m_wProjScreen),
-        this.m_posY * (this.m_hProjScreen));
-      break;
-    case tools2d.ANGLE:
-      this.m_angleTool.onMouseDown(xt, yt, this.m_zoom, this.m_posX * (this.m_wProjScreen),
-        this.m_posY * (this.m_hProjScreen));
-      break;
-    case tools2d.TEXT:
-      this.m_textTool.onMouseDown(xt, yt, this.m_zoom, this.m_posX * (this.m_wProjScreen),
-        this.m_posY * (this.m_hProjScreen));
-      break;
-    case tools2d.AREA:
-      this.m_areaTool.onMouseDown(xt, yt, this.m_zoom, this.m_posX * (this.m_wProjScreen),
-        this.m_posY * (this.m_hProjScreen));
-      break;
-    case tools2d.RECT:
-      this.m_rectTool.onMouseDown(xt, yt, this.m_zoom, this.m_posX * (this.m_wProjScreen),
-        this.m_posY * (this.m_hProjScreen));
-      break;
-    case tools2d.GRAD:
-      break;
-    case tools2d.COBR:
-    /*this.m_contrastBrightTool.onMouseDown(xt, yt);
+      case tools2d.DISTANCE:
+        this.m_distanceTool.onMouseDown(xt, yt, this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
+        break;
+      case tools2d.ANGLE:
+        this.m_angleTool.onMouseDown(xt, yt, this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
+        break;
+      case tools2d.TEXT:
+        this.m_textTool.onMouseDown(xt, yt, this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
+        break;
+      case tools2d.AREA:
+        this.m_areaTool.onMouseDown(xt, yt, this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
+        break;
+      case tools2d.RECT:
+        this.m_rectTool.onMouseDown(xt, yt, this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
+        break;
+      case tools2d.GRAD:
+        break;
+      case tools2d.COBR:
+        /*this.m_contrastBrightTool.onMouseDown(xt, yt);
           this.m_materialsTex2d.m_uniforms.contrast.value = this.m_contrastBrightTool.m_contrast;
           this.m_materialsTex2d.m_uniforms.brightness.value = this.m_contrastBrightTool.m_brightness;
           this.m_materialsTex2d.m_uniforms.COBRflag.value = this.m_contrastBrightTool.m_COBRflag;*/
-      break;
-    case tools2d.BIFI:
-      /*this.m_filterTool.onMouseDown(xt, yt);
+        break;
+      case tools2d.BIFI:
+        /*this.m_filterTool.onMouseDown(xt, yt);
           this.m_materialsTex2d.m_uniforms.sigma.value = this.m_filterTool.m_sigma;
           this.m_materialsTex2d.m_uniforms.sigmaB.value = this.m_filterTool.m_sigmaB;
           this.m_materialsTex2d.m_uniforms.BIFIflag.value = this.m_filterTool.m_BIFIflag;*/
-      break;
-    case tools2d.ZOOM:
-      this.m_move = true;
-      this.m_moveTool.onMouseDown(xt, yt);
-      break;
-    case tools2d.DELETE:
-      this.m_deleteTool.onMouseDown(xt, yt, this.m_distanceTool.m_distances, this.m_angleTool.m_angles,
-        this.m_rectTool.m_areas, this.m_areaTool.m_distances, this.m_textTool.m_textArr,
-        this.m_distanceTool.m_vertexes, this.m_angleTool.m_vertexes, this.m_rectTool.m_vertexes,
-        this.m_areaTool.m_vertexes2, this.m_areaTool.m_last_lengths, this.m_areaTool.m_vertexes, this.m_areaTool,
-        this.m_textTool.m_vertexes);
-      console.log(`${this.m_areaTool.last_length}`);
-      break;
-    case tools2d.EDIT:
-      this.m_editTool.onMouseDown();
-      break;
-    default:
-      console.log('Unexpected 2d tool');
-      break;
+        break;
+      case tools2d.ZOOM:
+        this.m_move = true;
+        this.m_moveTool.onMouseDown(xt, yt);
+        break;
+      case tools2d.DELETE:
+        this.m_deleteTool.onMouseDown(
+          xt,
+          yt,
+          this.m_distanceTool.m_distances,
+          this.m_angleTool.m_angles,
+          this.m_rectTool.m_areas,
+          this.m_areaTool.m_distances,
+          this.m_textTool.m_textArr,
+          this.m_distanceTool.m_vertexes,
+          this.m_angleTool.m_vertexes,
+          this.m_rectTool.m_vertexes,
+          this.m_areaTool.m_vertexes2,
+          this.m_areaTool.m_last_lengths,
+          this.m_areaTool.m_vertexes,
+          this.m_areaTool,
+          this.m_textTool.m_vertexes
+        );
+        console.log(`${this.m_areaTool.last_length}`);
+        break;
+      case tools2d.EDIT:
+        this.m_editTool.onMouseDown();
+        break;
+      default:
+        console.log('Unexpected 2d tool');
+        break;
     }
   }
 
@@ -221,10 +226,10 @@ export default class Graphics23d {
    * xScr, yScr in [0..1] is normalized mouse coordinate in screen
    */
   onMouseUp(xScr, yScr) {
-    if ((this.m_volumeData === null) || (this.m_volumeHeader === null)) {
+    if (this.m_volumeData === null || this.m_volumeHeader === null) {
       return;
     }
-    if ((xScr > this.m_wProjScreen) || (yScr > this.m_hProjScreen)) {
+    if (xScr > this.m_wProjScreen || yScr > this.m_hProjScreen) {
       // out of image
       return;
     }
@@ -242,34 +247,34 @@ export default class Graphics23d {
       return;
     }
     switch (this.m_toolType) {
-    case tools2d.DISTANCE:
-      break;
-    case tools2d.ANGLE:
-      break;
-    case tools2d.AREA:
-      break;
-    case tools2d.RECT:
-      break;
-    case tools2d.TEXT:
-      break;
-    case tools2d.COBR:
-      break;
-    case tools2d.BIFI:
-      break;
-    case tools2d.ZOOM:
-      this.m_move = false;
-      this.m_moveTool.onMouseUp();
-      this.m_savePosX = this.m_posX;
-      this.m_savePosY = this.m_posY;
-      break;
-    case tools2d.DELETE:
-      break;
-    case tools2d.EDIT:
-      this.m_editTool.onMouseUp();
-      break;
-    default:
-      console.log('Unexpected 2d tool');
-      break;
+      case tools2d.DISTANCE:
+        break;
+      case tools2d.ANGLE:
+        break;
+      case tools2d.AREA:
+        break;
+      case tools2d.RECT:
+        break;
+      case tools2d.TEXT:
+        break;
+      case tools2d.COBR:
+        break;
+      case tools2d.BIFI:
+        break;
+      case tools2d.ZOOM:
+        this.m_move = false;
+        this.m_moveTool.onMouseUp();
+        this.m_savePosX = this.m_posX;
+        this.m_savePosY = this.m_posY;
+        break;
+      case tools2d.DELETE:
+        break;
+      case tools2d.EDIT:
+        this.m_editTool.onMouseUp();
+        break;
+      default:
+        console.log('Unexpected 2d tool');
+        break;
     }
   }
 
@@ -279,10 +284,10 @@ export default class Graphics23d {
    * @param (float) yScr - normalized mouse y coordinate in screen
    */
   onMouseMove(xScr, yScr) {
-    if ((this.m_volumeData === null) || (this.m_volumeHeader === null)) {
+    if (this.m_volumeData === null || this.m_volumeHeader === null) {
       return;
     }
-    if ((xScr > this.m_wProjScreen) || (yScr > this.m_hProjScreen)) {
+    if (xScr > this.m_wProjScreen || yScr > this.m_hProjScreen) {
       // out of image
       return;
     }
@@ -292,57 +297,73 @@ export default class Graphics23d {
     //const yt = (1.0 - yScr) * TWICE - 1.0;
 
     switch (this.m_toolType) {
-    case tools2d.DISTANCE:
-      this.m_distanceTool.onMouseMove(xt, yt, this.m_zoom);
-      break;
-    case tools2d.ANGLE:
-      this.m_angleTool.onMouseMove(xt, yt);
-      break;
-    case tools2d.AREA:
-      this.m_areaTool.onMouseMove(xt, yt);
-      break;
-    case tools2d.RECT:
-      this.m_rectTool.onMouseMove(xt, yt, this.m_zoom);
-      break;
-    case tools2d.TEXT:
-      break;
-    case tools2d.GRAD:
-      break;
-    case tools2d.COBR:
-      /*this.m_contrastBrightTool.onMouseMove(xt, yt);
+      case tools2d.DISTANCE:
+        this.m_distanceTool.onMouseMove(xt, yt, this.m_zoom);
+        break;
+      case tools2d.ANGLE:
+        this.m_angleTool.onMouseMove(xt, yt);
+        break;
+      case tools2d.AREA:
+        this.m_areaTool.onMouseMove(xt, yt);
+        break;
+      case tools2d.RECT:
+        this.m_rectTool.onMouseMove(xt, yt, this.m_zoom);
+        break;
+      case tools2d.TEXT:
+        break;
+      case tools2d.GRAD:
+        break;
+      case tools2d.COBR:
+        /*this.m_contrastBrightTool.onMouseMove(xt, yt);
         this.m_materialsTex2d.m_uniforms.contrast.value = this.m_contrastBrightTool.m_contrast;
         this.m_materialsTex2d.m_uniforms.brightness.value = this.m_contrastBrightTool.m_brightness;
         this.m_materialsTex2d.m_uniforms.COBRflag.value = this.m_contrastBrightTool.m_COBRflag;*/
-      break;
-    case tools2d.BIFI:
-      /*this.m_filterTool.onMouseMove(xt, yt);
+        break;
+      case tools2d.BIFI:
+        /*this.m_filterTool.onMouseMove(xt, yt);
         this.m_materialsTex2d.m_uniforms.sigma.value = this.m_filterTool.m_sigma;
         this.m_materialsTex2d.m_uniforms.sigmaB.value = this.m_filterTool.m_sigmaB;
         this.m_materialsTex2d.m_uniforms.BIFIflag.value = this.m_filterTool.m_BIFIflag;*/
-      break;
-    case tools2d.ZOOM:
-      if (this.m_move) {
-        this.updateMove(xt, yt);
-      }
-      break;
-    case tools2d.DELETE:
-      this.m_deleteTool.onMouseMove(xt, yt, this.m_zoom, this.m_distanceTool.m_distances, this.m_angleTool.m_angles,
-        this.m_rectTool.m_areas, this.m_areaTool.m_distances, this.m_textTool.m_textArr);
-      break;
-    case tools2d.EDIT: // TO DO: add text tool
-      this.m_editTool.onMouseMove(xt, yt, this.m_zoom, this.m_distanceTool.m_distances, this.m_angleTool.m_angles,
-        this.m_rectTool.m_areas, this.m_areaTool.m_distances, this.m_areaTool, this.m_textTool,
-        this.m_posX * (this.m_wProjScreen), this.m_posY * (this.m_hProjScreen));
-      //this.m_areaTool.updateVertexes(this.m_zoom, this.m_posX * (this.m_wProjScreen), this.m_posY *
-      // (this.m_hProjScreen));
-      this.m_distanceTool.updateVertexes(this.m_zoom, this.m_posX * (this.m_wProjScreen),
-        this.m_posY * (this.m_hProjScreen));
-      this.m_angleTool.updateVertexes(this.m_zoom, this.m_posX * (this.m_wProjScreen),
-        this.m_posY * (this.m_hProjScreen));
-      break;
-    default:
-      console.log('Unexpected 2d tool');
-      break;
+        break;
+      case tools2d.ZOOM:
+        if (this.m_move) {
+          this.updateMove(xt, yt);
+        }
+        break;
+      case tools2d.DELETE:
+        this.m_deleteTool.onMouseMove(
+          xt,
+          yt,
+          this.m_zoom,
+          this.m_distanceTool.m_distances,
+          this.m_angleTool.m_angles,
+          this.m_rectTool.m_areas,
+          this.m_areaTool.m_distances,
+          this.m_textTool.m_textArr
+        );
+        break;
+      case tools2d.EDIT: // TO DO: add text tool
+        this.m_editTool.onMouseMove(
+          xt,
+          yt,
+          this.m_zoom,
+          this.m_distanceTool.m_distances,
+          this.m_angleTool.m_angles,
+          this.m_rectTool.m_areas,
+          this.m_areaTool.m_distances,
+          this.m_areaTool,
+          this.m_textTool,
+          this.m_posX * this.m_wProjScreen,
+          this.m_posY * this.m_hProjScreen
+        );
+        //this.m_areaTool.updateVertexes(this.m_zoom, this.m_posX * (this.m_wProjScreen), this.m_posY *
+        // (this.m_hProjScreen));
+        this.m_distanceTool.updateVertexes(this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
+        this.m_angleTool.updateVertexes(this.m_zoom, this.m_posX * this.m_wProjScreen, this.m_posY * this.m_hProjScreen);
+        break;
+      default:
+        console.log('Unexpected 2d tool');
+        break;
     }
   }
 
@@ -352,38 +373,38 @@ export default class Graphics23d {
    */
   onMouseWheel() {
     switch (this.m_toolType) {
-    case tools2d.DISTANCE:
-      break;
-    case tools2d.ANGLE:
-      break;
-    case tools2d.AREA:
-      break;
-    case tools2d.RECT:
-      break;
-    case tools2d.TEXT:
-      break;
-    case tools2d.COBR:
-      break;
-    case tools2d.BIFI:
-      break;
-    case tools2d.ZOOM:
-      this.updateZoom();
-      break;
-    case tools2d.DELETE:
-      break;
-    case tools2d.EDIT:
-      break;
-    default:
-      console.log('Unexpected 2d tool');
-      break;
+      case tools2d.DISTANCE:
+        break;
+      case tools2d.ANGLE:
+        break;
+      case tools2d.AREA:
+        break;
+      case tools2d.RECT:
+        break;
+      case tools2d.TEXT:
+        break;
+      case tools2d.COBR:
+        break;
+      case tools2d.BIFI:
+        break;
+      case tools2d.ZOOM:
+        this.updateZoom();
+        break;
+      case tools2d.DELETE:
+        break;
+      case tools2d.EDIT:
+        break;
+      default:
+        console.log('Unexpected 2d tool');
+        break;
     }
   }
 
   updateMove(xt, yt) {
     const TWICE = 2;
-    const delta = (TWICE - TWICE * this.m_zoom);
+    const delta = TWICE - TWICE * this.m_zoom;
     const coord = this.m_moveTool.onMouseMove(xt, yt);
-    if (((this.m_savePosX + coord.x) <= Math.abs(delta)) && ((this.m_savePosX + coord.x) > 0)) {
+    if (this.m_savePosX + coord.x <= Math.abs(delta) && this.m_savePosX + coord.x > 0) {
       this.m_posX = this.m_savePosX + coord.x;
       this.m_materialsTex2d.m_uniforms.posX.value = this.m_posX;
     } else if (this.m_savePosX + coord.x > Math.abs(delta)) {
@@ -394,11 +415,11 @@ export default class Graphics23d {
       this.m_materialsTex2d.m_uniforms.posX.value = this.m_posX;
     }
 
-    if (((this.m_savePosY + coord.y) >= (-1) * Math.abs(delta)) && ((this.m_savePosY + coord.y) < 0)) {
+    if (this.m_savePosY + coord.y >= -1 * Math.abs(delta) && this.m_savePosY + coord.y < 0) {
       this.m_posY = this.m_savePosY + coord.y;
       this.m_materialsTex2d.m_uniforms.posY.value = this.m_posY;
-    } else if (this.m_savePosY + coord.y < (-1) * Math.abs(delta)) {
-      this.m_posY = (-1) * Math.abs(delta);
+    } else if (this.m_savePosY + coord.y < -1 * Math.abs(delta)) {
+      this.m_posY = -1 * Math.abs(delta);
       this.m_materialsTex2d.m_uniforms.posY.value = this.m_posY;
     } else {
       this.m_posY = 0;
@@ -409,13 +430,13 @@ export default class Graphics23d {
   updateZoom() {
     const TWICE = 2;
     this.m_materialsTex2d.m_uniforms.zoom.value = this.m_zoomTool.m_zoom;
-    const delta = (TWICE - TWICE * this.m_zoom);
+    const delta = TWICE - TWICE * this.m_zoom;
     if (this.m_posX > delta) {
       this.m_posX = delta;
       this.m_materialsTex2d.m_uniforms.posX.value = this.m_posX;
     }
-    if ((this.m_posY < (-1) * delta) && (this.m_posY < 0)) {
-      this.m_posY = (-1) * delta;
+    if (this.m_posY < -1 * delta && this.m_posY < 0) {
+      this.m_posY = -1 * delta;
       this.m_materialsTex2d.m_uniforms.posY.value = this.m_posY;
     }
     this.updateLines();

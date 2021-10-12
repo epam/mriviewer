@@ -4,9 +4,9 @@
  */
 
 /**
-* Geometry for render
-* @module lib/scripts/actvolume/georender
-*/
+ * Geometry for render
+ * @module lib/scripts/actvolume/georender
+ */
 
 // absolute imports
 import * as THREE from 'three';
@@ -25,9 +25,9 @@ const GEO_ERROR_OK = 1;
 // const GEO_ERROR_BAD_FACE_VERT_INDEX = -8;
 
 /**
-* Class GeoRender for render geometry
-* @class GeoRender
-*/
+ * Class GeoRender for render geometry
+ * @class GeoRender
+ */
 export default class GeoRender {
   constructor() {
     this.m_numVertices = 0;
@@ -130,7 +130,7 @@ export default class GeoRender {
     const ANGLE_QUATER = M_PI * 0.5 * LIT_BIT_LESS_ONE;
     for (j = 0; j <= numSegmentsVert; j++) {
       const tv = j / numSegmentsVert;
-      const angleVert = -(ANGLE_QUATER) + tv * (ANGLE_QUATER * OFF_2);
+      const angleVert = -ANGLE_QUATER + tv * (ANGLE_QUATER * OFF_2);
       for (i = 0; i < numSegmentsHor; i++) {
         const th = i / numSegmentsHor;
         const angleHor = th * M_PI * OFF_2;
@@ -189,8 +189,8 @@ export default class GeoRender {
   }
 
   /**
-  * Save render geometry into given file (OBJ type)
-  */
+   * Save render geometry into given file (OBJ type)
+   */
   saveGeoToObjFile(fileName) {
     let strOut = '# Render geometry save\n';
     const numVertices = this.m_numVertices;
@@ -252,8 +252,8 @@ export default class GeoRender {
   } // saveGeoToObjFile
 
   /**
-  * Calculate vertices normals, based on triangle normals
-  */
+   * Calculate vertices normals, based on triangle normals
+   */
   createNormalsForGeometry() {
     this.m_normals = new Array(this.m_numVertices);
     for (let i = 0; i < this.m_numVertices; i++) {

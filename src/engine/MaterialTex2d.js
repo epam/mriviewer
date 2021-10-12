@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // ********************************************************
 // Imports
 // ********************************************************
@@ -19,7 +18,7 @@ import * as THREE from 'three';
 // ********************************************************
 // Const
 // ********************************************************
- 
+
 const TEX2D_PLANE_X = 0;
 const TEX2D_PLANE_Y = 1;
 const TEX2D_PLANE_Z = 2;
@@ -31,7 +30,7 @@ const TEX2D_PLANE_Z = 2;
 /**
  * Class MaterialTex2d some text later...
  */
-export default class MaterialTex2d  {
+export default class MaterialTex2d {
   constructor() {
     this.m_defines = {
       useWebGL2: 1,
@@ -212,14 +211,14 @@ export default class MaterialTex2d  {
   } // end construrot
 
   /** Create material for 2d texture display
-  * @param {object} tex - texture with 2d layout of 3d source
-  * @param {int} xDim - 3d texture dimension on x
-  * @param {int} yDim - 3d texture dimension on y
-  * @param {int} zDim - 3d texture dimension on z
-  * @param {int} planeMode - see TEX2D_PLANE_X, TEX2D_PLANE_Y, TEX2D_PLANE_Z
-  * @param {int} sliceIndex - current sliceIndex
-  * @param {bool} isRoiVolume - is roi volume or not
-  */
+   * @param {object} tex - texture with 2d layout of 3d source
+   * @param {int} xDim - 3d texture dimension on x
+   * @param {int} yDim - 3d texture dimension on y
+   * @param {int} zDim - 3d texture dimension on z
+   * @param {int} planeMode - see TEX2D_PLANE_X, TEX2D_PLANE_Y, TEX2D_PLANE_Z
+   * @param {int} sliceIndex - current sliceIndex
+   * @param {bool} isRoiVolume - is roi volume or not
+   */
   create(tex, xDim, yDim, zDim, planeMode, sliceIndex, isRoiVolume) {
     this.m_uniforms.volTexture.value = tex;
     this.m_uniforms.plane.value = planeMode;
@@ -227,7 +226,7 @@ export default class MaterialTex2d  {
     this.m_uniforms.xDim.value = xDim;
     this.m_uniforms.yDim.value = yDim;
     this.m_uniforms.zDim.value = zDim;
-    this.m_uniforms.isRoiVolume.value = (isRoiVolume) ? 1.0 : 0.0;
+    this.m_uniforms.isRoiVolume.value = isRoiVolume ? 1.0 : 0.0;
     if (isRoiVolume) {
       // const roiPalette = new RoiPalette();
       const roiPalette = null; // TODO
@@ -272,8 +271,8 @@ export default class MaterialTex2d  {
       uniforms: this.m_uniforms,
       defines: this.m_defines,
       vertexShader: this.m_strShaderVertex,
-      fragmentShader: this.m_strShaderFragment
+      fragmentShader: this.m_strShaderFragment,
     });
     this.m_material.needsUpdate = true;
   } // enmd create
-}  // end class
+} // end class

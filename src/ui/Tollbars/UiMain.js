@@ -18,12 +18,12 @@ class UiMain extends React.Component {
     const viewModeIndex = store.viewMode;
 
     const jsxArray = new Array(ViewMode.VIEW_COUNT);
-    jsxArray[ViewMode.VIEW_MPR] = <UiMainMpr/>;
-    jsxArray[ViewMode.VIEW_2D] =  <UiMain2d/>;
-    jsxArray[ViewMode.VIEW_3D_LIGHT] = <UiMain3dLight/> ;
-    jsxArray[ViewMode.VIEW_3D] = <UiMain3dLight/>;
+    jsxArray[ViewMode.VIEW_MPR] = <UiMainMpr />;
+    jsxArray[ViewMode.VIEW_2D] = <UiMain2d />;
+    jsxArray[ViewMode.VIEW_3D_LIGHT] = <UiMain3dLight />;
+    jsxArray[ViewMode.VIEW_3D] = <UiMain3dLight />;
     return jsxArray[viewModeIndex];
-  };
+  }
 }
 
-export default connect(store => store)(UiMain);
+export default connect((store) => store)(UiMain);

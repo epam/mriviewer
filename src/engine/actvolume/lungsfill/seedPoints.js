@@ -4,19 +4,19 @@
  */
 
 /**
-* Lungs fill tool
-* @module lib/scripts/actvolume/lungsfill/seedPoints
-*/
+ * Lungs fill tool
+ * @module lib/scripts/actvolume/lungsfill/seedPoints
+ */
 const TOO_MIN_VAL = 40;
 /**
-* Class seedPoints perform find seed points for lungs selection (segmentation)
-* @class seedPoints
-*/
+ * Class seedPoints perform find seed points for lungs selection (segmentation)
+ * @class seedPoints
+ */
 export default class SeedPoints {
   /**
-  * Init all internal data
-  * @constructs SeedPoints
-  */
+   * Init all internal data
+   * @constructs SeedPoints
+   */
   constructor(volume, xDim, yDim, zDim) {
     this.m_xDim = xDim;
     this.m_yDim = yDim;
@@ -28,7 +28,8 @@ export default class SeedPoints {
     const TWO = 2;
     const zCenter = Math.floor(this.m_zDim / TWO);
     const yCenter = Math.floor(this.m_yDim / TWO);
-    let yMin = -1, yMax = -1;
+    let yMin = -1,
+      yMax = -1;
     const zOff = zCenter * this.m_xDim * this.m_yDim;
     let yOff = -1;
 
@@ -42,10 +43,10 @@ export default class SeedPoints {
       yOff = y * this.m_xDim;
       let numWhitePixels = 0;
       for (x = 0; x < this.m_xDim; x++) {
-        numWhitePixels += (this.m_volTexSrc[x + yOff + zOff] > TOO_MIN_VAL) ? 1 : 0;
+        numWhitePixels += this.m_volTexSrc[x + yOff + zOff] > TOO_MIN_VAL ? 1 : 0;
       }
       // how much percents of non-black pixels can be in line
-      const isBlackLine = (numWhitePixels / this.m_xDim < MIN_LINE_RATIO) ? 1 : 0;
+      const isBlackLine = numWhitePixels / this.m_xDim < MIN_LINE_RATIO ? 1 : 0;
       if (!isBlackLine) {
         break;
       }
@@ -56,10 +57,10 @@ export default class SeedPoints {
       yOff = y * this.m_xDim;
       let numWhitePixels = 0;
       for (x = 0; x < this.m_xDim; x++) {
-        numWhitePixels += (this.m_volTexSrc[x + yOff + zOff] > TOO_MIN_VAL) ? 1 : 0;
+        numWhitePixels += this.m_volTexSrc[x + yOff + zOff] > TOO_MIN_VAL ? 1 : 0;
       }
       // how much percetns non-black pixels can be in line
-      const isBlackLine = (numWhitePixels / this.m_xDim < MIN_LINE_RATIO) ? 1 : 0;
+      const isBlackLine = numWhitePixels / this.m_xDim < MIN_LINE_RATIO ? 1 : 0;
       if (!isBlackLine) {
         break;
       }
@@ -80,7 +81,7 @@ export default class SeedPoints {
     const NUM_COLORS = 8;
     const histogram = new Float32Array(NUM_COLORS);
     let goodHistogramDetected = false;
-    for (y = yMin; (y <= yMax) && !goodHistogramDetected; y++) {
+    for (y = yMin; y <= yMax && !goodHistogramDetected; y++) {
       // clear histogram
       for (x = 0; x < NUM_COLORS; x++) {
         histogram[x] = 0;
@@ -154,7 +155,7 @@ export default class SeedPoints {
 
     const NUM_7 = 7;
     const NUM_512 = 512;
-    const sizeBlackAreaMin = Math.floor(this.m_xDim * NUM_7 / NUM_512);
+    const sizeBlackAreaMin = Math.floor((this.m_xDim * NUM_7) / NUM_512);
 
     // for each point scan in 4 directions to find white barrier
 
@@ -167,9 +168,9 @@ export default class SeedPoints {
 
     let cx, cy;
     const offZ = 2 * this.m_xDim * this.m_yDim;
-    for (cy = yMin; (cy < yMax) && !holeFound; cy++) {
+    for (cy = yMin; cy < yMax && !holeFound; cy++) {
       const cyOff = cy * this.m_xDim;
-      for (cx = xMin; (cx < xMax) && !holeFound; cx++) {
+      for (cx = xMin; cx < xMax && !holeFound; cx++) {
         const val = pixelsSrc[cx + cyOff + offZ];
         if (val >= VAL_BLACK_BARRIER) {
           continue;
@@ -246,7 +247,7 @@ export default class SeedPoints {
           break;
         } // if 4 barriers
       } // for (cx)
-    }  // for (cy)
+    } // for (cy)
     if (!holeFound) {
       return 1;
     } else {

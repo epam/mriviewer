@@ -103,8 +103,15 @@ export default class DeleteTool {
       const yE = (this.m_vertexes[COUNT_POINTS * i + MODULO_1].yZ - posY) / zoom + (1 - 1 / zoom);
       const line = new Line2D(this.m_scene, this.m_lineWidth, xS, yS, xE, yE, this.m_linesMaterial);
       this.m_distances[i].line = line;
-      this.m_distances[i].text.updateText(0.5 * (xS + xE) - 0.00, 0.5 * (yS + yE) - 0.00, this.m_textWidthScr,
-        MeshText2D.ALIGN_CENTER, MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
+      this.m_distances[i].text.updateText(
+        0.5 * (xS + xE) - 0.0,
+        0.5 * (yS + yE) - 0.0,
+        this.m_textWidthScr,
+        MeshText2D.ALIGN_CENTER,
+        MeshText2D.ALIGN_CENTER,
+        this.m_textBgColor,
+        this.m_textColor
+      );
       this.m_scene.add(this.m_distances[i].text);
     }
   }
@@ -121,7 +128,8 @@ export default class DeleteTool {
    * @param (float) xPixelSize - canvas pixel size in mm for x axis
    * @param (float) yPixelSize - canvas pixel size in mm for y axis
    */
-  setPixelSize(xPixelSize, yPixelSize) { // in mm
+  setPixelSize(xPixelSize, yPixelSize) {
+    // in mm
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }
@@ -228,7 +236,7 @@ export default class DeleteTool {
       console.log(`${checkedAreaDistance.count}`);
       let c = 0;
       for (let j = 0; j < areaLL.length; ++j) {
-        if ((areaLL[j].begin <= checkedAreaDistance.count) && (checkedAreaDistance.count <= areaLL[j].endl)) {
+        if (areaLL[j].begin <= checkedAreaDistance.count && checkedAreaDistance.count <= areaLL[j].endl) {
           c = j;
           break;
         }
@@ -288,8 +296,23 @@ export default class DeleteTool {
    * @param (float) x - mouse x coordinate
    * @param (float) y - mouse y coordinate
    */
-  onMouseDown(x, y, distancesV, anglesA, rectR, areaD, textT, vertexesD, vertexesA, vertexesR, vertexesAr, areaLL,
-    vertexesArr, arr, vertexesT) {
+  onMouseDown(
+    x,
+    y,
+    distancesV,
+    anglesA,
+    rectR,
+    areaD,
+    textT,
+    vertexesD,
+    vertexesA,
+    vertexesR,
+    vertexesAr,
+    areaLL,
+    vertexesArr,
+    arr,
+    vertexesT
+  ) {
     this.deleteLine(distancesV, vertexesD);
     this.deleteAngle(anglesA, vertexesA);
     this.deleteRect(rectR, vertexesR);
@@ -376,34 +399,50 @@ export default class DeleteTool {
     const TYPE_RECTANGLE = 1;
     const TYPE_ANGLE = 2;
     const TYPE_AREA = 3;
-    if (((Math.abs(l.getxS() - x) < SPACE) && (Math.abs(l.getyS() - y) < SPACE))
-      || (((Math.abs(l.getxE() - x) < SPACE) && (Math.abs(l.getyE() - y) < SPACE)))) {
+    if (
+      (Math.abs(l.getxS() - x) < SPACE && Math.abs(l.getyS() - y) < SPACE) ||
+      (Math.abs(l.getxE() - x) < SPACE && Math.abs(l.getyE() - y) < SPACE)
+    ) {
       console.log('AREA OF DESTRUCTION');
       if (!this.isPointsExist) {
         const count = i;
         switch (type) {
-        case TYPE_DISTANCE:
-          this.m_checkedLines.push({ count });
-          break;
-        case TYPE_RECTANGLE:
-          this.m_checkedAngles.push({ count });
-          break;
-        case TYPE_ANGLE:
-          this.m_checkedRects.push({ count });
-          break;
-        case TYPE_AREA:
-          this.m_checkedAreasDistances.push({ count });
-          break;
-        default:
-          break;
+          case TYPE_DISTANCE:
+            this.m_checkedLines.push({ count });
+            break;
+          case TYPE_RECTANGLE:
+            this.m_checkedAngles.push({ count });
+            break;
+          case TYPE_ANGLE:
+            this.m_checkedRects.push({ count });
+            break;
+          case TYPE_AREA:
+            this.m_checkedAreasDistances.push({ count });
+            break;
+          default:
+            break;
         } // end switch
 
         const INDENTANTION = 0.005;
-        let point = new Line2D(this.m_scene, this.m_lineWidth, l.getxS(), l.getyS(),
-          l.getxS() + INDENTANTION, l.getyS() + INDENTANTION, this.m_pointMaterial);
+        let point = new Line2D(
+          this.m_scene,
+          this.m_lineWidth,
+          l.getxS(),
+          l.getyS(),
+          l.getxS() + INDENTANTION,
+          l.getyS() + INDENTANTION,
+          this.m_pointMaterial
+        );
         this.m_point.push({ point });
-        point = new Line2D(this.m_scene, this.m_lineWidth, l.getxE(), l.getyE(),
-          l.getxE() + INDENTANTION, l.getyE() + INDENTANTION, this.m_pointMaterial);
+        point = new Line2D(
+          this.m_scene,
+          this.m_lineWidth,
+          l.getxE(),
+          l.getyE(),
+          l.getxE() + INDENTANTION,
+          l.getyE() + INDENTANTION,
+          this.m_pointMaterial
+        );
         this.m_point.push({ point });
       }
       this.isOut = true;
@@ -415,17 +454,13 @@ export default class DeleteTool {
       if (!this.isPointsExist) {
         const count = i;
         this.m_checkedText.push({ count });
-        let point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMin, mesh.m_yMin,
-          mesh.m_xMin, mesh.m_yMax, this.m_pointMaterial);
+        let point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMin, mesh.m_yMin, mesh.m_xMin, mesh.m_yMax, this.m_pointMaterial);
         this.m_point.push({ point });
-        point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMin, mesh.m_yMax,
-          mesh.m_xMax, mesh.m_yMax, this.m_pointMaterial);
+        point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMin, mesh.m_yMax, mesh.m_xMax, mesh.m_yMax, this.m_pointMaterial);
         this.m_point.push({ point });
-        point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMax, mesh.m_yMax,
-          mesh.m_xMax, mesh.m_yMin, this.m_pointMaterial);
+        point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMax, mesh.m_yMax, mesh.m_xMax, mesh.m_yMin, this.m_pointMaterial);
         this.m_point.push({ point });
-        point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMax, mesh.m_yMin,
-          mesh.m_xMin, mesh.m_yMin, this.m_pointMaterial);
+        point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMax, mesh.m_yMin, mesh.m_xMin, mesh.m_yMin, this.m_pointMaterial);
         this.m_point.push({ point });
       }
       this.isOut = true;

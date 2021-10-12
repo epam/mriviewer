@@ -4,9 +4,9 @@
  */
 
 /**
-* Blur material, used for rendering of blurred volume slices
-* @module lib/scripts/gfx/matblur
-*/
+ * Blur material, used for rendering of blurred volume slices
+ * @module lib/scripts/gfx/matblur
+ */
 
 // ******************************************************************
 // imports
@@ -20,10 +20,9 @@ import AO_FRAGMENT_SHADER from '../shaders/createAO.frag';
 
 /** Class @class MaterialBlur for volume slice blurring */
 export default class MaterialAO {
-
   /** Backface material constructor
-  * @constructor
-  */
+   * @constructor
+   */
   constructor() {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
@@ -49,8 +48,8 @@ export default class MaterialAO {
   }
 
   /** Backface material constructor
-  * @return {object} Three.js material with this shader
-  */
+   * @return {object} Three.js material with this shader
+   */
   create(texture, texelSize, vectorsTex, vectorsSize, isoThreshold, callbackMat) {
     // Init uniforms
     this.m_uniforms.texVolume.value = texture;
@@ -74,7 +73,7 @@ export default class MaterialAO {
           uniforms: this.m_uniforms,
           defines: this.m_defines,
           vertexShader: this.m_strShaderVertex,
-          fragmentShader: this.m_strShaderFragment
+          fragmentShader: this.m_strShaderFragment,
         });
         if (callbackMat) {
           callbackMat(material);

@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // ********************************************************
 // Imports
 // ********************************************************
@@ -35,7 +34,7 @@ class UiMainMpr extends React.Component {
   render() {
     const jsxRet = <p>MPR is not implemented yet</p>;
     return jsxRet;
-  };
+  }
 }
 
-export default connect(store => store)(UiMainMpr);
+export default connect((store) => store)(UiMainMpr);

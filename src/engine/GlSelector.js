@@ -6,14 +6,14 @@
 // import * as THREE from 'three';
 
 /**
-* OpenGL, WebGL renderer selector
-* @module lib/scripts/graphics3d/glselector
-*/
+ * OpenGL, WebGL renderer selector
+ * @module lib/scripts/graphics3d/glselector
+ */
 
 export default class GlSelector {
   /** constructor: defines fields
-  * @constructor
-  */
+   * @constructor
+   */
   constructor() {
     this.m_useWebGL2 = undefined;
   }

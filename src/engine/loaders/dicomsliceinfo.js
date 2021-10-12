@@ -4,13 +4,13 @@
  */
 
 /**
-* Dicom slice info
-* @module lib/scripts/loaders/dicomsliceinfo
-*/
+ * Dicom slice info
+ * @module lib/scripts/loaders/dicomsliceinfo
+ */
 
 /**
-* Class @class DicomSliceInfo slice information
-*/
+ * Class @class DicomSliceInfo slice information
+ */
 class DicomSliceInfo {
   constructor() {
     this.m_sliceName = '';

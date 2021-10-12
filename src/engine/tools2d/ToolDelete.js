@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // **********************************************
 // Imports
 // **********************************************
@@ -57,8 +56,9 @@ class ToolDelete {
 
   /**
    * When mouse pressed down
-   */  
-  onMouseDown() { // ommited args: xScr, yScr, store
+   */
+  onMouseDown() {
+    // ommited args: xScr, yScr, store
     this.m_mousePressed = true;
 
     if (this.m_pointTracked !== null) {
@@ -73,7 +73,8 @@ class ToolDelete {
     if (!this.m_mousePressed) {
       // fly mouse over objects on 2d screen
       const vScr = {
-        x: xScr, y: yScr
+        x: xScr,
+        y: yScr,
       };
 
       const toolDist = this.m_objGraphics2d.m_toolDistance;
@@ -81,10 +82,8 @@ class ToolDelete {
       const toolArea = this.m_objGraphics2d.m_toolArea;
       const toolRect = this.m_objGraphics2d.m_toolRect;
       const toolText = this.m_objGraphics2d.m_toolText;
-      const tools = [
-        toolDist, toolAngle, toolArea, toolRect, toolText
-      ];
-      const trackedBefore = (this.m_pointTracked !== null);
+      const tools = [toolDist, toolAngle, toolArea, toolRect, toolText];
+      const trackedBefore = this.m_pointTracked !== null;
       this.m_pointTracked = null;
       const numTools = tools.length;
       for (let i = 0; i < numTools; i++) {
@@ -97,12 +96,11 @@ class ToolDelete {
           break;
         }
       } // for i all tools
-      const trackedNow = (this.m_pointTracked !== null);
+      const trackedNow = this.m_pointTracked !== null;
       if (trackedNow || (trackedBefore && !trackedNow)) {
         // invoke forced 2d render
         this.m_objGraphics2d.forceUpdate();
       }
-
     } else {
       /*
       if (this.m_pointTracked !== null) {
@@ -115,13 +113,14 @@ class ToolDelete {
     }
   }
 
-  onMouseUp() { // ommited args: xScr, yScr, store
+  onMouseUp() {
+    // ommited args: xScr, yScr, store
     this.m_mousePressed = false;
   }
 
   /**
    * Render all areas on screen in 2d mode
-   * 
+   *
    * @param {object} ctx - html5 canvas context
    * @param {object} store - global store with app parameters
    */

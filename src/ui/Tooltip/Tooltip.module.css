@@ -13,7 +13,7 @@
   border-radius: 5px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.14);
   padding: 10px 15px;
-  background-color: #282A2D;
+  background-color: #282a2d;
   display: flex;
 }
 
@@ -27,7 +27,7 @@
 .arrow,
 .arrow:before {
   position: absolute;
-  background: #282A2D;
+  background: #282a2d;
   width: 15px;
   height: 15px;
 }
@@ -41,7 +41,6 @@
   content: '';
   transform: rotate(45deg);
 }
-
 
 .tooltip[data-popper-placement^='top'] > .arrow {
   bottom: -6px;

@@ -4,9 +4,9 @@
  */
 
 /**
-* 2d texture simplest render
-* @module lib/scripts/gfx/mattplain
-*/
+ * 2d texture simplest render
+ * @module lib/scripts/gfx/mattplain
+ */
 
 // ******************************************************************
 // imports
@@ -17,10 +17,9 @@ import * as THREE from 'three';
 
 /** Class @class MaterialTexturePlain2d for create artifical volume */
 export default class MaterialTexturePlain2d {
-
   /** Simple material constructor
-  * @constructor
-  */
+   * @constructor
+   */
   constructor() {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
@@ -57,8 +56,8 @@ export default class MaterialTexturePlain2d {
   }
 
   /** Simple material constructor
-  * @return {object} Three.js material with this shader
-  */
+   * @return {object} Three.js material with this shader
+   */
   create(tex) {
     // Init uniforms
     this.m_uniforms.texture1.value = tex;
@@ -70,7 +69,7 @@ export default class MaterialTexturePlain2d {
       blendDst: THREE.OneMinusSrcAlphaFactor,
       uniforms: this.m_uniforms,
       vertexShader: this.m_strShaderVertex,
-      fragmentShader: this.m_strShaderFragment
+      fragmentShader: this.m_strShaderFragment,
     });
     this.m_material.needsUpdate = true;
   }

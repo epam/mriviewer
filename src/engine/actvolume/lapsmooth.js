@@ -4,18 +4,18 @@
  */
 
 /**
-* Laplasian smoother
-* @module lib/scripts/actvolume/alpsmooth
-* @note refernces to articles:
-* G.Taubin, "A Signal Processing Approach To Fair Surface Design"
-* Y.Ohtake, A.Belyaev, I.Bogaevski, "Polyhedral Surface Smoothing with Simultaneous Mesh Regularization"
-* A.Belyaev, Y.Ohtake, "A Comparison of Mesh Smoothing Methods"
-*
-* Future enchancement
-* Advanced mesh smoothing, better then Laplasian smoothing
-* H.Yagou, Y.Ohtake, A.Belyaev, "Mesh Smoothing via Mean and Median Filtering Applied to Face Normals"
-*
-*/
+ * Laplasian smoother
+ * @module lib/scripts/actvolume/alpsmooth
+ * @note refernces to articles:
+ * G.Taubin, "A Signal Processing Approach To Fair Surface Design"
+ * Y.Ohtake, A.Belyaev, I.Bogaevski, "Polyhedral Surface Smoothing with Simultaneous Mesh Regularization"
+ * A.Belyaev, Y.Ohtake, "A Comparison of Mesh Smoothing Methods"
+ *
+ * Future enchancement
+ * Advanced mesh smoothing, better then Laplasian smoothing
+ * H.Yagou, Y.Ohtake, A.Belyaev, "Mesh Smoothing via Mean and Median Filtering Applied to Face Normals"
+ *
+ */
 
 // absolute imports
 import * as THREE from 'three';
@@ -26,16 +26,15 @@ import * as THREE from 'three';
 const LAPSMOOTH_NUM_NEIBS = 16;
 const INVALID_INDEX = -1;
 
-
 /**
-* Class LaplasianSmoother perform simple laplasian smoothing
-* @class LaplasianSmoother
-*/
+ * Class LaplasianSmoother perform simple laplasian smoothing
+ * @class LaplasianSmoother
+ */
 export default class LaplasianSmoother {
   /**
-  * Init all internal data
-  * @constructs ActiveVolume
-  */
+   * Init all internal data
+   * @constructs ActiveVolume
+   */
   constructor() {
     this.m_vertNeib = null;
   }
@@ -77,7 +76,7 @@ export default class LaplasianSmoother {
         vAve.y += vertSrc4[vertOffset + OFF_1];
         vAve.z += vertSrc4[vertOffset + OFF_2];
         numNeibs++;
-      }   // for (k) all possible neighbours
+      } // for (k) all possible neighbours
 
       // check is this isolated vertex: no one triangle share thios vertex
       if (numNeibs === 0) {
@@ -89,11 +88,11 @@ export default class LaplasianSmoother {
       const vCur = new THREE.Vector3(vertSrc4[i4 + OFF_0], vertSrc4[i4 + OFF_1], vertSrc4[i4 + OFF_2]);
 
       const vNew = new THREE.Vector3();
-      const  RATIO_CUR = 0.3;
+      const RATIO_CUR = 0.3;
 
-      vNew.x = vCur.x * (1.0 - RATIO_CUR) + vAve.x * (RATIO_CUR);
-      vNew.y = vCur.y * (1.0 - RATIO_CUR) + vAve.y * (RATIO_CUR);
-      vNew.z = vCur.z * (1.0 - RATIO_CUR) + vAve.z * (RATIO_CUR);
+      vNew.x = vCur.x * (1.0 - RATIO_CUR) + vAve.x * RATIO_CUR;
+      vNew.y = vCur.y * (1.0 - RATIO_CUR) + vAve.y * RATIO_CUR;
+      vNew.z = vCur.z * (1.0 - RATIO_CUR) + vAve.z * RATIO_CUR;
 
       const dist = vNew.distanceTo(vCur);
       distAve += dist;
@@ -101,8 +100,7 @@ export default class LaplasianSmoother {
       vertDst[i4 + OFF_0] = vNew.x;
       vertDst[i4 + OFF_1] = vNew.y;
       vertDst[i4 + OFF_2] = vNew.z;
-
-    }     // for (i)
+    } // for (i)
     distAve /= numVertices;
 
     // enlarge model
@@ -148,7 +146,7 @@ export default class LaplasianSmoother {
     const idx = indFrom * LAPSMOOTH_NUM_NEIBS;
     let i;
     let found = false;
-    for (i = 0; (i < LAPSMOOTH_NUM_NEIBS) && !found; i++) {
+    for (i = 0; i < LAPSMOOTH_NUM_NEIBS && !found; i++) {
       if (this.m_vertNeib[idx + i] === INVALID_INDEX) {
         break;
       }
@@ -161,7 +159,7 @@ export default class LaplasianSmoother {
     }
 
     // add new link
-    for (i = 0; (i < LAPSMOOTH_NUM_NEIBS); i++) {
+    for (i = 0; i < LAPSMOOTH_NUM_NEIBS; i++) {
       if (this.m_vertNeib[idx + i] === INVALID_INDEX) {
         break;
       }

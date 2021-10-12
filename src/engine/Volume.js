@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // ********************************************************
 // Imports
 // ********************************************************
@@ -32,8 +31,8 @@ export const VOLUME_ICON_SIDE = 64;
 // ********************************************************
 
 /**
- * Class Volume  
- * 
+ * Class Volume
+ *
  * Result volume, loaded from Dicom, Ktx, Nifti, ... files
  */
 class Volume extends React.Component {
@@ -49,7 +48,9 @@ class Volume extends React.Component {
     this.m_dataArray = null;
     this.m_dataSize = 0;
     this.m_boxSize = {
-      x: 0.0, y: 0.0, z: 0.0
+      x: 0.0,
+      y: 0.0,
+      z: 0.0,
     };
     // icon to show
     this.m_xIcon = 0;
@@ -66,7 +67,9 @@ class Volume extends React.Component {
     this.m_dataArray = new Uint8Array(xyzDim);
     this.m_dataSize = xyzDim;
     this.m_boxSize = {
-      x: xDim, y: yDim, z: zDim
+      x: xDim,
+      y: yDim,
+      z: zDim,
     };
     for (let i = 0; i < xyzDim; i++) {
       this.m_dataArray[i] = 0;
@@ -79,7 +82,7 @@ class Volume extends React.Component {
     console.assert(this.m_yDim > 0);
     console.assert(this.m_zDim > 0);
     console.assert(this.m_dataArray !== null);
-    const sizeSrcMax = (this.m_xDim > this.m_yDim) ? this.m_xDim : this.m_yDim;
+    const sizeSrcMax = this.m_xDim > this.m_yDim ? this.m_xDim : this.m_yDim;
     const scale = sizeSrcMax / VOLUME_ICON_SIDE;
 
     // central slice
@@ -90,12 +93,12 @@ class Volume extends React.Component {
     this.m_yIcon = this.m_xIcon;
     const numPixelsIcon = this.m_xIcon * this.m_yIcon;
     this.m_dataIcon = new Uint8Array(numPixelsIcon);
-    for (let i = 0; i < numPixelsIcon; i++){
+    for (let i = 0; i < numPixelsIcon; i++) {
       this.m_dataIcon[i] = 0;
     }
     // actual size in icon (dest image)
-    const wDst = Math.floor(VOLUME_ICON_SIDE * this.m_xDim / sizeSrcMax);
-    const hDst = Math.floor(VOLUME_ICON_SIDE * this.m_yDim / sizeSrcMax);
+    const wDst = Math.floor((VOLUME_ICON_SIDE * this.m_xDim) / sizeSrcMax);
+    const hDst = Math.floor((VOLUME_ICON_SIDE * this.m_yDim) / sizeSrcMax);
     // top left corner in dst image
     const xDstL = Math.floor(this.m_xIcon / 2 - wDst / 2);
     const yDstT = Math.floor(this.m_yIcon / 2 - hDst / 2);
@@ -120,15 +123,15 @@ class Volume extends React.Component {
     if (this.m_zDim < 4) {
       return;
     }
-    const xDimNew = (this.m_xDim + 3) & (~3);
-    const yDimNew = (this.m_yDim + 3) & (~3);
-    const zDimNew = (this.m_zDim + 3) & (~3);
-    if ((this.m_xDim === xDimNew) && (this.m_yDim === yDimNew) && (this.m_zDim === zDimNew)) {
+    const xDimNew = (this.m_xDim + 3) & ~3;
+    const yDimNew = (this.m_yDim + 3) & ~3;
+    const zDimNew = (this.m_zDim + 3) & ~3;
+    if (this.m_xDim === xDimNew && this.m_yDim === yDimNew && this.m_zDim === zDimNew) {
       return; // do nothing
     } // if new size the same as current
     // perfom convert adding black pixels
     console.log(`Volume. makeDimensions4x. Convert into ${xDimNew}*${yDimNew}*${zDimNew}`);
-    const xyzDimNew  = xDimNew * yDimNew * zDimNew;
+    const xyzDimNew = xDimNew * yDimNew * zDimNew;
     const bytesPerVoxel = this.m_bytesPerVoxel;
     const bufSizeBytes = xyzDimNew * bytesPerVoxel;
     const datArrayNew = new Uint8Array(xyzDimNew * bytesPerVoxel);
@@ -139,8 +142,10 @@ class Volume extends React.Component {
 
     const ONE = 1;
     const FOUR = 4;
-    const OFF_0 = 0; const OFF_1 = 1;
-    const OFF_2 = 2; const OFF_3 = 3;
+    const OFF_0 = 0;
+    const OFF_1 = 1;
+    const OFF_2 = 2;
+    const OFF_3 = 3;
 
     console.log(`Volume info: xyzDim = ${this.m_xDim}*${this.m_yDim}*${this.m_zDim}`);
     console.log(`Volume info: bpp = ${this.m_bytesPerVoxel}`);
@@ -196,7 +201,6 @@ class Volume extends React.Component {
   render() {
     return <p>></p>;
   }
-
 } // end class Volume
 
 export default Volume;

@@ -4,8 +4,8 @@
  */
 
 //
-// Bilateral filter for 3d iamge using render and shader 
-// 
+// Bilateral filter for 3d iamge using render and shader
+//
 
 import * as THREE from 'three';
 import GlSelector from '../GlSelector';
@@ -99,8 +99,8 @@ export default class BilateralHW {
       volumeSizeZ: { type: 'f', value: VOL_SIZE_Z },
       xDim: { type: 'f', value: VOL_SIZE_Z },
       yDim: { type: 'f', value: VOL_SIZE_Z },
-      distSigma:   { type: 'f', value: DIST_SIGMA },
-      valSigma:   { type: 'f', value: VAL_SIGMA },
+      distSigma: { type: 'f', value: DIST_SIGMA },
+      valSigma: { type: 'f', value: VAL_SIGMA },
       curZ: { type: 'f', value: 0.0 },
       kernelSize: { type: 'f', value: 0.0 },
     };
@@ -117,14 +117,14 @@ export default class BilateralHW {
   isFinished() {
     if (this.m_z >= this.m_zDim) {
       return true;
-    }    
+    }
     return false;
   }
 
   update() {
     const zDim = this.m_zDim;
-    const STEP = (zDim > 16 ) ? 24 : 2;
-    const zNext = Math.floor((this.m_iter + 1) * zDim / STEP);
+    const STEP = zDim > 16 ? 24 : 2;
+    const zNext = Math.floor(((this.m_iter + 1) * zDim) / STEP);
 
     const VAL_4 = 4;
 
@@ -141,7 +141,7 @@ export default class BilateralHW {
         for (let x = 0; x < this.m_xDim; x++) {
           const val = this.m_frameBuf[VAL_4 * (x + yOff)];
           this.m_bufferTextureCPU[x + yOff + zOffs] = val;
-          valMax = (val > valMax) ? val : valMax;
+          valMax = val > valMax ? val : valMax;
         } // for x
       } // for y
     } // for z
@@ -169,16 +169,13 @@ export default class BilateralHW {
   initRenderer(distSigma, valSigma) {
     this.sceneBlur = new THREE.Scene();
     // eslint-disable-next-line
-    this.cameraOrtho = new THREE.OrthographicCamera(
-      -this.m_xDim / 2, +this.m_xDim / 2, 
-      +this.m_yDim / 2, -this.m_yDim / 2, 
-      0.1, 100);
+    this.cameraOrtho = new THREE.OrthographicCamera(-this.m_xDim / 2, +this.m_xDim / 2, +this.m_yDim / 2, -this.m_yDim / 2, 0.1, 100);
     const glSelector = new GlSelector();
     this.context = glSelector.createWebGLContext();
     this.canvas3d = glSelector.getCanvas();
     this.rendererBlur = new THREE.WebGLRenderer({
       canvas: this.canvas3d,
-      context: this.context
+      context: this.context,
     });
 
     const geometryBlur = new THREE.PlaneGeometry(1.0, 1.0);
@@ -200,18 +197,19 @@ export default class BilateralHW {
   // create renderer
   // koefDist in 0.5 .. 3.0
   // koefVal in 0.1 .. 4.0
-  // 
+  //
   //                | koefDist = 0.5  | koefDist = 3.0
   // ---------------+-----------------+----------------
-  // koefVal = 0.1  | orig            | Nice without noise 
+  // koefVal = 0.1  | orig            | Nice without noise
   // koefVal = 4.0  | orig            | Blurred
   //
   //
   create(volume, texelSize, kernelSize, koefDist, koefVal = 0.1) {
-
     const distSigma = (1.0 / kernelSize) * koefDist;
     const valSigma = (1.0 / 256.0) * koefVal;
-    console.log('BilateralHW params: kernel=' + kernelSize.toString() +  ' dist sigma=' + distSigma.toString() + ' val sigma=' + valSigma.toString() );
+    console.log(
+      'BilateralHW params: kernel=' + kernelSize.toString() + ' dist sigma=' + distSigma.toString() + ' val sigma=' + valSigma.toString()
+    );
     const xDim = volume.m_xDim;
     const yDim = volume.m_yDim;
     const zDim = volume.m_zDim;
@@ -242,16 +240,16 @@ export default class BilateralHW {
     this.origVolumeTex.wrapR = THREE.ClampToEdgeWrapping;
     this.origVolumeTex.wrapS = THREE.ClampToEdgeWrapping;
     this.origVolumeTex.wrapT = THREE.ClampToEdgeWrapping;
-    this.origVolumeTex.magFilter = THREE.NearestFilter;//THREE.LinearFilter;
-    this.origVolumeTex.minFilter = THREE.NearestFilter;//THREE.LinearFilter;
+    this.origVolumeTex.magFilter = THREE.NearestFilter; //THREE.LinearFilter;
+    this.origVolumeTex.minFilter = THREE.NearestFilter; //THREE.LinearFilter;
     this.origVolumeTex.needsUpdate = true;
-  
+
     // compile shaders
     this.m_material = new THREE.ShaderMaterial({
       uniforms: this.m_uniforms,
       defines: this.m_defines,
       vertexShader: this.m_strShaderVertex,
-      fragmentShader: this.m_strShaderFragment
+      fragmentShader: this.m_strShaderFragment,
     });
 
     this.m_uniforms.texVolume.value = this.origVolumeTex;
@@ -263,5 +261,4 @@ export default class BilateralHW {
     }
     return this.m_bufferTextureCPU;
   } // end create
-
 } // end class

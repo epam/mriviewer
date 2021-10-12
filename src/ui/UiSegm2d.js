@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // ********************************************************
 // Imports
 // ********************************************************
@@ -17,7 +16,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Switch, SwitchRow } from "./Form";
+import { Switch, SwitchRow } from './Form';
 
 // ********************************************************
 // Class
@@ -38,12 +37,11 @@ class UiSegm2d extends React.Component {
     const store = this.props;
     const gra2d = store.graphics2d;
     if (gra2d !== null) {
-
       gra2d.m_isSegmented = !this.state.isSegmented;
       gra2d.forceUpdate();
       gra2d.forceRender();
       const segm = gra2d.segm2d;
-      if ((segm !== null)  && (!this.state.isSegmented)) {
+      if (segm !== null && !this.state.isSegmented) {
         if (segm.model == null) {
           //console.log('onChangeSegm2d. onLoadModel ...');
           segm.onLoadModel();
@@ -57,16 +55,17 @@ class UiSegm2d extends React.Component {
 
   // render UI for 2d segmentation on screen
   render() {
-    return <>
-      You can use automatic 2d image segmentation only for brain-like data
+    return (
+      <>
+        You can use automatic 2d image segmentation only for brain-like data
         <SwitchRow>
           Segmentation 2d (brain only)
-          <Switch value={ this.state.isSegmented } onValueChange={ this.onChangeSegm2d }/>
+          <Switch value={this.state.isSegmented} onValueChange={this.onChangeSegm2d} />
         </SwitchRow>
-      Switch checker above on and see segmentation result on right
-    </>;
+        Switch checker above on and see segmentation result on right
+      </>
+    );
   }
 }
 
-export default connect(store => store)(UiSegm2d);
-
+export default connect((store) => store)(UiSegm2d);

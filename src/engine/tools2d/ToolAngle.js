@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // **********************************************
 // Imports
 // **********************************************
@@ -28,15 +27,18 @@ class ToolAngle {
     this.m_hScreen = 0;
 
     const v0 = {
-      x: 0.0, y: 0.0
+      x: 0.0,
+      y: 0.0,
     };
     const v1 = {
-      x: 0.0, y: 0.0
+      x: 0.0,
+      y: 0.0,
     };
     const v2 = {
-      x: 0.0, y: 0.0
+      x: 0.0,
+      y: 0.0,
     };
-    this.m_points = [ v0, v1, v2 ];
+    this.m_points = [v0, v1, v2];
     this.m_numClicks = 0;
     this.m_angles = [];
 
@@ -65,9 +67,9 @@ class ToolAngle {
    * Determine intersection with points in lines set.
    * Input - screen coordinates of pick point
    * Output - volume coordinate
-   *  
+   *
    * @param {object} vScr - screen coordinates of poick
-   * @param {object} store - global store 
+   * @param {object} store - global store
    */
   getEditPoint(vScr, store) {
     const numObj = this.m_angles.length;
@@ -99,7 +101,7 @@ class ToolAngle {
     // update angle dist
     this.getAngleForObj(this.m_objEdit);
   }
-    
+
   /**
    * Remove highlighted object
    */
@@ -115,8 +117,7 @@ class ToolAngle {
   getDistMm(vs, ve) {
     const dx = vs.x - ve.x;
     const dy = vs.y - ve.y;
-    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize +
-      dy * dy * this.m_yPixelSize * this.m_yPixelSize);
+    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize + dy * dy * this.m_yPixelSize * this.m_yPixelSize);
     return dist;
   }
 
@@ -148,7 +149,7 @@ class ToolAngle {
       // console.log('get Angle < -1');
       return 180.0;
     }
-    const ang = Math.acos(cosAlp) * M_180 / M_PI;
+    const ang = (Math.acos(cosAlp) * M_180) / M_PI;
     return ang;
   }
 
@@ -184,7 +185,7 @@ class ToolAngle {
       const ang = this.getAngle();
 
       const objAngle = {
-        points: [ v0, v1, v2 ],
+        points: [v0, v1, v2],
         angle: ang,
       };
       this.m_angles.push(objAngle);
@@ -208,7 +209,8 @@ class ToolAngle {
     this.m_objGraphics2d.forceUpdate();
   }
 
-  onMouseUp() { // ommited args: xScr, yScr, store
+  onMouseUp() {
+    // ommited args: xScr, yScr, store
   }
 
   clear() {
@@ -218,7 +220,7 @@ class ToolAngle {
 
   //
   // render lines on screen
-  // 
+  //
   render(ctx, store) {
     const NUM_3 = 3;
 
@@ -231,7 +233,7 @@ class ToolAngle {
     ctx.textBaseline = 'top';
 
     if (this.m_numClicks > 0) {
-      for(let i = 1; i < NUM_3; i++) {
+      for (let i = 1; i < NUM_3; i++) {
         const vTex0 = this.m_points[0];
         const vTex1 = this.m_points[i];
         const vs = ToolDistance.textureToScreen(vTex0.x, vTex0.y, this.m_wScreen, this.m_hScreen, store);
@@ -239,7 +241,7 @@ class ToolAngle {
         const dx = vs.x - ve.x;
         const dy = vs.y - ve.y;
         const MIN_DIST2 = 2 * 2;
-        if ((dx * dx) + (dy * dy) >= MIN_DIST2) {
+        if (dx * dx + dy * dy >= MIN_DIST2) {
           ctx.beginPath();
           ctx.moveTo(vs.x, vs.y);
           ctx.lineTo(ve.x, ve.y);
@@ -258,7 +260,6 @@ class ToolAngle {
       const xText = vs0.x;
       const yText = vs0.y + SHIFT_UP;
       ctx.fillText(strMsg, xText, yText);
-
     } // if we have angle under build
 
     // draw ready angles
@@ -283,11 +284,7 @@ class ToolAngle {
       const xText = vs0.x;
       const yText = vs0.y + SHIFT_UP;
       ctx.fillText(strMsg, xText, yText);
-
     } // for all angles
   } // end render
-
-
 } // end class
 export default ToolAngle;
-

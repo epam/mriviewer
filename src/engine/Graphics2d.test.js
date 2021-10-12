@@ -6,34 +6,34 @@
 import ToolArea from './tools2d/ToolArea';
 import VolumeSet from './VolumeSet';
 import Volume from './Volume';
-import Graphics2d from "./Graphics2d";
-jest.mock("./Graphics2d", () => jest.fn(() => {}));
+import Graphics2d from './Graphics2d';
+jest.mock('./Graphics2d', () => jest.fn(() => {}));
 
 describe('ToolArea. test line intersect', () => {
   beforeEach(() => {
     // Clear all instances and calls to constructor and all methods:
     Graphics2d.mockClear();
   });
-  
+
   it('ToolArea. test line intersect no 0', () => {
     // const gra = new Graphics2d();
     // const toolArea = new ToolArea(gra);
 
     const v0 = {
       x: 0.0,
-      y: 0.0
+      y: 0.0,
     };
     const v1 = {
       x: 1.0,
-      y: 0.0
+      y: 0.0,
     };
     const v2 = {
       x: 2.0,
-      y: -1.0
+      y: -1.0,
     };
     const v3 = {
       x: 2.0,
-      y: 1.0
+      y: 1.0,
     };
     const vInter = ToolArea.getLineIntersection(v0, v1, v2, v3);
     expect(vInter === null).toBeTruthy();
@@ -44,19 +44,19 @@ describe('ToolArea. test line intersect', () => {
 
     const v0 = {
       x: 0.0,
-      y: 0.0
+      y: 0.0,
     };
     const v1 = {
       x: 1.0,
-      y: 0.0
+      y: 0.0,
     };
     const v2 = {
       x: 0.5,
-      y: -1.0
+      y: -1.0,
     };
     const v3 = {
       x: 0.5,
-      y: 1.0
+      y: 1.0,
     };
     const vInter = ToolArea.getLineIntersection(v0, v1, v2, v3);
     expect(vInter !== null).toBeTruthy();
@@ -69,19 +69,19 @@ describe('ToolArea. test line intersect', () => {
 
     const v0 = {
       x: 0.0,
-      y: 0.0
+      y: 0.0,
     };
     const v1 = {
       x: 1.0,
-      y: 0.0
+      y: 0.0,
     };
     const v2 = {
       x: 0.0,
-      y: 1.0
+      y: 1.0,
     };
     const v3 = {
       x: 1.0,
-      y: 1.0
+      y: 1.0,
     };
     const vInter = ToolArea.getLineIntersection(v0, v1, v2, v3);
     expect(vInter === null).toBeTruthy();
@@ -121,7 +121,7 @@ describe('ToolArea. test line intersect', () => {
   it('ToolArea. test check area', () => {
     const vol = new Volume();
     vol.m_xDim = vol.m_yDim = vol.m_zDim = 100.0;
-    vol.m_boxSize.x = vol.m_boxSize.y = vol.m_boxSize.z = 10.0; 
+    vol.m_boxSize.x = vol.m_boxSize.y = vol.m_boxSize.z = 10.0;
     const volSet = new VolumeSet();
     volSet.addVolume(vol);
     const store = {
@@ -142,5 +142,4 @@ describe('ToolArea. test line intersect', () => {
     // console.log(`test area = ${area}`);
     expect(area === 100.0).toBeTruthy();
   });
-
 });

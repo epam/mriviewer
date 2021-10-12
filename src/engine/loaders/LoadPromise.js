@@ -22,11 +22,11 @@ export default class LoadFilePromise {
   }
 
   /**
-  * Read local file. If success, invoke resolve callback for created promise
-  *
-  * @param {object} file - file to read
-  * @return {object} Promise, working after file will be read
-  */
+   * Read local file. If success, invoke resolve callback for created promise
+   *
+   * @param {object} file - file to read
+   * @return {object} Promise, working after file will be read
+   */
   readLocal(file) {
     return new Promise((resolve) => {
       this.m_file = file;
@@ -42,11 +42,11 @@ export default class LoadFilePromise {
   }
 
   /**
-  * Read remote file (via promise). If success, invoke resolve callback for created promise
-  *
-  * @param {string} url - file to read
-  * @return {object} Promise, working after file will be read
-  */
+   * Read remote file (via promise). If success, invoke resolve callback for created promise
+   *
+   * @param {string} url - file to read
+   * @return {object} Promise, working after file will be read
+   */
   readFromUrl(url) {
     return new Promise((resolve, reject) => {
       this.m_url = url;
@@ -66,21 +66,29 @@ export default class LoadFilePromise {
         console.log('This browser cant support CORS requests');
         return;
       }
-      this.m_request.responseType = 'arraybuffer';  // "blob"
-      this.m_request.addEventListener('load', (event) => {
-        const arrBuf = event.target.response;
-        if (arrBuf === null) {
-          console.log('Bad response type. Expect object type in response.');
-        } else {
-          resolve(arrBuf);
-        }
-      }, false);
+      this.m_request.responseType = 'arraybuffer'; // "blob"
+      this.m_request.addEventListener(
+        'load',
+        (event) => {
+          const arrBuf = event.target.response;
+          if (arrBuf === null) {
+            console.log('Bad response type. Expect object type in response.');
+          } else {
+            resolve(arrBuf);
+          }
+        },
+        false
+      );
 
-      this.m_request.addEventListener('error', (event) => {
-        const strError = `Error event happend for XMLHttpRequest: loaded = ${event.loaded}, total = ${event.total}`;
-        console.log(strError);
-        reject(strError);
-      }, false);
+      this.m_request.addEventListener(
+        'error',
+        (event) => {
+          const strError = `Error event happend for XMLHttpRequest: loaded = ${event.loaded}, total = ${event.total}`;
+          console.log(strError);
+          reject(strError);
+        },
+        false
+      );
       this.m_request.send();
     });
   }

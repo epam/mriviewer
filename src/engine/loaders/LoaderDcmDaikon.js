@@ -12,7 +12,7 @@
 // **********************************************
 
 // 31.08.2020. Daikon reader
-import daikon from  'daikon';
+import daikon from 'daikon';
 import DicomSliceInfo from './dicomsliceinfo';
 import LoadResult from '../LoadResult';
 import LoaderDicom from './LoaderDicom';
@@ -37,7 +37,7 @@ const READ_DICOMDIR = false;
 // **********************************************
 
 class LoaderDcmDaikon {
-  constructor(){ 
+  constructor() {
     this.m_loaderDicom = null;
   }
 
@@ -51,10 +51,10 @@ class LoaderDcmDaikon {
     try {
       image = daikon.Series.parseImage(dataFile);
     } catch (err) {
-      console.log("error parse dcm file buffer");
+      console.log('error parse dcm file buffer');
       return LoadResult.BAD_DICOM;
     }
-    if ((image === undefined) || (image === null)) {
+    if (image === undefined || image === null) {
       return LoadResult.BAD_DICOM;
     }
     const TAG_DIRECTORY_REC = [0x0004, 0x1220];
@@ -66,20 +66,20 @@ class LoaderDcmDaikon {
       const numEntries = tagDirRec.value.length;
       for (let k = 0; k < numEntries; k++) {
         let dirEntry = tagDirRec.value[k];
-        if ((dirEntry.element === 57344) && (dirEntry.group === 65534)) {
+        if (dirEntry.element === 57344 && dirEntry.group === 65534) {
           const numSub = dirEntry.value.length;
           for (let s = 0; s < numSub; s++) {
             let elemSub = dirEntry.value[s];
-            if ((elemSub.element === 5168) && (elemSub.group === 4)) {
+            if (elemSub.element === 5168 && elemSub.group === 4) {
               //const str = elemSub.value[0];
               //console.log(`elem sub val = ${str}`);
             }
-            if ((elemSub.element === 5376) && (elemSub.group === 4)) {
+            if (elemSub.element === 5376 && elemSub.group === 4) {
               const fold = elemSub.value[0];
               const fname = elemSub.value[1];
               console.log(`image nm = ${fold} / ${fname}`);
             }
-          } // for s, all sub elemenst 
+          } // for s, all sub elemenst
         } // if entry with patient and image information
       } // for k all entries in dir
     } // if dir rec found
@@ -94,17 +94,17 @@ class LoaderDcmDaikon {
     try {
       image = daikon.Series.parseImage(dataFile);
     } catch (err) {
-      console.log("error parse dcm file buffer");
+      console.log('error parse dcm file buffer');
       return LoadResult.BAD_DICOM;
     }
-    if ((image === undefined) || (image === null)) {
+    if (image === undefined || image === null) {
       return LoadResult.BAD_DICOM;
     }
     // console.log("dcm parse completed");
     const yDim = image.getRows();
     const xDim = image.getCols();
     const bits = image.getBitsAllocated();
-    if ((bits !== 8) && (bits !== 16)) {
+    if (bits !== 8 && bits !== 16) {
       console.log('Parse Dicom data. Strange bits per pixel = ' + bits.toString());
     }
     // data for hash code evaluate
@@ -117,7 +117,6 @@ class LoaderDcmDaikon {
     //const hasPixels = image.hasPixelData();
     //const isComp = image.isCompressed();
 
-
     const dicomInfo = this.m_loaderDicom.m_dicomInfo;
     //const volSlice = this.m_loaderDicom.m_slicesVolume.getNewSlice();
     const volSlice = new DicomSlice();
@@ -127,7 +126,7 @@ class LoaderDcmDaikon {
     volSlice.m_studyDescr = studyDescr;
     volSlice.m_studyDate = studyDate;
     volSlice.m_seriesTime = seriesTime;
-    volSlice.m_seriesDescr  = seriesDescr;
+    volSlice.m_seriesDescr = seriesDescr;
     volSlice.m_bodyPartExamined = bodyPartExamined;
     volSlice.buildHash();
 
@@ -156,46 +155,69 @@ class LoaderDcmDaikon {
     const TAG_PADDING_VALUE = [0x0028, 0x0120];
     const knownTags = [
       // image dims
-      daikon.Tag.TAG_ROWS, daikon.Tag.TAG_COLS, daikon.Tag.TAG_ACQUISITION_MATRIX, 
-      daikon.Tag.TAG_NUMBER_OF_FRAMES, daikon.Tag.TAG_NUMBER_TEMPORAL_POSITIONS,
+      daikon.Tag.TAG_ROWS,
+      daikon.Tag.TAG_COLS,
+      daikon.Tag.TAG_ACQUISITION_MATRIX,
+      daikon.Tag.TAG_NUMBER_OF_FRAMES,
+      daikon.Tag.TAG_NUMBER_TEMPORAL_POSITIONS,
       // voxel dims
-      daikon.Tag.TAG_PIXEL_SPACING, daikon.Tag.TAG_SLICE_THICKNESS, daikon.Tag.TAG_SLICE_GAP,
-      daikon.Tag.TAG_TR, daikon.Tag.TAG_FRAME_TIME, 
+      daikon.Tag.TAG_PIXEL_SPACING,
+      daikon.Tag.TAG_SLICE_THICKNESS,
+      daikon.Tag.TAG_SLICE_GAP,
+      daikon.Tag.TAG_TR,
+      daikon.Tag.TAG_FRAME_TIME,
       // datatype
-      daikon.Tag.TAG_BITS_ALLOCATED, daikon.Tag.TAG_BITS_STORED,
-      daikon.Tag.TAG_PIXEL_REPRESENTATION, daikon.Tag.TAG_HIGH_BIT, 
-      daikon.Tag.TAG_PHOTOMETRIC_INTERPRETATION, daikon.Tag.TAG_SAMPLES_PER_PIXEL,
-      daikon.Tag.TAG_PLANAR_CONFIG, daikon.Tag.TAG_PALETTE_RED, daikon.Tag.TAG_PALETTE_GREEN,
+      daikon.Tag.TAG_BITS_ALLOCATED,
+      daikon.Tag.TAG_BITS_STORED,
+      daikon.Tag.TAG_PIXEL_REPRESENTATION,
+      daikon.Tag.TAG_HIGH_BIT,
+      daikon.Tag.TAG_PHOTOMETRIC_INTERPRETATION,
+      daikon.Tag.TAG_SAMPLES_PER_PIXEL,
+      daikon.Tag.TAG_PLANAR_CONFIG,
+      daikon.Tag.TAG_PALETTE_RED,
+      daikon.Tag.TAG_PALETTE_GREEN,
       daikon.Tag.TAG_PALETTE_BLUE,
 
       // data scale
-      daikon.Tag.TAG_DATA_SCALE_SLOPE, daikon.Tag.TAG_DATA_SCALE_INTERCEPT,
-      daikon.Tag.TAG_DATA_SCALE_ELSCINT, daikon.Tag.TAG_PIXEL_BANDWIDTH,
+      daikon.Tag.TAG_DATA_SCALE_SLOPE,
+      daikon.Tag.TAG_DATA_SCALE_INTERCEPT,
+      daikon.Tag.TAG_DATA_SCALE_ELSCINT,
+      daikon.Tag.TAG_PIXEL_BANDWIDTH,
 
       // range
-      daikon.Tag.TAG_IMAGE_MIN, daikon.Tag.TAG_IMAGE_MAX,
-      daikon.Tag.TAG_WINDOW_CENTER, daikon.Tag.TAG_WINDOW_WIDTH,
+      daikon.Tag.TAG_IMAGE_MIN,
+      daikon.Tag.TAG_IMAGE_MAX,
+      daikon.Tag.TAG_WINDOW_CENTER,
+      daikon.Tag.TAG_WINDOW_WIDTH,
 
       // description
-      daikon.Tag.TAG_PATIENT_NAME, daikon.Tag.TAG_PATIENT_ID,
-      daikon.Tag.TAG_STUDY_DATE, daikon.Tag.TAG_STUDY_TIME,
-      daikon.Tag.TAG_STUDY_DES, daikon.Tag.TAG_IMAGE_TYPE,
-      daikon.Tag.TAG_IMAGE_COMMENTS, daikon.Tag.TAG_SEQUENCE_NAME,
+      daikon.Tag.TAG_PATIENT_NAME,
+      daikon.Tag.TAG_PATIENT_ID,
+      daikon.Tag.TAG_STUDY_DATE,
+      daikon.Tag.TAG_STUDY_TIME,
+      daikon.Tag.TAG_STUDY_DES,
+      daikon.Tag.TAG_IMAGE_TYPE,
+      daikon.Tag.TAG_IMAGE_COMMENTS,
+      daikon.Tag.TAG_SEQUENCE_NAME,
       daikon.Tag.TAG_MODALITY,
 
       daikon.Tag.TAG_FRAME_OF_REF_UID,
       daikon.Tag.TAG_STUDY_UID,
 
       // volume id
-      daikon.Tag.TAG_SERIES_DESCRIPTION, daikon.Tag.TAG_SERIES_INSTANCE_UID,
-      daikon.Tag.TAG_SERIES_NUMBER, daikon.Tag.TAG_ECHO_NUMBER,
+      daikon.Tag.TAG_SERIES_DESCRIPTION,
+      daikon.Tag.TAG_SERIES_INSTANCE_UID,
+      daikon.Tag.TAG_SERIES_NUMBER,
+      daikon.Tag.TAG_ECHO_NUMBER,
       daikon.Tag.TAG_TEMPORAL_POSITION,
 
       // slice id
-      daikon.Tag.TAG_IMAGE_NUM, daikon.Tag.TAG_SLICE_LOCATION,
+      daikon.Tag.TAG_IMAGE_NUM,
+      daikon.Tag.TAG_SLICE_LOCATION,
 
       // orientation
-      daikon.Tag.TAG_IMAGE_ORIENTATION, daikon.Tag.TAG_IMAGE_POSITION,
+      daikon.Tag.TAG_IMAGE_ORIENTATION,
+      daikon.Tag.TAG_IMAGE_POSITION,
       daikon.Tag.TAG_SLICE_LOCATION_VECTOR,
       // lut shape
       daikon.Tag.TAG_LUT_SHAPE,
@@ -211,21 +233,19 @@ class LoaderDcmDaikon {
     const TAG_PHYSICANS_NAME = [0x0008, 0x0090];
 
     dicomInfo.m_patientName = image.getPatientName();
-    dicomInfo.m_patientDateOfBirth = daikon.Image.getSingleValueSafely(image.getTag(TAG_PATIENT_BIRTH_DATE[0], 
-      TAG_PATIENT_BIRTH_DATE[1]), 0);
+    dicomInfo.m_patientDateOfBirth = daikon.Image.getSingleValueSafely(
+      image.getTag(TAG_PATIENT_BIRTH_DATE[0], TAG_PATIENT_BIRTH_DATE[1]),
+      0
+    );
     dicomInfo.m_seriesDescr = seriesDescr;
 
     dicomInfo.m_studyDescr = studyDescr;
     dicomInfo.m_studyDate = studyDate;
     dicomInfo.m_seriesTime = seriesTime;
-    dicomInfo.m_bodyPartExamined = daikon.Image.getSingleValueSafely(image.getTag(TAG_BODY_PART_EXAMINED[0], 
-      TAG_BODY_PART_EXAMINED[1]), 0);
-    dicomInfo.m_institutionName = daikon.Image.getSingleValueSafely(image.getTag(TAG_INSTITUTION_NAME[0], 
-      TAG_INSTITUTION_NAME[1]), 0);
-    dicomInfo.m_operatorsName = daikon.Image.getSingleValueSafely(image.getTag(TAG_OPERATORS_NAME[0], 
-      TAG_OPERATORS_NAME[1]), 0);
-    dicomInfo.m_physicansName = daikon.Image.getSingleValueSafely(image.getTag(TAG_PHYSICANS_NAME[0], 
-      TAG_PHYSICANS_NAME[1]), 0);
+    dicomInfo.m_bodyPartExamined = daikon.Image.getSingleValueSafely(image.getTag(TAG_BODY_PART_EXAMINED[0], TAG_BODY_PART_EXAMINED[1]), 0);
+    dicomInfo.m_institutionName = daikon.Image.getSingleValueSafely(image.getTag(TAG_INSTITUTION_NAME[0], TAG_INSTITUTION_NAME[1]), 0);
+    dicomInfo.m_operatorsName = daikon.Image.getSingleValueSafely(image.getTag(TAG_OPERATORS_NAME[0], TAG_OPERATORS_NAME[1]), 0);
+    dicomInfo.m_physicansName = daikon.Image.getSingleValueSafely(image.getTag(TAG_PHYSICANS_NAME[0], TAG_PHYSICANS_NAME[1]), 0);
 
     // save all known tags to info array (can be displayed in app UI)
     const numKnownTags = knownTags.length;
@@ -239,18 +259,16 @@ class LoaderDcmDaikon {
 
         // const sliceInfo = dicomInfo.m_sliceInfo[0];
         const tagInfo = new DicomTagInfo();
-        tagInfo.m_tag = '(' + 
-          LoaderDicom.numberToHexString(group) + ',' + 
-          LoaderDicom.numberToHexString(element) + ')';
+        tagInfo.m_tag = '(' + LoaderDicom.numberToHexString(group) + ',' + LoaderDicom.numberToHexString(element) + ')';
         const strTagName = this.m_loaderDicom.m_dictionary.getTextDesc(group, element);
-        tagInfo.m_attrName = (strTagName.length > 1) ? strTagName : '';
-  
+        tagInfo.m_attrName = strTagName.length > 1 ? strTagName : '';
+
         // let strVal = LoaderDicom.getAttrValueAsString(tag);
         let strVal = '';
         if (val !== null) {
           strVal = val.toString();
         }
-  
+
         tagInfo.m_attrValue = strVal;
         sliceInfo.m_tags.push(tagInfo);
         if (NEED_DEBUG_PRINT_TAGS) {
@@ -266,8 +284,8 @@ class LoaderDcmDaikon {
     if (tagSLoc !== undefined) {
       let sliceLoc = tagSLoc.value[0];
       volSlice.m_sliceLocation = sliceLoc;
-      this.m_sliceLocMin = (sliceLoc < this.m_sliceLocMin) ? sliceLoc : this.m_sliceLocMin;
-      this.m_sliceLocMax = (sliceLoc > this.m_sliceLocMax) ? sliceLoc : this.m_sliceLocMax;
+      this.m_sliceLocMin = sliceLoc < this.m_sliceLocMin ? sliceLoc : this.m_sliceLocMin;
+      this.m_sliceLocMax = sliceLoc > this.m_sliceLocMax ? sliceLoc : this.m_sliceLocMax;
     }
     // slice number
     ind = daikon.Utils.dec2hex(daikon.Tag.TAG_IMAGE_NUM[0]) + daikon.Utils.dec2hex(daikon.Tag.TAG_IMAGE_NUM[1]);
@@ -326,7 +344,7 @@ class LoaderDcmDaikon {
     ind = daikon.Utils.dec2hex(TAG_RESCALE_TYPE[0]) + daikon.Utils.dec2hex(TAG_RESCALE_TYPE[1]);
     const tagResTyp = image.tags[ind];
     if (tagResTyp !== undefined) {
-      if ((tagResTyp.value !== null) && (tagResTyp.value[0] === 'HU')) {
+      if (tagResTyp.value !== null && tagResTyp.value[0] === 'HU') {
         this.m_loaderDicom.m_rescaleHounsfield = true;
       }
     }
@@ -339,7 +357,6 @@ class LoaderDcmDaikon {
         this.m_loaderDicom.m_pixelRepresentaionSigned = true;
       }
     }
-
 
     // read pixel spacing on xy (physical dimensions)
     ind = daikon.Utils.dec2hex(daikon.Tag.TAG_PIXEL_SPACING[0]) + daikon.Utils.dec2hex(daikon.Tag.TAG_PIXEL_SPACING[1]);
@@ -375,12 +392,12 @@ class LoaderDcmDaikon {
         const yPos = tagImPos.value[1];
         // eslint-disable-next-line
         const zPos = tagImPos.value[2];
-        this.m_loaderDicom.m_imagePosMin.x = (xPos < this.m_loaderDicom.m_imagePosMin.x) ? xPos : this.m_loaderDicom.m_imagePosMin.x;
-        this.m_loaderDicom.m_imagePosMin.y = (yPos < this.m_loaderDicom.m_imagePosMin.y) ? yPos : this.m_loaderDicom.m_imagePosMin.y;
-        this.m_loaderDicom.m_imagePosMin.z = (zPos < this.m_loaderDicom.m_imagePosMin.z) ? zPos : this.m_loaderDicom.m_imagePosMin.z;
-        this.m_loaderDicom.m_imagePosMax.x = (xPos > this.m_loaderDicom.m_imagePosMax.x) ? xPos : this.m_loaderDicom.m_imagePosMax.x;
-        this.m_loaderDicom.m_imagePosMax.y = (yPos > this.m_loaderDicom.m_imagePosMax.y) ? yPos : this.m_loaderDicom.m_imagePosMax.y;
-        this.m_loaderDicom.m_imagePosMax.z = (zPos > this.m_loaderDicom.m_imagePosMax.z) ? zPos : this.m_loaderDicom.m_imagePosMax.z;
+        this.m_loaderDicom.m_imagePosMin.x = xPos < this.m_loaderDicom.m_imagePosMin.x ? xPos : this.m_loaderDicom.m_imagePosMin.x;
+        this.m_loaderDicom.m_imagePosMin.y = yPos < this.m_loaderDicom.m_imagePosMin.y ? yPos : this.m_loaderDicom.m_imagePosMin.y;
+        this.m_loaderDicom.m_imagePosMin.z = zPos < this.m_loaderDicom.m_imagePosMin.z ? zPos : this.m_loaderDicom.m_imagePosMin.z;
+        this.m_loaderDicom.m_imagePosMax.x = xPos > this.m_loaderDicom.m_imagePosMax.x ? xPos : this.m_loaderDicom.m_imagePosMax.x;
+        this.m_loaderDicom.m_imagePosMax.y = yPos > this.m_loaderDicom.m_imagePosMax.y ? yPos : this.m_loaderDicom.m_imagePosMax.y;
+        this.m_loaderDicom.m_imagePosMax.z = zPos > this.m_loaderDicom.m_imagePosMax.z ? zPos : this.m_loaderDicom.m_imagePosMax.z;
         if (NEED_DEBUG_PRINT_TAGS) {
           console.log(`TAG. image position x,y,z = ${xPos}, ${yPos}, ${zPos}`);
         } // if print
@@ -392,7 +409,7 @@ class LoaderDcmDaikon {
     const tagTraSyn = image.tags[ind];
     if (tagTraSyn !== undefined) {
       let arrStrTra = tagTraSyn.value;
-      if (arrStrTra[0] === "1.2.840.10008.1.2.2") {
+      if (arrStrTra[0] === '1.2.840.10008.1.2.2') {
         this.m_loaderDicom.m_littleEndian = false;
       }
       // console.log('val pad = ' + valPad);
@@ -433,7 +450,7 @@ class LoaderDcmDaikon {
         const bVal = pixSrc[j + 0];
         const gVal = pixSrc[j + 1];
         const rVal = pixSrc[j + 2];
-        volSlice.m_image[i] = Math.floor( (bVal + gVal + rVal) / 3 );
+        volSlice.m_image[i] = Math.floor((bVal + gVal + rVal) / 3);
       } // for i
     } // if samples per pixel is 3
     // store x, y dims
@@ -463,7 +480,7 @@ class LoaderDcmDaikon {
     if (ret !== LoadResult.SUCCESS) {
       return ret;
     }
-    
+
     // save dicomInfo to store
     const dicomInfo = this.m_loaderDicom.m_dicomInfo;
     store.dispatch({ type: StoreActionType.SET_DICOM_INFO, dicomInfo: dicomInfo });
@@ -471,9 +488,6 @@ class LoaderDcmDaikon {
     store.dispatch({ type: StoreActionType.SET_LOADER_DICOM, loaderDicom: this.m_loaderDicom });
     return ret;
   }
-
 }
 
-
 export default LoaderDcmDaikon;
-

@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import ViewMode from '../store/ViewMode';
 import Modes3d from '../store/Modes3d';
 import StoreActionType from '../store/ActionTypes';
-import VolumeRenderer3d from './VolumeRenderer3d'
+import VolumeRenderer3d from './VolumeRenderer3d';
 //import DistanceTool from '../tools23d/distancetool'
 
 class Graphics3d extends React.Component {
@@ -37,7 +37,7 @@ class Graphics3d extends React.Component {
     this.m_fileDataType = {
       thresholdIsosurf: 0.46,
       thresholdTissue1: 0.09,
-      thresholdTissue2: 0.30,
+      thresholdTissue2: 0.3,
       opacityTissue: 0.53,
       startRotX: -Math.PI * 0.5,
       startRotY: Math.PI,
@@ -80,7 +80,7 @@ class Graphics3d extends React.Component {
     this.m_mesh.rotation.y += 0.01;
     this.m_material.color.setRGB(this.m_slider3dr, this.m_slider3dg, this.m_slider3db);
     this.m_material.wireframe = (this.m_mode3d === Modes3d.ISO);*/
- 
+
     this.renderScene();
     this.m_frameId = window.requestAnimationFrame(this.animate);
   }
@@ -100,8 +100,8 @@ class Graphics3d extends React.Component {
   componentDidMount() {
     // detect actual render window dims
     const MIN_DIM = 200;
-    const w = (this.m_mount.clientWidth > 0) ? this.m_mount.clientWidth : MIN_DIM;
-    const h = (this.m_mount.clientHeight > 0) ? this.m_mount.clientHeight : MIN_DIM;
+    const w = this.m_mount.clientWidth > 0 ? this.m_mount.clientWidth : MIN_DIM;
+    const h = this.m_mount.clientHeight > 0 ? this.m_mount.clientHeight : MIN_DIM;
     if (this.state.wRender === 0) {
       this.setState({ wRender: w });
       this.setState({ hRender: h });
@@ -132,24 +132,31 @@ class Graphics3d extends React.Component {
         curFileDataType: this.m_fileDataType,
         width: w,
         height: h,
-        mount: this.m_mount
+        mount: this.m_mount,
       });
     }
     this.setVolRenderToStore(this.m_volumeRenderer3D);
-    if (this.volume !== null && this.isLoaded === false && this.m_volumeRenderer3D !== null) { 
+    if (this.volume !== null && this.isLoaded === false && this.m_volumeRenderer3D !== null) {
       const store = this.props;
       const volSet = store.volumeSet;
       const volIndex = store.volumeIndex;
       const vol = volSet.getVolume(volIndex);
       const FOUR = 4;
-      const isIso = (vol.m_bytesPerVoxel === FOUR);
-      const viewMode = store.viewMode; 
+      const isIso = vol.m_bytesPerVoxel === FOUR;
+      const viewMode = store.viewMode;
       //let tst = 0;
       //if (this.volume.m_zDim < 4)
       if (viewMode === ViewMode.VIEW_3D) {
         this.m_volumeRenderer3D.initWithVolume(this.volume, this.volume.m_boxSize, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, true);
       } else {
-        this.m_volumeRenderer3D.initWithVolume(this.volume, this.volume.m_boxSize, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, isIso, false);
+        this.m_volumeRenderer3D.initWithVolume(
+          this.volume,
+          this.volume.m_boxSize,
+          { x: 0, y: 0, z: 0 },
+          { x: 1, y: 1, z: 1 },
+          isIso,
+          false
+        );
       }
       //if (tst) {
       //  return;
@@ -162,7 +169,7 @@ class Graphics3d extends React.Component {
   }
 
   componentWillUnmount() {
-    this.stop()
+    this.stop();
     if (this.m_renderer !== null) {
       this.m_mount.removeChild(this.m_renderer.domElement);
     }
@@ -189,7 +196,8 @@ class Graphics3d extends React.Component {
     }
   }
 
-  _onMouseUp() { // ommited args: evt
+  _onMouseUp() {
+    // ommited args: evt
     //console.log(`${e.x}, ${e.y}\n`);
     if (this.m_volumeRenderer3D !== null) {
       this.m_volumeRenderer3D.onMouseUp();
@@ -208,7 +216,7 @@ class Graphics3d extends React.Component {
   }
 
   onTouchStart(evt) {
-    if ((this.m_mount !== undefined) && (this.m_mount !== null)) {
+    if (this.m_mount !== undefined && this.m_mount !== null) {
       // evt.preventDefault();
       const touches = evt.changedTouches;
       const numTouches = touches.length;
@@ -230,7 +238,7 @@ class Graphics3d extends React.Component {
   }
 
   onTouchMove(evt) {
-    if ((this.m_mount !== undefined) && (this.m_mount !== null)) {
+    if (this.m_mount !== undefined && this.m_mount !== null) {
       // evt.preventDefault();
       const touches = evt.changedTouches;
       const numTouches = touches.length;
@@ -262,7 +270,6 @@ class Graphics3d extends React.Component {
       console.log('Ctrl key was pressed');
       const store = this.props;
       store.volumeRenderer.setEraserStart(true);
-  
     }
   }
 
@@ -304,14 +311,14 @@ class Graphics3d extends React.Component {
           //}
           this.m_prevMode = Modes3d.RAYCAST;
           this.m_volumeRenderer3D.setTransferFuncVec3([store.slider3d_r, store.slider3d_g, store.slider3d_b], 0);
-          this.m_volumeRenderer3D.switchToVolumeRender();      
+          this.m_volumeRenderer3D.switchToVolumeRender();
         }
         if (mode3d === Modes3d.ISO) {
           //if (this.m_prevMode === Modes3d.EREASER) {
           //  this.m_volumeRenderer3D.setEraserMode(false);
           //}
           this.m_prevMode = Modes3d.ISO;
-          this.m_volumeRenderer3D.switchToIsosurfRender();      
+          this.m_volumeRenderer3D.switchToIsosurfRender();
           this.m_volumeRenderer3D.setIsoThresholdValue(store.isoThresholdValue);
         }
         if (mode3d === Modes3d.RAYFAST) {
@@ -326,13 +333,13 @@ class Graphics3d extends React.Component {
           //  this.m_volumeRenderer3D.setEraserMode(true);
           //}
           this.m_prevMode = Modes3d.RAYFAST;
-          this.m_volumeRenderer3D.switchToIsosurfRender();     
+          this.m_volumeRenderer3D.switchToIsosurfRender();
           this.m_volumeRenderer3D.setIsoThresholdValue(store.isoThresholdValue);
           this.m_volumeRenderer3D.volumeUpdater.eraser.setEraserRadius(store.sliderErRadius);
           this.m_volumeRenderer3D.volumeUpdater.eraser.setEraserDepth(store.sliderErDepth);
         }
       } else {
-        this.m_volumeRenderer3D.switchToFullVolumeRender() 
+        this.m_volumeRenderer3D.switchToFullVolumeRender();
       }
       this.m_volumeRenderer3D.setOpacityBarrier(store.opacityValue3D);
       this.m_volumeRenderer3D.updateBrightness(store.brightness3DValue);
@@ -350,22 +357,28 @@ class Graphics3d extends React.Component {
       display: 'block',
     };
 
-    return <div
-      style={styleObj}
-      width={this.state.wRender} height={this.state.hRender}
-      ref={ (mount) => {this.m_mount = mount} }
-      onMouseMove={this._onMouseMove.bind(this)} 
-      onMouseDown={this._onMouseDown.bind(this)} 
-      onMouseUp={this._onMouseUp.bind(this)} 
-      onTouchStart={this.onTouchStart.bind(this)}
-      onTouchEnd={this.onTouchEnd.bind(this)}
-      onTouchMove={this.onTouchMove.bind(this)}
-      onClick={this.onClick.bind(this)}
-      tabIndex="1"
-      onKeyDown={(evt) => this.onKeyDown(evt)}
-      onKeyUp={(evt) => this.onKeyUp(evt)}
-      onWheel={this._onWheel.bind(this)} />
+    return (
+      <div
+        style={styleObj}
+        width={this.state.wRender}
+        height={this.state.hRender}
+        ref={(mount) => {
+          this.m_mount = mount;
+        }}
+        onMouseMove={this._onMouseMove.bind(this)}
+        onMouseDown={this._onMouseDown.bind(this)}
+        onMouseUp={this._onMouseUp.bind(this)}
+        onTouchStart={this.onTouchStart.bind(this)}
+        onTouchEnd={this.onTouchEnd.bind(this)}
+        onTouchMove={this.onTouchMove.bind(this)}
+        onClick={this.onClick.bind(this)}
+        tabIndex="1"
+        onKeyDown={(evt) => this.onKeyDown(evt)}
+        onKeyUp={(evt) => this.onKeyUp(evt)}
+        onWheel={this._onWheel.bind(this)}
+      />
+    );
   }
 }
 
-export default connect(store => store)(Graphics3d);
+export default connect((store) => store)(Graphics3d);

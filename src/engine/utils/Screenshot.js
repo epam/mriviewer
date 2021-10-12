@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 /**
-* Screen shot take from app
-* @module demo/engine/utils/screenshot
-*/
+ * Screen shot take from app
+ * @module demo/engine/utils/screenshot
+ */
 // absolute imports
 /**
-* Class Screenshot to take screen copy
-* @class Screenshot
-*/
+ * Class Screenshot to take screen copy
+ * @class Screenshot
+ */
 class Screenshot {
   /**
-  * Convert string into byte array
-  */
+   * Convert string into byte array
+   */
   static bytesFromBase64(str) {
     const binary = window.atob(str);
     const bytes = new Uint8Array(binary.length);
@@ -25,8 +25,8 @@ class Screenshot {
   }
 
   /**
-  * Encode byte buffer into base64
-  */
+   * Encode byte buffer into base64
+   */
   static bytesToBase64(buffer) {
     const bytes = new Uint8Array(buffer);
     let binary = '';
@@ -37,8 +37,8 @@ class Screenshot {
   }
 
   /**
-  * Convert data URI to blob (for further save)
-  */
+   * Convert data URI to blob (for further save)
+   */
   static dataUriToBlob(uri) {
     const parts = uri.split(/[:;,]/);
     const partsCount = parts.length;
@@ -51,8 +51,8 @@ class Screenshot {
   }
 
   /**
-  * Open new browser window and display screenshot in it
-  */
+   * Open new browser window and display screenshot in it
+   */
   static showScreenshotInNewWindow(imageUri) {
     // show image on screen
     // console.log(`imageUri = ${imageUri}`);
@@ -61,8 +61,8 @@ class Screenshot {
   }
 
   /**
-  * Save screenshot in file
-  */
+   * Save screenshot in file
+   */
   static saveScreenShotToFile(imageUri, fileName) {
     // save image to file
     const blob = Screenshot.dataUriToBlob(imageUri);
@@ -81,8 +81,8 @@ class Screenshot {
   }
 
   /**
-  * Format value as a text with 2 digits. '2' -> '02', '34' -> '34'
-  */
+   * Format value as a text with 2 digits. '2' -> '02', '34' -> '34'
+   */
   static formatTwoDigits(val) {
     const TEN = 10;
     if (val >= TEN) {
@@ -92,8 +92,8 @@ class Screenshot {
   }
 
   /**
-  * Get current date + time in format YYMMDD-HHMMSS
-  */
+   * Get current date + time in format YYMMDD-HHMMSS
+   */
   static getFormattedDateString() {
     const date = new Date();
     const yy = date.getUTCFullYear();
@@ -107,8 +107,8 @@ class Screenshot {
   }
 
   /**
-  * Get screenshot
-  */
+   * Get screenshot
+   */
   static makeScreenshot(engineRender, shotW, shotH) {
     const imageUri = engineRender.screenshot(shotW, shotH);
     // const imageUri = engineRender3d.screenshot();

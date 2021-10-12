@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
@@ -50,7 +49,7 @@ export default class VolumeFilter3d {
         const yVolOff = yVol * this.xDim;
         for (let x = 0; x < this.xDim; x++) {
           const xVol = x;
-          const offSrc = (xVol + yVolOff + zVolOff);
+          const offSrc = xVol + yVolOff + zVolOff;
           let valInt = this.arrPixels[offSrc + 0];
           const offDst = offSrc;
           if (this.zDim > 5 && (z === 0 || z === this.zDim - 1)) {
@@ -83,10 +82,10 @@ export default class VolumeFilter3d {
 
     // Fill initial rgba array
     for (let yTile = 0; yTile < this.zDimSqrt; yTile++) {
-      const yTileOff = (yTile * this.yDim) * this.xTex;
+      const yTileOff = yTile * this.yDim * this.xTex;
       for (let xTile = 0; xTile < this.zDimSqrt; xTile++) {
         const xTileOff = xTile * this.xDim;
-        const zVol = xTile + (yTile * this.zDimSqrt);
+        const zVol = xTile + yTile * this.zDimSqrt;
         if (zVol >= this.zDim) {
           break;
         }
@@ -100,7 +99,7 @@ export default class VolumeFilter3d {
             const offSrc = (xVol + yVolOff + zVolOff) * BID;
             const valInt = this.arrPixels[offSrc + 0];
             const valRoi = this.arrPixels[offSrc + OFF3];
-            const offDst = yTileOff + xTileOff + (y * this.xTex) + x;
+            const offDst = yTileOff + xTileOff + y * this.xTex + x;
             this.bufferR[offDst + OFF0] = valRoi;
             this.bufferTextureCPU[BID * offDst + OFF0] = valInt;
             this.bufferTextureCPU[BID * offDst + OFF1] = valInt;
@@ -109,7 +108,6 @@ export default class VolumeFilter3d {
             // 255.0 * zVol * (x + y) / ( this.zDimSqrt * this.zDimSqrt * (this.xDim + this.yDim));
             this.bufferTextureCPU[BID * offDst + OFF3] = valInt;
             this.bufferRoi[offDst + OFF0] = valRoi;
-
           }
         }
       }
@@ -161,9 +159,9 @@ export default class VolumeFilter3d {
     if (this.isWebGL2 === 0) {
       const yTile = Math.floor(mainZ / this.zDimSqrt);
       const xTile = mainZ - this.zDimSqrt * yTile;
-      const yTileOff = (yTile * this.yDim) * this.xTex;
+      const yTileOff = yTile * this.yDim * this.xTex;
       const xTileOff = xTile * this.xDim;
-      return yTileOff + (mainY * this.xTex) + xTileOff + mainX;
+      return yTileOff + mainY * this.xTex + xTileOff + mainX;
     } else {
       return mainX + mainY * this.xTex + mainZ * this.xTex * this.yTex;
     }
@@ -175,16 +173,16 @@ export default class VolumeFilter3d {
     if (this.isWebGL2 === 0) {
       const yTile = Math.floor(pointZ / this.zDimSqrt);
       const xTile = pointZ - this.zDimSqrt * yTile;
-      const yTileOff = (yTile * this.yDim) * this.xTex;
+      const yTileOff = yTile * this.yDim * this.xTex;
       const xTileOff = xTile * this.xDim;
-      offDst = yTileOff + (pointY * this.xTex) + xTileOff + pointX;
+      offDst = yTileOff + pointY * this.xTex + xTileOff + pointX;
     } else {
       offDst = pointX + pointY * this.xDim + pointZ * this.xDim * this.yDim;
     }
     let intensityPoint = this.bufferTextureCPU[offDst];
-    if ((this.bufferMask[offDst] === 0) && (!undoFlag)) {
+    if (this.bufferMask[offDst] === 0 && !undoFlag) {
       intensityPoint = 0;
-    } else if ((this.bufferMask[offDst] === full) && (undoFlag)) {
+    } else if (this.bufferMask[offDst] === full && undoFlag) {
       intensityPoint = 0;
     }
     return intensityPoint;
@@ -198,9 +196,9 @@ export default class VolumeFilter3d {
     if (this.isWebGL2 === 0) {
       const yTile = Math.floor(mainZ / this.zDimSqrt);
       const xTile = mainZ - this.zDimSqrt * yTile;
-      const yTileOff = (yTile * this.yDim) * this.xTex;
+      const yTileOff = yTile * this.yDim * this.xTex;
       const xTileOff = xTile * this.xDim;
-      offDst = yTileOff + (mainY * this.xTex) + xTileOff + mainX;
+      offDst = yTileOff + mainY * this.xTex + xTileOff + mainX;
     } else {
       offDst = mainX + mainY * this.xDim + mainZ * this.xDim * this.xDim;
     }
@@ -334,16 +332,15 @@ export default class VolumeFilter3d {
     }
     let rtFormat = THREE.RGBAFormat;
     if (this.isWebGL2 === 1) {
-      rtFormat = THREE.RGBAFormat;// can we use ALPHA?
+      rtFormat = THREE.RGBAFormat; // can we use ALPHA?
     }
-    this.bufferTexture = new THREE.WebGLRenderTarget(this.xDim,
-      this.yDim, {
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter,
-        format: rtFormat,
-        type: THREE.UnsignedByteType,
-        depthBuffer: false,
-      });
+    this.bufferTexture = new THREE.WebGLRenderTarget(this.xDim, this.yDim, {
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+      format: rtFormat,
+      type: THREE.UnsignedByteType,
+      depthBuffer: false,
+    });
 
     if (this.origVolumeTex) {
       this.origVolumeTex.dispose();
@@ -360,8 +357,8 @@ export default class VolumeFilter3d {
     this.origVolumeTex.wrapS = THREE.ClampToEdgeWrapping;
     this.origVolumeTex.wrapT = THREE.ClampToEdgeWrapping;
 
-    this.origVolumeTex.magFilter = THREE.NearestFilter;//THREE.LinearFilter;
-    this.origVolumeTex.minFilter = THREE.NearestFilter;//THREE.LinearFilter;
+    this.origVolumeTex.magFilter = THREE.NearestFilter; //THREE.LinearFilter;
+    this.origVolumeTex.minFilter = THREE.NearestFilter; //THREE.LinearFilter;
 
     this.origVolumeTex.needsUpdate = true;
     if (this.origVolumeTex) {

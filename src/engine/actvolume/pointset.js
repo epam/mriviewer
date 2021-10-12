@@ -4,9 +4,9 @@
  */
 
 /**
-* Simple point set with voxelization
-* @module lib/scripts/actvolume/pointset
-*/
+ * Simple point set with voxelization
+ * @module lib/scripts/actvolume/pointset
+ */
 
 // absolute imports
 // import TetrahedronGenerator from 'tetra';
@@ -15,25 +15,25 @@
 import PointLink from './pointlink';
 
 const PSET_NUM_VOXELS = 16;
-const PSET_NUM_LINKS = (PSET_NUM_VOXELS * PSET_NUM_VOXELS * PSET_NUM_VOXELS);
+const PSET_NUM_LINKS = PSET_NUM_VOXELS * PSET_NUM_VOXELS * PSET_NUM_VOXELS;
 
 /**
-* Class PointSet define set of 3d points
-* @class PointSet
-*/
+ * Class PointSet define set of 3d points
+ * @class PointSet
+ */
 export default class PointSet {
   /**
-  * Init all internal data
-  * @constructs PointSet
-  */
+   * Init all internal data
+   * @constructs PointSet
+   */
   constructor(numPoints) {
     this.create(numPoints);
   }
 
   /**
-  * create points set, not initialized
-  * @param {number} numPoints Number of points in set estimated
-  */
+   * create points set, not initialized
+   * @param {number} numPoints Number of points in set estimated
+   */
   create(numPoints) {
     this.m_numPoints = 0;
     this.m_numAllocatedPoints = numPoints;
@@ -65,11 +65,11 @@ export default class PointSet {
   }
 
   /**
-  * Add point to set
-  * @param {number} x coordinate x
-  * @param {number} y coordinate y
-  * @param {number} z coordinate z
-  */
+   * Add point to set
+   * @param {number} x coordinate x
+   * @param {number} y coordinate y
+   * @param {number} z coordinate z
+   */
   addPoint(x, y, z) {
     const iSlow = this.findPointSlow(x, y, z);
     // check if exist
@@ -88,5 +88,4 @@ export default class PointSet {
     this.m_numPoints++;
     return index;
   } // addPoint
-
 }
