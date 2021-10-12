@@ -110,22 +110,23 @@ class Graphics2d extends React.Component {
 	prepareImageForRender(volIndexArg) {
 		
 		//TODO: center the image by click
-		const objCanvas = this.m_mount.current;
+		const objCanvas = this.m_mount.current; // Canvas HTML element reference
 		if (objCanvas === null) {
 			return;
 		}
-		const ctx = objCanvas.getContext('2d');
-		const w = objCanvas.clientWidth;
-		const h = objCanvas.clientHeight;
+		// resetting canvas max sizes, by checking its wrapper's size
+		const canvasWrapper = objCanvas.parentNode;
+		const w = canvasWrapper.clientWidth;
+		const h = canvasWrapper.clientHeight;
 		if (w * h === 0) {
 			return;
 		}
 		
-		const store = this.props;
-		
+		const ctx = objCanvas.getContext('2d');
 		ctx.fillStyle = 'rgb(64, 64, 64)';
 		ctx.fillRect(0, 0, w, h);
 		
+		const store = this.props;
 		const volSet = store.volumeSet;
 		// const volIndex = this.m_volumeIndex;
 		const volIndex = (volIndexArg !== undefined) ? volIndexArg : store.volumeIndex;
@@ -449,6 +450,10 @@ class Graphics2d extends React.Component {
 				} // end if 4 bpp
 			}
 			
+			// centering: setting canvas image size, to match its HTML element's size 
+			objCanvas.width = wScreen;
+			objCanvas.height = hScreen;
+
 			// check is segmentation 2d mode is active
 			// const isSegm = store.graphics2dModeSegmentation;
 			// console.log("Segm2d mode = " + isSegm);
@@ -698,20 +703,26 @@ class Graphics2d extends React.Component {
 		this.m_sliceRatio = this.props.sliderValue;
 		this.m_mode2d = this.props.mode2d;
 		
-		const styleObj = {
+		const wrapperStyles = {
+			display: 'flex',
+			alignItems: 'center',
+			justifyContent: 'center',
 			width: '100%',
 			height: '100%',
-			display: 'block',
 		};
-		return <div style={styleObj}>
+		const canvasStyles = {
+			maxWidth: '100%',
+			width: 'auto',
+			height: 'auto',
+		};
+		return <div style={wrapperStyles}>
 			<canvas
 				ref={this.m_mount}
-				style={styleObj}
-				width={this.state.wRender} height={this.state.hRender}
+				style={canvasStyles}
 				onMouseDown={this.onMouseDown}
 				onMouseUp={this.onMouseUp}
 				onMouseMove={this.onMouseMove}
-				onWheel={this.onMouseWheel}/>
+				onWheel={this.onMouseWheel} />
 		</div>
 	}
 }
