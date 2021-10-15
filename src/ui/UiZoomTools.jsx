@@ -3,16 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import { connect } from "react-redux";
-import Tools2dType from "../engine/tools2d/ToolTypes";
-import StoreActionType from "../store/ActionTypes";
-import { buttonsBuilder } from "./Button/Button";
-import { Container } from "./Tollbars/Container";
+import { connect } from 'react-redux';
+import Tools2dType from '../engine/tools2d/ToolTypes';
+import StoreActionType from '../store/ActionTypes';
+import { buttonsBuilder } from './Button/Button';
+import { Container } from './Tollbars/Container';
 
-
-const UiZoomTools = props => {
+const UiZoomTools = (props) => {
   const [activeButton, setActiveButton] = useState(Tools2dType.NONE);
 
   const mediator = (buttonId) => {
@@ -27,28 +26,24 @@ const UiZoomTools = props => {
       props.graphics2d.forceUpdate();
       props.graphics2d.forceRender();
     }
-  }
+  };
 
   const buttons = [
     {
-      icon: "zoom",
-      caption: "Zoom in/out",
+      icon: 'zoom',
+      caption: 'Zoom in/out',
       handler: mediator.bind(null, Tools2dType.ZOOM),
-      id: Tools2dType.ZOOM
+      id: Tools2dType.ZOOM,
     },
     {
-      icon: "zoom_100",
-      caption: "Zoom to default",
+      icon: 'zoom_100',
+      caption: 'Zoom to default',
       handler: mediator.bind(null, Tools2dType.ZOOM_100),
-      id: Tools2dType.ZOOM_100
+      id: Tools2dType.ZOOM_100,
     },
   ];
 
-  return (
-    <Container direction="vertical">
-      {buttonsBuilder(buttons, { activeButton }, "left")}
-    </Container>
-  )
+  return <Container direction="vertical">{buttonsBuilder(buttons, { activeButton }, 'left')}</Container>;
 };
 
-export default connect(store => store)(UiZoomTools);
+export default connect((store) => store)(UiZoomTools);
