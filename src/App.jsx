@@ -176,9 +176,11 @@ class App extends React.Component {
                   {store.viewMode === ViewMode.VIEW_2D && <UiFilterMenu/>}
                   <FullScreenToggle isFullMode={ isFullMode } handler={() => this.handleFullMode() } />
                 </div>
-                <div className={css.center}>
-                  {store.viewMode === ViewMode.VIEW_2D ? <Graphics2d/> : <Graphics3d/>}
-                </div>
+                {
+                store.viewMode === ViewMode.VIEW_2D
+                  ? <div className={css.center2d}><Graphics2d/></div>
+                  : <div className={css.center}><Graphics3d/></div>
+                }
                 <div className={css.bottleft}>
                   {store.viewMode === ViewMode.VIEW_2D && <ZoomTools/>}
                 </div>

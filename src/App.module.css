@@ -30,10 +30,35 @@
     left: 100px;
 }
 
+.center {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+}
+
+.center2d {
+    position: absolute;
+    top: calc(100px + 50px);
+    bottom: 0;
+    left: calc(50px + 25px);
+    right: 0;
+    width: calc(100% - 50px - 25px);
+    header: calc(100% - 100px - 50px);
+    z-index: 10;
+}
+
 .fullscreen .left,
 .fullscreen .top,
 .fullscreen .settings {
     top: 25px;
+}
+
+.fullscreen .center2d {
+    top: calc(25px + 50px);
+    header: calc(100% - 25px - 50px);
 }
 
 .left {
@@ -43,15 +68,6 @@
     left: 25px;
     top: 100px;
     z-index: 1000;
-}
-
-.center {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 10;
 }
 
 .settings {
