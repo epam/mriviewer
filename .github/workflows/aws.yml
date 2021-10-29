@@ -2,7 +2,7 @@ name: Build + deploy aws
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
@@ -29,7 +29,6 @@ jobs:
       - run: node --version
       - run: npm --version
       - run: npm ci --no-optional
-      - run: npm audit --audit-level=critical
       - run: npm run build
       - run: npm test
         env:
@@ -46,4 +45,3 @@ jobs:
       - name: Invalidate cache with the AWS CLI
         run: |
           aws cloudfront create-invalidation --distribution-id ESRGIUPNHEYPX --paths "/*"
-          
