@@ -2,7 +2,7 @@ name: Build + deploy aws
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [master, develop]
 
 jobs:
   build:
@@ -46,4 +46,3 @@ jobs:
       - name: Invalidate cache with the AWS CLI
         run: |
           aws cloudfront create-invalidation --distribution-id ESRGIUPNHEYPX --paths "/*"
-          
