@@ -3,25 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from "react";
+import React from 'react';
 
-import { Container } from "./Container";
-import { UIButton } from "../Button/Button";
-import { Tooltip } from "../Tooltip/Tooltip";
-
+import { Container } from './Container';
+import { UIButton } from '../Button/Button';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 const FullScreen = ({ isFullMode, handler }) => {
-    return (
-        <Container>
-            <Tooltip content={`${isFullMode ? "Exit" : "Go to"} fullscreen mode`}>
-                <UIButton
-                    icon= { isFullMode ? "collapse" : "expand" }
-                    handler={ handler }
-                    active={ isFullMode }
-                />
-            </Tooltip>
-        </Container>
-    );
+  return (
+    <Container>
+      <Tooltip content={`${isFullMode ? 'Exit' : 'Go to'} fullscreen mode`}>
+        <UIButton icon={isFullMode ? 'collapse' : 'expand'} handler={handler} active={isFullMode} />
+      </Tooltip>
+    </Container>
+  );
 };
 
 export default FullScreen;

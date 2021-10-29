@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from "react";
+import React from 'react';
 
-import css from "./Switch.module.css";
+import css from './Switch.module.css';
 
 export const Switch = ({ value, onValueChange }) => {
-    return (
-        <label className={ css.switch }>
-            <input type="checkbox" className={ css.checkbox } checked={ value } onChange={() => onValueChange(!value)}/>
-            <span className={ css.toggle }/>
-        </label>
-    )
-}
+  return (
+    <label className={css.switch}>
+      <input type="checkbox" className={css.checkbox} checked={value} onChange={() => onValueChange(!value)} />
+      <span className={css.toggle} />
+    </label>
+  );
+};
