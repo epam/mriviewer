@@ -6,7 +6,7 @@
 import React from 'react';
 import cx from 'classnames';
 
-import css from './Tollbars.module.css';
+import css from './Toolbars.module.css';
 
 export const Container = ({ children, direction }) => {
   const alignStyle = direction === 'vertical' ? css.vertical : css.horizontal;

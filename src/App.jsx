@@ -15,19 +15,19 @@ import BrowserDetector from './engine/utils/BrowserDetector';
 import Graphics3d from './engine/Graphics3d';
 import FileTools from './engine/loaders/FileTools';
 
-import UiSettings from './ui/Tollbars/UiMain';
+import UiSettings from './ui/Toolbars/UiMain';
 import UiOpenMenu from './ui/OpenFile/UiOpenMenu';
-import UiViewMode from './ui/Tollbars/UiViewMode';
+import UiViewMode from './ui/Toolbars/UiViewMode';
 import UiFilterMenu from './ui/UiFilterMenu';
 import UiModalText from './ui/Modals/UiModalText';
 import UiModalAlert from './ui/Modals/ModalAlert';
 import UiErrConsole from './ui/UiErrConsole';
 import UiCtrl2d from './ui/UiCtrl2d';
-import ExploreTools from './ui/Tollbars/ExploreTools';
+import ExploreTools from './ui/Toolbars/ExploreTools';
 import ZoomTools from './ui//UiZoomTools';
 import UIProgressBar from './ui/ProgressBar/UIProgressBar';
 import UiAbout from './ui/UiAbout';
-import FullScreenToggle from './ui/Tollbars/FullScreen';
+import FullScreenToggle from './ui/Toolbars/FullScreen';
 
 import css from './App.module.css';
 import cx from 'classnames';

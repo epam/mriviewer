@@ -25,6 +25,6 @@
   height: 50px;
 }
 
-.horizontal:not(:first-child) {
-  margin-left: 25px;
+.horizontal {
+  margin-right: 25px;
 }

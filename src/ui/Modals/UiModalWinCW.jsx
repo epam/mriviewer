@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import Nouislider from 'react-nouislider';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from './ModalBase';
 import { UIButton } from '../Button/Button';
+import buttonCss from '../Button/Button.module.css';
 
 const LARGE_NUMBER = 0x3fffffff;
 const DEFAULT_WIN_MIN = 650 - 2000 / 2;
@@ -386,7 +387,7 @@ class UiModalWindowCenterWidth extends React.Component {
           </p>
         </ModalBody>
         <ModalFooter>
-          <UIButton handler={this.onButtonApply} caption="Apply" />
+          <UIButton handler={this.onButtonApply} caption="Apply" cx={buttonCss.apply} />
         </ModalFooter>
       </Modal>
     );
