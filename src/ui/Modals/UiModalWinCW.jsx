@@ -7,17 +7,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Nouislider from 'react-nouislider';
-import { Modal, ModalBody, ModalFooter, ModalHeader } from "./ModalBase";
-import { UIButton } from "../Button/Button";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from './ModalBase';
+import { UIButton } from '../Button/Button';
 
-const LARGE_NUMBER = 0x3FFFFFFF;
+const LARGE_NUMBER = 0x3fffffff;
 const DEFAULT_WIN_MIN = 650 - 2000 / 2;
 const DEFAULT_WIN_MAX = 650 + 2000 / 2;
 
 class UiModalWindowCenterWidth extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.sliderRange = React.createRef();
     this.m_objCanvas = React.createRef();
     this.m_updateEnable = true;
@@ -31,7 +31,7 @@ class UiModalWindowCenterWidth extends React.Component {
     this.state = {
       showModalWindowCenterWidth: false,
       windowMin: DEFAULT_WIN_MIN,
-      windowMax: DEFAULT_WIN_MAX, 
+      windowMax: DEFAULT_WIN_MAX,
     };
   } // end constructor
 
@@ -66,7 +66,7 @@ class UiModalWindowCenterWidth extends React.Component {
 
     // set loader features according current modal properties (window min, max)
     loaderDicom.m_windowCenter = (this.state.windowMin + this.state.windowMax) * 0.5;
-    loaderDicom.m_windowWidth = (this.state.windowMax - this.state.windowMin);
+    loaderDicom.m_windowWidth = this.state.windowMax - this.state.windowMin;
 
     // apply for single slice dicom read
     // select 1st slice and hash
@@ -81,18 +81,18 @@ class UiModalWindowCenterWidth extends React.Component {
 
   //
   componentDidMount() {
-    this.initWindowRange()
+    this.initWindowRange();
     this.renderPreview();
   }
 
   componentDidUpdate() {
     this.renderPreview();
   }
-  
+
   shouldComponentUpdate() {
     return this.m_updateEnable;
   }
-  
+
   drawSlice(ctx, wScreen, hScreen, imgData, dataDst, series, loaderDicom) {
     const serie = series[0];
     const slices = serie.m_slices;
@@ -103,8 +103,8 @@ class UiModalWindowCenterWidth extends React.Component {
     let maxSliceNum = slices[0].m_sliceNumber;
     for (let s = 0; s < numSlices; s++) {
       const num = slices[s].m_sliceNumber;
-      minSliceNum = (num < minSliceNum) ? num : minSliceNum;
-      maxSliceNum = (num > maxSliceNum) ? num : maxSliceNum;
+      minSliceNum = num < minSliceNum ? num : minSliceNum;
+      maxSliceNum = num > maxSliceNum ? num : maxSliceNum;
     }
     const difSlceNum = maxSliceNum - minSliceNum;
     if (difSlceNum > 0) {
@@ -143,11 +143,11 @@ class UiModalWindowCenterWidth extends React.Component {
         valSrc = (valSrc >> 8) | ((valSrc << 8) & 0xffff);
       }
       // check pad value
-      valSrc = (valSrc === loaderDicom.m_padValue) ? 0 : valSrc;
-      
+      valSrc = valSrc === loaderDicom.m_padValue ? 0 : valSrc;
+
       const valData = valSrc * loaderDicom.m_rescaleSlope + loaderDicom.m_rescaleIntercept;
-      minVal = (valData < minVal) ? valData : minVal;
-      maxVal = (valData > maxVal) ? valData : maxVal;
+      minVal = valData < minVal ? valData : minVal;
+      maxVal = valData > maxVal ? valData : maxVal;
     } // for (i) all slice pixels
     // console.log(`Modal dcm. min/max val = ${minVal} / ${maxVal}`);
     // this.m_dataMin = minVal;
@@ -178,19 +178,19 @@ class UiModalWindowCenterWidth extends React.Component {
         valSrc = (valSrc >> 8) | ((valSrc << 8) & 0xffff);
       }
       // check pad value
-      valSrc = (valSrc === loaderDicom.m_padValue) ? 0 : valSrc;
+      valSrc = valSrc === loaderDicom.m_padValue ? 0 : valSrc;
       const valScaled = valSrc * loaderDicom.m_rescaleSlope + loaderDicom.m_rescaleIntercept;
 
       let val = 0;
       if (loaderDicom.m_rescaleHounsfield) {
         // rescale for hounsfield units
-        val = Math.floor((valScaled - winMin) * 255 / ww);
+        val = Math.floor(((valScaled - winMin) * 255) / ww);
       } else {
         // usual (default) rescale
-        val = Math.floor(127 + (valScaled - wc) * 128 / (ww / 2));
+        val = Math.floor(127 + ((valScaled - wc) * 128) / (ww / 2));
       }
-      val = (val >= 0) ? val : 0;
-      val = (val < 255) ? val : 255;
+      val = val >= 0 ? val : 0;
+      val = val < 255 ? val : 255;
       dataArray[zOff + i] = val;
     } // for i
 
@@ -198,7 +198,7 @@ class UiModalWindowCenterWidth extends React.Component {
     let j = 0;
     const xStep = xDim / wScreen;
     const yStep = yDim / hScreen;
-    let ay = 0.0; 
+    let ay = 0.0;
     for (let y = 0; y < hScreen; y++, ay += yStep) {
       const ySrc = Math.floor(ay);
       const yOff = ySrc * xDim;
@@ -241,12 +241,12 @@ class UiModalWindowCenterWidth extends React.Component {
     let j = 0;
     const TEST_RAINBOW = false;
     if (TEST_RAINBOW) {
-      console.log("special rainbow test instead of slice render");
+      console.log('special rainbow test instead of slice render');
       for (let y = 0; y < hScreen; y++) {
         for (let x = 0; x < wScreen; x++) {
           dataDst[j] = 50;
-          dataDst[j + 1] = Math.floor(255.0 * y / hScreen);
-          dataDst[j + 2] = Math.floor(255.0 * x / wScreen);
+          dataDst[j + 1] = Math.floor((255.0 * y) / hScreen);
+          dataDst[j + 2] = Math.floor((255.0 * x) / wScreen);
           dataDst[j + 3] = 255;
           j += 4;
         }
@@ -265,7 +265,7 @@ class UiModalWindowCenterWidth extends React.Component {
     }
     this.drawSlice(ctx, wScreen, hScreen, imgData, dataDst, series, loaderDicom);
   } // end render preview
-  
+
   onSliderWindowRange() {
     this.m_updateEnable = false;
     if (!this.sliderRange.current) return;
@@ -299,11 +299,11 @@ class UiModalWindowCenterWidth extends React.Component {
         valSrc = (valSrc >> 8) | ((valSrc << 8) & 0xffff);
       }
       // check pad value
-      valSrc = (valSrc === loaderDicom.m_padValue) ? 0 : valSrc;
-      
+      valSrc = valSrc === loaderDicom.m_padValue ? 0 : valSrc;
+
       const valData = valSrc * loaderDicom.m_rescaleSlope + loaderDicom.m_rescaleIntercept;
-      minVal = (valData < minVal) ? valData : minVal;
-      maxVal = (valData > maxVal) ? valData : maxVal;
+      minVal = valData < minVal ? valData : minVal;
+      maxVal = valData > maxVal ? valData : maxVal;
     } // for (i) all slice pixels
     // console.log(`Modal dcm. min/max val = ${minVal} / ${maxVal}`);
     this.m_dataMin = minVal;
@@ -321,9 +321,9 @@ class UiModalWindowCenterWidth extends React.Component {
     const loaderDicom = store.loaderDicom;
     if (loaderDicom !== null) {
       let isValid = true;
-      isValid = (loaderDicom.m_windowCenter === LARGE_NUMBER) ? false : isValid;
-      isValid = (loaderDicom.m_windowWidth === LARGE_NUMBER) ? false : isValid;
-      isValid = (loaderDicom.m_windowWidth <= 0) ? false : isValid;
+      isValid = loaderDicom.m_windowCenter === LARGE_NUMBER ? false : isValid;
+      isValid = loaderDicom.m_windowWidth === LARGE_NUMBER ? false : isValid;
+      isValid = loaderDicom.m_windowWidth <= 0 ? false : isValid;
 
       if (isValid) {
         // console.log('initWindowRange: use predefined in tags window center, width');
@@ -336,9 +336,8 @@ class UiModalWindowCenterWidth extends React.Component {
     } // if loader dicom ready
   } // end init
 
-  // render 
+  // render
   render() {
-
     //const stateVis = true;
     const stateVis = this.props.stateVis;
 
@@ -361,38 +360,37 @@ class UiModalWindowCenterWidth extends React.Component {
     }
 
     const rangeTwo = {
-      'min': Math.floor(valMin - valDelta / 4),
-      'max': Math.floor(valMax + valDelta / 4)
-    }
+      min: Math.floor(valMin - valDelta / 4),
+      max: Math.floor(valMax + valDelta / 4),
+    };
     const wMin = Math.floor(this.state.windowMin);
     const wMax = Math.floor(this.state.windowMax);
     const wArr = [wMin, wMax];
 
-    return <Modal isOpen={stateVis} close={this.onButtonCancel}>
-      <ModalHeader
-        title="Select window center and width to display DICOM"
-        close={this.onButtonCancel} />
-      <ModalBody>
-        Window range
-        <Nouislider onSlide={this.onSliderWindowRange.bind(this)}
-                    ref={this.sliderRange}
-                    range={rangeTwo}
-                    start={wArr}
-                    step={valStep}
-                    connect={true}
-                    tooltips={valToolTps}/>
-        <p className="text-center">
-          <canvas ref={this.m_objCanvas}
-                  style={stylePreview}
-                  width="500px"
-                  height="400px" />
-        </p>
-      </ModalBody>
-      <ModalFooter>
-        <UIButton handler={this.onButtonApply} caption="Apply"/>
-      </ModalFooter>
-    </Modal>;
+    return (
+      <Modal isOpen={stateVis} close={this.onButtonCancel}>
+        <ModalHeader title="Select window center and width to display DICOM" close={this.onButtonCancel} />
+        <ModalBody>
+          Window range
+          <Nouislider
+            onSlide={this.onSliderWindowRange.bind(this)}
+            ref={this.sliderRange}
+            range={rangeTwo}
+            start={wArr}
+            step={valStep}
+            connect={true}
+            tooltips={valToolTps}
+          />
+          <p className="text-center">
+            <canvas ref={this.m_objCanvas} style={stylePreview} width="500px" height="400px" />
+          </p>
+        </ModalBody>
+        <ModalFooter>
+          <UIButton handler={this.onButtonApply} caption="Apply" />
+        </ModalFooter>
+      </Modal>
+    );
   } // end render
 } // end class UiWindowCenterWidth
 
-export default connect(store => store)(UiModalWindowCenterWidth);
+export default connect((store) => store)(UiModalWindowCenterWidth);

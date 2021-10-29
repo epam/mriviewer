@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from "react";
+import React from 'react';
 
-import css from "./UIprogressBar.module.css";
-import { connect } from "react-redux";
+import css from './UIprogressBar.module.css';
+import { connect } from 'react-redux';
 
 const UIProgressBar = (props) => {
   // console.log(`Progress ${props.progress}`);
-  return props.progress &&
-    (
+  return (
+    props.progress && (
       <>
         <div className={css.progress}>
           <div
@@ -25,7 +25,8 @@ const UIProgressBar = (props) => {
         </div>
         {/*<span className={ css.label }>{text}</span>*/}
       </>
-    );
+    )
+  );
 };
 
-export default connect(store => store)(UIProgressBar);
+export default connect((store) => store)(UIProgressBar);
