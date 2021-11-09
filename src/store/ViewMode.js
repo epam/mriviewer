@@ -9,7 +9,7 @@ const ViewMode = {
   VIEW_2D: 1,
   VIEW_3D_LIGHT: 2,
   VIEW_3D: 3,
-  VIEW_COUNT: 4
+  VIEW_COUNT: 4,
 };
 
 export default ViewMode;

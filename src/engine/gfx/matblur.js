@@ -4,9 +4,9 @@
  */
 
 /**
-* Blur material, used for rendering of blurred volume slices
-* @module lib/scripts/gfx/matblur
-*/
+ * Blur material, used for rendering of blurred volume slices
+ * @module lib/scripts/gfx/matblur
+ */
 
 // ******************************************************************
 // imports
@@ -21,8 +21,8 @@ import BLUR_FRAGMENT_SHADER from '../shaders/blur.frag';
 /** Class @class MaterialBlur for volume slice blurring */
 export default class MaterialBlur {
   /** Backface material constructor
-  * @constructor
-  */
+   * @constructor
+   */
   constructor() {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
@@ -42,11 +42,11 @@ export default class MaterialBlur {
       volumeSizeZ: { type: 'f', value: VOL_SIZE_Z },
       xDim: { type: 'f', value: VOL_SIZE_Z },
       yDim: { type: 'f', value: VOL_SIZE_Z },
-      blurSigma:   { type: 'f', value: BLUR_SIGMA },
+      blurSigma: { type: 'f', value: BLUR_SIGMA },
       contrast: { type: 'f', value: CONTRAST },
       brightness: { type: 'f', value: BRIGHTNESS },
       curZ: { type: 'f', value: 0.0 },
-      save_flag: { type: 'b', value: SAVE_FLAG }
+      save_flag: { type: 'b', value: SAVE_FLAG },
     };
     this.m_defines = {
       renderRoiMap: 0,
@@ -55,8 +55,8 @@ export default class MaterialBlur {
   }
 
   /** Backface material constructor
-  * @return {object} Three.js material with this shader
-  */
+   * @return {object} Three.js material with this shader
+   */
   create(texture, texRoi, texelSize, texRoiColor, texRoiId, callbackMat) {
     // Init uniforms
     this.m_uniforms.texVolume.value = texture;
@@ -81,7 +81,7 @@ export default class MaterialBlur {
           uniforms: this.m_uniforms,
           defines: this.m_defines,
           vertexShader: this.m_strShaderVertex,
-          fragmentShader: this.m_strShaderFragment
+          fragmentShader: this.m_strShaderFragment,
         });
         if (callbackMat) {
           callbackMat(material);

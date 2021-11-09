@@ -13,10 +13,10 @@ import Modes3d from '../store/Modes3d';
 
 import SobelEdgeDetector from '../engine/imgproc/Sobel';
 import UiModalBilateral from './Modals/UiModalBilateral';
-import { Container } from "./Tollbars/Container";
-import { UIButton } from "./Button/Button";
-import { connect } from "react-redux";
-import { Tooltip } from "./Tooltip/Tooltip";
+import { Container } from './Toolbars/Container';
+import { UIButton } from './Button/Button';
+import { connect } from 'react-redux';
+import { Tooltip } from './Tooltip/Tooltip';
 
 class UiFilterMenu extends React.Component {
   constructor(props) {
@@ -35,7 +35,6 @@ class UiFilterMenu extends React.Component {
       showModalBilateral: false,
     };
 
-
     //this.callbackProgressFun = this.callbackProgressFun.bind(this);
   }
 
@@ -48,7 +47,7 @@ class UiFilterMenu extends React.Component {
     const volIndex = store.volumeIndex;
     const vol = volSet.getVolume(volIndex);
 
-    if ((vol === undefined) || (vol === null)) {
+    if (vol === undefined || vol === null) {
       console.log('onButtonDetectBrain: no volume!');
       return;
     }
@@ -69,7 +68,7 @@ class UiFilterMenu extends React.Component {
     //const callbackProgress = this.callbackProgressFun;
     //lungsFiller.run(callbackProgress);
 
-    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
     const SK_REM_DELAY_MSEC = 200;
     this.m_timerId = setTimeout(this.onLungsFillerCallback, SK_REM_DELAY_MSEC);
     //store.volumeRenderer.volumeUpdater.createUpdatableVolumeTex(store.volume, false, null);
@@ -79,12 +78,12 @@ class UiFilterMenu extends React.Component {
     const store = this.props;
     const ratioUpdate = this.lungsFiller.m_ratioUpdate;
     console.log(`onLungsFillerCallback: iter counter = ${ratioUpdate}`);
-    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioUpdate })
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioUpdate });
     const isFinished = this.lungsFiller.run();
 
     if (isFinished) {
       console.log('`onSkullRemoveCallback: iters finished!');
-      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
       // store.graphics2d.renderScene();
@@ -109,7 +108,7 @@ class UiFilterMenu extends React.Component {
     const volIndex = store.volumeIndex;
     const vol = volSet.getVolume(volIndex);
 
-    if ((vol === undefined) || (vol === null)) {
+    if (vol === undefined || vol === null) {
       console.log('onButtonSobel: no volume!');
       return;
     }
@@ -136,11 +135,10 @@ class UiFilterMenu extends React.Component {
     sobel.start(vol);
     this.m_sobel = sobel;
 
-    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
 
     const SOBEL_UPDATE_DELAY_MSEC = 150;
     this.m_timerId = setTimeout(this.onSobelCallback, SOBEL_UPDATE_DELAY_MSEC);
-
   } // end onButtonSobel
 
   // callback for periodicallt invoke sobel 3d volume filtering
@@ -150,18 +148,18 @@ class UiFilterMenu extends React.Component {
     const store = this.props;
 
     let ratioUpdate = this.m_sobel.getRatio();
-    ratioUpdate = (ratioUpdate < 1.0) ? ratioUpdate : 1.0;
+    ratioUpdate = ratioUpdate < 1.0 ? ratioUpdate : 1.0;
     ratioUpdate *= 100;
     ratioUpdate = Math.floor(ratioUpdate);
     // console.log('ratio = ' + ratioUpdate.toString() );
 
-    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioUpdate })
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioUpdate });
 
     const isFinished = this.m_sobel.isFinished();
 
     if (isFinished) {
       console.log('`onSobelCallback: iters finished!');
-      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
 
@@ -177,7 +175,7 @@ class UiFilterMenu extends React.Component {
       const yDim = vol.m_yDim;
       const zDim = vol.m_zDim;
       const xyzDim = xDim * yDim * zDim;
-      const pixelsDst = this.m_sobel.getPixelsDst()
+      const pixelsDst = this.m_sobel.getPixelsDst();
       for (let i = 0; i < xyzDim; i++) {
         vol.m_dataArray[i] = Math.floor(pixelsDst[i]);
       } // for i
@@ -219,7 +217,7 @@ class UiFilterMenu extends React.Component {
     const volIndex = store.volumeIndex;
     const vol = volSet.getVolume(volIndex);
 
-    if ((vol === undefined) || (vol === null)) {
+    if (vol === undefined || vol === null) {
       console.log('onButtonDetectBrain: no volume!');
       return;
     }
@@ -261,10 +259,9 @@ class UiFilterMenu extends React.Component {
     const actVolume = new ActiveVolume();
     this.m_actVolume = actVolume;
 
-    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
 
-    this.m_geoRender = actVolume.skullRemoveStart(xDim, yDim, zDim,
-      volTextureSrc, volTextureDst, CREATE_TYPE, NEED_LOG);
+    this.m_geoRender = actVolume.skullRemoveStart(xDim, yDim, zDim, volTextureSrc, volTextureDst, CREATE_TYPE, NEED_LOG);
     const SK_REM_DELAY_MSEC = 10;
     this.m_timerId = setTimeout(this.onSkullRemoveCallback, SK_REM_DELAY_MSEC);
 
@@ -318,15 +315,15 @@ class UiFilterMenu extends React.Component {
 
     const maxCounter = this.m_actVolume.m_numPredSteps;
     let ratioUpdate = iterCounter / maxCounter;
-    ratioUpdate = (ratioUpdate < 1.0) ? ratioUpdate : 1.0;
+    ratioUpdate = ratioUpdate < 1.0 ? ratioUpdate : 1.0;
     ratioUpdate *= 100;
 
-    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioUpdate })
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioUpdate });
     const isFinished = this.m_actVolume.skullRemoveUpdate(this.m_geoRender);
 
     if (isFinished) {
       console.log('`onSkullRemoveCallback: iters finished!');
-      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
 
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
@@ -354,8 +351,7 @@ class UiFilterMenu extends React.Component {
     }
   }
 
-  componentDidMount() {
-  }
+  componentDidMount() {}
 
   clearButtonState() {
     this.m_sobel = null;
@@ -380,27 +376,27 @@ class UiFilterMenu extends React.Component {
     const store = this.props;
     const isLoaded = store.isLoaded;
 
-    return isLoaded && (<Container direction="horizontal">
-      <Tooltip content="Lungs segmentation">
-        <UIButton active={this.lungsFiller} handler={this.onButtonLungsSeg} icon="lungs" />
-      </Tooltip>
-      <Tooltip content="Auto detect brain">
-        <UIButton active={this.m_geoRender} handler={this.onButtonDetectBrain} icon="brain" />
-      </Tooltip>
-      <Tooltip content="Sobel filter">
-        <UIButton active={this.m_sobel} handler={this.onButtonSobel} icon="edge-detection" />
-      </Tooltip>
-      <Tooltip content="Bilateral (denoise or smooth)">
-        <UIButton active={this.m_bilateral_applied} handler={this.onButtonBilateral} icon="noise-reduction" />
-    </Tooltip>
+    return (
+      isLoaded && (
+        <Container direction="horizontal">
+          <Tooltip content="Lungs segmentation">
+            <UIButton active={this.lungsFiller} handler={this.onButtonLungsSeg} icon="lungs" />
+          </Tooltip>
+          <Tooltip content="Auto detect brain">
+            <UIButton active={this.m_geoRender} handler={this.onButtonDetectBrain} icon="brain" />
+          </Tooltip>
+          <Tooltip content="Sobel filter">
+            <UIButton active={this.m_sobel} handler={this.onButtonSobel} icon="edge-detection" />
+          </Tooltip>
+          <Tooltip content="Bilateral (denoise or smooth)">
+            <UIButton active={this.m_bilateral_applied} handler={this.onButtonBilateral} icon="noise-reduction" />
+          </Tooltip>
 
-      {this.state.showModalBilateral &&
-      <UiModalBilateral
-        stateVis={this.state.showModalBilateral}
-        onHide={this.hideModalBilateral}/>}
-    </Container>);
+          {this.state.showModalBilateral && <UiModalBilateral stateVis={this.state.showModalBilateral} onHide={this.hideModalBilateral} />}
+        </Container>
+      )
+    );
   }
 }
 
-export default connect(store => store)(UiFilterMenu);
-
+export default connect((store) => store)(UiFilterMenu);

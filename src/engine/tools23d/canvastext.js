@@ -4,9 +4,9 @@
  */
 
 /**
-* Text rendering to canvas
-* @module lib/scripts/graphics2d/canvastext
-*/
+ * Text rendering to canvas
+ * @module lib/scripts/graphics2d/canvastext
+ */
 
 // import * as THREE from 'three';
 
@@ -15,8 +15,8 @@ const FONT_FOR_TEXT_RENDER = '72px Arial';
 /** Class CanvasText is used for render text to canvas via HTML5 interface */
 export default class CanvasText {
   /**
-  * Initialize Canvas text renderer
-  */
+   * Initialize Canvas text renderer
+   */
   constructor() {
     this.m_textWidth = 0;
     this.m_textHeight = 0;
@@ -54,10 +54,10 @@ export default class CanvasText {
   }
 
   /**
-  * Returns the smallest power of 2 that is greater than or equal to val.
-  * @param (number) val - value to search closest power of 2.
-  * @return {number} the smallest power of 2 that is greater than or equal to val
-  */
+   * Returns the smallest power of 2 that is greater than or equal to val.
+   * @param (number) val - value to search closest power of 2.
+   * @return {number} the smallest power of 2 that is greater than or equal to val
+   */
   static ceilPowerOfTwo(val) {
     const FAIL = -1;
     const MAX_PWR = 30;
@@ -71,10 +71,10 @@ export default class CanvasText {
   }
 
   /**
-  * Initialize Canvas text renderer
-  * @param (strint) strTextToRender - text to render
-  * @return {Object} Canvas with rendered text
-  */
+   * Initialize Canvas text renderer
+   * @param (strint) strTextToRender - text to render
+   * @return {Object} Canvas with rendered text
+   */
   drawText(strTextToRender, strTextColor) {
     // clear screen
     this.m_canvas.width = 1024;
@@ -91,11 +91,10 @@ export default class CanvasText {
     this.m_ctx.textBaseline = 'top';
     this.m_ctx.lineWidth = 2;
 
-    const strText = (strTextToRender.length === 0) ? '?' : strTextToRender;
+    const strText = strTextToRender.length === 0 ? '?' : strTextToRender;
 
     this.m_textWidth = Math.floor(this.m_ctx.measureText(strText).width);
     this.m_textHeight = CanvasText.getFontHeight(FONT_FOR_TEXT_RENDER);
-
 
     // set canvas size to desired dimension
     // this.m_canvas.width = THREE.Math.ceilPowerOfTwo(this.m_textWidth);

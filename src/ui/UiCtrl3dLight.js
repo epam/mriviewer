@@ -10,8 +10,9 @@ import StoreActionType from '../store/ActionTypes';
 import UiTF from './UiTF';
 import UiTFroi from './UiTFroi';
 import UiRoiSelect from './UiRoiSelect';
-import { UIButton } from "./Button/Button";
-import { Container } from "./Tollbars/Container";
+import { UIButton } from './Button/Button';
+import { Container } from './Toolbars/Container';
+import css from './Form/Slider.module.css';
 
 class UiCtrl3dLight extends React.Component {
   constructor(props) {
@@ -89,28 +90,30 @@ class UiCtrl3dLight extends React.Component {
     const store = this.props;
     const mode3d = store.mode3d;
 
-    const strA = (mode3d === Modes3d.ISO);
-    const strB = (mode3d === Modes3d.RAYCAST);
-    const strC = (mode3d === Modes3d.RAYFAST);
-    const strD = (mode3d === Modes3d.ERASER);
+    const strA = mode3d === Modes3d.ISO;
+    const strB = mode3d === Modes3d.RAYCAST;
+    const strC = mode3d === Modes3d.RAYFAST;
+    const strD = mode3d === Modes3d.ERASER;
 
-    const jsxRenderControls =
+    const jsxRenderControls = (
       <>
-        <p>3D mode selection</p>
+        <p className={css.caption}>3D mode selection</p>
         <Container direction="horizontal">
-            <UIButton active={strA} handler={this.onModeA} caption="Show just barrier value surface, 1st ray intersection" icon="I"/>
-            <UIButton active={strB} handler={this.onModeB} caption="Show complete 3D volumetric rendering" icon="V"/>
-            <UIButton active={strC} handler={this.onModeC} caption="Show maximum projection rendering" icon="M"/>
-            <UIButton active={strD} handler={this.onModeD} caption="Special volume eraser tool" icon="E"/>
+          <UIButton active={strA} handler={this.onModeA} caption="Show just barrier value surface, 1st ray intersection" icon="I" />
+          <UIButton active={strB} handler={this.onModeB} caption="Show complete 3D volumetric rendering" icon="V" />
+          <UIButton active={strC} handler={this.onModeC} caption="Show maximum projection rendering" icon="M" />
+          <UIButton active={strD} handler={this.onModeD} caption="Special volume eraser tool" icon="E" />
         </Container>
-        <UiTF/>
+        <UiTF />
       </>
+    );
 
-    const jsxROI =
+    const jsxROI = (
       <>
-          <UiRoiSelect setRoiFunc={this.setRoi}/>
-        <UiTFroi/>
+        <UiRoiSelect setRoiFunc={this.setRoi} />
+        <UiTFroi />
       </>
+    );
     let indx = 0;
 
     const volSet = store.volumeSet;
@@ -125,9 +128,7 @@ class UiCtrl3dLight extends React.Component {
     } // end if more 0 volumes
     const jsxArray = [jsxRenderControls, jsxROI];
     return jsxArray[indx];
-
   }
 }
 
-export default connect(store => store)(UiCtrl3dLight);
-
+export default connect((store) => store)(UiCtrl3dLight);

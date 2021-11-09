@@ -8,7 +8,7 @@
  * @author Epam
  * @version 1.0.0
  */
- 
+
 const Tools2dType = {
   INTENSITY: 0,
   DISTANCE: 1,

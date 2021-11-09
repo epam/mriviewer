@@ -4,9 +4,9 @@
  */
 
 /**
-* Gauss filtering
-* @module demo/engine/imgproc/Gauss
-*/
+ * Gauss filtering
+ * @module demo/engine/imgproc/Gauss
+ */
 
 import * as THREE from 'three';
 
@@ -36,22 +36,19 @@ class GaussSmoother {
   }
 
   createKernel(kernelSize, sigma) {
-    const side      = kernelSize * 2 + 1;
+    const side = kernelSize * 2 + 1;
     const xyzKernel = side * side * side;
     const arr = new Float32Array(xyzKernel);
-  
+
     const mult = 1.0 / (2.0 * sigma * sigma);
-  
+
     let off = 0;
     let sum = 0.0;
-    for (let dz = -kernelSize; dz <= +kernelSize; dz++)
-    {
+    for (let dz = -kernelSize; dz <= +kernelSize; dz++) {
       const tz = dz / kernelSize;
-      for (let dy = -kernelSize; dy <= +kernelSize; dy++)
-      {
+      for (let dy = -kernelSize; dy <= +kernelSize; dy++) {
         const ty = dy / kernelSize;
-        for (let dx = -kernelSize; dx <= +kernelSize; dx++)
-        {
+        for (let dx = -kernelSize; dx <= +kernelSize; dx++) {
           const tx = dx / kernelSize;
           const w = Math.exp(-(tx * tx + ty * ty + tz * tz) * mult);
           arr[off++] = w;
@@ -59,11 +56,10 @@ class GaussSmoother {
         } // for dx
       } // for dy
     } // for dz
-  
+
     // normalize arr
     const scl = 1.0 / sum;
-    for (let i = 0; i < xyzKernel; i++)
-      arr[i] *= scl;
+    for (let i = 0; i < xyzKernel; i++) arr[i] *= scl;
     this.m_kernel = arr;
   }
 
@@ -87,7 +83,6 @@ class GaussSmoother {
       const vTexelSize = new THREE.Vector3(1.0 / xDim, 1.0 / yDim, 1.0 / zDim);
       this.m_bilateralHw.create(vol, vTexelSize, kernelSize, koefDist, koefVal);
     } // if HW gauss
-
   }
 
   normalizeDstImage() {
@@ -99,7 +94,7 @@ class GaussSmoother {
     const xyzDim = this.m_vol.m_xDim * this.m_vol.m_yDim * this.m_vol.m_zDim;
     for (let i = 0; i < xyzDim; i++) {
       const val = this.m_pixelsDst[i];
-      valMax = (val > valMax) ? val : valMax;
+      valMax = val > valMax ? val : valMax;
     } // for i
     valMax += 0.9;
     const scl = 255.0 / valMax;
@@ -116,7 +111,7 @@ class GaussSmoother {
   // return ratio in [0..1]
   getRatio() {
     const zDim = this.m_vol.m_zDim;
-    let ratio01 = 0.0; 
+    let ratio01 = 0.0;
     if (this.m_needHw) {
       ratio01 = this.m_bilateralHw.m_z / zDim;
     } else {
@@ -131,7 +126,7 @@ class GaussSmoother {
     if (this.m_needHw) {
       if (this.m_bilateralHw.m_z >= zDim) {
         return true;
-      } 
+      }
     } else {
       if (this.m_z >= zDim) {
         return true;
@@ -156,8 +151,8 @@ class GaussSmoother {
     const zDim = this.m_vol.m_zDim;
     const xyDim = xDim * yDim;
 
-    const STEP = (zDim > 16 ) ? 24 : 2;
-    const zNext = Math.floor((this.m_iter + 1) * zDim / STEP);
+    const STEP = zDim > 16 ? 24 : 2;
+    const zNext = Math.floor(((this.m_iter + 1) * zDim) / STEP);
     // console.log('Gauss update z from ' + this.m_z.toString() + ' until ' + zNext.toString());
 
     const arrKernel = this.m_kernel;
@@ -173,28 +168,26 @@ class GaussSmoother {
           let offKer = 0;
           for (let dz = -kernelSize; dz <= +kernelSize; dz++) {
             let zz = z + dz;
-            zz = (zz >= 0) ? zz : 0;
-            zz = (zz < zDim) ? zz : (zDim - 1);
+            zz = zz >= 0 ? zz : 0;
+            zz = zz < zDim ? zz : zDim - 1;
             const zzOff = zz * xyDim;
             for (let dy = -kernelSize; dy <= +kernelSize; dy++) {
               let yy = y + dy;
-              yy = (yy >= 0) ? yy : 0;
-              yy = (yy < yDim) ? yy : (yDim - 1);
+              yy = yy >= 0 ? yy : 0;
+              yy = yy < yDim ? yy : yDim - 1;
               const yyOff = yy * xDim;
               for (let dx = -kernelSize; dx <= +kernelSize; dx++) {
                 let xx = x + dx;
-                xx = (xx >= 0) ? xx : 0;
-                xx = (xx < xDim) ? xx : (xDim - 1);
-  
+                xx = xx >= 0 ? xx : 0;
+                xx = xx < xDim ? xx : xDim - 1;
+
                 sum += arrKernel[offKer] * pixelsSrc[xx + yyOff + zzOff];
                 offKer++;
-  
               } // for dx
             } // for dy
           } // for dz
           this.m_pixelsDst[off] = sum;
           off++;
-  
         } // for x
       } // for y
     } // for z all slices
@@ -217,7 +210,7 @@ class GaussSmoother {
     for (let z = 0; z < SZ; z++) {
       for (let y = 0; y < SZ; y++) {
         for (let x = 0; x < SZ; x++) {
-          pixelsSrc[offDst++] = (z < HALF_SZ) ? 0 : 255;
+          pixelsSrc[offDst++] = z < HALF_SZ ? 0 : 255;
         }
       }
     }
@@ -239,7 +232,7 @@ class GaussSmoother {
       const srcVal = pixelsSrc[xOff + yOff + z * xyDim];
       const val = pixelsDst[xOff + yOff + z * xyDim];
       console.log('src val / gauss val = ' + srcVal.toString() + ' / ' + val.toString());
-      const isGood = (val >= valPrev) ? true : false;
+      const isGood = val >= valPrev ? true : false;
       if (!isGood) {
         console.log('gauss test failed');
       }
@@ -247,9 +240,7 @@ class GaussSmoother {
     } // for z
     this.stop();
     console.log('gauss test completed on a small volume');
-
   } // end test simple
-
 } // end class
 
 export default GaussSmoother;

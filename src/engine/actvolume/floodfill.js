@@ -4,17 +4,17 @@
  */
 
 /**
-* Flood fill 3d volume
-* @module lib/scripts/actvolume/floodfill
-*/
+ * Flood fill 3d volume
+ * @module lib/scripts/actvolume/floodfill
+ */
 
 // absolute imports
 import * as THREE from 'three';
 
 /**
-* Class FloodFillTool used to fill areas in 3d
-* @class FloodFillTool
-*/
+ * Class FloodFillTool used to fill areas in 3d
+ * @class FloodFillTool
+ */
 export default class FloodFillTool {
   constructoir() {
     this.m_stack3d = [];
@@ -63,7 +63,7 @@ export default class FloodFillTool {
   }
 
   stack3dEIsEmpty() {
-    return (this.m_indexStack3d <= 0);
+    return this.m_indexStack3d <= 0;
   }
 
   detectSeedPoint3d(xDim, yDim, zDim, pixels, vaSeedPoints, maxSeedPoints) {
@@ -93,12 +93,12 @@ export default class FloodFillTool {
         let xR = -1;
         let x;
         for (x = 0; x < xDim - 1; x++) {
-          const isStartInside = (pixels[x + yOff + zOff] > 0)  && (pixels[x + 1 + yOff + zOff] === 0);
-          const isEndInside   = (pixels[x + yOff + zOff] === 0) && (pixels[x + 1 + yOff + zOff] > 0);
+          const isStartInside = pixels[x + yOff + zOff] > 0 && pixels[x + 1 + yOff + zOff] === 0;
+          const isEndInside = pixels[x + yOff + zOff] === 0 && pixels[x + 1 + yOff + zOff] > 0;
           if (isStartInside) {
             xL = x;
           }
-          if (isEndInside && (xL >= 0)) {
+          if (isEndInside && xL >= 0) {
             xR = x + 1;
             const xSegmentLen = xR - xL + 1;
             if (xSegmentLen > 1) {
@@ -139,12 +139,12 @@ export default class FloodFillTool {
       const zOff = z * xyDim;
 
       // get leftmost
-      for (x = vTaken.x; (x >= 0) && (pixels[x + yOff + zOff] === 0);) {
+      for (x = vTaken.x; x >= 0 && pixels[x + yOff + zOff] === 0; ) {
         x--;
       }
       const xL = x + 1;
       // get rightmost
-      for (x = vTaken.x; (x < xDim) && (pixels[x + yOff + zOff] === 0);) {
+      for (x = vTaken.x; x < xDim && pixels[x + yOff + zOff] === 0; ) {
         x++;
       }
       const xR = x - 1;
@@ -159,7 +159,7 @@ export default class FloodFillTool {
         this.m_numFilled3d++;
 
         // check line y less
-        if ((y > 0) && (pixels[x + yOff - xDim + zOff] !== setYLess)) {
+        if (y > 0 && pixels[x + yOff - xDim + zOff] !== setYLess) {
           setYLess = VIS - setYLess;
           if (setYLess === 0) {
             // V3d vPu(x, y - 1, z);
@@ -172,7 +172,7 @@ export default class FloodFillTool {
         } // if (y less pint has another vis state
 
         // check line above
-        if ((y < yDim - 1) && (pixels[x + yOff + xDim + zOff] !== setYMore)) {
+        if (y < yDim - 1 && pixels[x + yOff + xDim + zOff] !== setYMore) {
           setYMore = VIS - setYMore;
           if (setYMore === 0) {
             // V3d vPu(x, y + 1, z);
@@ -185,7 +185,7 @@ export default class FloodFillTool {
         } // if (y more point has another vis state
 
         // check line z less
-        if ((z > 0) && (pixels[x + yOff + zOff - xyDim] !== setZLess)) {
+        if (z > 0 && pixels[x + yOff + zOff - xyDim] !== setZLess) {
           setZLess = VIS - setZLess;
           if (setZLess === 0) {
             // V3d vPu(x, y, z - 1);
@@ -198,7 +198,7 @@ export default class FloodFillTool {
         } // if (z less pint has another vis state
 
         // check line z more
-        if ((z < zDim - 1) && (pixels[x + yOff + zOff + xyDim] !== setZMore)) {
+        if (z < zDim - 1 && pixels[x + yOff + zOff + xyDim] !== setZMore) {
           setZMore = VIS - setZMore;
           if (setZMore === 0) {
             // V3d vPu(x, y, z + 1);
@@ -214,5 +214,4 @@ export default class FloodFillTool {
     this.destroyStack3d();
     return 1;
   }
-
 } // class

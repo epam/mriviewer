@@ -61,14 +61,13 @@ export default class AmbientTexture {
     this.xDimAO = this.xDim;
     this.yDimAO = this.yDim;
     this.zDimAO = this.zDim;
-    this.bufferTextureAO = new THREE.WebGLRenderTarget(this.xDimAO,
-      this.yDimAO, {
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter,
-        format: THREE.RGBAFormat,
-        type: THREE.UnsignedByteType,
-        depthBuffer: false,
-      });
+    this.bufferTextureAO = new THREE.WebGLRenderTarget(this.xDimAO, this.yDimAO, {
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+      format: THREE.RGBAFormat,
+      type: THREE.UnsignedByteType,
+      depthBuffer: false,
+    });
 
     this.ambientVolumeTexCPU = new Uint8Array(this.xDimAO * this.yDimAO * this.zDimAO);
     if (this.isWebGL2 === 0) {
@@ -111,8 +110,7 @@ export default class AmbientTexture {
       const zOffs = z * this.xDimAO * this.yDimAO;
       for (let y = 0; y < this.yDimAO; y++) {
         for (let x = 0; x < this.xDimAO; x++) {
-          this.ambientVolumeTexCPU[x + y * this.xDimAO + zOffs] = 
-            frameBuf[VAL_4 * (x + y * this.xDimAO)]; //256.0 * k / this.zDim;
+          this.ambientVolumeTexCPU[x + y * this.xDimAO + zOffs] = frameBuf[VAL_4 * (x + y * this.xDimAO)]; //256.0 * k / this.zDim;
         }
       }
     }

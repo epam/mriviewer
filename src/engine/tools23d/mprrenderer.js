@@ -4,9 +4,9 @@
  */
 
 /**
-* MPR mode renderer (in 2d)
-* @module app/scripts/graphics2d/mprrenderer
-*/
+ * MPR mode renderer (in 2d)
+ * @module app/scripts/graphics2d/mprrenderer
+ */
 
 // global imports
 import * as THREE from 'three';
@@ -25,7 +25,6 @@ const PROJECTION_Y = 1;
 /** Project index Z */
 const PROJECTION_Z = 0;
 const NUM_PROJECTIONS = 3;
-
 
 /** Class MprRenderer is used for 2d MRP mode visualization */
 export default class MprRenderer {
@@ -57,8 +56,8 @@ export default class MprRenderer {
   }
 
   /**
-  * Create WebGl renderer and connect to HTML container
-  */
+   * Create WebGl renderer and connect to HTML container
+   */
   create() {
     // this.m_renderer = new THREE.WebGLRenderer({ antialias: true });
     //this.canvas2d = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
@@ -72,8 +71,10 @@ export default class MprRenderer {
     this.isWebGL2 = glSelector.useWebGL2();
     this.canvas2d = glSelector.getCanvas();
     this.m_renderer = new THREE.WebGLRenderer({
-      antialias: false, canvas: this.canvas2d,
-      preserveDrawingBuffer: true, context: this.context
+      antialias: false,
+      canvas: this.canvas2d,
+      preserveDrawingBuffer: true,
+      context: this.context,
     });
     const width = this.m_width;
     const height = this.m_height;
@@ -118,9 +119,9 @@ export default class MprRenderer {
     this.m_sliceRatio[PROJECTION_Y] = 0.5;
     this.m_sliceRatio[PROJECTION_Z] = 0.5;
     this.m_controlPoint = new Array(NUM_PROJECTIONS);
-    this.m_controlPoint[PROJECTION_X] = { 'x': -1.0, 'y': 0.0 };
-    this.m_controlPoint[PROJECTION_Y] = { 'x': 0.0,  'y': 0.0 };
-    this.m_controlPoint[PROJECTION_Z] = { 'x': 1.0,  'y': 0.0 };
+    this.m_controlPoint[PROJECTION_X] = { x: -1.0, y: 0.0 };
+    this.m_controlPoint[PROJECTION_Y] = { x: 0.0, y: 0.0 };
+    this.m_controlPoint[PROJECTION_Z] = { x: 1.0, y: 0.0 };
 
     this.m_projectionRect = new Array(NUM_PROJECTIONS);
     const NUM_BOUND_LINES = 6;
@@ -159,8 +160,8 @@ export default class MprRenderer {
   }
 
   /**
-  * Action when new file was completely loaded
-  */
+   * Action when new file was completely loaded
+   */
   onFileLoaded() {
     this.clearScene();
     const volTexture = this.m_objGraphics2d.m_volTexture;
@@ -171,12 +172,13 @@ export default class MprRenderer {
     let i;
     const SIZE_SCREEN = 2.0;
     for (i = 0; i < NUM_PROJECTIONS; i++) {
-      const XMin = -VPORT_SIZE + (i + 0) * SIZE_SCREEN / NUM_PROJECTIONS;
-      const XMax = -VPORT_SIZE + (i + 1) * SIZE_SCREEN / NUM_PROJECTIONS;
+      const XMin = -VPORT_SIZE + ((i + 0) * SIZE_SCREEN) / NUM_PROJECTIONS;
+      const XMax = -VPORT_SIZE + ((i + 1) * SIZE_SCREEN) / NUM_PROJECTIONS;
 
       // define correct vertical rect dimension
       // to look slice proportional
-      let wPhys = 0, hPhys = 0;
+      let wPhys = 0,
+        hPhys = 0;
       if (i === PROJECTION_X) {
         wPhys = this.m_objGraphics2d.m_volumeBox.y;
         hPhys = this.m_objGraphics2d.m_volumeBox.z;
@@ -189,10 +191,10 @@ export default class MprRenderer {
       }
       const wPart = this.m_width / NUM_PROJECTIONS;
       let wScreen = wPart;
-      let hScreen = wScreen * hPhys / wPhys;
+      let hScreen = (wScreen * hPhys) / wPhys;
       if (hScreen > this.m_height) {
         hScreen = this.m_height;
-        wScreen = hScreen * wPhys / hPhys;
+        wScreen = (hScreen * wPhys) / hPhys;
       }
       // console.log(`Proportion is: ${wScreen} * ${hScreen}`);
       // normalize to [0..1]
@@ -213,10 +215,10 @@ export default class MprRenderer {
       const YMax = +hScreen;
 
       this.m_projectionRect[i] = {
-        'xMin': XMin,
-        'yMin': YMin,
-        'xMax': XMax,
-        'yMax': YMax,
+        xMin: XMin,
+        yMin: YMin,
+        xMax: XMax,
+        yMax: YMax,
       };
 
       // v2 ----- v3
@@ -242,19 +244,10 @@ export default class MprRenderer {
       //        |
       //  (0,0) v  y     (0,1)
       //                 (1,2)
-      geo.faceVertexUvs[0][0] = [
-        new THREE.Vector2(0.0, 1.0),
-        new THREE.Vector2(1.0, 1.0),
-        new THREE.Vector2(0.0, 0.0),
-      ];
-      geo.faceVertexUvs[0][1] = [
-        new THREE.Vector2(1.0, 0.0),
-        new THREE.Vector2(0.0, 0.0),
-        new THREE.Vector2(1.0, 1.0),
-      ];
+      geo.faceVertexUvs[0][0] = [new THREE.Vector2(0.0, 1.0), new THREE.Vector2(1.0, 1.0), new THREE.Vector2(0.0, 0.0)];
+      geo.faceVertexUvs[0][1] = [new THREE.Vector2(1.0, 0.0), new THREE.Vector2(0.0, 0.0), new THREE.Vector2(1.0, 1.0)];
       const normal = new THREE.Vector3();
       THREE.Triangle.getNormal(v0, v1, v2, normal);
-
 
       // eslint-disable-next-line
       geo.faces[0] = new THREE.Face3(0, 1, 2, normal);
@@ -269,15 +262,14 @@ export default class MprRenderer {
 
       // get dim for current slice (one between X, Y or Z) and slice index, based on ratio
       let dim = xDim;
-      dim = (i === PROJECTION_Y) ? yDim : dim;
-      dim = (i === PROJECTION_Z) ? zDim : dim;
+      dim = i === PROJECTION_Y ? yDim : dim;
+      dim = i === PROJECTION_Z ? zDim : dim;
       const sliceIndex = Math.floor(this.m_sliceRatio[i] * dim);
 
       // console.log(`Create mat. vol ${xDim}*${yDim}*${zDim}. sliceIndex=${sliceIndex} `);
       // eslint-disable-next-line
       const axisIndex = 2 - i; // inside matTex2d.create it should be X - 0 or Y - 1 or Z - 2
-      matTex2d.create(volTexture,
-        xDim, yDim, zDim, axisIndex, sliceIndex, this.m_objGraphics2d.m_isRoiVolume);
+      matTex2d.create(volTexture, xDim, yDim, zDim, axisIndex, sliceIndex, this.m_objGraphics2d.m_isRoiVolume);
 
       const mat = matTex2d.m_material;
       this.m_meshes[i] = new THREE.Mesh(geo, mat);
@@ -296,10 +288,24 @@ export default class MprRenderer {
     this.m_boundLines[1] = new Line2D(this.m_scene, this.m_vertLineWidth, maxCoord, maxCoord, maxCoord, minCoord, mat);
     this.m_boundLines[2] = new Line2D(this.m_scene, this.m_horLineWidth, maxCoord, minCoord, minCoord, minCoord, mat);
     this.m_boundLines[3] = new Line2D(this.m_scene, this.m_vertLineWidth, minCoord, minCoord, minCoord, maxCoord, mat);
-    this.m_boundLines[4] = new Line2D(this.m_scene, this.m_vertLineWidth, this.m_projectionRect[0].xMax - halfLineWidth,
-      minCoord, this.m_projectionRect[0].xMax - halfLineWidth, maxCoord, mat);
-    this.m_boundLines[5] = new Line2D(this.m_scene, this.m_vertLineWidth, this.m_projectionRect[1].xMax - halfLineWidth,
-      minCoord, this.m_projectionRect[1].xMax - halfLineWidth, maxCoord, mat);
+    this.m_boundLines[4] = new Line2D(
+      this.m_scene,
+      this.m_vertLineWidth,
+      this.m_projectionRect[0].xMax - halfLineWidth,
+      minCoord,
+      this.m_projectionRect[0].xMax - halfLineWidth,
+      maxCoord,
+      mat
+    );
+    this.m_boundLines[5] = new Line2D(
+      this.m_scene,
+      this.m_vertLineWidth,
+      this.m_projectionRect[1].xMax - halfLineWidth,
+      minCoord,
+      this.m_projectionRect[1].xMax - halfLineWidth,
+      maxCoord,
+      mat
+    );
 
     this.m_sliceRatio[PROJECTION_X] = 0.5;
     this.m_sliceRatio[PROJECTION_Y] = 0.5;
@@ -340,66 +346,149 @@ export default class MprRenderer {
     const vertShift = SHIFT_MUL * this.m_horLineWidth;
 
     // lines on Z
-    const xCenterOnZ = this.m_projectionRect[PROJECTION_Z].xMin + this.m_sliceRatio[PROJECTION_X] *
-      (this.m_projectionRect[PROJECTION_Z].xMax - this.m_projectionRect[PROJECTION_Z].xMin);
-    const yCenterOnZ = this.m_projectionRect[PROJECTION_Z].yMin + this.m_sliceRatio[PROJECTION_Y] *
-      (this.m_projectionRect[PROJECTION_Z].yMax - this.m_projectionRect[PROJECTION_Z].yMin);
+    const xCenterOnZ =
+      this.m_projectionRect[PROJECTION_Z].xMin +
+      this.m_sliceRatio[PROJECTION_X] * (this.m_projectionRect[PROJECTION_Z].xMax - this.m_projectionRect[PROJECTION_Z].xMin);
+    const yCenterOnZ =
+      this.m_projectionRect[PROJECTION_Z].yMin +
+      this.m_sliceRatio[PROJECTION_Y] * (this.m_projectionRect[PROJECTION_Z].yMax - this.m_projectionRect[PROJECTION_Z].yMin);
     // blue X projection line on Z projection
-    this.m_linesXOnZ = [new Line2D(this.m_scene, this.m_vertLineWidth, xCenterOnZ,
-      this.m_projectionRect[PROJECTION_Z].yMax, xCenterOnZ, yCenterOnZ + vertShift, this.m_materialLineBlue),
-    new Line2D(this.m_scene, this.m_vertLineWidth, xCenterOnZ, yCenterOnZ - vertShift, xCenterOnZ,
-      this.m_projectionRect[PROJECTION_Z].yMin, this.m_materialLineBlue)];
+    this.m_linesXOnZ = [
+      new Line2D(
+        this.m_scene,
+        this.m_vertLineWidth,
+        xCenterOnZ,
+        this.m_projectionRect[PROJECTION_Z].yMax,
+        xCenterOnZ,
+        yCenterOnZ + vertShift,
+        this.m_materialLineBlue
+      ),
+      new Line2D(
+        this.m_scene,
+        this.m_vertLineWidth,
+        xCenterOnZ,
+        yCenterOnZ - vertShift,
+        xCenterOnZ,
+        this.m_projectionRect[PROJECTION_Z].yMin,
+        this.m_materialLineBlue
+      ),
+    ];
     // green Y projection line on Z projection
-    this.m_linesYOnZ = [new Line2D(this.m_scene, this.m_horLineWidth, this.m_projectionRect[PROJECTION_Z].xMin,
-      yCenterOnZ, xCenterOnZ - horShift, yCenterOnZ, this.m_materialLineGreen),
-    new Line2D(this.m_scene, this.m_horLineWidth, xCenterOnZ + horShift, yCenterOnZ,
-      this.m_projectionRect[PROJECTION_Z].xMax, yCenterOnZ, this.m_materialLineGreen)];
+    this.m_linesYOnZ = [
+      new Line2D(
+        this.m_scene,
+        this.m_horLineWidth,
+        this.m_projectionRect[PROJECTION_Z].xMin,
+        yCenterOnZ,
+        xCenterOnZ - horShift,
+        yCenterOnZ,
+        this.m_materialLineGreen
+      ),
+      new Line2D(
+        this.m_scene,
+        this.m_horLineWidth,
+        xCenterOnZ + horShift,
+        yCenterOnZ,
+        this.m_projectionRect[PROJECTION_Z].xMax,
+        yCenterOnZ,
+        this.m_materialLineGreen
+      ),
+    ];
     this.m_controlPoint[PROJECTION_Z].x = xCenterOnZ;
     this.m_controlPoint[PROJECTION_Z].y = yCenterOnZ;
 
     // lines on Y
-    const xCenterOnY = this.m_projectionRect[PROJECTION_Y].xMin + this.m_sliceRatio[PROJECTION_X] *
-      (this.m_projectionRect[PROJECTION_Y].xMax - this.m_projectionRect[PROJECTION_Y].xMin);
-    const yCenterOnY = this.m_projectionRect[PROJECTION_Y].yMin + this.m_sliceRatio[PROJECTION_Z] *
-      (this.m_projectionRect[PROJECTION_Y].yMax - this.m_projectionRect[PROJECTION_Y].yMin);
+    const xCenterOnY =
+      this.m_projectionRect[PROJECTION_Y].xMin +
+      this.m_sliceRatio[PROJECTION_X] * (this.m_projectionRect[PROJECTION_Y].xMax - this.m_projectionRect[PROJECTION_Y].xMin);
+    const yCenterOnY =
+      this.m_projectionRect[PROJECTION_Y].yMin +
+      this.m_sliceRatio[PROJECTION_Z] * (this.m_projectionRect[PROJECTION_Y].yMax - this.m_projectionRect[PROJECTION_Y].yMin);
     // blue X projection line on Y projection
-    this.m_linesXOnY = [new Line2D(this.m_scene, this.m_vertLineWidth, xCenterOnY,
-      this.m_projectionRect[PROJECTION_Y].yMax, xCenterOnY, yCenterOnY + vertShift, this.m_materialLineBlue),
-    new Line2D(this.m_scene, this.m_vertLineWidth, xCenterOnY, yCenterOnY - vertShift, xCenterOnY,
-      this.m_projectionRect[PROJECTION_Y].yMin, this.m_materialLineBlue)];
-    this.m_controlLineXOnY = new Line2D(this.m_scene, this.m_vertLineWidth, xCenterOnY,
-      yCenterOnY + this.m_yControlShift, xCenterOnY, yCenterOnY - this.m_yControlShift, this.m_materialLineBlue);
+    this.m_linesXOnY = [
+      new Line2D(
+        this.m_scene,
+        this.m_vertLineWidth,
+        xCenterOnY,
+        this.m_projectionRect[PROJECTION_Y].yMax,
+        xCenterOnY,
+        yCenterOnY + vertShift,
+        this.m_materialLineBlue
+      ),
+      new Line2D(
+        this.m_scene,
+        this.m_vertLineWidth,
+        xCenterOnY,
+        yCenterOnY - vertShift,
+        xCenterOnY,
+        this.m_projectionRect[PROJECTION_Y].yMin,
+        this.m_materialLineBlue
+      ),
+    ];
+    this.m_controlLineXOnY = new Line2D(
+      this.m_scene,
+      this.m_vertLineWidth,
+      xCenterOnY,
+      yCenterOnY + this.m_yControlShift,
+      xCenterOnY,
+      yCenterOnY - this.m_yControlShift,
+      this.m_materialLineBlue
+    );
     this.m_controlPoint[PROJECTION_Y].x = xCenterOnY;
     this.m_controlPoint[PROJECTION_Y].y = yCenterOnY;
 
     // lines on X
-    const xCenterOnX = this.m_projectionRect[PROJECTION_X].xMin + this.m_sliceRatio[PROJECTION_Y] *
-      (this.m_projectionRect[PROJECTION_X].xMax - this.m_projectionRect[PROJECTION_X].xMin);
-    const yCenterOnX = this.m_projectionRect[PROJECTION_X].yMin + this.m_sliceRatio[PROJECTION_Z] *
-      (this.m_projectionRect[PROJECTION_X].yMax - this.m_projectionRect[PROJECTION_X].yMin);
+    const xCenterOnX =
+      this.m_projectionRect[PROJECTION_X].xMin +
+      this.m_sliceRatio[PROJECTION_Y] * (this.m_projectionRect[PROJECTION_X].xMax - this.m_projectionRect[PROJECTION_X].xMin);
+    const yCenterOnX =
+      this.m_projectionRect[PROJECTION_X].yMin +
+      this.m_sliceRatio[PROJECTION_Z] * (this.m_projectionRect[PROJECTION_X].yMax - this.m_projectionRect[PROJECTION_X].yMin);
     // green Y projection line on X projection
-    this.m_linesYOnX = [new Line2D(this.m_scene, this.m_vertLineWidth, xCenterOnX,
-      this.m_projectionRect[PROJECTION_X].yMax, xCenterOnX, yCenterOnX + vertShift, this.m_materialLineGreen),
-    new Line2D(this.m_scene, this.m_vertLineWidth, xCenterOnX, yCenterOnX - vertShift, xCenterOnX,
-      this.m_projectionRect[PROJECTION_X].yMin, this.m_materialLineGreen)];
-    this.m_controlLineYOnX = new Line2D(this.m_scene, this.m_vertLineWidth, xCenterOnX,
-      yCenterOnX - this.m_yControlShift, xCenterOnX, yCenterOnX + this.m_yControlShift, this.m_materialLineGreen);
+    this.m_linesYOnX = [
+      new Line2D(
+        this.m_scene,
+        this.m_vertLineWidth,
+        xCenterOnX,
+        this.m_projectionRect[PROJECTION_X].yMax,
+        xCenterOnX,
+        yCenterOnX + vertShift,
+        this.m_materialLineGreen
+      ),
+      new Line2D(
+        this.m_scene,
+        this.m_vertLineWidth,
+        xCenterOnX,
+        yCenterOnX - vertShift,
+        xCenterOnX,
+        this.m_projectionRect[PROJECTION_X].yMin,
+        this.m_materialLineGreen
+      ),
+    ];
+    this.m_controlLineYOnX = new Line2D(
+      this.m_scene,
+      this.m_vertLineWidth,
+      xCenterOnX,
+      yCenterOnX - this.m_yControlShift,
+      xCenterOnX,
+      yCenterOnX + this.m_yControlShift,
+      this.m_materialLineGreen
+    );
     this.m_controlPoint[PROJECTION_X].x = xCenterOnX;
     this.m_controlPoint[PROJECTION_X].y = yCenterOnX;
   }
   /**
-  * Keyboard event handler
-  */
+   * Keyboard event handler
+   */
   // eslint-disable-next-line
-  onKeyDown() {
-  }
+  onKeyDown() {}
 
   /**
    * Mouse events handler
    * xScr, yScr in [0..1] is normalized mouse coordinate in screen
    */
   onMouseDown(xScr, yScr) {
-    if ((this.m_objGraphics2d.m_volumeData === null) || (this.m_objGraphics2d.m_volumeHeader === null)) {
+    if (this.m_objGraphics2d.m_volumeData === null || this.m_objGraphics2d.m_volumeHeader === null) {
       return;
     }
     const TWICE = 2.0;
@@ -407,19 +496,23 @@ export default class MprRenderer {
     const yt = (1.0 - yScr) * TWICE - 1.0;
 
     for (let i = 0; i < NUM_PROJECTIONS; ++i) {
-      if (this.m_projectionRect[i].xMin <= xt && xt <= this.m_projectionRect[i].xMax) { // is in i-th projection
-        if (this.m_projectionRect[i].yMin <= yt && yt <= this.m_projectionRect[i].yMax) { // is in i-th projection rect
-          if (this.m_controlPoint[i].y - this.m_yControlShift <= yt &&
-            yt <= this.m_controlPoint[i].y + this.m_yControlShift) { // is near control point for vertical lines
-            if (i === PROJECTION_Z) { // for z projection (has horizontal line)
-              if (this.m_controlPoint[i].x - this.m_xControlShift <= xt &&
-                xt <= this.m_controlPoint[i].x + this.m_xControlShift) { // is near control point for horizontal line
+      if (this.m_projectionRect[i].xMin <= xt && xt <= this.m_projectionRect[i].xMax) {
+        // is in i-th projection
+        if (this.m_projectionRect[i].yMin <= yt && yt <= this.m_projectionRect[i].yMax) {
+          // is in i-th projection rect
+          if (this.m_controlPoint[i].y - this.m_yControlShift <= yt && yt <= this.m_controlPoint[i].y + this.m_yControlShift) {
+            // is near control point for vertical lines
+            if (i === PROJECTION_Z) {
+              // for z projection (has horizontal line)
+              if (this.m_controlPoint[i].x - this.m_xControlShift <= xt && xt <= this.m_controlPoint[i].x + this.m_xControlShift) {
+                // is near control point for horizontal line
                 this.m_runningState = true;
                 this.m_activePlane = i;
               } else {
                 return;
               }
-            } else { // for x and y projections
+            } else {
+              // for x and y projections
               this.m_runningState = true;
               this.m_activePlane = i;
             }
@@ -447,7 +540,7 @@ export default class MprRenderer {
    * @param (float) yScr - normalized mouse y coordinate in screen
    */
   onMouseMove(xScr, yScr) {
-    if ((this.m_objGraphics2d.m_volumeData === null) || (this.m_objGraphics2d.m_volumeHeader === null)) {
+    if (this.m_objGraphics2d.m_volumeData === null || this.m_objGraphics2d.m_volumeHeader === null) {
       return;
     }
     if (this.m_runningState === false) {
@@ -462,29 +555,29 @@ export default class MprRenderer {
       const xRatio = (xt - activeRect.xMin) / (activeRect.xMax - activeRect.xMin);
       const yRatio = (yt - activeRect.yMin) / (activeRect.yMax - activeRect.yMin);
       switch (this.m_activePlane) {
-      case PROJECTION_X:
-        this.m_sliceRatio[PROJECTION_Y] = xRatio;
-        this.m_sliceRatio[PROJECTION_Z] = yRatio;
-        break;
-      case PROJECTION_Y:
-        this.m_sliceRatio[PROJECTION_X] = xRatio;
-        this.m_sliceRatio[PROJECTION_Z] = yRatio;
-        break;
-      case PROJECTION_Z:
-        this.m_sliceRatio[PROJECTION_X] = xRatio;
-        this.m_sliceRatio[PROJECTION_Y] = yRatio;
-        break;
-      default:
-        console.log('MPR: Unexpected active plane');
-        break;
+        case PROJECTION_X:
+          this.m_sliceRatio[PROJECTION_Y] = xRatio;
+          this.m_sliceRatio[PROJECTION_Z] = yRatio;
+          break;
+        case PROJECTION_Y:
+          this.m_sliceRatio[PROJECTION_X] = xRatio;
+          this.m_sliceRatio[PROJECTION_Z] = yRatio;
+          break;
+        case PROJECTION_Z:
+          this.m_sliceRatio[PROJECTION_X] = xRatio;
+          this.m_sliceRatio[PROJECTION_Y] = yRatio;
+          break;
+        default:
+          console.log('MPR: Unexpected active plane');
+          break;
       } // end switch
       this.updateControlLines();
     }
   }
 
   /**
-  * Action on each render
-  */
+   * Action on each render
+   */
   render() {
     // console.log('MprRender...');
     this.m_renderer.render(this.m_scene, this.m_camera);
@@ -508,9 +601,9 @@ export default class MprRenderer {
     let x = Math.floor(this.m_sliceRatio[PROJECTION_X] * xDim);
     let y = Math.floor(this.m_sliceRatio[PROJECTION_Y] * yDim);
     let z = Math.floor(this.m_sliceRatio[PROJECTION_Z] * zDim);
-    x = (x < xDim) ? x : (xDim - 1);
-    y = (y < yDim) ? y : (yDim - 1);
-    z = (z < zDim) ? z : (zDim - 1);
+    x = x < xDim ? x : xDim - 1;
+    y = y < yDim ? y : yDim - 1;
+    z = z < zDim ? z : zDim - 1;
 
     this.m_material[PROJECTION_X].m_uniforms.sliceIndex.value = x;
     this.m_material[PROJECTION_Y].m_uniforms.sliceIndex.value = y;

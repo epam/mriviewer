@@ -19,8 +19,8 @@ import DicomSerie from './dicomserie';
 // ********************************************************
 
 /**
-* Class DicomSlicesVolume Collected volume (from slices)
-*/
+ * Class DicomSlicesVolume Collected volume (from slices)
+ */
 class DicomSlicesVolume {
   constructor() {
     //
@@ -44,7 +44,7 @@ class DicomSlicesVolume {
   // slice: DicomSlice
   addSlice(slice) {
     console.assert(slice !== undefined);
-    console.assert(slice instanceof DicomSlice, "should be DicomSlice object");
+    console.assert(slice instanceof DicomSlice, 'should be DicomSlice object');
     console.assert(slice.m_hash !== undefined);
     console.assert(slice.m_hash !== 0);
     let indSerie = this.getSerieIndex(slice);
@@ -69,7 +69,6 @@ class DicomSlicesVolume {
     } // end for
     return -1;
   } // end get serie index
-
 } // end class DicomSlicesVolume
 
 export default DicomSlicesVolume;

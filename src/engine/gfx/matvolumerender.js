@@ -4,9 +4,9 @@
  */
 
 /**
-* Final isosurface rendering material for CT dataset
-* @module lib/scripts/gfx/matvolumerender
-*/
+ * Final isosurface rendering material for CT dataset
+ * @module lib/scripts/gfx/matvolumerender
+ */
 
 // ******************************************************************
 // imports
@@ -20,10 +20,9 @@ import VOL_RENDER_FRAGMENT_SHADER from '../shaders/volumerender.frag';
 
 /** Class @class MaterialVolumeRender for create skull volume render shader material */
 export default class MaterialVolumeRender {
-
   /** Simple material constructor
-  * @constructor
-  */
+   * @constructor
+   */
   constructor() {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
@@ -68,10 +67,9 @@ export default class MaterialVolumeRender {
   }
 
   /** Simple material constructor
-  * @return {object} Three.js material with this shader
-  */
-  create(texTF, texVol2d,
-    texVolMask, texVolAO, texBackface, texFrontface, renderTexture, offsets, callbackMat) {
+   * @return {object} Three.js material with this shader
+   */
+  create(texTF, texVol2d, texVolMask, texVolAO, texBackface, texFrontface, renderTexture, offsets, callbackMat) {
     // Init uniforms
     this.m_uniforms.texTF.value = texTF;
     this.m_uniforms.texVolume.value = texVol2d;

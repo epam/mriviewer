@@ -4,9 +4,9 @@
  */
 
 /**
-* 2d text render
-* @module lib/scripts/graphics2d/text2d
-*/
+ * 2d text render
+ * @module lib/scripts/graphics2d/text2d
+ */
 
 import * as THREE from 'three';
 

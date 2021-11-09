@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // ********************************************************
 // Imports
 // ********************************************************
@@ -27,9 +26,9 @@ import LoaderHdr from './loaders/LoaderHdr';
 // Const
 // ********************************************************
 
-/** 
- * Class representing a volume set 
- * Typically set contains only 1 volume, but for some Dicom folders it can be more then 1 
+/**
+ * Class representing a volume set
+ * Typically set contains only 1 volume, but for some Dicom folders it can be more then 1
  * See Volume class as an element of volume set
  */
 class VolumeSet extends React.Component {
@@ -66,11 +65,11 @@ class VolumeSet extends React.Component {
 
   /**
    * Add volume to set
-   * 
+   *
    * @param {Volume} vol - added volume
    */
   addVolume(vol) {
-    console.assert(vol instanceof Volume, "VolumeSet.addVolume: arg must be Volume");
+    console.assert(vol instanceof Volume, 'VolumeSet.addVolume: arg must be Volume');
     // this.m_volumes[this.m_numVolumes] = vol;
     this.m_volumes.push(vol);
     this.m_numVolumes++;
@@ -78,7 +77,7 @@ class VolumeSet extends React.Component {
 
   /**
    * Get number of volumes in st
-   * 
+   *
    * @return {number} Amount of volumes on set
    */
   getNumVolumes() {
@@ -91,10 +90,10 @@ class VolumeSet extends React.Component {
    * @return {Volume} volume is set or null
    */
   getVolume(idx) {
-    console.assert(Number.isInteger(idx), "VolumeSet.getVolume: arg must be number");
-    console.assert(idx < this.m_numVolumes, "index of volume should be in range");
-    console.assert(idx >= 0, "index of volume should be non negative");
-    if ((idx < 0) || (idx >= this.m_numVolumes)) {
+    console.assert(Number.isInteger(idx), 'VolumeSet.getVolume: arg must be number');
+    console.assert(idx < this.m_numVolumes, 'index of volume should be in range');
+    console.assert(idx >= 0, 'index of volume should be non negative');
+    if (idx < 0 || idx >= this.m_numVolumes) {
       return null;
     }
     return this.m_volumes[idx];
@@ -110,20 +109,20 @@ class VolumeSet extends React.Component {
   // ********************************************
   /**
    * Read KTX from local file buffer
-   * 
-   * @param {char array} arrBuf 
-   * @param {func} callbackProgress 
-   * @param {func} callbackComplete 
+   *
+   * @param {char array} arrBuf
+   * @param {func} callbackProgress
+   * @param {func} callbackComplete
    */
   readFromKtx(arrBuf, callbackProgress, callbackComplete) {
     console.assert(arrBuf != null);
-    console.assert(arrBuf.constructor.name === "ArrayBuffer", "Should be ArrayBuf in arrBuf");
+    console.assert(arrBuf.constructor.name === 'ArrayBuffer', 'Should be ArrayBuf in arrBuf');
     const loader = new LoaderKtx();
     const vol = this.getVolume(0);
     const ret = loader.readFromBuffer(vol, arrBuf, callbackProgress, callbackComplete);
     return ret;
   }
-  
+
   readFromKtxUrl(strUrl, callbackProgress, callbackComplete) {
     const loader = new LoaderKtx();
     const vol = this.getVolume(0);
@@ -170,7 +169,6 @@ class VolumeSet extends React.Component {
     const ret = loader.readFromBuffer(indexFile, fileName, ratioLoaded, arrBuf, callbackProgress, callbackComplete);
     return ret;
   }
-
 } // end VolumeSet
 
 export default VolumeSet;

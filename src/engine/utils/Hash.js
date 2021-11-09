@@ -3,16 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 /**
-* Get string hash
-* @module demo/engine/utils/hash
-*/
+ * Get string hash
+ * @module demo/engine/utils/hash
+ */
 // absolute imports
 /**
-* Class Hash to calc string hash
-* @class Hash
-*/
+ * Class Hash to calc string hash
+ * @class Hash
+ */
 class Hash {
-
   static getHash(strInp) {
     const ROT = 27;
     const len = strInp.length;

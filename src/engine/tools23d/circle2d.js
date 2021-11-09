@@ -4,9 +4,9 @@
  */
 
 /**
-* Render 2d circle in scene
-* @module app/scripts/graphics2d/circle2d
-*/
+ * Render 2d circle in scene
+ * @module app/scripts/graphics2d/circle2d
+ */
 
 import * as THREE from 'three';
 
@@ -16,27 +16,24 @@ const CIRCLE_2D_Z_COORDINATE = 0.2;
 /** Class Circle2D is used for render circle in 2d mode */
 export default class Circle2D {
   /**
-  * Constructor. Create a single circle 2d mode and add to scene on render
-  * @param (object) scene - Scene where object will be rendered
-  * @param (float) lineWidth - Line width in scale [-1..+1]
-  * @param (float) xCenter - Circle center, x coordinate
-  * @param (float) yCenter - Circle center, y coordinate
-  * @param (float) xRadius - Circle (ellipse) radius, x coordinate
-  * @param (float) yRadius - Circle (ellipse) radius, y coordinate
-  * @param (object) matColor2d - MaterialColor2d
-  */
+   * Constructor. Create a single circle 2d mode and add to scene on render
+   * @param (object) scene - Scene where object will be rendered
+   * @param (float) lineWidth - Line width in scale [-1..+1]
+   * @param (float) xCenter - Circle center, x coordinate
+   * @param (float) yCenter - Circle center, y coordinate
+   * @param (float) xRadius - Circle (ellipse) radius, x coordinate
+   * @param (float) yRadius - Circle (ellipse) radius, y coordinate
+   * @param (object) matColor2d - MaterialColor2d
+   */
   constructor(scene, lineWidth, xCenter, yCenter, xRadius, yRadius, matColor2d) {
-    this.createWithMaterial(scene, lineWidth,
-      xCenter, yCenter, xRadius, yRadius, matColor2d);
+    this.createWithMaterial(scene, lineWidth, xCenter, yCenter, xRadius, yRadius, matColor2d);
     this.m_xCenter = xCenter;
     this.m_yCenter = yCenter;
     this.m_xRadius = xRadius;
     this.m_yRadius = yRadius;
   }
 
-  createWithMaterial(scene, lineWidth,
-    xCenter, yCenter, xRadius, yRadius,
-    matColor2d) {
+  createWithMaterial(scene, lineWidth, xCenter, yCenter, xRadius, yRadius, matColor2d) {
     this.m_scene = scene;
     this.m_lineWidth = lineWidth;
 
@@ -54,11 +51,10 @@ export default class Circle2D {
     const TWICE = 2;
     const M2PI = MPI * TWICE;
     // eslint-disable-next-line
-    const perimeterApprox = MPI * (XRAD + YRAD) * (1.0 + 3.0 * hP / (10 + Math.sqrt(4.0 - 3.0 * hP)));
+    const perimeterApprox = MPI * (XRAD + YRAD) * (1.0 + (3.0 * hP) / (10 + Math.sqrt(4.0 - 3.0 * hP)));
     let numAngles = Math.floor(perimeterApprox) + 1;
     const MIN_NUMBER_PIXELS_IN_CIRCLE = 4;
-    numAngles = (numAngles > MIN_NUMBER_PIXELS_IN_CIRCLE) ?
-      numAngles : MIN_NUMBER_PIXELS_IN_CIRCLE;
+    numAngles = numAngles > MIN_NUMBER_PIXELS_IN_CIRCLE ? numAngles : MIN_NUMBER_PIXELS_IN_CIRCLE;
     // console.log(`numAngles = ${numAngles}`);
 
     // create geometry holder
@@ -76,7 +72,7 @@ export default class Circle2D {
     //
 
     for (let a = 0; a < numAngles; a++) {
-      const angle = M2PI * a / numAngles;
+      const angle = (M2PI * a) / numAngles;
       const x0 = xCenter + xRadius * Math.cos(angle);
       const y0 = yCenter + yRadius * Math.sin(angle);
       const x1 = xCenter + (xRadius + lineWidth) * Math.cos(angle);
@@ -91,7 +87,7 @@ export default class Circle2D {
     const normal = new THREE.Vector3(0.0, 0.0, 1.0);
     for (let a = 0; a < numAngles; a++) {
       const is = a * TWICE;
-      const anext = (a + 1 < numAngles) ? (a + 1) : (0);
+      const anext = a + 1 < numAngles ? a + 1 : 0;
       const ie = anext * TWICE;
       // const faceA = new THREE.Face3(is, ie, ie + 1, normal);
       // const faceB = new THREE.Face3(ie + 1, is + 1, is, normal);
@@ -106,41 +102,41 @@ export default class Circle2D {
   }
 
   /**
-  * Get object for further scene addition. Need to remove old circle from scene
-  * @return (object) geometry mesh object (circle)
-  */
+   * Get object for further scene addition. Need to remove old circle from scene
+   * @return (object) geometry mesh object (circle)
+   */
   getRenderObject() {
     return this.m_mesh;
   }
 
   /**
-  * Return coordinate x of circle center
-  * @return (float) x
-  */
+   * Return coordinate x of circle center
+   * @return (float) x
+   */
   getxCenter() {
     return this.m_xCenter;
   }
 
   /**
-  * Return coordinate y of circle center
-  * @return (float) y
-  */
+   * Return coordinate y of circle center
+   * @return (float) y
+   */
   getyCenter() {
     return this.m_yCenter;
   }
 
   /**
-  * Return x radius of circle
-  * @return (float) x
-  */
+   * Return x radius of circle
+   * @return (float) x
+   */
   getxRadius() {
     return this.m_xRadius;
   }
 
   /**
-  * Return y radius of circle
-  * @return (float) y
-  */
+   * Return y radius of circle
+   * @return (float) y
+   */
   getyRadius() {
     return this.m_yRadius;
   }

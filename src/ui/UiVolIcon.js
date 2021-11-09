@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // ********************************************************
 // Imports
 // ********************************************************
@@ -47,7 +46,7 @@ class UiVolIcon extends React.Component {
     }
     // clear dest image
     ctx.fillStyle = 'rgb(64, 64, 64)';
-    ctx.fillRect(0,0, w, h);
+    ctx.fillRect(0, 0, w, h);
 
     if (vol.m_xIcon <= 0) {
       // draw cross on whole image
@@ -81,10 +80,17 @@ class UiVolIcon extends React.Component {
   // render on screen
   render() {
     const side = VOLUME_ICON_SIDE;
-    this.m_volIndex = this.props.index;;
-    const jsxCanvas = <canvas ref={ (mount) => {this.m_mount = mount} } width={side} height={side} />
+    this.m_volIndex = this.props.index;
+    const jsxCanvas = (
+      <canvas
+        ref={(mount) => {
+          this.m_mount = mount;
+        }}
+        width={side}
+        height={side}
+      />
+    );
     return jsxCanvas;
   }
-
 } // end class UiVolIcon
-export default connect(store => store)(UiVolIcon);
+export default connect((store) => store)(UiVolIcon);

@@ -8,9 +8,9 @@ import { connect } from 'react-redux';
 
 import Modes2d from '../store/Modes2d';
 import StoreActionType from '../store/ActionTypes';
-import { UIButton } from "./Button/Button";
-import { Container } from "./Tollbars/Container";
-import { Tooltip } from "./Tooltip/Tooltip";
+import { UIButton } from './Button/Button';
+import { Container } from './Toolbars/Container';
+import { Tooltip } from './Tooltip/Tooltip';
 
 class UiCtrl2d extends React.Component {
   constructor(props) {
@@ -62,24 +62,26 @@ class UiCtrl2d extends React.Component {
     const store = this.props;
     const mode2d = store.mode2d;
 
-    const varSag = mode2d === Modes2d.SAGGITAL
-    const varCor = mode2d === Modes2d.CORONAL
-    const varTra = mode2d === Modes2d.TRANSVERSE
+    const varSag = mode2d === Modes2d.SAGGITAL;
+    const varCor = mode2d === Modes2d.CORONAL;
+    const varTra = mode2d === Modes2d.TRANSVERSE;
 
-    return <>
-      <Container direction="vertical">
-        <Tooltip content="Show slices along x axis" placement="left">
-          <UIButton handler={this.onModeSaggital} active={varSag} icon="saggital" />
-        </Tooltip>
-        <Tooltip content="Show slices along y axis" placement="left">
-          <UIButton handler={this.onModeCoronal} active={varCor} icon="coronal" />
-        </Tooltip>
-        <Tooltip content="Show slices along z axis" placement="left">
-        <UIButton handler={this.onModeTransverse} active={varTra} icon="transverse" />
-        </Tooltip>
-      </Container>
-    </>;
+    return (
+      <>
+        <Container direction="vertical">
+          <Tooltip content="Show slices along x axis" placement="left">
+            <UIButton handler={this.onModeSaggital} active={varSag} icon="saggital" />
+          </Tooltip>
+          <Tooltip content="Show slices along y axis" placement="left">
+            <UIButton handler={this.onModeCoronal} active={varCor} icon="coronal" />
+          </Tooltip>
+          <Tooltip content="Show slices along z axis" placement="left">
+            <UIButton handler={this.onModeTransverse} active={varTra} icon="transverse" />
+          </Tooltip>
+        </Container>
+      </>
+    );
   }
 }
 
-export default connect(store => store)(UiCtrl2d);
+export default connect((store) => store)(UiCtrl2d);

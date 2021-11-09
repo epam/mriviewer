@@ -6,7 +6,7 @@
 // ********************************************************
 // Imports
 // ********************************************************
- 
+
 import Volume from '../engine/Volume';
 import SobelEdgeDetector from '../engine/imgproc/Sobel';
 import GaussSmoother from '../engine/imgproc/Gauss';
@@ -16,7 +16,6 @@ import GaussSmoother from '../engine/imgproc/Gauss';
 // ********************************************************
 
 describe('UiFilterMenuTests', () => {
-
   it('testGaussOnSmallVolume', () => {
     // create simple small volume
     const SZ = 16;
@@ -28,7 +27,7 @@ describe('UiFilterMenuTests', () => {
     for (let z = 0; z < SZ; z++) {
       for (let y = 0; y < SZ; y++) {
         for (let x = 0; x < SZ; x++) {
-          pixelsSrc[offDst++] = (z < HALF_SZ) ? 0 : 255;
+          pixelsSrc[offDst++] = z < HALF_SZ ? 0 : 255;
         }
       }
     }
@@ -75,7 +74,7 @@ describe('UiFilterMenuTests', () => {
     for (let z = 0; z < SZ; z++) {
       for (let y = 0; y < SZ; y++) {
         for (let x = 0; x < SZ; x++) {
-          pixelsSrc[offDst++] = (z < HALF_SZ) ? 0 : 255;
+          pixelsSrc[offDst++] = z < HALF_SZ ? 0 : 255;
         }
       }
     }
@@ -93,7 +92,7 @@ describe('UiFilterMenuTests', () => {
       for (let y = 0; y < SZ; y++) {
         for (let x = 0; x < SZ; x++) {
           const val = pixelsDst[off++];
-          if ((z == HALF_SZ) || (z == HALF_SZ - 1)) {
+          if (z == HALF_SZ || z == HALF_SZ - 1) {
             expect(val > 240).toBeTruthy();
           } else {
             expect(val < 10).toBeTruthy();
