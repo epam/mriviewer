@@ -55,6 +55,8 @@
     padding: 25px;
     width: 400px;
     opacity: var(--opacity);
+    cursor: all-scroll;
+    transition: opacity 300ms ease-in-out;
 }
 
 .bottleft {

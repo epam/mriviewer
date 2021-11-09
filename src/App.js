@@ -4,14 +4,16 @@
  */
 
 import React from 'react';
-import { connect } from 'react-redux';
-
 import UiApp from './ui/UiApp';
+import {HTML5Backend} from "react-dnd-html5-backend";
+import {DndProvider} from "react-dnd";
 
-class App extends React.Component {
-  render() {
-    return <UiApp/>
-  }
+const App = () => {
+    return (
+        <DndProvider backend={HTML5Backend}>
+            <UiApp />
+        </DndProvider>
+    )
 }
 
-export default connect(store => store)(App);
+export default App;
