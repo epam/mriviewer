@@ -714,6 +714,7 @@ class Graphics2d extends React.Component {
 			maxWidth: '100%',
 			width: 'auto',
 			height: 'auto',
+      border: "5px solid #282a2d",
 		};
 		return <div style={wrapperStyles}>
 			<canvas
