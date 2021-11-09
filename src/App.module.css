@@ -65,6 +65,7 @@
   padding: 25px;
   width: 400px;
   opacity: var(--opacity);
+  border-radius: 10px;
 }
 
 .bottleft {

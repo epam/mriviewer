@@ -13,7 +13,7 @@ import Modes3d from '../store/Modes3d';
 
 import SobelEdgeDetector from '../engine/imgproc/Sobel';
 import UiModalBilateral from './Modals/UiModalBilateral';
-import { Container } from './Tollbars/Container';
+import { Container } from './Toolbars/Container';
 import { UIButton } from './Button/Button';
 import { connect } from 'react-redux';
 import { Tooltip } from './Tooltip/Tooltip';

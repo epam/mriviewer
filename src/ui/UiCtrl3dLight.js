@@ -11,7 +11,8 @@ import UiTF from './UiTF';
 import UiTFroi from './UiTFroi';
 import UiRoiSelect from './UiRoiSelect';
 import { UIButton } from './Button/Button';
-import { Container } from './Tollbars/Container';
+import { Container } from './Toolbars/Container';
+import css from './Form/Slider.module.css';
 
 class UiCtrl3dLight extends React.Component {
   constructor(props) {
@@ -96,7 +97,7 @@ class UiCtrl3dLight extends React.Component {
 
     const jsxRenderControls = (
       <>
-        <p>3D mode selection</p>
+        <p className={css.caption}>3D mode selection</p>
         <Container direction="horizontal">
           <UIButton active={strA} handler={this.onModeA} caption="Show just barrier value surface, 1st ray intersection" icon="I" />
           <UIButton active={strB} handler={this.onModeB} caption="Show complete 3D volumetric rendering" icon="V" />

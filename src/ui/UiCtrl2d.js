@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import Modes2d from '../store/Modes2d';
 import StoreActionType from '../store/ActionTypes';
 import { UIButton } from './Button/Button';
-import { Container } from './Tollbars/Container';
+import { Container } from './Toolbars/Container';
 import { Tooltip } from './Tooltip/Tooltip';
 
 class UiCtrl2d extends React.Component {
