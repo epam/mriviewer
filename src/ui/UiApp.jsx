@@ -8,17 +8,17 @@ import {connect} from "react-redux";
 import StoreActionType from '../store/ActionTypes';
 
 import UiOpenMenu from './OpenFile/UiOpenMenu';
-import UiViewMode from './Tollbars/UiViewMode';
+import UiViewMode from './Toolbars/UiViewMode';
 import UiFilterMenu from './UiFilterMenu';
 import UiModalText from './Modals/UiModalText';
 import UiModalAlert from './Modals/ModalAlert';
 import UiErrConsole from './UiErrConsole';
-import ModeView from '../store/ModeView';
+import ModeView from '../store/ViewMode';
 import Graphics2d from "../engine/Graphics2d";
 import UiCtrl2d from "./UiCtrl2d";
 
 import BrowserDetector from '../engine/utils/BrowserDetector';
-import ExploreTools from "./Tollbars/ExploreTools";
+import ExploreTools from "./Toolbars/ExploreTools";
 import UIProgressBar from "./ProgressBar/UIProgressBar";
 import UiAbout from "./UiAbout";
 
@@ -26,7 +26,7 @@ import css from "./UiApp.module.css";
 import '../nouislider-custom.css';
 import Graphics3d from "../engine/Graphics3d";
 import ZoomTools from "./UiZoomTools";
-import UiMainDNDContainer from "./Tollbars/UiMainDNDContainer";
+import UiMainDNDContainer from "./Toolbars/UiMainDNDContainer";
 import {useDrop} from "react-dnd";
 import {DnDItemTypes} from "./Constants/DnDItemTypes";
 
