@@ -4,9 +4,9 @@
  */
 
 /**
-* Simple point link
-* @module lib/scripts/actvolume/pointlink
-*/
+ * Simple point link
+ * @module lib/scripts/actvolume/pointlink
+ */
 
 // absolute imports
 import * as THREE from 'three';
@@ -15,14 +15,14 @@ import * as THREE from 'three';
 // import PointLink from './pointlink';
 
 /**
-* Class PointLink define link entry
-* @class PointLink
-*/
+ * Class PointLink define link entry
+ * @class PointLink
+ */
 export default class PointLink {
   /**
-  * Init all internal data
-  * @constructs PointLink
-  */
+   * Init all internal data
+   * @constructs PointLink
+   */
   constructor() {
     this.m_point = new THREE.Vector3();
     this.m_next = null;

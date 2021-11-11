@@ -6,6 +6,7 @@
   "author": "EPAM Systems <mri@epam.com>",
   "year": "2021",
   "license": "Apache-2.0",
+  "proxy": "http://localhost:3000",
   "licenses": [
     {
       "type": "Apache-2.0",
@@ -41,13 +42,12 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --detectOpenHandles",
+    "debugtest": "DEBUG=true react-scripts test",
     "lint": "eslint src/**/*.js",
+    "format": "prettier --write \"src/**/*.{js,jsx,html,css}\"",
     "docker": "npm run build && docker run --name med3web -v ./build:/usr/share/nginx/html:ro -d -p 8080:80 nginx",
     "prepare": "husky install"
-  },
-  "lint-staged": {
-    "*.js": "npm run lint"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -61,10 +61,14 @@
   "devDependencies": {
     "@babel/core": "7.14.3",
     "canvas": "^2.6.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "7.x.x",
-    "husky": "^6.0.0",
+    "husky": "^7.0.0",
     "lint-staged": "^11.0.0",
-    "node-pre-gyp": "^0.14.0"
+    "node-pre-gyp": "^0.14.0",
+    "prettier": "^2.4.1",
+    "puppeteer": "^10.2.0"
   },
   "engines": {
     "node": ">=12.20.1",

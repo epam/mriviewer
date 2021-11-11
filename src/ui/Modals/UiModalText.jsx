@@ -5,9 +5,9 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Modal, ModalBody, ModalFooter, ModalHeader } from "./ModalBase";
-import { UIButton } from "../Button/Button"
-import css from "./Modals.module.css";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from './ModalBase';
+import { UIButton } from '../Button/Button';
+import css from './Modals.module.css';
 
 class UiModalText extends React.Component {
   constructor(props) {
@@ -16,15 +16,15 @@ class UiModalText extends React.Component {
     this.onTexChange = this.onTexChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
     // this.onSaveNifti = this.onSaveNifti.bind(this);
-    
+
     this.m_showFunc = null;
     this.m_hideFunc = null;
-    
+
     this.state = {
-      text: ''
+      text: '',
     };
   } // end constr
-  
+
   onTextEntered() {
     const store = this.props;
     const gra = store.graphics2d;
@@ -32,7 +32,7 @@ class UiModalText extends React.Component {
     toolText.setText(this.state.text);
     this.setState({ text: '' });
   }
-  
+
   /**
    * When user press OK button
    */
@@ -41,19 +41,19 @@ class UiModalText extends React.Component {
     this.m_hideFunc();
     this.onTextEntered();
   }
-  
+
   handleFormSubmit(evt) {
     evt.preventDefault();
     this.m_hideFunc();
     this.onTextEntered();
   }
-  
+
   onTexChange(evt) {
     const strText = evt.target.value;
     // console.log(`onTexChange. text = ${strText}`);
     this.setState({ text: strText });
   }
-  
+
   render() {
     const stateVis = this.props.stateVis;
     const onHideFunc = this.props.onHide;
@@ -61,20 +61,29 @@ class UiModalText extends React.Component {
     this.m_hideFunc = onHideFunc;
     this.m_showFunc = onShowFunc;
     // console.log(`UiModalText. setup funcs: ${this.m_showFunc}, ${this.m_hideFunc}`);
-    
-    return <Modal isOpen={stateVis} close={onHideFunc}>
-      <ModalHeader title="Input text" close={ onHideFunc } />
-      <ModalBody>
-        <input required type="text" placeholder="" style={{ width: "70%" }}
-               className={css.input}
-               value={this.state.text} onChange={this.onTexChange} autoFocus={true}/>
-      </ModalBody>
-      <ModalFooter>
-        <UIButton handler={onHideFunc} caption="Cancel"/>
-        <UIButton handler={this.handleFormSubmit} caption="Apply"/>
-      </ModalFooter>
-    </Modal>
+
+    return (
+      <Modal isOpen={stateVis} close={onHideFunc}>
+        <ModalHeader title="Input text" close={onHideFunc} />
+        <ModalBody>
+          <input
+            required
+            type="text"
+            placeholder=""
+            style={{ width: '70%' }}
+            className={css.input}
+            value={this.state.text}
+            onChange={this.onTexChange}
+            autoFocus={true}
+          />
+        </ModalBody>
+        <ModalFooter>
+          <UIButton handler={onHideFunc} caption="Cancel" />
+          <UIButton handler={this.handleFormSubmit} caption="Apply" />
+        </ModalFooter>
+      </Modal>
+    );
   }
 }
 
-export default connect(store => store)(UiModalText);
+export default connect((store) => store)(UiModalText);

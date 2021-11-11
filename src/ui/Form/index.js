@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export * from "./SliderCaption";
-export * from "./SliderRow";
-export * from "./Switch";
-export * from "./SwitchRow";
+export * from './SliderCaption';
+export * from './SliderRow';
+export * from './Switch';
+export * from './SwitchRow';

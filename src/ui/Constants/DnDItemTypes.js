@@ -6,4 +6,3 @@
 export const DnDItemTypes = {
   SETTINGS: 'settings',
 };
-

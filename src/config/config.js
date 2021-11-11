@@ -3,12 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export default {
+const config = {
   // special demo dialog file locations
-  //
 
-  demoUrls: [
-  ],
+  demoUrls: [],
 
   googleCloudDemoActivce: false,
   arrMenuGoogle: [
@@ -25,11 +23,10 @@ export default {
       tooltip: 'Write here smth please',
     },
   ],
-  demoWomanPelvisPrefix : '',
-  demoWomanPelvisUrls : [
-  ],
+  demoWomanPelvisPrefix: '',
+  demoWomanPelvisUrls: [],
   demoLungsPrefix: '',
-  demoLungsUrls: [
-  ],
-
+  demoLungsUrls: [],
 };
+
+export default config;

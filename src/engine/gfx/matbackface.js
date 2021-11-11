@@ -4,9 +4,9 @@
  */
 
 /**
-* Backface material, used for cube backface rendering
-* @module lib/scripts/gfx/matbackface
-*/
+ * Backface material, used for cube backface rendering
+ * @module lib/scripts/gfx/matbackface
+ */
 
 // ******************************************************************
 // imports
@@ -21,16 +21,16 @@ import BACK_FACE_FRAGMENT_SHADER from '../shaders/backface.frag';
 /** Class @class MaterialBF for volume backface rendering */
 export default class MaterialBF {
   /** Backface material constructor
-  * @constructor
-  */
+   * @constructor
+   */
   constructor() {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
   }
 
   /** Backface material constructor
-  * @return {object} Three.js material with this shader
-  */
+   * @return {object} Three.js material with this shader
+   */
   create(callbackMat) {
     // Init uniforms
 

@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
@@ -13,7 +12,7 @@ import * as THREE from 'three';
 import MaterialBlur from './gfx/matblur';
 import GlSelector from './GlSelector';
 import AmbientTexture from './ambientTexture';
-import TransferTexture from './transferTexture'
+import TransferTexture from './transferTexture';
 import Eraser from './Eraser';
 /** Class VolumeFilter3d is used for 3d render */
 export default class VolumeFilter3d {
@@ -42,7 +41,7 @@ export default class VolumeFilter3d {
     this.canvas3d = glSelector.getCanvas();
     this.rendererBlur = new THREE.WebGLRenderer({
       canvas: this.canvas3d,
-      context: this.context
+      context: this.context,
     });
     this.ambientTexture = new AmbientTexture({
       xDim: this.xDim,
@@ -84,7 +83,7 @@ export default class VolumeFilter3d {
 
   /**
    * Create 2D texture containing transfer func colors
-  */
+   */
   createTransferFuncTexture() {
     if (this.transferFunc !== null) {
       return this.transferFunc.createTransferFuncTexture();
@@ -130,7 +129,7 @@ export default class VolumeFilter3d {
    * @param blurSigma Gauss sigma parameter
    */
   setVolumeTexture(blurSigma) {
-    if ((!this.material) || (typeof this.material === 'undefined')) {
+    if (!this.material || typeof this.material === 'undefined') {
       console.log('blur material null');
       return;
     }
@@ -140,7 +139,7 @@ export default class VolumeFilter3d {
   }
 
   updateVolumeTextureWithMask() {
-    if (this.eraser.bufferMask === null){
+    if (this.eraser.bufferMask === null) {
       console.log('volTextureMask null');
     }
     for (let z = 0; z < this.zDim; z++) {
@@ -150,10 +149,10 @@ export default class VolumeFilter3d {
         const yVolOff = yVol * this.xDim;
         for (let x = 0; x < this.xDim; x++) {
           const xVol = x;
-          const offSrc = (xVol + yVolOff + zVolOff);
+          const offSrc = xVol + yVolOff + zVolOff;
           let valInt = this.arrPixels[offSrc];
           const offDst = offSrc;
-          if ((this.zDim > 5) && ((z === 0) || (z === this.zDim - 1) || (this.eraser.bufferMask[offSrc] === 0))) {
+          if (this.zDim > 5 && (z === 0 || z === this.zDim - 1 || this.eraser.bufferMask[offSrc] === 0)) {
             valInt = 0;
           }
           this.bufferR[offDst] = valInt;
@@ -190,8 +189,7 @@ export default class VolumeFilter3d {
             this.bufferTextureCPU[indxL + VAL_2] = frameBuf[indxR + VAL_2];
             this.bufferTextureCPU[indxL + VAL_3] = frameBuf[indxR + VAL_3];
           } else {
-            this.bufferTextureCPU[x + y * this.xDim + zOffs] =
-            frameBuf[VAL_4 * (x + y * this.xDim)]; //256.0 * k / this.zDim;
+            this.bufferTextureCPU[x + y * this.xDim + zOffs] = frameBuf[VAL_4 * (x + y * this.xDim)]; //256.0 * k / this.zDim;
           }
         }
       }
@@ -213,7 +211,7 @@ export default class VolumeFilter3d {
         const yVolOff = yVol * this.xDim;
         for (let x = 0; x < this.xDim; x++) {
           const xVol = x;
-          const offSrc = (xVol + yVolOff + zVolOff);
+          const offSrc = xVol + yVolOff + zVolOff;
           let valInt = this.arrPixels[offSrc + 0];
           const offDst = offSrc;
           if (this.zDim > 5 && (z === 0 || z === this.zDim - 1)) {
@@ -258,10 +256,8 @@ export default class VolumeFilter3d {
           //const valInt = this.arrPixels[offSrc + OFF3];
           const offDst = xVol + yVolOff + zVolOff;
           //if (x === 0 || x === this.xDim - 1 || y === 0 || y === this.yDim - 1 || z === 0 || z === this.zDim - 1)
-          if (x < 2 || x > this.xDim - 4 || y < 2 || y > this.yDim - 4 || z < 2 || z > this.zDim - 4)
-            this.bufferR[offDst + OFF0] = 0;
-          else
-            this.bufferR[offDst + OFF0] = valInt;
+          if (x < 2 || x > this.xDim - 4 || y < 2 || y > this.yDim - 4 || z < 2 || z > this.zDim - 4) this.bufferR[offDst + OFF0] = 0;
+          else this.bufferR[offDst + OFF0] = valInt;
           this.bufferTextureCPU[BID * offDst + OFF0] = valInt;
           this.bufferTextureCPU[BID * offDst + OFF1] = valInt;
           this.bufferTextureCPU[BID * offDst + OFF2] = valInt;
@@ -341,14 +337,13 @@ export default class VolumeFilter3d {
       this.RoiVolumeTex.minFilter = THREE.NearestFilter;
       this.RoiVolumeTex.needsUpdate = true;
     }
-    this.bufferTexture = new THREE.WebGLRenderTarget(this.xDim,
-      this.yDim, {
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter,
-        format: THREE.RGBAFormat,
-        type: THREE.UnsignedByteType,
-        depthBuffer: false,
-      });
+    this.bufferTexture = new THREE.WebGLRenderTarget(this.xDim, this.yDim, {
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+      format: THREE.RGBAFormat,
+      type: THREE.UnsignedByteType,
+      depthBuffer: false,
+    });
 
     if (this.origVolumeTex) {
       this.origVolumeTex.dispose();
@@ -360,8 +355,8 @@ export default class VolumeFilter3d {
     this.origVolumeTex.wrapR = THREE.ClampToEdgeWrapping;
     this.origVolumeTex.wrapS = THREE.ClampToEdgeWrapping;
     this.origVolumeTex.wrapT = THREE.ClampToEdgeWrapping;
-    this.origVolumeTex.magFilter = THREE.NearestFilter;//THREE.LinearFilter;
-    this.origVolumeTex.minFilter = THREE.NearestFilter;//THREE.LinearFilter;
+    this.origVolumeTex.magFilter = THREE.NearestFilter; //THREE.LinearFilter;
+    this.origVolumeTex.minFilter = THREE.NearestFilter; //THREE.LinearFilter;
     this.origVolumeTex.needsUpdate = true;
 
     let volTexFormat = THREE.RedFormat;

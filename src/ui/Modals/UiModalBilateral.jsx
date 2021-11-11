@@ -3,16 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @fileOverview UiModalBilateral
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -21,21 +11,12 @@ import Nouislider from 'react-nouislider';
 import GaussSmoother from '../../engine/imgproc/Gauss';
 
 import StoreActionType from '../../store/ActionTypes';
-import Texture3D from '../../engine/Texture3D';
-import ModeView from '../../store/ModeView';
+import ViewMode from '../../store/ViewMode';
 import Modes3d from '../../store/Modes3d';
-import { Modal, ModalBody, ModalHeader } from "./ModalBase";
-import { UIButton } from "../Button/Button";
-
-
-// ********************************************************
-// Class
-// ********************************************************
+import { Modal, ModalBody, ModalHeader } from './ModalBase';
+import { UIButton } from '../Button/Button';
 
 class UiModalBilateral extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
     this.onModalShow = this.onModalShow.bind(this);
@@ -51,17 +32,14 @@ class UiModalBilateral extends React.Component {
 
     this.state = {
       showModalGauss: false,
-      text: 'dump'
+      text: 'dump',
     };
 
     this.m_kernelSize = 10;
     this.m_koefDist = 3.0;
     this.m_koefVal = 0.1;
-  } // end constr
+  }
 
-  //
-  //
-  //
   onButtonStart() {
     console.log('on button start Bilateral with kernel = ' + this.m_kernelSize.toString());
     this.m_hideFunc();
@@ -72,7 +50,7 @@ class UiModalBilateral extends React.Component {
     const volIndex = store.volumeIndex;
     const vol = volSet.getVolume(volIndex);
 
-    if ((vol === undefined) || (vol === null)) {
+    if (vol === undefined || vol === null) {
       console.log('onButtonSobel: no volume!');
       return;
     }
@@ -104,31 +82,28 @@ class UiModalBilateral extends React.Component {
     const kernelSize = this.m_kernelSize;
     gauss.start(vol, kernelSize, this.m_koefDist, this.m_koefVal);
     this.m_gauss = gauss;
-    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
     const UPDATE_DELAY_MSEC = 150;
     this.m_timerId = setTimeout(this.onBilateralCallback, UPDATE_DELAY_MSEC);
   }
 
-  //
-  // callback for periodicallt invoke sobel 3d volume filtering
-  //
   onBilateralCallback() {
     this.m_gauss.update();
 
     const store = this.props;
 
     let ratioUpdate = this.m_gauss.getRatio();
-    ratioUpdate = (ratioUpdate < 1.0) ? ratioUpdate : 1.0;
+    ratioUpdate = ratioUpdate < 1.0 ? ratioUpdate : 1.0;
     ratioUpdate *= 100;
     ratioUpdate = Math.floor(ratioUpdate);
     // console.log('ratio = ' + ratioUpdate.toString() );
 
-    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioUpdate })
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioUpdate });
     const isFinished = this.m_gauss.isFinished();
 
     if (isFinished) {
       console.log('onBilateralCallback: iters finished!');
-      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
 
       clearInterval(this.m_timerId);
       this.m_timerId = 0;
@@ -141,7 +116,7 @@ class UiModalBilateral extends React.Component {
       const yDim = vol.m_yDim;
       const zDim = vol.m_zDim;
       const xyzDim = xDim * yDim * zDim;
-      const pixelsDst = this.m_gauss.getPixelsDst()
+      const pixelsDst = this.m_gauss.getPixelsDst();
       for (let i = 0; i < xyzDim; i++) {
         vol.m_dataArray[i] = Math.floor(pixelsDst[i]);
       } // for i
@@ -150,10 +125,7 @@ class UiModalBilateral extends React.Component {
       // rebuild 3d data
       store.dispatch({ type: StoreActionType.SET_VOLUME_SET, volumeSet: volSet });
       store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
-      const tex3d = new Texture3D();
-      tex3d.createFromRawVolume(vol);
-      store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, viewMode: ViewMode.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     } // if finished
     // update render
@@ -174,12 +146,6 @@ class UiModalBilateral extends React.Component {
     this.setState({ showModalGauss: false });
   }
 
-  handleFormSubmit(evt) {
-    evt.preventDefault();
-    this.m_hideFunc();
-    // this.onSaveNifti();
-  }
-
   onChangeSliderKoefDist() {
     if (this.refs === undefined) {
       return;
@@ -187,7 +153,7 @@ class UiModalBilateral extends React.Component {
     this.m_updateEnable = false;
     let val = 0.0;
     const aval = this.refs.slider1.slider.get();
-    if (typeof (aval) === 'string') {
+    if (typeof aval === 'string') {
       val = Number.parseFloat(aval);
       this.m_koefDist = val;
     }
@@ -200,7 +166,7 @@ class UiModalBilateral extends React.Component {
     this.m_updateEnable = false;
     let val = 0.0;
     const aval = this.refs.slider2.slider.get();
-    if (typeof (aval) === 'string') {
+    if (typeof aval === 'string') {
       val = Number.parseFloat(aval);
       this.m_koefVal = val;
     }
@@ -221,39 +187,38 @@ class UiModalBilateral extends React.Component {
 
     const valToolTps = true;
 
-    const jsxModalGauss =
-    <Modal isOpen={stateVis} close={onHideFunc} >
-      <ModalHeader title="Bilateral filtration"></ModalHeader>
+    return (
+      <Modal isOpen={stateVis} close={onHideFunc}>
+        <ModalHeader title="Bilateral filtration" />
 
-      <ModalBody>
-                Select koefficient distance (kd)
-                    <Form onSubmit={evt => this.handleFormSubmit(evt)}>
-                      <Nouislider onSlide={this.onChangeSliderKoefDist.bind(this)} ref={strSlider1}
-                        range={{ min: 0.5, max: 3.0 }}
-                        start={wArrDist} step={0.2} tooltips={valToolTps} />
-                    </Form>
+        <ModalBody>
+          Select koefficient distance (kd)
+          <Nouislider
+            onSlide={this.onChangeSliderKoefDist.bind(this)}
+            ref={strSlider1}
+            range={{ min: 0.5, max: 3.0 }}
+            start={wArrDist}
+            step={0.00001}
+            tooltips={valToolTps}
+          />
+          Select koefficient value (kv)
+          <Nouislider
+            onSlide={this.onChangeSliderKoefVal.bind(this)}
+            ref={strSlider2}
+            range={{ min: 0.1, max: 4.0 }}
+            start={wArrVal}
+            step={0.00001}
+            tooltips={valToolTps}
+          />
+          <b>Hints to setup values:</b> <br />
+          kd = 0.5, kv = 0.1 => original image <br />
+          kd = 3.0, kv = 0.1 => denoise image <br />
+          kd = 3.0, kv = 4.0 => image blur
+          <UIButton handler={this.onButtonStart} caption="Start" />
+        </ModalBody>
+      </Modal>
+    );
+  }
+}
 
-                Select koefficient value (kv)
-              
-                    <Form onSubmit={evt => this.handleFormSubmit(evt)}>
-                      <Nouislider onSlide={this.onChangeSliderKoefVal.bind(this)} ref={strSlider2}
-                        range={{ min: 0.1, max: 4.0 }}
-                        start={wArrVal} step={0.2} tooltips={valToolTps} />
-                    </Form>
-                <b>Hints to setup values:</b> <br />
-                kd = 0.5, kv = 0.1 => original image <br />
-                kd = 3.0, kv = 0.1 => denoise image <br />
-                kd = 3.0, kv = 4.0 => image blur
-              
-                    <UIButton handler={this.onButtonStart} caption="Start" />
-      </ModalBody>
-
-    </Modal>
-    return jsxModalGauss;
-  } // end render
-
-} // end class
-
-export default connect(store => store)(UiModalBilateral);
-
-
+export default connect((store) => store)(UiModalBilateral);

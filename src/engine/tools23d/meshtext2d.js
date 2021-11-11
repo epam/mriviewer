@@ -4,9 +4,9 @@
  */
 
 /**
-* Mesh with 2d text
-* @module lib/scripts/graphics2d/meshtext2d
-*/
+ * Mesh with 2d text
+ * @module lib/scripts/graphics2d/meshtext2d
+ */
 
 import * as THREE from 'three';
 
@@ -74,13 +74,13 @@ export default class MeshText2D extends Text2D {
   }
 
   /**
-  * Update text 2d object: create mesh in desired position, content and width
-  * @param (object) container - object container for 3d rendering
-  * @param (int) xc - text anchor x coordinate
-  * @param (int) yc - text anchor y coordinate
-  * @param (float) letterHeight - single letter height in range [-1..+1]
-  * @param (string ) strTextBackColor - Background color, like rgba(255, 0, 0, 255), i.e. red color
-  */
+   * Update text 2d object: create mesh in desired position, content and width
+   * @param (object) container - object container for 3d rendering
+   * @param (int) xc - text anchor x coordinate
+   * @param (int) yc - text anchor y coordinate
+   * @param (float) letterHeight - single letter height in range [-1..+1]
+   * @param (string ) strTextBackColor - Background color, like rgba(255, 0, 0, 255), i.e. red color
+   */
   updateText(xc, yc, letterHeight, xAlign, yAlign, strTextBackColor, strTextColor) {
     // console.log('MeshText2D.updateText()...');
     this.cleanUp();
@@ -214,4 +214,3 @@ MeshText2D.ALIGN_RIGHT = 1;
 MeshText2D.ALIGN_TOP = 2;
 MeshText2D.ALIGN_BOTTOM = 3;
 MeshText2D.ALIGN_CENTER = 4;
-

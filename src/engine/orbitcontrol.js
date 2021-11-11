@@ -4,9 +4,9 @@
  */
 
 /**
-* Orbit control
-* @module lib/scripts/controls/orbitcontrol
-*/
+ * Orbit control
+ * @module lib/scripts/controls/orbitcontrol
+ */
 
 // ******************************************************************
 // imports
@@ -29,11 +29,10 @@ const CONTROL_CAMERA_ZOOM_SPEED = 0.5;
 
 /** Class Graphics2d is used for simple debug style 2d render */
 export default class OrbitControl {
-
   /**
-  * Initialize render
-  * @return {Object} Intsance of this class (singleton)
-  */
+   * Initialize render
+   * @return {Object} Intsance of this class (singleton)
+   */
   constructor(domElem, camera, scene, mesh, meshRotationCallback) {
     this.m_callback = meshRotationCallback;
     this.m_mesh = mesh;
@@ -104,7 +103,7 @@ export default class OrbitControl {
     }
     // time update
     const curTimeMs = new Date().getTime();
-    this.m_prevTime = (this.m_prevTime > 0) ? this.m_prevTime : curTimeMs;
+    this.m_prevTime = this.m_prevTime > 0 ? this.m_prevTime : curTimeMs;
     this.m_deltaTime = curTimeMs - this.m_prevTime;
     this.m_prevTime = curTimeMs;
     if (!this.m_mesh) {
@@ -139,7 +138,7 @@ export default class OrbitControl {
     this.m_prevMouse = { x: xMouse, y: yMouse };
     this.m_spherical.set(0, 0, 0);
     this.m_sphericalDelta.set(0, 0, 0);
-    this.m_prevTime = new Date().getTime();// -1;
+    this.m_prevTime = new Date().getTime(); // -1;
     this.ctrlKey = ctrlKey;
   }
 
@@ -274,7 +273,6 @@ export default class OrbitControl {
     this.m_camera.lookAt(this.m_target);
     this.m_camera.updateMatrixWorld();
   }
-
 } // class
 
 OrbitControl.EVENT_BUTTON_NA = -1;

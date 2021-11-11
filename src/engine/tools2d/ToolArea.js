@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // **********************************************
 // Imports
 // **********************************************
@@ -63,14 +62,14 @@ class ToolArea {
    * Determine intersection with points in areas set.
    * Input - screen coordinates of pick point
    * Output - volume coordinate
-   *  
+   *
    * @param {object} vScr - screen coordinates of poick
    * @param {object} store - global store
    */
   getEditPoint(vScr, store) {
     this.store = store;
     const numAreas = this.m_areas.length;
-    for(let i = 0 ; i < numAreas; i++) {
+    for (let i = 0; i < numAreas; i++) {
       const objArea = this.m_areas[i];
       for (let j = 0; j < objArea.m_points.length; j++) {
         const vScrProj = ToolDistance.textureToScreen(objArea.m_points[j].x, objArea.m_points[j].y, this.m_wScreen, this.m_hScreen, store);
@@ -86,9 +85,9 @@ class ToolArea {
 
   /**
    * Move edited point into new pos
-   * 
-   * @param {object} vVolOld 
-   * @param {object} vVolNew 
+   *
+   * @param {object} vVolOld
+   * @param {object} vVolNew
    */
   moveEditPoint(vVolOld, vVolNew) {
     const x = vVolOld.x;
@@ -123,18 +122,17 @@ class ToolArea {
   getDistMm(vs, ve) {
     const dx = vs.x - ve.x;
     const dy = vs.y - ve.y;
-    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize +
-      dy * dy * this.m_yPixelSize * this.m_yPixelSize);
+    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize + dy * dy * this.m_yPixelSize * this.m_yPixelSize);
     return dist;
   }
 
   /**
    * Get lines intersection in 2d
-   * 
-   * @param {object} v0 
-   * @param {object} v1 
-   * @param {object} v2 
-   * @param {object} v3 
+   *
+   * @param {object} v0
+   * @param {object} v1
+   * @param {object} v2
+   * @param {object} v3
    * @return {object} point (object with x,y) of intersection or null
    */
   static getLineIntersection(v0, v1, v2, v3) {
@@ -161,7 +159,7 @@ class ToolArea {
       return null;
     }
     const t01 = dotUp / dotDn; // should be in [0..1]
-    if ((t01 < 0.0) || (t01 > 1.0)) {
+    if (t01 < 0.0 || t01 > 1.0) {
       return null;
     }
     // check intersect from 2nd line
@@ -171,7 +169,7 @@ class ToolArea {
     };
     const n01 = {
       x: -v01.y,
-      y: v01.x
+      y: v01.x,
     };
     const dotProdDn = v23.x * n01.x + v23.y * n01.y;
     if (Math.abs(dotProdDn) < TOO_SMALL) {
@@ -179,12 +177,12 @@ class ToolArea {
     }
     const dotProdUp = v20.x * n01.x + v20.y * n01.y;
     const t23 = dotProdUp / dotProdDn; // should be in [0..1]
-    if ((t23 < 0.0) || (t23 > 1.0)) {
+    if (t23 < 0.0 || t23 > 1.0) {
       return null;
     }
     const vIntersection = {
       x: v0.x + v01.x * t01,
-      y: v0.y + v01.y * t01
+      y: v0.y + v01.y * t01,
     };
     return vIntersection;
   }
@@ -192,12 +190,12 @@ class ToolArea {
   static hasSelfIntersection(points) {
     let i, j;
     for (i = 0; i < points.length; i++) {
-      const iNext = (i + 1 < points.length) ? (i + 1) : 0;
+      const iNext = i + 1 < points.length ? i + 1 : 0;
       const vA = points[i];
       const vB = points[iNext];
       for (j = 0; j < points.length; j++) {
-        const jNext = (j + 1 < points.length) ? (j + 1) : 0;
-        if ((i !== j) && (i !== jNext) && (iNext !== j) && (iNext !== jNext)) {
+        const jNext = j + 1 < points.length ? j + 1 : 0;
+        if (i !== j && i !== jNext && iNext !== j && iNext !== jNext) {
           const vC = points[j];
           const vD = points[jNext];
           const vIntersect = ToolArea.getLineIntersection(vA, vB, vC, vD);
@@ -205,7 +203,6 @@ class ToolArea {
             return true;
           }
         } // if not same index
-        
       } // for (j)
     } // for (i)
     return false;
@@ -226,8 +223,8 @@ class ToolArea {
       if (vIntersect !== null) {
         const objInter = {
           m_vIntersection: vIntersect,
-          m_lineIndex: i
-        }
+          m_lineIndex: i,
+        };
         return objInter;
       }
     } // for (i) checked points in poly
@@ -243,8 +240,8 @@ class ToolArea {
       };
       const objInter = {
         m_vIntersection: vInter,
-        m_lineIndex: 0
-      }
+        m_lineIndex: 0,
+      };
       // console.log('getSelfIntersection: detect with start');
       return objInter;
     }
@@ -252,7 +249,7 @@ class ToolArea {
   }
 
   /**
-   * 
+   *
    * @param {object} vNew - new added point
    * @param {array} points - array of polygon's points
    * @return true, if polygon is finished
@@ -270,8 +267,8 @@ class ToolArea {
       for (let i = objInter.m_lineIndex + 1; i < numPoints - 1; i++) {
         const vAdd = {
           x: points[i].x,
-          y: points[i].y
-        }
+          y: points[i].y,
+        };
         polyNew.push(vAdd);
       }
       // copy to points
@@ -290,7 +287,7 @@ class ToolArea {
   }
 
   /**
-   * 
+   *
    * @param {array} points - array of points (x,y) props
    */
   getPolyArea(points, store) {
@@ -306,7 +303,8 @@ class ToolArea {
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
     // const zDim = vol.m_zDim;
-    let xScale = 0.0, yScale = 0.0;
+    let xScale = 0.0,
+      yScale = 0.0;
     if (mode2d === Modes2d.TRANSVERSE) {
       // z const
       xScale = xSize / xDim;
@@ -330,7 +328,7 @@ class ToolArea {
       const vi = points[i];
       const vj = points[j];
       let areaTri = (vj.x + vi.x) * (vj.y - vi.y) * xScale * yScale;
-      areaTri = (areaTri > 0.0) ? areaTri : (-areaTri);
+      areaTri = areaTri > 0.0 ? areaTri : -areaTri;
       area += areaTri;
       j = i;
     }
@@ -339,7 +337,7 @@ class ToolArea {
 
   /**
    * When mouse button is pressed
-   * 
+   *
    * @param {number} xScr - x screen coordinate
    * @param {number} yScr - y screen coordinate
    * @param {object} store  - global store with all app parameters
@@ -352,15 +350,15 @@ class ToolArea {
       const v0 = {
         x: vTex.x,
         y: vTex.y,
-      }
+      };
       const v1 = {
         x: vTex.x,
         y: vTex.y,
-      }
+      };
       const objArea = {
         m_isClosed: false,
         m_points: [],
-        m_area: 0.0
+        m_area: 0.0,
       };
       objArea.m_points.push(v0);
       objArea.m_points.push(v1);
@@ -369,7 +367,7 @@ class ToolArea {
       // add new point to polygon
       const vNew = {
         x: vTex.x,
-        y: vTex.y
+        y: vTex.y,
       };
       const numAreas = this.m_areas.length;
       const objArea = this.m_areas[numAreas - 1];
@@ -387,7 +385,7 @@ class ToolArea {
 
   /**
    * When mouse is moved
-   * 
+   *
    * @param {number} xScr - x screen coordinate
    * @param {number} yScr - y screen coordinate
    * @param {object} store  - global store with all app parameters
@@ -408,12 +406,13 @@ class ToolArea {
     this.m_objGraphics2d.forceUpdate();
   }
 
-  onMouseUp() { // ommited args: xScr, yScr, store
+  onMouseUp() {
+    // ommited args: xScr, yScr, store
   }
 
   /**
    * Render all areas on screen in 2d mode
-   * 
+   *
    * @param {object} ctx - html5 canvas context
    * @param {object} store - global store with app parameters
    */
@@ -437,7 +436,6 @@ class ToolArea {
       const TWO = 2;
       ctx.arc(vScr.x, vScr.y, RAD_CIRCLE, 0.0, TWO * M_PI);
       ctx.stroke();
-
     }
 
     ctx.strokeStyle = 'yellow';
@@ -445,7 +443,7 @@ class ToolArea {
     for (let a = 0; a < numAreas; a++) {
       const objArea = this.m_areas[a];
       const isClosed = objArea.m_isClosed;
-      const numPoints = (isClosed) ? (objArea.m_points.length + 1) : (objArea.m_points.length);
+      const numPoints = isClosed ? objArea.m_points.length + 1 : objArea.m_points.length;
       // console.log(`ToolArea. render ${numPoints} points in poly`);
 
       // calc area centroid in screen
@@ -454,7 +452,7 @@ class ToolArea {
 
       ctx.beginPath();
       for (let i = 0; i < numPoints; i++) {
-        const iPoly = (i < objArea.m_points.length) ? (i) : 0;
+        const iPoly = i < objArea.m_points.length ? i : 0;
         const vTex0 = objArea.m_points[iPoly];
         // console.log(`ToolArea. render point ${vTex0.x}, ${vTex0.y} `);
         const vScr = ToolDistance.textureToScreen(vTex0.x, vTex0.y, this.m_wScreen, this.m_hScreen, store);
@@ -487,6 +485,5 @@ class ToolArea {
       } // if this poly closed
     } // for (a) all polys
   }
-
 } // end class
 export default ToolArea;

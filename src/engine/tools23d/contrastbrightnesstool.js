@@ -9,7 +9,6 @@
  */
 
 export default class ContrastBrightnessTool {
-
   /**
    * Initialize area tool
    * @param (float) m_x - position on x for changing contrast
@@ -34,7 +33,8 @@ export default class ContrastBrightnessTool {
     this.m_COBRflag = false;
   }
 
-  setPixelSize(xPixelSize, yPixelSize) { // in mm
+  setPixelSize(xPixelSize, yPixelSize) {
+    // in mm
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }

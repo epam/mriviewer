@@ -6,7 +6,7 @@
 // ********************************************************
 // Imports
 // ********************************************************
- 
+
 import UiHistogram from './UiHistogram';
 import Volume from '../engine/Volume';
 
@@ -15,7 +15,6 @@ import Volume from '../engine/Volume';
 // ********************************************************
 
 describe('UiHistogramTests', () => {
-
   it('testHistogramFromEmptyVolume', () => {
     const hist = new UiHistogram();
     const vol = new Volume();
@@ -67,11 +66,11 @@ describe('UiHistogramTests', () => {
           const x = DHALF + dx;
           const tx = 1.0 - dx / RAD;
           const dist = Math.sqrt(tx * tx + ty * ty + tz * tz);
-          const val = Math.floor( (NUM_COLORS - 1 ) * dist);
+          const val = Math.floor((NUM_COLORS - 1) * dist);
           pixels[x + yOff + zOff] = val;
         } // for (dx)
       } // for (dy)
-    }  // for (dz)
+    } // for (dz)
 
     // create hist from volume
     const hist = new UiHistogram();
@@ -107,7 +106,7 @@ describe('UiHistogramTests', () => {
     const VAL_RANGE = 96;
     for (let i = 0; i < NUM_COLORS; i++) {
       let iDif = i - INDEX_PEAK;
-      iDif = (iDif >= 0) ? iDif : (-iDif);
+      iDif = iDif >= 0 ? iDif : -iDif;
       const r = 1.0 - iDif / VAL_RANGE;
       histArray[i] = r;
     }
@@ -138,19 +137,19 @@ describe('UiHistogramTests', () => {
     for (let i = 0; i < NUM_COLORS; i++) {
       let iDif;
       iDif = i - INDEX_PEAK_1;
-      iDif = (iDif >= 0) ? iDif : (-iDif);
+      iDif = iDif >= 0 ? iDif : -iDif;
       const r1 = 1.0 - iDif / VAL_RANGE - ARTIF_SUB;
 
       iDif = i - INDEX_PEAK_2;
-      iDif = (iDif >= 0) ? iDif : (-iDif);
+      iDif = iDif >= 0 ? iDif : -iDif;
       const r2 = 1.0 - iDif / VAL_RANGE;
 
       iDif = i - INDEX_PEAK_3;
-      iDif = (iDif >= 0) ? iDif : (-iDif);
+      iDif = iDif >= 0 ? iDif : -iDif;
       const r3 = 1.0 - iDif / VAL_RANGE - ARTIF_SUB;
 
-      const rMax12 = (r1 > r2 ) ?  r1 : r2;
-      const rMax = (rMax12 > r3) ? rMax12 : r3;
+      const rMax12 = r1 > r2 ? r1 : r2;
+      const rMax = rMax12 > r3 ? rMax12 : r3;
 
       histArray[i] = rMax;
     }
@@ -177,7 +176,4 @@ describe('UiHistogramTests', () => {
     const indFoundMax = hist.getLastMaxIndex();
     expect(indFoundMax === IND_MAX).toBeTruthy();
   });
-
-
-
 }); // all tests

@@ -4,15 +4,15 @@
  */
 
 /**
-* Soble edge detector
-* @module demo/engine/imgproc/Sobel
-*/
+ * Soble edge detector
+ * @module demo/engine/imgproc/Sobel
+ */
 
 //
 // Sobel edge detectio
 //
 
-const MAX_SQRT = (5400 * 5400)
+const MAX_SQRT = 5400 * 5400;
 
 export default class SobelEdgeDetector {
   constructor() {
@@ -49,7 +49,7 @@ export default class SobelEdgeDetector {
     const xyzDim = this.m_vol.m_xDim * this.m_vol.m_yDim * this.m_vol.m_zDim;
     for (let i = 0; i < xyzDim; i++) {
       const val = this.m_pixelsDst[i];
-      valMax = (val > valMax) ? val : valMax;
+      valMax = val > valMax ? val : valMax;
     } // for i
     valMax += 0.9;
     const scl = 255.0 / valMax;
@@ -91,7 +91,7 @@ export default class SobelEdgeDetector {
     const xyDim = xDim * yDim;
 
     const STEP = 24;
-    const zNext = Math.floor((this.m_iter + 1) * zDim / STEP);
+    const zNext = Math.floor(((this.m_iter + 1) * zDim) / STEP);
     // console.log('Sobel update z from ' + this.m_z.toString() + ' until ' + zNext.toString());
 
     // let maxSqrt = 0;
@@ -101,45 +101,40 @@ export default class SobelEdgeDetector {
     for (let z = this.m_z; z < zNext; z++) {
       for (let y = 0; y < yDim; y++) {
         for (let x = 0; x < xDim; x++) {
-          let sumDx = 0.0, sumDy = 0.0, sumDz = 0.0;
+          let sumDx = 0.0,
+            sumDy = 0.0,
+            sumDz = 0.0;
           for (let dz = -1; dz <= +1; dz++) {
             let zz = z + dz;
-            zz = (zz >= 0) ? zz : 0;
-            zz = (zz < zDim) ? zz : (zDim - 1);
+            zz = zz >= 0 ? zz : 0;
+            zz = zz < zDim ? zz : zDim - 1;
             const zzOff = zz * xyDim;
             for (let dy = -1; dy <= +1; dy++) {
               let yy = y + dy;
-              yy = (yy >= 0) ? yy : 0;
-              yy = (yy < yDim) ? yy : (yDim - 1);
+              yy = yy >= 0 ? yy : 0;
+              yy = yy < yDim ? yy : yDim - 1;
               const yyOff = yy * xDim;
               for (let dx = -1; dx <= +1; dx++) {
                 let xx = x + dx;
-                xx = (xx >= 0) ? xx : 0;
-                xx = (xx < xDim) ? xx : (xDim - 1);
-  
+                xx = xx >= 0 ? xx : 0;
+                xx = xx < xDim ? xx : xDim - 1;
+
                 const val = pixelsSrc[xx + yyOff + zzOff];
-  
+
                 let kx = 1;
-                if (dy === 0)
-                  kx *= 2;
-                if (dz === 0)
-                  kx *= 2;
+                if (dy === 0) kx *= 2;
+                if (dz === 0) kx *= 2;
                 sumDx += dx * val * kx;
-  
+
                 let ky = 1;
-                if (dx === 0)
-                  ky *= 2;
-                if (dz === 0)
-                  ky *= 2;
+                if (dx === 0) ky *= 2;
+                if (dz === 0) ky *= 2;
                 sumDy += dy * val * ky;
-  
+
                 let kz = 1;
-                if (dx === 0)
-                  kz *= 2;
-                if (dy === 0)
-                  kz *= 2;
+                if (dx === 0) kz *= 2;
+                if (dy === 0) kz *= 2;
                 sumDz += dz * val * kz;
-  
               } // for dx
             } // for dy
           } // for dz
@@ -150,7 +145,6 @@ export default class SobelEdgeDetector {
 
           this.m_pixelsDst[off] = this.m_sqrtTable[dotProd];
           off++;
-  
         } // for x
       } // for y
     } // for z all slices

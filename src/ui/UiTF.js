@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // ********************************************************
 // Imports
 // ********************************************************
@@ -20,11 +19,10 @@ import { connect } from 'react-redux';
 import Nouislider from 'react-nouislider';
 import StoreActionType from '../store/ActionTypes';
 import UiHistogram from './UiHistogram';
-import { SliderCaption, SliderRow, SwitchRow } from "./Form";
-import { Switch } from "./Form/Switch";
-import { UIButton } from "./Button/Button";
-import { FlexRow } from "./Layout/FlexRow";
-
+import { SliderCaption, SliderRow, SwitchRow } from './Form';
+import { Switch } from './Form/Switch';
+import { UIButton } from './Button/Button';
+import { FlexRow } from './Layout/FlexRow';
 
 // ********************************************************
 // Const
@@ -41,7 +39,7 @@ class UiTF extends React.Component {
     super(props);
     this.state = {
       AO: false,
-    }
+    };
     //this.onUndo = this.onUndo.bind(this);
     this.m_updateEnable = true;
     this.toggleAO = this.toggleAO.bind(this);
@@ -60,7 +58,7 @@ class UiTF extends React.Component {
 
   onAO() {
     const store = this.props;
-    const isoThreshold = store.sliderIsosurface;//this.refs.sliderIsosurface.slider.get();
+    const isoThreshold = store.isoThresholdValue; //this.refs.isoThresholdValue.slider.get();
     store.volumeRenderer.setAmbientTextureMode(isoThreshold);
   }
 
@@ -111,16 +109,16 @@ class UiTF extends React.Component {
 
   onChangeSliderOpacity() {
     this.m_updateEnable = false;
-    const aval = this.refs.sliderOpacity.slider.get();
+    const aval = this.refs.opacityValue3D.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, sliderOpacity: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, opacityValue3D: Number.parseFloat(aval) });
   }
 
   onChangeSliderIsosurface() {
     this.m_updateEnable = false;
-    const aval = this.refs.sliderIsosurface.slider.get();
+    const aval = this.refs.isoThresholdValue.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, sliderIsosurface: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, isoThresholdValue: Number.parseFloat(aval) });
   }
 
   onChangeSliderErRadius() {
@@ -153,13 +151,13 @@ class UiTF extends React.Component {
     const slider3dr = store.slider3d_r;
     const slider3dg = store.slider3d_g;
     const slider3db = store.slider3d_b;
-    const sliderOpacity = store.sliderOpacity;
-    const sliderIsosurface = store.sliderIsosurface;
+    const opacityValue3D = store.opacityValue3D;
+    const isoThresholdValue = store.isoThresholdValue;
     const sliderErRadius = store.sliderErRadius;
     const sliderErDepth = store.sliderErDepth;
     const wArr = [slider3dr, slider3dg, slider3db];
-    const wArrOpacity = [sliderOpacity];
-    const wArrIsosurface = [sliderIsosurface];
+    const wArrOpacity = [opacityValue3D];
+    const wArrIsosurface = [isoThresholdValue];
     const wArrErRadius = [sliderErRadius];
     const wArrErDepth = [sliderErDepth];
 
@@ -171,71 +169,110 @@ class UiTF extends React.Component {
     }
 
     const NEED_TANSF_FUNC = true;
-    const funcTra = (NEED_TANSF_FUNC) ? this.transferFuncCallback : undefined;
+    const funcTra = NEED_TANSF_FUNC ? this.transferFuncCallback : undefined;
     //store.volumeRenderer.updateTransferFuncTexture(this.m_transfFunc.m_handleX, this.m_transfFunc.m_handleY);
     /*
     const styleObj = {
       margin: '30px 0px 0px'
     };
     */
-    const jsxVolumeTF =
+    const jsxVolumeTF = (
       <>
-        <UiHistogram volume={vol} transfFunc={funcTra}/>
+        <UiHistogram volume={vol} transfFunc={funcTra} />
         <SliderCaption caption="Set" />
-          <SliderRow >
-            <Nouislider onSlide={this.onChangeSliderTF.bind(this)} ref={'sliderTF'}
-                        range={{ min: 0.0, max: 1.0 }}
-                        start={wArr} connect={[false, true, false, true]} step={0.00001} tooltips={true}/>
-          </SliderRow>
-        <SliderRow icon="opacity" title="Opacity">
-          <Nouislider onSlide={this.onChangeSliderOpacity.bind(this)} ref={'sliderOpacity'}
-                      range={{ min: 0.0, max: 1.0 }}
-                      start={wArrOpacity} connect={[true, false]} step={0.00001} tooltips={true}/>
+        <SliderRow>
+          <Nouislider
+            onSlide={this.onChangeSliderTF.bind(this)}
+            ref={'sliderTF'}
+            range={{ min: 0.0, max: 1.0 }}
+            start={wArr}
+            connect={[false, true, false, true]}
+            step={0.00001}
+            tooltips={true}
+          />
         </SliderRow>
-      </>;
+        <SliderRow icon="opacity" title="Opacity">
+          <Nouislider
+            onSlide={this.onChangeSliderOpacity.bind(this)}
+            ref={'opacityValue3D'}
+            range={{ min: 0.0, max: 1.0 }}
+            start={wArrOpacity}
+            connect={[true, false]}
+            step={0.00001}
+            tooltips={true}
+          />
+        </SliderRow>
+      </>
+    );
 
-    const jsxIsoTF =
+    const jsxIsoTF = (
       <>
-        <UiHistogram volume={vol} transfFunc={funcTra}/>
+        <UiHistogram volume={vol} transfFunc={funcTra} />
         <SliderCaption caption="Isosurface" />
         <SliderRow>
-          <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
-                      range={{ min: 0.0, max: 1.0 }}
-                      start={wArrIsosurface} connect={[true, false]} step={0.00001} tooltips={true}/>
+          <Nouislider
+            onSlide={this.onChangeSliderIsosurface.bind(this)}
+            ref={'isoThresholdValue'}
+            range={{ min: 0.0, max: 1.0 }}
+            start={wArrIsosurface}
+            connect={[true, false]}
+            step={0.00001}
+            tooltips={true}
+          />
         </SliderRow>
         <SwitchRow>
           Ambient Occlusion
-          <Switch value={ this.state.AO } onValueChange={ this.toggleAO }/>
+          <Switch value={this.state.AO} onValueChange={this.toggleAO} />
         </SwitchRow>
       </>
-    const jsxEreaser =
+    );
+    const jsxEreaser = (
       <>
         Press Control + Mouse Down [+ Mouse Move] for erease
         <SliderCaption caption="Radius" />
         <SliderRow>
-          <Nouislider onSlide={this.onChangeSliderErRadius.bind(this)} ref={'sliderErRadius'}
-                      range={{ min: 1.0, max: 100.0 }}
-                      start={wArrErRadius} connect={[true, false]} step={0.00001} tooltips={true}/>
+          <Nouislider
+            onSlide={this.onChangeSliderErRadius.bind(this)}
+            ref={'sliderErRadius'}
+            range={{ min: 1.0, max: 100.0 }}
+            start={wArrErRadius}
+            connect={[true, false]}
+            step={0.00001}
+            tooltips={true}
+          />
         </SliderRow>
         <SliderCaption caption="Depth" />
         <SliderRow>
-          <Nouislider onSlide={this.onChangeSliderErDepth.bind(this)} ref={'sliderErDepth'}
-                      range={{ min: 1.0, max: 100.0 }}
-                      start={wArrErDepth} connect={[true, false]} step={0.00001} tooltips={true}/>
+          <Nouislider
+            onSlide={this.onChangeSliderErDepth.bind(this)}
+            ref={'sliderErDepth'}
+            range={{ min: 1.0, max: 100.0 }}
+            start={wArrErDepth}
+            connect={[true, false]}
+            step={0.00001}
+            tooltips={true}
+          />
         </SliderRow>
         <SliderCaption caption="Isosurface" />
         <SliderRow>
-          <Nouislider onSlide={this.onChangeSliderIsosurface.bind(this)} ref={'sliderIsosurface'}
-                      range={{ min: 0.0, max: 1.0 }}
-                      start={wArrIsosurface} connect={[true, false]} step={0.00001} tooltips={true}/>
+          <Nouislider
+            onSlide={this.onChangeSliderIsosurface.bind(this)}
+            ref={'isoThresholdValue'}
+            range={{ min: 0.0, max: 1.0 }}
+            start={wArrIsosurface}
+            connect={[true, false]}
+            step={0.00001}
+            tooltips={true}
+          />
         </SliderRow>
         <FlexRow>
-          <UIButton caption="Undo" mode="light" onClick={this.onUndo}/>
+          <UIButton caption="Undo" mode="light" onClick={this.onUndo} />
           <UIButton caption="Save" mode="accent" onClick={this.onSave} />
         </FlexRow>
       </>
+    );
 
-    const jsxRayfastTF = null
+    const jsxRayfastTF = null;
 
     console.log(`UiTF . mode = ${mode3d}`);
     const jsxArray = [jsxIsoTF, jsxVolumeTF, jsxRayfastTF, jsxEreaser];
@@ -244,4 +281,4 @@ class UiTF extends React.Component {
   }
 }
 
-export default connect(store => store)(UiTF);
+export default connect((store) => store)(UiTF);

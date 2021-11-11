@@ -4,9 +4,9 @@
  */
 
 /**
-* Clipping plane material, used for rendering of near camera plane as a part ray-casting pipeline
-* @module lib/scripts/gfx/matcliplane
-*/
+ * Clipping plane material, used for rendering of near camera plane as a part ray-casting pipeline
+ * @module lib/scripts/gfx/matcliplane
+ */
 
 // ******************************************************************
 // imports
@@ -21,8 +21,8 @@ import CLIP_FRAGMENT_SHADER from '../shaders/clipplane.frag';
 /** Class @class MaterialClipPlane for volume clip plane rendering */
 export default class MaterialClipPlane {
   /** ClipPlane material constructor
-  * @constructor
-  */
+   * @constructor
+   */
   constructor() {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
@@ -33,8 +33,8 @@ export default class MaterialClipPlane {
   }
 
   /** Frontface material constructor
-  * @return {object} Three.js material with this shader
-  */
+   * @return {object} Three.js material with this shader
+   */
   create(textureBF, callbackMat) {
     // Init uniforms
     this.m_uniforms.texBF.value = textureBF;

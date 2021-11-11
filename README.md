@@ -1,31 +1,38 @@
-![](https://img.shields.io/github/workflow/status/epam/med3web/PR?style=for-the-badge)
-![](https://img.shields.io/github/v/release/epam/med3web?style=for-the-badge)
 # Med3Web DICOM 2D/3D web viewer.
-
-Copyright (c) 2015–2021 [EPAM Systems, Inc.](https://www.epam.com/)
-
-## Purpose
 
 Med3Web is a high performance web tool for advanced visualization (both in 2D and 3D modes)
 medical volumetric data, provided in popular file formats: DICOM, NIfTI, KTX<sup>™</sup>, HDR.
-Other popular formats will be planned for future improvements.
+
+## Description
+
 Med3Web can read local data from files/folders and from predefined web locations.
-The demonstration project shows both (local data / remote data) usage types.
+
+The [demonstration project](https://med3web.opensource.epam.com/) shows both (local data / remote data) usage types.
+
+![Background image](public/images/med3web_logo.png)
+
+## Motivation
+
+Med3Web can be used in a medical center with diagnostic equipment.
+
+- ⚡️ MRI and CT scanning results can be viewed in any computer (inside the medical office and in the client home)
+- 💡 Qualified medical personnel can provide diagnosis or conclusion based on provided visualization.
+- :globe_with_meridians: App can be used as a web application as a part of large websites and services
+- :mortar_board: Can be used by research institutes
+due to NIfTI, HDR, etc. file standards support
+- :hospital: Medical centers can create their clients database, based on this viewer.
+
+
+## Installation
+
 It works as a standalone HTML5 web application. The latest version can be used with
 WebGL-enabled desktop browsers (Chrome, Firefox, Opera) and allows limited usage
 with mobile browsers (Android Chrome). Version for Safari (macOS, iOS) is planned for future.
 
-![Background image](public/images/med3web_logo.png)
-
-## Market evaluation
-
-Med3Web can be used in a medical center with diagnostic equipment.
-MRI and CT scanning results can be viewed in any computer (inside the medical office and in the client home)
-and qualified medical personnel can provide diagnosis or conclusion based on provided visualization.
-Unlike the range of standalone DICOM viewers executables, this app can be used as a web
-application as a part of large websites and services. Also, it can be used by research institutes
-due to NIfTI, HDR, etc. file standards support (more popular for researchers rather than physicians).
-Medical centers can create their clients database, based on this viewer.
+```
+npm install
+npm run start
+```
 
 ## References
 
@@ -52,7 +59,12 @@ Links to publications that contain **med3web** references
 * [Belyaev, S., Smirnov, P., Shubnikov, V., Smirnova, N. Adaptive algorithm for accelerating direct isosurface rendering on GPU](https://www.scopus.com/record/display.uri?eid=2-s2.0-85059228722&doi=10.11989%2fJEST.1674-862X.71013102&origin=inward&txGid=a917c3aa38d38f5b6e1b5add9aa3bb29)
 
 ## Demo app
-[Here](https://epa.ms/mri) you can find a demo app.
+[Here](https://med3web.opensource.epam.com/) you can find a demo app.
 
 ## Contribution
-[CONTRIBUTING.md](CONTRIBUTING.md)
+See [Contributing Guide](./contributing.md).
+
+## License
+[Apache 2.0](./LICENCE.MD)
+
+Copyright (c) 2015–2021 [EPAM Systems, Inc.](https://www.epam.com/)

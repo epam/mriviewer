@@ -95,7 +95,8 @@ export default class RectTool {
       this.m_areas[i].linex2 = linex2;
       const liney2 = new Line2D(this.m_scene, this.m_lineWidth, xE, yS, xE, yE, this.m_linesMaterial);
       this.m_areas[i].liney2 = liney2;
-      let xText = xE, yText = yE;
+      let xText = xE,
+        yText = yE;
       const INDENTATION = 0.05;
       if (yS < yE) {
         yText = this.m_yStart;
@@ -105,8 +106,15 @@ export default class RectTool {
       }
       xText += INDENTATION;
       yText -= INDENTATION;
-      this.m_areas[i].text.updateText(xText, yText, this.m_textWidthScr,
-        MeshText2D.ALIGN_CENTER, MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
+      this.m_areas[i].text.updateText(
+        xText,
+        yText,
+        this.m_textWidthScr,
+        MeshText2D.ALIGN_CENTER,
+        MeshText2D.ALIGN_CENTER,
+        this.m_textBgColor,
+        this.m_textColor
+      );
       this.m_scene.add(this.m_areas[i].text);
     }
   }
@@ -116,7 +124,8 @@ export default class RectTool {
    * @param (float) xPixelSize - canvas pixel size in mm for x axis
    * @param (float) yPixelSize - canvas pixel size in mm for y axis
    */
-  setPixelSize(xPixelSize, yPixelSize) { // in mm
+  setPixelSize(xPixelSize, yPixelSize) {
+    // in mm
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }
@@ -142,20 +151,21 @@ export default class RectTool {
       this.m_xStart = x;
       this.m_yStart = y;
 
-      const linex1 = new Line2D(this.m_scene, this.m_lineWidth, this.m_xStart,
-        this.m_yStart, x, this.m_yStart, this.m_linesMaterial);
-      const liney1 = new Line2D(this.m_scene, this.m_lineWidth, this.m_xStart,
-        this.m_yStart, this.m_xStart, y, this.m_linesMaterial);
+      const linex1 = new Line2D(this.m_scene, this.m_lineWidth, this.m_xStart, this.m_yStart, x, this.m_yStart, this.m_linesMaterial);
+      const liney1 = new Line2D(this.m_scene, this.m_lineWidth, this.m_xStart, this.m_yStart, this.m_xStart, y, this.m_linesMaterial);
 
       const linex2 = new Line2D(this.m_scene, this.m_lineWidth, x, y, this.m_xStart, y, this.m_linesMaterial);
       const liney2 = new Line2D(this.m_scene, this.m_lineWidth, x, y, x, this.m_yStart, this.m_linesMaterial);
       const strMsg = '0 mm^2';
       const text = new MeshText2D(strMsg);
-      text.updateText(x, y, this.m_textWidthScr, MeshText2D.ALIGN_CENTER,
-        MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
+      text.updateText(x, y, this.m_textWidthScr, MeshText2D.ALIGN_CENTER, MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
       this.m_scene.add(text);
       this.m_areas.push({
-        linex1, liney1, linex2, liney2, text
+        linex1,
+        liney1,
+        linex2,
+        liney2,
+        text,
       });
       this.m_vertexes.push({ xZ, yZ });
     } else {
@@ -178,22 +188,27 @@ export default class RectTool {
       this.m_scene.remove(area.liney1.getRenderObject());
       this.m_scene.remove(area.liney2.getRenderObject());
 
-      const linex1 = new Line2D(this.m_scene, this.m_lineWidth, this.m_xStart,
-        this.m_yStart, x, this.m_yStart, this.m_linesMaterial);
-      const liney1 = new Line2D(this.m_scene, this.m_lineWidth, this.m_xStart,
-        this.m_yStart, this.m_xStart, y, this.m_linesMaterial);
+      const linex1 = new Line2D(this.m_scene, this.m_lineWidth, this.m_xStart, this.m_yStart, x, this.m_yStart, this.m_linesMaterial);
+      const liney1 = new Line2D(this.m_scene, this.m_lineWidth, this.m_xStart, this.m_yStart, this.m_xStart, y, this.m_linesMaterial);
 
       const linex2 = new Line2D(this.m_scene, this.m_lineWidth, x, y, this.m_xStart, y, this.m_linesMaterial);
       const liney2 = new Line2D(this.m_scene, this.m_lineWidth, x, y, x, this.m_yStart, this.m_linesMaterial);
 
       this.m_scene.remove(area.text);
 
-      const strMsg = `${(Math.abs(x - this.m_xStart) * this.m_xPixelSize *
-      // eslint-disable-next-line
-      Math.abs(y - this.m_yStart) * this.m_yPixelSize * zoom * zoom).toFixed(2)} mm^2`;
+      const strMsg = `${(
+        Math.abs(x - this.m_xStart) *
+        this.m_xPixelSize *
+        // eslint-disable-next-line
+        Math.abs(y - this.m_yStart) *
+        this.m_yPixelSize *
+        zoom *
+        zoom
+      ).toFixed(2)} mm^2`;
       const text = new MeshText2D(strMsg);
 
-      let xText = x, yText = y;
+      let xText = x,
+        yText = y;
       const INDENTATION = 0.05;
       if (this.m_yStart < y) {
         yText = this.m_yStart;
@@ -203,12 +218,23 @@ export default class RectTool {
       }
       xText += INDENTATION;
       yText -= INDENTATION;
-      text.updateText(xText, yText, this.m_textWidthScr,
-        MeshText2D.ALIGN_CENTER, MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
+      text.updateText(
+        xText,
+        yText,
+        this.m_textWidthScr,
+        MeshText2D.ALIGN_CENTER,
+        MeshText2D.ALIGN_CENTER,
+        this.m_textBgColor,
+        this.m_textColor
+      );
 
       this.m_scene.add(text);
       this.m_areas.push({
-        linex1, liney1, linex2, liney2, text
+        linex1,
+        liney1,
+        linex2,
+        liney2,
+        text,
       });
     }
   }

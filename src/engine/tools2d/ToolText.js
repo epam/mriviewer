@@ -9,13 +9,12 @@
  * @version 1.0.0
  */
 
-
 // **********************************************
 // Imports
 // **********************************************
 
 import ToolDistance from './ToolDistance';
-import StoreActionType from "../../store/ActionTypes";
+import StoreActionType from '../../store/ActionTypes';
 // import UiModalText from '../../ui/UiModalText';
 
 // **********************************************
@@ -57,7 +56,7 @@ class ToolText {
    * Determine intersection with points in all texts.
    * Input - screen coordinates of pick point
    * Output - volume coordinate
-   *  
+   *
    * @param {object} vScr - screen coordinates of poick
    * @param {object} store - global store
    */
@@ -77,9 +76,9 @@ class ToolText {
 
   /**
    * Move edited point into new pos
-   * 
-   * @param {object} vVolOld 
-   * @param {object} vVolNew 
+   *
+   * @param {object} vVolOld
+   * @param {object} vVolNew
    */
   moveEditPoint(vVolOld, vVolNew) {
     vVolOld.x = vVolNew.x;
@@ -89,7 +88,7 @@ class ToolText {
 
   /**
    * Remove highlighted object
-   * 
+   *
    */
   deleteObject() {
     if (this.m_objEdit != null) {
@@ -103,8 +102,7 @@ class ToolText {
   getDistMm(vs, ve) {
     const dx = vs.x - ve.x;
     const dy = vs.y - ve.y;
-    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize +
-      dy * dy * this.m_yPixelSize * this.m_yPixelSize);
+    const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize + dy * dy * this.m_yPixelSize * this.m_yPixelSize);
     return dist;
   }
 
@@ -114,9 +112,9 @@ class ToolText {
     const objText = {
       point: {
         x: this.m_pointPressed.x,
-        y: this.m_pointPressed.y
+        y: this.m_pointPressed.y,
       },
-      text: str
+      text: str,
     };
     this.m_texts.push(objText);
     // invoke render
@@ -129,26 +127,28 @@ class ToolText {
 
   /**
    * When mouse pressed down
-   * 
+   *
    * @param {number} xScr - x coordinate of click on screen
    * @param {number} yScr - y coordinate of click on screen
    * @param {object} store - global storage
-   */  
+   */
   onMouseDown(xScr, yScr, store) {
     this.m_pointPressed = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
-    
-    store.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true })
+
+    store.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true });
   }
 
-  onMouseMove() { // args ommited: xScr, yScr, store
+  onMouseMove() {
+    // args ommited: xScr, yScr, store
   }
 
-  onMouseUp() { // args ommited: xScr, yScr, store
+  onMouseUp() {
+    // args ommited: xScr, yScr, store
   }
 
   /**
    * Render all areas on screen in 2d mode
-   * 
+   *
    * @param {object} ctx - html5 canvas context
    * @param {object} store - global store with app parameters
    */

@@ -38,25 +38,22 @@ class SaverNifti {
   }
 
   static fpsToDimInfo(freq, phase, slice) {
-    const res = (freq & 0x3) | 
-      ((phase & 0x3) << 2) |
-      ((slice & 0x3) << 4);
+    const res = (freq & 0x3) | ((phase & 0x3) << 2) | ((slice & 0x3) << 4);
     return res;
   }
 
   /**
-  * Write nifti file data to buffer array
-  * @param {object} volumeData - array of intensities (uint8)
-  * @param {object} volumeSize - pixel and physical size
-  * @return {Object} ArrayBuffer with file content
-  */
+   * Write nifti file data to buffer array
+   * @param {object} volumeData - array of intensities (uint8)
+   * @param {object} volumeSize - pixel and physical size
+   * @return {Object} ArrayBuffer with file content
+   */
   static writeBuffer(volumeData, volumeSize) {
-
     // check input data
     const xDim = volumeSize.x;
     const yDim = volumeSize.y;
     const zDim = volumeSize.z;
-    if ((xDim <= 0) || (yDim <= 0) || (zDim <= 0)) {
+    if (xDim <= 0 || yDim <= 0 || zDim <= 0) {
       console.log(`SaverNifti. volume pixels dim is bad: ${xDim} * ${yDim} * ${zDim} `);
     }
     const xGrid = volumeSize.pixdim1;
@@ -64,10 +61,10 @@ class SaverNifti {
     const zGrid = volumeSize.pixdim3;
     const TOO_MUCH = 5.0;
     const TOO_MIN = 0.00001;
-    if ((xGrid > TOO_MUCH) || (yGrid > TOO_MUCH) || (zGrid > TOO_MUCH)) {
+    if (xGrid > TOO_MUCH || yGrid > TOO_MUCH || zGrid > TOO_MUCH) {
       console.log(`SaverNifti. volume grid size is too much: ${xGrid} * ${yGrid} * ${zGrid} `);
     }
-    if ((xGrid < TOO_MIN) || (yGrid < TOO_MIN) || (zGrid < TOO_MIN)) {
+    if (xGrid < TOO_MIN || yGrid < TOO_MIN || zGrid < TOO_MIN) {
       console.log(`SaverNifti. volume grid size is too min: ${xGrid} * ${yGrid} * ${zGrid} `);
     }
     if (volumeData.length !== xDim * yDim * zDim) {
@@ -79,8 +76,8 @@ class SaverNifti {
     let valMax = TOO_SMALL_VAL;
     const numPixels = xDim * yDim * zDim;
     for (let i = 0; i < numPixels; i++) {
-      valMin = (volumeData[i] < valMin) ? volumeData[i] : valMin;
-      valMax = (volumeData[i] > valMax) ? volumeData[i] : valMax;
+      valMin = volumeData[i] < valMin ? volumeData[i] : valMin;
+      valMax = volumeData[i] > valMax ? volumeData[i] : valMax;
     }
     const TOO_MIN_RANGE = 60;
     if (valMax - valMin < TOO_MIN_RANGE) {

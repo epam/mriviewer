@@ -6,13 +6,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Modes3d from '../store/Modes3d';
-import Modes3droi from '../store/Modes3droi';
 import StoreActionType from '../store/ActionTypes';
 import UiTF from './UiTF';
 import UiTFroi from './UiTFroi';
 import UiRoiSelect from './UiRoiSelect';
-import { UIButton } from "./Button/Button";
-import { Container } from "./Tollbars/Container";
+import { UIButton } from './Button/Button';
+import { Container } from './Toolbars/Container';
+import css from './Form/Slider.module.css';
 
 class UiCtrl3dLight extends React.Component {
   constructor(props) {
@@ -22,7 +22,6 @@ class UiCtrl3dLight extends React.Component {
     this.onModeC = this.onModeC.bind(this);
     this.onModeD = this.onModeD.bind(this);
     this.onMode = this.onMode.bind(this);
-    this.onModeroi = this.onModeroi.bind(this);
     this.m_updateEnable = true;
   }
 
@@ -51,19 +50,6 @@ class UiCtrl3dLight extends React.Component {
   onModeD() {
     this.onMode(Modes3d.EREASER);
     this.props.volumeRenderer.setEraserMode(true);
-  }
-
-  onModeroi(indexMode) {
-    this.m_updateEnable = true;
-    this.props.dispatch({ type: StoreActionType.SET_MODE_3Droi, mode3droi: indexMode });
-  }
-
-  onModeAroi() {
-    this.onModeroi(Modes3droi.ISO);
-  }
-
-  onModeBroi() {
-    this.onModeroi(Modes3droi.RAYCAST);
   }
 
   shouldComponentUpdate() {
@@ -103,32 +89,31 @@ class UiCtrl3dLight extends React.Component {
   render() {
     const store = this.props;
     const mode3d = store.mode3d;
-    // const mode3droi = store.mode3droi;
 
-    const strA = (mode3d === Modes3d.ISO);
-    const strB = (mode3d === Modes3d.RAYCAST);
-    const strC = (mode3d === Modes3d.RAYFAST);
-    const strD = (mode3d === Modes3d.ERASER);
-    // const strAroi = (mode3droi === Modes3droi.ISO);
-    // const strBroi = (mode3droi === Modes3droi.RAYCAST);
+    const strA = mode3d === Modes3d.ISO;
+    const strB = mode3d === Modes3d.RAYCAST;
+    const strC = mode3d === Modes3d.RAYFAST;
+    const strD = mode3d === Modes3d.ERASER;
 
-    const jsxRenderControls =
+    const jsxRenderControls = (
       <>
-        <p>3D mode selection</p>
+        <p className={css.caption}>3D mode selection</p>
         <Container direction="horizontal">
-            <UIButton active={strA} handler={this.onModeA} caption="Show just barrier value surface, 1st ray intersection" icon="I"/>
-            <UIButton active={strB} handler={this.onModeB} caption="Show complete 3D volumetric rendering" icon="V"/>
-            <UIButton active={strC} handler={this.onModeC} caption="Show maximum projection rendering" icon="M"/>
-            <UIButton active={strD} handler={this.onModeD} caption="Special volume eraser tool" icon="E"/>
+          <UIButton active={strA} handler={this.onModeA} caption="Show just barrier value surface, 1st ray intersection" icon="I" />
+          <UIButton active={strB} handler={this.onModeB} caption="Show complete 3D volumetric rendering" icon="V" />
+          <UIButton active={strC} handler={this.onModeC} caption="Show maximum projection rendering" icon="M" />
+          <UIButton active={strD} handler={this.onModeD} caption="Special volume eraser tool" icon="E" />
         </Container>
-        <UiTF/>
+        <UiTF />
       </>
+    );
 
-    const jsxROI =
+    const jsxROI = (
       <>
-          <UiRoiSelect setRoiFunc={this.setRoi}/>
-        <UiTFroi/>
+        <UiRoiSelect setRoiFunc={this.setRoi} />
+        <UiTFroi />
       </>
+    );
     let indx = 0;
 
     const volSet = store.volumeSet;
@@ -143,9 +128,7 @@ class UiCtrl3dLight extends React.Component {
     } // end if more 0 volumes
     const jsxArray = [jsxRenderControls, jsxROI];
     return jsxArray[indx];
-
   }
 }
 
-export default connect(store => store)(UiCtrl3dLight);
-
+export default connect((store) => store)(UiCtrl3dLight);

@@ -17,9 +17,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Screenshot from '../engine/utils/Screenshot';
-import ModeView from '../store/ModeView';
-import { UIButton } from "./Button/Button";
-import UiModalInfo from "./Modals/ModalInfo";
+import ViewMode from '../store/ViewMode';
+import { Tooltip } from './Tooltip/Tooltip';
+import { UIButton } from './Button/Button';
+import UiModalInfo from './Modals/ModalInfo';
 
 // ********************************************************
 // Const
@@ -59,11 +60,11 @@ class UiReportMenu extends React.Component {
     const SHOT_H = 600;
 
     const store = this.props;
-    const modeView = store.modeView;
-    if (modeView === ModeView.VIEW_2D) {
+    const viewMode = store.viewMode;
+    if (viewMode === ViewMode.VIEW_2D) {
       const gra2d = store.graphics2d;
       Screenshot.makeScreenshot(gra2d, SHOT_W, SHOT_H);
-    } else if ((modeView === ModeView.VIEW_3D) || (modeView === ModeView.VIEW_3D_LIGHT)) {
+    } else if (viewMode === ViewMode.VIEW_3D || viewMode === ViewMode.VIEW_3D_LIGHT) {
       const volRender = store.volumeRenderer;
       Screenshot.makeScreenshot(volRender, SHOT_W, SHOT_H);
     } else {
@@ -75,20 +76,20 @@ class UiReportMenu extends React.Component {
     const store = this.props;
     const isLoaded = store.isLoaded;
 
-    const strDisabled = (!isLoaded);
-    return <>
-      <UIButton caption="Show tags" icon="report" rounded mode="light" disabled={strDisabled}
-                handler={this.onModalDicomTagsShow}/>
-      <UIButton caption="Screenshot" icon="camera" rounded mode="light" disabled={strDisabled}
-                handler={this.onModalScreenshot}/>
-      { this.state.showModalDicomTags && (
-          <UiModalInfo
-              stateVis={this.state.showModalDicomTags}
-              onHide={this.onModalDicomTagsHide}
-          />
-      ) }
-    </>;
+    const strDisabled = !isLoaded;
+    return (
+      <>
+        <Tooltip content="Show tags">
+          <UIButton icon="report" rounded mode="light" disabled={strDisabled} handler={this.onModalDicomTagsShow} />
+        </Tooltip>
+        <Tooltip content="Screenshot">
+          <UIButton icon="camera" rounded mode="light" disabled={strDisabled} handler={this.onModalScreenshot} />
+        </Tooltip>
+
+        {this.state.showModalDicomTags && <UiModalInfo stateVis={this.state.showModalDicomTags} onHide={this.onModalDicomTagsHide} />}
+      </>
+    );
   }
 }
 
-export default connect(store => store)(UiReportMenu);
+export default connect((store) => store)(UiReportMenu);

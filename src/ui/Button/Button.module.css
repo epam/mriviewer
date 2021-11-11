@@ -27,7 +27,6 @@
   font-family: inherit;
   text-align: center;
   font-size: 21px;
-  border-radius: 5px;
 }
 
 .rounded {
@@ -47,11 +46,16 @@
 
 .button:hover,
 .button:focus {
-  background-color: var(--dark-gray);
+  background-color: var(--dark-gray2);
 }
 
 .button.active {
   color: var(--red);
+}
+
+.apply {
+  background-color: var(--red);
+  border-radius: 4px;
 }
 
 .button.active svg {

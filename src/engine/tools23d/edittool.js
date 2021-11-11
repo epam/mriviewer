@@ -104,8 +104,15 @@ export default class EditTool {
       const yE = (this.m_vertexes[COUNT_POINTS * i + MODULO_1].yZ - posY) / zoom + (1 - 1 / zoom);
       const line = new Line2D(this.m_scene, this.m_lineWidth, xS, yS, xE, yE, this.m_linesMaterial);
       this.m_distances[i].line = line;
-      this.m_distances[i].text.updateText(0.5 * (xS + xE) - 0.00, 0.5 * (yS + yE) - 0.00, this.m_textWidthScr,
-        MeshText2D.ALIGN_CENTER, MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
+      this.m_distances[i].text.updateText(
+        0.5 * (xS + xE) - 0.0,
+        0.5 * (yS + yE) - 0.0,
+        this.m_textWidthScr,
+        MeshText2D.ALIGN_CENTER,
+        MeshText2D.ALIGN_CENTER,
+        this.m_textBgColor,
+        this.m_textColor
+      );
       this.m_scene.add(this.m_distances[i].text);
     }
   }
@@ -122,7 +129,8 @@ export default class EditTool {
    * @param (float) xPixelSize - canvas pixel size in mm for x axis
    * @param (float) yPixelSize - canvas pixel size in mm for y axis
    */
-  setPixelSize(xPixelSize, yPixelSize) { // in mm
+  setPixelSize(xPixelSize, yPixelSize) {
+    // in mm
     this.m_xPixelSize = xPixelSize;
     this.m_yPixelSize = yPixelSize;
   }
@@ -181,14 +189,24 @@ export default class EditTool {
           this.m_scene.remove(distancesV[i].line.getRenderObject());
           this.m_scene.remove(distancesV[i].text);
           distancesV[i].line = newLine;
-          const strMsg = `${(zoom * (Math.sqrt((newLine.getxS() - newLine.getxE()) * (newLine.getxS() - newLine.getxE())
-            * this.m_xPixelSize * this.m_xPixelSize +
-            // eslint-disable-next-line
-            (newLine.getyS() - newLine.getyE()) * (newLine.getyS() - newLine.getyE()) * this.m_yPixelSize * this.m_yPixelSize))).toFixed(2)} mm`;
+          const strMsg = `${(
+            zoom *
+            Math.sqrt(
+              (newLine.getxS() - newLine.getxE()) * (newLine.getxS() - newLine.getxE()) * this.m_xPixelSize * this.m_xPixelSize +
+                // eslint-disable-next-line
+                (newLine.getyS() - newLine.getyE()) * (newLine.getyS() - newLine.getyE()) * this.m_yPixelSize * this.m_yPixelSize
+            )
+          ).toFixed(2)} mm`;
           const text = new MeshText2D(strMsg);
-          text.updateText(0.5 * (newLine.getxS() + newLine.getxE()) - 0.00,
-            0.5 * (newLine.getyS() + newLine.getyE()) - 0.00, this.m_textWidthScr,
-            MeshText2D.ALIGN_CENTER, MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
+          text.updateText(
+            0.5 * (newLine.getxS() + newLine.getxE()) - 0.0,
+            0.5 * (newLine.getyS() + newLine.getyE()) - 0.0,
+            this.m_textWidthScr,
+            MeshText2D.ALIGN_CENTER,
+            MeshText2D.ALIGN_CENTER,
+            this.m_textBgColor,
+            this.m_textColor
+          );
           distancesV[i].text = text;
           this.m_scene.add(distancesV[i].text);
           newLine = null;
@@ -198,20 +216,30 @@ export default class EditTool {
         this.processingLine2(distancesV[i].line, x, y);
       }
     }
-    if (this.m_runningState) { // text: recalculate distance
+    if (this.m_runningState) {
+      // text: recalculate distance
       if (newLine != null && distancesV.length !== 0 && countLine !== -1) {
         this.m_scene.remove(distancesV[distancesV.length - 1].line.getRenderObject());
         this.m_scene.remove(distancesV[distancesV.length - 1].text);
         distancesV[distancesV.length - 1].line = newLine;
-        const strMsg = `${(zoom * (Math.sqrt((newLine.getxS() - newLine.getxE())
-          * (newLine.getxS() - newLine.getxE()) * this.m_xPixelSize * this.m_xPixelSize +
-          // eslint-disable-next-line
-          (newLine.getyS() - newLine.getyE()) * (newLine.getyS() - newLine.getyE())
-          * this.m_yPixelSize * this.m_yPixelSize))).toFixed(ACCURACY)} mm`;
+        const strMsg = `${(
+          zoom *
+          Math.sqrt(
+            (newLine.getxS() - newLine.getxE()) * (newLine.getxS() - newLine.getxE()) * this.m_xPixelSize * this.m_xPixelSize +
+              // eslint-disable-next-line
+              (newLine.getyS() - newLine.getyE()) * (newLine.getyS() - newLine.getyE()) * this.m_yPixelSize * this.m_yPixelSize
+          )
+        ).toFixed(ACCURACY)} mm`;
         const text = new MeshText2D(strMsg);
-        text.updateText(0.5 * (newLine.getxS() + newLine.getxE()) - 0.00,
-          0.5 * (newLine.getyS() + newLine.getyE()) - 0.00, this.m_textWidthScr,
-          MeshText2D.ALIGN_CENTER, MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
+        text.updateText(
+          0.5 * (newLine.getxS() + newLine.getxE()) - 0.0,
+          0.5 * (newLine.getyS() + newLine.getyE()) - 0.0,
+          this.m_textWidthScr,
+          MeshText2D.ALIGN_CENTER,
+          MeshText2D.ALIGN_CENTER,
+          this.m_textBgColor,
+          this.m_textColor
+        );
         distancesV[distancesV.length - 1].text = text;
         this.m_scene.add(distancesV[distancesV.length - 1].text);
         newLine = null;
@@ -269,11 +297,17 @@ export default class EditTool {
 
       console.log(`${areaTool.m_vertexes2[pos.endl].xS}`);
       const area = this.updateArea(areaTool.m_last_lengths, countLine, areaTool.m_vertexes2);
-      const strMsgAr = `${(area).toFixed(ACCURACY)} mm^2`;
+      const strMsgAr = `${area.toFixed(ACCURACY)} mm^2`;
       const textAr = new MeshText2D(strMsgAr);
-      textAr.updateText(0.5 * (areaD[pos.endl].line.getxS() + areaD[pos.endl].line.getxE()) - 0.00,
-        0.5 * (areaD[pos.endl].line.getyS() + areaD[pos.endl].line.getyE()) - 0.00, this.m_textWidthScr,
-        MeshText2D.ALIGN_CENTER, MeshText2D.ALIGN_CENTER, this.m_textBgColor, this.m_textColor);
+      textAr.updateText(
+        0.5 * (areaD[pos.endl].line.getxS() + areaD[pos.endl].line.getxE()) - 0.0,
+        0.5 * (areaD[pos.endl].line.getyS() + areaD[pos.endl].line.getyE()) - 0.0,
+        this.m_textWidthScr,
+        MeshText2D.ALIGN_CENTER,
+        MeshText2D.ALIGN_CENTER,
+        this.m_textBgColor,
+        this.m_textColor
+      );
       areaD[pos.endl].text = textAr;
       this.m_scene.add(areaD[pos.endl].text);
       newLine = null;
@@ -311,33 +345,53 @@ export default class EditTool {
         newLine2 = null;
       }
       this.m_scene.remove(anglesA[countLine].text);
-      const len1 = Math.sqrt((anglesA[countLine].line1.getxS() - anglesA[countLine].line1.getxE()) *
-        (anglesA[countLine].line1.getxS() - anglesA[countLine].line1.getxE()) +
-        (anglesA[countLine].line1.getyS() - anglesA[countLine].line1.getyE()) *
-        (anglesA[countLine].line1.getyS() - anglesA[countLine].line1.getyE()));
-      const len2 = Math.sqrt((anglesA[countLine].line2.getxS() - anglesA[countLine].line2.getxE()) *
-        (anglesA[countLine].line2.getxS() - anglesA[countLine].line2.getxE()) +
-        (anglesA[countLine].line2.getyS() - anglesA[countLine].line2.getyE()) *
-        (anglesA[countLine].line2.getyS() - anglesA[countLine].line2.getyE()));
-      const strMsg = `${(Math.acos(((anglesA[countLine].line1.getxS() - anglesA[countLine].line1.getxE()) *
-        (anglesA[countLine].line2.getxS() - anglesA[countLine].line2.getxE()) +
-        (anglesA[countLine].line1.getyS() - anglesA[countLine].line1.getyE()) *
-        (anglesA[countLine].line2.getyS() - anglesA[countLine].line2.getyE())) /
-        // eslint-disable-next-line
-        (len1 * len2)) / Math.PI * 180).toFixed(2)}°`;
+      const len1 = Math.sqrt(
+        (anglesA[countLine].line1.getxS() - anglesA[countLine].line1.getxE()) *
+          (anglesA[countLine].line1.getxS() - anglesA[countLine].line1.getxE()) +
+          (anglesA[countLine].line1.getyS() - anglesA[countLine].line1.getyE()) *
+            (anglesA[countLine].line1.getyS() - anglesA[countLine].line1.getyE())
+      );
+      const len2 = Math.sqrt(
+        (anglesA[countLine].line2.getxS() - anglesA[countLine].line2.getxE()) *
+          (anglesA[countLine].line2.getxS() - anglesA[countLine].line2.getxE()) +
+          (anglesA[countLine].line2.getyS() - anglesA[countLine].line2.getyE()) *
+            (anglesA[countLine].line2.getyS() - anglesA[countLine].line2.getyE())
+      );
+      const strMsg = `${(
+        (Math.acos(
+          ((anglesA[countLine].line1.getxS() - anglesA[countLine].line1.getxE()) *
+            (anglesA[countLine].line2.getxS() - anglesA[countLine].line2.getxE()) +
+            (anglesA[countLine].line1.getyS() - anglesA[countLine].line1.getyE()) *
+              (anglesA[countLine].line2.getyS() - anglesA[countLine].line2.getyE())) /
+            // eslint-disable-next-line
+            (len1 * len2)
+        ) /
+          Math.PI) *
+        180
+      ).toFixed(2)}°`;
       const textA = new MeshText2D(strMsg);
       const Y_SHIFT_UP = 0.02;
-      textA.updateText(anglesA[countLine].line1.getxS(), anglesA[countLine].line1.getyS() - Y_SHIFT_UP,
-        this.m_textWidthScr, MeshText2D.ALIGN_CENTER,
-        MeshText2D.ALIGN_TOP, this.m_textBgColor, this.m_textColor);
+      textA.updateText(
+        anglesA[countLine].line1.getxS(),
+        anglesA[countLine].line1.getyS() - Y_SHIFT_UP,
+        this.m_textWidthScr,
+        MeshText2D.ALIGN_CENTER,
+        MeshText2D.ALIGN_TOP,
+        this.m_textBgColor,
+        this.m_textColor
+      );
       anglesA[countLine].text = textA;
       this.m_scene.add(anglesA[countLine].text);
     }
 
     countLine = -1;
     for (let i = 0; i < textTool.m_textArr.length; ++i) {
-      if (textTool.m_textArr[i].m_xMin <= x && x <= textTool.m_textArr[i].m_xMax
-        && textTool.m_textArr[i].m_yMin <= y && y <= textTool.m_textArr[i].m_yMax) {
+      if (
+        textTool.m_textArr[i].m_xMin <= x &&
+        x <= textTool.m_textArr[i].m_xMax &&
+        textTool.m_textArr[i].m_yMin <= y &&
+        y <= textTool.m_textArr[i].m_yMax
+      ) {
         if (this.m_runningState) {
           textTool.move(i, x - this.m_xInnerShift, y + this.m_yInnerShift, zoom, posX, posY);
         } else {
@@ -360,10 +414,10 @@ export default class EditTool {
     const CONSTRAINTS = 0.02;
     let newLine = null;
     if (this.m_runningState) {
-      if (((Math.abs(l.getxS() - x) < CONSTRAINTS) && (Math.abs(l.getyS() - y) < CONSTRAINTS))) {
+      if (Math.abs(l.getxS() - x) < CONSTRAINTS && Math.abs(l.getyS() - y) < CONSTRAINTS) {
         console.log('AREA OF EDITING 1');
         newLine = new Line2D(this.m_scene, this.m_lineWidth, x, y, l.getxE(), l.getyE(), this.m_linesMaterial);
-      } else if (((Math.abs(l.getxE() - x) < CONSTRAINTS) && (Math.abs(l.getyE() - y) < CONSTRAINTS))) {
+      } else if (Math.abs(l.getxE() - x) < CONSTRAINTS && Math.abs(l.getyE() - y) < CONSTRAINTS) {
         console.log('AREA OF EDITING 2');
         newLine = new Line2D(this.m_scene, this.m_lineWidth, l.getxS(), l.getyS(), x, y, this.m_linesMaterial);
       }
@@ -375,15 +429,29 @@ export default class EditTool {
     let point;
     const CONSTRAINTS = 0.01;
     const INSTANSITY = 0.005;
-    if (((Math.abs(l.getxS() - x) < CONSTRAINTS) && (Math.abs(l.getyS() - y) < CONSTRAINTS))) {
-      point = new Line2D(this.m_scene, this.m_lineWidth, l.getxS(), l.getyS(), l.getxS() + INSTANSITY,
-        l.getyS() + INSTANSITY, this.m_pointMaterial);
+    if (Math.abs(l.getxS() - x) < CONSTRAINTS && Math.abs(l.getyS() - y) < CONSTRAINTS) {
+      point = new Line2D(
+        this.m_scene,
+        this.m_lineWidth,
+        l.getxS(),
+        l.getyS(),
+        l.getxS() + INSTANSITY,
+        l.getyS() + INSTANSITY,
+        this.m_pointMaterial
+      );
       this.m_point.push({ point });
       this.isOut = true;
     }
-    if ((((Math.abs(l.getxE() - x) < CONSTRAINTS) && (Math.abs(l.getyE() - y) < CONSTRAINTS)))) {
-      point = new Line2D(this.m_scene, this.m_lineWidth, l.getxE(), l.getyE(), l.getxE() + INSTANSITY,
-        l.getyE() + INSTANSITY, this.m_pointMaterial);
+    if (Math.abs(l.getxE() - x) < CONSTRAINTS && Math.abs(l.getyE() - y) < CONSTRAINTS) {
+      point = new Line2D(
+        this.m_scene,
+        this.m_lineWidth,
+        l.getxE(),
+        l.getyE(),
+        l.getxE() + INSTANSITY,
+        l.getyE() + INSTANSITY,
+        this.m_pointMaterial
+      );
       this.m_point.push({ point });
       this.isOut = true;
     }
@@ -391,17 +459,13 @@ export default class EditTool {
 
   processingText(mesh) {
     if (!this.isPointsExist) {
-      let point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMin, mesh.m_yMin,
-        mesh.m_xMin, mesh.m_yMax, this.m_pointMaterial);
+      let point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMin, mesh.m_yMin, mesh.m_xMin, mesh.m_yMax, this.m_pointMaterial);
       this.m_point.push({ point });
-      point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMin, mesh.m_yMax,
-        mesh.m_xMax, mesh.m_yMax, this.m_pointMaterial);
+      point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMin, mesh.m_yMax, mesh.m_xMax, mesh.m_yMax, this.m_pointMaterial);
       this.m_point.push({ point });
-      point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMax, mesh.m_yMax,
-        mesh.m_xMax, mesh.m_yMin, this.m_pointMaterial);
+      point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMax, mesh.m_yMax, mesh.m_xMax, mesh.m_yMin, this.m_pointMaterial);
       this.m_point.push({ point });
-      point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMax, mesh.m_yMin,
-        mesh.m_xMin, mesh.m_yMin, this.m_pointMaterial);
+      point = new Line2D(this.m_scene, this.m_lineWidth, mesh.m_xMax, mesh.m_yMin, mesh.m_xMin, mesh.m_yMin, this.m_pointMaterial);
       this.m_point.push({ point });
     }
     this.isOut = true;
@@ -427,15 +491,19 @@ export default class EditTool {
     let sum1 = 0;
     let sum2 = 0;
     for (let j = 0; j < array.length; ++j) {
-      if ((array[j].begin <= numLine) && (numLine <= array[j].endl)) {
+      if (array[j].begin <= numLine && numLine <= array[j].endl) {
         for (let i = array[j].begin; i < array[j].endl; ++i) {
           sum1 += vertexes[i].xS * vertexes[i + 1].yS * this.m_xPixelSize * this.m_yPixelSize;
           sum2 += vertexes[i + 1].xS * vertexes[i].yS * this.m_xPixelSize * this.m_yPixelSize;
         }
-        const result = (0.5 * Math.abs(sum1
-          + vertexes[array[j].endl].xS * vertexes[array[j].begin].yS * this.m_xPixelSize * this.m_yPixelSize
-          - sum2 - vertexes[array[j].begin].xS * vertexes[array[j].endl].yS
-          * this.m_xPixelSize * this.m_yPixelSize));
+        const result =
+          0.5 *
+          Math.abs(
+            sum1 +
+              vertexes[array[j].endl].xS * vertexes[array[j].begin].yS * this.m_xPixelSize * this.m_yPixelSize -
+              sum2 -
+              vertexes[array[j].begin].xS * vertexes[array[j].endl].yS * this.m_xPixelSize * this.m_yPixelSize
+          );
         return result;
       }
     }
@@ -444,7 +512,7 @@ export default class EditTool {
 
   num(array, numLine) {
     for (let j = 0; j < array.length; ++j) {
-      if ((array[j].begin <= numLine) && (numLine <= array[j].endl)) {
+      if (array[j].begin <= numLine && numLine <= array[j].endl) {
         return array[j];
       }
     }

@@ -4,9 +4,9 @@
  */
 
 /**
-* Single triagle
-* @module lib/scripts/actvolume/trianglesingle
-*/
+ * Single triagle
+ * @module lib/scripts/actvolume/trianglesingle
+ */
 
 // absolute imports
 import * as THREE from 'three';
@@ -14,9 +14,9 @@ import * as THREE from 'three';
 // relative imports
 
 /**
-* Class TriangleSingle is one triangle
-* @class TriangleSingle
-*/
+ * Class TriangleSingle is one triangle
+ * @class TriangleSingle
+ */
 export default class TriangleSingle {
   constructor() {
     this.va = new THREE.Vector3();

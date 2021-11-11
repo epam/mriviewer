@@ -13,13 +13,12 @@ import createReadStream from 'filereader-stream';
 
 import VolumeSet from '../../engine/VolumeSet';
 import Volume from '../../engine/Volume';
-import Texture3D from '../../engine/Texture3D';
 
-import UiModalDemo from "../Modals/ModalDemo";
-import UIModalUrl from "../Modals/ModalUrl";
+import UiModalDemo from '../Modals/ModalDemo';
+import UIModalUrl from '../Modals/ModalUrl';
 import UiModalWindowCenterWidth from '../Modals/UiModalWinCW';
 import StoreActionType from '../../store/ActionTypes';
-import ModeView from '../../store/ModeView';
+import ViewMode from '../../store/ViewMode';
 import Modes3d from '../../store/Modes3d';
 
 // import { timingSafeEqual } from 'crypto';
@@ -33,10 +32,11 @@ import LoaderDcmDaikon from '../../engine/loaders/LoaderDcmDaikon';
 import LoaderDcmUrlDaikon from '../../engine/loaders/LoadDcmUrlDiakon';
 
 import config from '../../config/config';
-import { UIButton } from "../Button/Button";
-import css from "./UiOpenMenu.module.css";
-import UiSaveMenu from "../UiSaveMenu";
-import UiReportMenu from "../UiReportMenu";
+import { UIButton } from '../Button/Button';
+import css from './UiOpenMenu.module.css';
+import UiSaveMenu from '../UiSaveMenu';
+import UiReportMenu from '../UiReportMenu';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 /** Need to have demo menu */
 const NEED_DEMO_MENU = true;
@@ -50,7 +50,7 @@ const READ_DICOM_VIA_DAIKON = true;
 class UiOpenMenu extends React.Component {
   constructor(props) {
     super(props);
-    this.onButtonLocalFile = this.onButtonLocalFile.bind(this);
+    this.onButtonOpenLocalFileClick = this.onButtonOpenLocalFileClick.bind(this);
     this.handleFileSelected = this.handleFileSelected.bind(this);
     this.onFileContentReadSingleFile = this.onFileContentReadSingleFile.bind(this);
     this.onFileContentReadMultipleDicom = this.onFileContentReadMultipleDicom.bind(this);
@@ -101,12 +101,12 @@ class UiOpenMenu extends React.Component {
   finalizeSuccessLoadedVolume(volSet, fileNameIn) {
     const store = this.props;
 
-    console.assert(volSet instanceof VolumeSet, "finalizeSuccessLoadedVolume: should be VolumeSet");
-    console.assert(volSet.getNumVolumes() >= 1, "finalizeSuccessLoadedVolume: should be more or 1 volume");
+    console.assert(volSet instanceof VolumeSet, 'finalizeSuccessLoadedVolume: should be VolumeSet');
+    console.assert(volSet.getNumVolumes() >= 1, 'finalizeSuccessLoadedVolume: should be more or 1 volume');
     const indexVol = 0;
 
     const vol = volSet.getVolume(indexVol);
-    console.assert(vol !== null, "finalizeSuccessLoadedVolume: should be non zero volume");
+    console.assert(vol !== null, 'finalizeSuccessLoadedVolume: should be non zero volume');
 
     if (vol.m_dataArray !== null) {
       console.log(`success loaded volume from ${fileNameIn}`);
@@ -125,10 +125,7 @@ class UiOpenMenu extends React.Component {
       store.dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
       store.dispatch({ type: StoreActionType.SET_FILENAME, fileName: fileNameIn });
       store.dispatch({ type: StoreActionType.SET_ERR_ARRAY, arrErrors: [] });
-      const tex3d = new Texture3D();
-      tex3d.createFromRawVolume(vol);
-      store.dispatch({ type: StoreActionType.SET_TEXTURE3D, texture3d: tex3d });
-      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, modeView: ModeView.VIEW_2D });
+      store.dispatch({ type: StoreActionType.SET_MODE_VIEW, viewMode: ViewMode.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
     }
   }
@@ -150,7 +147,7 @@ class UiOpenMenu extends React.Component {
     store.dispatch({ type: StoreActionType.SET_VOLUME_SET, volume: null });
     store.dispatch({ type: StoreActionType.SET_ERR_ARRAY, arrErrors: arrErrors });
     store.dispatch({ type: StoreActionType.SET_FILENAME, fileName: fileNameIn });
-    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
   }
 
   callbackReadProgress(ratio01) {
@@ -159,9 +156,9 @@ class UiOpenMenu extends React.Component {
     const store = this.props;
     if (ratioPrc >= 99) {
       // console.log(`callbackReadProgress. hide on = ${ratio01}`);
-      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
     } else {
-      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioPrc })
+      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioPrc });
     }
   } // callback progress
 
@@ -175,7 +172,7 @@ class UiOpenMenu extends React.Component {
       }
     }
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
     if (errCode === LoadResult.SUCCESS) {
       // console.log('callbackReadComplete finished OK');
       this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
@@ -246,11 +243,10 @@ class UiOpenMenu extends React.Component {
     // console.log(`onFileContentRead. type = ${typeof strContent}`);
     this.m_volumeSet = new VolumeSet();
     // add empty [0]-th volume in set to read single file
-    this.m_volumeSet.addVolume(new Volume())
+    this.m_volumeSet.addVolume(new Volume());
     const callbackProgress = this.callbackReadProgress;
     const callbackComplete = this.callbackReadComplete;
     const callbackCompleteSingleDicom = this.callbackReadSingleDicomComplete;
-
 
     if (this.m_fileName.endsWith('.ktx') || this.m_fileName.endsWith('.KTX')) {
       // if read ktx
@@ -280,7 +276,6 @@ class UiOpenMenu extends React.Component {
     } else {
       console.log(`onFileContentReadSingleFile: unknown file type: ${this.m_fileName}`);
     }
-
   }
 
   //
@@ -289,7 +284,7 @@ class UiOpenMenu extends React.Component {
   onFileContentReadMultipleHdr() {
     const VALID_NUM_FILES_2 = 2;
     const VALID_NUM_FILES_4 = 4;
-    if ((this.m_numFiles !== VALID_NUM_FILES_2) && (this.m_numFiles !== VALID_NUM_FILES_4)) {
+    if (this.m_numFiles !== VALID_NUM_FILES_2 && this.m_numFiles !== VALID_NUM_FILES_4) {
       console.log(`onFileContentReadMultipleHdr: can read ${VALID_NUM_FILES_2} or ${VALID_NUM_FILES_4} files for multiple hdr loader`);
       return;
     }
@@ -309,7 +304,7 @@ class UiOpenMenu extends React.Component {
       this.callbackReadProgress(0.0);
     }
 
-    if ((this.m_numFiles === VALID_NUM_FILES_4) && (this.m_volumeRoi === null)) {
+    if (this.m_numFiles === VALID_NUM_FILES_4 && this.m_volumeRoi === null) {
       this.m_volumeRoi = new Volume();
     }
 
@@ -357,7 +352,7 @@ class UiOpenMenu extends React.Component {
 
     // create final volume from readed data
     volDst = this.m_volumeSet.getVolume(0);
-    if (readOk && (this.m_fileIndex === this.m_numFiles)) {
+    if (readOk && this.m_fileIndex === this.m_numFiles) {
       let ok = false;
       if (this.m_numFiles === VALID_NUM_FILES_2) {
         ok = this.m_loader.createVolumeFromHeaderAndImage(volDst);
@@ -385,7 +380,6 @@ class UiOpenMenu extends React.Component {
       this.m_fileName = file.name;
       this.m_fileReader.readAsArrayBuffer(file);
     }
-
   } // on multuple hdr
 
   // on complete read multuple dicom
@@ -425,14 +419,21 @@ class UiOpenMenu extends React.Component {
     if (READ_DICOM_VIA_DAIKON) {
       readStatus = this.readSliceDicomViaDaikon(this.m_fileIndex - 1, this.m_fileName, ratioLoad, strContent);
     } else {
-      readStatus = this.m_volumeSet.readSingleSliceFromDicom(this.m_loader, this.m_fileIndex - 1,
-        this.m_fileName, ratioLoad, strContent, callbackProgress, callbackColmpleteVoid);
+      readStatus = this.m_volumeSet.readSingleSliceFromDicom(
+        this.m_loader,
+        this.m_fileIndex - 1,
+        this.m_fileName,
+        ratioLoad,
+        strContent,
+        callbackProgress,
+        callbackColmpleteVoid
+      );
     }
 
     if (readStatus !== LoadResult.SUCCESS) {
       console.log('onFileContentReadMultipleDicom. Error read individual file');
     }
-    if ((readStatus === LoadResult.SUCCESS) && (this.m_fileIndex === this.m_numFiles)) {
+    if (readStatus === LoadResult.SUCCESS && this.m_fileIndex === this.m_numFiles) {
       // setup global vars
       const store = this.props;
       store.dispatch({ type: StoreActionType.SET_VOLUME_INDEX, volumeIndex: 0 });
@@ -483,7 +484,7 @@ class UiOpenMenu extends React.Component {
         // print console loading progress
         const NUM_PARTS_REPORT = 16;
         const STEP_PROGRESS = Math.floor(this.m_numFiles / NUM_PARTS_REPORT);
-        if ((this.m_fileIndex % STEP_PROGRESS) === 0) {
+        if (this.m_fileIndex % STEP_PROGRESS === 0) {
           // console.log(`onFileContentReadMultipleDicom. Loading completed = ${ratioLoad}`);
           this.callbackReadProgress(ratioLoad);
         }
@@ -530,13 +531,13 @@ class UiOpenMenu extends React.Component {
           createReadStream(file).pipe(gunzip);
           gunzip.on('data', (data) => {
             if (this.m_unzippedBuffer == null) {
-              store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+              store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
             } else {
               const readSize = this.m_unzippedBuffer.length;
               const allSize = file.size;
               const KOEF_DEFLATE = 0.28;
-              const ratio100 = Math.floor(readSize * 100.0 * KOEF_DEFLATE / allSize);
-              store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratio100 })
+              const ratio100 = Math.floor((readSize * 100.0 * KOEF_DEFLATE) / allSize);
+              store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratio100 });
             }
 
             // read the data chunk-by-chunk
@@ -560,7 +561,7 @@ class UiOpenMenu extends React.Component {
           });
 
           gunzip.on('end', () => {
-            store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 })
+            store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
             // now all chunks are read. Need to check raw ungzipped buffer
             const sizeBuffer = this.m_unzippedBuffer.length;
             if (sizeBuffer < 128) {
@@ -595,7 +596,7 @@ class UiOpenMenu extends React.Component {
         const progressHandler = ({ loaded, total }) => {
           this.callbackReadProgress(loaded / total);
         };
-        this.m_fileReader.addEventListener("progress", progressHandler)
+        this.m_fileReader.addEventListener('progress', progressHandler);
         this.m_fileReader.onloadend = this.onFileContentReadSingleFile;
         this.m_fileReader.readAsArrayBuffer(file);
       } else {
@@ -606,17 +607,15 @@ class UiOpenMenu extends React.Component {
         this.m_fileReader = new FileReader();
         // if multiple files, create Dicom loader
         this.m_loader = null;
-        if (evt.target.files[0].name.endsWith(".dcm")) {
-
+        if (evt.target.files[0].name.endsWith('.dcm')) {
           // remove non-dcm files
           let numFilesNew = 0;
           for (let i = numFiles - 1; i >= 0; i--) {
-            if (this.m_files[i].name.endsWith(".dcm")) {
+            if (this.m_files[i].name.endsWith('.dcm')) {
               numFilesNew++;
             } else {
               this.m_files.splice(i, 1);
             }
-
           }
           numFiles = numFilesNew;
           this.m_numFiles = numFilesNew;
@@ -632,7 +631,7 @@ class UiOpenMenu extends React.Component {
           store.dispatch({ type: StoreActionType.SET_LOADER_DICOM, loaderDicom: this.m_loader });
 
           this.m_fileReader.onloadend = this.onFileContentReadMultipleDicom;
-        } else if ((evt.target.files[0].name.endsWith(".hdr")) || (evt.target.files[0].name.endsWith(".img"))) {
+        } else if (evt.target.files[0].name.endsWith('.hdr') || evt.target.files[0].name.endsWith('.img')) {
           this.m_loader = new LoaderHdr(numFiles);
           this.m_fileReader.onloadend = this.onFileContentReadMultipleHdr;
         }
@@ -651,13 +650,15 @@ class UiOpenMenu extends React.Component {
   buildFileSelector() {
     const fileSelector = document.createElement('input');
     fileSelector.setAttribute('type', 'file');
+    fileSelector.setAttribute('hidden', 'true');
     fileSelector.setAttribute('accept', '.txt,.ktx,.dcm,.nii,.hdr,.h,.img,.gz');
-    fileSelector.setAttribute('multiple', '');
+    fileSelector.setAttribute('multiple', 'true');
+    document.body.appendChild(fileSelector);
     fileSelector.onchange = this.handleFileSelected;
     return fileSelector;
   }
 
-  onButtonLocalFile(evt) {
+  onButtonOpenLocalFileClick(evt) {
     // console.log('onButtonLocalFile started');
     evt.preventDefault();
     this.m_fileSelector.click();
@@ -672,7 +673,6 @@ class UiOpenMenu extends React.Component {
     console.log(`onModalUrlHide`);
     this.setState({ showModalUrl: false });
   }
-
 
   callbackReadCompleteUrlKtxNii(codeResult) {
     if (codeResult !== LoadResult.SUCCESS) {
@@ -689,12 +689,10 @@ class UiOpenMenu extends React.Component {
   }
 
   loadFromUrl(strUrl) {
-    const fileTools = new FileTools();
-    const isValid = fileTools.isValidUrl(strUrl);
-    if (isValid) {
+    if (FileTools.isValidUrl(strUrl)) {
       this.m_url = strUrl;
 
-      this.m_fileName = fileTools.getFileNameFromUrl(strUrl);
+      this.m_fileName = FileTools.getFileNameFromUrl(strUrl);
       this.m_volumeSet = new VolumeSet();
       this.m_volumeSet.addVolume(new Volume());
 
@@ -785,20 +783,22 @@ class UiOpenMenu extends React.Component {
       return;
     }
 
-    const DEMO_URL = "http://med3web.s3-website.eu-central-1.amazonaws.com/demo/";
+    const DEMO_URL = 'http://med3web.s3-website.eu-central-1.amazonaws.com/demo/';
 
-    let fileName = DEMO_URL + [
-      "01_lungs/20101108.ktx",
-      "02_brain_set/brain256.ktx",
-      "03_grandmother_gm3/gm3_512_512_165.nii",
-      "04_woman_pelvis/file_list.txt",
-      "05_lungs_00cba/file_list.txt",
-      "06_ct_256/ct_256_256_256.ktx",
-      "07_lungs_256/lungs_256_256_256.ktx",
-      "08_brain_with_roi/set_intn.hdr"
-    ][index] || console.log(`onDemoSelected. not implemented for index = ${index}`);
+    let fileName =
+      DEMO_URL +
+        [
+          '01_lungs/20101108.ktx',
+          '02_brain_set/brain256.ktx',
+          '03_grandmother_gm3/gm3_512_512_165.nii',
+          '04_woman_pelvis/file_list.txt',
+          '05_lungs_00cba/file_list.txt',
+          '06_ct_256/ct_256_256_256.ktx',
+          '07_lungs_256/lungs_256_256_256.ktx',
+          '08_brain_with_roi/set_intn.hdr',
+        ][index] || console.log(`onDemoSelected. not implemented for index = ${index}`);
 
-    if (fileName === "04_woman_pelvis/file_list.txt") {
+    if (fileName === '04_woman_pelvis/file_list.txt') {
       const numUrls = config.demoWomanPelvisUrls.length;
       if (numUrls > 0) {
         const strPrefix = config.demoWomanPelvisPrefix;
@@ -816,7 +816,7 @@ class UiOpenMenu extends React.Component {
         return;
       }
     }
-    if (fileName === "05_lungs_00cba/file_list.txt") {
+    if (fileName === '05_lungs_00cba/file_list.txt') {
       const numUrls = config.demoLungsUrls.length;
       if (numUrls > 0) {
         const strPrefix = config.demoLungsPrefix;
@@ -890,7 +890,7 @@ class UiOpenMenu extends React.Component {
     this.m_fileSelector = this.buildFileSelector();
     const fileNameOnLoad = this.m_fileNameOnLoad;
     // console.log(`UiOpenMenu. componentDidMount. fnonl = ${fileNameOnLoad}`);
-    if ((fileNameOnLoad.length > 0) && (this.state.onLoadCounter > 0)) {
+    if (fileNameOnLoad.length > 0 && this.state.onLoadCounter > 0) {
       this.setState({ onLoadCounter: 0 });
       const TIMEOUT_MS = 50;
       setTimeout(this.loadFromUrl(fileNameOnLoad), TIMEOUT_MS);
@@ -899,55 +899,55 @@ class UiOpenMenu extends React.Component {
 
   // render
   render() {
-    const fileNameOnLoad = this.props.fileNameOnLoad;
-    this.m_fileNameOnLoad = fileNameOnLoad;
-    if (fileNameOnLoad.length > 2) {
-      return null;
-    }
+    this.m_fileNameOnLoad = this.props.fileNameOnLoad;
 
-    return <>
-      <div className={css["open-file__area"]}>
-        <div className={css["left"]}>
-          <UIButton icon="file" handler={evt => this.onButtonLocalFile(evt)}/>
-          <span className="filename">{this.props.fileNameOnLoad || 'file_name_displayed_here.dicom'}</span>
+    return (
+      <>
+        <div className={css['open-file__area']}>
+          <div className={css['left']}>
+            <UIButton icon="file" handler={(evt) => this.onButtonOpenLocalFileClick(evt)} />
+            <span className="filename">{this.props.fileNameOnLoad || 'file_name_displayed_here.dicom'}</span>
+          </div>
+          <div className={css['right']}>
+            <Tooltip content="Open file or folder">
+              <UIButton icon="folder" handler={(evt) => this.onButtonOpenLocalFileClick(evt)} />
+            </Tooltip>
+            <Tooltip content="Open external URL">
+              <UIButton icon="link" handler={this.onModalUrlShow} />
+            </Tooltip>
+            {NEED_DEMO_MENU && (
+              <Tooltip content="Open demo data">
+                <UIButton icon="grid" handler={this.onModalDemoOpenShow} />
+              </Tooltip>
+            )}
+            {/*<UIButton caption="G" handler={this.onModalGoogleShow}/>*/}
+          </div>
         </div>
-        <div className={css["right"]}>
-          <UIButton icon="folder" handler={evt => this.onButtonLocalFile(evt)}/>
-          <UIButton icon="link" handler={this.onModalUrlShow}/>
-          {(NEED_DEMO_MENU) ?
-            <UIButton icon="grid" handler={this.onModalDemoOpenShow}/>
-            :
-            null}
-          {/*<UIButton caption="G" handler={this.onModalGoogleShow}/>*/}
-        </div>
-      </div>
 
-      {this.props.isLoaded && <div className={css["save-file__area"]}>
-        <UiSaveMenu/>
-        <UiReportMenu/>
-      </div>}
+        {this.props.isLoaded && (
+          <div className={css['save-file__area']}>
+            <UiSaveMenu />
+            <UiReportMenu />
+          </div>
+        )}
 
-      {this.state.showModalUrl && <UIModalUrl
-        stateVis={this.state.showModalUrl}
-        onHide={this.onModalUrlHide}
-        loadUrl={this.onClickLoadUrl}
-      />}
+        {this.state.showModalUrl && (
+          <UIModalUrl stateVis={this.state.showModalUrl} onHide={this.onModalUrlHide} loadUrl={this.onClickLoadUrl} />
+        )}
 
-      {this.state.showModalDemo && <UiModalDemo stateVis={this.state.showModalDemo}
-                                                onHide={this.onModalDemoOpenHide}
-                                                onSelectDemo={this.onDemoSelected}
-      />}
-      {this.state.showModalWindowCW && <UiModalWindowCenterWidth
-        stateVis={this.state.showModalWindowCW}
-        volSet={this.m_volumeSet}
-        onHide={this.onModalWindowCWHide}
-      />}
+        {this.state.showModalDemo && (
+          <UiModalDemo stateVis={this.state.showModalDemo} onHide={this.onModalDemoOpenHide} onSelectDemo={this.onDemoSelected} />
+        )}
+        {this.state.showModalWindowCW && (
+          <UiModalWindowCenterWidth stateVis={this.state.showModalWindowCW} volSet={this.m_volumeSet} onHide={this.onModalWindowCWHide} />
+        )}
 
-      {/*<UiModalGoogle stateVis={this.state.showModalGoogle}*/}
-      {/*               onHide={this.onModalGoogleHide} onSelectDemo={this.onGoogleSelected}*/}
-      {/*               arrMenu={config.arrMenuGoogle}/>*/}
-    </>;
+        {/*<UiModalGoogle stateVis={this.state.showModalGoogle}*/}
+        {/*               onHide={this.onModalGoogleHide} onSelectDemo={this.onGoogleSelected}*/}
+        {/*               arrMenu={config.arrMenuGoogle}/>*/}
+      </>
+    );
   }
 }
 
-export default connect(store => store)(UiOpenMenu);
+export default connect((store) => store)(UiOpenMenu);

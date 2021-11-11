@@ -3,18 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @fileOverview Eraser
- * @author Epam
- * @version 1.0.0
- */
-// ********************************************************
-// Imports
-// ********************************************************/**
 import * as THREE from 'three';
-// ********************************************************
-// Class Eraser is used for erasing of volume data part
-// ********************************************************
 export default class Eraser {
   constructor() {
     this.bufferBF = null;
@@ -75,8 +64,7 @@ export default class Eraser {
     const GPU_CELL_SIZE = 4;
     const cellInd = (y * windowWidth + x) * GPU_CELL_SIZE;
     const THREE3 = 3;
-    const bigCellInd = (Math.floor(y / THREE3) * Math.floor(windowWidth / THREE3) +
-      Math.floor(x / THREE3)) * GPU_CELL_SIZE;
+    const bigCellInd = (Math.floor(y / THREE3) * Math.floor(windowWidth / THREE3) + Math.floor(x / THREE3)) * GPU_CELL_SIZE;
     const dist = this.bufferRenderToTexture[bigCellInd + OFF3];
     const NO_MATERIAL = 2;
     if (dist === NO_MATERIAL) {
@@ -88,9 +76,9 @@ export default class Eraser {
     const vDir = new THREE.Vector3(vX, vY, vZ);
     const length = Math.sqrt(vX * vX + vY * vY + vZ * vZ);
     const COORD_SHIFT = 0.5;
-    vX = vX / length * dist + COORD_SHIFT + this.bufferFF[cellInd + OFF0];
-    vY = vY / length * dist + COORD_SHIFT + this.bufferFF[cellInd + OFF1];
-    vZ = vZ / length * dist + COORD_SHIFT + this.bufferFF[cellInd + OFF2];
+    vX = (vX / length) * dist + COORD_SHIFT + this.bufferFF[cellInd + OFF0];
+    vY = (vY / length) * dist + COORD_SHIFT + this.bufferFF[cellInd + OFF1];
+    vZ = (vZ / length) * dist + COORD_SHIFT + this.bufferFF[cellInd + OFF2];
     this.erasePixels(vX, vY, vZ, vDir, startflag, dist);
     this.updatableTextureMask.needsUpdate = true;
   }
@@ -141,11 +129,11 @@ export default class Eraser {
           nZ += curVal * gauss * (-k / SIGMA2);
         }
       }
-    }// end gauss summation
+    } // end gauss summation
     normalGauss.set(nX / normFactor, nY / normFactor, nZ / normFactor);
     normal.copy(normalGauss);
     normal.normalize();
-    const pi = 180;// pi (just for console output)
+    const pi = 180; // pi (just for console output)
     const radiusRatio = this.xDim / this.zDim;
     const geometry = new THREE.CylinderGeometry(this.radius, this.radius, this.depth, pi, this.depth);
     const mesh = new THREE.Mesh(geometry, null);
@@ -175,8 +163,11 @@ export default class Eraser {
           RotPoint.applyAxisAngle(new THREE.Vector3(1, 0, 0), -mesh.rotation.x);
           RotPoint.applyAxisAngle(new THREE.Vector3(0, 1, 0), -mesh.rotation.y);
           RotPoint.applyAxisAngle(new THREE.Vector3(0, 0, 1), mesh.rotation.z);
-          if (Math.sqrt(RotPoint.x * RotPoint.x + RotPoint.y * RotPoint.y) > this.radius ||
-            Math.abs(RotPoint.z) > this.depth || RotPoint.z < backZ) {
+          if (
+            Math.sqrt(RotPoint.x * RotPoint.x + RotPoint.y * RotPoint.y) > this.radius ||
+            Math.abs(RotPoint.z) > this.depth ||
+            RotPoint.z < backZ
+          ) {
             continue;
           }
           for (let x = this.point.x - 1; x <= this.point.x + 1; x++) {
@@ -206,11 +197,9 @@ export default class Eraser {
           this.lastDepth.push(this.depth);
           this.lastRotationVector.push(new THREE.Vector3(-mesh.rotation.x, -mesh.rotation.y, mesh.rotation.z));
           this.lastTarget.push(new THREE.Vector3(targetX, targetY, targetZ));
-          this.lastBackDistance.push(-Math.round(Math.abs(Math.tan(vDir.normalize().angleTo(normalGauss.normalize())))
-            * (this.radius)));
-        } 
+          this.lastBackDistance.push(-Math.round(Math.abs(Math.tan(vDir.normalize().angleTo(normalGauss.normalize()))) * this.radius));
+        }
         this.updatableTextureMask.needsUpdate = true;
-        
       } else {
         this.resetflag = false;
       }
@@ -237,8 +226,7 @@ export default class Eraser {
       RotPoint.applyAxisAngle(new THREE.Vector3(1, 0, 0), lastRotation.x);
       RotPoint.applyAxisAngle(new THREE.Vector3(0, 1, 0), lastRotation.y);
       RotPoint.applyAxisAngle(new THREE.Vector3(0, 0, 1), lastRotation.z);
-      if (Math.sqrt(RotPoint.x * RotPoint.x + RotPoint.y * RotPoint.y) > rxy ||
-        RotPoint.z > lastDepth || RotPoint.z < lastback) {
+      if (Math.sqrt(RotPoint.x * RotPoint.x + RotPoint.y * RotPoint.y) > rxy || RotPoint.z > lastDepth || RotPoint.z < lastback) {
         continue;
       }
       let offDst = 0;

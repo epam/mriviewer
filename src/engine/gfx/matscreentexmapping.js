@@ -4,9 +4,9 @@
  */
 
 /**
-* Material to map texture using screen positions of the fragments
-* @module lib/scripts/gfx/matscreentexmapping
-*/
+ * Material to map texture using screen positions of the fragments
+ * @module lib/scripts/gfx/matscreentexmapping
+ */
 
 // ******************************************************************
 // imports
@@ -20,8 +20,8 @@ import * as THREE from 'three';
  */
 export default class MaterialScreenTexMap {
   /** Wireframe material constructor
-  * @constructor
-  */
+   * @constructor
+   */
   constructor() {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
@@ -32,8 +32,8 @@ export default class MaterialScreenTexMap {
   }
 
   /** material constructor
-  * @return {object} Three.js material with this shader
-  */
+   * @return {object} Three.js material with this shader
+   */
   create(texBuffer) {
     // Init uniforms
     this.m_uniforms.texBuffer.value = texBuffer;

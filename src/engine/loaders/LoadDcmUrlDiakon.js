@@ -37,38 +37,38 @@ class LoaderDcmUrlDaikon {
 
   readFromUrl(volSet, strUrl, callbackComplete, callbackProgress) {
     // check arguments
-    console.assert(volSet != null, "Null volume");
-    console.assert(volSet instanceof VolumeSet, "Should be volume set");
-    console.assert(strUrl != null, "Null string url");
-    console.assert(typeof(strUrl) === 'string', "Should be string in url");
+    console.assert(volSet != null, 'Null volume');
+    console.assert(volSet instanceof VolumeSet, 'Should be volume set');
+    console.assert(strUrl != null, 'Null string url');
+    console.assert(typeof strUrl === 'string', 'Should be string in url');
 
-    // replace file name to 'file_list.txt'
-    const ft = new FileTools();
-    const isValidUrl = ft.isValidUrl(strUrl);
-    if (!isValidUrl) {
+    if (!FileTools.isValidUrl(strUrl)) {
       console.log(`readFromUrl: not vaild URL = = ${strUrl} `);
       return false;
     }
-    this.m_folder = ft.getFolderNameFromUrl(strUrl);
+    this.m_folder = FileTools.getFolderNameFromUrl(strUrl);
     const urlFileList = this.m_folder + '/file_list.txt';
     console.log(`readFromUrl: load file = ${urlFileList} `);
 
     callbackProgress(0.0);
-    
+
     const fileLoader = new FileLoader(urlFileList);
     this.m_fileListCounter = 0;
-    fileLoader.readFile((arrBuf) => {
-      this.m_fileListCounter += 1;
-      if (this.m_fileListCounter === 1) {
-        const okRead = this.readReadyFileList(volSet, arrBuf, callbackComplete, callbackProgress);
-        return okRead;
+    fileLoader.readFile(
+      (arrBuf) => {
+        this.m_fileListCounter += 1;
+        if (this.m_fileListCounter === 1) {
+          const okRead = this.readReadyFileList(volSet, arrBuf, callbackComplete, callbackProgress);
+          return okRead;
+        }
+        return true;
+      },
+      (errMsg) => {
+        console.log(`Error read file: ${errMsg}`);
+        // callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
+        return false;
       }
-      return true;
-    }, (errMsg) => {
-      console.log(`Error read file: ${errMsg}`);
-      // callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
-      return false;
-    }); // get file from server
+    ); // get file from server
     return true;
   } // end read from url
 
@@ -103,7 +103,6 @@ class LoaderDcmUrlDaikon {
       this.m_errors[i] = -1;
       this.m_loaders[i] = null;
     }
-    
 
     const zDim = numFiles;
     console.log(`Loaded file list. ${numFiles} files will be loaded. 1st file in list is = ${arrFileNames[0]}`);
@@ -132,7 +131,7 @@ class LoaderDcmUrlDaikon {
       // eslint-disable-next-line
       y: +1.0e12,
       // eslint-disable-next-line
-      z: +1.0e12
+      z: +1.0e12,
     };
     this.m_loaderDaikon.m_loaderDicom.m_imagePosMax = {
       // eslint-disable-next-line
@@ -140,7 +139,7 @@ class LoaderDcmUrlDaikon {
       // eslint-disable-next-line
       y: -1.0e12,
       // eslint-disable-next-line
-      z: -1.0e12
+      z: -1.0e12,
     };
 
     // eslint-disable-next-line
@@ -148,7 +147,7 @@ class LoaderDcmUrlDaikon {
     // eslint-disable-next-line
     this.m_loaderDaikon.m_sliceLocMax = -1.0e12;
 
-    for (let i = 0; (i < this.m_numLoadedFiles) && (this.m_numFailsLoad < 1); i++) {
+    for (let i = 0; i < this.m_numLoadedFiles && this.m_numFailsLoad < 1; i++) {
       const urlFile = `${this.m_folder}/${arrFileNames[i]}`;
       // console.log(`trying read file ${urlFile} from web`);
 
@@ -157,7 +156,7 @@ class LoaderDcmUrlDaikon {
       loader.readFile((fileArrBu) => {
         const ratioLoaded = this.m_filesLoadedCounter / this.m_numLoadedFiles;
         const VAL_MASK = 7;
-        if ((callbackProgress !== undefined) && ((this.m_filesLoadedCounter & VAL_MASK) === 0)) {
+        if (callbackProgress !== undefined && (this.m_filesLoadedCounter & VAL_MASK) === 0) {
           //console.log(`LoadDcmUrlDaikon. Progress = ${ratioLoaded}`);
           callbackProgress(ratioLoaded);
         }
@@ -179,7 +178,7 @@ class LoaderDcmUrlDaikon {
           const imagePosBox = {
             x: this.m_loaderDaikon.m_loaderDicom.m_imagePosMax.x - this.m_loaderDaikon.m_loaderDicom.m_imagePosMin.x,
             y: this.m_loaderDaikon.m_loaderDicom.y - this.m_loaderDaikon.m_loaderDicom.m_imagePosMin.y,
-            z: this.m_loaderDaikon.m_loaderDicom.m_imagePosMax.z - this.m_loaderDaikon.m_loaderDicom.m_imagePosMin.z
+            z: this.m_loaderDaikon.m_loaderDicom.m_imagePosMax.z - this.m_loaderDaikon.m_loaderDicom.m_imagePosMin.z,
           };
           const TOO_MIN = 0.00001;
           let zBox;
@@ -199,7 +198,7 @@ class LoaderDcmUrlDaikon {
           }
           const xDim = this.m_loaderDaikon.m_loaderDicom.m_xDim;
           const yDim = this.m_loaderDaikon.m_loaderDicom.m_yDim;
-  
+
           this.m_loaderDaikon.m_loaderDicom.m_pixelSpacing.z = zBox / zDim;
           this.m_boxSize.z = zDim * this.m_loaderDaikon.m_loaderDicom.m_pixelSpacing.z;
           this.m_boxSize.x = xDim * this.m_loaderDaikon.m_loaderDicom.m_pixelSpacing.x;
@@ -214,7 +213,7 @@ class LoaderDcmUrlDaikon {
           }
           const indexSerie = 0;
           const hash = series[indexSerie].m_hash;
-          const errStatus = this.m_loaderDaikon.m_loaderDicom.createVolumeFromSlices(volSet, indexSerie,  hash);
+          const errStatus = this.m_loaderDaikon.m_loaderDicom.createVolumeFromSlices(volSet, indexSerie, hash);
           if (callbackProgress !== null) {
             callbackProgress(1.0);
           }
@@ -225,12 +224,10 @@ class LoaderDcmUrlDaikon {
           }
         } // if last file
       }); // file buffer is ready to parse
-  
     } // for i all files
 
     return LoadResult.SUCCESS;
   } // end readReadyFileList
-
 } // end class LoaderDcmUrlDaikon
 
 export default LoaderDcmUrlDaikon;

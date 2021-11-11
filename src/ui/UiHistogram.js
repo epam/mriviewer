@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // ********************************************************
 // Imports
 // ********************************************************
@@ -59,7 +58,7 @@ export default class UiHistogram extends React.Component {
   componentDidMount() {
     this.updateCanvas();
     window.addEventListener('resize', this.handleResize, false);
-    this.setSize();    
+    this.setSize();
   }
 
   componentDidUpdate() {
@@ -102,7 +101,7 @@ export default class UiHistogram extends React.Component {
     // calc max value in histogram
     let valMax = 0;
     for (i = 0; i < this.m_numColors; i++) {
-      valMax = (this.m_histogram[i] > valMax) ? this.m_histogram[i] : valMax;
+      valMax = this.m_histogram[i] > valMax ? this.m_histogram[i] : valMax;
     }
     const SOME_SMALL_ADD = 0.001;
     valMax += SOME_SMALL_ADD;
@@ -127,9 +126,9 @@ export default class UiHistogram extends React.Component {
     let found = false;
     for (i = this.m_numColors - IND_MIN; i > IND_MIN; i--) {
       if (this.m_histogram[i] > valMin) {
-        if ((this.m_histogram[i] > this.m_histogram[i - 2]) && 
-          (this.m_histogram[i] > this.m_histogram[i + 2])) {
-          found = true; break;
+        if (this.m_histogram[i] > this.m_histogram[i - 2] && this.m_histogram[i] > this.m_histogram[i + 2]) {
+          found = true;
+          break;
         } // if local maximum
       } // if mor min
     } // for (i)
@@ -138,7 +137,6 @@ export default class UiHistogram extends React.Component {
       return -1;
     }
     return i;
-
   } // end get last max index
 
   //
@@ -151,8 +149,7 @@ export default class UiHistogram extends React.Component {
     const MAX_SCAN = this.m_numColors - 4;
     let maxPeakVal = 0;
     for (i = MAX_SCAN; i > MIN_SCAN; i--) {
-      if ((hist[i] > hist[i - 1]) && (hist[i] > hist[i + 1]) && 
-        (hist[i] > hist[i - 2]) && (hist[i] > hist[i + 2])) {
+      if (hist[i] > hist[i - 1] && hist[i] > hist[i + 1] && hist[i] > hist[i - 2] && hist[i] > hist[i + 2]) {
         const peakVal = hist[i];
         if (peakVal > maxPeakVal) {
           maxPeakVal = peakVal;
@@ -160,7 +157,7 @@ export default class UiHistogram extends React.Component {
         }
         // console.log(`Local histogram peak in ${this.m_peakIndex}`);
       } // if (ha slocal peak)
-    } // for (all colors to scan) 
+    } // for (all colors to scan)
   }
 
   smoothHistogram(sigma = 1.2, needNormalize = true) {
@@ -184,13 +181,13 @@ export default class UiHistogram extends React.Component {
         const ii = i + di;
         const t = di / RAD;
         const w = Math.exp(-t * t * KOEF);
-        if ((ii >= 0) && (ii < this.m_numColors)) {
+        if (ii >= 0 && ii < this.m_numColors) {
           sum += this.m_histogram[ii] * w;
           sumW += w;
         }
       }
       sum /= sumW;
-      maxVal = (sum > maxVal) ? sum : maxVal;
+      maxVal = sum > maxVal ? sum : maxVal;
 
       newHist[i] = sum;
     } // for (i)
@@ -207,8 +204,7 @@ export default class UiHistogram extends React.Component {
   } // smoothHistogram
 
   onMouseDown(evt) {
-    if ((this.m_transfFuncCallback === undefined) ||
-      (this.m_transfFuncUpdateCallback === undefined)) {
+    if (this.m_transfFuncCallback === undefined || this.m_transfFuncUpdateCallback === undefined) {
       return;
     }
     const box = this.refs.canvasHistogram.getBoundingClientRect();
@@ -221,8 +217,7 @@ export default class UiHistogram extends React.Component {
   }
 
   onMouseUp(evt) {
-    if ((this.m_transfFuncCallback === undefined) ||
-      (this.m_transfFuncUpdateCallback === undefined)) {
+    if (this.m_transfFuncCallback === undefined || this.m_transfFuncUpdateCallback === undefined) {
       return;
     }
     const box = this.refs.canvasHistogram.getBoundingClientRect();
@@ -235,8 +230,7 @@ export default class UiHistogram extends React.Component {
   }
 
   onMouseMove(evt) {
-    if ((this.m_transfFuncCallback === undefined) ||
-      (this.m_transfFuncUpdateCallback === undefined)) {
+    if (this.m_transfFuncCallback === undefined || this.m_transfFuncUpdateCallback === undefined) {
       return;
     }
     const box = this.refs.canvasHistogram.getBoundingClientRect();
@@ -256,10 +250,10 @@ export default class UiHistogram extends React.Component {
     const w = this.refs.canvasHistogram.clientWidth;
     const h = this.refs.canvasHistogram.clientHeight;
     ctx.fillStyle = 'rgb(220, 220, 220)';
-    ctx.fillRect(0,0, w, h);
+    ctx.fillRect(0, 0, w, h);
 
     // was 300 * 250
-    // console.log(`updateCanvas. canvas dim = ${w} * ${h}`); 
+    // console.log(`updateCanvas. canvas dim = ${w} * ${h}`);
 
     const vol = this.props.volume;
     if (vol !== null) {
@@ -296,18 +290,18 @@ export default class UiHistogram extends React.Component {
     let maxHistValue = 1.0;
     if (this.m_peakIndex > 0) {
       maxHistValue = this.m_histogram[this.m_peakIndex] * 2;
-      maxHistValue = (maxHistValue > 1.0) ? 1.0 : maxHistValue;
+      maxHistValue = maxHistValue > 1.0 ? 1.0 : maxHistValue;
     }
 
     // draw marks horizontal
     let i;
     const NUM_X_MARKS = 4;
     for (i = 0; i <= NUM_X_MARKS; i++) {
-      const x = xMin + Math.floor(wRect * i / NUM_X_MARKS);
+      const x = xMin + Math.floor((wRect * i) / NUM_X_MARKS);
       ctx.moveTo(x, yMax);
       ctx.lineTo(x, yMax + 6);
       ctx.stroke();
-      const valMark = Math.floor(0 + this.m_numColors * i / NUM_X_MARKS);
+      const valMark = Math.floor(0 + (this.m_numColors * i) / NUM_X_MARKS);
       if (i === 0) {
         ctx.textAlign = 'left';
       } else if (i === NUM_X_MARKS) {
@@ -327,11 +321,11 @@ export default class UiHistogram extends React.Component {
         if (i === NUM_Y_MARKS) {
           ctx.textBaseline = 'top';
         }
-        const y = yMax - Math.floor(hRect * i / NUM_Y_MARKS);
+        const y = yMax - Math.floor((hRect * i) / NUM_Y_MARKS);
         ctx.moveTo(xMin, y);
         ctx.lineTo(xMin - 4, y);
         ctx.stroke();
-        const valMark = (0 + maxHistValue * i / NUM_Y_MARKS);
+        const valMark = 0 + (maxHistValue * i) / NUM_Y_MARKS;
         ctx.fillText(valMark.toFixed(2), xMin + 6, y);
       }
     }
@@ -346,9 +340,9 @@ export default class UiHistogram extends React.Component {
       let i;
       let x, y;
       for (i = 0; i < this.m_numColors; i++) {
-        x = xMin + Math.floor(wRect * i / this.m_numColors);
+        x = xMin + Math.floor((wRect * i) / this.m_numColors);
         let v = this.m_histogram[i] / maxHistValue;
-        v = (v >= 1.0) ? 1.0 : v;
+        v = v >= 1.0 ? 1.0 : v;
         y = yMax - Math.floor(hRect * v);
         ctx.lineTo(x, y);
       } // for (i) all colors
@@ -361,9 +355,9 @@ export default class UiHistogram extends React.Component {
     if (this.m_peakIndex > 0) {
       ctx.lineWidth = 1;
       ctx.strokeStyle = '#eeeeee';
-      const x = xMin + Math.floor(wRect * this.m_peakIndex / this.m_numColors);
+      const x = xMin + Math.floor((wRect * this.m_peakIndex) / this.m_numColors);
       let v = this.m_histogram[this.m_peakIndex] / maxHistValue;
-      v = (v >= 1.0) ? 1.0 : v;
+      v = v >= 1.0 ? 1.0 : v;
       let y = yMax - Math.floor(hRect * v);
       ctx.beginPath();
       ctx.setLineDash([5, 15]);
@@ -374,8 +368,7 @@ export default class UiHistogram extends React.Component {
       ctx.setLineDash([]);
     }
     // render points and lines for modified transfer fucntion
-    if ((this.m_transfFuncCallback !== undefined) &&
-      (this.m_transfFuncUpdateCallback !== undefined)) {
+    if (this.m_transfFuncCallback !== undefined && this.m_transfFuncUpdateCallback !== undefined) {
       this.m_transfFunc.render(ctx, xMin, yMin, wRect, hRect);
     }
   } // end update canvas
@@ -400,15 +393,27 @@ export default class UiHistogram extends React.Component {
     }
     this.m_transfFuncCallback = this.props.transfFunc;
     this.m_transfFuncUpdateCallback = this.props.transfFuncUpdate;
-  
+
     const cw = this.state.width;
     const ch = this.state.height;
 
-    const jsxHist = 
-      <div ref={ (mount) => {this.m_canvasOwner = mount} } style={{ cursor: 'initial' }}>
-        <canvas ref="canvasHistogram" width={cw} height={ch} 
-          onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onMouseMove={this.onMouseMove} />
-      </div>;
+    const jsxHist = (
+      <div
+        ref={(mount) => {
+          this.m_canvasOwner = mount;
+        }}
+        style={{ cursor: 'initial' }}
+      >
+        <canvas
+          ref="canvasHistogram"
+          width={cw}
+          height={ch}
+          onMouseDown={this.onMouseDown}
+          onMouseUp={this.onMouseUp}
+          onMouseMove={this.onMouseMove}
+        />
+      </div>
+    );
     return jsxHist;
   }
 }

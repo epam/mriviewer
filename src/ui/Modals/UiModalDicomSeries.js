@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Modal, ModalBody, ModalHeader } from "./ModalBase";
+import { Modal, ModalBody, ModalHeader } from './ModalBase';
 
 class UiModalDicomSeries extends React.Component {
   constructor(props) {
@@ -23,18 +23,18 @@ class UiModalDicomSeries extends React.Component {
     this.m_onSelect(rowIndex);
   }
 
-  // special code to fix bootstrap table 
+  // special code to fix bootstrap table
   // clippimng problem
-  componentWillUpdate(){
-    // document.querySelector('.react-bs-table-container').style.height = "auto";
-    this.m_strStyle = 'auto';
-  }
+  // componentDidUpdate() {
+  //   // document.querySelector('.react-bs-table-container').style.height = "auto";
+  //   this.m_strStyle = 'auto';
+  // }
 
-  componentDidUpdate(){
+  componentDidUpdate() {
     // document.querySelector('.react-bs-table-container').style.height = "100%";
     this.m_strStyle = '100%';
   }
-  
+
   render() {
     const isVisible = this.props.stateVis;
     const store = this.props;
@@ -77,15 +77,23 @@ class UiModalDicomSeries extends React.Component {
     //   },
     // ];
 
-    return <Modal isOpen={isVisible} close={this.m_onHide} size="xl" >
-      <ModalHeader title="Select Dicom series" />
-      <ModalBody>
-        {/* todo: output columns*/}
-        <ul>
-          { arrSeries.map((row) => <li>{row.map( (cell) => <span>{ cell }</span> )}</li>)}
-        </ul>
-      </ModalBody>
-    </Modal>;
-  } // end render 
+    return (
+      <Modal isOpen={isVisible} close={this.m_onHide} size="xl">
+        <ModalHeader title="Select Dicom series" />
+        <ModalBody>
+          {/* todo: output columns*/}
+          <ul>
+            {arrSeries.map((row) => (
+              <li>
+                {row.map((cell) => (
+                  <span>{cell}</span>
+                ))}
+              </li>
+            ))}
+          </ul>
+        </ModalBody>
+      </Modal>
+    );
+  } // end render
 } // end class
-export default connect(store => store)(UiModalDicomSeries);
+export default connect((store) => store)(UiModalDicomSeries);

@@ -9,7 +9,6 @@
  * @version 1.0.0
  */
 
-
 // **********************************************
 // Imports
 // **********************************************
@@ -38,11 +37,11 @@ class ToolPick {
   }
 
   /**
-  * @param {number} xScr - relative x screen position. In [0..1]
-  * @param {number} yScr - relative y screen position. In [0..1]
-  * @param {object} store - global parameters store
-  * @return object with props x,y,z - texture coordinates
-  */
+   * @param {number} xScr - relative x screen position. In [0..1]
+   * @param {number} yScr - relative y screen position. In [0..1]
+   * @param {object} store - global parameters store
+   * @return object with props x,y,z - texture coordinates
+   */
   screenToTexture(xScr, yScr, store) {
     const vTex = {
       x: 0.0,
@@ -50,7 +49,7 @@ class ToolPick {
       z: 0.0,
     };
     const mode2d = store.mode2d;
-    const sliderPosition = store.slider2d;
+    const sliderPosition = store.sliceRatio;
 
     const volSet = store.volumeSet;
     const volIndex = store.volumeIndex;
@@ -84,14 +83,14 @@ class ToolPick {
   }
 
   onMouseDown(xScr, yScr, store) {
-    if ((this.m_wScreen === 0) || (this.m_hScreen === 0)) {
+    if (this.m_wScreen === 0 || this.m_hScreen === 0) {
       console.log('ToolPick. onMouseDown. Bad screen size');
       return;
     }
 
     const xRatioImage = xScr / this.m_wScreen;
     const yRatioImage = yScr / this.m_hScreen;
-    if ((xRatioImage > 1.0) || (yRatioImage > 1.0)) {
+    if (xRatioImage > 1.0 || yRatioImage > 1.0) {
       // out if rendered image
       return;
     }
@@ -124,7 +123,7 @@ class ToolPick {
     const ONE = 1;
     const FOUR = 4;
     const bpp = vol.m_bytesPerVoxel;
-    let off = vTex.x + (vTex.y * xDim) + (vTex.z * xDim * yDim);
+    let off = vTex.x + vTex.y * xDim + vTex.z * xDim * yDim;
     let val = 0;
     if (bpp === ONE) {
       val = vol.m_dataArray[off];
@@ -132,15 +131,13 @@ class ToolPick {
       off = off * FOUR;
       val = vol.m_dataArray[off];
     }
-    
+
     this.m_xMessage = xScr;
     this.m_yMessage = yScr;
-    this.m_strMessage = 'x,y,z = ' + (vTex.x).toString() + ', ' + (vTex.y).toString() + ', ' + (vTex.z).toString() + 
-      '. val = ' + val.toString();
+    this.m_strMessage = 'x,y,z = ' + vTex.x.toString() + ', ' + vTex.y.toString() + ', ' + vTex.z.toString() + '. val = ' + val.toString();
     // console.log(`ToolPick. onMouseDown. ${this.m_strMessage}`);
     this.m_timeStart = Date.now();
     setTimeout(this.onTimerEnd, 1500);
-
   } // end onMouseDown
 
   onTimerEnd() {

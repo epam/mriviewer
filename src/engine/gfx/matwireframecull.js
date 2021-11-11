@@ -4,9 +4,9 @@
  */
 
 /**
-* Material to enable back/front face culling with wireframe geom
-* @module lib/scripts/gfx/matwireframecull
-*/
+ * Material to enable back/front face culling with wireframe geom
+ * @module lib/scripts/gfx/matwireframecull
+ */
 
 // ******************************************************************
 // imports
@@ -17,10 +17,9 @@ import * as THREE from 'three';
 
 /** Class @class MaterialWC back/front face culling with wireframe rendering */
 export default class MaterialWC {
-
   /** Wireframe material constructor
-  * @constructor
-  */
+   * @constructor
+   */
   constructor() {
     this.m_strShaderVertex = '';
     this.m_strShaderFragment = '';
@@ -34,8 +33,8 @@ export default class MaterialWC {
   }
 
   /** Wireframe material constructor
-  * @return {object} Three.js material with this shader
-  */
+   * @return {object} Three.js material with this shader
+   */
   create(textureBF, textureFF) {
     // Init uniforms
     this.m_uniforms.texBF.value = textureBF;

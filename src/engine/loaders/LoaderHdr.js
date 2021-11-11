@@ -19,7 +19,6 @@ import LoadFilePromise from './LoadPromise';
 import Volume from '../Volume';
 import VolumeSet from '../VolumeSet';
 
-
 // ********************************************************
 // Const
 // ********************************************************
@@ -43,41 +42,41 @@ class LoaderHdr {
   }
 
   /**
-  * Read 32 bit integer from input buffer
-  * @param {object} buf - source buffer
-  * @param {number} off - offset in buffer
-  * @return 32 bit integer number
-  */
+   * Read 32 bit integer from input buffer
+   * @param {object} buf - source buffer
+   * @param {number} off - offset in buffer
+   * @return 32 bit integer number
+   */
   static readIntFromBuffer(buf, off) {
-    const res = ((buf[off + 0]) |
+    const res =
+      buf[off + 0] |
       // eslint-disable-next-line
       (buf[off + 1] << 8) |
       // eslint-disable-next-line
       (buf[off + 2] << 16) |
       // eslint-disable-next-line
-      (buf[off + 3] << 24)
-    );
+      (buf[off + 3] << 24);
     return res;
   }
 
   /**
-  * Read 16 bit short integer from input buffer
-  * @param {object} buf - source buffer
-  * @param {number} off - offset in buffer
-  * @return 16 bit short integer number
-  */
+   * Read 16 bit short integer from input buffer
+   * @param {object} buf - source buffer
+   * @param {number} off - offset in buffer
+   * @return 16 bit short integer number
+   */
   static readShortFromBuffer(buf, off) {
     // eslint-disable-next-line
-    const res = ((buf[off + 0]) | (buf[off + 1] << 8));
+    const res = buf[off + 0] | (buf[off + 1] << 8);
     return res;
   }
 
   /**
-  * Read 32 bit float from input buffer
-  * @param {object} buf - source buffer
-  * @param {number} off - offset in buffer
-  * @return 32 bit float number
-  */
+   * Read 32 bit float from input buffer
+   * @param {object} buf - source buffer
+   * @param {number} off - offset in buffer
+   * @return 32 bit float number
+   */
   static readFloatFromBuffer(buf, off) {
     const BYTES_IN_FLOAT = 4;
     const arBuf = new ArrayBuffer(BYTES_IN_FLOAT);
@@ -96,12 +95,12 @@ class LoaderHdr {
   }
 
   /**
-  * Convert DataView object into string
-  * @param {object} buf - buffer
-  * @param {number} off - current offset in buffer, when string started
-  * @param {number} lengthBuf - number of bytes to convert to string
-  * @return {string} string presentation of DataView
-  */
+   * Convert DataView object into string
+   * @param {object} buf - buffer
+   * @param {number} off - current offset in buffer, when string started
+   * @param {number} lengthBuf - number of bytes to convert to string
+   * @return {string} string presentation of DataView
+   */
   static getStringAt(buf, off, lengthBuf) {
     let str = '';
     for (let i = 0; i < lengthBuf; i++) {
@@ -119,10 +118,10 @@ class LoaderHdr {
   //
   readFromBufferHeader(volumeDst, arrBuf, callbackProgress, callbackComplete) {
     // check arguments
-    console.assert(volumeDst != null, "Null volume");
-    console.assert(volumeDst instanceof Volume, "Should be volume");
-    console.assert(arrBuf != null, "Null array");
-    console.assert(arrBuf.constructor.name === "ArrayBuffer", "Should be ArrayBuf in arrBuf");
+    console.assert(volumeDst != null, 'Null volume');
+    console.assert(volumeDst instanceof Volume, 'Should be volume');
+    console.assert(arrBuf != null, 'Null array');
+    console.assert(arrBuf.constructor.name === 'ArrayBuffer', 'Should be ArrayBuf in arrBuf');
 
     const bufBytes = new Uint8Array(arrBuf);
     const bufLen = bufBytes.length;
@@ -198,7 +197,7 @@ class LoaderHdr {
     const iRegular = LoaderHdr.readByteFromBuffer(bufBytes, bufOff);
     bufOff += SIZE_BYTE;
 
-    const  MAGIC_REGULAR = 114;
+    const MAGIC_REGULAR = 114;
     if (iRegular !== MAGIC_REGULAR) {
       console.log(`Hdr wrong regular in header. Should be ${MAGIC_REGULAR}, but found: ${iRegular}`);
       if (callbackComplete) {
@@ -308,24 +307,24 @@ class LoaderHdr {
   //
   readFromBufferImage(volumeDst, arrBuf, callbackProgress, callbackComplete) {
     // check arguments
-    console.assert(volumeDst != null, "Null volume");
-    console.assert(volumeDst instanceof Volume, "Should be volume");
-    console.assert(arrBuf != null, "Null array");
-    console.assert(arrBuf.constructor.name === "ArrayBuffer", "Should be ArrayBuf in arrBuf");
+    console.assert(volumeDst != null, 'Null volume');
+    console.assert(volumeDst instanceof Volume, 'Should be volume');
+    console.assert(arrBuf != null, 'Null array');
+    console.assert(arrBuf.constructor.name === 'ArrayBuffer', 'Should be ArrayBuf in arrBuf');
 
     const bufBytes = new Uint8Array(arrBuf);
     const bufLen = bufBytes.length;
     const MIN_BUF_SIZE = 8;
-    const MAX_BUF_SIZE = (1024 * 1024 * 230);
+    const MAX_BUF_SIZE = 1024 * 1024 * 230;
     if (bufLen < MIN_BUF_SIZE) {
       if (callbackComplete) {
-        callbackComplete(LoadResult.ERROR_TOO_SMALL_DATA_SIZE , null, 0, null);
+        callbackComplete(LoadResult.ERROR_TOO_SMALL_DATA_SIZE, null, 0, null);
       }
       return false;
     }
     if (bufLen >= MAX_BUF_SIZE) {
       if (callbackComplete) {
-        callbackComplete(LoadResult.ERROR_TOO_LARGE_DATA_SIZE , null, 0, null);
+        callbackComplete(LoadResult.ERROR_TOO_LARGE_DATA_SIZE, null, 0, null);
       }
       return false;
     }
@@ -340,9 +339,9 @@ class LoaderHdr {
   //
   createVolumeFromHeaderAndImage(volDst) {
     // check arguments
-    console.assert(volDst != null, "Null volume");
-    console.assert(volDst instanceof Volume, "Should be volume");
-  
+    console.assert(volDst != null, 'Null volume');
+    console.assert(volDst instanceof Volume, 'Should be volume');
+
     const NUM_BYTES_CHAR = 1;
     const NUM_BYTES_WORD = 2;
 
@@ -367,7 +366,7 @@ class LoaderHdr {
       let i;
       let valMax = 0;
       for (i = 0; i < numPixels; i++) {
-        valMax = (dataArray16[i] > valMax) ? dataArray16[i] : valMax;
+        valMax = dataArray16[i] > valMax ? dataArray16[i] : valMax;
       }
       // console.log(`IMG: maximum input color is ${valMax}`);
       valMax++;
@@ -375,7 +374,7 @@ class LoaderHdr {
       // scale down to 256 colors
       const MAX_COLOR_BYTE = 255;
       for (i = 0; i < numPixels; i++) {
-        volDst.m_dataArray[i] = Math.floor(MAX_COLOR_BYTE * dataArray16[i] / valMax);
+        volDst.m_dataArray[i] = Math.floor((MAX_COLOR_BYTE * dataArray16[i]) / valMax);
       }
     } else if (volDst.m_dataType === HDR_DT_UNSIGNED_CHAR) {
       // Read color indices info: usually this is 1 bpp data
@@ -395,10 +394,10 @@ class LoaderHdr {
   //
   createRoiVolumeFromHeaderAndImage(volDst, volRoi) {
     // check arguments
-    console.assert(volDst != null, "Null volume");
-    console.assert(volDst instanceof Volume, "Should be volume");
-    console.assert(volRoi != null, "Null volume");
-    console.assert(volRoi instanceof Volume, "Should be volume");
+    console.assert(volDst != null, 'Null volume');
+    console.assert(volDst instanceof Volume, 'Should be volume');
+    console.assert(volRoi != null, 'Null volume');
+    console.assert(volRoi instanceof Volume, 'Should be volume');
 
     // both volumes are in 1 byte format
     const ONE = 1;
@@ -411,7 +410,7 @@ class LoaderHdr {
       return false;
     }
     // compare size
-    if ((volDst.m_xDim !== volRoi.m_xDim) || (volDst.m_yDim !== volRoi.m_yDim) || (volDst.m_zDim !== volRoi.m_zDim)) {
+    if (volDst.m_xDim !== volRoi.m_xDim || volDst.m_yDim !== volRoi.m_yDim || volDst.m_zDim !== volRoi.m_zDim) {
       console.log('createRoiVolumeFromHeaderAndImage: different volumes sizes');
       return false;
     }
@@ -422,8 +421,10 @@ class LoaderHdr {
     const arrBuf = volRoi.m_arrBuf;
     const dataArrayRoi8 = new Uint8Array(arrBuf);
 
-    const OFF0 = 0; const OFF1 = 1;
-    const OFF2 = 2; const OFF3 = 3;
+    const OFF0 = 0;
+    const OFF1 = 1;
+    const OFF2 = 2;
+    const OFF3 = 3;
     let j = 0;
     for (let i = 0; i < numPixels; i++, j += BYTES_IN_RGBA) {
       dataNew[j + OFF0] = volDst.m_dataArray[i];
@@ -440,7 +441,7 @@ class LoaderHdr {
 
   /**
    * Read hdr (h + img) files from URL
-   * 
+   *
    * @param {object} volSet - volume set
    * @param {string} strUrl - url string
    * @param {func} callbackProgress - callback during read progress
@@ -450,14 +451,12 @@ class LoaderHdr {
   readFromUrl(volSet, strUrl, callbackProgress, callbackComplete) {
     console.log(`readFromUrl. going to read from ${strUrl} ...`);
 
-    const ft = new FileTools();
-    const isValidUrl = ft.isValidUrl(strUrl);
-    if (!isValidUrl) {
+    if (!FileTools.isValidUrl(strUrl)) {
       console.log(`readFromUrl: not vaild URL = = ${strUrl} `);
       return false;
     }
-    this.m_folder = ft.getFolderNameFromUrl(strUrl);
-    const fileName = ft.getFileNameFromUrl(strUrl);
+    this.m_folder = FileTools.getFolderNameFromUrl(strUrl);
+    const fileName = FileTools.getFileNameFromUrl(strUrl);
     // console.log(`readFromUrl: folder =  ${this.m_folder} filename = ${fileName}`);
 
     const regExp = /(\w+)_intn.(h|hdr)/;
@@ -474,7 +473,6 @@ class LoaderHdr {
     const fileNameMaskHeader = this.m_folder + '/' + namePrefix + '_mask.hdr';
     const fileNameMaskImage = this.m_folder + '/' + namePrefix + '_mask.img';
 
-
     const arrUrls = [];
     arrUrls.push(fileNameIntensityHeader);
     arrUrls.push(fileNameIntensityImage);
@@ -486,18 +484,16 @@ class LoaderHdr {
   } // end of readFromUrl
 
   /**
-   * 
+   *
    * @param {object} arrUrls  - array of strings urls
    * @param {*} volSet  - dest volume set
    * @param {*} callbackProgress - callback during read
    * @param {*} callbackComplete - callback after end fo read
    */
   readFromUrls(arrUrls, volSet, callbackProgress, callbackComplete) {
-
     // check arguments
-    console.assert(volSet != null, "Null volume set");
-    console.assert(volSet instanceof VolumeSet, "Should be volume set");
-    
+    console.assert(volSet != null, 'Null volume set');
+    console.assert(volSet instanceof VolumeSet, 'Should be volume set');
 
     const numUrls = arrUrls.length;
     const NUM_URLS_IN_SET = 2;
@@ -516,25 +512,27 @@ class LoaderHdr {
       // this.m_volIntensity = new HdrVolume(this.m_needScaleDownTexture);
 
       const volDst = volSet.getVolume(0);
-      loaderHdr.readFromUrl(urlHdr).then((arrBufHdr) => {
-        this.readFromBufferHeader(volDst, arrBufHdr, callbackComplete, callbackProgress);
-        console.log(`Load success HDR file: ${urlHdr}`);
-        loaderImg.readFromUrl(urlImg).then((arrBufImg) => {
-          this.readFromBufferImage(volDst, arrBufImg, callbackComplete, callbackProgress);
-          console.log(`Load success IMG file: ${urlImg}`);
+      loaderHdr.readFromUrl(urlHdr).then(
+        (arrBufHdr) => {
+          this.readFromBufferHeader(volDst, arrBufHdr, callbackComplete, callbackProgress);
+          console.log(`Load success HDR file: ${urlHdr}`);
+          loaderImg.readFromUrl(urlImg).then((arrBufImg) => {
+            this.readFromBufferImage(volDst, arrBufImg, callbackComplete, callbackProgress);
+            console.log(`Load success IMG file: ${urlImg}`);
 
-          // complete 2 images
-          this.createVolumeFromHeaderAndImage(volDst);
+            // complete 2 images
+            this.createVolumeFromHeaderAndImage(volDst);
 
-          // invoke callback for good loading end
-          callbackComplete(LoadResult.SUCCESS);
-
-        });
-      }, (error) => {
-        console.log('HDR File read error', error);
-        callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
-        return false;
-      });
+            // invoke callback for good loading end
+            callbackComplete(LoadResult.SUCCESS);
+          });
+        },
+        (error) => {
+          console.log('HDR File read error', error);
+          callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
+          return false;
+        }
+      );
     } else if (numUrls === NUM_FILES_VOL_INT_ROI) {
       // read 4 files
       const urlHdrInt = arrUrls[0];
@@ -553,49 +551,48 @@ class LoaderHdr {
       const volRoi = new Volume();
       const volDst = volSet.getVolume(0);
 
-      loaderHdrInt.readFromUrl(urlHdrInt).then((arrBufHdr) => {
-        // this.m_volIntensity.readBufferHead(arrBufHdr, callbackComplete, callbackProgress);
-        // this.readBufferHead(arrBufHdr, callbackComplete, callbackProgress);
-        this.readFromBufferHeader(volDst, arrBufHdr, callbackComplete, callbackProgress);
+      loaderHdrInt.readFromUrl(urlHdrInt).then(
+        (arrBufHdr) => {
+          // this.m_volIntensity.readBufferHead(arrBufHdr, callbackComplete, callbackProgress);
+          // this.readBufferHead(arrBufHdr, callbackComplete, callbackProgress);
+          this.readFromBufferHeader(volDst, arrBufHdr, callbackComplete, callbackProgress);
 
-        console.log(`Load success HDR file: ${urlHdrInt}`);
-        loaderImgInt.readFromUrl(urlImgInt).then((arrBufImg) => {
-          // this.m_volIntensity.readBufferImg(arrBufImg, callbackComplete, callbackProgress);
-          // this.readBufferImg(arrBufImg, callbackComplete, callbackProgress);
-          this.readFromBufferImage(volDst, arrBufImg, callbackComplete, callbackProgress);
-          console.log(`Load success IMG file: ${urlImgInt}`);
+          console.log(`Load success HDR file: ${urlHdrInt}`);
+          loaderImgInt.readFromUrl(urlImgInt).then((arrBufImg) => {
+            // this.m_volIntensity.readBufferImg(arrBufImg, callbackComplete, callbackProgress);
+            // this.readBufferImg(arrBufImg, callbackComplete, callbackProgress);
+            this.readFromBufferImage(volDst, arrBufImg, callbackComplete, callbackProgress);
+            console.log(`Load success IMG file: ${urlImgInt}`);
 
-          loaderHdrRoi.readFromUrl(urlHdrRoi).then((arrBufferHdr) => {
-            //this.m_volRoi.readBufferHead(arrBufferHdr, callbackComplete, callbackProgress);
-            this.readFromBufferHeader(volRoi, arrBufferHdr, callbackComplete, callbackProgress);
+            loaderHdrRoi.readFromUrl(urlHdrRoi).then((arrBufferHdr) => {
+              //this.m_volRoi.readBufferHead(arrBufferHdr, callbackComplete, callbackProgress);
+              this.readFromBufferHeader(volRoi, arrBufferHdr, callbackComplete, callbackProgress);
 
-            loaderImgRoi.readFromUrl(urlImgRoi).then((arrBufferImg) => {
+              loaderImgRoi.readFromUrl(urlImgRoi).then((arrBufferImg) => {
+                // this.m_volRoi.readBufferImg(arrBufferImg, callbackComplete, callbackProgress);
+                this.readFromBufferImage(volRoi, arrBufferImg, callbackComplete, callbackProgress);
 
-              // this.m_volRoi.readBufferImg(arrBufferImg, callbackComplete, callbackProgress);
-              this.readFromBufferImage(volRoi, arrBufferImg, callbackComplete, callbackProgress);
+                // transform intensity data from 16 bpp -> 8 bpp
+                this.createVolumeFromHeaderAndImage(volDst);
 
-              // transform intensity data from 16 bpp -> 8 bpp
-              this.createVolumeFromHeaderAndImage(volDst);
+                // mix intensity + roi
+                this.createRoiVolumeFromHeaderAndImage(volDst, volRoi);
 
-              // mix intensity + roi
-              this.createRoiVolumeFromHeaderAndImage(volDst, volRoi);
-
-              // invoke callback for good loading end
-              callbackComplete(LoadResult.SUCCESS);
-
-            }); // loaderImgRoi
-          }); // loaderHdrRoi
-
-        }); // loaderImgInt
-      }, (error) => {
-        console.log('HDR File read error', error);
-        return false;
-      }); // loaderHdrInt
-
+                // invoke callback for good loading end
+                callbackComplete(LoadResult.SUCCESS);
+              }); // loaderImgRoi
+            }); // loaderHdrRoi
+          }); // loaderImgInt
+        },
+        (error) => {
+          console.log('HDR File read error', error);
+          return false;
+        }
+      ); // loaderHdrInt
     } else {
       console.log(`Error read hdr files. Should be ${NUM_URLS_IN_SET} files`);
       return false;
-    }// if number of files equal to 2
+    } // if number of files equal to 2
     return true;
   } // end of readFromUrls
 } // end class LoaderHdr
