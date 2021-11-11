@@ -405,7 +405,7 @@ export default class UiHistogram extends React.Component {
     const ch = this.state.height;
 
     const jsxHist = 
-      <div ref={ (mount) => {this.m_canvasOwner = mount} }>
+      <div ref={ (mount) => {this.m_canvasOwner = mount} } style={{ cursor: 'initial' }}>
         <canvas ref="canvasHistogram" width={cw} height={ch} 
           onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onMouseMove={this.onMouseMove} />
       </div>;
