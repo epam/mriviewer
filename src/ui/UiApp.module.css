@@ -4,65 +4,64 @@
  */
 
 .header {
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    align-items: center;
-    position: absolute;
-    top: 25px;
-    left: 25px;
-    z-index: 1000;
-    margin-bottom: 25px;
-    width: calc(100% - 50px);
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: center;
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  z-index: 1000;
+  margin-bottom: 25px;
+  width: calc(100% - 50px);
 }
 
 .top {
-    display: flex;
-    flex-direction: row;
-    /*padding-left: 25px;*/
-    position: absolute;
-    z-index: 1000;
-    top: 100px;
-    left: 100px;
+  display: flex;
+  flex-direction: row;
+  /*padding-left: 25px;*/
+  position: absolute;
+  z-index: 1000;
+  top: 100px;
+  left: 100px;
 }
 
 .left {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    left: 25px;
-    top: 100px;
-    z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 25px;
+  top: 100px;
+  z-index: 1000;
 }
 
 .center {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 10;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
 }
 
 .settings {
-    display: flex;
-    flex-direction: column;
-    z-index: 1002;
-    position: absolute;
-    right: 25px;
-    top: 100px;
-    background-color: var(--dark-gray);
-    padding: 25px;
-    width: 400px;
-    opacity: var(--opacity);
-    cursor: all-scroll;
-    transition: opacity 300ms ease-in-out;
+  display: flex;
+  flex-direction: column;
+  z-index: 1002;
+  position: absolute;
+  right: 25px;
+  top: 100px;
+  background-color: var(--dark-gray);
+  padding: 25px;
+  width: 400px;
+  opacity: var(--opacity);
+  cursor: all-scroll;
+  transition: opacity 300ms ease-in-out;
 }
 
 .bottleft {
-    position: absolute;
-    left: 25px;
-    bottom: 25px;
-    z-index: 1000;
+  position: absolute;
+  left: 25px;
+  bottom: 25px;
+  z-index: 1000;
 }
-

@@ -5,15 +5,15 @@
 
 import React from 'react';
 import UiApp from './ui/UiApp';
-import {HTML5Backend} from "react-dnd-html5-backend";
-import {DndProvider} from "react-dnd";
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from 'react-dnd';
 
 const App = () => {
-    return (
-        <DndProvider backend={HTML5Backend}>
-            <UiApp />
-        </DndProvider>
-    )
-}
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <UiApp />
+    </DndProvider>
+  );
+};
 
 export default App;
