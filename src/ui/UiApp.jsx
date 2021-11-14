@@ -119,14 +119,14 @@ const UiApp = (props) => {
         <>
           <div className={css.left}>
             <UiViewMode />
-            {props.modeView === ModeView.VIEW_2D && <UiCtrl2d />}
+            {props.viewMode === ModeView.VIEW_2D && <UiCtrl2d />}
           </div>
           <div className={css.top}>
-            {props.modeView === ModeView.VIEW_2D && <ExploreTools />}
-            {props.modeView === ModeView.VIEW_2D && <UiFilterMenu />}
+            {props.viewMode === ModeView.VIEW_2D && <ExploreTools />}
+            {props.viewMode === ModeView.VIEW_2D && <UiFilterMenu />}
           </div>
-          <div className={css.center}>{props.modeView === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
-          <div className={css.bottleft}>{props.modeView === ModeView.VIEW_2D && <ZoomTools />}</div>
+          <div className={css.center}>{props.viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
+          <div className={css.bottleft}>{props.viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
           <UiMainDNDContainer />
         </>
       )}
