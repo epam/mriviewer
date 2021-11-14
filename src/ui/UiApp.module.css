@@ -3,12 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+.app {
+  position: relative;
+}
+
 .header {
   display: flex;
   flex-wrap: nowrap;
   flex-direction: row;
   align-items: center;
-  position: absolute;
+  position: relative;
   top: 25px;
   left: 25px;
   z-index: 1000;
@@ -24,6 +28,12 @@
   z-index: 1000;
   top: 100px;
   left: 100px;
+}
+
+.fullscreen .left,
+.fullscreen .top,
+.fullscreen .settings {
+  top: 25px;
 }
 
 .left {
@@ -56,6 +66,7 @@
   width: 400px;
   opacity: var(--opacity);
   cursor: all-scroll;
+  border-radius: 10px;
   transition: opacity 300ms ease-in-out;
 }
 
