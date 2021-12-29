@@ -135,17 +135,20 @@ class UiViewMode extends React.Component {
       }
     } // if more 0 volumes
     const test = true;
+
     return (
-      <Container direction="vertical">
-        <Tooltip content="Show volume in 2d mode per slice on selected orientation" placement="left">
-          <UIButton handler={this.onMode2d} active={str2d} icon="2D" />
-        </Tooltip>
-        <Tooltip content="Show volume in 3d mode with fast rendering" placement="left">
-          <UIButton handler={this.onMode3dLight} active={str3dLight} icon="lightning" />
-        </Tooltip>
-        {needShow3d ? jsx3d : ''}
+      <>
+        <Container direction="vertical">
+          <Tooltip content="Show volume in 2d mode per slice on selected orientation" placement="left">
+            <UIButton handler={this.onMode2d} active={str2d} icon="2D" />
+          </Tooltip>
+          <Tooltip content="Show volume in 3d mode with fast rendering" placement="left">
+            <UIButton handler={this.onMode3dLight} active={str3dLight} icon="lightning" />
+          </Tooltip>
+          {needShow3d ? jsx3d : ''}
+        </Container>
         {viewMode === ViewMode.VIEW_3D_LIGHT && test ? jsxViewTool : ''}
-      </Container>
+      </>
     );
   }
 }
