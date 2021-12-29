@@ -6,6 +6,7 @@
 .container {
   display: inline-flex;
   flex-wrap: wrap;
+  width: fit-content;
   border-radius: 10px;
   overflow: hidden;
   opacity: var(--opacity);
@@ -23,8 +24,5 @@
 .horizontal {
   flex-direction: row;
   height: 50px;
-}
-
-.horizontal {
-  margin-right: 25px;
+  margin: 0 25px 10px 0;
 }

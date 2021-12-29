@@ -12,6 +12,7 @@ import UiTFroi from './UiTFroi';
 import UiRoiSelect from './UiRoiSelect';
 import { UIButton } from './Button/Button';
 import { Container } from './Toolbars/Container';
+import { Tooltip } from './Tooltip/Tooltip';
 import css from './Form/Slider.module.css';
 
 class UiCtrl3dLight extends React.Component {
@@ -99,10 +100,18 @@ class UiCtrl3dLight extends React.Component {
       <>
         <p className={css.caption}>3D mode selection</p>
         <Container direction="horizontal">
-          <UIButton active={strA} handler={this.onModeA} caption="Show just barrier value surface, 1st ray intersection" icon="I" />
-          <UIButton active={strB} handler={this.onModeB} caption="Show complete 3D volumetric rendering" icon="V" />
-          <UIButton active={strC} handler={this.onModeC} caption="Show maximum projection rendering" icon="M" />
-          <UIButton active={strD} handler={this.onModeD} caption="Special volume eraser tool" icon="E" />
+          <Tooltip content="Show just barrier value surface, 1st ray intersection">
+            <UIButton active={strA} handler={this.onModeA} icon="I" />
+          </Tooltip>
+          <Tooltip content="Show complete 3D volumetric rendering">
+            <UIButton active={strB} handler={this.onModeB} icon="V" />
+          </Tooltip>
+          <Tooltip content="Show maximum projection rendering">
+            <UIButton active={strC} handler={this.onModeC} icon="M" />
+          </Tooltip>
+          <Tooltip content="Special volume eraser tool">
+            <UIButton active={strD} handler={this.onModeD} icon="E" />
+          </Tooltip>
         </Container>
         <UiTF />
       </>
