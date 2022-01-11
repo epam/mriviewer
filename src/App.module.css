@@ -69,6 +69,8 @@
 }
 
 .bottleft {
+  display: flex;
+  flex-direction: column;
   position: absolute;
   left: 25px;
   bottom: 25px;

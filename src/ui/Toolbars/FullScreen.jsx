@@ -11,7 +11,7 @@ import { Tooltip } from '../Tooltip/Tooltip';
 
 const FullScreen = ({ isFullMode, handler }) => {
   return (
-    <Container>
+    <Container direction="vertical">
       <Tooltip content={`${isFullMode ? 'Exit' : 'Go to'} fullscreen mode`}>
         <UIButton icon={isFullMode ? 'collapse' : 'expand'} handler={handler} active={isFullMode} />
       </Tooltip>

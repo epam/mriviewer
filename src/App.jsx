@@ -169,10 +169,12 @@ class App extends React.Component {
               <div className={css.top}>
                 {store.viewMode === ViewMode.VIEW_2D && <ExploreTools />}
                 {store.viewMode === ViewMode.VIEW_2D && <UiFilterMenu />}
-                <FullScreenToggle isFullMode={isFullMode} handler={() => this.handleFullMode()} />
               </div>
               <div className={css.center}>{store.viewMode === ViewMode.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
-              <div className={css.bottleft}>{store.viewMode === ViewMode.VIEW_2D && <ZoomTools />}</div>
+              <div className={css.bottleft}>
+                {store.viewMode === ViewMode.VIEW_2D && <ZoomTools />}
+                <FullScreenToggle isFullMode={isFullMode} handler={() => this.handleFullMode()} />
+              </div>
               <div className={css.settings}>
                 <UiSettings />
               </div>
