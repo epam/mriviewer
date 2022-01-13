@@ -154,21 +154,31 @@ class App extends React.Component {
       <DndProvider backend={HTML5Backend}>
         <div ref={this.appRef}>
           {this.props.progress > 0 && <UIProgressBar active={this.props.progress} progress={this.props.progress} />}
-          {!isFullMode && (
-            <div className={css.header}>
-              <UiAbout />
-              <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad} />
-            </div>
-          )}
+          <div className={css.header}>
+            {!isFullMode && (
+              <div className={css.header__logo}>
+                <UiAbout />
+              </div>
+            )}
+            {isReady && (
+              <div className={cx(isFullMode && css.fullscreen)}>
+                <div className={css.header__panels}>
+                  {store.viewMode === ViewMode.VIEW_2D && <ExploreTools />}
+                  {store.viewMode === ViewMode.VIEW_2D && <UiFilterMenu />}
+                </div>
+              </div>
+            )}
+            {!isFullMode && (
+              <div className={css.header__right}>
+                <UiOpenMenu fileNameOnLoad={this.m_fileNameOnLoad} />
+              </div>
+            )}
+          </div>
           {isReady && (
             <div className={cx(isFullMode && css.fullscreen)}>
               <div className={css.left}>
                 <UiViewMode />
                 {store.viewMode === ViewMode.VIEW_2D && <UiCtrl2d />}
-              </div>
-              <div className={css.top}>
-                {store.viewMode === ViewMode.VIEW_2D && <ExploreTools />}
-                {store.viewMode === ViewMode.VIEW_2D && <UiFilterMenu />}
               </div>
               <div className={css.center}>{store.viewMode === ViewMode.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
               <div className={css.bottleft}>

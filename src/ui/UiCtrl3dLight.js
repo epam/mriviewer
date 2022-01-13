@@ -13,7 +13,8 @@ import UiRoiSelect from './UiRoiSelect';
 import { UIButton } from './Button/Button';
 import { Container } from './Toolbars/Container';
 import { Tooltip } from './Tooltip/Tooltip';
-import css from './Form/Slider.module.css';
+import cssSlider from './Form/Slider.module.css';
+import css from './UiCtrl3dLight.module.css';
 
 class UiCtrl3dLight extends React.Component {
   constructor(props) {
@@ -97,8 +98,8 @@ class UiCtrl3dLight extends React.Component {
     const strD = mode3d === Modes3d.ERASER;
 
     const jsxRenderControls = (
-      <>
-        <p className={css.caption}>3D mode selection</p>
+      <div className={css.container}>
+        <p className={cssSlider.caption}>3D mode selection</p>
         <Container direction="horizontal">
           <Tooltip content="Show just barrier value surface, 1st ray intersection">
             <UIButton active={strA} handler={this.onModeA} icon="I" />
@@ -114,7 +115,7 @@ class UiCtrl3dLight extends React.Component {
           </Tooltip>
         </Container>
         <UiTF />
-      </>
+      </div>
     );
 
     const jsxROI = (

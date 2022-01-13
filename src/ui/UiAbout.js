@@ -10,6 +10,7 @@ import packageJson from '../../package.json';
 import UiSkelAni from './UiSkelAni';
 import { UIButton } from './Button/Button';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from './Modals/ModalBase';
+import { Tooltip } from './Tooltip/Tooltip';
 
 import css from './UiAbout.module.css';
 
@@ -41,7 +42,9 @@ class UiLogoAbout extends React.Component {
 
     return (
       <>
-        <UIButton cx={css.logo} icon="logo" caption="See detailed information about this app" handler={this.onShow} />
+        <Tooltip content="See detailed information about this app">
+          <UIButton cx={css.logo} icon="logo" handler={this.onShow} />
+        </Tooltip>
         {this.state.modalShow && (
           <Modal isOpen={this.state.modalShow} close={this.onHide}>
             <ModalHeader title={strName} />

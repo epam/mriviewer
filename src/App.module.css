@@ -13,25 +13,33 @@
   flex-direction: row;
   align-items: center;
   position: relative;
-  top: 25px;
-  left: 25px;
+  margin: 25px 25px 0;
   z-index: 1000;
-  margin-bottom: 25px;
-  width: calc(100% - 50px);
 }
 
-.top {
+.header__logo {
+  margin-right: 25px;
+}
+
+.header__panels {
   display: flex;
   flex-direction: row;
-  /*padding-left: 25px;*/
-  position: absolute;
   z-index: 1000;
-  top: 100px;
-  left: 100px;
+}
+
+.header__right {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  margin-left: auto;
+}
+
+.fullscreen .header__panels {
+  position: absolute;
+  left: 75px;
 }
 
 .fullscreen .left,
-.fullscreen .top,
 .fullscreen .settings {
   top: 25px;
 }

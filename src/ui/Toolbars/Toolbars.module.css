@@ -23,6 +23,7 @@
 
 .horizontal {
   flex-direction: row;
+  flex-shrink: 0;
   height: 50px;
-  margin: 0 25px 10px 0;
+  margin: 0 25px 0 0;
 }

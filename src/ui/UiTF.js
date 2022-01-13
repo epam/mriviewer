@@ -177,7 +177,7 @@ class UiTF extends React.Component {
     };
     */
     const jsxVolumeTF = (
-      <>
+      <div>
         <UiHistogram volume={vol} transfFunc={funcTra} />
         <SliderCaption caption="Set" />
         <SliderRow>
@@ -202,11 +202,11 @@ class UiTF extends React.Component {
             tooltips={true}
           />
         </SliderRow>
-      </>
+      </div>
     );
 
     const jsxIsoTF = (
-      <>
+      <div>
         <UiHistogram volume={vol} transfFunc={funcTra} />
         <SliderCaption caption="Isosurface" />
         <SliderRow>
@@ -224,10 +224,11 @@ class UiTF extends React.Component {
           Ambient Occlusion
           <Switch value={this.state.AO} onValueChange={this.toggleAO} />
         </SwitchRow>
-      </>
+      </div>
     );
+
     const jsxEreaser = (
-      <>
+      <div>
         Press Control + Mouse Down [+ Mouse Move] for erease
         <SliderCaption caption="Radius" />
         <SliderRow>
@@ -269,7 +270,7 @@ class UiTF extends React.Component {
           <UIButton caption="Undo" mode="light" onClick={this.onUndo} />
           <UIButton caption="Save" mode="accent" onClick={this.onSave} />
         </FlexRow>
-      </>
+      </div>
     );
 
     const jsxRayfastTF = null;
