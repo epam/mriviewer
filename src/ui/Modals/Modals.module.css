@@ -59,7 +59,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  overflow-y: auto;
+  overflow-y: visible;
   scrollbar-width: thin;
   scrollbar-color: var(--gray);
   -ms-overflow-style: -ms-autohiding-scrollbar;
