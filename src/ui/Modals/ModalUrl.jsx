@@ -8,6 +8,7 @@ import { Modal, ModalBody, ModalFooter, ModalHeader } from './ModalBase';
 import { UIButton } from '../Button/Button';
 
 import css from './Modals.module.css';
+import buttonCss from '../Button/Button.module.css';
 
 export const ModalUrl = (props) => {
   const { stateVis, onHide, loadUrl } = props;
@@ -26,7 +27,7 @@ export const ModalUrl = (props) => {
         </div>
       </ModalBody>
       <ModalFooter>
-        <UIButton caption="Submit" cx={css.button} handler={() => loadUrl(inputRef.current.value)} />
+        <UIButton caption="Submit" cx={buttonCss.apply} handler={() => loadUrl(inputRef.current.value)} />
       </ModalFooter>
     </Modal>
   );
