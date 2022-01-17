@@ -13,8 +13,8 @@
   border-radius: 5px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.14);
   padding: 10px 15px;
-  background-color: #282a2d;
-  display: flex;
+  background-color: var(--dark-gray2);
+  opacity: 0.98;
 }
 
 .body {
@@ -27,7 +27,7 @@
 .arrow,
 .arrow:before {
   position: absolute;
-  background: #282a2d;
+  background: var(--dark-gray2);
   width: 15px;
   height: 15px;
 }
