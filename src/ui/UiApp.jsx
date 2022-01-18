@@ -31,10 +31,10 @@ import { useDrop } from 'react-dnd';
 import { DnDItemTypes } from './Constants/DnDItemTypes';
 
 const UiApp = (props) => {
-  const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState('');
-  const [isWebGl20supported, setIsWebGl20supported] = useState('');
-  const [strAlertTitle, setStrAlertTitle] = useState();
-  const [strAlertText, setStrAlertText] = useState();
+  const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
+  const [isWebGl20supported, setIsWebGl20supported] = useState(true);
+  const [strAlertTitle, setStrAlertTitle] = useState('');
+  const [strAlertText, setStrAlertText] = useState('');
 
   const [, drop] = useDrop(
     () => ({
@@ -94,7 +94,7 @@ const UiApp = (props) => {
     // browser detector
     const browserDetector = new BrowserDetector();
     setIsWebGl20supported(browserDetector.checkWebGlSupported());
-    if (!isWebGl20supported && isWebGl20supported !== '') {
+    if (!isWebGl20supported) {
       setStrAlertTitle('Browser compatibility problem detected');
       setStrAlertText('This browser not supported WebGL 2.0. Application functionality is decreased and' + ' app can be unstable');
       onShowModalAlert();

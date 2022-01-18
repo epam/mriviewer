@@ -72,8 +72,6 @@ class UiMain2d extends React.Component {
       store.dispatch({ type: StoreActionType.SET_SLIDER_2D, sliceRatio: valNormalizedTo01 });
       // clear all 2d tools
       const gra2d = store.graphics2d;
-      console.log(store);
-      console.log(gra2d);
       gra2d.clear();
 
       // re-render (and rebuild segm if present)

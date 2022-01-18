@@ -10,19 +10,22 @@ const UiMainDNDContainer = () => {
 
   const checkEventTagName = useCallback(
     (e) => {
-      e.target.tagName !== 'DIV' ? setIsCanDrag(false) : setIsCanDrag(true);
+      e.target.tagName === 'DIV' ? setIsCanDrag(true) : setIsCanDrag(false);
     },
     [isCanDrag, setIsCanDrag]
   );
 
-  const getLeftPositionSettings = (e) => {
-    if (position.left === null) {
-      setPosition({
-        top: position.top,
-        left: window.innerWidth - e.currentTarget.offsetWidth - 25,
-      });
-    }
-  };
+  const getLeftPositionSettings = useCallback(
+    (e) => {
+      if (position.left === null) {
+        setPosition({
+          top: position.top,
+          left: window.innerWidth - e.currentTarget.offsetWidth - 25,
+        });
+      }
+    },
+    [position]
+  );
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
