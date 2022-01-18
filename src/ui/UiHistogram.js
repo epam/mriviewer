@@ -402,6 +402,7 @@ export default class UiHistogram extends React.Component {
         ref={(mount) => {
           this.m_canvasOwner = mount;
         }}
+        style={{ cursor: 'initial' }}
       >
         <canvas
           ref="canvasHistogram"

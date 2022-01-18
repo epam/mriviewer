@@ -89,7 +89,6 @@ class UiMain2d extends React.Component {
   render() {
     const store = this.props;
     const valSlider = store.sliceRatio;
-
     const wArr = [Math.floor(valSlider * this.slideRangeMax)];
     // special formatter interface for show only intefer numbers
     // in slider:

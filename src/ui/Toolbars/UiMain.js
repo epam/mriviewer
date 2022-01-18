@@ -16,7 +16,6 @@ class UiMain extends React.Component {
   render() {
     const store = this.props;
     const viewModeIndex = store.viewMode;
-
     const jsxArray = new Array(ViewMode.VIEW_COUNT);
     jsxArray[ViewMode.VIEW_MPR] = <UiMainMpr />;
     jsxArray[ViewMode.VIEW_2D] = <UiMain2d />;
