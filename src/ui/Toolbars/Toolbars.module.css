@@ -9,7 +9,6 @@
   width: fit-content;
   border-radius: 10px;
   overflow: hidden;
-  opacity: var(--opacity);
 }
 
 .vertical {
