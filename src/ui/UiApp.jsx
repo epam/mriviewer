@@ -2,7 +2,7 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 
 import StoreActionType from '../store/ActionTypes';
@@ -10,6 +10,7 @@ import StoreActionType from '../store/ActionTypes';
 import UiOpenMenu from './OpenFile/UiOpenMenu';
 import UiViewMode from './Toolbars/UiViewMode';
 import UiFilterMenu from './UiFilterMenu';
+import FullScreenToggle from './Toolbars/FullScreen';
 import UiModalText from './Modals/UiModalText';
 import UiModalAlert from './Modals/ModalAlert';
 import UiErrConsole from './UiErrConsole';
@@ -23,6 +24,7 @@ import UIProgressBar from './ProgressBar/UIProgressBar';
 import UiAbout from './UiAbout';
 
 import css from './UiApp.module.css';
+import cx from 'classnames';
 import '../nouislider-custom.css';
 import Graphics3d from '../engine/Graphics3d';
 import ZoomTools from './UiZoomTools';
@@ -35,6 +37,8 @@ const UiApp = (props) => {
   const [isWebGl20supported, setIsWebGl20supported] = useState(true);
   const [strAlertTitle, setStrAlertTitle] = useState('');
   const [strAlertText, setStrAlertText] = useState('');
+  const [isFullMode, setIsFullMode] = useState(false);
+  const appRef = useRef();
 
   const [, drop] = useDrop(
     () => ({
@@ -64,6 +68,32 @@ const UiApp = (props) => {
 
   const onHideModalAlert = () => {
     props.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: false });
+  };
+
+  const startFullMode = () => {
+    return appRef.current.requestFullscreen().then(() => {
+      // TODO: add notification for user
+      console.log(`%cFullscreen entered`, 'color:green');
+    });
+  };
+
+  const endFullMode = () => {
+    return document.exitFullscreen().then(() => {
+      // TODO: add notification for user
+      console.log(`%cFullscreen exited`, 'color:green');
+    });
+  };
+
+  const handleFullMode = () => {
+    const fn = isFullMode ? endFullMode : startFullMode;
+    fn().catch((err) => {
+      // TODO: add notification for user
+      console.log(`%cFullscreen error: ${err.message}`, 'color:red');
+    });
+  };
+
+  const onFullScreenChange = () => {
+    setIsFullMode(!isFullMode);
   };
 
   useEffect(() => {
@@ -108,44 +138,57 @@ const UiApp = (props) => {
     }
   }, [strAlertText, strAlertTitle, isWebGl20supported]);
 
+  useEffect(() => {
+    document.addEventListener('fullscreenchange', onFullScreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', onFullScreenChange);
+    };
+  }, [isFullMode]);
+
   return (
-    <div ref={drop}>
-      {props.progress > 0 && <UIProgressBar active={props.progress} progress={props.progress} />}
-      <div className={css.header}>
-        <UiAbout />
-        <UiOpenMenu fileNameOnLoad={m_fileNameOnLoad} />
+    <div ref={appRef}>
+      <div ref={drop}>
+        {props.progress > 0 && <UIProgressBar active={props.progress} progress={props.progress} />}
+        {/*<UIProgressBar active={props.progress} progress={props.progress} titleProgressBar={props.titleProgressBar} />*/}
+        {!isFullMode && (
+          <div className={css.header}>
+            <UiAbout />
+            <UiOpenMenu fileNameOnLoad={m_fileNameOnLoad} />
+          </div>
+        )}
+        {isReady && (
+          <div className={cx(isFullMode && css.fullscreen)}>
+            <div className={css.left}>
+              <UiViewMode />
+              {props.viewMode === ModeView.VIEW_2D && <UiCtrl2d />}
+            </div>
+            <div className={css.top}>
+              {props.viewMode === ModeView.VIEW_2D && <ExploreTools />}
+              {props.viewMode === ModeView.VIEW_2D && <UiFilterMenu />}
+              <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
+            </div>
+            <div className={css.center}>{props.viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
+            <div className={css.bottleft}>{props.viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
+            <UiMainDNDContainer />
+          </div>
+        )}
+
+        {arrErrorsLoaded.length > 0 && <UiErrConsole />}
+
+        {props.showModalText && (
+          <UiModalText stateVis={props.showModalText} onHide={onHideModalText.bind(this)} onShow={onShowModalText.bind(this)} />
+        )}
+
+        {props.showModalAlert && (
+          <UiModalAlert
+            stateVis={props.showModalAlert}
+            onHide={onHideModalAlert.bind(this)}
+            onShow={onShowModalAlert.bind(this)}
+            title={strAlertTitle}
+            text={strAlertText}
+          />
+        )}
       </div>
-      {isReady && (
-        <>
-          <div className={css.left}>
-            <UiViewMode />
-            {props.viewMode === ModeView.VIEW_2D && <UiCtrl2d />}
-          </div>
-          <div className={css.top}>
-            {props.viewMode === ModeView.VIEW_2D && <ExploreTools />}
-            {props.viewMode === ModeView.VIEW_2D && <UiFilterMenu />}
-          </div>
-          <div className={css.center}>{props.viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
-          <div className={css.bottleft}>{props.viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
-          <UiMainDNDContainer />
-        </>
-      )}
-
-      {arrErrorsLoaded.length > 0 && <UiErrConsole />}
-
-      {props.showModalText && (
-        <UiModalText stateVis={props.showModalText} onHide={onHideModalText.bind(this)} onShow={onShowModalText.bind(this)} />
-      )}
-
-      {props.showModalAlert && (
-        <UiModalAlert
-          stateVis={props.showModalAlert}
-          onHide={onHideModalAlert.bind(this)}
-          onShow={onShowModalAlert.bind(this)}
-          title={strAlertTitle}
-          text={strAlertText}
-        />
-      )}
     </div>
   );
 };

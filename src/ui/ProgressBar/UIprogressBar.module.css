@@ -8,13 +8,14 @@
   top: 5px;
   left: 6px;
   right: 6px;
-  height: 5px;
+  height: 20px;
   display: flex;
   align-items: stretch;
   background-color: var(--gray);
   overflow: hidden;
   border-radius: 100px;
   z-index: 1001;
+  padding: 2px 20px;
 }
 
 .progressBar {
