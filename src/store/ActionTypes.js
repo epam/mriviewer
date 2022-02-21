@@ -44,5 +44,6 @@ const StoreActionType = {
   SET_LOADER_DICOM: 32,
   SET_MODAL_TEXT: 33,
   SET_MODAL_ALERT: 34,
+  SET_SPINNER: 35,
 };
 export default StoreActionType;

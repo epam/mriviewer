@@ -37,6 +37,7 @@ import css from './UiOpenMenu.module.css';
 import UiSaveMenu from '../UiSaveMenu';
 import UiReportMenu from '../UiReportMenu';
 import { Tooltip } from '../Tooltip/Tooltip';
+import Spinner from '../ProgressBar/UISpinner';
 
 /** Need to have demo menu */
 const NEED_DEMO_MENU = true;
@@ -127,6 +128,7 @@ class UiOpenMenu extends React.Component {
       store.dispatch({ type: StoreActionType.SET_ERR_ARRAY, arrErrors: [] });
       store.dispatch({ type: StoreActionType.SET_MODE_VIEW, viewMode: ViewMode.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
+      store.dispatch({ type: StoreActionType.SET_SPINNER, spinner: false });
     }
   }
 
@@ -775,6 +777,8 @@ class UiOpenMenu extends React.Component {
   }
 
   onDemoSelected(index) {
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_SPINNER, spinner: true });
     const arr = config.demoUrls;
     if (arr.length >= 8) {
       const fileName = arr[index];
@@ -909,6 +913,8 @@ class UiOpenMenu extends React.Component {
             <span className="filename">{this.props.fileNameOnLoad || 'file_name_displayed_here.dicom'}</span>
           </div>
           <div className={css['right']}>
+            {this.props.spinner ? <Spinner /> : null}
+
             <Tooltip content="Open file or folder">
               <UIButton icon="folder" handler={(evt) => this.onButtonOpenLocalFileClick(evt)} />
             </Tooltip>

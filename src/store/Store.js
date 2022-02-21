@@ -45,6 +45,7 @@ export const initialState = {
   arrErrors: [],
   dicomSeries: [],
   loaderDicom: null,
+  spinner: false, //true when mock data is loading
 };
 //
 // App reducer
@@ -119,6 +120,8 @@ const medReducer = (state = initialState, action) => {
       return Object.assign({}, state, { showModalText: action.showModalText });
     case StoreActionType.SET_MODAL_ALERT:
       return Object.assign({}, state, { showModalAlert: action.showModalAlert });
+    case StoreActionType.SET_SPINNER:
+      return Object.assign({}, state, { spinner: action.spinner });
     default:
       return state;
   }
