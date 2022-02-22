@@ -13,8 +13,10 @@ import GaussSmoother from '../../engine/imgproc/Gauss';
 import StoreActionType from '../../store/ActionTypes';
 import ViewMode from '../../store/ViewMode';
 import Modes3d from '../../store/Modes3d';
-import { Modal, ModalBody, ModalHeader } from './ModalBase';
+import { Modal, ModalBody, ModalFooter, ModalHeader } from './ModalBase';
 import { UIButton } from '../Button/Button';
+
+import buttonCss from '../Button/Button.module.css';
 
 class UiModalBilateral extends React.Component {
   constructor(props) {
@@ -210,12 +212,16 @@ class UiModalBilateral extends React.Component {
             step={0.00001}
             tooltips={valToolTps}
           />
-          <b>Hints to setup values:</b> <br />
-          kd = 0.5, kv = 0.1 => original image <br />
-          kd = 3.0, kv = 0.1 => denoise image <br />
-          kd = 3.0, kv = 4.0 => image blur
-          <UIButton handler={this.onButtonStart} caption="Start" />
+          <p>
+            <b>Hints to setup values:</b> <br />
+            kd = 0.5, kv = 0.1 ={'>'} original image <br />
+            kd = 3.0, kv = 0.1 ={'>'} denoise image <br />
+            kd = 3.0, kv = 4.0 ={'>'} image blur <br />
+          </p>
         </ModalBody>
+        <ModalFooter>
+          <UIButton handler={this.onButtonStart} caption="Start" cx={buttonCss.apply} />
+        </ModalFooter>
       </Modal>
     );
   }
