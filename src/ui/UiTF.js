@@ -2,21 +2,10 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-
-/**
- * @fileOverview UiTF
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Nouislider from 'react-nouislider';
+import { Nouislider } from './Nouislider/Nouislider';
 import StoreActionType from '../store/ActionTypes';
 import UiHistogram from './UiHistogram';
 import { SliderCaption, SliderRow, SwitchRow } from './Form';
@@ -24,16 +13,6 @@ import { Switch } from './Form/Switch';
 import { UIButton } from './Button/Button';
 import { FlexRow } from './Layout/FlexRow';
 
-// ********************************************************
-// Const
-// ********************************************************
-
-// ********************************************************
-// Class
-// ********************************************************
-/**
- * Class UiTF some text later...
- */
 class UiTF extends React.Component {
   constructor(props) {
     super(props);
@@ -58,7 +37,7 @@ class UiTF extends React.Component {
 
   onAO() {
     const store = this.props;
-    const isoThreshold = store.isoThresholdValue; //this.refs.isoThresholdValue.slider.get();
+    const isoThreshold = store.isoThresholdValue;
     store.volumeRenderer.setAmbientTextureMode(isoThreshold);
   }
 
@@ -88,51 +67,45 @@ class UiTF extends React.Component {
     console.log(`onSave`);
   }
 
-  onChangeSliderTF() {
+  onChangeSliderTF(value) {
     this.m_updateEnable = false;
-    const aval = this.refs.sliderTF.slider.get();
+    const [r, g, b] = value;
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3d_r: Number.parseFloat(aval[0]) });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: Number.parseFloat(aval[1]) });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_3DB, slider3d_b: Number.parseFloat(aval[2]) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3d_r: r });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: g });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DB, slider3d_b: b });
   }
 
   shouldComponentUpdate(nextProps) {
-    //return this.m_updateEnable;
     let flag = this.m_updateEnable;
     if (this.props.mode3d !== nextProps.mode3d) {
       flag = true;
     }
     return flag;
-    //return true;
   }
 
-  onChangeSliderOpacity() {
+  onChangeSliderOpacity(value) {
     this.m_updateEnable = false;
-    const aval = this.refs.opacityValue3D.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, opacityValue3D: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, opacityValue3D: value });
   }
 
-  onChangeSliderIsosurface() {
+  onChangeSliderIsosurface(value) {
     this.m_updateEnable = false;
-    const aval = this.refs.isoThresholdValue.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, isoThresholdValue: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, isoThresholdValue: value });
   }
 
-  onChangeSliderErRadius() {
+  onChangeSliderErRadius(value) {
     this.m_updateEnable = false;
-    const aval = this.refs.sliderErRadius.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_ErRadius, sliderErRadius: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_ErRadius, sliderErRadius: value });
   }
 
-  onChangeSliderErDepth() {
+  onChangeSliderErDepth(value) {
     this.m_updateEnable = false;
-    const aval = this.refs.sliderErDepth.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_ErDepth, sliderErDepth: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_ErDepth, sliderErDepth: value });
   }
 
   transferFuncCallback(transfFuncObj) {
@@ -182,8 +155,7 @@ class UiTF extends React.Component {
         <SliderCaption caption="Set" />
         <SliderRow>
           <Nouislider
-            onSlide={this.onChangeSliderTF.bind(this)}
-            ref={'sliderTF'}
+            onChange={this.onChangeSliderTF.bind(this)}
             range={{ min: 0.0, max: 1.0 }}
             start={wArr}
             connect={[false, true, false, true]}
@@ -193,8 +165,7 @@ class UiTF extends React.Component {
         </SliderRow>
         <SliderRow icon="opacity" title="Opacity">
           <Nouislider
-            onSlide={this.onChangeSliderOpacity.bind(this)}
-            ref={'opacityValue3D'}
+            onChange={this.onChangeSliderOpacity.bind(this)}
             range={{ min: 0.0, max: 1.0 }}
             start={wArrOpacity}
             connect={[true, false]}
@@ -211,8 +182,7 @@ class UiTF extends React.Component {
         <SliderCaption caption="Isosurface" />
         <SliderRow>
           <Nouislider
-            onSlide={this.onChangeSliderIsosurface.bind(this)}
-            ref={'isoThresholdValue'}
+            onChange={this.onChangeSliderIsosurface.bind(this)}
             range={{ min: 0.0, max: 1.0 }}
             start={wArrIsosurface}
             connect={[true, false]}
@@ -232,8 +202,7 @@ class UiTF extends React.Component {
         <SliderCaption caption="Radius" />
         <SliderRow>
           <Nouislider
-            onSlide={this.onChangeSliderErRadius.bind(this)}
-            ref={'sliderErRadius'}
+            onChange={this.onChangeSliderErRadius.bind(this)}
             range={{ min: 1.0, max: 100.0 }}
             start={wArrErRadius}
             connect={[true, false]}
@@ -244,8 +213,7 @@ class UiTF extends React.Component {
         <SliderCaption caption="Depth" />
         <SliderRow>
           <Nouislider
-            onSlide={this.onChangeSliderErDepth.bind(this)}
-            ref={'sliderErDepth'}
+            onChange={this.onChangeSliderErDepth.bind(this)}
             range={{ min: 1.0, max: 100.0 }}
             start={wArrErDepth}
             connect={[true, false]}
@@ -256,8 +224,7 @@ class UiTF extends React.Component {
         <SliderCaption caption="Isosurface" />
         <SliderRow>
           <Nouislider
-            onSlide={this.onChangeSliderIsosurface.bind(this)}
-            ref={'isoThresholdValue'}
+            onChange={this.onChangeSliderIsosurface.bind(this)}
             range={{ min: 0.0, max: 1.0 }}
             start={wArrIsosurface}
             connect={[true, false]}

@@ -9,50 +9,34 @@ import { connect } from 'react-redux';
 import UiCtrl3dLight from './UiCtrl3dLight';
 import UiCtrl3d from './UiCtrl3d';
 
-import Nouislider from 'react-nouislider';
+import { Nouislider } from './Nouislider/Nouislider';
 import StoreActionType from '../store/ActionTypes';
 import ViewMode from '../store/ViewMode';
 import { SliderRow } from './Form';
+import { CutProperty } from './Panels/Properties3d/CutProperty';
 
 class UiMain3dLight extends React.Component {
-  /**
-   * Main component render func callback
-   */
   constructor(props) {
     super(props);
     this.m_updateEnable = true;
-    this.cut3DRatio = React.createRef();
-    this.brightness3DValue = React.createRef();
-    this.quality3DStepSize = React.createRef();
-    this.sliderContrast3D = React.createRef();
   }
 
-  onChangeSliderBrightness() {
+  onChangeSliderBrightness(value) {
     this.m_updateEnable = false;
-    const aval = this.brightness3DValue.current.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Brightness, brightness3DValue: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Brightness, brightness3DValue: value });
   }
 
-  onChangeSliderCut() {
+  onChangeSliderQuality(value) {
     this.m_updateEnable = false;
-    const aval = this.cut3DRatio.current.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Cut, cut3DRatio: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Quality, quality3DStepSize: value });
   }
 
-  onChangeSliderQuality() {
+  onChangeSliderContrast3D(value) {
     this.m_updateEnable = false;
-    const aval = this.quality3DStepSize.current.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Quality, quality3DStepSize: Number.parseFloat(aval) });
-  }
-
-  onChangeSliderContrast3D() {
-    this.m_updateEnable = false;
-    const aval = this.sliderContrast3D.current.slider.get();
-    const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Contrast3D, sliderContrast3D: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Contrast3D, sliderContrast3D: value });
   }
 
   shouldComponentUpdate(nextProps) {
@@ -68,11 +52,9 @@ class UiMain3dLight extends React.Component {
     const viewModeIndex = store.viewMode;
 
     const brightness3DValue = store.brightness3DValue;
-    const cut3DRatio = store.cut3DRatio;
     const quality3DStepSize = store.quality3DStepSize;
 
     const wArrBrightness = [brightness3DValue];
-    const wArrCut = [cut3DRatio];
     const wArrQuality = [quality3DStepSize];
     const jsx3dLight = <UiCtrl3dLight />;
     const jsx3d = <UiCtrl3d />;
@@ -85,8 +67,7 @@ class UiMain3dLight extends React.Component {
       <>
         <SliderRow icon={'brightness'} title={'Brightness'}>
           <Nouislider
-            onSlide={this.onChangeSliderBrightness.bind(this)}
-            ref={this.brightness3DValue}
+            onChange={this.onChangeSliderBrightness.bind(this)}
             range={{ min: 0.0, max: 1.0 }}
             overflow-scroll={'true'}
             start={wArrBrightness}
@@ -97,8 +78,7 @@ class UiMain3dLight extends React.Component {
         </SliderRow>
         <SliderRow icon="triangle" title="Quality">
           <Nouislider
-            onSlide={this.onChangeSliderQuality.bind(this)}
-            ref={this.quality3DStepSize}
+            onChange={this.onChangeSliderQuality.bind(this)}
             range={{ min: 0.0, max: 1.0 }}
             overflow-scroll={'true'}
             start={wArrQuality}
@@ -114,8 +94,7 @@ class UiMain3dLight extends React.Component {
       <>
         <SliderRow title="Cut plane opacity">
           <Nouislider
-            onSlide={this.onChangeSliderContrast3D.bind(this)}
-            ref={this.sliderContrast3D}
+            onChange={this.onChangeSliderContrast3D.bind(this)}
             range={{ min: 0.0, max: 1.0 }}
             overflow-scroll={'true'}
             start={wArrBrightness}
@@ -130,18 +109,7 @@ class UiMain3dLight extends React.Component {
     return (
       <>
         {jsxRet}
-        <SliderRow icon="scissors" title="Cut">
-          <Nouislider
-            onSlide={this.onChangeSliderCut.bind(this)}
-            ref={this.cut3DRatio}
-            range={{ min: 0.0, max: 1.0 }}
-            overflow-scroll={'true'}
-            start={wArrCut}
-            connect={[false, false]}
-            step={0.00001}
-            tooltips={true}
-          />
-        </SliderRow>
+        <CutProperty />
         {store.isTool3D === false ? jsxView : jsxTool}
       </>
     );

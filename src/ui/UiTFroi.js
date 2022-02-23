@@ -2,34 +2,13 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-
-/**
- * @fileOverview UiTF
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Nouislider from 'react-nouislider';
+import { Nouislider } from './Nouislider/Nouislider';
 import StoreActionType from '../store/ActionTypes';
 import { SliderRow } from './Form';
 
-// ********************************************************
-// Const
-// ********************************************************
-
-// ********************************************************
-// Class
-// ********************************************************
-/**
- * Class UiTF some text later...
- */
 class UiTFroi extends React.Component {
   constructor(props) {
     super(props);
@@ -37,7 +16,6 @@ class UiTFroi extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    //return this.m_updateEnable;
     let flag = this.m_updateEnable;
     if (this.props.mode3d !== nextProps.mode3d) {
       flag = true;
@@ -45,26 +23,18 @@ class UiTFroi extends React.Component {
     return flag;
   }
 
-  onChangeSliderTF() {
+  onChangeSliderTF(value) {
     this.m_updateEnable = false;
-    const aval = this.refs.sliderTF.slider.get();
+    const [min, max] = value;
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3d_r: Number.parseFloat(aval[0]) });
-    store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: Number.parseFloat(aval[1]) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DR, slider3d_r: min });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_3DG, slider3d_g: max });
   }
 
-  onChangeSliderOpacity() {
+  onChangeSliderOpacity(value) {
     this.m_updateEnable = false;
-    const aval = this.refs.opacityValue3D.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, opacityValue3D: Number.parseFloat(aval) });
-  }
-
-  onChangeSliderIsosurface() {
-    this.m_updateEnable = false;
-    const aval = this.refs.isoThresholdValue.slider.get();
-    const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Isosurface, isoThresholdValue: Number.parseFloat(aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, opacityValue3D: value });
   }
 
   render() {
@@ -79,8 +49,7 @@ class UiTFroi extends React.Component {
       <>
         <SliderRow>
           <Nouislider
-            onSlide={this.onChangeSliderTF.bind(this)}
-            ref={'sliderTF'}
+            onChange={this.onChangeSliderTF.bind(this)}
             range={{ min: 0.0, max: 1.0 }}
             start={wArr}
             connect={[false, true, false]}
@@ -90,8 +59,7 @@ class UiTFroi extends React.Component {
         </SliderRow>
         <SliderRow icon="opacity" title="Opacity">
           <Nouislider
-            onSlide={this.onChangeSliderOpacity.bind(this)}
-            ref={'opacityValue3D'}
+            onChange={this.onChangeSliderOpacity.bind(this)}
             range={{ min: 0.0, max: 1.0 }}
             start={wArrOpacity}
             connect={[false, true]}
