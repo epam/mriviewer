@@ -17,7 +17,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import StoreActionType from '../store/ActionTypes';
 import UiHistogram from './UiHistogram';
-import Nouislider from 'react-nouislider';
+import { Nouislider } from './Nouislider/Nouislider';
 import { SliderRow } from './Form';
 
 /**
@@ -34,11 +34,10 @@ class UiCtrl3d extends React.Component {
     this.m_updateEnable = true;
   }
 
-  onChangeSliderOpacity() {
+  onChangeSliderOpacity(value) {
     this.m_updateEnable = false;
-    this.aval = this.refs.opacityValue3D.slider.get();
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, opacityValue3D: Number.parseFloat(this.aval) });
+    store.dispatch({ type: StoreActionType.SET_SLIDER_Opacity, opacityValue3D: value });
   }
 
   shouldComponentUpdate() {
@@ -55,9 +54,6 @@ class UiCtrl3d extends React.Component {
     vr.updateTransferFuncTexture(transfFuncObj.m_handleX, transfFuncObj.m_handleY);
   }
 
-  /**
-   * Main component render func callback
-   */
   render() {
     const store = this.props;
     const opacityValue3D = store.opacityValue3D;
@@ -70,20 +66,13 @@ class UiCtrl3d extends React.Component {
     const NEED_TANSF_FUNC = true;
     const funcTra = NEED_TANSF_FUNC ? this.transferFuncCallback : undefined;
     const funcTrTex = store.volumeRenderer === null ? null : store.volumeRenderer;
-    //const store = this.props;
-    //const mode3d = store.mode3d;
-
-    // console.log(`UiCtr3dLight. render. flags = ${bCheckedSag}+${bCheckedCor}+${bCheckedTra}`);
-
-    // btn-default active
 
     return (
       <>
         <UiHistogram volume={vol} transfFunc={funcTra} transfFuncUpdate={funcTrTex} />
         <SliderRow icon="opacity" title="Opacity">
           <Nouislider
-            onSlide={this.onChangeSliderOpacity.bind(this)}
-            ref={'opacityValue3D'}
+            onChange={this.onChangeSliderOpacity.bind(this)}
             range={{ min: 0.0, max: 1.0 }}
             start={wArrOpacity}
             connect={[true, false]}

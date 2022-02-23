@@ -6,7 +6,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Nouislider from 'react-nouislider';
+import { Nouislider } from '../Nouislider/Nouislider';
 
 import GaussSmoother from '../../engine/imgproc/Gauss';
 
@@ -148,30 +148,14 @@ class UiModalBilateral extends React.Component {
     this.setState({ showModalGauss: false });
   }
 
-  onChangeSliderKoefDist() {
-    if (this.refs === undefined) {
-      return;
-    }
+  onChangeSliderKoefDist(value) {
     this.m_updateEnable = false;
-    let val = 0.0;
-    const aval = this.refs.slider1.slider.get();
-    if (typeof aval === 'string') {
-      val = Number.parseFloat(aval);
-      this.m_koefDist = val;
-    }
+    this.m_koefDist = value;
   }
 
-  onChangeSliderKoefVal() {
-    if (this.refs === undefined) {
-      return;
-    }
+  onChangeSliderKoefVal(value) {
     this.m_updateEnable = false;
-    let val = 0.0;
-    const aval = this.refs.slider2.slider.get();
-    if (typeof aval === 'string') {
-      val = Number.parseFloat(aval);
-      this.m_koefVal = val;
-    }
+    this.m_koefVal = value;
   }
 
   //
@@ -180,8 +164,6 @@ class UiModalBilateral extends React.Component {
     const onHideFunc = this.props.onHide;
     this.m_hideFunc = onHideFunc;
 
-    const strSlider1 = 'slider1';
-    const strSlider2 = 'slider2';
     const defaultDist = 3;
     const defaultVal = 0.1;
     const wArrDist = [defaultDist];
@@ -196,8 +178,7 @@ class UiModalBilateral extends React.Component {
         <ModalBody>
           Select koefficient distance (kd)
           <Nouislider
-            onSlide={this.onChangeSliderKoefDist.bind(this)}
-            ref={strSlider1}
+            onChange={this.onChangeSliderKoefDist.bind(this)}
             range={{ min: 0.5, max: 3.0 }}
             start={wArrDist}
             step={0.00001}
@@ -205,8 +186,7 @@ class UiModalBilateral extends React.Component {
           />
           Select koefficient value (kv)
           <Nouislider
-            onSlide={this.onChangeSliderKoefVal.bind(this)}
-            ref={strSlider2}
+            onChange={this.onChangeSliderKoefVal.bind(this)}
             range={{ min: 0.1, max: 4.0 }}
             start={wArrVal}
             step={0.00001}

@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 
 import UiSegm2d from './UiSegm2d';
 import UiVolumeSel from './UiVolumeSel';
-import Nouislider from 'react-nouislider';
+import { Nouislider } from './Nouislider/Nouislider';
 import Modes2d from '../store/Modes2d';
 import StoreActionType from '../store/ActionTypes';
 import { SliderCaption, SliderRow } from './Form';
@@ -42,7 +42,6 @@ class UiMain2d extends React.Component {
       this.slideRangeMax = zDim - 1;
     }
 
-    this.slider = React.createRef();
     this.m_updateEnable = true;
     this.onChangeSliderSlice = this.onChangeSliderSlice.bind(this);
   }
@@ -58,28 +57,20 @@ class UiMain2d extends React.Component {
     return this.m_updateEnable;
   }
 
-  onChangeSliderSlice() {
-    if (!this.slider.current) return;
+  onChangeSliderSlice(value) {
     this.m_updateEnable = false;
-    let val = 0.0;
-    const aval = this.slider.current.slider.get();
-    if (typeof aval === 'string') {
-      val = +aval;
-      // console.log(`onSlider. val = ${val}`);
-      // convert slider value from [0.. ?dim] to [0..1]
-      const valNormalizedTo01 = val / this.slideRangeMax;
-      const store = this.props;
-      store.dispatch({ type: StoreActionType.SET_SLIDER_2D, sliceRatio: valNormalizedTo01 });
-      // clear all 2d tools
-      const gra2d = store.graphics2d;
-      gra2d.clear();
+    const ratio = value / this.slideRangeMax;
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_SLIDER_2D, sliceRatio: ratio });
+    // clear all 2d tools
+    const gra2d = store.graphics2d;
+    gra2d.clear();
 
-      // re-render (and rebuild segm if present)
-      gra2d.forceUpdate();
+    // re-render (and rebuild segm if present)
+    gra2d.forceUpdate();
 
-      // render just builded image
-      gra2d.forceRender();
-    }
+    // render just builded image
+    gra2d.forceRender();
   }
 
   /*
@@ -111,8 +102,7 @@ class UiMain2d extends React.Component {
         <SliderCaption caption="Slider" />
         <SliderRow icon="transverse">
           <Nouislider
-            onUpdate={this.onChangeSliderSlice}
-            ref={this.slider}
+            onChange={this.onChangeSliderSlice}
             range={{ min: 0, max: this.slideRangeMax }}
             start={wArr}
             step={1}

@@ -7,20 +7,17 @@ import { connect } from 'react-redux';
 
 import StoreActionType from '../store/ActionTypes';
 
-import UiOpenMenu from './OpenFile/UiOpenMenu';
-import UiViewMode from './Toolbars/UiViewMode';
+import { LeftToolbar } from './Toolbars/LeftToolbar';
 import UiFilterMenu from './UiFilterMenu';
 import UiModalText from './Modals/UiModalText';
 import UiModalAlert from './Modals/ModalAlert';
 import UiErrConsole from './UiErrConsole';
 import ModeView from '../store/ViewMode';
 import Graphics2d from '../engine/Graphics2d';
-import UiCtrl2d from './UiCtrl2d';
 
 import BrowserDetector from '../engine/utils/BrowserDetector';
 import ExploreTools from './Toolbars/ExploreTools';
 import UIProgressBar from './ProgressBar/UIProgressBar';
-import UiAbout from './UiAbout';
 
 import css from './UiApp.module.css';
 import '../nouislider-custom.css';
@@ -29,6 +26,7 @@ import ZoomTools from './UiZoomTools';
 import UiMainDNDContainer from './Toolbars/UiMainDNDContainer';
 import { useDrop } from 'react-dnd';
 import { DnDItemTypes } from './Constants/DnDItemTypes';
+import { Header } from './Header/Header';
 
 const UiApp = (props) => {
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
@@ -111,15 +109,11 @@ const UiApp = (props) => {
   return (
     <div ref={drop}>
       {props.progress > 0 && <UIProgressBar active={props.progress} progress={props.progress} />}
-      <div className={css.header}>
-        <UiAbout />
-        <UiOpenMenu fileNameOnLoad={m_fileNameOnLoad} />
-      </div>
+      <Header fileNameOnLoad={m_fileNameOnLoad} />
       {isReady && (
         <>
           <div className={css.left}>
-            <UiViewMode />
-            {props.viewMode === ModeView.VIEW_2D && <UiCtrl2d />}
+            <LeftToolbar />
           </div>
           <div className={css.top}>
             {props.viewMode === ModeView.VIEW_2D && <ExploreTools />}

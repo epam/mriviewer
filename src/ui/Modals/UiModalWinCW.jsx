@@ -6,7 +6,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Nouislider from 'react-nouislider';
+import { Nouislider } from '../Nouislider/Nouislider';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from './ModalBase';
 import { UIButton } from '../Button/Button';
 import buttonCss from '../Button/Button.module.css';
@@ -19,7 +19,6 @@ class UiModalWindowCenterWidth extends React.Component {
   constructor(props) {
     super(props);
 
-    this.sliderRange = React.createRef();
     this.m_objCanvas = React.createRef();
     this.m_updateEnable = true;
 
@@ -267,15 +266,11 @@ class UiModalWindowCenterWidth extends React.Component {
     this.drawSlice(ctx, wScreen, hScreen, imgData, dataDst, series, loaderDicom);
   } // end render preview
 
-  onSliderWindowRange() {
+  onSliderWindowRange(value) {
     this.m_updateEnable = false;
-    if (!this.sliderRange.current) return;
-    const arrVals = this.sliderRange.current.slider.get();
-    const vMin = parseInt(arrVals[0]);
-    const vMax = parseInt(arrVals[1]);
-    this.setState({ windowMin: vMin });
-    this.setState({ windowMax: vMax });
-    // console.log(`slider min/max = ${vMin} / ${vMax}`);
+    const [min, max] = value;
+    this.setState({ windowMin: min });
+    this.setState({ windowMax: max });
   }
 
   getDataMinMax(store, loaderDicom) {
@@ -374,8 +369,7 @@ class UiModalWindowCenterWidth extends React.Component {
         <ModalBody>
           Window range
           <Nouislider
-            onSlide={this.onSliderWindowRange.bind(this)}
-            ref={this.sliderRange}
+            onChange={this.onSliderWindowRange.bind(this)}
             range={rangeTwo}
             start={wArr}
             step={valStep}
