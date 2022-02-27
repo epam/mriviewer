@@ -1,19 +1,19 @@
 /*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2022 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import React from 'react';
 import { connect } from 'react-redux';
-import Modes3d from '../store/Modes3d';
-import StoreActionType from '../store/ActionTypes';
-import UiTF from './UiTF';
-import UiTFroi from './UiTFroi';
-import UiRoiSelect from './UiRoiSelect';
-import { UIButton } from './Button/Button';
-import { Container } from './Toolbars/Container';
-import { Tooltip } from './Tooltip/Tooltip';
-import css from './Form/Slider.module.css';
+import Modes3d from '../../store/Modes3d';
+import StoreActionType from '../../store/ActionTypes';
+import UiTF from '../UiTF';
+import UiTFroi from '../UiTFroi';
+import UiRoiSelect from '../UiRoiSelect';
+import { UIButton } from '../Button/Button';
+import { Container } from '../Toolbars/Container';
+import { Tooltip } from '../Tooltip/Tooltip';
+import css from '../Form/Slider.module.css';
 
 class UiCtrl3dLight extends React.Component {
   constructor(props) {
@@ -94,7 +94,7 @@ class UiCtrl3dLight extends React.Component {
     const strA = mode3d === Modes3d.ISO;
     const strB = mode3d === Modes3d.RAYCAST;
     const strC = mode3d === Modes3d.RAYFAST;
-    const strD = mode3d === Modes3d.ERASER;
+    const strD = mode3d === Modes3d.EREASER;
 
     const jsxRenderControls = (
       <>
