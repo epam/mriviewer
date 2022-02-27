@@ -10,7 +10,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import StoreActionType from '../../../store/ActionTypes';
 
-export function Fast3dToolbar() {
+export function ModeFast3dToolbar() {
   const dispatch = useDispatch();
   const { isTool3D } = useSelector((state) => state);
 

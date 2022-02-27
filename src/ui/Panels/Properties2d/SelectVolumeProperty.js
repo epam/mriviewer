@@ -1,54 +1,31 @@
 /*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2022 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-
-/**
- * @fileOverview UiVolumeSel
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 import { connect } from 'react-redux';
 
-import StoreActionType from '../store/ActionTypes';
+import StoreActionType from '../../../store/ActionTypes';
 
-import UiVolIcon from './UiVolIcon';
+import UiVolIcon from '../../UiVolIcon';
 
 const NEED_TEXTURE_SIZE_4X = true;
 
-class UiVolumeSel extends React.Component {
+class SelectVolumeProperty extends React.Component {
   constructor(props) {
     super(props);
     this.onClickRow = this.onClickRow.bind(this);
-    // this.state = {
-    //   index: 0,
-    // };
   }
 
   setVolumeIndex(indexSelected) {
     const store = this.props;
-    // const series = store.dicomSeries;
-    // const serieSelected = series[indexSelected];
-    // const hash = serieSelected.m_hash;
     const volumeSet = store.volumeSet;
-
-    // const loaderDicom = store.loaderDicom;
-
-    // volumes are already created from slices
-    // loaderDicom.createVolumeFromSlices(volumeSet, indexSelected, hash);
 
     // finalize load
     const vol = volumeSet.getVolume(indexSelected);
     console.assert(vol !== null, 'setVolumeIndex: vol should be non zero volume');
 
     if (vol.m_dataArray !== null) {
-      // console.log(`success loaded volume from ${fileNameIn}`);
       if (NEED_TEXTURE_SIZE_4X) {
         vol.makeDimensions4x();
       }
@@ -67,7 +44,7 @@ class UiVolumeSel extends React.Component {
       gra.clear();
       gra.forceUpdate(indexSelected);
       gra.forceRender();
-    } // if vol data not null
+    }
   }
 
   onClickRow(ind) {
@@ -90,9 +67,7 @@ class UiVolumeSel extends React.Component {
     const strStudyDescr = store.dicomInfo.m_studyDescr;
     const strTitle = `Volume select. [${strPatName}]: ${strStudyDescr}`;
 
-    // const slices = store.dicomInfo.m_sliceInfo;
-
-    const jsx = (
+    return (
       <>
         {strTitle}
         {vols.map((vol, i) => {
@@ -128,8 +103,7 @@ class UiVolumeSel extends React.Component {
         })}
       </>
     );
-    return jsx;
   }
 }
 
-export default connect((store) => store)(UiVolumeSel);
+export default connect((store) => store)(SelectVolumeProperty);

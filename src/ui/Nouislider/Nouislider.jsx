@@ -6,13 +6,21 @@ import React from 'react';
 import { Slider } from '@mui/material';
 
 // eslint-disable-next-line react/display-name
-export const Nouislider = React.forwardRef((props, ref) => {
-  const { range, step, start, onChange } = props;
+export const Nouislider = (props) => {
+  const { range, step, start, onChange, getAriaValueText } = props;
   const onSliderChange = (event, value) => {
     if (!event || !onChange) return;
     onChange(value);
   };
   return (
-    <Slider ref={ref} defaultValue={start} onChange={onSliderChange} step={step} min={range.min} max={range.max} valueLabelDisplay="auto" />
+    <Slider
+      defaultValue={start}
+      onChange={onSliderChange}
+      step={step}
+      min={range.min}
+      max={range.max}
+      getAriaValueText={getAriaValueText}
+      valueLabelDisplay="auto"
+    />
   );
-});
+};

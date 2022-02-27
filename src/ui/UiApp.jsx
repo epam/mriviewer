@@ -23,10 +23,10 @@ import css from './UiApp.module.css';
 import '../nouislider-custom.css';
 import Graphics3d from '../engine/Graphics3d';
 import ZoomTools from './UiZoomTools';
-import UiMainDNDContainer from './Toolbars/UiMainDNDContainer';
 import { useDrop } from 'react-dnd';
 import { DnDItemTypes } from './Constants/DnDItemTypes';
 import { Header } from './Header/Header';
+import { RightPanel } from './Panels/RightPanel';
 
 const UiApp = (props) => {
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
@@ -121,7 +121,7 @@ const UiApp = (props) => {
           </div>
           <div className={css.center}>{props.viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
           <div className={css.bottleft}>{props.viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
-          <UiMainDNDContainer />
+          <RightPanel />
         </>
       )}
 
