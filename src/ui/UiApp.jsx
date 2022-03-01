@@ -7,8 +7,7 @@ import { connect } from 'react-redux';
 
 import StoreActionType from '../store/ActionTypes';
 
-import { LeftToolbar } from './Toolbars/LeftToolbar';
-import UiFilterMenu from './UiFilterMenu';
+import { LeftToolbar } from './Toolbars/Left/LeftToolbar';
 import UiModalText from './Modals/UiModalText';
 import UiModalAlert from './Modals/ModalAlert';
 import UiErrConsole from './UiErrConsole';
@@ -16,7 +15,6 @@ import ModeView from '../store/ViewMode';
 import Graphics2d from '../engine/Graphics2d';
 
 import BrowserDetector from '../engine/utils/BrowserDetector';
-import ExploreTools from './Toolbars/ExploreTools';
 import UIProgressBar from './ProgressBar/UIProgressBar';
 
 import css from './UiApp.module.css';
@@ -27,6 +25,7 @@ import { useDrop } from 'react-dnd';
 import { DnDItemTypes } from './Constants/DnDItemTypes';
 import { Header } from './Header/Header';
 import { RightPanel } from './Panels/RightPanel';
+import { TopToolbar } from './Toolbars/Top/TopToolbar';
 
 const UiApp = (props) => {
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
@@ -116,8 +115,7 @@ const UiApp = (props) => {
             <LeftToolbar />
           </div>
           <div className={css.top}>
-            {props.viewMode === ModeView.VIEW_2D && <ExploreTools />}
-            {props.viewMode === ModeView.VIEW_2D && <UiFilterMenu />}
+            <TopToolbar />
           </div>
           <div className={css.center}>{props.viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
           <div className={css.bottleft}>{props.viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>

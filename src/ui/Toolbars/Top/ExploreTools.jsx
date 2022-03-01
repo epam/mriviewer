@@ -1,14 +1,14 @@
 /*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2022 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import React, { useState } from 'react';
 
-import { Container } from './Container';
-import { buttonsBuilder } from '../Button/Button';
-import Tools2dType from '../../engine/tools2d/ToolTypes';
-import StoreActionType from '../../store/ActionTypes';
+import { Container } from '../Container';
+import { buttonsBuilder } from '../../Button/Button';
+import Tools2dType from '../../../engine/tools2d/ToolTypes';
+import StoreActionType from '../../../store/ActionTypes';
 import { connect } from 'react-redux';
 
 const ExploreTools = (props) => {

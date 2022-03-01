@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Modes2d from '../../../store/Modes2d';
 import StoreActionType from '../../../store/ActionTypes';
@@ -61,5 +61,3 @@ export const Mode2dToolbar = () => {
     </>
   );
 };
-
-export default connect((store) => store)(Mode2dToolbar);
