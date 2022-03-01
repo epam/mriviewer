@@ -29,6 +29,7 @@ import ZoomTools from './UiZoomTools';
 import UiMainDNDContainer from './Toolbars/UiMainDNDContainer';
 import { useDrop } from 'react-dnd';
 import { DnDItemTypes } from './Constants/DnDItemTypes';
+import Spinner from './ProgressBar/UISpinner';
 
 const UiApp = (props) => {
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
@@ -111,6 +112,7 @@ const UiApp = (props) => {
   return (
     <div ref={drop}>
       {props.progress > 0 && <UIProgressBar active={props.progress} progress={props.progress} />}
+      {props.spinner ? <Spinner /> : null}
       <div className={css.header}>
         <UiAbout />
         <UiOpenMenu fileNameOnLoad={m_fileNameOnLoad} />

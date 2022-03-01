@@ -37,7 +37,6 @@ import css from './UiOpenMenu.module.css';
 import UiSaveMenu from '../UiSaveMenu';
 import UiReportMenu from '../UiReportMenu';
 import { Tooltip } from '../Tooltip/Tooltip';
-import Spinner from '../ProgressBar/UISpinner';
 
 /** Need to have demo menu */
 const NEED_DEMO_MENU = true;
@@ -913,8 +912,6 @@ class UiOpenMenu extends React.Component {
             <span className="filename">{this.props.fileNameOnLoad || 'file_name_displayed_here.dicom'}</span>
           </div>
           <div className={css['right']}>
-            {this.props.spinner ? <Spinner /> : null}
-
             <Tooltip content="Open file or folder">
               <UIButton icon="folder" handler={(evt) => this.onButtonOpenLocalFileClick(evt)} />
             </Tooltip>
