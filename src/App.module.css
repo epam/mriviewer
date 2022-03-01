@@ -30,6 +30,18 @@
   left: 100px;
 }
 
+.center2d {
+  box-sizing: border-box;
+  position: absolute;
+  top: calc(100px + 50px + 5px);
+  bottom: 0;
+  left: calc(50px + 25px);
+  right: 0;
+  width: calc(100% - 50px - 25px);
+  height: calc(100% - 100px - 50px - 10px);
+  z-index: 10;
+}
+
 .fullscreen .left,
 .fullscreen .top,
 .fullscreen .settings {
