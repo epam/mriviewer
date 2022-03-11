@@ -4,7 +4,7 @@
   "description": "Med3Web is unique 2-D/3-D medical volume data web viewer application. One can inspect data both in 2-D and 3-D modes.",
   "version": "1.0.2",
   "author": "EPAM Systems <mri@epam.com>",
-  "year": "2021",
+  "year": "2022",
   "license": "Apache-2.0",
   "proxy": "http://localhost:3000",
   "licenses": [
@@ -54,6 +54,21 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "jest": {
+    "resetMocks": false,
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "text-summary",
+      "clover"
+    ],
+    "collectCoverageFrom": [
+      "./src/**/*.{js,jsx,ts,tsx}",
+      "!./node_modules/",
+      "!./build/"
+    ]
+  },
   "browserslist": [
     ">0.2%",
     "not dead",
@@ -79,5 +94,13 @@
   "engines": {
     "node": ">=12.20.1",
     "npm": ">=7.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": "eslint --fix"
   }
 }
