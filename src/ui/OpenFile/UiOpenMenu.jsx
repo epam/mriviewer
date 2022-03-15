@@ -127,6 +127,7 @@ class UiOpenMenu extends React.Component {
       store.dispatch({ type: StoreActionType.SET_ERR_ARRAY, arrErrors: [] });
       store.dispatch({ type: StoreActionType.SET_MODE_VIEW, viewMode: ViewMode.VIEW_2D });
       store.dispatch({ type: StoreActionType.SET_MODE_3D, mode3d: Modes3d.RAYCAST });
+      store.dispatch({ type: StoreActionType.SET_SPINNER, spinner: false });
     }
   }
 
@@ -775,6 +776,8 @@ class UiOpenMenu extends React.Component {
   }
 
   onDemoSelected(index) {
+    const store = this.props;
+    store.dispatch({ type: StoreActionType.SET_SPINNER, spinner: true });
     const arr = config.demoUrls;
     if (arr.length >= 8) {
       const fileName = arr[index];
