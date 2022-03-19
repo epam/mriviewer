@@ -4,14 +4,15 @@
  */
 import React from 'react';
 import { useSelector } from 'react-redux';
-import UiCtrl3dLight from './UiCtrl3dLight';
 import { BrightnessProperty } from './Properties3d/BrightnessProperty';
 import { QualityProperty } from './Properties3d/QualityProperty';
 import { CutProperty } from './Properties3d/CutProperty';
 import { ContrastProperty } from './Properties3d/ContrastProperty';
 import { useNeedShow3d } from '../useNeedShow3d';
 import { RoiSelectProperty } from './Properties3d/RoiSelectProperty';
-import UiTFroi from '../UiTFroi';
+import { OpacityProperty } from './Properties3d/OpacityProperty';
+import { RGBProperty } from './Properties3d/RGBProperty';
+import { Mode3dSelectionTabs } from './Tabs/Mode3dSelectionTabs';
 
 export const ModeFast3dSettingsPanel = () => {
   const { isTool3D, volumeSet, volumeIndex } = useSelector((state) => state);
@@ -19,18 +20,18 @@ export const ModeFast3dSettingsPanel = () => {
 
   return (
     <>
-      {!needShow3d && (
+      {needShow3d ? (
+        <Mode3dSelectionTabs />
+      ) : (
         <>
           <RoiSelectProperty />
-          <UiTFroi />
+          <RGBProperty changeOnlyRG={true} />
+          <OpacityProperty />
         </>
       )}
-      <UiCtrl3dLight />
       <CutProperty />
       {isTool3D ? (
-        <>
-          <ContrastProperty />
-        </>
+        <ContrastProperty />
       ) : (
         <>
           <BrightnessProperty />
