@@ -127,7 +127,15 @@ const UiApp = (props) => {
             {props.viewMode === ModeView.VIEW_2D && <ExploreTools />}
             {props.viewMode === ModeView.VIEW_2D && <UiFilterMenu />}
           </div>
-          <div className={css.center}>{props.viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
+          {props.viewMode === ModeView.VIEW_2D ? (
+            <div className={css.center2d}>
+              <Graphics2d />
+            </div>
+          ) : (
+            <div className={css.center}>
+              <Graphics3d />
+            </div>
+          )}
           <div className={css.bottleft}>{props.viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
           <UiMainDNDContainer />
         </>
