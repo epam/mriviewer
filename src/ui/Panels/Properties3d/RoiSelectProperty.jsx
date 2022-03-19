@@ -47,7 +47,7 @@ export const RoiSelectProperty = () => {
   return (
     <>
       ROI Selector
-      <FormGroup row>
+      <FormGroup row style={{ height: '300px', overflowY: 'auto' }}>
         <FormControlLabel control={<Checkbox onChange={selectAll} />} label={isSelectedAll ? 'Select none' : 'Select all'} />
         {palette.map(({ roiId, name, roiColor }) => {
           return (
