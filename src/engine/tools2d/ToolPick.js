@@ -137,7 +137,7 @@ class ToolPick {
     this.m_strMessage = 'x,y,z = ' + vTex.x.toString() + ', ' + vTex.y.toString() + ', ' + vTex.z.toString() + '. val = ' + val.toString();
     // console.log(`ToolPick. onMouseDown. ${this.m_strMessage}`);
     this.m_timeStart = Date.now();
-    setTimeout(this.onTimerEnd, 1500);
+    setTimeout(this.onTimerEnd, 6000);
   } // end onMouseDown
 
   onTimerEnd() {
