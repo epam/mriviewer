@@ -9,23 +9,22 @@ import css from './UIprogressBar.module.css';
 import { connect } from 'react-redux';
 
 const UIProgressBar = (props) => {
-  // console.log(`Progress ${props.progress}`);
+  console.log(`Progress ${props.progress}`);
   return (
-    props.progress && (
-      <>
-        <div className={css.progress}>
-          <div
-            className={css.progressBar}
-            style={{ width: `${props.progress < 1 ? props.progress * 100 : props.progress}%` }}
-            role="progressbar"
-            aria-valuenow={props.progress}
-            aria-valuemin="0"
-            aria-valuemax="1"
-          />
-        </div>
-        {/*<span className={ css.label }>{text}</span>*/}
-      </>
-    )
+    <>
+      <div className={css.progress}>
+        <div
+          className={css.progressBar}
+          style={{ width: `${props.progress < 1 ? props.progress * 100 : props.progress}%` }}
+          role="progressbar"
+          aria-valuenow={props.progress}
+          aria-valuemin="0"
+          aria-valuemax="1"
+        />
+        {props.titleProgressBar}
+      </div>
+      {/*<span className={ css.label }>{text}</span>*/}
+    </>
   );
 };
 

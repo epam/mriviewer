@@ -78,7 +78,11 @@ class UiFilterMenu extends React.Component {
     const store = this.props;
     const ratioUpdate = this.lungsFiller.m_ratioUpdate;
     console.log(`onLungsFillerCallback: iter counter = ${ratioUpdate}`);
-    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioUpdate });
+    const payload = {
+      progress: ratioUpdate,
+      titleProgressBar: 'Please wait, applying lungs filter...',
+    };
+    store.dispatch({ type: StoreActionType.SET_PROGRESS, payload });
     const isFinished = this.lungsFiller.run();
 
     if (isFinished) {

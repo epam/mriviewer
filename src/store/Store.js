@@ -39,6 +39,7 @@ export const initialState = {
   render2dyPos: 0.0,
   graphics2d: null,
   progress: 0, // 0 to 1
+  titleProgressBar: '',
   dicomInfo: null,
   isTool3D: false,
   sliderContrast3D: 0.0,
@@ -103,6 +104,7 @@ const medReducer = (state = initialState, action) => {
     case StoreActionType.SET_GRAPHICS_2D:
       return Object.assign({}, state, { graphics2d: action.graphics2d });
     case StoreActionType.SET_PROGRESS:
+      // debugger;
       return Object.assign({}, state, { progress: action.progress });
     case StoreActionType.SET_DICOM_INFO:
       return Object.assign({}, state, { dicomInfo: action.dicomInfo });
