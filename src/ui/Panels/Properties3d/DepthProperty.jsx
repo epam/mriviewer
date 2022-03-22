@@ -20,14 +20,7 @@ export function DepthProperty() {
     <>
       <SliderCaption caption="Depth" />
       <SliderRow>
-        <Nouislider
-          onChange={onChange}
-          range={{ min: 1.0, max: 100.0 }}
-          start={[sliderErDepth]}
-          connect={[true, false]}
-          step={0.00001}
-          tooltips={true}
-        />
+        <Nouislider onChange={onChange} range={{ min: 1.0, max: 100.0 }} value={sliderErDepth} connect={[true, false]} step={0.00001} />
       </SliderRow>
     </>
   );

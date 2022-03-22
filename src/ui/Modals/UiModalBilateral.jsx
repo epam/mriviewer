@@ -166,10 +166,6 @@ class UiModalBilateral extends React.Component {
 
     const defaultDist = 3;
     const defaultVal = 0.1;
-    const wArrDist = [defaultDist];
-    const wArrVal = [defaultVal];
-
-    const valToolTps = true;
 
     return (
       <Modal isOpen={stateVis} close={onHideFunc}>
@@ -177,21 +173,9 @@ class UiModalBilateral extends React.Component {
 
         <ModalBody>
           Select koefficient distance (kd)
-          <Nouislider
-            onChange={this.onChangeSliderKoefDist.bind(this)}
-            range={{ min: 0.5, max: 3.0 }}
-            start={wArrDist}
-            step={0.00001}
-            tooltips={valToolTps}
-          />
+          <Nouislider onChange={this.onChangeSliderKoefDist.bind(this)} range={{ min: 0.5, max: 3.0 }} value={defaultDist} step={0.00001} />
           Select koefficient value (kv)
-          <Nouislider
-            onChange={this.onChangeSliderKoefVal.bind(this)}
-            range={{ min: 0.1, max: 4.0 }}
-            start={wArrVal}
-            step={0.00001}
-            tooltips={valToolTps}
-          />
+          <Nouislider onChange={this.onChangeSliderKoefVal.bind(this)} range={{ min: 0.1, max: 4.0 }} value={defaultVal} step={0.00001} />
           <p>
             <b>Hints to setup values:</b> <br />
             kd = 0.5, kv = 0.1 ={'>'} original image <br />

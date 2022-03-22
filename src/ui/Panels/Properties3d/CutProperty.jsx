@@ -19,15 +19,7 @@ export function CutProperty() {
 
   return (
     <SliderRow icon="scissors" title="Cut">
-      <Nouislider
-        onChange={onChange}
-        range={{ min: 0.0, max: 1.0 }}
-        overflow-scroll={'true'}
-        start={cut3DRatio}
-        connect={[false, false]}
-        step={0.00001}
-        tooltips={true}
-      />
+      <Nouislider onChange={onChange} range={{ min: 0.0, max: 1.0 }} value={cut3DRatio} connect={[false, false]} step={0.00001} />
     </SliderRow>
   );
 }

@@ -342,8 +342,6 @@ class UiModalWindowCenterWidth extends React.Component {
       height: '400px',
     };
 
-    const valToolTps = true;
-
     let valMin = 0;
     let valMax = 5000;
     let valDelta = valMax - valMin;
@@ -368,14 +366,7 @@ class UiModalWindowCenterWidth extends React.Component {
         <ModalHeader title="Select window center and width to display DICOM" close={this.onButtonCancel} />
         <ModalBody>
           Window range
-          <Nouislider
-            onChange={this.onSliderWindowRange.bind(this)}
-            range={rangeTwo}
-            start={wArr}
-            step={valStep}
-            connect={true}
-            tooltips={valToolTps}
-          />
+          <Nouislider onChange={this.onSliderWindowRange.bind(this)} range={rangeTwo} value={wArr} step={valStep} connect={true} />
           <p className="text-center">
             <canvas ref={this.m_objCanvas} style={stylePreview} width="500px" height="400px" />
           </p>

@@ -20,14 +20,7 @@ export function RadiusProperty() {
     <>
       <SliderCaption caption="Radius" />
       <SliderRow>
-        <Nouislider
-          onChange={onChange}
-          range={{ min: 1.0, max: 100.0 }}
-          start={[sliderErRadius]}
-          connect={[true, false]}
-          step={0.00001}
-          tooltips={true}
-        />
+        <Nouislider onChange={onChange} range={{ min: 1.0, max: 100.0 }} value={sliderErRadius} connect={[true, false]} step={0.00001} />
       </SliderRow>
     </>
   );

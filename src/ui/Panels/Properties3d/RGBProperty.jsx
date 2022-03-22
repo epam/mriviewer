@@ -26,14 +26,7 @@ export function RGBProperty({ changeOnlyRG = false }) {
 
   return (
     <SliderRow>
-      <Nouislider
-        onChange={onChange}
-        range={{ min: 0.0, max: 1.0 }}
-        start={wArr}
-        connect={[false, true, false, true]}
-        step={0.00001}
-        tooltips={true}
-      />
+      <Nouislider onChange={onChange} range={{ min: 0.0, max: 1.0 }} value={wArr} connect={[false, true, false, true]} step={0.00001} />
     </SliderRow>
   );
 }

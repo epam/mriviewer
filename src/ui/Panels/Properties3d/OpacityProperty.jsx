@@ -21,10 +21,9 @@ export function OpacityProperty() {
       <Nouislider
         onChange={onChangeSliderOpacity.bind(this)}
         range={{ min: 0.0, max: 1.0 }}
-        start={[opacityValue3D]}
+        value={opacityValue3D}
         connect={[true, false]}
         step={2 ** -8}
-        tooltips={true}
       />
     </SliderRow>
   );
