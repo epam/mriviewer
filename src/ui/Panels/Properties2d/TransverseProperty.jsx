@@ -62,7 +62,7 @@ export const TransverseProperty = () => {
       <Nouislider
         onChange={onChangeSliderSlice}
         range={{ min: 0, max: slideRangeMax }}
-        start={start}
+        value={start}
         step={1}
         getAriaValueText={getAriaValueText}
         tooltips={true}

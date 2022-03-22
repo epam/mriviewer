@@ -20,14 +20,7 @@ export function IsosurfaceProperty() {
     <>
       <SliderCaption caption="Isosurface" />
       <SliderRow>
-        <Nouislider
-          onChange={onChange}
-          range={{ min: 0.0, max: 1.0 }}
-          start={[isoThresholdValue]}
-          connect={[true, false]}
-          step={0.00001}
-          tooltips={true}
-        />
+        <Nouislider onChange={onChange} range={{ min: 0.0, max: 1.0 }} value={isoThresholdValue} connect={[true, false]} step={0.00001} />
       </SliderRow>
     </>
   );

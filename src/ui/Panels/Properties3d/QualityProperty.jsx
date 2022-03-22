@@ -22,11 +22,9 @@ export const QualityProperty = () => {
       <Nouislider
         onChange={onChangeSliderQuality}
         range={{ min: 0.0, max: 1.0 }}
-        overflow-scroll={'true'}
-        start={[quality3DStepSize]}
+        value={quality3DStepSize}
         connect={[false, false]}
         step={0.00001}
-        tooltips={true}
       />
     </SliderRow>
   );
