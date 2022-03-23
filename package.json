@@ -102,5 +102,8 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "eslint --fix"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.2"
   }
 }
