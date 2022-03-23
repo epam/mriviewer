@@ -9,19 +9,21 @@ import packageJson from '../../package.json';
 import UiSkelAni from './UiSkelAni';
 import { UIButton } from './Button/Button';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from './Modals/ModalBase';
+import { useSelector } from 'react-redux';
 
 import css from './UiAbout.module.css';
 
-const UiLogoAbout = (props) => {
+const UiLogoAbout = () => {
   const [modalShow, setModalShow] = useState(false);
   const strVer = packageJson.version;
   const strName = packageJson.name;
   const strDescription = packageJson.description;
   const strAuthor = packageJson.author;
   const strYear = packageJson.year;
+  const { graphics2d } = useSelector((state) => state);
 
   const onShow = () => {
-    props.graphics2d?.clear();
+    graphics2d?.clear();
     setModalShow(true);
   };
 
