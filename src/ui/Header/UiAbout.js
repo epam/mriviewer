@@ -1,19 +1,19 @@
 /*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2022 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import React, { useState } from 'react';
 
-import packageJson from '../../package.json';
-import UiSkelAni from './UiSkelAni';
-import { UIButton } from './Button/Button';
-import { Modal, ModalBody, ModalFooter, ModalHeader } from './Modals/ModalBase';
+import packageJson from '../../../package.json';
+import UiSkelAni from '../UiSkelAni';
+import { UIButton } from '../Button/Button';
+import { Modal, ModalBody, ModalFooter, ModalHeader } from '../Modals/ModalBase';
 import { useSelector } from 'react-redux';
 
 import css from './UiAbout.module.css';
 
-const UiLogoAbout = () => {
+export const UiAbout = () => {
   const [modalShow, setModalShow] = useState(false);
   const strVer = packageJson.version;
   const strName = packageJson.name;
@@ -57,5 +57,3 @@ const UiLogoAbout = () => {
     </>
   );
 };
-
-export default UiLogoAbout;
