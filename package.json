@@ -4,7 +4,7 @@
   "description": "Med3Web is unique 2-D/3-D medical volume data web viewer application. One can inspect data both in 2-D and 3-D modes.",
   "version": "1.0.2",
   "author": "EPAM Systems <mri@epam.com>",
-  "year": "2021",
+  "year": "2022",
   "license": "Apache-2.0",
   "proxy": "http://localhost:3000",
   "licenses": [
@@ -19,18 +19,20 @@
   "homepage": "https://med3web.opensource.epam.com/",
   "private": false,
   "dependencies": {
+    "@emotion/react": "^11.8.1",
+    "@emotion/styled": "^11.8.1",
+    "@mui/material": "^5.4.3",
     "@popperjs/core": "^2.9.2",
     "@tensorflow/tfjs": "^3.6.0",
     "classnames": "^2.3.1",
     "daikon": "^1.2.42",
     "eslint": "^7.27.0",
     "filereader-stream": "^2.0.0",
-    "react": "16.14.0",
+    "react": "^17.0.2",
     "react-dnd": "^14.0.2",
     "react-dnd-html5-backend": "^14.0.0",
-    "react-dom": "16.14.0",
+    "react-dom": "^17.0.2",
     "react-modal": "^3.14.2",
-    "react-nouislider": "^2.0.1",
     "react-popper": "^2.2.5",
     "react-redux": "7.2.4",
     "react-scripts": "4.0.3",
@@ -52,6 +54,21 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "jest": {
+    "resetMocks": false,
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "text-summary",
+      "clover"
+    ],
+    "collectCoverageFrom": [
+      "./src/**/*.{js,jsx,ts,tsx}",
+      "!./node_modules/",
+      "!./build/"
+    ]
+  },
   "browserslist": [
     ">0.2%",
     "not dead",
@@ -60,6 +77,10 @@
   ],
   "devDependencies": {
     "@babel/core": "7.14.3",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.1.0",
+    "@testing-library/react-hooks": "^7.0.2",
+    "@testing-library/user-event": "^13.2.1",
     "canvas": "^2.6.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -73,5 +94,13 @@
   "engines": {
     "node": ">=12.20.1",
     "npm": ">=7.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": "eslint --fix"
   }
 }

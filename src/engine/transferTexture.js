@@ -228,14 +228,13 @@ export default class TransferTexture {
     const roiSelectedTrue = 255;
     const roiSelectedFalse = 0;
     for (let pix = 0; pix < this.numRois; pix++) {
-      if (selectedROI[pix]) {
+      if (selectedROI.indexOf(pix) !== -1) {
         this.selectedROIs[pix * roiTexelBpp] = roiSelectedTrue;
       } else {
         this.selectedROIs[pix * roiTexelBpp] = roiSelectedFalse;
       }
     }
     this.texRoiId.needsUpdate = true;
-    //this.setVolumeTexture(1.0);
   }
   /**
    * Update roi selection map

@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import css from '../UiApp.module.css';
-import UiSettings from './UiMain';
 import { DnDItemTypes } from '../Constants/DnDItemTypes';
 import { useDrag } from 'react-dnd';
 
-const UiMainDNDContainer = () => {
+export const DragAndDropContainer = ({ children }) => {
   const [position, setPosition] = useState({ top: 100, left: null });
   const [isCanDrag, setIsCanDrag] = useState(false);
 
@@ -51,9 +50,7 @@ const UiMainDNDContainer = () => {
   );
 
   return isDragging ? (
-    <div ref={dragPreview}>
-      <UiSettings />
-    </div>
+    <div ref={dragPreview}>{children}</div>
   ) : (
     <div
       ref={drag}
@@ -66,9 +63,7 @@ const UiMainDNDContainer = () => {
       }}
       className={css.settings}
     >
-      <UiSettings />
+      {children}
     </div>
   );
 };
-
-export default UiMainDNDContainer;

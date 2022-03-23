@@ -2,7 +2,6 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -20,7 +19,7 @@ import ToolDelete from './tools2d/ToolDelete';
 import Tools2dType from './tools2d/ToolTypes';
 import Segm2d from './Segm2d';
 
-import RoiPalette from './loaders/roipalette';
+import { getPalette256 } from './loaders/RoiPalette256';
 
 class Graphics2d extends React.Component {
   constructor(props) {
@@ -69,9 +68,6 @@ class Graphics2d extends React.Component {
     this.m_toolText = new ToolText(this);
     this.m_toolEdit = new ToolEdit(this);
     this.m_toolDelete = new ToolDelete(this);
-
-    // roi
-    this.m_roiPalette = new RoiPalette();
 
     // store
     props.dispatch({ type: StoreActionType.SET_GRAPHICS_2D, graphics2d: this });
@@ -155,7 +151,7 @@ class Graphics2d extends React.Component {
     let imgData = null;
     let dataDst = null;
 
-    const roiPal256 = this.m_roiPalette.getPalette256();
+    const roiPal256 = getPalette256();
 
     // determine actual render square (not w * h - viewport)
     // calculate area using physical volume dimension

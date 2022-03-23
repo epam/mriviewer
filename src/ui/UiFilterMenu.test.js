@@ -2,18 +2,9 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import Volume from '../engine/Volume';
 import SobelEdgeDetector from '../engine/imgproc/Sobel';
 import GaussSmoother from '../engine/imgproc/Gauss';
-
-// ********************************************************
-// Tests
-// ********************************************************
 
 describe('UiFilterMenuTests', () => {
   it('testGaussOnSmallVolume', () => {
