@@ -3,8 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
 
 import packageJson from '../../package.json';
 import UiSkelAni from './UiSkelAni';
@@ -13,58 +12,48 @@ import { Modal, ModalBody, ModalFooter, ModalHeader } from './Modals/ModalBase';
 
 import css from './UiAbout.module.css';
 
-class UiLogoAbout extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      modalShow: false,
-    };
-    this.onShow = this.onShow.bind(this);
-    this.onHide = this.onHide.bind(this);
-  }
+const UiLogoAbout = (props) => {
+  const [modalShow, setModalShow] = useState(false);
+  const strVer = packageJson.version;
+  const strName = packageJson.name;
+  const strDescription = packageJson.description;
+  const strAuthor = packageJson.author;
+  const strYear = packageJson.year;
 
-  onShow() {
-    this.props.graphics2d?.clear();
-    this.setState({ modalShow: true });
-  }
+  const onShow = () => {
+    props.graphics2d?.clear();
+    setModalShow(true);
+  };
 
-  onHide() {
-    this.setState({ modalShow: false });
-  }
+  const onHide = () => {
+    setModalShow(false);
+  };
 
-  render() {
-    const strVer = packageJson.version;
-    const strName = packageJson.name;
-    const strDescription = packageJson.description;
-    const strAuthor = packageJson.author;
-    const strYear = packageJson.year;
+  return (
+    <>
+      <UIButton cx={css.logo} icon="logo" caption="See detailed information about this app" handler={onShow} />
+      {modalShow && (
+        <Modal isOpen={modalShow} close={onHide}>
+          <ModalHeader title={strName} />
+          <ModalBody>
+            <center>
+              <UiSkelAni />
+              <p>{strDescription}</p>
+              <p>
+                <b>Version: </b> {strVer}
+              </p>
+              <p>
+                <b>Copyright: </b> {strYear} {strAuthor}
+              </p>
+            </center>
+          </ModalBody>
+          <ModalFooter>
+            <UIButton handler={onHide} caption="Ok" type="submit" mode="accent" />
+          </ModalFooter>
+        </Modal>
+      )}
+    </>
+  );
+};
 
-    return (
-      <>
-        <UIButton cx={css.logo} icon="logo" caption="See detailed information about this app" handler={this.onShow} />
-        {this.state.modalShow && (
-          <Modal isOpen={this.state.modalShow} close={this.onHide}>
-            <ModalHeader title={strName} />
-            <ModalBody>
-              <center>
-                <UiSkelAni />
-                <p>{strDescription}</p>
-                <p>
-                  <b>Version: </b> {strVer}
-                </p>
-                <p>
-                  <b>Copyright: </b> {strYear} {strAuthor}
-                </p>
-              </center>
-            </ModalBody>
-            <ModalFooter>
-              <UIButton handler={this.onHide} caption="Ok" type="submit" mode="accent" />
-            </ModalFooter>
-          </Modal>
-        )}
-      </>
-    );
-  }
-}
-
-export default connect((store) => store)(UiLogoAbout);
+export default UiLogoAbout;
