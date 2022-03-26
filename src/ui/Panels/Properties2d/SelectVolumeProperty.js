@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
 import React from 'react';
@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 
 import StoreActionType from '../../../store/ActionTypes';
 
-import UiVolIcon from '../../UiVolIcon';
+import { UiVolIcon } from '../../UiVolIcon';
 
 const NEED_TEXTURE_SIZE_4X = true;
 

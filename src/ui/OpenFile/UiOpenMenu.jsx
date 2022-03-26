@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2022 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -34,8 +34,8 @@ import LoaderDcmUrlDaikon from '../../engine/loaders/LoadDcmUrlDiakon';
 import config from '../../config/config';
 import { UIButton } from '../Button/Button';
 import css from './UiOpenMenu.module.css';
-import UiSaveMenu from '../UiSaveMenu';
-import UiReportMenu from '../UiReportMenu';
+import { UiSaveMenu } from './UiSaveMenu';
+import { UiReportMenu } from './UiReportMenu';
 import { Tooltip } from '../Tooltip/Tooltip';
 
 /** Need to have demo menu */
