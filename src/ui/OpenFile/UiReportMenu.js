@@ -3,12 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @fileOverview UiReportMenu
- * @author Epam
- * @version 1.0.0
- */
-
 import React, { useState } from 'react';
 
 import Screenshot from '../../engine/utils/Screenshot';
@@ -21,7 +15,7 @@ import { useSelector } from 'react-redux';
 export const UiReportMenu = () => {
   const [showModalDicomTags, setShowModalDicomTags] = useState(false);
 
-  const store = useSelector((state) => state);
+  const { viewMode, graphics2d, volumeRenderer, isLoaded } = useSelector((state) => state);
   const onModalDicomTagsShow = () => {
     setShowModalDicomTags(true);
   };
@@ -34,20 +28,20 @@ export const UiReportMenu = () => {
     const SHOT_W = 800;
     const SHOT_H = 600;
 
-    const viewMode = store.viewMode;
-    if (viewMode === ViewMode.VIEW_2D) {
-      const gra2d = store.graphics2d;
+    const viewModeLocal = viewMode;
+    if (viewModeLocal === ViewMode.VIEW_2D) {
+      const gra2d = graphics2d;
       Screenshot.makeScreenshot(gra2d, SHOT_W, SHOT_H);
-    } else if (viewMode === ViewMode.VIEW_3D || viewMode === ViewMode.VIEW_3D_LIGHT) {
-      const volRender = store.volumeRenderer;
+    } else if (viewModeLocal === ViewMode.VIEW_3D || viewModeLocal === ViewMode.VIEW_3D_LIGHT) {
+      const volRender = volumeRenderer;
       Screenshot.makeScreenshot(volRender, SHOT_W, SHOT_H);
     } else {
       console.log('onModalScreenshot. not implemented yet');
     }
   };
 
-  const isLoaded = store.isLoaded;
-  const strDisabled = !isLoaded;
+  const isLoadedLocal = isLoaded;
+  const strDisabled = !isLoadedLocal;
   return (
     <>
       <Tooltip content="Show tags">

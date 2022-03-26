@@ -3,12 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @fileOverview UiSaveMenu
- * @author Epam
- * @version 1.0.0
- */
-
 import React, { useState } from 'react';
 
 import { useSelector } from 'react-redux';

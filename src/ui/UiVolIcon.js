@@ -3,12 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @fileOverview UiVolIcon
- * @author Epam
- * @version 1.0.0
- */
-
 import React, { useRef, useEffect } from 'react';
 
 import { useSelector } from 'react-redux';
@@ -22,7 +16,7 @@ export const UiVolIcon = (props) => {
     const volSet = store.volumeSet;
     const vol = volSet.getVolume(m_volIndex);
     // console.log(`vol icon = ${vol.m_xIcon} * ${vol.m_yIcon}`);
-    const objCanvas = useRef(m_mount);
+    const objCanvas = useRef(null);
     if (objCanvas === null) {
       return;
     }
@@ -64,14 +58,5 @@ export const UiVolIcon = (props) => {
   }, []);
   const side = VOLUME_ICON_SIDE;
   m_volIndex = props.index;
-  const jsxCanvas = (
-    <canvas
-      ref={(mount) => {
-        m_mount = mount;
-      }}
-      width={side}
-      height={side}
-    />
-  );
-  return jsxCanvas;
+  return <canvas ref={objCanvas} width={side} height={side} />;
 };
