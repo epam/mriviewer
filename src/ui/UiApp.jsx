@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2022 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
 import React, { useEffect, useState } from 'react';
@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 
 import StoreActionType from '../store/ActionTypes';
 
-import { LeftToolbar } from './Toolbars/Left/LeftToolbar';
+import { LeftToolbar } from './LeftToolbar/LeftToolbar';
 import UiModalText from './Modals/UiModalText';
 import UiModalAlert from './Modals/ModalAlert';
 import UiErrConsole from './UiErrConsole';
@@ -25,8 +25,9 @@ import { useDrop } from 'react-dnd';
 import { DnDItemTypes } from './Constants/DnDItemTypes';
 import { Header } from './Header/Header';
 import { RightPanel } from './Panels/RightPanel';
-import { TopToolbar } from './Toolbars/Top/TopToolbar';
+import { TopToolbar } from './TopToolbar/TopToolbar';
 import Spinner from './ProgressBar/UISpinner';
+import { JobContextProvider } from './Job/JobContext';
 
 const UiApp = (props) => {
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
@@ -107,40 +108,42 @@ const UiApp = (props) => {
   }, [strAlertText, strAlertTitle, isWebGl20supported]);
 
   return (
-    <div ref={drop}>
-      {props.progress > 0 && <UIProgressBar active={props.progress} progress={props.progress} />}
-      {props.spinner ? <Spinner /> : null}
-      <Header fileNameOnLoad={m_fileNameOnLoad} />
-      {isReady && (
-        <>
-          <div className={css.left}>
-            <LeftToolbar />
-          </div>
-          <div className={css.top}>
-            <TopToolbar />
-          </div>
-          <div className={css.center}>{props.viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
-          <div className={css.bottleft}>{props.viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
-          <RightPanel />
-        </>
-      )}
+    <JobContextProvider>
+      <div ref={drop}>
+        {props.progress > 0 && <UIProgressBar active={props.progress} progress={props.progress} />}
+        {props.spinner ? <Spinner /> : null}
+        <Header fileNameOnLoad={m_fileNameOnLoad} />
+        {isReady && (
+          <>
+            <div className={css.left}>
+              <LeftToolbar />
+            </div>
+            <div className={css.top}>
+              <TopToolbar />
+            </div>
+            <div className={css.center}>{props.viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
+            <div className={css.bottleft}>{props.viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
+            <RightPanel />
+          </>
+        )}
 
-      {arrErrorsLoaded.length > 0 && <UiErrConsole />}
+        {arrErrorsLoaded.length > 0 && <UiErrConsole />}
 
-      {props.showModalText && (
-        <UiModalText stateVis={props.showModalText} onHide={onHideModalText.bind(this)} onShow={onShowModalText.bind(this)} />
-      )}
+        {props.showModalText && (
+          <UiModalText stateVis={props.showModalText} onHide={onHideModalText.bind(this)} onShow={onShowModalText.bind(this)} />
+        )}
 
-      {props.showModalAlert && (
-        <UiModalAlert
-          stateVis={props.showModalAlert}
-          onHide={onHideModalAlert.bind(this)}
-          onShow={onShowModalAlert.bind(this)}
-          title={strAlertTitle}
-          text={strAlertText}
-        />
-      )}
-    </div>
+        {props.showModalAlert && (
+          <UiModalAlert
+            stateVis={props.showModalAlert}
+            onHide={onHideModalAlert.bind(this)}
+            onShow={onShowModalAlert.bind(this)}
+            title={strAlertTitle}
+            text={strAlertText}
+          />
+        )}
+      </div>
+    </JobContextProvider>
   );
 };
 

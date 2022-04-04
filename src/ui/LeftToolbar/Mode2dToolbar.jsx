@@ -6,11 +6,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Modes2d from '../../../store/Modes2d';
-import StoreActionType from '../../../store/ActionTypes';
-import { UIButton } from '../../Button/Button';
-import { Container } from '../Container';
-import { Tooltip } from '../../Tooltip/Tooltip';
+import Modes2d from '../../store/Modes2d';
+import StoreActionType from '../../store/ActionTypes';
+import { UIButton } from '../Button/Button';
+import { Container } from '../Layout/Container';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 export const Mode2dToolbar = () => {
   const dispatch = useDispatch();

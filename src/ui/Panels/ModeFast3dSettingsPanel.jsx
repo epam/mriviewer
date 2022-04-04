@@ -8,7 +8,7 @@ import { BrightnessProperty } from './Properties3d/BrightnessProperty';
 import { QualityProperty } from './Properties3d/QualityProperty';
 import { CutProperty } from './Properties3d/CutProperty';
 import { ContrastProperty } from './Properties3d/ContrastProperty';
-import { useNeedShow3d } from '../useNeedShow3d';
+import { useNeedShow3d } from '../../utils/useNeedShow3d';
 import { RoiSelectProperty } from './Properties3d/RoiSelectProperty';
 import { OpacityProperty } from './Properties3d/OpacityProperty';
 import { RGBProperty } from './Properties3d/RGBProperty';

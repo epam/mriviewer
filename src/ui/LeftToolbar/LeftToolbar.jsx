@@ -6,10 +6,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import ViewMode from '../../../store/ViewMode';
+import ViewMode from '../../store/ViewMode';
 import { ModeSwitcherToolbar } from './ModeSwitcherToolbar';
 import { ModeFast3dToolbar } from './ModeFast3dToolbar';
-import ModeView from '../../../store/ViewMode';
+import ModeView from '../../store/ViewMode';
 import { Mode2dToolbar } from './Mode2dToolbar';
 
 export const LeftToolbar = () => {
