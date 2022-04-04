@@ -5,10 +5,10 @@
 
 import React, { useState } from 'react';
 
-import { Container } from '../Container';
-import { buttonsBuilder } from '../../Button/Button';
-import Tools2dType from '../../../engine/tools2d/ToolTypes';
-import StoreActionType from '../../../store/ActionTypes';
+import { Container } from '../Layout/Container';
+import { buttonsBuilder } from '../Button/Button';
+import Tools2dType from '../../engine/tools2d/ToolTypes';
+import StoreActionType from '../../store/ActionTypes';
 import { connect } from 'react-redux';
 
 const ExploreTools = (props) => {
