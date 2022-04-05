@@ -6,7 +6,7 @@
 import React, { useRef, useEffect } from 'react';
 
 import { useSelector } from 'react-redux';
-import { VOLUME_ICON_SIDE } from '../engine/Volume';
+import { VOLUME_ICON_SIDE } from '../../../engine/Volume';
 
 export const UiVolIcon = (props) => {
   let m_volIndex = useRef(-1);

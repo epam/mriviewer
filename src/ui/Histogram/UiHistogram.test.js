@@ -8,7 +8,8 @@
 // ********************************************************
 
 import UiHistogram from './UiHistogram';
-import Volume from '../engine/Volume';
+import Volume from '../../engine/Volume';
+import HistogramUtils from './HistogramUtils';
 
 // ********************************************************
 // Tests
@@ -165,7 +166,7 @@ describe('UiHistogramTests', () => {
     for (i = 0; i < NUM_COLORS; i++) {
       histArr[i] = 1;
     }
-    const hist = new UiHistogram();
+    const hist = new HistogramUtils();
     hist.assignArray(NUM_COLORS, histArr);
     const indMax = hist.getLastMaxIndex();
     expect(indMax === -1).toBeTruthy();
