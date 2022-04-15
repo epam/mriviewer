@@ -10,66 +10,40 @@ const DEFAULT_HEIGHT = 220;
 const NEED_TO_DRAW_VERTICAL_MARKS = false;
 
 const Histogram = (props) => {
-  const canvasRef = useRef(null);
-  const canvasHistogram = useRef(null);
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(DEFAULT_HEIGHT);
+  const containerRef = useRef(null);
+  const canvasHistogramRef = useRef(null);
   let numColors = 0;
   let histogram = [];
   let peakIndex = -1;
 
-  let transfFunc = new TransfFunc();
-  let transfFuncCallback = undefined;
-  let transfFuncUpdateCallback = undefined;
+  let mainTransfFunc = new TransfFunc();
+  let transfFuncCallback = props.transfFunc;
+  let transfFuncUpdateCallback = props.transfFuncUpdate;
 
-  function useWindowSize() {
-    const [windowSize, setWindowSize] = useState({
-      width: undefined,
-      height: undefined,
-    });
-    useEffect(() => {
-      function handleResize() {
-        setWindowSize({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        });
-      }
+  const { transfFuncUpdate } = props;
+
+  const [canvasSize, setCanvasSize] = useState({
+    width: 0,
+    height: DEFAULT_HEIGHT,
+  });
+
+  useEffect(() => {
+    // calculate width and height canvas
+    function handleResize() {
+      const { current } = containerRef;
+      setCanvasSize({
+        width: current.clientWidth - 2,
+        height: current.clientHeight - 2,
+      });
+    }
+    updateCanvas();
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => {
       updateCanvas();
-      window.addEventListener('resize', handleResize);
-      handleResize();
-      return () => {
-        updateCanvas();
-        window.removeEventListener('resize', handleResize);
-      };
-    }, []);
-    return windowSize;
-  }
-
-  // useEffect(() => {
-  //
-  //   window.addEventListener('resize', handleResize, false);
-  //   setSize();
-  // }, []);
-
-  // useEffect(() => {
-  //   updateCanvas();
-  //   window.removeEventListener('resize', handleResize, false);
-  // }, [handleResize]);
-
-  // function handleResize() {
-  //   setSize();
-  // }
-
-  // function setSize() {
-  //   const { current } = canvasRef;
-  //   if (current !== null) {
-  //     const w = current.clientWidth - 2;
-  //     const h = current.clientHeight - 2;
-  //     // console.log(`UiHistogram. setSize. = ${w} * ${h}`);
-  //     setWidth(w);
-  //     setHeight(h);
-  //   }
-  // }
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   function smoothHistogram(sigma = 1.2, needNormalize = true) {
     const SIZE_DIV = 60;
@@ -167,10 +141,8 @@ const Histogram = (props) => {
   }
 
   function forceRender() {
-    setHeight(height);
-    setWidth(width);
     if (transfFuncCallback !== undefined) {
-      transfFuncCallback(transfFunc);
+      transfFuncCallback(mainTransfFunc);
     }
   }
 
@@ -178,10 +150,10 @@ const Histogram = (props) => {
     if (transfFuncCallback === undefined || transfFuncUpdateCallback === undefined) {
       return;
     }
-    const box = canvasHistogram.getBoundingClientRect();
+    const box = canvasHistogramRef.current.getBoundingClientRect();
     const xScr = evt.clientX - box.left;
     const yScr = evt.clientY - box.top;
-    const needRender = transfFunc.onMouseDown(xScr, yScr);
+    const needRender = mainTransfFunc.onMouseDown(xScr, yScr);
     if (needRender) {
       forceRender();
     }
@@ -191,10 +163,10 @@ const Histogram = (props) => {
     if (transfFuncCallback === undefined || transfFuncUpdateCallback === undefined) {
       return;
     }
-    const box = canvasHistogram.getBoundingClientRect();
+    const box = canvasHistogramRef.current.getBoundingClientRect();
     const xScr = evt.clientX - box.left;
     const yScr = evt.clientY - box.top;
-    const needRender = transfFunc.onMouseUp(xScr, yScr);
+    const needRender = mainTransfFunc.onMouseUp(xScr, yScr);
     if (needRender) {
       forceRender();
     }
@@ -204,22 +176,22 @@ const Histogram = (props) => {
     if (transfFuncCallback === undefined || transfFuncUpdateCallback === undefined) {
       return;
     }
-    const box = canvasHistogram.getBoundingClientRect();
+    const box = canvasHistogramRef.current.getBoundingClientRect();
     const xScr = evt.clientX - box.left;
     const yScr = evt.clientY - box.top;
-    const needRender = transfFunc.onMouseMove(xScr, yScr);
+    const needRender = mainTransfFunc.onMouseMove(xScr, yScr);
     if (needRender) {
       forceRender();
     }
   }
 
   function updateCanvas() {
-    if (canvasHistogram === undefined) {
+    if (canvasHistogramRef === undefined) {
       return;
     }
-    const ctx = canvasHistogram.getContext('2d');
-    const w = canvasHistogram.clientWidth;
-    const h = canvasHistogram.clientHeight;
+    const ctx = canvasHistogramRef.current.getContext('2d');
+    const w = canvasHistogramRef.current.clientWidth;
+    const h = canvasHistogramRef.current.clientHeight;
     ctx.fillStyle = 'rgb(220, 220, 220)';
     ctx.fillRect(0, 0, w, h);
 
@@ -329,8 +301,8 @@ const Histogram = (props) => {
       ctx.setLineDash([]);
     }
     // render points and lines for modified transfer fucntion
-    if (transfFuncCallback !== undefined && transfFuncUpdateCallback !== undefined) {
-      transfFunc.render(ctx, xMin, yMin, wRect, hRect);
+    if (transfFuncCallback !== undefined && transfFuncUpdate !== undefined) {
+      mainTransfFunc.render(ctx, xMin, yMin, wRect, hRect);
     }
   }
 
@@ -341,17 +313,19 @@ const Histogram = (props) => {
   if (vol === null) {
     return <p></p>;
   }
-  const size = useWindowSize();
-  transfFuncCallback = props.transfFunc;
-  transfFuncUpdateCallback = props.transfFuncUpdate;
-  const cw = size.width;
-  const ch = size.height;
-  const jsxHist = (
-    <div ref={canvasRef} style={{ cursor: 'initial' }}>
-      <canvas ref={canvasHistogram} width={cw} height={ch} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onMouseMove={onMouseMove} />
+
+  return (
+    <div ref={containerRef} style={{ cursor: 'initial' }}>
+      <canvas
+        ref={canvasHistogramRef}
+        width={canvasSize.width}
+        height={canvasSize.height}
+        onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
+        onMouseMove={onMouseMove}
+      />
     </div>
   );
-  return jsxHist;
 };
 
 export default Histogram;
