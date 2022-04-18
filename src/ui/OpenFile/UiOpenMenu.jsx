@@ -264,7 +264,7 @@ class UiOpenMenu extends React.Component {
 
     if (this.m_fileName.endsWith('.ktx') || this.m_fileName.endsWith('.KTX')) {
       // if read ktx
-      debugger;
+      // debugger;
       this.m_volumeSet.readFromKtx(strContent, callbackProgress, callbackComplete);
     } else if (this.m_fileName.endsWith('.nii') || this.m_fileName.endsWith('.NII')) {
       this.m_volumeSet.readFromNifti(strContent, callbackProgress, callbackComplete);
@@ -720,11 +720,11 @@ class UiOpenMenu extends React.Component {
       this.m_volumeSet.addVolume(new Volume());
 
       if (strUrl.endsWith('.ktx')) {
-        debugger;
+        // debugger;
         const callbackProgress = this.callbackReadProgress;
         const callbackComplete = this.callbackReadCompleteUrlKtxNii;
         this.callbackReadProgress(0.0);
-        debugger;
+        // debugger;
         this.m_volumeSet.readFromKtxUrl(strUrl, callbackProgress, callbackComplete);
         // if KTX
       } else if (strUrl.endsWith('.nii')) {
@@ -924,7 +924,7 @@ class UiOpenMenu extends React.Component {
     if (fileNameOnLoad.length > 0 && this.state.onLoadCounter > 0) {
       this.setState({ onLoadCounter: 0 });
       const TIMEOUT_MS = 50;
-      debugger;
+      // debugger;
       setTimeout(this.loadFromUrl(fileNameOnLoad), TIMEOUT_MS);
     }
   }
