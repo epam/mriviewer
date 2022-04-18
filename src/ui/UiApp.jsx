@@ -7,31 +7,28 @@ import { connect } from 'react-redux';
 
 import StoreActionType from '../store/ActionTypes';
 
-import UiOpenMenu from './OpenFile/UiOpenMenu';
-import UiViewMode from './Toolbars/UiViewMode';
-import UiFilterMenu from './UiFilterMenu';
 import FullScreenToggle from './Toolbars/FullScreen';
+import { LeftToolbar } from './Toolbars/Left/LeftToolbar';
 import UiModalText from './Modals/UiModalText';
 import UiModalAlert from './Modals/ModalAlert';
 import UiErrConsole from './UiErrConsole';
 import ModeView from '../store/ViewMode';
 import Graphics2d from '../engine/Graphics2d';
-import UiCtrl2d from './UiCtrl2d';
 
 import BrowserDetector from '../engine/utils/BrowserDetector';
-import ExploreTools from './Toolbars/ExploreTools';
 import UIProgressBar from './ProgressBar/UIProgressBar';
-import UiAbout from './UiAbout';
 
 import css from './UiApp.module.css';
 import cx from 'classnames';
 import '../nouislider-custom.css';
 import Graphics3d from '../engine/Graphics3d';
 import ZoomTools from './UiZoomTools';
-import UiMainDNDContainer from './Toolbars/UiMainDNDContainer';
 import { useDrop } from 'react-dnd';
 import { DnDItemTypes } from './Constants/DnDItemTypes';
-// import Spinner from './ProgressBar/UISpinner';
+import { Header } from './Header/Header';
+import { RightPanel } from './Panels/RightPanel';
+import { TopToolbar } from './Toolbars/Top/TopToolbar';
+import Spinner from './ProgressBar/UISpinner';
 
 const UiApp = (props) => {
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
@@ -145,55 +142,42 @@ const UiApp = (props) => {
   }, [isFullMode]);
 
   return (
-    <div ref={appRef}>
-      <div ref={drop}>
-        {/*{props.progress > 0 && <UIProgressBar />}*/}
-        <UIProgressBar active={props.progress} progress={props.progress} titleProgressBar={props.titleProgressBar} />
-        {/*{props.spinner && <Spinner />}*/}
-        {!isFullMode && (
-          <div className={css.header}>
-            <UiAbout />
-            <UiOpenMenu fileNameOnLoad={m_fileNameOnLoad} />
+    <div ref={drop}>
+      {props.progress > 0 && <UIProgressBar active={props.progress} progress={props.progress} />}
+      {props.spinner ? <Spinner /> : null}
+      {!isFullMode && (
+        <Header fileNameOnLoad={m_fileNameOnLoad} />
+       )}
+      {isReady && (
+        <div className={cx(isFullMode && css.fullscreen)}>
+          <div className={css.left}>
+            <LeftToolbar />
           </div>
-        )}
-        {isReady && (
-          <div className={cx(isFullMode && css.fullscreen)}>
-            <div className={css.left}>
-              <UiViewMode />
-              {props.viewMode === ModeView.VIEW_2D && <UiCtrl2d />}
-            </div>
-            <div className={css.top}>
-              {props.viewMode === ModeView.VIEW_2D && <ExploreTools />}
-              {props.viewMode === ModeView.VIEW_2D && <UiFilterMenu />}
-              <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
-            </div>
-            {props.viewMode === ModeView.VIEW_2D ? (
-              <div className={css.center2d}>
-                <Graphics2d />
-              </div>
-            ) : (
-              <div className={css.center}>
-                <Graphics3d />
-              </div>
-            )}
-            <div className={css.bottleft}>{props.viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
-            <UiMainDNDContainer />
+          <div className={css.top}>
+            <TopToolbar />
+            <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
           </div>
-        )}
-        {arrErrorsLoaded.length > 0 && <UiErrConsole />}
-        {props.showModalText && (
-          <UiModalText stateVis={props.showModalText} onHide={onHideModalText.bind(this)} onShow={onShowModalText.bind(this)} />
-        )}
-        {props.showModalAlert && (
-          <UiModalAlert
-            stateVis={props.showModalAlert}
-            onHide={onHideModalAlert.bind(this)}
-            onShow={onShowModalAlert.bind(this)}
-            title={strAlertTitle}
-            text={strAlertText}
-          />
-        )}
-      </div>
+          <div className={css.center}>{props.viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
+          <div className={css.bottleft}>{props.viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
+          <RightPanel />
+        </div>
+      )}
+
+      {arrErrorsLoaded.length > 0 && <UiErrConsole />}
+
+      {props.showModalText && (
+        <UiModalText stateVis={props.showModalText} onHide={onHideModalText.bind(this)} onShow={onShowModalText.bind(this)} />
+      )}
+
+      {props.showModalAlert && (
+        <UiModalAlert
+          stateVis={props.showModalAlert}
+          onHide={onHideModalAlert.bind(this)}
+          onShow={onShowModalAlert.bind(this)}
+          title={strAlertTitle}
+          text={strAlertText}
+        />
+      )}
     </div>
   );
 };
