@@ -142,42 +142,42 @@ const UiApp = (props) => {
   }, [isFullMode]);
 
   return (
-    <div ref={drop}>
-      {props.progress > 0 && <UIProgressBar active={props.progress} progress={props.progress} />}
-      {props.spinner ? <Spinner /> : null}
-      {!isFullMode && (
-        <Header fileNameOnLoad={m_fileNameOnLoad} />
-       )}
-      {isReady && (
-        <div className={cx(isFullMode && css.fullscreen)}>
-          <div className={css.left}>
-            <LeftToolbar />
+    <div ref={appRef}>
+      <div ref={drop}>
+        {props.progress > 0 && <UIProgressBar active={props.progress} progress={props.progress} />}
+        {props.spinner ? <Spinner /> : null}
+        {!isFullMode && <Header fileNameOnLoad={m_fileNameOnLoad} />}
+        {isReady && (
+          <div className={cx(isFullMode && css.fullscreen)}>
+            <div className={css.left}>
+              <LeftToolbar />
+            </div>
+            <div className={css.top}>
+              <TopToolbar />
+              <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
+            </div>
+            <div className={css.center}>{props.viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
+            <div className={css.bottleft}>{props.viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
+            <RightPanel />
           </div>
-          <div className={css.top}>
-            <TopToolbar />
-            <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
-          </div>
-          <div className={css.center}>{props.viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
-          <div className={css.bottleft}>{props.viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
-          <RightPanel />
-        </div>
-      )}
+        )}
 
-      {arrErrorsLoaded.length > 0 && <UiErrConsole />}
+        {arrErrorsLoaded.length > 0 && <UiErrConsole />}
 
-      {props.showModalText && (
-        <UiModalText stateVis={props.showModalText} onHide={onHideModalText.bind(this)} onShow={onShowModalText.bind(this)} />
-      )}
+        {props.showModalText && (
+          <UiModalText stateVis={props.showModalText} onHide={onHideModalText.bind(this)} onShow={onShowModalText.bind(this)} />
+        )}
 
-      {props.showModalAlert && (
-        <UiModalAlert
-          stateVis={props.showModalAlert}
-          onHide={onHideModalAlert.bind(this)}
-          onShow={onShowModalAlert.bind(this)}
-          title={strAlertTitle}
-          text={strAlertText}
-        />
-      )}
+        {props.showModalAlert && (
+          <UiModalAlert
+            stateVis={props.showModalAlert}
+            onHide={onHideModalAlert.bind(this)}
+            onShow={onShowModalAlert.bind(this)}
+            title={strAlertTitle}
+            text={strAlertText}
+          />
+        )}
+      </div>
     </div>
   );
 };
