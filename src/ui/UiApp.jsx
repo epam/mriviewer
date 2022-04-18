@@ -31,7 +31,7 @@ import ZoomTools from './UiZoomTools';
 import UiMainDNDContainer from './Toolbars/UiMainDNDContainer';
 import { useDrop } from 'react-dnd';
 import { DnDItemTypes } from './Constants/DnDItemTypes';
-import Spinner from './ProgressBar/UISpinner';
+// import Spinner from './ProgressBar/UISpinner';
 
 const UiApp = (props) => {
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
@@ -120,8 +120,6 @@ const UiApp = (props) => {
   }, [m_fileNameOnLoad]);
 
   useEffect(() => {
-    props.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
-
     // browser detector
     const browserDetector = new BrowserDetector();
     setIsWebGl20supported(browserDetector.checkWebGlSupported());
@@ -149,9 +147,9 @@ const UiApp = (props) => {
   return (
     <div ref={appRef}>
       <div ref={drop}>
-        {props.progress > 0 && <UIProgressBar active={props.progress} progress={props.progress} />}
-        {/*<UIProgressBar active={props.progress} progress={props.progress} titleProgressBar={props.titleProgressBar} />*/}
-        {props.spinner ? <Spinner /> : null}
+        {/*{props.progress > 0 && <UIProgressBar />}*/}
+        <UIProgressBar active={props.progress} progress={props.progress} titleProgressBar={props.titleProgressBar} />
+        {/*{props.spinner && <Spinner />}*/}
         {!isFullMode && (
           <div className={css.header}>
             <UiAbout />

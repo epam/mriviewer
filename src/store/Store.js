@@ -105,7 +105,7 @@ const medReducer = (state = initialState, action) => {
       return Object.assign({}, state, { graphics2d: action.graphics2d });
     case StoreActionType.SET_PROGRESS:
       // debugger;
-      return Object.assign({}, state, { progress: action.progress });
+      return Object.assign({}, state, { progress: action.payload.progress, titleProgressBar: action.payload.titleProgressBar });
     case StoreActionType.SET_DICOM_INFO:
       return Object.assign({}, state, { dicomInfo: action.dicomInfo });
     case StoreActionType.SET_IS_TOOL3D:
