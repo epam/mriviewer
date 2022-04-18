@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import css from './UIprogressBar.module.css';
 import { connect } from 'react-redux';

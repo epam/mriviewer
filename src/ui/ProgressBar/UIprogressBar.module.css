@@ -15,6 +15,7 @@
   overflow: hidden;
   border-radius: 100px;
   z-index: 1001;
+  padding: 2px 20px;
 }
 
 .progressBar {
