@@ -1,0 +1,23 @@
+/*
+ * Copyright 2022 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.logo {
+  background: transparent !important;
+  background-color: red;
+}
+
+.logo svg {
+  width: 40px;
+  height: 40px;
+}
+
+.logo:hover,
+.logo:focus {
+  background: transparent;
+}
+
+.logo:hover svg {
+  fill: var(--red);
+}

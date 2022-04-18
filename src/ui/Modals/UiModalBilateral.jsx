@@ -6,15 +6,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Nouislider from 'react-nouislider';
+import { Nouislider } from '../Nouislider/Nouislider';
 
 import GaussSmoother from '../../engine/imgproc/Gauss';
 
 import StoreActionType from '../../store/ActionTypes';
 import ViewMode from '../../store/ViewMode';
 import Modes3d from '../../store/Modes3d';
-import { Modal, ModalBody, ModalHeader } from './ModalBase';
+import { Modal, ModalBody, ModalFooter, ModalHeader } from './ModalBase';
 import { UIButton } from '../Button/Button';
+
+import buttonCss from '../Button/Button.module.css';
 
 class UiModalBilateral extends React.Component {
   constructor(props) {
@@ -146,30 +148,14 @@ class UiModalBilateral extends React.Component {
     this.setState({ showModalGauss: false });
   }
 
-  onChangeSliderKoefDist() {
-    if (this.refs === undefined) {
-      return;
-    }
+  onChangeSliderKoefDist(value) {
     this.m_updateEnable = false;
-    let val = 0.0;
-    const aval = this.refs.slider1.slider.get();
-    if (typeof aval === 'string') {
-      val = Number.parseFloat(aval);
-      this.m_koefDist = val;
-    }
+    this.m_koefDist = value;
   }
 
-  onChangeSliderKoefVal() {
-    if (this.refs === undefined) {
-      return;
-    }
+  onChangeSliderKoefVal(value) {
     this.m_updateEnable = false;
-    let val = 0.0;
-    const aval = this.refs.slider2.slider.get();
-    if (typeof aval === 'string') {
-      val = Number.parseFloat(aval);
-      this.m_koefVal = val;
-    }
+    this.m_koefVal = value;
   }
 
   //
@@ -178,14 +164,8 @@ class UiModalBilateral extends React.Component {
     const onHideFunc = this.props.onHide;
     this.m_hideFunc = onHideFunc;
 
-    const strSlider1 = 'slider1';
-    const strSlider2 = 'slider2';
     const defaultDist = 3;
     const defaultVal = 0.1;
-    const wArrDist = [defaultDist];
-    const wArrVal = [defaultVal];
-
-    const valToolTps = true;
 
     return (
       <Modal isOpen={stateVis} close={onHideFunc}>
@@ -193,29 +173,19 @@ class UiModalBilateral extends React.Component {
 
         <ModalBody>
           Select koefficient distance (kd)
-          <Nouislider
-            onSlide={this.onChangeSliderKoefDist.bind(this)}
-            ref={strSlider1}
-            range={{ min: 0.5, max: 3.0 }}
-            start={wArrDist}
-            step={0.00001}
-            tooltips={valToolTps}
-          />
+          <Nouislider onChange={this.onChangeSliderKoefDist.bind(this)} range={{ min: 0.5, max: 3.0 }} value={defaultDist} step={0.00001} />
           Select koefficient value (kv)
-          <Nouislider
-            onSlide={this.onChangeSliderKoefVal.bind(this)}
-            ref={strSlider2}
-            range={{ min: 0.1, max: 4.0 }}
-            start={wArrVal}
-            step={0.00001}
-            tooltips={valToolTps}
-          />
-          <b>Hints to setup values:</b> <br />
-          kd = 0.5, kv = 0.1 => original image <br />
-          kd = 3.0, kv = 0.1 => denoise image <br />
-          kd = 3.0, kv = 4.0 => image blur
-          <UIButton handler={this.onButtonStart} caption="Start" />
+          <Nouislider onChange={this.onChangeSliderKoefVal.bind(this)} range={{ min: 0.1, max: 4.0 }} value={defaultVal} step={0.00001} />
+          <p>
+            <b>Hints to setup values:</b> <br />
+            kd = 0.5, kv = 0.1 ={'>'} original image <br />
+            kd = 3.0, kv = 0.1 ={'>'} denoise image <br />
+            kd = 3.0, kv = 4.0 ={'>'} image blur <br />
+          </p>
         </ModalBody>
+        <ModalFooter>
+          <UIButton handler={this.onButtonStart} caption="Start" cx={buttonCss.apply} />
+        </ModalFooter>
       </Modal>
     );
   }

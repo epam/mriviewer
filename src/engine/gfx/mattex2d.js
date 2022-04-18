@@ -2,32 +2,15 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-
-/**
- * 2d texture material, used for 2d edit mode
- * @module app/scripts/fgx/shaders/mattex2d
- */
-
-// ******************************************************************
-// imports
-// ******************************************************************
-
-// absoulte imports
 import * as THREE from 'three';
 
-// app imports
-import RoiPalette from '../loaders/roipalette';
+import { getPalette256 } from '../loaders/RoiPalette256';
 
 const TEX2D_PLANE_X = 0;
 const TEX2D_PLANE_Y = 1;
 const TEX2D_PLANE_Z = 2;
 
-/** @class MaterialTex2d to render texture in 2d mode */
-
 export default class MaterialTex2d {
-  /** Simple material constructor
-   * @constructor
-   */
   constructor() {
     this.m_defines = {
       useWebGL2: 1,
@@ -229,8 +212,7 @@ export default class MaterialTex2d {
     this.m_uniforms.zDim.value = zDim;
     this.m_uniforms.isRoiVolume.value = isRoiVolume ? 1.0 : 0.0;
     if (isRoiVolume) {
-      const roiPalette = new RoiPalette();
-      const palette = roiPalette.getPalette256();
+      const palette = getPalette256();
       const BYTES_PER_COLOR = 4;
       const MAGIC_COLOR = 250;
       const OFFS_0 = 0;
