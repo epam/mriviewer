@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { VOLUME_ICON_SIDE } from '../../../engine/Volume';
 
 export const UiVolIcon = (props) => {
-  let m_volIndex = useRef(-1);
+  let m_volIndex = -1;
   useEffect(() => {
     // console.log("UiVlIcon.componentDidMount");
     const store = useSelector((state) => state);
@@ -20,9 +20,9 @@ export const UiVolIcon = (props) => {
     if (objCanvas === null) {
       return;
     }
-    const ctx = objCanvas.getContext('2d');
-    const w = objCanvas.clientWidth;
-    const h = objCanvas.clientHeight;
+    const ctx = objCanvas.current.getContext('2d');
+    const w = objCanvas.current.clientWidth;
+    const h = objCanvas.current.clientHeight;
     if (w * h === 0) {
       return;
     }
