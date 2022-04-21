@@ -9,9 +9,10 @@ import TransfFunc from '../../engine/TransFunc';
 const DEFAULT_HEIGHT = 220;
 const NEED_TO_DRAW_VERTICAL_MARKS = false;
 
-const Histogram = (props) => {
+export const UiHistogram = (props) => {
   const containerRef = useRef(null);
   const canvasHistogramRef = useRef(null);
+  const didMount = useRef(false);
   let numColors = 0;
   let histogram = [];
   let peakIndex = -1;
@@ -31,8 +32,12 @@ const Histogram = (props) => {
   }, []);
 
   useEffect(() => {
-    updateCanvas();
-    window.removeEventListener('resize', handleResize, false);
+    if (didMount.current) {
+      updateCanvas();
+      window.removeEventListener('resize', handleResize, false);
+    } else {
+      didMount.current = true;
+    }
   }, [handleResize]);
 
   function handleResize() {
@@ -346,5 +351,3 @@ const Histogram = (props) => {
     </div>
   );
 };
-
-export default Histogram;

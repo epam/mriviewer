@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { useSelector } from 'react-redux';
-import UiHistogram from '../../Histogram/UiHistogram';
+import { UiHistogram } from '../../Histogram/UiHistogram';
 
 export function HistogramProperty() {
   const { volumeSet, volumeIndex, volumeRenderer } = useSelector((state) => state);
