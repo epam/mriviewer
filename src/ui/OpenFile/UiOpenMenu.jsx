@@ -85,6 +85,7 @@ class UiOpenMenu extends React.Component {
     this.m_fileName = '';
     this.m_fileIndex = 0;
     this.m_fileReader = null;
+    this.m_fileSize = null;
     this.state = {
       showModalUrl: false,
       showModalDemo: false,
@@ -155,11 +156,19 @@ class UiOpenMenu extends React.Component {
     // console.log(`callbackReadProgress = ${ratio01}`);
     const ratioPrc = Math.floor(ratio01 * 100);
     const store = this.props;
+    console.log('ratioPrc ===================> ' + ratioPrc);
+    console.log('ratio01 ===================> ' + ratio01);
     if (ratioPrc >= 99) {
       // console.log(`callbackReadProgress. hide on = ${ratio01}`);
-      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
+      store.dispatch({
+        type: StoreActionType.SET_PROGRESS,
+        payload: { progress: 0, titleProgressBar: 'Loading file...' },
+      });
     } else {
-      store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratioPrc });
+      store.dispatch({
+        type: StoreActionType.SET_PROGRESS,
+        payload: { progress: ratioPrc, titleProgressBar: 'Loading file...' },
+      });
     }
   } // callback progress
 
@@ -173,7 +182,10 @@ class UiOpenMenu extends React.Component {
       }
     }
     const store = this.props;
-    store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
+    store.dispatch({
+      type: StoreActionType.SET_PROGRESS,
+      payload: { progress: 0, titleProgressBar: 'The file has been uploaded' },
+    });
     if (errCode === LoadResult.SUCCESS) {
       // console.log('callbackReadComplete finished OK');
       this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
@@ -211,6 +223,7 @@ class UiOpenMenu extends React.Component {
   onFileContentReadSingleFile() {
     let strContent = this.m_fileReader.result;
     this.onFileReadSingleBuffer(strContent);
+    console.log(this.onFileReadSingleBuffer(strContent));
   }
 
   //
@@ -251,6 +264,7 @@ class UiOpenMenu extends React.Component {
 
     if (this.m_fileName.endsWith('.ktx') || this.m_fileName.endsWith('.KTX')) {
       // if read ktx
+      // debugger;
       this.m_volumeSet.readFromKtx(strContent, callbackProgress, callbackComplete);
     } else if (this.m_fileName.endsWith('.nii') || this.m_fileName.endsWith('.NII')) {
       this.m_volumeSet.readFromNifti(strContent, callbackProgress, callbackComplete);
@@ -451,33 +465,33 @@ class UiOpenMenu extends React.Component {
       return; // do nothing immediately after: wait for dialog
       /*
 
-      const numSeries = this.m_loader.m_slicesVolume.m_series.length;
-      console.log(`num series = ${numSeries}`);
-      const series = this.m_loader.m_slicesVolume.getSeries();
-      // save loaded series description to store
-      if (numSeries === 1) {
-        const indexSerie = 0;
-        const hash = series[indexSerie].m_hash;
-        this.m_loader.createVolumeFromSlices(this.m_volumeSet, indexSerie, hash);
-        this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
-        console.log(`onFileContentReadMultipleDicom read all ${this.m_numFiles} files`);
-      } else {
-        // now we have loaded more then 1 series from dicon files set
-        for (let i = 0; i < numSeries; i++) {
-          const hashCode = series[i].m_hash;
-          this.m_loader.createVolumeFromSlices(this.m_volumeSet, i, hashCode);
-        }
-        this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
-        console.log(`onFileContentReadMultipleDicom create ${numSeries} volumes for ${this.m_numFiles} files`);
+            const numSeries = this.m_loader.m_slicesVolume.m_series.length;
+            console.log(`num series = ${numSeries}`);
+            const series = this.m_loader.m_slicesVolume.getSeries();
+            // save loaded series description to store
+            if (numSeries === 1) {
+              const indexSerie = 0;
+              const hash = series[indexSerie].m_hash;
+              this.m_loader.createVolumeFromSlices(this.m_volumeSet, indexSerie, hash);
+              this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
+              console.log(`onFileContentReadMultipleDicom read all ${this.m_numFiles} files`);
+            } else {
+              // now we have loaded more then 1 series from dicon files set
+              for (let i = 0; i < numSeries; i++) {
+                const hashCode = series[i].m_hash;
+                this.m_loader.createVolumeFromSlices(this.m_volumeSet, i, hashCode);
+              }
+              this.finalizeSuccessLoadedVolume(this.m_volumeSet, this.m_fileName);
+              console.log(`onFileContentReadMultipleDicom create ${numSeries} volumes for ${this.m_numFiles} files`);
 
-        // setup dicom series (volumes info) for global store: select volume later
-        const store = this.props;
-        store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: series });
-      }
+              // setup dicom series (volumes info) for global store: select volume later
+              const store = this.props;
+              store.dispatch({ type: StoreActionType.SET_DICOM_SERIES, dicomSeries: series });
+            }
 
-      this.callbackReadProgress(1.0);
-      this.callbackReadComplete(LoadResult.SUCCESS);
-      */
+            this.callbackReadProgress(1.0);
+            this.callbackReadComplete(LoadResult.SUCCESS);
+            */
     } // end if successfully read all files (multiple dicom read)
     // read again new file
     if (readStatus === LoadResult.SUCCESS) {
@@ -513,10 +527,16 @@ class UiOpenMenu extends React.Component {
         return;
       }
       console.log(`UiOpenMenu. handleFileSelected. file[0] = ${evt.target.files[0].name}`);
+      // debugger;
+      console.log('evt = ' + evt.target.files);
       this.m_volumeSet = new VolumeSet();
       if (numFiles === 1) {
         const file = evt.target.files[0];
         this.m_fileName = file.name;
+        this.m_fileSize = file.size;
+        console.log('this.m_fileSize ->>>>>>>>>>>>>>      ' + this.m_fileSize);
+        console.log('evt.loaded ->>>>>>>>>>>>>>      ' + evt.loaded);
+        console.log('evt.total ->>>>>>>>>>>>>>      ' + evt.total);
 
         //  read gzip
         if (this.m_fileName.endsWith('.gz')) {
@@ -566,7 +586,7 @@ class UiOpenMenu extends React.Component {
             // now all chunks are read. Need to check raw ungzipped buffer
             const sizeBuffer = this.m_unzippedBuffer.length;
             if (sizeBuffer < 128) {
-              console.log('Too small ungzipped data: ' + sizeBuffer.toString() + ' bytes. canat read volume data');
+              console.log('Too small ungzipped data: ' + sizeBuffer.toString() + " bytes. can't read volume data");
               return;
             }
             // check correct nifti header after extract raw bytes from gzip
@@ -595,6 +615,7 @@ class UiOpenMenu extends React.Component {
         } // if gzipped file
         this.m_fileReader = new FileReader();
         const progressHandler = ({ loaded, total }) => {
+          // debugger;
           this.callbackReadProgress(loaded / total);
         };
         this.m_fileReader.addEventListener('progress', progressHandler);
@@ -645,7 +666,7 @@ class UiOpenMenu extends React.Component {
         this.m_fileName = file.name;
         this.m_fileReader.readAsArrayBuffer(file);
       } // if num files > 1
-    } // if event is mnot empty
+    } // if event is not empty
   }
 
   buildFileSelector() {
@@ -661,6 +682,7 @@ class UiOpenMenu extends React.Component {
 
   onButtonOpenLocalFileClick(evt) {
     // console.log('onButtonLocalFile started');
+    // debugger;
     evt.preventDefault();
     this.m_fileSelector.click();
   }
@@ -698,9 +720,11 @@ class UiOpenMenu extends React.Component {
       this.m_volumeSet.addVolume(new Volume());
 
       if (strUrl.endsWith('.ktx')) {
+        // debugger;
         const callbackProgress = this.callbackReadProgress;
         const callbackComplete = this.callbackReadCompleteUrlKtxNii;
         this.callbackReadProgress(0.0);
+        // debugger;
         this.m_volumeSet.readFromKtxUrl(strUrl, callbackProgress, callbackComplete);
         // if KTX
       } else if (strUrl.endsWith('.nii')) {
@@ -777,6 +801,10 @@ class UiOpenMenu extends React.Component {
 
   onDemoSelected(index) {
     const store = this.props;
+    store.dispatch({
+      type: StoreActionType.SET_PROGRESS,
+      payload: { progress: 0, titleProgressBar: 'Loading demo file, please, wait...' },
+    });
     store.dispatch({ type: StoreActionType.SET_SPINNER, spinner: true });
     const arr = config.demoUrls;
     if (arr.length >= 8) {
@@ -896,6 +924,7 @@ class UiOpenMenu extends React.Component {
     if (fileNameOnLoad.length > 0 && this.state.onLoadCounter > 0) {
       this.setState({ onLoadCounter: 0 });
       const TIMEOUT_MS = 50;
+      // debugger;
       setTimeout(this.loadFromUrl(fileNameOnLoad), TIMEOUT_MS);
     }
   }

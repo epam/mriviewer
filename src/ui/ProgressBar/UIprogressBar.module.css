@@ -8,13 +8,14 @@
   top: 5px;
   left: 6px;
   right: 6px;
-  height: 5px;
+  height: 20px;
   display: flex;
   align-items: stretch;
   background-color: var(--gray);
   overflow: hidden;
   border-radius: 100px;
   z-index: 1001;
+  padding: 2px 20px;
 }
 
 .progressBar {
@@ -24,12 +25,11 @@
 
 .label {
   position: absolute;
-  top: 12px;
+  top: 2px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.7rem;
-  font-style: italic;
-  letter-spacing: 0.2px;
-  color: var(--gray);
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  color: var(--white);
   z-index: 1001;
 }
