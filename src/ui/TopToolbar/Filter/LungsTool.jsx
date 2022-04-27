@@ -7,11 +7,11 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { ToolButton } from '../ToolButton';
 import { checkVolume } from './checkVolume';
-import { useJobContext } from '../../Job/JobContext';
+import { useAppContext } from '../../App/AppContext';
 import { lungsFillJob } from './Jobs/lungsFillJob';
 
 export const LungsTool = () => {
-  const { startJob } = useJobContext();
+  const { startJob } = useAppContext();
   const { volumeSet, volumeIndex, graphics2d } = useSelector((state) => state);
 
   const volume = volumeSet.getVolume(volumeIndex);

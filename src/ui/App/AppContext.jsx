@@ -7,9 +7,9 @@ import { useDispatch } from 'react-redux';
 import StoreActionType from '../../store/ActionTypes';
 import { useInterval } from '../../utils/useInterval';
 
-const JobContext = React.createContext(null);
+const AppContext = React.createContext(null);
 
-export const JobContextProvider = ({ children }) => {
+export const AppContextProvider = ({ children }) => {
   const dispatch = useDispatch();
   const [isRunning, setIsRunning] = useState(false);
 
@@ -25,7 +25,11 @@ export const JobContextProvider = ({ children }) => {
         setIsRunning(false);
         dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
       } else {
-        dispatch({ type: StoreActionType.SET_PROGRESS, progress: runningJob.current.getProgress() });
+        const payload = {
+          progress: runningJob.current.getProgress(),
+          titleProgressBar: 'Please wait, applying filter...',
+        };
+        dispatch({ type: StoreActionType.SET_PROGRESS, payload });
       }
     },
     isRunning ? 200 : null
@@ -37,12 +41,12 @@ export const JobContextProvider = ({ children }) => {
     onFinishJob.current = onFinish;
   };
 
-  return <JobContext.Provider value={{ startJob }}>{children}</JobContext.Provider>;
+  return <AppContext.Provider value={{ startJob }}>{children}</AppContext.Provider>;
 };
 
-export const useJobContext = () => {
-  const context = useContext(JobContext);
-  const contextName = 'JobContext';
+export const useAppContext = () => {
+  const context = useContext(AppContext);
+  const contextName = 'AppContext';
 
   if (!context) {
     throw new Error(`Used outside of "${contextName}"`);

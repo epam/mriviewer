@@ -3,12 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { connect } from 'react-redux';
-
 import StoreActionType from '../store/ActionTypes';
 
 import FullScreenToggle from './Toolbars/FullScreen';
-import { LeftToolbar } from './Toolbars/Left/LeftToolbar';
 import UiModalText from './Modals/UiModalText';
 import UiModalAlert from './Modals/ModalAlert';
 import UiErrConsole from './UiErrConsole';
@@ -18,7 +15,7 @@ import Graphics2d from '../engine/Graphics2d';
 import BrowserDetector from '../engine/utils/BrowserDetector';
 import UIProgressBar from './ProgressBar/UIProgressBar';
 
-import css from './UiApp.module.css';
+import css from './Main.module.css';
 import cx from 'classnames';
 import '../nouislider-custom.css';
 import Graphics3d from '../engine/Graphics3d';
@@ -27,10 +24,16 @@ import { useDrop } from 'react-dnd';
 import { DnDItemTypes } from './Constants/DnDItemTypes';
 import { Header } from './Header/Header';
 import { RightPanel } from './Panels/RightPanel';
-import { TopToolbar } from './Toolbars/Top/TopToolbar';
 import Spinner from './ProgressBar/UISpinner';
+import { AppContextProvider } from './App/AppContext';
+import { TopToolbar } from './TopToolbar/TopToolbar';
+import { LeftToolbar } from './LeftToolbar/LeftToolbar';
+import { useDispatch, useSelector } from 'react-redux';
 
-const UiApp = (props) => {
+export const Main = () => {
+  const dispatch = useDispatch();
+  const { arrErrors, isLoaded, progress, spinner, viewMode, showModalText, showModalAlert } = useSelector((state) => state);
+
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
   const [isWebGl20supported, setIsWebGl20supported] = useState(true);
   const [strAlertTitle, setStrAlertTitle] = useState('');
@@ -49,23 +52,22 @@ const UiApp = (props) => {
     []
   );
 
-  const arrErrorsLoaded = props.arrErrors;
-  const isReady = props.isLoaded && isWebGl20supported;
+  const isReady = isLoaded && isWebGl20supported;
 
   const onShowModalText = () => {
-    props.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true });
+    dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true });
   };
 
   const onHideModalText = () => {
-    props.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: false });
+    dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: false });
   };
 
   const onShowModalAlert = () => {
-    props.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: true });
+    dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: true });
   };
 
   const onHideModalAlert = () => {
-    props.dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: false });
+    dispatch({ type: StoreActionType.SET_MODAL_ALERT, showModalAlert: false });
   };
 
   const startFullMode = () => {
@@ -142,44 +144,41 @@ const UiApp = (props) => {
   }, [isFullMode]);
 
   return (
-    <div ref={appRef}>
-      <div ref={drop}>
-        {props.progress > 0 && <UIProgressBar active={props.progress} progress={props.progress} />}
-        {props.spinner ? <Spinner /> : null}
-        {!isFullMode && <Header fileNameOnLoad={m_fileNameOnLoad} />}
-        {isReady && (
-          <div className={cx(isFullMode && css.fullscreen)}>
-            <div className={css.left}>
-              <LeftToolbar />
+    <AppContextProvider>
+      <div ref={appRef}>
+        <div ref={drop}>
+          {progress > 0 && <UIProgressBar active={progress} progress={progress} />}
+          {spinner ? <Spinner /> : null}
+          {!isFullMode && <Header fileNameOnLoad={m_fileNameOnLoad} />}
+          {isReady && (
+            <div className={cx(isFullMode && css.fullscreen)}>
+              <div className={css.left}>
+                <LeftToolbar />
+              </div>
+              <div className={css.top}>
+                <TopToolbar />
+                <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
+              </div>
+              <div className={css.center}>{viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
+              <div className={css.bottleft}>{viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
+              <RightPanel />
             </div>
-            <div className={css.top}>
-              <TopToolbar />
-              <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
-            </div>
-            <div className={css.center}>{props.viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
-            <div className={css.bottleft}>{props.viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
-            <RightPanel />
-          </div>
-        )}
-
-        {arrErrorsLoaded.length > 0 && <UiErrConsole />}
-
-        {props.showModalText && (
-          <UiModalText stateVis={props.showModalText} onHide={onHideModalText.bind(this)} onShow={onShowModalText.bind(this)} />
-        )}
-
-        {props.showModalAlert && (
-          <UiModalAlert
-            stateVis={props.showModalAlert}
-            onHide={onHideModalAlert.bind(this)}
-            onShow={onShowModalAlert.bind(this)}
-            title={strAlertTitle}
-            text={strAlertText}
-          />
-        )}
+          )}
+          {arrErrors.length > 0 && <UiErrConsole />}
+          {showModalText && (
+            <UiModalText stateVis={showModalText} onHide={onHideModalText.bind(this)} onShow={onShowModalText.bind(this)} />
+          )}
+          {showModalAlert && (
+            <UiModalAlert
+              stateVis={showModalAlert}
+              onHide={onHideModalAlert.bind(this)}
+              onShow={onShowModalAlert.bind(this)}
+              title={strAlertTitle}
+              text={strAlertText}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </AppContextProvider>
   );
 };
-
-export default connect((store) => store)(UiApp);

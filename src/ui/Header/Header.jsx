@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import React from 'react';
-import css from '../UiApp.module.css';
+import css from '../Main.module.css';
 import { UiAbout } from './UiAbout';
 import UiOpenMenu from '../OpenFile/UiOpenMenu';
 

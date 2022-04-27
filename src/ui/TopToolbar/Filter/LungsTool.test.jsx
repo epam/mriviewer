@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { renderWithState } from '../../../utils/configureTest';
-import { JobContextProvider } from '../../Job/JobContext';
+import { AppContextProvider } from '../../App/AppContext';
 import { LungsTool } from './LungsTool';
 import VolumeSet from '../../../engine/VolumeSet';
 import Volume from '../../../engine/Volume';
@@ -25,11 +25,11 @@ describe('Test LungsTool', () => {
     volumeSet.addVolume(volume);
 
     renderWithState(
-      <JobContextProvider>
+      <AppContextProvider>
         <ToolbarContextProvider>
           <LungsTool />
         </ToolbarContextProvider>
-      </JobContextProvider>,
+      </AppContextProvider>,
       { volumeSet: volumeSet, volumeIndex: 0, graphics2d: { forceUpdate: forceUpdate } }
     );
 

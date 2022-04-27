@@ -6,7 +6,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToolButton } from '../ToolButton';
-import { useJobContext } from '../../Job/JobContext';
+import { useAppContext } from '../../App/AppContext';
 import { checkVolume } from './checkVolume';
 import StoreActionType from '../../../store/ActionTypes';
 import ViewMode from '../../../store/ViewMode';
@@ -15,7 +15,7 @@ import { sobelJob } from './Jobs/sobelJob';
 
 export const SobelTool = () => {
   const dispatch = useDispatch();
-  const { startJob } = useJobContext();
+  const { startJob } = useAppContext();
   const { volumeSet, volumeIndex, graphics2d } = useSelector((state) => state);
 
   const volume = volumeSet.getVolume(volumeIndex);

@@ -6,7 +6,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToolButton } from '../ToolButton';
-import { useJobContext } from '../../Job/JobContext';
+import { useAppContext } from '../../App/AppContext';
 import { checkVolume } from './checkVolume';
 import { detectBrainJob } from './Jobs/detectBrainJob';
 import StoreActionType from '../../../store/ActionTypes';
@@ -15,7 +15,7 @@ import Modes3d from '../../../store/Modes3d';
 
 export const DetectBrainTool = () => {
   const dispatch = useDispatch();
-  const { startJob } = useJobContext();
+  const { startJob } = useAppContext();
   const { volumeSet, volumeIndex, graphics2d } = useSelector((state) => state);
 
   const volume = volumeSet.getVolume(volumeIndex);
