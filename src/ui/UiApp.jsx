@@ -27,6 +27,7 @@ import { Header } from './Header/Header';
 import { RightPanel } from './Panels/RightPanel';
 import { TopToolbar } from './Toolbars/Top/TopToolbar';
 import Spinner from './ProgressBar/UISpinner';
+import ImplementStartScreen from './ImplementStartScreen/ImplementStartScreen';
 
 const UiApp = (props) => {
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
@@ -110,9 +111,10 @@ const UiApp = (props) => {
     <div ref={drop}>
       {props.progress > 0 && <UIProgressBar active={props.progress} progress={props.progress} />}
       {props.spinner ? <Spinner /> : null}
-      <Header fileNameOnLoad={m_fileNameOnLoad} />
+      {!isReady && <ImplementStartScreen />}
       {isReady && (
         <>
+          <Header fileNameOnLoad={m_fileNameOnLoad} />
           <div className={css.left}>
             <LeftToolbar />
           </div>
