@@ -10,7 +10,7 @@ import { CutProperty } from './Properties3d/CutProperty';
 import { BrightnessProperty } from './Properties3d/BrightnessProperty';
 import { QualityProperty } from './Properties3d/QualityProperty';
 import { ContrastProperty } from './Properties3d/ContrastProperty';
-import { useNeedShow3d } from '../useNeedShow3d';
+import { useNeedShow3d } from '../../utils/useNeedShow3d';
 import { Mode3dSelectionTabs } from './Tabs/Mode3dSelectionTabs';
 import { RoiSelectProperty } from './Properties3d/RoiSelectProperty';
 import { RGBProperty } from './Properties3d/RGBProperty';

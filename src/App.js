@@ -4,14 +4,14 @@
  */
 
 import React from 'react';
-import UiApp from './ui/UiApp';
+import { Main } from './ui/Main';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 
 const App = () => {
   return (
     <DndProvider backend={HTML5Backend}>
-      <UiApp />
+      <Main />
     </DndProvider>
   );
 };

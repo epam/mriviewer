@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import Tools2dType from '../engine/tools2d/ToolTypes';
 import StoreActionType from '../store/ActionTypes';
 import { buttonsBuilder } from './Button/Button';
-import { Container } from './Toolbars/Container';
+import { Container } from './Layout/Container';
 
 const UiZoomTools = (props) => {
   const [activeButton, setActiveButton] = useState(Tools2dType.NONE);

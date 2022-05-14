@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import React from 'react';
-import { Tooltip } from '../../Tooltip/Tooltip';
-import { UIButton } from '../../Button/Button';
-import { Container } from '../Container';
+import { Tooltip } from '../Tooltip/Tooltip';
+import { UIButton } from '../Button/Button';
+import { Container } from '../Layout/Container';
 import { useDispatch, useSelector } from 'react-redux';
-import StoreActionType from '../../../store/ActionTypes';
-import ViewMode from '../../../store/ViewMode';
-import { useNeedShow3d } from '../../useNeedShow3d';
+import StoreActionType from '../../store/ActionTypes';
+import ViewMode from '../../store/ViewMode';
+import { useNeedShow3d } from '../../utils/useNeedShow3d';
 
 export function ModeSwitcherToolbar() {
   const dispatch = useDispatch();

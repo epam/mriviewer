@@ -1,44 +1,17 @@
 /*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2022 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @fileOverview Volume
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 
-//import LoaderKtx from './loaders/LoaderKtx';
-//import LoaderNifti from './loaders/LoaderNifti';
-//import LoaderDicom from './loaders/LoaderDicom';
-//import LoaderHdr from './loaders/LoaderHdr';
-
-// ********************************************************
-// Const
-// ********************************************************
-
 export const VOLUME_ICON_SIDE = 64;
-
-// ********************************************************
-// Class
-// ********************************************************
-
 /**
  * Class Volume
  *
  * Result volume, loaded from Dicom, Ktx, Nifti, ... files
  */
 class Volume extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
     this.m_xDim = 0;

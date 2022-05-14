@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Tooltip } from '../../Tooltip/Tooltip';
-import { UIButton } from '../../Button/Button';
-import { Container } from '../Container';
+import { Tooltip } from '../Tooltip/Tooltip';
+import { UIButton } from '../Button/Button';
+import { Container } from '../Layout/Container';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import StoreActionType from '../../../store/ActionTypes';
+import StoreActionType from '../../store/ActionTypes';
 
 export function ModeFast3dToolbar() {
   const dispatch = useDispatch();

@@ -34,9 +34,6 @@ export default class FloodFill {
     this.m_xDim = 0;
     this.m_yDim = 0;
     this.m_zDim = 0;
-    this.m_stack3d = null;
-    this.m_maxStack3d = 0;
-    this.m_indexStack3d = 0;
     this.m_numFilled3d = 0;
   }
 
