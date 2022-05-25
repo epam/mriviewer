@@ -3,79 +3,116 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useRef, useState, useEffect } from 'react';
+import React from 'react';
+
 import TransfFunc from '../../engine/TransFunc';
 
 const DEFAULT_HEIGHT = 220;
 const NEED_TO_DRAW_VERTICAL_MARKS = false;
 
-export const UiHistogram = (props) => {
-  const containerRef = useRef(null);
-  const canvasHistogramRef = useRef(null);
-  const didMount = useRef(false);
-  let numColors = 0;
-  let histogram = [];
-  let peakIndex = -1;
+export default class UiHistogram extends React.Component {
+  constructor(props) {
+    super(props);
+    this.m_histogram = [];
+    this.m_numColors = 0;
 
-  let mainTransfFunc = new TransfFunc();
-  let transfFuncCallback = props.transfFunc;
-  let transfFuncUpdateCallback = props.transfFuncUpdate;
+    this.m_transfFunc = new TransfFunc();
+    this.m_transfFuncCallback = undefined;
+    this.m_transfFuncUpdateCallback = undefined;
 
-  const { transfFuncUpdate } = props;
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(DEFAULT_HEIGHT);
+    this.setSize = this.setSize.bind(this);
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
 
-  useEffect(() => {
-    updateCanvas();
-    window.addEventListener('resize', handleResize, false);
-    setSize();
-  }, []);
-
-  useEffect(() => {
-    if (didMount.current) {
-      updateCanvas();
-      window.removeEventListener('resize', handleResize, false);
-    } else {
-      didMount.current = true;
-    }
-  }, [handleResize]);
-
-  function handleResize() {
-    setSize();
+    this.state = {
+      width: 0,
+      height: DEFAULT_HEIGHT,
+    };
   }
 
-  function setSize() {
-    const { current } = containerRef;
-    if (current !== null) {
-      const w = current.clientWidth - 2;
-      const h = current.clientHeight - 2;
+  componentDidMount() {
+    this.updateCanvas();
+    window.addEventListener('resize', this.handleResize, false);
+    this.setSize();
+  }
+
+  componentDidUpdate() {
+    this.updateCanvas();
+    window.removeEventListener('resize', this.handleResize, false);
+  }
+
+  handleResize() {
+    this.setSize();
+  }
+
+  setSize() {
+    const objOwner = this.m_canvasOwner;
+    if (objOwner !== null) {
+      const w = objOwner.clientWidth - 2;
+      const h = objOwner.clientHeight - 2;
       // console.log(`UiHistogram. setSize. = ${w} * ${h}`);
-      setWidth(w);
-      setHeight(h);
+      this.setState({ width: w });
+      this.setState({ height: h });
     }
   }
 
-  // useEffect(() => {
-  //   // calculate width and height canvas
-  //   function handleResize() {
-  //     const { current } = containerRef;
-  //     setCanvasSize({
-  //       width: current.clientWidth - 2,
-  //       height: current.clientHeight - 2,
-  //     });
-  //   }
-  //   updateCanvas();
-  //   window.addEventListener('resize', handleResize);
-  //   handleResize();
-  //   return () => {
-  //     updateCanvas();
-  //     window.removeEventListener('resize', handleResize);
-  //   };
-  // }, []);
+  getVolumeHistogram(vol) {
+    const xDim = vol.m_xDim;
+    const yDim = vol.m_yDim;
+    const zDim = vol.m_zDim;
+    const dataArray = vol.m_dataArray;
+    const xyzDim = xDim * yDim * zDim;
+    const NUM_COLORS = 256;
+    this.m_numColors = NUM_COLORS;
+    this.m_histogram = new Array(this.m_numColors);
+    let i;
+    for (i = 0; i < this.m_numColors; i++) {
+      this.m_histogram[i] = 0;
+    }
+    for (i = 0; i < xyzDim; i++) {
+      const ind = dataArray[i];
+      this.m_histogram[ind]++;
+    }
+    // calc max value in histogram
+    let valMax = 0;
+    for (i = 0; i < this.m_numColors; i++) {
+      valMax = this.m_histogram[i] > valMax ? this.m_histogram[i] : valMax;
+    }
+    const SOME_SMALL_ADD = 0.001;
+    valMax += SOME_SMALL_ADD;
+    // scale values to [0..1]
+    const scl = 1.0 / valMax;
+    for (i = 0; i < this.m_numColors; i++) {
+      this.m_histogram[i] *= scl;
+    }
+    this.smoothHistogram();
+    this.getMaxPeak();
+  }
 
-  function smoothHistogram(sigma = 1.2, needNormalize = true) {
+  getMaxPeak() {
+    this.m_peakIndex = -1;
+    let i;
+    const hist = this.m_histogram;
+    const MIN_SCAN = 12;
+    const MAX_SCAN = this.m_numColors - 4;
+    let maxPeakVal = 0;
+    for (i = MAX_SCAN; i > MIN_SCAN; i--) {
+      if (hist[i] > hist[i - 1] && hist[i] > hist[i + 1] && hist[i] > hist[i - 2] && hist[i] > hist[i + 2]) {
+        const peakVal = hist[i];
+        if (peakVal > maxPeakVal) {
+          maxPeakVal = peakVal;
+          this.m_peakIndex = i;
+        }
+        // console.log(`Local histogram peak in ${this.m_peakIndex}`);
+      } // if (ha slocal peak)
+    } // for (all colors to scan)
+    console.log('This function calls', this.m_peakIndex);
+  }
+
+  smoothHistogram(sigma = 1.2, needNormalize = true) {
     const SIZE_DIV = 60;
-    let RAD = Math.floor(numColors / SIZE_DIV);
+    let RAD = Math.floor(this.m_numColors / SIZE_DIV);
     // avoid too large neighbourhood window size
     const SIZE_LARGE = 32;
     if (RAD > SIZE_LARGE) {
@@ -84,18 +121,18 @@ export const UiHistogram = (props) => {
     // console.log(`smoothHistogram. RAD = ${RAD}`);
 
     const KOEF = 1.0 / (2 * sigma * sigma);
-    const newHist = new Array(numColors);
+    const newHist = new Array(this.m_numColors);
     let i;
     let maxVal = 0;
-    for (i = 0; i < numColors; i++) {
+    for (i = 0; i < this.m_numColors; i++) {
       let sum = 0;
       let sumW = 0;
       for (let di = -RAD; di <= RAD; di++) {
         const ii = i + di;
         const t = di / RAD;
         const w = Math.exp(-t * t * KOEF);
-        if (ii >= 0 && ii < numColors) {
-          sum += histogram[ii] * w;
+        if (ii >= 0 && ii < this.m_numColors) {
+          sum += this.m_histogram[ii] * w;
           sumW += w;
         }
       }
@@ -106,129 +143,70 @@ export const UiHistogram = (props) => {
     } // for (i)
     // copy back to hist
     if (needNormalize) {
-      for (i = 0; i < numColors; i++) {
-        histogram[i] = newHist[i] / maxVal;
+      for (i = 0; i < this.m_numColors; i++) {
+        this.m_histogram[i] = newHist[i] / maxVal;
       } // for (i)
     } else {
-      for (i = 0; i < numColors; i++) {
-        histogram[i] = newHist[i];
+      for (i = 0; i < this.m_numColors; i++) {
+        this.m_histogram[i] = newHist[i];
       } // for (i)
     }
   } // smoothHistogram
 
-  const getVolumeHistogram = (vol) => {
-    const xDim = vol.m_xDim;
-    const yDim = vol.m_yDim;
-    const zDim = vol.m_zDim;
-    const dataArray = vol.m_dataArray;
-    const xyzDim = xDim * yDim * zDim;
-    const NUM_COLORS = 256;
-    numColors = NUM_COLORS;
-    histogram = new Array(numColors);
-    let i;
-    for (i = 0; i < numColors; i++) {
-      histogram[i] = 0;
-    }
-    for (i = 0; i < xyzDim; i++) {
-      const ind = dataArray[i];
-      histogram[ind]++;
-    }
-    // calc max value in histogram
-    let valMax = 0;
-    for (i = 0; i < numColors; i++) {
-      valMax = histogram[i] > valMax ? histogram[i] : valMax;
-    }
-    const SOME_SMALL_ADD = 0.001;
-    valMax += SOME_SMALL_ADD;
-    // scale values to [0..1]
-    const scl = 1.0 / valMax;
-    for (i = 0; i < numColors; i++) {
-      histogram[i] *= scl;
-    }
-    smoothHistogram();
-    getMaxPeak();
-  };
-
-  function getMaxPeak() {
-    // this.m_peakIndex = -1;
-    let i;
-    const hist = histogram;
-    const MIN_SCAN = 12;
-    const MAX_SCAN = numColors - 4;
-    let maxPeakVal = 0;
-    for (i = MAX_SCAN; i > MIN_SCAN; i--) {
-      if (hist[i] > hist[i - 1] && hist[i] > hist[i + 1] && hist[i] > hist[i - 2] && hist[i] > hist[i + 2]) {
-        const peakVal = hist[i];
-        if (peakVal > maxPeakVal) {
-          maxPeakVal = peakVal;
-          peakIndex = i;
-        }
-        // console.log(`Local histogram peak in ${m_peakIndex}`);
-      } // if (ha slocal peak)
-    } // for (all colors to scan)
-  }
-
-  function forceRender() {
-    setHeight(height);
-    setWidth(width);
-    if (transfFuncCallback !== undefined) {
-      transfFuncCallback(mainTransfFunc);
-    }
-  }
-
-  function onMouseDown(evt) {
-    if (transfFuncCallback === undefined || transfFuncUpdateCallback === undefined) {
+  onMouseDown(evt) {
+    if (this.m_transfFuncCallback === undefined || this.m_transfFuncUpdateCallback === undefined) {
       return;
     }
-    const box = canvasHistogramRef.current.getBoundingClientRect();
+    const box = this.refs.canvasHistogram.getBoundingClientRect();
     const xScr = evt.clientX - box.left;
     const yScr = evt.clientY - box.top;
-    const needRender = mainTransfFunc.onMouseDown(xScr, yScr);
+    const needRender = this.m_transfFunc.onMouseDown(xScr, yScr);
     if (needRender) {
-      forceRender();
+      this.forceRender();
     }
   }
 
-  function onMouseUp(evt) {
-    if (transfFuncCallback === undefined || transfFuncUpdateCallback === undefined) {
+  onMouseUp(evt) {
+    if (this.m_transfFuncCallback === undefined || this.m_transfFuncUpdateCallback === undefined) {
       return;
     }
-    const box = canvasHistogramRef.current.getBoundingClientRect();
+    const box = this.refs.canvasHistogram.getBoundingClientRect();
     const xScr = evt.clientX - box.left;
     const yScr = evt.clientY - box.top;
-    const needRender = mainTransfFunc.onMouseUp(xScr, yScr);
+    const needRender = this.m_transfFunc.onMouseUp(xScr, yScr);
     if (needRender) {
-      forceRender();
+      this.forceRender();
     }
   }
 
-  function onMouseMove(evt) {
-    if (transfFuncCallback === undefined || transfFuncUpdateCallback === undefined) {
+  onMouseMove(evt) {
+    if (this.m_transfFuncCallback === undefined || this.m_transfFuncUpdateCallback === undefined) {
       return;
     }
-    const box = canvasHistogramRef.current.getBoundingClientRect();
+    const box = this.refs.canvasHistogram.getBoundingClientRect();
     const xScr = evt.clientX - box.left;
     const yScr = evt.clientY - box.top;
-    const needRender = mainTransfFunc.onMouseMove(xScr, yScr);
+    const needRender = this.m_transfFunc.onMouseMove(xScr, yScr);
     if (needRender) {
-      forceRender();
+      this.forceRender();
     }
   }
 
-  function updateCanvas() {
-    if (canvasHistogramRef === undefined) {
+  updateCanvas() {
+    if (this.refs.canvasHistogram === undefined) {
       return;
     }
-    const ctx = canvasHistogramRef.current.getContext('2d');
-    const w = canvasHistogramRef.current.clientWidth;
-    const h = canvasHistogramRef.current.clientHeight;
+    const ctx = this.refs.canvasHistogram.getContext('2d');
+    const w = this.refs.canvasHistogram.clientWidth;
+    const h = this.refs.canvasHistogram.clientHeight;
     ctx.fillStyle = 'rgb(220, 220, 220)';
     ctx.fillRect(0, 0, w, h);
 
-    const vol = props.volume;
+    const vol = this.props.volume;
     if (vol !== null) {
-      getVolumeHistogram(vol);
+      this.getVolumeHistogram(vol);
     }
+
     const xMin = Math.floor(0.01 * w);
     const xMax = Math.floor(0.99 * w);
     const yMin = Math.floor(0.05 * h);
@@ -253,10 +231,11 @@ export const UiHistogram = (props) => {
     ctx.textAlign = 'center';
 
     let maxHistValue = 1.0;
-    if (peakIndex > 0) {
-      maxHistValue = histogram[peakIndex] * 2;
+    if (this.m_peakIndex > 0) {
+      maxHistValue = this.m_histogram[this.m_peakIndex] * 2;
       maxHistValue = maxHistValue > 1.0 ? 1.0 : maxHistValue;
     }
+
     let i;
     const NUM_X_MARKS = 4;
     for (i = 0; i <= NUM_X_MARKS; i++) {
@@ -264,7 +243,7 @@ export const UiHistogram = (props) => {
       ctx.moveTo(x, yMax);
       ctx.lineTo(x, yMax + 6);
       ctx.stroke();
-      const valMark = Math.floor(0 + (numColors * i) / NUM_X_MARKS);
+      const valMark = Math.floor(0 + (this.m_numColors * i) / NUM_X_MARKS);
       if (i === 0) {
         ctx.textAlign = 'left';
       } else if (i === NUM_X_MARKS) {
@@ -302,9 +281,9 @@ export const UiHistogram = (props) => {
       ctx.moveTo(xMin, yMax);
       let i;
       let x, y;
-      for (i = 0; i < numColors; i++) {
-        x = xMin + Math.floor((wRect * i) / numColors);
-        let v = histogram[i] / maxHistValue;
+      for (i = 0; i < this.m_numColors; i++) {
+        x = xMin + Math.floor((wRect * i) / this.m_numColors);
+        let v = this.m_histogram[i] / maxHistValue;
         v = v >= 1.0 ? 1.0 : v;
         y = yMax - Math.floor(hRect * v);
         ctx.lineTo(x, y);
@@ -315,11 +294,11 @@ export const UiHistogram = (props) => {
     ctx.closePath();
     ctx.fill();
     // draw peak
-    if (peakIndex > 0) {
+    if (this.m_peakIndex > 0) {
       ctx.lineWidth = 1;
       ctx.strokeStyle = '#eeeeee';
-      const x = xMin + Math.floor((wRect * peakIndex) / numColors);
-      let v = histogram[peakIndex] / maxHistValue;
+      const x = xMin + Math.floor((wRect * this.m_peakIndex) / this.m_numColors);
+      let v = this.m_histogram[this.m_peakIndex] / maxHistValue;
       v = v >= 1.0 ? 1.0 : v;
       let y = yMax - Math.floor(hRect * v);
       ctx.beginPath();
@@ -331,23 +310,49 @@ export const UiHistogram = (props) => {
       ctx.setLineDash([]);
     }
     // render points and lines for modified transfer fucntion
-    if (transfFuncCallback !== undefined && transfFuncUpdate !== undefined) {
-      mainTransfFunc.render(ctx, xMin, yMin, wRect, hRect);
+    if (this.m_transfFuncCallback !== undefined && this.m_transfFuncUpdateCallback !== undefined) {
+      this.m_transfFunc.render(ctx, xMin, yMin, wRect, hRect);
+    }
+  } // end update canvas
+
+  forceRender() {
+    this.setState({ state: this.state });
+    if (this.m_transfFuncCallback !== undefined) {
+      this.m_transfFuncCallback(this.m_transfFunc);
     }
   }
 
-  const vol = props.volume;
-  if (vol === undefined) {
-    return <p>UiHistogram.props volume is not defined !!!</p>;
+  render() {
+    const vol = this.props.volume;
+    if (vol === undefined) {
+      return <p>UiHistogram.props volume is not defined !!!</p>;
+    }
+    if (vol === null) {
+      return <p></p>;
+    }
+    this.m_transfFuncCallback = this.props.transfFunc;
+    this.m_transfFuncUpdateCallback = this.props.transfFuncUpdate;
+
+    const cw = this.state.width;
+    const ch = this.state.height;
+
+    const jsxHist = (
+      <div
+        ref={(mount) => {
+          this.m_canvasOwner = mount;
+        }}
+        style={{ cursor: 'initial' }}
+      >
+        <canvas
+          ref="canvasHistogram"
+          width={cw}
+          height={ch}
+          onMouseDown={this.onMouseDown}
+          onMouseUp={this.onMouseUp}
+          onMouseMove={this.onMouseMove}
+        />
+      </div>
+    );
+    return jsxHist;
   }
-  if (vol === null) {
-    return <p></p>;
-  }
-  const cw = width;
-  const ch = height;
-  return (
-    <div ref={containerRef} style={{ cursor: 'initial' }}>
-      <canvas ref={canvasHistogramRef} width={cw} height={ch} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onMouseMove={onMouseMove} />
-    </div>
-  );
-};
+}
