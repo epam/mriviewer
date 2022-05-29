@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 
 import { useSelector } from 'react-redux';
 
-import UiModalSaveNifti from '../Modals/UiModalSaveNifti';
+import { UiModalSaveNifti } from '../Modals/UiModalSaveNifti';
 import { UIButton } from '../Button/Button';
 import { Tooltip } from '../Tooltip/Tooltip';
 

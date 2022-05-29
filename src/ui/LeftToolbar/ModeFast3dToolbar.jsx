@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Tooltip } from '../../Tooltip/Tooltip';
-import { UIButton } from '../../Button/Button';
-import { Container } from '../Container';
+import { Tooltip } from '../Tooltip/Tooltip';
+import { UIButton } from '../Button/Button';
+import { Container } from '../Layout/Container';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import StoreActionType from '../../../store/ActionTypes';
+import StoreActionType from '../../store/ActionTypes';
 
 export function ModeFast3dToolbar() {
   const dispatch = useDispatch();
@@ -22,10 +22,10 @@ export function ModeFast3dToolbar() {
   return (
     <Container direction="vertical">
       <Tooltip content="Show volume in 3d mode with simple toolset" placement="left">
-        <UIButton handler={toggleIsTool3d} active={!isTool3D} icon="V" />
+        <UIButton handler={toggleIsTool3d} active={!isTool3D} icon="V" testId={'buttonV'} />
       </Tooltip>
       <Tooltip content="Show volume in 2d mode per slice on selected orientation" placement="left">
-        <UIButton handler={toggleIsTool3d} active={isTool3D} icon="T" />
+        <UIButton handler={toggleIsTool3d} active={isTool3D} icon="T" testId={'buttonT'} />
       </Tooltip>
     </Container>
   );

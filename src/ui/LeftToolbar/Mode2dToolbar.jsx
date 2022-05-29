@@ -6,11 +6,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Modes2d from '../../../store/Modes2d';
-import StoreActionType from '../../../store/ActionTypes';
-import { UIButton } from '../../Button/Button';
-import { Container } from '../Container';
-import { Tooltip } from '../../Tooltip/Tooltip';
+import Modes2d from '../../store/Modes2d';
+import StoreActionType from '../../store/ActionTypes';
+import { UIButton } from '../Button/Button';
+import { Container } from '../Layout/Container';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 export const Mode2dToolbar = () => {
   const dispatch = useDispatch();
@@ -49,13 +49,13 @@ export const Mode2dToolbar = () => {
     <>
       <Container direction="vertical">
         <Tooltip content="Show slices along x axis" placement="left">
-          <UIButton handler={onModeSaggital} active={isModeActivated(Modes2d.SAGGITAL)} icon="saggital" />
+          <UIButton handler={onModeSaggital} active={isModeActivated(Modes2d.SAGGITAL)} icon="saggital" testId={'buttonSaggital'} />
         </Tooltip>
         <Tooltip content="Show slices along y axis" placement="left">
-          <UIButton handler={onModeCoronal} active={isModeActivated(Modes2d.CORONAL)} icon="coronal" />
+          <UIButton handler={onModeCoronal} active={isModeActivated(Modes2d.CORONAL)} icon="coronal" testId={'buttonCoronal'} />
         </Tooltip>
         <Tooltip content="Show slices along z axis" placement="left">
-          <UIButton handler={onModeTransverse} active={isModeActivated(Modes2d.TRANSVERSE)} icon="transverse" />
+          <UIButton handler={onModeTransverse} active={isModeActivated(Modes2d.TRANSVERSE)} icon="transverse" testId={'buttonTransverse'} />
         </Tooltip>
       </Container>
     </>

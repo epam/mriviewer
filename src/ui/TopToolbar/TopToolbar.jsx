@@ -6,9 +6,9 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import ModeView from '../../../store/ViewMode';
+import ModeView from '../../store/ViewMode';
 import ExploreTools from './ExploreTools';
-import UiFilterMenu from '../../UiFilterMenu';
+import { FilterTools } from './FilterTools';
 
 export const TopToolbar = () => {
   const { viewMode } = useSelector((state) => state);
@@ -16,7 +16,7 @@ export const TopToolbar = () => {
   return (
     <>
       {viewMode === ModeView.VIEW_2D && <ExploreTools />}
-      {viewMode === ModeView.VIEW_2D && <UiFilterMenu />}
+      {viewMode === ModeView.VIEW_2D && <FilterTools />}
     </>
   );
 };

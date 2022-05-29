@@ -10,7 +10,7 @@ import { CutProperty } from './Properties3d/CutProperty';
 import { BrightnessProperty } from './Properties3d/BrightnessProperty';
 import { QualityProperty } from './Properties3d/QualityProperty';
 import { ContrastProperty } from './Properties3d/ContrastProperty';
-import { useNeedShow3d } from '../useNeedShow3d';
+import { useNeedShow3d } from '../../utils/useNeedShow3d';
 import { Mode3dSelectionTabs } from './Tabs/Mode3dSelectionTabs';
 import { RoiSelectProperty } from './Properties3d/RoiSelectProperty';
 import { RGBProperty } from './Properties3d/RGBProperty';
@@ -25,7 +25,7 @@ jest.mock('./Properties3d/BrightnessProperty', () => ({ BrightnessProperty: jest
 jest.mock('./Properties3d/QualityProperty', () => ({ QualityProperty: jest.fn(() => null) }));
 jest.mock('./Properties3d/ContrastProperty', () => ({ ContrastProperty: jest.fn(() => null) }));
 
-jest.mock('../useNeedShow3d');
+jest.mock('../../utils/useNeedShow3d');
 const mockedUseNeedShow3d = useNeedShow3d;
 
 describe('Test ModeFast3dSettingsPanel', () => {

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import css from '../UiApp.module.css';
+import css from '../Main.module.css';
 import { DnDItemTypes } from '../Constants/DnDItemTypes';
 import { useDrag } from 'react-dnd';
 

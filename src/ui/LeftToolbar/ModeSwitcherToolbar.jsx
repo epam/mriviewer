@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import React from 'react';
-import { Tooltip } from '../../Tooltip/Tooltip';
-import { UIButton } from '../../Button/Button';
-import { Container } from '../Container';
+import { Tooltip } from '../Tooltip/Tooltip';
+import { UIButton } from '../Button/Button';
+import { Container } from '../Layout/Container';
 import { useDispatch, useSelector } from 'react-redux';
-import StoreActionType from '../../../store/ActionTypes';
-import ViewMode from '../../../store/ViewMode';
-import { useNeedShow3d } from '../../useNeedShow3d';
+import StoreActionType from '../../store/ActionTypes';
+import ViewMode from '../../store/ViewMode';
+import { useNeedShow3d } from '../../utils/useNeedShow3d';
 
 export function ModeSwitcherToolbar() {
   const dispatch = useDispatch();
@@ -40,14 +40,14 @@ export function ModeSwitcherToolbar() {
   return (
     <Container direction="vertical">
       <Tooltip content="Show volume in 2d mode per slice on selected orientation" placement="left">
-        <UIButton handler={set2dMode} active={isModeActivated(ViewMode.VIEW_2D)} icon="2D" />
+        <UIButton handler={set2dMode} active={isModeActivated(ViewMode.VIEW_2D)} icon="2D" testId={'Button2D'} />
       </Tooltip>
       <Tooltip content="Show volume in 3d mode with fast rendering" placement="left">
-        <UIButton handler={setFast3dMode} active={isModeActivated(ViewMode.VIEW_3D_LIGHT)} icon="lightning" />
+        <UIButton handler={setFast3dMode} active={isModeActivated(ViewMode.VIEW_3D_LIGHT)} icon="lightning" testId={'ButtonLightning'} />
       </Tooltip>
       {needShow3d && (
         <Tooltip content="Show volume in 3d mode with old rendering" placement="left">
-          <UIButton handler={set3dMode} active={isModeActivated(ViewMode.VIEW_3D)} icon="3D" />
+          <UIButton handler={set3dMode} active={isModeActivated(ViewMode.VIEW_3D)} icon="3D" testId={'Button3D'} />
         </Tooltip>
       )}
     </Container>
