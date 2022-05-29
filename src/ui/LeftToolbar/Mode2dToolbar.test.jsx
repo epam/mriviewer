@@ -1,8 +1,8 @@
 import React from 'react';
-import Modes2d from '../../../store/Modes2d';
+import Modes2d from '../../store/Modes2d';
 import { Mode2dToolbar } from './Mode2dToolbar';
 import { fireEvent, screen } from '@testing-library/react';
-import { renderWithState } from '../../../utils/configureTest';
+import { renderWithState } from '../../utils/configureTest';
 
 describe('Mode2dToolbarTest', () => {
   const initialState = {
@@ -22,7 +22,7 @@ describe('Mode2dToolbarTest', () => {
   it('test button coronal', () => {
     const { store } = renderWithState(<Mode2dToolbar />, initialState);
     expect(store.getState().mode2d).toBe(Modes2d.SAGGITAL);
-    expect(store.getState().graphics2d.m_mode2d).toBe(null);
+    expect(store.getState().graphics2d.m_mode2d).toBe(0);
     fireEvent.click(screen.getByTestId('buttonCoronal'));
     expect(store.getState().graphics2d.m_mode2d).toBe(Modes2d.CORONAL);
     expect(store.getState().mode2d).toBe(Modes2d.CORONAL);
@@ -32,7 +32,7 @@ describe('Mode2dToolbarTest', () => {
   it('test button transverse', () => {
     const { store } = renderWithState(<Mode2dToolbar />, initialState);
     expect(store.getState().mode2d).toBe(Modes2d.SAGGITAL);
-    expect(store.getState().graphics2d.m_mode2d).toBe(null);
+    expect(store.getState().graphics2d.m_mode2d).toBe(1);
     fireEvent.click(screen.getByTestId('buttonTransverse'));
     expect(store.getState().graphics2d.m_mode2d).toBe(Modes2d.TRANSVERSE);
     expect(store.getState().mode2d).toBe(Modes2d.TRANSVERSE);

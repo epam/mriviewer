@@ -1,11 +1,11 @@
 import React from 'react';
-import { renderWithState } from '../../../utils/configureTest';
+import { renderWithState } from '../../utils/configureTest';
 import { fireEvent, screen } from '@testing-library/react';
 import { ModeSwitcherToolbar } from './ModeSwitcherToolbar';
-import ViewMode from '../../../store/ViewMode';
-import { useNeedShow3d } from '../../useNeedShow3d';
+import ViewMode from '../../store/ViewMode';
+import { useNeedShow3d } from '../../utils/useNeedShow3d';
 
-jest.mock('../../useNeedShow3d');
+jest.mock('../../utils/useNeedShow3d');
 const mockedUseNeedShow3d = useNeedShow3d;
 
 describe('ModeSwitcherToolbarTest', () => {

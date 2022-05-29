@@ -1,6 +1,6 @@
 import React from 'react';
 import { ModeFast3dToolbar } from './ModeFast3dToolbar';
-import { renderWithState } from '../../../utils/configureTest';
+import { renderWithState } from '../../utils/configureTest';
 import { fireEvent, screen } from '@testing-library/react';
 
 describe('ModeFast3dToolbarTest', () => {
