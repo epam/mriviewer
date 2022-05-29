@@ -14,7 +14,7 @@
 // ********************************************************
 
 import LoadResult from '../LoadResult';
-import UiHistogram from '../../ui/UiHistogram';
+import HistogramUtils from '../../ui/Histogram/HistogramUtils';
 import FileLoader from './FileLoader';
 
 // ********************************************************
@@ -459,7 +459,7 @@ class LoaderNifti {
       }
     } // if
 
-    const histogram = new UiHistogram();
+    const histogram = new HistogramUtils();
     histogram.assignArray(valMax, histArray);
 
     const HIST_SMOOTH_SIGMA = 0.8;
