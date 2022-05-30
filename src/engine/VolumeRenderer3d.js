@@ -2,14 +2,7 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-
-/**
- * 3D volume/isosurface rendering engine
- * @module app/scripts/engine/VolumeRenderer3d
- */
-
 import * as THREE from 'three';
-// import swal from 'sweetalert';
 
 import GlSelector from './GlSelector';
 import OrbitControl from './orbitcontrol';
@@ -22,15 +15,10 @@ import MaterialRenderToTexture from './gfx/matrendertotexture';
 import MaterialInterpolation from './gfx/matinterpolation';
 import MaterialVolumeRender from './gfx/matvolumerender';
 import VolumeFilter3D from './volumeFilter3d';
-import RoiPalette from './loaders/roipalette';
 import TetrahedronGenerator from './actvolume/tetra';
 import Graphics23d from './tools23d/graphics23d';
-// import MaterialColor2d from './gfx/matcolor2d';
+import { getPalette256 } from './loaders/RoiPalette256';
 
-// import GlCheck from './glcheck';
-// import GeoRender from '../actvolume/georender';
-
-/**  @constant {number} SCENE_3D_BACKGROUND_COLOR - backgroudn color for 3d window */
 const SCENE_3D_BACKGROUND_COLOR = 0x0;
 const VOLUME_COLOR1_MIN_R = 0.1;
 const VOLUME_COLOR1_MIN_G = 0.0;
@@ -50,15 +38,12 @@ const VOLUME_COLOR2_MAX_B = 0.3;
 const STEP_SIZE1 = 0.0025;
 const STEP_SIZE2 = 0.0033;
 const STEP_SIZE3 = 0.0025;
-//const STEP_SIZE3 = 0.0039;
 const STEP_SIZE4 = 0.0029;
 const OPACITY_SCALE = 175.0;
-//const MIN_FPS = 10;
 
 // Special values to check frame buffer
 const CHECK_MODE_NOT_CHECKED = 0;
 const CHECK_MODE_RESULT_OK = 1;
-// const CHECK_MODE_RESULT_BAD = 2;
 
 // When scene is ready (how much materials are created via arrow functions)
 const SCENE_READY_COUNTER_OK = 5;
@@ -894,8 +879,7 @@ export default class VolumeRenderer3d {
     this.isRoiVolume = isRoiVolume;
     this.roiPalette = null;
     if (isRoiVolume === true) {
-      const palette = new RoiPalette();
-      this.roiPalette = palette.getPalette256();
+      this.roiPalette = getPalette256();
       const BYTES_PER_COLOR = 4;
       const MAGIC_COLOR = 250;
       const OFFS_0 = 0;

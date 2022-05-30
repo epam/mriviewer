@@ -2,7 +2,6 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -20,7 +19,7 @@ import ToolDelete from './tools2d/ToolDelete';
 import Tools2dType from './tools2d/ToolTypes';
 import Segm2d from './Segm2d';
 
-import RoiPalette from './loaders/roipalette';
+import { getPalette256 } from './loaders/RoiPalette256';
 
 class Graphics2d extends React.Component {
   constructor(props) {
@@ -70,9 +69,6 @@ class Graphics2d extends React.Component {
     this.m_toolEdit = new ToolEdit(this);
     this.m_toolDelete = new ToolDelete(this);
 
-    // roi
-    this.m_roiPalette = new RoiPalette();
-
     // store
     props.dispatch({ type: StoreActionType.SET_GRAPHICS_2D, graphics2d: this });
   }
@@ -106,22 +102,23 @@ class Graphics2d extends React.Component {
 
   prepareImageForRender(volIndexArg) {
     //TODO: center the image by click
-    const objCanvas = this.m_mount.current;
+    const objCanvas = this.m_mount.current; // Canvas HTML element reference
     if (objCanvas === null) {
       return;
     }
-    const ctx = objCanvas.getContext('2d');
-    const w = objCanvas.clientWidth;
-    const h = objCanvas.clientHeight;
+    // resetting canvas max sizes, by checking its wrapper's size
+    const canvasWrapper = objCanvas.parentNode;
+    const w = canvasWrapper.clientWidth;
+    const h = canvasWrapper.clientHeight;
     if (w * h === 0) {
       return;
     }
 
-    const store = this.props;
-
+    const ctx = objCanvas.getContext('2d');
     ctx.fillStyle = 'rgb(64, 64, 64)';
     ctx.fillRect(0, 0, w, h);
 
+    const store = this.props;
     const volSet = store.volumeSet;
     // const volIndex = this.m_volumeIndex;
     const volIndex = volIndexArg !== undefined ? volIndexArg : store.volumeIndex;
@@ -154,7 +151,7 @@ class Graphics2d extends React.Component {
     let imgData = null;
     let dataDst = null;
 
-    const roiPal256 = this.m_roiPalette.getPalette256();
+    const roiPal256 = getPalette256();
 
     // determine actual render square (not w * h - viewport)
     // calculate area using physical volume dimension
@@ -442,6 +439,10 @@ class Graphics2d extends React.Component {
       } // end if 4 bpp
     }
 
+    // centering: setting canvas image size, to match its HTML element's size
+    objCanvas.width = wScreen;
+    objCanvas.height = hScreen;
+
     // check is segmentation 2d mode is active
     // const isSegm = store.graphics2dModeSegmentation;
     // console.log("Segm2d mode = " + isSegm);
@@ -689,18 +690,25 @@ class Graphics2d extends React.Component {
     this.m_sliceRatio = this.props.sliderValue;
     this.m_mode2d = this.props.mode2d;
 
-    const styleObj = {
+    const wrapperStyles = {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
       width: '100%',
       height: '100%',
-      display: 'block',
+      margin: '7%',
+    };
+    const canvasStyles = {
+      maxWidth: '100%',
+      width: '60%',
+      height: '34.875em',
+      border: '5px solid #282a2d',
     };
     return (
-      <div style={styleObj}>
+      <div style={wrapperStyles}>
         <canvas
           ref={this.m_mount}
-          style={styleObj}
-          width={this.state.wRender}
-          height={this.state.hRender}
+          style={canvasStyles}
           onMouseDown={this.onMouseDown}
           onMouseUp={this.onMouseUp}
           onMouseMove={this.onMouseMove}

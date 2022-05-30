@@ -3,64 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import SaverNifti from '../../engine/savers/SaverNifti';
 import { Modal, ModalBody, ModalHeader } from './ModalBase';
 import { UIButton } from '../Button/Button';
 
-class UiModalSaveNifti extends React.Component {
-  constructor(props) {
-    super(props);
-    this.onModalShow = this.onModalShow.bind(this);
-    this.onModalHide = this.onModalHide.bind(this);
-    this.onButtonSave = this.onButtonSave.bind(this);
-    this.onTexChange = this.onTexChange.bind(this);
-    this.handleFormSubmit = this.handleFormSubmit.bind(this);
-    this.onSaveNifti = this.onSaveNifti.bind(this);
+export function UiModalSaveNifti(props) {
+  const { stateVis, onHide } = props;
+  const [fileName, setFileName] = useState('dump');
+  const { volumeSet, volumeIndex, volumeRenderer } = useSelector((state) => state);
 
-    this.m_hideFunc = null;
-
-    this.state = {
-      showModalSaveNifti: false,
-      text: 'dump',
-    };
-  } // end constr
-
-  onButtonSave() {
-    // console.log('on button save');
-    this.m_hideFunc();
-    this.onSaveNifti();
-  }
-
-  onModalShow() {
-    this.setState({ showModalSaveNifti: true });
-  }
-
-  onModalHide() {
-    this.setState({ showModalSaveNifti: false });
-  }
-
-  handleFormSubmit(evt) {
-    evt.preventDefault();
-    this.m_hideFunc();
-    this.onSaveNifti();
-  }
-
-  onTexChange(evt) {
-    const strText = evt.target.value;
-    // console.log(`onTexChange. text = ${strText}`);
-    this.setState({ text: strText });
-  }
-
-  // invoked on save nifti file format
-  onSaveNifti() {
-    const store = this.props;
-
-    const volSet = store.volumeSet;
-    const volIndex = store.volumeIndex;
-    const vol = volSet.getVolume(volIndex);
+  const onSaveNifti = () => {
+    const vol = volumeSet.getVolume(volumeIndex);
 
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
@@ -77,17 +33,16 @@ class UiModalSaveNifti extends React.Component {
       pixdim3: zBox / zDim,
     };
     let volData = vol.m_dataArray;
-    const vR = store.volumeRenderer;
+    const vR = volumeRenderer;
     if (vR !== null) {
       volData = vR.volumeUpdater.bufferR;
     }
     const niiArr = SaverNifti.writeBuffer(volData, volSize);
     const textToSaveAsBlob = new Blob([niiArr], { type: 'application/octet-stream' });
     const textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-    let fileName = this.state.text;
-    const goodSuffix = fileName.endsWith('.nii');
+    const goodSuffix = fileName.trim().endsWith('.nii');
     if (!goodSuffix) {
-      fileName = fileName.concat('.nii');
+      setFileName((prev) => `${prev.trim()}.nii`);
     }
     // console.log(`Save to file ${fileName}`);
 
@@ -100,33 +55,36 @@ class UiModalSaveNifti extends React.Component {
     document.body.appendChild(downloadLink);
 
     downloadLink.click();
-  } // end on save nifti
+  }; // end on save nifti
 
-  render() {
-    const stateVis = this.props.stateVis;
-    const onHideFunc = this.props.onHide;
-    this.m_hideFunc = onHideFunc;
-    return (
-      <Modal show={stateVis} onHide={onHideFunc}>
-        <ModalBody>
-          <ModalHeader title="Save to Nifty" />
-          <input
-            required
-            type="text"
-            placeholder="Enter file name here"
-            value={this.state.text}
-            onChange={this.onTexChange}
-            onKeyUp={() => (evt) => {
-              this.handleFormSubmit(evt);
-            }}
-          />
-          .nii
-          <UIButton handler={this.onButtonSave} caption="Save" />
-          <UIButton handler={onHideFunc} caption="Cancel" />
-        </ModalBody>
-      </Modal>
-    );
-  }
+  const onTexChange = (evt) => {
+    const strText = evt.target.value;
+    setFileName(strText);
+  };
+
+  const handleFormSubmit = () => {
+    evt.preventDefault();
+    onSaveNifti();
+  };
+
+  return (
+    <Modal show={stateVis} onHide={onHide}>
+      <ModalBody>
+        <ModalHeader title="Save to Nifty" />
+        <input
+          required
+          type="text"
+          placeholder="Enter file name here"
+          value={fileName}
+          onChange={onTexChange}
+          onKeyUp={(evt) => {
+            handleFormSubmit(evt);
+          }}
+        />
+        .nii
+        <UIButton handler={onSaveNifti} caption="Save" />
+        <UIButton handler={onHide} caption="Cancel" />
+      </ModalBody>
+    </Modal>
+  );
 }
-
-export default connect((store) => store)(UiModalSaveNifti);

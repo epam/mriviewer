@@ -11,13 +11,13 @@ import { Tooltip } from '../Tooltip/Tooltip';
 
 import css from './Button.module.css';
 
-export const ButtonContainer = ({ children, onClick, type = 'button', caption, cx: styles, customStyle }) => (
-  <button type={type} className={cx(css.reset, styles, customStyle)} onClick={onClick} caption={caption}>
+export const ButtonContainer = ({ children, onClick, type = 'button', caption, cx: styles, customStyle, testId }) => (
+  <button type={type} data-testid={testId} className={cx(css.reset, styles, customStyle)} onClick={onClick} caption={caption}>
     {children}
   </button>
 );
 
-export const UIButton = ({ icon, caption, handler, active, rounded, type, mode, cx: customStyle }) => {
+export const UIButton = ({ icon, caption, handler, active, rounded, type, mode, cx: customStyle, testId }) => {
   const modeStyle = (mode === 'light' && css.light) || (mode === 'accent' && css.accent);
   const isOnlyCaption = icon === undefined && caption;
 
@@ -26,6 +26,7 @@ export const UIButton = ({ icon, caption, handler, active, rounded, type, mode, 
       type={type}
       cx={cx(css.button, active && css.active, rounded && css.rounded, isOnlyCaption && css.captionButton, modeStyle, customStyle)}
       onClick={handler}
+      testId={testId}
       caption={icon && caption}
     >
       {icon ? <SVG name={icon} title={caption} /> : caption}

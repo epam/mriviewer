@@ -46,7 +46,7 @@
 
 .button:hover,
 .button:focus {
-  background-color: var(--dark-gray2);
+  background-color: var(--light-orange);
 }
 
 .button.active {
