@@ -1,40 +1,16 @@
 /*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2022 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @fileOverview UiHistogram
- * @author Epam
- * @version 1.0.0
- */
-
-// ********************************************************
-// Imports
-// ********************************************************
-
 import React from 'react';
 
-import TransfFunc from '../engine/TransFunc';
-
-// ********************************************************
-// Const
-// ********************************************************
+import TransfFunc from '../../engine/TransFunc';
 
 const DEFAULT_HEIGHT = 220;
 const NEED_TO_DRAW_VERTICAL_MARKS = false;
 
-// ********************************************************
-// Class
-// ********************************************************
-
-/**
- * Class UiHistogram some text later...
- */
 export default class UiHistogram extends React.Component {
-  /**
-   * @param {object} props - props from up level object
-   */
   constructor(props) {
     super(props);
     this.m_histogram = [];
@@ -114,33 +90,6 @@ export default class UiHistogram extends React.Component {
     this.getMaxPeak();
   }
 
-  assignArray(numColors, histogramArray) {
-    this.m_numColors = numColors;
-    this.m_histogram = histogramArray;
-  }
-
-  getLastMaxIndex(valMin = 0.0) {
-    const IND_MIN = 4;
-    let i;
-
-    let found = false;
-    for (i = this.m_numColors - IND_MIN; i > IND_MIN; i--) {
-      if (this.m_histogram[i] > valMin) {
-        if (this.m_histogram[i] > this.m_histogram[i - 2] && this.m_histogram[i] > this.m_histogram[i + 2]) {
-          found = true;
-          break;
-        } // if local maximum
-      } // if mor min
-    } // for (i)
-    if (!found) {
-      console.log(`getLastMaxIndex. Not found!`);
-      return -1;
-    }
-    return i;
-  } // end get last max index
-
-  //
-  //
   getMaxPeak() {
     this.m_peakIndex = -1;
     let i;
@@ -158,6 +107,7 @@ export default class UiHistogram extends React.Component {
         // console.log(`Local histogram peak in ${this.m_peakIndex}`);
       } // if (ha slocal peak)
     } // for (all colors to scan)
+    console.log('This function calls', this.m_peakIndex);
   }
 
   smoothHistogram(sigma = 1.2, needNormalize = true) {
@@ -252,17 +202,11 @@ export default class UiHistogram extends React.Component {
     ctx.fillStyle = 'rgb(220, 220, 220)';
     ctx.fillRect(0, 0, w, h);
 
-    // was 300 * 250
-    // console.log(`updateCanvas. canvas dim = ${w} * ${h}`);
-
     const vol = this.props.volume;
     if (vol !== null) {
       this.getVolumeHistogram(vol);
     }
 
-    // rect inside
-    // const xMin = Math.floor(0.10 * w);
-    // const xMax = Math.floor(0.95 * w);
     const xMin = Math.floor(0.01 * w);
     const xMax = Math.floor(0.99 * w);
     const yMin = Math.floor(0.05 * h);
@@ -286,14 +230,12 @@ export default class UiHistogram extends React.Component {
     ctx.textBaseline = 'top';
     ctx.textAlign = 'center';
 
-    // detect max visible value in hist
     let maxHistValue = 1.0;
     if (this.m_peakIndex > 0) {
       maxHistValue = this.m_histogram[this.m_peakIndex] * 2;
       maxHistValue = maxHistValue > 1.0 ? 1.0 : maxHistValue;
     }
 
-    // draw marks horizontal
     let i;
     const NUM_X_MARKS = 4;
     for (i = 0; i <= NUM_X_MARKS; i++) {
@@ -311,7 +253,7 @@ export default class UiHistogram extends React.Component {
       }
       ctx.fillText(valMark.toString(), x, yMax + 4);
     }
-    // draw marks vertical
+
     if (NEED_TO_DRAW_VERTICAL_MARKS) {
       ctx.textBaseline = 'bottom';
       ctx.textAlign = 'left';
@@ -333,7 +275,7 @@ export default class UiHistogram extends React.Component {
     ctx.lineWidth = 2;
     ctx.strokeStyle = '#080808';
     ctx.fillStyle = '#707070';
-    // draw histogram function line
+
     ctx.beginPath();
     {
       ctx.moveTo(xMin, yMax);
@@ -345,7 +287,7 @@ export default class UiHistogram extends React.Component {
         v = v >= 1.0 ? 1.0 : v;
         y = yMax - Math.floor(hRect * v);
         ctx.lineTo(x, y);
-      } // for (i) all colors
+      }
       y = yMax;
       ctx.lineTo(x, y);
     }
@@ -380,9 +322,6 @@ export default class UiHistogram extends React.Component {
     }
   }
 
-  /**
-   * Main component render func callback
-   */
   render() {
     const vol = this.props.volume;
     if (vol === undefined) {

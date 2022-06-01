@@ -22,10 +22,10 @@ export function ModeFast3dToolbar() {
   return (
     <Container direction="vertical">
       <Tooltip content="Show volume in 3d mode with simple toolset" placement="left">
-        <UIButton handler={toggleIsTool3d} active={!isTool3D} icon="V" />
+        <UIButton handler={toggleIsTool3d} active={!isTool3D} icon="V" testId={'buttonV'} />
       </Tooltip>
       <Tooltip content="Show volume in 2d mode per slice on selected orientation" placement="left">
-        <UIButton handler={toggleIsTool3d} active={isTool3D} icon="T" />
+        <UIButton handler={toggleIsTool3d} active={isTool3D} icon="T" testId={'buttonT'} />
       </Tooltip>
     </Container>
   );
