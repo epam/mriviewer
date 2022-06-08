@@ -25,7 +25,7 @@ jest.mock('./Properties3d/BrightnessProperty', () => ({ BrightnessProperty: jest
 jest.mock('./Properties3d/QualityProperty', () => ({ QualityProperty: jest.fn(() => null) }));
 jest.mock('./Properties3d/ContrastProperty', () => ({ ContrastProperty: jest.fn(() => null) }));
 
-jest.mock('../useNeedShow3d');
+jest.mock('../../utils/useNeedShow3d');
 const mockedUseNeedShow3d = useNeedShow3d;
 
 describe('Test ModeFast3dSettingsPanel', () => {

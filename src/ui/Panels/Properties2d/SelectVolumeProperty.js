@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 
 import StoreActionType from '../../../store/ActionTypes';
 
-import { UiVolIcon } from '../../UiVolIcon';
+import { UiVolIcon } from './UiVolIcon';
 
 const NEED_TEXTURE_SIZE_4X = true;
 
