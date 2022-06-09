@@ -696,7 +696,10 @@ class Graphics2d extends React.Component {
       justifyContent: 'flex-start',
       width: '100%',
       height: '100%',
-      margin: '7%',
+      marginTop: '2%',
+      marginRight: '7%',
+      marginBottom: '7%',
+      marginLeft: '7%',
     };
     const canvasStyles = {
       maxWidth: '100%',
