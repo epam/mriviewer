@@ -29,5 +29,5 @@ yarn-error.log*
 
 /.idea
 /.vscode
-/med3web.sln
+/mriviewer.sln
 /.vs
