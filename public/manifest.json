@@ -1,5 +1,5 @@
 {
-  "short_name": "Med3Web",
+  "short_name": "mri-viewer",
   "name": "Dicom 2D/3D browser app. Also can read Ktx, NiFTi, HDR, other formats",
   "icons": [
     {

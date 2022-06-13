@@ -1,19 +1,19 @@
-# Med3Web DICOM 2D/3D web viewer.
+# MRI-viewer DICOM 2D/3D web viewer.
 
-Med3Web is a high performance web tool for advanced visualization (both in 2D and 3D modes)
+MRI-viewer is a high performance web tool for advanced visualization (both in 2D and 3D modes)
 medical volumetric data, provided in popular file formats: DICOM, NIfTI, KTX<sup>™</sup>, HDR.
 
 ## Description
 
-Med3Web can read local data from files/folders and from predefined web locations.
+MRI-viewer can read local data from files/folders and from predefined web locations.
 
 The [demonstration project](https://med3web.opensource.epam.com/) shows both (local data / remote data) usage types.
 
-![Background image](public/images/med3web_logo.png)
+![Background image](public/images/mri-viewer_logo.png)
 
 ## Motivation
 
-Med3Web can be used in a medical center with diagnostic equipment.
+MRI-viewer can be used in a medical center with diagnostic equipment.
 
 - ⚡️ MRI and CT scanning results can be viewed in any computer (inside the medical office and in the client home)
 - 💡 Qualified medical personnel can provide diagnosis or conclusion based on provided visualization.
@@ -51,7 +51,7 @@ so we use tricky way to build 2D texture from initial 3D texture by linking 2D s
 as a large tile map. This idea (with source codes) can be seen in project [WebGL Volume Rendering](https://github.com/lebarba/WebGLVolumeRendering).
 
 # Publications 
-Links to publications that contain **med3web** references
+Links to publications that contain **mriviewer** references
 * [Belyaev, S., Smirnov, P., Smirnova, N., Shubnikov, V. Fast adaptive undersampling for volume rendering](http://dx.doi.org/10.24132/JWSCG.2019.27.1.1)
 * [Belyaev, S.Y., Smirnova, N.D., Smirnov, P.O., Savchuk, D.A. Fast selective antialiasing for direct volume rendering](http://dx.doi.org/10.24132/JWSCG.2019.27.1.1)
 * [Savchuk, D.A., Belyaev, S.Y. Two-pass real-Time direct isosurface rendering algorithm optimization for HTC Vive and low performance devices](http://dx.doi.org/10.1117/12.2292183)
