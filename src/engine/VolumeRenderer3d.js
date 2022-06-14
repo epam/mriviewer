@@ -145,7 +145,7 @@ export default class VolumeRenderer3d {
     /*if (root3dContainer.length === 1) {
       root3dContainer.append(this.renderer.domElement);
     } else {
-      console.log('containter with id=med3web-container-3d not found in scene');
+      console.log('containter with id=mri-viewer-container-3d not found in scene');
     }*/
     props.mount.appendChild(this.renderer.domElement);
     // When rotating an object, it is necessary to reverse the rotation of
