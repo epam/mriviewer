@@ -5,7 +5,7 @@
 0. Install [Git](https://git-scm.com/downloads) and [Node.js](https://nodejs.org/en/download/)
 1. Run in Terminal:
 ```
-$ git clone https://github.com/epam/mri-viewer.git && cd mriviewer
+$ git clone https://github.com/epam/mriviewer.git && cd mriviewer
 $ npm i
 $ npm start
 ```
