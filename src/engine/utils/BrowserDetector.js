@@ -83,7 +83,7 @@ class BrowserDetector {
     // console.log(`Is Safari browser = ${this.m_isSafari}`);
     // console.log(`Is Opera browser = ${this.m_isOpera}`);
 
-    const strTitle1 = 'MRI-viewer is designed for Chrome/Firefox/Safari browsers.';
+    const strTitle1 = 'MRI Viewer is designed for Chrome/Firefox/Safari browsers.';
     const strTitle2 = 'The application can be slow or unstable in this web browser.';
     const strTitleFinal = `${strTitle1} ${strTitle2}`;
     const isValidBrowserType = this.m_isChrome || this.m_isFirefox || this.m_isSafari || this.m_isOpera;

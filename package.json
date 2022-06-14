@@ -1,7 +1,7 @@
 {
   "name": "mri-viewer",
-  "fullName": "MRI-viewer 2-D/3-D DICOM and other medical formats web viewer",
-  "description": "MRI-viewer is unique 2-D/3-D medical volume data web viewer application. One can inspect data both in 2-D and 3-D modes.",
+  "fullName": "MRI Viewer 2d/3d Dicom and other medical formats web viewer/editor",
+  "description": "MRI Viewer is unique 2d/3d medical volume data web viewer application. You can inspect data both in 2d and 3d modes.",
   "version": "1.0.2",
   "author": "EPAM Systems <mri@epam.com>",
   "year": "2022",
@@ -16,7 +16,7 @@
   "bugs": {
     "url": "https://github.com/epam/mriviewer/issues"
   },
-  "homepage": "https://med3web.opensource.epam.com/",
+  "homepage": "https://mriviewer.opensource.epam.com/",
   "private": false,
   "dependencies": {
     "@emotion/react": "^11.8.1",
