@@ -1,5 +1,5 @@
 {
-  "name": "MRIViewer",
+  "name": "mri-viewer",
   "fullName": "MRI Viewer 2d/3d Dicom and other medical formats web viewer/editor",
   "description": "MRI Viewer is unique 2d/3d medical volume data web viewer application. You can inspect data both in 2d and 3d modes.",
   "version": "1.0.1",
@@ -41,7 +41,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "lint": "eslint src/**/*.js",
-    "docker": "npm run build && docker run --name med3web -v ./build:/usr/share/nginx/html:ro -d -p 8080:80 nginx",
+    "docker": "npm run build && docker run --name mriviewer -v ./build:/usr/share/nginx/html:ro -d -p 8080:80 nginx",
     "prepare": "husky install"
   },
   "lint-staged": {

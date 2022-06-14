@@ -9,7 +9,7 @@ MRI Viewer can read local data from files/folders and from predefined web locati
 
 The [demonstration project](https://epa.ms/mri) shows both (local data / remote data) usage types.
 
-![Background image](public/images/med3web_logo.png)
+![Background image](public/images/mriviewer_logo.png)
 
 ## Motivation
 
