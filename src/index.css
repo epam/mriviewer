@@ -38,7 +38,7 @@ code {
   --opacity: 0.95;
 
   color: var(--white);
-  background-color: black;
+  background-color: var(--black);
 
   /* Page layout */
   height: 100vh;
