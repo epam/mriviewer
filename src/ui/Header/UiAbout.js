@@ -10,6 +10,7 @@ import UiSkelAni from '../UiSkelAni';
 import { UIButton } from '../Button/Button';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from '../Modals/ModalBase';
 import { useSelector } from 'react-redux';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 import css from './UiAbout.module.css';
 
@@ -33,7 +34,9 @@ export const UiAbout = () => {
 
   return (
     <>
-      <UIButton cx={css.logo} icon="logo" caption="See detailed information about this app" handler={onShow} />
+      <Tooltip content="See detailed information about this app">
+        <UIButton cx={css.logo} icon="logo" handler={onShow} />
+      </Tooltip>
       {modalShow && (
         <Modal isOpen={modalShow} close={onHide}>
           <ModalHeader title={strName} />

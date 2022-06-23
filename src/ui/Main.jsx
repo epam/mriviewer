@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2022 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
 import React, { useEffect, useRef, useState } from 'react';
@@ -26,9 +26,11 @@ import { Header } from './Header/Header';
 import { RightPanel } from './Panels/RightPanel';
 import Spinner from './ProgressBar/UISpinner';
 import { AppContextProvider } from './App/AppContext';
-import { TopToolbar } from './TopToolbar/TopToolbar';
+
 import { LeftToolbar } from './LeftToolbar/LeftToolbar';
 import { useDispatch, useSelector } from 'react-redux';
+import { TopToolbar } from './TopToolbar/TopToolbar';
+import { UiAbout } from './Header/UiAbout';
 
 export const Main = () => {
   const dispatch = useDispatch();
@@ -149,16 +151,34 @@ export const Main = () => {
         <div ref={drop}>
           {progress > 0 && <UIProgressBar active={progress} progress={progress} />}
           {spinner ? <Spinner /> : null}
-          {!isFullMode && <Header fileNameOnLoad={m_fileNameOnLoad} />}
+          <div className={css.header}>
+            {!isFullMode && (
+              <div className={css.header__logo}>
+                <UiAbout />
+              </div>
+            )}
+            {isReady && (
+              <div className={cx(isFullMode && css.fullscreen)}>
+                <div className={css.header__panels}>
+                  <TopToolbar />
+                  <div className={css.top}>
+                    <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
+                  </div>
+                </div>
+              </div>
+            )}
+            {!isFullMode && (
+              <div className={css.header__right}>
+                <Header fileNameOnLoad={m_fileNameOnLoad} />
+              </div>
+            )}
+          </div>
           {isReady && (
             <div className={cx(isFullMode && css.fullscreen)}>
               <div className={css.left}>
                 <LeftToolbar />
               </div>
-              <div className={css.top}>
-                <TopToolbar />
-                <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
-              </div>
+
               <div className={css.center}>{viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
               <div className={css.bottleft}>{viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
               <RightPanel />

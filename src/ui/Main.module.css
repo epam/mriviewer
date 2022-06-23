@@ -11,24 +11,36 @@
   display: flex;
   align-items: center;
   position: relative;
-  top: 30px;
-  left: 25px;
+  margin: 25px 25px 0;
   z-index: 1000;
-  margin-bottom: 25px;
-  width: calc(100% - 50px);
 }
 
-.top {
-  position: absolute;
+.header__logo {
+  margin-right: 25px;
+}
+
+.header__panels {
+  display: flex;
   z-index: 1000;
-  top: 100px;
-  left: 100px;
+  margin-top: 17px;
+}
+
+.header__right {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  margin-left: auto;
+  margin-top: 17px;
+}
+
+.fullscreen .header__panels {
+  position: absolute;
+  left: 75px;
 }
 
 .fullscreen .left,
-.fullscreen .top,
 .fullscreen .settings {
-  top: 25px;
+  top: 20px;
 }
 
 .left {
@@ -66,6 +78,8 @@
 }
 
 .bottleft {
+  display: flex;
+  flex-direction: column;
   position: absolute;
   left: 25px;
   bottom: 25px;
