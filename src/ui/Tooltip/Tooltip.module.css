@@ -9,7 +9,7 @@
 
 .tooltip {
   display: flex;
-  z-index: 100000;
+  z-index: 1000;
   border-radius: 5px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.14);
   padding: 10px 15px;
@@ -42,18 +42,18 @@
   transform: rotate(45deg);
 }
 
-.tooltip[data-popper-placement^='top'] > .arrow {
+.tooltip[data-popper-placement^='top']>.arrow {
   bottom: -6px;
 }
 
-.tooltip[data-popper-placement^='bottom'] > .arrow {
+.tooltip[data-popper-placement^='bottom']>.arrow {
   top: -6px;
 }
 
-.tooltip[data-popper-placement^='left'] > .arrow {
+.tooltip[data-popper-placement^='left']>.arrow {
   right: -6px;
 }
 
-.tooltip[data-popper-placement^='right'] > .arrow {
+.tooltip[data-popper-placement^='right']>.arrow {
   left: -6px;
 }
