@@ -49,7 +49,7 @@
   position: absolute;
   left: 25px;
   top: 100px;
-  z-index: 1000;
+  z-index: 900;
 }
 
 .center {
@@ -64,7 +64,7 @@
 .settings {
   display: flex;
   flex-direction: column;
-  z-index: 1002;
+  z-index: 901;
   position: absolute;
   right: 25px;
   top: 100px;
