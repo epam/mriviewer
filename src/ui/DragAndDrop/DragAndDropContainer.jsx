@@ -50,7 +50,9 @@ export const DragAndDropContainer = ({ children }) => {
   );
 
   return isDragging ? (
-    <div ref={dragPreview}>{children}</div>
+    <div style={{ display: 'none' }} ref={dragPreview}>
+      {children}
+    </div>
   ) : (
     <div
       ref={drag}
