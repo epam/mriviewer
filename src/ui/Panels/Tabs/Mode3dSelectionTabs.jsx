@@ -20,6 +20,7 @@ import { RadiusProperty } from '../Properties3d/RadiusProperty';
 import { DepthProperty } from '../Properties3d/DepthProperty';
 import { FlexRow } from '../../Layout/FlexRow';
 import { UIButton } from '../../Button/Button';
+import { MuiStyledTooltip } from './atoms/CustomizedTooltip';
 
 export function Mode3dSelectionTabs() {
   const dispatch = useDispatch();
@@ -49,10 +50,18 @@ export function Mode3dSelectionTabs() {
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <p className={css.caption}>3D mode selection</p>
         <Tabs value={mode3d} onChange={handleChange} aria-label="basic tabs example" textColor="inherit" indicatorColor="secondary">
-          <Tab label="I" value={Modes3d.ISO} />
-          <Tab label="V" value={Modes3d.RAYCAST} />
-          <Tab label="M" value={Modes3d.RAYFAST} />
-          <Tab label="E" value={Modes3d.EREASER} />
+          <MuiStyledTooltip arrow title=" Show just barrier value surface, 1st ray intersection">
+            <Tab label="I" value={Modes3d.ISO} />
+          </MuiStyledTooltip>
+          <MuiStyledTooltip arrow title="Show complete 3d volumetric rendering">
+            <Tab label="V" value={Modes3d.RAYCAST} />
+          </MuiStyledTooltip>
+          <MuiStyledTooltip arrow title="Show maximum projection rendering">
+            <Tab label="M" value={Modes3d.RAYFAST} />
+          </MuiStyledTooltip>
+          <MuiStyledTooltip arrow title="Special volume eraser tool">
+            <Tab label="E" value={Modes3d.EREASER} />
+          </MuiStyledTooltip>
         </Tabs>
       </Box>
       <TabPanel index={Modes3d.ISO} value={mode3d}>
