@@ -16,5 +16,6 @@ export const MuiStyledTooltip = styled(({ className, ...props }) => <Tooltip {..
     lineHeight: '20px',
     color: 'white',
     whiteSpace: 'pre',
+    fontFamily: "'Inter', 'sans-serif'",
   },
 }));

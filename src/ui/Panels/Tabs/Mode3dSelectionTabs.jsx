@@ -20,7 +20,7 @@ import { RadiusProperty } from '../Properties3d/RadiusProperty';
 import { DepthProperty } from '../Properties3d/DepthProperty';
 import { FlexRow } from '../../Layout/FlexRow';
 import { UIButton } from '../../Button/Button';
-import { MuiStyledTooltip } from './atoms/CustomizedTooltip';
+import { MuiStyledTooltip } from '../../Tooltip/atoms/MuiStyledTooltip';
 
 export function Mode3dSelectionTabs() {
   const dispatch = useDispatch();
