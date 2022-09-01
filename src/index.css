@@ -34,11 +34,12 @@ code {
   --light: #cbd2d2;
   --white: #fff;
   --light-orange: #e7675191;
+  --extreme-black: #000000;
 
   --opacity: 0.95;
 
   color: var(--white);
-  background-color: var(--black);
+  background-color: var(--extreme-black);
 
   /* Page layout */
   height: 100vh;
