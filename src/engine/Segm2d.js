@@ -14,6 +14,7 @@
 // ********************************************************
 
 import * as tf from '@tensorflow/tfjs';
+import PATH_MODEL from './PATH_MODEL.json';
 
 // ********************************************************
 // Const
@@ -27,8 +28,6 @@ import * as tf from '@tensorflow/tfjs';
 // - ...
 // - group1-shard12of12.bin: last binary koeeficient file
 // - .htaccess: file to prevent CORS issue
-
-const PATH_MODEL = 'http://lugachai.ru/med3web/tfjs/model.json';
 
 // stages
 const STAGE_MODEL_NOT_LOADED = 0;

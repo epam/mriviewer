@@ -812,7 +812,7 @@ class UiOpenMenu extends React.Component {
       return;
     }
 
-    const DEMO_URL = 'http://mri-viewer-epam.s3-website.eu-central-1.amazonaws.com/demo/';
+    const DEMO_URL = 'https://d8ohfj70qg23c.cloudfront.net/demo/';
 
     let fileName =
       DEMO_URL +
