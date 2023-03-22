@@ -55,6 +55,10 @@ class Graphics2d extends React.Component {
       xMouse: -1,
       yMouse: -1,
     };
+
+    // default offset
+    this.defaultVerticalOffset = 100;
+
     // segm 2d
     this.segm2d = new Segm2d(this);
     this.m_isSegmented = false;
@@ -180,6 +184,11 @@ class Graphics2d extends React.Component {
         }
       }
       hScreen = hScreen > 0 ? hScreen : 1;
+
+      // set default vertical offset
+      wScreen = wScreen - this.defaultVerticalOffset;
+      hScreen = hScreen - this.defaultVerticalOffset;
+
       // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
 
       this.m_toolPick.setScreenDim(wScreen, hScreen);
@@ -268,6 +277,10 @@ class Graphics2d extends React.Component {
       }
       hScreen = hScreen > 0 ? hScreen : 1;
       // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
+
+      // set default vertical offset
+      wScreen = wScreen - this.defaultVerticalOffset;
+      hScreen = hScreen - this.defaultVerticalOffset;
 
       this.m_toolPick.setScreenDim(wScreen, hScreen);
       this.m_toolDistance.setScreenDim(wScreen, hScreen);
@@ -361,6 +374,10 @@ class Graphics2d extends React.Component {
       hScreen = hScreen > 0 ? hScreen : 1;
       // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
 
+      // set default vertical offset
+      wScreen = wScreen - this.defaultVerticalOffset;
+      hScreen = hScreen - this.defaultVerticalOffset;
+
       this.m_toolPick.setScreenDim(wScreen, hScreen);
       this.m_toolDistance.setScreenDim(wScreen, hScreen);
       this.m_toolAngle.setScreenDim(wScreen, hScreen);
@@ -442,7 +459,6 @@ class Graphics2d extends React.Component {
     // centering: setting canvas image size, to match its HTML element's size
     objCanvas.width = wScreen;
     objCanvas.height = hScreen;
-
     // check is segmentation 2d mode is active
     // const isSegm = store.graphics2dModeSegmentation;
     // console.log("Segm2d mode = " + isSegm);
@@ -692,20 +708,14 @@ class Graphics2d extends React.Component {
 
     const wrapperStyles = {
       display: 'flex',
-      alignItems: 'center',
       justifyContent: 'flex-start',
-      width: '100%',
-      height: '100%',
-      marginTop: '2%',
-      marginRight: '7%',
-      marginBottom: '7%',
-      marginLeft: '7%',
+      width: `calc(100% - ${this.defaultVerticalOffset}px)`,
+      height: `calc(100% - ${this.defaultVerticalOffset}px)`,
+      margin: '100px',
     };
     const canvasStyles = {
       maxWidth: '100%',
-      width: '60%',
-      height: '34.875em',
-      border: '5px solid #282a2d',
+      border: '2px solid #dc5e47',
     };
     return (
       <div style={wrapperStyles}>
