@@ -57,7 +57,7 @@ class Graphics2d extends React.Component {
     };
 
     // default offset
-    this.defaultVerticalOffset = 100;
+    this.defaultVerticalOffset = 0;
 
     // segm 2d
     this.segm2d = new Segm2d(this);
