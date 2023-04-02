@@ -1,0 +1,14 @@
+.smart_container {
+  padding: 35px 15px 15px;
+  background-color: var(--black);
+  border: 2px dashed var(--red);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.buttons_toolbar {
+  display: flex;
+  justify-content: space-between;
+}

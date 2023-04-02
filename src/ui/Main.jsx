@@ -11,13 +11,8 @@ import UiModalAlert from './Modals/ModalAlert';
 import UiErrConsole from './UiErrConsole';
 import ModeView from '../store/ViewMode';
 import Graphics2d from '../engine/Graphics2d';
-
 import BrowserDetector from '../engine/utils/BrowserDetector';
 import UIProgressBar from './ProgressBar/UIProgressBar';
-
-import css from './Main.module.css';
-import cx from 'classnames';
-import '../nouislider-custom.css';
 import Graphics3d from '../engine/Graphics3d';
 import ZoomTools from './UiZoomTools';
 import { useDrop } from 'react-dnd';
@@ -31,6 +26,10 @@ import { LeftToolbar } from './LeftToolbar/LeftToolbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { TopToolbar } from './TopToolbar/TopToolbar';
 import { UiAbout } from './Header/UiAbout';
+import StartScreen from './StartScreen/StartScreen';
+import css from './Main.module.css';
+import cx from 'classnames';
+import '../nouislider-custom.css';
 
 export const Main = () => {
   const dispatch = useDispatch();
@@ -147,32 +146,37 @@ export const Main = () => {
 
   return (
     <AppContextProvider>
-      <div ref={appRef}>
-        <div ref={drop}>
+      <div ref={appRef} style={{ height: '100%' }}>
+        <div ref={drop} style={{ height: '100%' }}>
           {progress > 0 && <UIProgressBar active={progress} progress={progress} />}
           {spinner ? <Spinner /> : null}
-          <div className={css.header}>
-            {!isFullMode && (
-              <div className={css.header__logo}>
-                <UiAbout />
-              </div>
-            )}
-            {isReady && (
-              <div className={cx(isFullMode && css.fullscreen)}>
-                <div className={css.header__panels}>
-                  <TopToolbar />
-                  <div className={css.top}>
-                    <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
+          {isReady ? (
+            <div className={css.header}>
+              {!isFullMode && (
+                <div className={css.header__logo}>
+                  <UiAbout />
+                </div>
+              )}
+              {isReady && (
+                <div className={cx(isFullMode && css.fullscreen)}>
+                  <div className={css.header__panels}>
+                    <TopToolbar />
+                    <div className={css.top}>
+                      <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-            {!isFullMode && (
-              <div className={css.header__right}>
-                <Header fileNameOnLoad={m_fileNameOnLoad} />
-              </div>
-            )}
-          </div>
+              )}
+              {!isFullMode && (
+                <div className={css.header__right}>
+                  <Header fileNameOnLoad={m_fileNameOnLoad} />
+                </div>
+              )}
+            </div>
+          ) : (
+            <StartScreen />
+          )}
+
           {isReady && (
             <div className={cx(isFullMode && css.fullscreen)}>
               <div className={css.left}>

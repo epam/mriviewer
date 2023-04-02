@@ -26,7 +26,14 @@
   color: var(--white);
   font-family: inherit;
   text-align: center;
-  font-size: 21px;
+  vertical-align: center;
+  font-size: 14px;
+}
+
+.button > svg {
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
 }
 
 .rounded {
