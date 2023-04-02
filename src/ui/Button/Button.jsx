@@ -11,8 +11,8 @@ import { Tooltip } from '../Tooltip/Tooltip';
 
 import css from './Button.module.css';
 
-export const ButtonContainer = ({ children, onClick, type = 'button', caption, cx: styles, customStyle, testId }) => (
-  <button type={type} data-testid={testId} className={cx(css.reset, styles, customStyle)} onClick={onClick} caption={caption}>
+export const ButtonContainer = ({ children, onClick, type = 'button', cx: styles, customStyle, testId }) => (
+  <button type={type} data-testid={testId} className={cx(css.reset, styles, customStyle)} onClick={onClick}>
     {children}
   </button>
 );

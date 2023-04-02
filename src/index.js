@@ -16,6 +16,14 @@ import App from './App';
 
 import './index.css';
 import './nouislider-custom.css';
+// eslint-disable-next-line no-unused-vars
+import process from 'process/browser';
+
+if (typeof window !== 'undefined') {
+  window.process = {
+    env: { NODE_ENV: 'development' },
+  };
+}
 
 const rootElement = document.getElementById('root');
 

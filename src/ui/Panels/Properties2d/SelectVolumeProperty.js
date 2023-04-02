@@ -82,7 +82,6 @@ class SelectVolumeProperty extends React.Component {
                 onClick={() => {
                   this.onClickRow(i);
                 }}
-                active
               >
                 {strVo} <UiVolIcon index={i} />{' '}
               </p>

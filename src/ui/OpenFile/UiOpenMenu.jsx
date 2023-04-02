@@ -8,7 +8,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import zlib from 'zlib';
+import pako from 'pako';
 import createReadStream from 'filereader-stream';
 
 import VolumeSet from '../../engine/VolumeSet';
@@ -546,7 +546,8 @@ class UiOpenMenu extends React.Component {
 
           const store = this.props;
 
-          const gunzip = zlib.createGunzip();
+          const gunzip = pako.inflate();
+          console.log('I HAVE GZIP FILE');
           createReadStream(file).pipe(gunzip);
           gunzip.on('data', (data) => {
             if (this.m_unzippedBuffer == null) {

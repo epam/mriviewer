@@ -8,11 +8,6 @@
  * @module src/demo/engine/utils/BrowserDetector
  */
 
-// absolute imports
-// import swal from 'sweetalert';
-
-import { createCanvas } from 'canvas';
-
 /**
  * Class BrowserDetector preform initial loading browser type detection
  * @class BrowserDetector
@@ -39,18 +34,14 @@ class BrowserDetector {
    * * @return {boolean} true, if WebGL 2.0 supported
    */
   checkWebGlSupported() {
-    // let canvas = document.createElement('canvas');
-    let canvas = createCanvas(640, 480);
-    let gl = null;
+    const canvas = document.createElement('canvas');
+
     try {
-      gl = canvas.getContext('webgl2');
-    } catch (x) {
-      gl = null;
+      const gl = canvas.getContext('webgl2');
+      return gl !== null;
+    } catch (error) {
+      return false;
     }
-    const glFound = gl !== null;
-    // console.log(`checkWebGlSupported. GL 2.0 = ${glFound}`);
-    canvas = undefined;
-    return glFound;
   }
 
   /**

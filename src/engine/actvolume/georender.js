@@ -9,7 +9,7 @@
  */
 
 // absolute imports
-import * as THREE from 'three';
+import { Geometry, Vector3 } from 'three';
 
 // const
 
@@ -74,7 +74,7 @@ export default class GeoRender {
   } // create tetra
 
   fromBufferGeometry(geoBuffered) {
-    const geo = new THREE.Geometry();
+    const geo = new Geometry();
     geo.fromBufferGeometry(geoBuffered);
     geo.mergeVertices();
 
@@ -257,11 +257,11 @@ export default class GeoRender {
   createNormalsForGeometry() {
     this.m_normals = new Array(this.m_numVertices);
     for (let i = 0; i < this.m_numVertices; i++) {
-      this.m_normals[i] = new THREE.Vector3();
+      this.m_normals[i] = new Vector3();
     }
     const triNormals = new Array(this.m_numTriangles);
     for (let i = 0; i < this.m_numTriangles; i++) {
-      triNormals[i] = new THREE.Vector3();
+      triNormals[i] = new Vector3();
     }
 
     const IND_A = 0;
@@ -280,9 +280,9 @@ export default class GeoRender {
       const ia = this.m_indices[i3 + IND_A] * COORDS_IN_VERTEX;
       const ib = this.m_indices[i3 + IND_B] * COORDS_IN_VERTEX;
       const ic = this.m_indices[i3 + IND_C] * COORDS_IN_VERTEX;
-      const va = new THREE.Vector3();
-      const vb = new THREE.Vector3();
-      const vc = new THREE.Vector3();
+      const va = new Vector3();
+      const vb = new Vector3();
+      const vc = new Vector3();
       va.x = this.m_vertices[ia + OFF_X];
       va.y = this.m_vertices[ia + OFF_Y];
       va.z = this.m_vertices[ia + OFF_Z];
@@ -292,11 +292,11 @@ export default class GeoRender {
       vc.x = this.m_vertices[ic + OFF_X];
       vc.y = this.m_vertices[ic + OFF_Y];
       vc.z = this.m_vertices[ic + OFF_Z];
-      const vab = new THREE.Vector3();
-      const vbc = new THREE.Vector3();
+      const vab = new Vector3();
+      const vbc = new Vector3();
       vab.subVectors(vb, va);
       vbc.subVectors(vc, vb);
-      const vTriNormal = new THREE.Vector3();
+      const vTriNormal = new Vector3();
       vTriNormal.crossVectors(vab, vbc);
       const TOO_SMALL = 1.0e-8;
       if (vTriNormal.lengthSq() < TOO_SMALL) {
