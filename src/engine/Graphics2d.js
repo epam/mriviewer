@@ -54,6 +54,8 @@ class Graphics2d extends React.Component {
       stateMouseDown: false,
       xMouse: -1,
       yMouse: -1,
+      canvasWidth: '60%',
+      canvasHeight: '34.875em',
     };
     // segm 2d
     this.segm2d = new Segm2d(this);
@@ -508,14 +510,31 @@ class Graphics2d extends React.Component {
 
     const zoom = store.render2dZoom;
     let zoomNew = zoom + step;
-    let xPosNew = store.render2dxPos - ((step / 4) * evt.clientX) / evt.clientY;
-    let yPosNew = store.render2dyPos - ((step / 4) * evt.clientY) / evt.clientX;
+
+    const rect = evt.target.getBoundingClientRect();
+    const mouseX = evt.clientX - rect.left;
+    const mouseY = evt.clientY - rect.top;
+
+    const xRatio = mouseX / rect.width;
+    const yRatio = mouseY / rect.height;
+
+    let xPosNew = store.render2dxPos - step * xRatio * (zoomNew / zoom);
+    let yPosNew = store.render2dyPos - step * yRatio * (zoomNew / zoom);
+
+    const canvasWidth = zoomNew < 1 ? '100%' : '60%';
+    const canvasHeight = zoomNew < 1 ? '100%' : '34.875em';
+    this.setState({ canvasWidth, canvasHeight });
+
+    if (zoomNew >= 1) {
+      xPosNew = 0;
+      yPosNew = 0;
+    }
 
     console.log(`onMouseWheel.evt = ${xPosNew}, ${yPosNew}`);
-    // console.log(`onMouseWheel. zoom.puml = ${zoom.puml} zoomNew = ${zoomNew}, xyPos = ${xPosNew},${yPosNew}`);
-    if (Math.abs(zoomNew) > 1 || Math.abs(zoomNew) < 0.02 || xPosNew < 0 || yPosNew < 0 || xPosNew > 1 || yPosNew > 1) {
+    if (Math.abs(zoomNew) > 1 || Math.abs(zoomNew) < 0.2) {
       return;
     }
+
     store.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: zoomNew });
     store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: xPosNew });
     store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: yPosNew });
@@ -693,19 +712,15 @@ class Graphics2d extends React.Component {
     const wrapperStyles = {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'flex-start',
+      justifyContent: 'center',
       width: '100%',
       height: '100%',
-      marginTop: '2%',
-      marginRight: '7%',
-      marginBottom: '7%',
-      marginLeft: '7%',
     };
     const canvasStyles = {
       maxWidth: '100%',
-      width: '60%',
-      height: '34.875em',
-      border: '5px solid #282a2d',
+      width: this.state.canvasWidth,
+      height: this.state.canvasHeight,
+      transition: 'width 0.2s ease-out, height 0.2s ease-out',
     };
     return (
       <div style={wrapperStyles}>
