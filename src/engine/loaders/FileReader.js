@@ -139,12 +139,12 @@ class FileReader extends React.Component {
       // console.log(`callbackReadProgress. hide on = ${ratio01}`);
       store.dispatch({
         type: StoreActionType.SET_PROGRESS,
-        payload: { progress: 0, titleProgressBar: 'Loading file...' },
+        progress: 0,
       });
     } else {
       store.dispatch({
         type: StoreActionType.SET_PROGRESS,
-        payload: { progress: ratioPrc, titleProgressBar: 'Loading file...' },
+        progress: ratioPrc,
       });
     }
   } // callback progress
@@ -161,7 +161,7 @@ class FileReader extends React.Component {
     const store = this.props;
     store.dispatch({
       type: StoreActionType.SET_PROGRESS,
-      payload: { progress: 0, titleProgressBar: 'The file has been uploaded' },
+      progress: 0,
     });
     if (errCode === LoadResult.SUCCESS) {
       // console.log('callbackReadComplete finished OK');
@@ -752,7 +752,7 @@ class FileReader extends React.Component {
     const store = this.props;
     store.dispatch({
       type: StoreActionType.SET_PROGRESS,
-      payload: { progress: 0, titleProgressBar: 'Loading demo file, please, wait...' },
+      progress: 0,
     });
     store.dispatch({ type: StoreActionType.SET_SPINNER, spinner: true });
     const arr = config.demoUrls;

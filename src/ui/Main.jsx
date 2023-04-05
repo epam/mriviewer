@@ -35,6 +35,10 @@ export const Main = () => {
   const dispatch = useDispatch();
   const { arrErrors, isLoaded, progress, spinner, viewMode, showModalText, showModalAlert } = useSelector((state) => state);
 
+  React.useEffect(() => {
+    console.log({ spinner, progress, isLoaded });
+  }, [spinner, progress]);
+
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
   const [isWebGl20supported, setIsWebGl20supported] = useState(true);
   const [strAlertTitle, setStrAlertTitle] = useState('');
@@ -146,9 +150,9 @@ export const Main = () => {
 
   return (
     <AppContextProvider>
-      <div ref={appRef} style={{ height: '100%' }}>
-        <div ref={drop} style={{ height: '100%' }}>
-          {progress > 0 && <UIProgressBar active={progress} progress={progress} />}
+      <div ref={appRef}>
+        <div ref={drop}>
+          {progress > 0 ? <UIProgressBar /> : null}
           {spinner ? <Spinner /> : null}
           {isReady ? (
             <div className={css.header}>

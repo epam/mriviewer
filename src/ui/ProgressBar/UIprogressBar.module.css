@@ -15,17 +15,19 @@
   overflow: hidden;
   border-radius: 100px;
   z-index: 1001;
-  padding: 2px 20px;
+  padding: 2px 2px;
 }
 
 .progressBar {
+  width: 100%;
+  height: 100%;
   background-color: var(--red);
   border-radius: 100px;
 }
 
 .label {
   position: absolute;
-  top: 2px;
+  top: 4px;
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.8rem;

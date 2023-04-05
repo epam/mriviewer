@@ -25,11 +25,10 @@ export const AppContextProvider = ({ children }) => {
         setIsRunning(false);
         dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
       } else {
-        const payload = {
-          progress: runningJob.current.getProgress(),
-          titleProgressBar: 'Please wait, applying filter...',
-        };
-        dispatch({ type: StoreActionType.SET_PROGRESS, payload });
+        const progress = runningJob.current.getProgress();
+        const titleProgressBar = 'Please wait, applying filter...';
+        dispatch({ type: StoreActionType.SET_PROGRESS, progress });
+        dispatch({ type: StoreActionType.SET_PROGRESS_INFO, titleProgressBar });
       }
     },
     isRunning ? 200 : null
