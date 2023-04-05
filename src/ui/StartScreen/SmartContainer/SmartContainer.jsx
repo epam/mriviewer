@@ -9,6 +9,7 @@ import UiModalDemo from '../../Modals/ModalDemo';
 import FileReader from '../../../engine/loaders/FileReader';
 import { UiSaveMenu } from '../../OpenFile/UiSaveMenu';
 import { UiReportMenu } from '../../OpenFile/UiReportMenu';
+import UIModalUrl from '../../Modals/ModalUrl';
 
 const IMG_DROPZONE_SIZE = 49;
 
