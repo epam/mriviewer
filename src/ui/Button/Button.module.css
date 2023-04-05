@@ -21,6 +21,8 @@
 }
 
 .button {
+  margin-right: 5px;
+  margin-bottom: 5px;
   background-color: var(--black);
   padding: 12px 13px;
   color: var(--white);
@@ -28,12 +30,12 @@
   text-align: center;
   vertical-align: center;
   font-size: 14px;
+  border-radius: 36px;
 }
 
 .button > svg {
   width: 24px;
   height: 24px;
-  margin-right: 5px;
 }
 
 .rounded {

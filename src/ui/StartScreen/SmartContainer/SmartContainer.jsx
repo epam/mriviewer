@@ -21,9 +21,14 @@ class SmartContainer extends FileReader {
         <p className={css.text}>Drag and drop files here</p>
         <p className={css.text}>OR</p>
         <div className={css.buttons_toolbar}>
-          <UIButton icon="folder" text="Open file or folder" handler={(evt) => this.onButtonOpenLocalFileClick(evt)} />
-          <UIButton icon="link" text="Open external URL" handler={this.onModalUrlShow} />
-          <UIButton icon="grid" text="Open demo data" handler={this.onModalDemoOpenShow} />
+          <UIButton
+            icon="folder"
+            text="Open From Device"
+            handler={(evt) => this.onButtonOpenLocalFileClick(evt)}
+            cx={css.button_start_screen}
+          />
+          <UIButton icon="link" text="Open From URL" handler={this.onModalUrlShow} cx={css.button_start_screen} />
+          <UIButton icon="grid" text="Open Demo Data" handler={this.onModalDemoOpenShow} cx={css.button_start_screen} />
         </div>
         <RecentlyFiles />
         {this.props.isLoaded && (

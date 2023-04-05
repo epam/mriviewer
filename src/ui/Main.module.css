@@ -73,7 +73,7 @@
   width: 400px;
   opacity: var(--opacity);
   cursor: all-scroll;
-  border-radius: 10px;
+  border-radius: 24px;
   transition: opacity 300ms ease-in-out;
 }
 

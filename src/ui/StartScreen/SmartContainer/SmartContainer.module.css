@@ -12,3 +12,7 @@
   display: flex;
   justify-content: space-between;
 }
+
+.button_start_screen svg {
+  margin-right: 5px;
+}
