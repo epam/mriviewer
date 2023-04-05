@@ -56,9 +56,6 @@ class Graphics2d extends React.Component {
       yMouse: -1,
     };
 
-    // default offset
-    this.defaultVerticalOffset = 0;
-
     // segm 2d
     this.segm2d = new Segm2d(this);
     this.m_isSegmented = false;
@@ -185,10 +182,6 @@ class Graphics2d extends React.Component {
       }
       hScreen = hScreen > 0 ? hScreen : 1;
 
-      // set default vertical offset
-      wScreen = wScreen - this.defaultVerticalOffset;
-      hScreen = hScreen - this.defaultVerticalOffset;
-
       // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
 
       this.m_toolPick.setScreenDim(wScreen, hScreen);
@@ -277,10 +270,6 @@ class Graphics2d extends React.Component {
       }
       hScreen = hScreen > 0 ? hScreen : 1;
       // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
-
-      // set default vertical offset
-      wScreen = wScreen - this.defaultVerticalOffset;
-      hScreen = hScreen - this.defaultVerticalOffset;
 
       this.m_toolPick.setScreenDim(wScreen, hScreen);
       this.m_toolDistance.setScreenDim(wScreen, hScreen);
@@ -373,10 +362,6 @@ class Graphics2d extends React.Component {
       }
       hScreen = hScreen > 0 ? hScreen : 1;
       // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
-
-      // set default vertical offset
-      wScreen = wScreen - this.defaultVerticalOffset;
-      hScreen = hScreen - this.defaultVerticalOffset;
 
       this.m_toolPick.setScreenDim(wScreen, hScreen);
       this.m_toolDistance.setScreenDim(wScreen, hScreen);
@@ -709,13 +694,14 @@ class Graphics2d extends React.Component {
     const wrapperStyles = {
       display: 'flex',
       justifyContent: 'flex-start',
-      width: `calc(100% - ${this.defaultVerticalOffset}px)`,
-      height: `calc(100% - ${this.defaultVerticalOffset}px)`,
-      margin: '100px',
+      width: `calc(100% - 110px)`,
+      height: `calc(100% - 110px)`,
+      margin: '100px 125px',
     };
     const canvasStyles = {
       maxWidth: '100%',
       border: '2px solid #dc5e47',
+      borderRadius: '10px',
     };
     return (
       <div style={wrapperStyles}>
