@@ -35,10 +35,6 @@ export const Main = () => {
   const dispatch = useDispatch();
   const { arrErrors, isLoaded, progress, spinner, viewMode, showModalText, showModalAlert } = useSelector((state) => state);
 
-  React.useEffect(() => {
-    console.log({ spinner, progress, isLoaded });
-  }, [spinner, progress]);
-
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
   const [isWebGl20supported, setIsWebGl20supported] = useState(true);
   const [strAlertTitle, setStrAlertTitle] = useState('');
