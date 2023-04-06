@@ -29,7 +29,7 @@ const NEED_TEXTURE_SIZE_4X = true;
 // use daikon parser for Dicom (*dcm) file loading
 const READ_DICOM_VIA_DAIKON = true;
 
-class UiOpenMenu extends React.Component {
+class UiOpenMenu extends FileReader {
   constructor(props) {
     super(props);
     this.onButtonOpenLocalFileClick = this.onButtonOpenLocalFileClick.bind(this);
