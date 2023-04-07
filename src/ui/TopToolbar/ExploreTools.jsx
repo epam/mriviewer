@@ -27,6 +27,11 @@ const ExploreTools = (props) => {
       props.graphics2d.forceUpdate();
       props.graphics2d.forceRender();
     }
+
+    if (buttonId === Tools2dType.CLEAR) {
+      const gra2d = props.graphics2d;
+      gra2d.clear();
+    }
   };
 
   const buttons = [
