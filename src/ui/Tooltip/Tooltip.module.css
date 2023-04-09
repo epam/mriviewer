@@ -1,0 +1,59 @@
+/*!
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.wrapper {
+  display: inline-block;
+}
+
+.tooltip {
+  display: flex;
+  z-index: 1000;
+  border-radius: 5px;
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.14);
+  padding: 10px 15px;
+  background-color: var(--dark-gray2);
+  opacity: 0.98;
+}
+
+.body {
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--white);
+  white-space: pre;
+}
+
+.arrow,
+.arrow:before {
+  position: absolute;
+  background: var(--dark-gray2);
+  width: 15px;
+  height: 15px;
+}
+
+.arrow {
+  visibility: hidden;
+}
+
+.arrow::before {
+  visibility: visible;
+  content: '';
+  transform: rotate(45deg);
+}
+
+.tooltip[data-popper-placement^='top']>.arrow {
+  bottom: -6px;
+}
+
+.tooltip[data-popper-placement^='bottom']>.arrow {
+  top: -6px;
+}
+
+.tooltip[data-popper-placement^='left']>.arrow {
+  right: -6px;
+}
+
+.tooltip[data-popper-placement^='right']>.arrow {
+  left: -6px;
+}

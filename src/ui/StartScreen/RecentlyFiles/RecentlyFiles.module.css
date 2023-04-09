@@ -1,0 +1,28 @@
+.files_container {
+  margin: 0;
+  margin-top: 10px;
+  background-color: var(--extreme-black);
+  font-size: 14px;
+  width: 100%;
+  padding: 15px;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.header {
+  margin-bottom: 10px;
+  display: flex;
+}
+
+.files {
+  display: flex;
+}
+
+.left {
+  color: var(--dark-gray4);
+  margin-right: 20px;
+}
+
+.element:not(:first-child) {
+  margin-top: 10px;
+}

@@ -3,6 +3,6 @@ RUN apk update && apk upgrade && \
     apk add --no-cache curl
 WORKDIR /usr/share/nginx/html
 COPY ./nginx.conf /etc/nginx/nginx.conf
-COPY build .
+COPY build /usr/share/nginx/html
 HEALTHCHECK --interval=10s --timeout=3s \
   CMD curl -f http://localhost:4010/user-count/metrics || exit 1
