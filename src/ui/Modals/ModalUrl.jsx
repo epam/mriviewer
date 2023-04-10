@@ -16,13 +16,16 @@ export const ModalUrl = (props) => {
 
   return (
     <Modal isOpen={stateVis} close={onHide}>
-      <ModalHeader title="Load data from external source" close={onHide} />
+      <ModalHeader title="Load data from external source via URL" close={onHide} />
       <ModalBody>
         <div className={css.row}>
           <label htmlFor="input-url" className={css.label}>
-            Input URL to open
+            Please provide direct URL to the file.
+            <br />
+            <br />
+            NOTE: For current release we support only extension-ended URLs. Example: "https://some.domain.com/file.dicom".
           </label>
-          <input id="input-url" ref={inputRef} placeholder="Enter URL here" className={css.input} />
+          <input id="input-url" ref={inputRef} placeholder="Enter URL" className={css.input} />
           {/* TODO: add validation for Url */}
         </div>
       </ModalBody>

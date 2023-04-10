@@ -57,6 +57,7 @@ class Graphics2d extends React.Component {
       canvasWidth: '60%',
       canvasHeight: '34.875em',
     };
+
     // segm 2d
     this.segm2d = new Segm2d(this);
     this.m_isSegmented = false;
@@ -182,6 +183,7 @@ class Graphics2d extends React.Component {
         }
       }
       hScreen = hScreen > 0 ? hScreen : 1;
+
       // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
 
       this.m_toolPick.setScreenDim(wScreen, hScreen);
@@ -444,7 +446,6 @@ class Graphics2d extends React.Component {
     // centering: setting canvas image size, to match its HTML element's size
     objCanvas.width = wScreen;
     objCanvas.height = hScreen;
-
     // check is segmentation 2d mode is active
     // const isSegm = store.graphics2dModeSegmentation;
     // console.log("Segm2d mode = " + isSegm);

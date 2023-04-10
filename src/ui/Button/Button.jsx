@@ -17,7 +17,7 @@ export const ButtonContainer = ({ children, onClick, type = 'button', caption, c
   </button>
 );
 
-export const UIButton = ({ icon, caption, handler, active, rounded, type, mode, cx: customStyle, testId }) => {
+export const UIButton = ({ icon, caption, handler, active, rounded, type, mode, cx: customStyle, testId, text }) => {
   const modeStyle = (mode === 'light' && css.light) || (mode === 'accent' && css.accent);
   const isOnlyCaption = icon === undefined && caption;
 
@@ -30,6 +30,7 @@ export const UIButton = ({ icon, caption, handler, active, rounded, type, mode, 
       caption={icon && caption}
     >
       {icon ? <SVG name={icon} title={caption} /> : caption}
+      {text ? text : ''}
     </ButtonContainer>
   );
 };
