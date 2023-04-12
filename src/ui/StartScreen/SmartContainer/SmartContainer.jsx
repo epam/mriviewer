@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import css from './SmartContainer.module.css';
 import { SVG } from '../../Button/SVG';
 import UiModalDemo from '../../Modals/ModalDemo';
+import UiModalWindowCenterWidth from '../../Modals/UiModalWinCW';
 import FileReader from '../../../engine/loaders/FileReader';
 import { UiSaveMenu } from '../../OpenFile/UiSaveMenu';
 import { UiReportMenu } from '../../OpenFile/UiReportMenu';
@@ -28,7 +29,7 @@ class SmartContainer extends FileReader {
             cx={css.button_start_screen}
           />
           <UIButton icon="link" text="Open From URL" handler={this.onModalUrlShow} cx={css.button_start_screen} />
-          <UIButton icon="grid" text="Open Demo Data" handler={this.onModalDemoOpenShow} cx={css.button_start_screen} />
+          <UIButton icon="grid" text="Demo Data" handler={this.onModalDemoOpenShow} cx={css.button_start_screen} />
         </div>
         <RecentlyFiles />
         {this.props.isLoaded && (
