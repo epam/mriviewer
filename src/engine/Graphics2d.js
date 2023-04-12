@@ -54,8 +54,9 @@ class Graphics2d extends React.Component {
       stateMouseDown: false,
       xMouse: -1,
       yMouse: -1,
-      canvasWidth: '60%',
+      canvasWidth: 'auto',
       canvasHeight: '34.875em',
+      scalingFactor: 1,
     };
 
     // segm 2d
@@ -519,10 +520,12 @@ class Graphics2d extends React.Component {
     const xRatio = mouseX / rect.width;
     const yRatio = mouseY / rect.height;
 
-    let xPosNew = store.render2dxPos - step * xRatio * (zoomNew / zoom);
-    let yPosNew = store.render2dyPos - step * yRatio * (zoomNew / zoom);
+    const zoomFactor = zoomNew / zoom;
 
-    const canvasWidth = zoomNew < 1 ? '100%' : '60%';
+    let xPosNew = (store.render2dxPos - xRatio) * zoomFactor + xRatio;
+    let yPosNew = (store.render2dyPos - yRatio) * zoomFactor + yRatio;
+
+    const canvasWidth = zoomNew < 1 ? '100%' : 'auto';
     const canvasHeight = zoomNew < 1 ? '100%' : '34.875em';
     this.setState({ canvasWidth, canvasHeight });
 
@@ -721,7 +724,9 @@ class Graphics2d extends React.Component {
       maxWidth: '100%',
       width: this.state.canvasWidth,
       height: this.state.canvasHeight,
-      transition: 'width 0.2s ease-out, height 0.2s ease-out',
+      transform: `scale(${this.state.scalingFactor})`,
+      transformOrigin: '0 0',
+      transition: 'width 0.4s ease-out, height 0.4s ease-out, transform 0.2s ease-out',
     };
     return (
       <div style={wrapperStyles}>
