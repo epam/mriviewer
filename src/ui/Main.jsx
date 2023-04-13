@@ -146,8 +146,8 @@ export const Main = () => {
 
   return (
     <AppContextProvider>
-      <div ref={appRef}>
-        <div ref={drop}>
+      <div ref={appRef} style={{ height: '100%' }}>
+        <div ref={drop} style={{ height: '100%' }}>
           {progress > 0 ? <UIProgressBar /> : null}
           {spinner ? <Spinner /> : null}
           {isReady ? (
