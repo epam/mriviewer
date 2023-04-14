@@ -1,8 +1,6 @@
-name: Build + deploy aws
+name: Deploy AWS - TST
 
-on:
-  pull_request:
-    branches: [master, develop]
+on: workflow_dispatch
 
 jobs:
   build:
@@ -41,7 +39,7 @@ jobs:
           aws-region: eu-central-1
       - name: Copy files to the test website with the AWS CLI
         run: |
-          aws s3 sync ./build/ s3://mri-viewer-epam --delete --exclude "*demo/*"
+          aws s3 sync ./build/ s3://mri-viewer-tst --delete"
       - name: Invalidate cache with the AWS CLI
         run: |
-          aws cloudfront create-invalidation --distribution-id ESRGIUPNHEYPX --paths "/*"
+          aws cloudfront create-invalidation --distribution-id E1JDJAC4CVCUAO --paths "/*"
