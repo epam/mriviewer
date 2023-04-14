@@ -45,5 +45,6 @@ const StoreActionType = {
   SET_MODAL_TEXT: 33,
   SET_MODAL_ALERT: 34,
   SET_SPINNER: 35,
+  SET_PROGRESS_INFO: 36,
 };
 export default StoreActionType;

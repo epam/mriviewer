@@ -3,27 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect } from 'react';
-
+import React from 'react';
+import { useSelector } from 'react-redux';
 import css from './UIprogressBar.module.css';
-import { connect } from 'react-redux';
-import StoreActionType from '../../store/ActionTypes';
 
-const UIProgressBar = (props) => {
-  useEffect(() => {
-    props.dispatch({ type: StoreActionType.SET_PROGRESS, payload: { progress: props.progress, titleProgressBar: 'Initialazing' } });
-  }, [props.progress]);
+const UIProgressBar = () => {
+  const { progress, titleProgressBar } = useSelector((state) => state);
+  const progressWidth = `${progress < 1 ? progress * 100 : progress}%`;
 
-  console.log(`Progress ${props.progress}`);
   return (
     <>
       <div className={css.progress}>
-        <span className={css.label}>{props.titleProgressBar}</span>
+        <span className={css.label}>{titleProgressBar}</span>
         <div
           className={css.progressBar}
-          style={{ width: `${props.progress < 1 ? props.progress * 100 : props.progress}%` }}
+          style={{ width: `${progressWidth}` }}
           role="progressbar"
-          aria-valuenow={props.progress}
+          aria-valuenow={progress}
           aria-valuemin="0"
           aria-valuemax="1"
         />
@@ -32,4 +28,4 @@ const UIProgressBar = (props) => {
   );
 };
 
-export default connect((store) => store)(UIProgressBar);
+export default React.memo(UIProgressBar);
