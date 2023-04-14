@@ -763,7 +763,7 @@ class FileReader extends React.Component {
       return;
     }
 
-    const DEMO_URL = 'https://d8ohfj70qg23c.cloudfront.net/demo/';
+    const DEMO_URL = 'https://daentjnvnffrh.cloudfront.net/demo/';
 
     let fileName =
       DEMO_URL +
