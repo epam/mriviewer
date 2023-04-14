@@ -14,13 +14,51 @@ import UIModalUrl from '../../Modals/ModalUrl';
 
 const IMG_DROPZONE_SIZE = 49;
 
+// This component cannot be refactor to FC yet, as we need to extend it from FileReader for now
 class SmartContainer extends FileReader {
+  constructor(props) {
+    super(props);
+    this.state = {
+      windowDimensions: this.getWindowDimensions(),
+    };
+    this.handleResize = this.handleResize.bind(this);
+  }
+
+  getWindowDimensions() {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+      width,
+      height,
+    };
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.handleResize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+  }
+
+  handleResize() {
+    this.setState({
+      windowDimensions: this.getWindowDimensions(),
+    });
+  }
+
   render() {
+    const { windowDimensions } = this.state;
+    const isMobile = windowDimensions.width < 900;
+
     return (
       <div className={css.smart_container}>
-        <SVG name="dropzone" width={IMG_DROPZONE_SIZE} height={IMG_DROPZONE_SIZE} />
-        <p className={css.text}>Drag and drop files here</p>
-        <p className={css.text}>OR</p>
+        {!isMobile && (
+          <>
+            <SVG name="dropzone" width={IMG_DROPZONE_SIZE} height={IMG_DROPZONE_SIZE} />
+            <p className={css.text}>Drag and drop files here</p>
+            <p className={css.text}>OR</p>
+          </>
+        )}
         <div className={css.buttons_toolbar}>
           <UIButton
             icon="folder"
