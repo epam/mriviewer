@@ -1,4 +1,5 @@
 .smart_container {
+  margin: 0 15px;
   padding: 35px 15px 15px;
   background-color: var(--black);
   border: 2px dashed var(--red);
@@ -13,6 +14,27 @@
   justify-content: space-between;
 }
 
+.button_start_screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .button_start_screen svg {
-  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+@media screen and (min-width: 768px) {
+  .smart_container {
+    margin: 0;
+  }
+
+  .button_start_screen {
+    flex-direction: row;
+  }
+
+  .button_start_screen svg {
+    margin-right: 5px;
+    margin-bottom: 0;
+  }
 }
