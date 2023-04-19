@@ -22,6 +22,8 @@ class SmartContainer extends FileReader {
       windowDimensions: this.getWindowDimensions(),
     };
     this.handleResize = this.handleResize.bind(this);
+    this.handleDrag = this.handleDrag.bind(this);
+    this.handleDrop = this.handleDrop.bind(this);
   }
 
   getWindowDimensions() {
@@ -46,12 +48,34 @@ class SmartContainer extends FileReader {
     });
   }
 
+  handleDrag(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      this.setState({ isActiveDnd: true });
+    } else if (e.type === 'dragleave') {
+      this.setState({ isActiveDnd: false });
+    }
+  }
+
+  handleDrop(e) {
+    e.preventDefault();
+    this.setState({ isActiveDnd: false });
+    this.handleFileSelected(e);
+  }
+
   render() {
     const { windowDimensions } = this.state;
     const isMobile = windowDimensions.width < 900;
 
     return (
-      <div className={css.smart_container}>
+      <div
+        onDragEnter={(e) => this.handleDrag(e)}
+        onDragLeave={(e) => this.handleDrag(e)}
+        onDragOver={(e) => this.handleDrag(e)}
+        onDrop={(e) => this.handleDrop(e)}
+        className={css.smart_container}
+      >
         {!isMobile && (
           <>
             <SVG name="dropzone" width={IMG_DROPZONE_SIZE} height={IMG_DROPZONE_SIZE} />
