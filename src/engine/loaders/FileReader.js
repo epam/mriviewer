@@ -468,152 +468,157 @@ class FileReader extends React.Component {
   //
   // Perform open file after it selected in dialog
   handleFileSelected(evt) {
-    if (evt.target.files !== undefined) {
-      let numFiles = evt.target.files.length;
-      console.log(`UiOpenMenu. Trying to open ${numFiles} files`);
-      if (numFiles <= 0) {
-        return;
-      }
-      console.log(`UiOpenMenu. handleFileSelected. file[0] = ${evt.target.files[0].name}`);
-      // debugger;
-      console.log('evt = ' + evt.target.files);
-      this.m_volumeSet = new VolumeSet();
-      if (numFiles === 1) {
-        const file = evt.target.files[0];
-        this.m_fileName = file.name;
-        this.m_fileSize = file.size;
-        console.log('this.m_fileSize ->>>>>>>>>>>>>>      ' + this.m_fileSize);
-        console.log('evt.loaded ->>>>>>>>>>>>>>      ' + evt.loaded);
-        console.log('evt.total ->>>>>>>>>>>>>>      ' + evt.total);
+    const files = evt.target.files || evt.dataTransfer.files;
 
-        //  read gzip
-        if (this.m_fileName.endsWith('.gz')) {
-          // here will be result raw buffer
-          this.m_unzippedBuffer = null;
+    if (!files) {
+      return;
+    }
 
-          // remove last 3 chars form file name string
-          this.m_fileName = this.m_fileName.slice(0, -3);
+    let numFiles = files.length;
+    console.log(`UiOpenMenu. Trying to open ${numFiles} files`);
+    if (numFiles <= 0) {
+      return;
+    }
+    console.log(`UiOpenMenu. handleFileSelected. file[0] = ${files[0].name}`);
+    // debugger;
+    console.log('evt = ' + files);
+    this.m_volumeSet = new VolumeSet();
+    if (numFiles === 1) {
+      const file = files[0];
+      this.m_fileName = file.name;
+      this.m_fileSize = file.size;
+      console.log('this.m_fileSize ->>>>>>>>>>>>>>      ' + this.m_fileSize);
+      console.log('evt.loaded ->>>>>>>>>>>>>>      ' + evt.loaded);
+      console.log('evt.total ->>>>>>>>>>>>>>      ' + evt.total);
 
-          const store = this.props;
+      //  read gzip
+      if (this.m_fileName.endsWith('.gz')) {
+        // here will be result raw buffer
+        this.m_unzippedBuffer = null;
 
-          const gunzip = zlib.createGunzip();
-          createReadStream(file).pipe(gunzip);
-          gunzip.on('data', (data) => {
-            if (this.m_unzippedBuffer == null) {
-              store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
-            } else {
-              const readSize = this.m_unzippedBuffer.length;
-              const allSize = file.size;
-              const KOEF_DEFLATE = 0.28;
-              const ratio100 = Math.floor((readSize * 100.0 * KOEF_DEFLATE) / allSize);
-              store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratio100 });
-            }
+        // remove last 3 chars form file name string
+        this.m_fileName = this.m_fileName.slice(0, -3);
 
-            // read the data chunk-by-chunk
-            // data is Uint8Array
-            const dataSize = data.length;
-            if (this.m_unzippedBuffer == null) {
-              // create buffer from first ungzipped data chunk
-              this.m_unzippedBuffer = new Uint8Array(dataSize);
-              this.m_unzippedBuffer.set(data, 0);
-            } else {
-              // append buffer from 2,3,... ungzipped data chunks
-              const dataCollectedSize = this.m_unzippedBuffer.length;
-              const arrNew = new Uint8Array(dataCollectedSize + dataSize);
-              arrNew.set(this.m_unzippedBuffer, 0);
-              arrNew.set(data, dataCollectedSize);
-              this.m_unzippedBuffer = arrNew;
-            }
-          });
-          gunzip.on('close', () => {
-            console.log('gzip on close');
-          });
+        const store = this.props;
 
-          gunzip.on('end', () => {
+        const gunzip = zlib.createGunzip();
+        createReadStream(file).pipe(gunzip);
+        gunzip.on('data', (data) => {
+          if (this.m_unzippedBuffer == null) {
             store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
-            // now all chunks are read. Need to check raw ungzipped buffer
-            const sizeBuffer = this.m_unzippedBuffer.length;
-            if (sizeBuffer < 128) {
-              console.log('Too small ungzipped data: ' + sizeBuffer.toString() + " bytes. can't read volume data");
-              return;
-            }
-            // check correct nifti header after extract raw bytes from gzip
-            const headTemplate = [0x00, 0x00, 0x01, 0x5c];
-            let correctHead0 = true;
-            for (let i = 0; i < 4; i++) {
-              if (this.m_unzippedBuffer[i] !== headTemplate[i]) {
-                correctHead0 = false;
-              }
-            }
-            let correctHead1 = true;
-            for (let i = 0; i < 4; i++) {
-              if (this.m_unzippedBuffer[i] !== headTemplate[3 - i]) {
-                correctHead1 = false;
-              }
-            }
-            if (!correctHead0 && !correctHead1) {
-              console.log('Wrong nifi header, cant read gzipped file');
-              return;
-            }
-            console.log('ungzip done with ' + sizeBuffer.toString() + ' bytes. Correct nifti header detected');
-            // process raw data buffer
-            this.onFileReadSingleBuffer(this.m_unzippedBuffer);
-          });
-          return;
-        } // if gzipped file
-        this.m_fileReader = new FileReader();
-        const progressHandler = ({ loaded, total }) => {
-          // debugger;
-          this.callbackReadProgress(loaded / total);
-        };
-        this.m_fileReader.addEventListener('progress', progressHandler);
-        this.m_fileReader.onloadend = this.onFileContentReadSingleFile;
-        this.m_fileReader.readAsArrayBuffer(file);
-      } else {
-        // not single file was open
-        this.m_files = Array.from(evt.target.files); // FileList -> Array
-        this.m_fileIndex = 0;
-        this.m_numFiles = numFiles;
-        this.m_fileReader = new FileReader();
-        // if multiple files, create Dicom loader
-        this.m_loader = null;
-        if (evt.target.files[0].name.endsWith('.dcm')) {
-          // remove non-dcm files
-          let numFilesNew = 0;
-          for (let i = numFiles - 1; i >= 0; i--) {
-            if (this.m_files[i].name.endsWith('.dcm')) {
-              numFilesNew++;
-            } else {
-              this.m_files.splice(i, 1);
+          } else {
+            const readSize = this.m_unzippedBuffer.length;
+            const allSize = file.size;
+            const KOEF_DEFLATE = 0.28;
+            const ratio100 = Math.floor((readSize * 100.0 * KOEF_DEFLATE) / allSize);
+            store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: ratio100 });
+          }
+
+          // read the data chunk-by-chunk
+          // data is Uint8Array
+          const dataSize = data.length;
+          if (this.m_unzippedBuffer == null) {
+            // create buffer from first ungzipped data chunk
+            this.m_unzippedBuffer = new Uint8Array(dataSize);
+            this.m_unzippedBuffer.set(data, 0);
+          } else {
+            // append buffer from 2,3,... ungzipped data chunks
+            const dataCollectedSize = this.m_unzippedBuffer.length;
+            const arrNew = new Uint8Array(dataCollectedSize + dataSize);
+            arrNew.set(this.m_unzippedBuffer, 0);
+            arrNew.set(data, dataCollectedSize);
+            this.m_unzippedBuffer = arrNew;
+          }
+        });
+        gunzip.on('close', () => {
+          console.log('gzip on close');
+        });
+
+        gunzip.on('end', () => {
+          store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
+          // now all chunks are read. Need to check raw ungzipped buffer
+          const sizeBuffer = this.m_unzippedBuffer.length;
+          if (sizeBuffer < 128) {
+            console.log('Too small ungzipped data: ' + sizeBuffer.toString() + " bytes. can't read volume data");
+            return;
+          }
+          // check correct nifti header after extract raw bytes from gzip
+          const headTemplate = [0x00, 0x00, 0x01, 0x5c];
+          let correctHead0 = true;
+          for (let i = 0; i < 4; i++) {
+            if (this.m_unzippedBuffer[i] !== headTemplate[i]) {
+              correctHead0 = false;
             }
           }
-          numFiles = numFilesNew;
-          this.m_numFiles = numFilesNew;
-
-          this.m_loader = new LoaderDicom(numFiles);
-          const dicomInfo = this.m_loader.m_dicomInfo;
-
-          // save dicomInfo to store
-          const store = this.props;
-          store.dispatch({ type: StoreActionType.SET_DICOM_INFO, dicomInfo: dicomInfo });
-
-          // save dicom loader to store
-          store.dispatch({ type: StoreActionType.SET_LOADER_DICOM, loaderDicom: this.m_loader });
-
-          this.m_fileReader.onloadend = this.onFileContentReadMultipleDicom;
-        } else if (evt.target.files[0].name.endsWith('.hdr') || evt.target.files[0].name.endsWith('.img')) {
-          this.m_loader = new LoaderHdr(numFiles);
-          this.m_fileReader.onloadend = this.onFileContentReadMultipleHdr;
+          let correctHead1 = true;
+          for (let i = 0; i < 4; i++) {
+            if (this.m_unzippedBuffer[i] !== headTemplate[3 - i]) {
+              correctHead1 = false;
+            }
+          }
+          if (!correctHead0 && !correctHead1) {
+            console.log('Wrong nifi header, cant read gzipped file');
+            return;
+          }
+          console.log('ungzip done with ' + sizeBuffer.toString() + ' bytes. Correct nifti header detected');
+          // process raw data buffer
+          this.onFileReadSingleBuffer(this.m_unzippedBuffer);
+        });
+        return;
+      } // if gzipped file
+      this.m_fileReader = new window.FileReader();
+      const progressHandler = ({ loaded, total }) => {
+        // debugger;
+        this.callbackReadProgress(loaded / total);
+      };
+      console.log(this.m_fileReader);
+      this.m_fileReader.addEventListener('progress', progressHandler);
+      this.m_fileReader.onloadend = this.onFileContentReadSingleFile;
+      this.m_fileReader.readAsArrayBuffer(file);
+    } else {
+      // not single file was open
+      this.m_files = Array.from(files); // FileList -> Array
+      this.m_fileIndex = 0;
+      this.m_numFiles = numFiles;
+      this.m_fileReader = new window.FileReader();
+      // if multiple files, create Dicom loader
+      this.m_loader = null;
+      if (files[0].name.endsWith('.dcm')) {
+        // remove non-dcm files
+        let numFilesNew = 0;
+        for (let i = numFiles - 1; i >= 0; i--) {
+          if (this.m_files[i].name.endsWith('.dcm')) {
+            numFilesNew++;
+          } else {
+            this.m_files.splice(i, 1);
+          }
         }
+        numFiles = numFilesNew;
+        this.m_numFiles = numFilesNew;
 
-        //const vol = new Volume();
-        //this.m_volume = vol;
-        this.m_volumeRoi = null;
+        this.m_loader = new LoaderDicom(numFiles);
+        const dicomInfo = this.m_loader.m_dicomInfo;
 
-        const file = evt.target.files[0];
-        this.m_fileName = file.name;
-        this.m_fileReader.readAsArrayBuffer(file);
-      } // if num files > 1
+        // save dicomInfo to store
+        const store = this.props;
+        store.dispatch({ type: StoreActionType.SET_DICOM_INFO, dicomInfo: dicomInfo });
+
+        // save dicom loader to store
+        store.dispatch({ type: StoreActionType.SET_LOADER_DICOM, loaderDicom: this.m_loader });
+
+        this.m_fileReader.onloadend = this.onFileContentReadMultipleDicom;
+      } else if (files[0].name.endsWith('.hdr') || files[0].name.endsWith('.img')) {
+        this.m_loader = new LoaderHdr(numFiles);
+        this.m_fileReader.onloadend = this.onFileContentReadMultipleHdr;
+      }
+
+      //const vol = new Volume();
+      //this.m_volume = vol;
+      this.m_volumeRoi = null;
+
+      const file = files[0];
+      this.m_fileName = file.name;
+      this.m_fileReader.readAsArrayBuffer(file);
     } // if event is not empty
   }
 
