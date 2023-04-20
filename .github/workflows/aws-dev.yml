@@ -1,8 +1,10 @@
-name: Deploy AWS - DEV
+name: Deploy DEV
 
 on:
-  merge:
-    branches: [develop]
+  pull_request:
+    types: [closed]
+    branches:
+      - develop
 
 jobs:
   build:
