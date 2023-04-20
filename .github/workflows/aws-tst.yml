@@ -1,4 +1,4 @@
-name: Deploy AWS - TST
+name: Deploy TST
 
 on: workflow_dispatch
 
