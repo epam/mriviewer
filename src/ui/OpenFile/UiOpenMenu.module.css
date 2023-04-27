@@ -1,0 +1,20 @@
+/*
+ * Copyright 2022 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.save-file__area {
+  height: 50px;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.save-file__area div {
+  margin-right: 10px;
+}
+
+.filename {
+  gap: 8px;
+}

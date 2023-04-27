@@ -1,0 +1,110 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.reset {
+  display: inline-block;
+  border: none;
+  margin: 0;
+  text-decoration: none;
+  background-color: transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: all 250ms ease-in-out, transform 150ms ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.reset:focus {
+  outline: none;
+}
+
+.button {
+  margin-right: 5px;
+  margin-bottom: 5px;
+  background-color: var(--black);
+  padding: 12px 13px;
+  color: var(--white);
+  font-family: inherit;
+  text-align: center;
+  vertical-align: center;
+  font-size: 14px;
+  border-radius: 36px;
+}
+
+.button > svg {
+  width: 24px;
+  height: 24px;
+}
+
+.rounded {
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.captionButton {
+  padding: 5px 10px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.button svg {
+  fill: var(--white);
+}
+
+.button:hover,
+.button:focus {
+  background-color: var(--light-orange);
+}
+
+.button.active {
+  color: var(--red);
+}
+
+.apply {
+  background-color: var(--red);
+  border-radius: 4px;
+}
+
+.button.active svg {
+  fill: var(--red);
+}
+
+.button.light {
+  color: var(--black);
+  background-color: var(--light);
+}
+
+.button.light svg {
+  fill: var(--black);
+}
+
+.button.light.active {
+  color: var(--red);
+}
+
+.button.light:hover,
+.button.light:focus {
+  background-color: var(--light);
+  filter: brightness(80%);
+}
+
+.button.accent {
+  color: var(--white);
+  background-color: var(--red);
+}
+
+.button.accent svg {
+  fill: var(--white);
+}
+
+.button.accent:hover,
+.button.accent:focus {
+  background-color: var(--red);
+  filter: brightness(85%);
+}
+
+.button.accent.active svg {
+  fill: var(--black);
+}

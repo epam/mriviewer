@@ -1,0 +1,314 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*! nouislider - 9.2.0 - 2017-01-11 10:35:35 */
+/* Functional styling;
+ * These styles are required for noUiSlider to function.
+ * You don't need to change these rules to apply your design.
+ */
+
+.noUi-target,
+.noUi-target * {
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: var(--dark-gray);
+  -webkit-user-select: none;
+  -ms-touch-action: none;
+  touch-action: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.noUi-target {
+  position: relative;
+  direction: ltr;
+}
+
+.noUi-base {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+  /* Fix 401 */
+}
+
+.noUi-connect {
+  position: absolute;
+  right: 0;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.noUi-origin {
+  position: absolute;
+  height: 0;
+  width: 0;
+}
+
+.noUi-handle {
+  position: relative;
+  z-index: 1;
+}
+
+.noUi-state-tap .noUi-connect,
+.noUi-state-tap .noUi-origin {
+  -webkit-transition: top 0.3s, right 0.3s, bottom 0.3s, left 0.3s;
+  transition: top 0.3s, right 0.3s, bottom 0.3s, left 0.3s;
+}
+
+.noUi-state-drag * {
+  cursor: inherit !important;
+}
+
+/* Painting and performance;
+ * Browsers can paint handles in their own layer. */
+
+.noUi-base,
+.noUi-handle {
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+/* Slider size and handle placement */
+
+.noUi-horizontal {
+  margin: 10px 0;
+  height: 10px;
+}
+
+.noUi-horizontal .noUi-handle {
+  width: 10px;
+  height: 30px;
+  left: -5px;
+  top: -10px;
+}
+
+.noUi-vertical {
+  margin: 0 10px;
+  width: 10px;
+}
+
+.noUi-vertical .noUi-handle {
+  width: 30px;
+  height: 10px;
+  left: -10px;
+  top: -5px;
+}
+
+/* Styling */
+
+.noUi-target {
+  background: var(--white);
+  border-radius: 5px;
+  border: 1px solid var(--dark-gray);
+}
+
+.noUi-connect {
+  background: var(--red);
+  -webkit-transition: background 450ms;
+  transition: background 450ms;
+}
+
+.noUi-connect:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.noUi-connect:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+/* Handles and cursors */
+
+.noUi-draggable {
+  cursor: ew-resize;
+}
+
+.noUi-vertical .noUi-draggable {
+  cursor: ns-resize;
+}
+
+.noUi-handle {
+  border: 1px solid var(--white);
+  border-radius: 5px;
+  background: var(--white);
+  cursor: col-resize;
+}
+
+.noUi-active {
+  border-color: var(--white);
+}
+
+/* Handle stripes */
+
+.noUi-handle:before,
+.noUi-handle:after {
+  content: '';
+  display: block;
+  position: absolute;
+  height: 10px;
+  width: 1px;
+  background: var(--white);
+  left: 2px;
+  top: 8px;
+}
+
+.noUi-handle:after {
+  left: 5px;
+}
+
+.noUi-vertical .noUi-handle:before,
+.noUi-vertical .noUi-handle:after {
+  width: 14px;
+  height: 1px;
+  left: 6px;
+  top: 14px;
+}
+
+.noUi-vertical .noUi-handle:after {
+  top: 17px;
+}
+
+/* Disabled state */
+
+[disabled] .noUi-connect {
+  background: #b8b8b8;
+}
+
+[disabled].noUi-target,
+[disabled].noUi-handle,
+[disabled] .noUi-handle {
+  cursor: not-allowed;
+}
+
+/* Base */
+
+.noUi-pips,
+.noUi-pips * {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.noUi-pips {
+  position: absolute;
+  color: #999;
+}
+
+/* Values */
+
+.noUi-value {
+  position: absolute;
+  text-align: center;
+}
+
+.noUi-value-sub {
+  color: #ccc;
+  font-size: 10px;
+}
+
+/* Markings */
+
+.noUi-marker {
+  position: absolute;
+  background: #ccc;
+}
+
+.noUi-marker-sub {
+  background: #aaa;
+}
+
+.noUi-marker-large {
+  background: #aaa;
+}
+
+/* Horizontal layout;  */
+
+.noUi-pips-horizontal {
+  padding: 10px 0;
+  height: 80px;
+  top: 100%;
+  left: 0;
+  width: 100%;
+}
+
+.noUi-value-horizontal {
+  -webkit-transform: translate3d(-50%, 50%, 0);
+  transform: translate3d(-50%, 50%, 0);
+}
+
+.noUi-marker-horizontal.noUi-marker {
+  margin-left: -1px;
+  width: 2px;
+  height: 5px;
+}
+
+.noUi-marker-horizontal.noUi-marker-sub {
+  height: 10px;
+}
+
+.noUi-marker-horizontal.noUi-marker-large {
+  height: 15px;
+}
+
+/* Vertical layout */
+
+.noUi-pips-vertical {
+  padding: 0 10px;
+  height: 100%;
+  top: 0;
+  left: 100%;
+}
+
+.noUi-value-vertical {
+  -webkit-transform: translate3d(0, 50%, 0);
+  transform: translate3d(0, 50%, 0);
+  padding-left: 25px;
+}
+
+.noUi-marker-vertical.noUi-marker {
+  width: 5px;
+  height: 2px;
+  margin-top: -1px;
+}
+
+.noUi-marker-vertical.noUi-marker-sub {
+  width: 10px;
+}
+
+.noUi-marker-vertical.noUi-marker-large {
+  width: 15px;
+}
+
+/* Tooltip styles */
+
+.noUi-tooltip {
+  display: block;
+  position: absolute;
+  border: 1px solid var(--dark-gray);
+  border-radius: 5px;
+  background: var(--white);
+  color: var(--dark-gray);
+  padding: 5px;
+  line-height: 1;
+  text-align: center;
+}
+
+.noUi-horizontal .noUi-tooltip {
+  -webkit-transform: translate(-50%, 0);
+  transform: translate(-50%, 0);
+  left: 50%;
+  bottom: 120%;
+}
+
+.noUi-vertical .noUi-tooltip {
+  -webkit-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+  top: 50%;
+  right: 120%;
+}
