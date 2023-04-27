@@ -1,0 +1,109 @@
+/*
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.subtitle {
+  margin: 0;
+  padding: 0;
+  font-weight: 400;
+  display: block;
+}
+
+.list {
+  padding: 10px 0;
+  margin: 0;
+}
+
+.item {
+  list-style: none;
+  font-size: 14px;
+}
+
+.selectWrapper {
+  position: relative;
+  display: flex;
+  width: 300px;
+  height: 30px;
+  line-height: 1.25;
+  background: var(--light);
+  overflow: hidden;
+  border-radius: 5px;
+  margin: 5px 0 10px;
+}
+
+.selectWrapper::after {
+  content: '\25BC';
+  color: var(--dark-gray);
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px 10px;
+  border-left: 1px solid var(--gray);
+  cursor: pointer;
+  pointer-events: none;
+  -webkit-transition: 0.25s all ease;
+  -o-transition: 0.25s all ease;
+  transition: 0.25s all ease;
+}
+
+.selectWrapper:hover::after {
+  color: var(--red);
+}
+
+.select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+  outline: 0;
+  box-shadow: none;
+  border: 0 !important;
+  background: var(--light);
+  background-image: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.select::-ms-expand {
+  display: none;
+}
+
+.select {
+  flex: 1;
+  padding: 0 10px;
+  color: var(--dark-gray);
+  cursor: pointer;
+}
+
+.table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--light);
+}
+
+.thead {
+  font-size: 14px;
+  text-align: left;
+}
+
+.thead th:nth-child(1) {
+  width: 30%;
+}
+
+.thead th:nth-child(2) {
+  width: 30%;
+}
+
+.thead th:nth-child(3) {
+  width: 40%;
+}
+
+.table th,
+.table td {
+  padding: 5px;
+  font-size: 14px;
+  border: 1px dashed var(--light);
+  word-break: break-word;
+}
