@@ -43,7 +43,7 @@ jobs:
           aws-region: eu-central-1
       - name: Copy files to the test website with the AWS CLI
         run: |
-          aws s3 sync ./build/ s3://mri-viewer-prd --delete"
+          aws s3 sync ./build/ s3://mri-viewer-prd --delete
       - name: Invalidate cache with the AWS CLI
         run: |
           aws cloudfront create-invalidation --distribution-id E3O0OMPB0HHSIG --paths "/*"
