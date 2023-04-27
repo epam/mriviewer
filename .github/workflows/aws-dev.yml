@@ -1,8 +1,10 @@
-name: Deploy AWS - DEV
+name: Deploy DEV
 
 on:
-  merge:
-    branches: [develop]
+  pull_request:
+    types: [closed]
+    branches:
+      - develop
 
 jobs:
   build:
@@ -41,7 +43,7 @@ jobs:
           aws-region: eu-central-1
       - name: Copy files to the test website with the AWS CLI
         run: |
-          aws s3 sync ./build/ s3://mri-viewer-dev --delete"
+          aws s3 sync ./build/ s3://mri-viewer-dev --delete
       - name: Invalidate cache with the AWS CLI
         run: |
           aws cloudfront create-invalidation --distribution-id E361BUPYLO4Y4S --paths "/*"
