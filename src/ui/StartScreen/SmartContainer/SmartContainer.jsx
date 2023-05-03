@@ -19,34 +19,14 @@ class SmartContainer extends FileReader {
   constructor(props) {
     super(props);
     this.state = {
-      windowDimensions: this.getWindowDimensions(),
+      isMobile: false,
       isActiveDnd: false,
-    };
-    this.handleResize = this.handleResize.bind(this);
-    this.handleDrag = this.handleDrag.bind(this);
-    this.handleDrop = this.handleDrop.bind(this);
-  }
-
-  getWindowDimensions() {
-    const { innerWidth: width, innerHeight: height } = window;
-    return {
-      width,
-      height,
     };
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.handleResize);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.handleResize);
-  }
-
-  handleResize() {
-    this.setState({
-      windowDimensions: this.getWindowDimensions(),
-    });
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    this.setState({ isMobile });
   }
 
   handleDrag(e) {
@@ -66,8 +46,7 @@ class SmartContainer extends FileReader {
   }
 
   render() {
-    const { windowDimensions } = this.state;
-    const isMobile = windowDimensions.width < 900;
+    const { isMobile } = this.state;
 
     return (
       <div
@@ -75,7 +54,7 @@ class SmartContainer extends FileReader {
         onDragLeave={(e) => this.handleDrag(e)}
         onDragOver={(e) => this.handleDrag(e)}
         onDrop={(e) => this.handleDrop(e)}
-        className={this.state.isActiveDnd ? `${css.smart_container} ${css.smart_container__active}` : css.smart_container}
+        className={this.state.isActiveDnd && !isMobile ? `${css.smart_container} ${css.smart_container__active}` : css.smart_container}
       >
         {!isMobile && (
           <>
