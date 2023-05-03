@@ -20,6 +20,7 @@ class SmartContainer extends FileReader {
     super(props);
     this.state = {
       windowDimensions: this.getWindowDimensions(),
+      isActiveDnd: false,
     };
     this.handleResize = this.handleResize.bind(this);
     this.handleDrag = this.handleDrag.bind(this);
@@ -51,9 +52,9 @@ class SmartContainer extends FileReader {
   handleDrag(e) {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'copy';
-    if (e.type === 'dragenter' || e.type === 'dragover') {
+    if ((e.type === 'dragenter' || e.type === 'dragover') && this.state.isActiveDnd !== true) {
       this.setState({ isActiveDnd: true });
-    } else if (e.type === 'dragleave') {
+    } else if (e.type === 'dragleave' && this.state.isActiveDnd === true) {
       this.setState({ isActiveDnd: false });
     }
   }
@@ -74,7 +75,7 @@ class SmartContainer extends FileReader {
         onDragLeave={(e) => this.handleDrag(e)}
         onDragOver={(e) => this.handleDrag(e)}
         onDrop={(e) => this.handleDrop(e)}
-        className={css.smart_container}
+        className={this.state.isActiveDnd ? `${css.smart_container} ${css.smart_container__active}` : css.smart_container}
       >
         {!isMobile && (
           <>

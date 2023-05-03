@@ -2,11 +2,16 @@
   margin: 0 15px;
   padding: 35px 15px 15px;
   background-color: var(--black);
-  border: 2px dashed var(--red);
+  border: none;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+}
+
+.smart_container__active {
+  border: 2px dashed var(--red);
 }
 
 .buttons_toolbar {
@@ -36,5 +41,14 @@
   .button_start_screen svg {
     margin-right: 5px;
     margin-bottom: 0;
+  }
+}
+
+@keyframes rotate {
+  0% {
+    background-position: 0 0, 100% 100%, 0 100%, 100% 0;
+  }
+  100% {
+    background-position: 100% 0, 0 100%, 0 0, 100% 100%;
   }
 }
