@@ -8,6 +8,8 @@
   flex-direction: column;
   align-items: center;
   position: relative;
+  border: 2px dashed transparent;
+  transition: 0.25s all ease;
 }
 
 .smart_container__active {
