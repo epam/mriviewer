@@ -1,0 +1,38 @@
+# This workflow runs build, lint and test steps.
+# Runs on new pull request to "develop" or "master" branches.
+
+name: Build
+
+on:
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [master, develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12.x
+      - name: Reconfigure git to use HTTP authentication
+        run: >
+          git config --global url."https://github.com/".insteadOf
+          ssh://git@github.com/
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - run: node --version
+      - run: npm --version
+      - run: npm ci --no-optional
+      - run: npm run build
+      - run: npm run lint
+      - run: npm test

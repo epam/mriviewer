@@ -1,0 +1,74 @@
+@startuml
+Actor User
+'User -> Window.onwheel: WheelDelta(+3|-3)
+
+User -> UI : click m_fileSelector
+UI -> Browser : open file browser dialog
+User -> Finder : choose file
+Finder -> UI : FileList
+UI -> Engine :
+
+
+@enduml
+
+@startuml
+
+diamond diamond
+
+UiOpenMenu --|> React.Component
+UiOpenMenu --o React.BaseSyntheticEvent
+
+
+package DOM {
+    HTMLInputElement --|> HTMLElement
+    HTMLInputElement --o FileList
+
+    class FileList {
+        ~ length
+        File item(index)
+        File [index]
+    }
+
+    interface HTMLElement {
+        click()
+    }
+
+    interface HTMLInputElement {
+        + FileList files
+    }
+
+    interface GlobalEventHandlers {
+        + onchange
+    }
+
+    FileBrowser -- GlobalEventHandlers
+}
+
+package React {
+    interface BaseSyntheticEvent {
+
+    }
+}
+
+class UiOpenMenu {
+    - React.BaseSyntheticEvent evt
+    - HTMLInputElement m_fileSelector
+    onButtonOpenLocalFileClick(evt)
+    handleFileSelected()
+}
+
+package OS {
+    interface FileBrowser {
+        emitOnChange(files)
+        + FileList files
+    }
+}
+
+@enduml
+
+
+@startuml
+class Store {
+    viewMode
+}
+@enduml

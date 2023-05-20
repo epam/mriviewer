@@ -1,0 +1,55 @@
+.screen {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.header_text {
+  margin: 0;
+  margin-top: 40px;
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 36.31px;
+  color: var(--white);
+}
+
+.subheader {
+  margin: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: center;
+}
+
+.subheader_text {
+  margin: 0;
+  margin-bottom: 10px;
+  opacity: 0.6;
+  font-size: 14px;
+  line-height: 36.31px;
+  font-weight: 400;
+  text-align: center;
+  color: var(--white);
+}
+
+.github_link {
+  margin-right: 10px;
+}
+
+.container {
+  margin-top: 30px;
+}
+
+@media screen and (min-width: 768px) {
+  .subheader {
+    flex-direction: row;
+  }
+
+  .subheader_text {
+    margin: 0;
+    margin-left: 10px;
+    text-align: left;
+  }
+}

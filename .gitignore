@@ -29,3 +29,5 @@ yarn-error.log*
 
 /.idea
 /.vscode
+/mriviewer.sln
+/.vs

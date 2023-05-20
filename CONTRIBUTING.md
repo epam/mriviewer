@@ -10,6 +10,10 @@ $ npm i
 $ npm start
 ```
 
+## IDE Configuration
+
+https://stackoverflow.com/questions/41920324/adding-spaces-between-imports-and-braces-in-webstorm
+
 ## Submitting changes
 
 We are following [GitHub's Collaborating with Issues and Pull Requests Guide](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests)
