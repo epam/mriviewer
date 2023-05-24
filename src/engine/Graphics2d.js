@@ -525,9 +525,11 @@ class Graphics2d extends React.Component {
     let xPosNew = (store.render2dxPos - xRatio) * zoomFactor + xRatio;
     let yPosNew = (store.render2dyPos - yRatio) * zoomFactor + yRatio;
 
-    const canvasWidth = zoomNew < 1 ? '100%' : 'auto';
-    const canvasHeight = zoomNew < 1 ? '100%' : '34.875em';
+    const canvasWidth = zoomNew > 1 ? '100%' : 'auto';
+    const canvasHeight = zoomNew > 1 ? '100%' : '34.875em';
     this.setState({ canvasWidth, canvasHeight });
+
+    this.setState({ scalingFactor: zoomNew });
 
     if (zoomNew >= 1) {
       xPosNew = 0;
@@ -722,11 +724,9 @@ class Graphics2d extends React.Component {
     };
     const canvasStyles = {
       maxWidth: '100%',
-      width: this.state.canvasWidth,
-      height: this.state.canvasHeight,
-      transform: `scale(${this.state.scalingFactor})`,
-      transformOrigin: '0 0',
-      transition: 'width 0.4s ease-out, height 0.4s ease-out, transform 0.2s ease-out',
+      width: this.state.scalingFactor >= 1 ? 'auto' : `${34.875 / this.state.scalingFactor}em`,
+      height: this.state.scalingFactor >= 1 ? '34.875em' : `${34.875 / this.state.scalingFactor}em`,
+      transition: 'width 0.4s ease-out, height 0.4s ease-out',
     };
     return (
       <div style={wrapperStyles}>
