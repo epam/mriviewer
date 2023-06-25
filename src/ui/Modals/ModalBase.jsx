@@ -12,11 +12,12 @@ import css from './Modals.module.css';
 
 ReactModal.setAppElement('#root');
 
-export const Modal = ({ isOpen, close, children }) => {
+export const Modal = ({ isOpen, close, children, customStyles = {} }) => {
   return (
     <ReactModal
       isOpen={isOpen}
       parentSelector={() => document.querySelector('#root')}
+      style={customStyles}
       className={css.modal}
       overlayClassName={css.overlay}
       onRequestClose={close}
