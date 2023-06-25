@@ -62,6 +62,7 @@ class FileReader extends React.Component {
     this.m_fileName = '';
     this.m_fileIndex = 0;
     this.m_fileReader = null;
+    this.m_fileSelector = this.buildFileSelector();
     this.m_fileSize = null;
     this.state = {
       showModalUrl: false,
