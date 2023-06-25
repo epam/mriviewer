@@ -65,6 +65,7 @@
     "no-bitwise": "off",
     "no-plusplus": "off",
     "no-multi-assign": "off",
+    "react/no-unknown-property": "off",
     "lines-between-class-members": ["error", "always"],
     "no-debugger": "warn",
     "prettier/prettier": ["error"]
