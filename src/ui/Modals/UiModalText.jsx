@@ -12,6 +12,7 @@ import css from './Modals.module.css';
 class UiModalText extends React.Component {
   constructor(props) {
     super(props);
+    this.maxLength = 200;
     this.onButtonOk = this.onButtonOk.bind(this);
     this.onTexChange = this.onTexChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
@@ -22,6 +23,7 @@ class UiModalText extends React.Component {
 
     this.state = {
       text: '',
+      isApplyButtonDisabled: false,
     };
   } // end constr
 
@@ -29,7 +31,9 @@ class UiModalText extends React.Component {
     const store = this.props;
     const gra = store.graphics2d;
     const toolText = gra.m_toolText;
-    toolText.setText(this.state.text);
+    const multiLineText = this.setMultiLineText(this.state.text, 80); // change the limit here
+    toolText.setText(multiLineText);
+
     this.setState({ text: '' });
   }
 
@@ -51,7 +55,31 @@ class UiModalText extends React.Component {
   onTexChange(evt) {
     const strText = evt.target.value;
     // console.log(`onTexChange. text = ${strText}`);
-    this.setState({ text: strText });
+    this.setState({
+      text: strText.slice(0, this.maxLength),
+      isApplyButtonDisabled: strText.length > this.maxLength,
+    });
+  }
+
+  setMultiLineText(text, limit) {
+    const words = text.split(' ');
+    let lines = [''];
+    let currentLine = 0;
+
+    for (let i = 0; i < words.length; i++) {
+      let line = lines[currentLine] + words[i] + ' ';
+
+      if (line.length > limit && i > 0) {
+        lines[currentLine] = lines[currentLine].trim();
+        lines.push(words[i] + ' ');
+        currentLine++;
+      } else {
+        lines[currentLine] += words[i] + ' ';
+      }
+    }
+
+    lines[currentLine] = lines[currentLine].trim();
+    return lines.join('\n');
   }
 
   render() {
@@ -70,16 +98,20 @@ class UiModalText extends React.Component {
             required
             type="text"
             placeholder=""
+            maxLength={this.maxLength}
             style={{ width: '70%' }}
             className={css.input}
             value={this.state.text}
             onChange={this.onTexChange}
             autoFocus={true}
           />
+          <div className={css.helperText}>
+            Maximum characters allowed: {this.maxLength} (Characters left: {this.maxLength - this.state.text.length})
+          </div>
         </ModalBody>
         <ModalFooter>
           <UIButton handler={onHideFunc} caption="Cancel" />
-          <UIButton handler={this.handleFormSubmit} caption="Apply" />
+          <UIButton handler={this.handleFormSubmit} caption="Apply" disabled={this.state.isApplyButtonDisabled} />
         </ModalFooter>
       </Modal>
     );
