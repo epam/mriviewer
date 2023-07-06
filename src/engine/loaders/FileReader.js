@@ -89,12 +89,7 @@ class FileReader extends React.Component {
     if (vol.m_dataArray !== null) {
       console.log(`success loaded volume from ${fileNameIn}`);
 
-      const RECENT_FILES_KEY = 'recentFiles';
-      const arrRecentFiles = JSON.parse(localStorage.getItem(RECENT_FILES_KEY)) || [];
-
-      const limitedRecentFiles = arrRecentFiles.slice(0, 2);
-
-      localStorage.setItem(RECENT_FILES_KEY, JSON.stringify([{ fileName: fileNameIn, timestamp: Date.now() }, ...limitedRecentFiles]));
+      this.saveFileNameToLocalStorage(fileNameIn);
 
       if (NEED_TEXTURE_SIZE_4X) {
         vol.makeDimensions4x();
@@ -875,6 +870,17 @@ class FileReader extends React.Component {
       if (gra !== null) {
         gra.forceUpdate();
       }
+    }
+  }
+
+  saveFileNameToLocalStorage(fileName) {
+    const RECENT_FILES_KEY = 'recentFiles';
+    const arrRecentFiles = JSON.parse(localStorage.getItem(RECENT_FILES_KEY)) || [];
+
+    if (!arrRecentFiles.find((recentFile) => recentFile.fileName === fileName)) {
+      // Set only unique file name
+      const limitedRecentFiles = arrRecentFiles.slice(0, 2);
+      localStorage.setItem(RECENT_FILES_KEY, JSON.stringify([{ fileName: fileName, timestamp: Date.now() }, ...limitedRecentFiles]));
     }
   }
 
