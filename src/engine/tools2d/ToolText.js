@@ -107,16 +107,21 @@ class ToolText {
   }
 
   setText(str) {
-    this.m_text = str;
-    console.log(`set text = ${str}`);
-    const objText = {
-      point: {
-        x: this.m_pointPressed.x,
-        y: this.m_pointPressed.y,
-      },
-      text: str,
-    };
-    this.m_texts.push(objText);
+    const lines = str.split('\n');
+    const lineHeight = 16;
+    const spacing = 4;
+
+    for (let i = 0; i < lines.length; i++) {
+      const objText = {
+        point: {
+          x: this.m_pointPressed.x,
+          y: this.m_pointPressed.y + i * (lineHeight + spacing),
+        },
+        text: lines[i],
+      };
+      this.m_texts.push(objText);
+    }
+
     // invoke render
     this.m_objGraphics2d.forceUpdate();
   }
@@ -157,17 +162,21 @@ class ToolText {
     ctx.strokeStyle = 'yellow';
     ctx.fillStyle = 'white';
     const FONT_SZ = 16;
-    ctx.font = FONT_SZ.toString() + 'px Arial';
+    const LINE_HEIGHT = FONT_SZ * 1.2; // Added this line for line height calculation
+    ctx.font = `${FONT_SZ}px Arial`;
     ctx.textAlign = 'center';
-    ctx.textBaseline = 'bottom';
+    ctx.textBaseline = 'middle'; // Changed from 'bottom' to 'middle' to better center multiline text
 
     const numTexts = this.m_texts.length;
     for (let i = 0; i < numTexts; i++) {
       const objText = this.m_texts[i];
       const vTex = objText.point;
       const vScr = ToolDistance.textureToScreen(vTex.x, vTex.y, this.m_wScreen, this.m_hScreen, store);
-      const strMsg = objText.text;
-      ctx.fillText(strMsg, vScr.x, vScr.y);
+      const lines = objText.text.split('\n'); // Split the text by newline character
+
+      for (let j = 0; j < lines.length; j++) {
+        ctx.fillText(lines[j], vScr.x, vScr.y + j * LINE_HEIGHT - ((lines.length - 1) * LINE_HEIGHT) / 2);
+      }
     } // for (i)
 
     /*
@@ -190,7 +199,6 @@ class ToolText {
       const yText = Math.floor((vScrMin.y + vScrMax.y) * 0.5);
       const strMsg = objRect.area.toFixed(2) + ' mm^2';
       ctx.fillText(strMsg, xText, yText);
-
     } // for (i) all rects
     */
   } // end render
