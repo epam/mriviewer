@@ -19,39 +19,43 @@ class SmartContainer extends FileReader {
   constructor(props) {
     super(props);
     this.state = {
-      windowDimensions: this.getWindowDimensions(),
-    };
-    this.handleResize = this.handleResize.bind(this);
-  }
-
-  getWindowDimensions() {
-    const { innerWidth: width, innerHeight: height } = window;
-    return {
-      width,
-      height,
+      isMobile: false,
+      isActiveDnd: false,
     };
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.handleResize);
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    this.setState({ isMobile });
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.handleResize);
+  handleDrag(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    if ((e.type === 'dragenter' || e.type === 'dragover') && this.state.isActiveDnd !== true) {
+      this.setState({ isActiveDnd: true });
+    } else if (e.type === 'dragleave' && this.state.isActiveDnd === true) {
+      this.setState({ isActiveDnd: false });
+    }
   }
 
-  handleResize() {
-    this.setState({
-      windowDimensions: this.getWindowDimensions(),
-    });
+  handleDrop(e) {
+    e.preventDefault();
+    this.setState({ isActiveDnd: false });
+    this.handleFileSelected(e);
   }
 
   render() {
-    const { windowDimensions } = this.state;
-    const isMobile = windowDimensions.width < 900;
+    const { isMobile } = this.state;
 
     return (
-      <div className={css.smart_container}>
+      <div
+        onDragEnter={(e) => this.handleDrag(e)}
+        onDragLeave={(e) => this.handleDrag(e)}
+        onDragOver={(e) => this.handleDrag(e)}
+        onDrop={(e) => this.handleDrop(e)}
+        className={this.state.isActiveDnd && !isMobile ? `${css.smart_container} ${css.smart_container__active}` : css.smart_container}
+      >
         {!isMobile && (
           <>
             <SVG name="dropzone" width={IMG_DROPZONE_SIZE} height={IMG_DROPZONE_SIZE} />

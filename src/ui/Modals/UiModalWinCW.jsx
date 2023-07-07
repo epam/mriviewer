@@ -342,6 +342,14 @@ class UiModalWindowCenterWidth extends React.Component {
       height: '400px',
     };
 
+    const modalStyle = {
+      content: {
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+      },
+    };
+
     let valMin = 0;
     let valMax = 5000;
     let valDelta = valMax - valMin;
@@ -362,7 +370,7 @@ class UiModalWindowCenterWidth extends React.Component {
     const wArr = [wMin, wMax];
 
     return (
-      <Modal isOpen={stateVis} close={this.onButtonCancel}>
+      <Modal isOpen={stateVis} customStyles={modalStyle} close={this.onButtonCancel}>
         <ModalHeader title="Select window center and width to display DICOM" close={this.onButtonCancel} />
         <ModalBody>
           Window range
