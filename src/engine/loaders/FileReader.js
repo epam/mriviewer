@@ -89,6 +89,9 @@ class FileReader extends React.Component {
 
     if (vol.m_dataArray !== null) {
       console.log(`success loaded volume from ${fileNameIn}`);
+
+      this.saveFileNameToLocalStorage(fileNameIn);
+
       if (NEED_TEXTURE_SIZE_4X) {
         vol.makeDimensions4x();
       }
@@ -568,11 +571,13 @@ class FileReader extends React.Component {
         return;
       } // if gzipped file
       this.m_fileReader = new window.FileReader();
+
       const progressHandler = ({ loaded, total }) => {
-        // debugger;
         this.callbackReadProgress(loaded / total);
       };
+
       console.log(this.m_fileReader);
+
       this.m_fileReader.addEventListener('progress', progressHandler);
       this.m_fileReader.onloadend = this.onFileContentReadSingleFile;
       this.m_fileReader.readAsArrayBuffer(file);
@@ -866,6 +871,17 @@ class FileReader extends React.Component {
       if (gra !== null) {
         gra.forceUpdate();
       }
+    }
+  }
+
+  saveFileNameToLocalStorage(fileName) {
+    const RECENT_FILES_KEY = 'recentFiles';
+    const arrRecentFiles = JSON.parse(localStorage.getItem(RECENT_FILES_KEY)) || [];
+
+    if (!arrRecentFiles.find((recentFile) => recentFile.fileName === fileName)) {
+      // Set only unique file name
+      const limitedRecentFiles = arrRecentFiles.slice(0, 2);
+      localStorage.setItem(RECENT_FILES_KEY, JSON.stringify([{ fileName: fileName, timestamp: Date.now() }, ...limitedRecentFiles]));
     }
   }
 
