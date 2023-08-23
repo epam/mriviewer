@@ -25,9 +25,8 @@ class SmartContainer extends FileReader {
   }
 
   componentDidMount() {
-    //const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     //console.log(navigator.userAgent);
-    const isMobile = window.innerWidth <= 768;
     this.setState({ isMobile });
     console.log(isMobile);
   }
