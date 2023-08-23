@@ -54,3 +54,8 @@
     background-position: 100% 0, 0 100%, 0 0, 100% 100%;
   }
 }
+
+.buttons_toolbar {
+  display: flex;
+  flex-direction: column;
+}
