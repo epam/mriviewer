@@ -1,6 +1,6 @@
 .smart_container {
-  margin: 0 15px;
-  padding: 35px 15px 15px;
+  margin: 0 1rem;
+  padding: 1.05rem 1rem 1rem;
   background-color: var(--black);
   border: none;
   border-radius: 8px;
@@ -17,8 +17,9 @@
 }
 
 .buttons_toolbar {
-  display: flex;
-  justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .button_start_screen {
@@ -28,7 +29,7 @@
 }
 
 .button_start_screen svg {
-  margin-bottom: 5px;
+  margin-bottom: 0.3rem;
 }
 
 @media screen and (min-width: 768px) {
@@ -44,6 +45,11 @@
     margin-right: 5px;
     margin-bottom: 0;
   }
+
+  .buttons_toolbar {
+    flex-direction: row;
+    width: 100%;
+  }
 }
 
 @keyframes rotate {
@@ -55,7 +61,3 @@
   }
 }
 
-.buttons_toolbar {
-  display: flex;
-  flex-direction: column;
-}

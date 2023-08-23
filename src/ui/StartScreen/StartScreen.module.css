@@ -32,6 +32,7 @@
   }
 
   .subheader_text {
+    display: inline-block;
     margin: 0;
     margin-bottom: 10px;
     opacity: 0.6;
@@ -40,6 +41,9 @@
     font-weight: 400;
     text-align: center;
     color: var(--white);
+  }
+  .subheader svg {
+    display: inline-block;
   }
 
   .github_link {
