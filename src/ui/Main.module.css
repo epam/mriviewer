@@ -2,6 +2,7 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
+/* mobile*/
 
 .app {
   position: relative;
@@ -11,7 +12,6 @@
   display: flex;
   align-items: center;
   position: relative;
-  margin: 25px 25px 0;
   z-index: 1000;
 }
 
@@ -19,18 +19,14 @@
   margin-right: 25px;
 }
 
-.header__panels {
-  display: flex;
-  z-index: 1000;
-  margin-top: 17px;
-}
+
 
 .header__right {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
   margin-left: auto;
-  margin-top: 17px;
+
 }
 
 .fullscreen .header__panels {
@@ -52,30 +48,21 @@
   z-index: 900;
 }
 
-.center {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 10;
-}
 
 .settings {
-  display: flex;
-  flex-direction: column;
-  z-index: 800;
-  position: absolute;
-  right: 25px;
-  top: 100px;
-  background-color: var(--dark-gray);
-  padding: 25px;
-  width: 400px;
-  opacity: var(--opacity);
-  cursor: all-scroll;
-  border-radius: 24px;
-  transition: opacity 300ms ease-in-out;
+  display: none;
 }
+
+.center div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+
+}
+
 
 .bottleft {
   display: flex;
@@ -84,4 +71,67 @@
   left: 25px;
   bottom: 25px;
   z-index: 1000;
+}
+
+@media screen and (min-width: 768px) {
+
+  .header {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 1rem;
+    z-index: 1000;
+  }
+
+  .settings {
+    display: flex;
+    flex-direction: column;
+    z-index: 800;
+    position: absolute;
+    right: 25px;
+    top: 100px;
+    background-color: var(--dark-gray);
+    padding: 25px;
+    width: 400px;
+    opacity: var(--opacity);
+    cursor: all-scroll;
+    border-radius: 24px;
+    transition: opacity 300ms ease-in-out;
+  }
+
+  .center {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+  }
+
+
+
+}
+@media screen and (min-width: 1024px) {
+
+  .header__panels  {
+    display: flex;
+  }
+
+  .settings {
+    display: flex;
+    flex-direction: column;
+    z-index: 800;
+    position: absolute;
+    right: 25px;
+    top: 100px;
+    background-color: var(--dark-gray);
+    padding: 25px;
+    width: 400px;
+    opacity: var(--opacity);
+    cursor: all-scroll;
+    border-radius: 24px;
+    transition: opacity 300ms ease-in-out;
+  }
+
+
 }
