@@ -26,11 +26,11 @@ import { LeftToolbar } from './LeftToolbar/LeftToolbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { TopToolbar } from './TopToolbar/TopToolbar';
 import { UiAbout } from './Header/UiAbout';
+import { BottomMenu } from './BottomMenu/BottomMenu';
 import StartScreen from './StartScreen/StartScreen';
 import css from './Main.module.css';
 import cx from 'classnames';
 import '../nouislider-custom.css';
-import { BottomMenu } from './BottomMenu/BottomMenu';
 
 export const Main = () => {
   const dispatch = useDispatch();

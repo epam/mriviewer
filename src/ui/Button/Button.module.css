@@ -118,6 +118,7 @@
 .button:not(.reset) {
     display: block;
 }
+
 @media screen and (min-width: 748px) {
   .button:not(.reset) {
     display: block;

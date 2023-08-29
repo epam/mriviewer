@@ -63,7 +63,6 @@
 
 }
 
-
 .bottleft {
   display: flex;
   flex-direction: column;
@@ -115,6 +114,8 @@
 
   .header__panels  {
     display: flex;
+    align-items: center;
+    padding: 1rem;
   }
 
   .settings {

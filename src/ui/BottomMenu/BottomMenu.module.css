@@ -1,4 +1,42 @@
+
 .bottomMenu {
-    display: block;
-    height: 30px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    padding: 1rem;
+    background-color: var(--beige);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+}
+
+ .button {
+     background: inherit;
+     border: none;
+     color: var(--black);
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: space-evenly;
+     font-size: 0.75rem;
+     line-height: 12.1px;
+ }
+
+.button svg {
+    fill: var(--black);
+}
+
+@media screen and (min-width: 768px) {
+    .bottomMenu {
+        display: none;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+ .bottomMenu {
+     display: none;
+ }
 }

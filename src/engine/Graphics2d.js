@@ -693,14 +693,18 @@ class Graphics2d extends React.Component {
 
     const wrapperStyles = {
       display: 'flex',
-      justifyContent: 'flex-start',
-      width: `calc(100% - 110px)`,
-      height: `calc(100% - 110px)`,
-      // TODO check that
-      //margin: '100px 125px',
-      margin: '5rem 0 4rem 5rem',
+      justifyContent: 'center',
+      width: '100%',
+      height: '100%',
     };
+
+    if (window.innerWidth > 768) {
+      wrapperStyles.width = `calc(100% - 110px)`;
+      wrapperStyles.height = `calc(100% - 110px)`;
+      wrapperStyles.margin = '6rem';
+    }
     const canvasStyles = {
+      display: 'block',
       maxWidth: '100%',
       border: '2px solid #dc5e47',
       borderRadius: '10px',
