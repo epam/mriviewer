@@ -1,14 +1,12 @@
 .smart_container {
   margin: 0 1rem;
   padding: 1.05rem 1rem 1rem;
-  background-color: var(--black);
   border: none;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  border: 2px dashed transparent;
   transition: 0.25s all ease;
 }
 
@@ -20,6 +18,10 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+.buttons_toolbar button {
+  background-color: inherit;
 }
 
 .button_start_screen {
@@ -35,6 +37,8 @@
 @media screen and (min-width: 768px) {
   .smart_container {
     margin: 0;
+    background-color: var(--black);
+    border: 2px dashed transparent;
   }
 
   .button_start_screen {
