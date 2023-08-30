@@ -20,7 +20,6 @@
 }
 
 
-
 .header__right {
   display: flex;
   flex-wrap: nowrap;
@@ -39,6 +38,24 @@
   top: 20px;
 }
 
+.settings__mobile {
+  width: 50px;
+  height: 50px;
+  background-color: green;
+  display: flex;
+
+}
+
+.settings__mobile  div   button {
+  background-color: red;
+  display: block;
+}
+
+.settings__mobile  div   button  svg {
+  background-color: red;
+  display: block;
+}
+
 .left {
   display: flex;
   flex-direction: column;
@@ -47,8 +64,6 @@
   top: 100px;
   z-index: 900;
 }
-
-
 
 
 .center div {
@@ -69,7 +84,7 @@
   bottom: 25px;
   z-index: 1000;
 }
-
+/*
 @media screen and (min-width: 768px) {
 
   .header {
@@ -106,8 +121,7 @@
   }
 
 
-
-}
+}*/
 @media screen and (min-width: 1024px) {
 
   .header__panels  {
@@ -131,6 +145,5 @@
     border-radius: 24px;
     transition: opacity 300ms ease-in-out;
   }
-
 
 }

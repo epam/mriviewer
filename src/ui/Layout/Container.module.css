@@ -6,9 +6,7 @@
   display: block;
 }
 /** check!!! */
-.container button {
-  display: none;
-}
+
 .container button > svg #clear {
   display: block;
 }

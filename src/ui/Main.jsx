@@ -31,6 +31,8 @@ import StartScreen from './StartScreen/StartScreen';
 import css from './Main.module.css';
 import cx from 'classnames';
 import '../nouislider-custom.css';
+import { UIButton } from './Button/Button';
+import { Tooltip } from './Tooltip/Tooltip';
 
 export const Main = () => {
   const dispatch = useDispatch();
@@ -55,6 +57,7 @@ export const Main = () => {
   );
 
   const isReady = isLoaded && isWebGl20supported;
+  const isMobile = window.innerWidth <= 768;
 
   const onShowModalText = () => {
     dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true });
@@ -165,6 +168,12 @@ export const Main = () => {
                     <div className={css.top}>
                       <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
                     </div>
+                    <div className={css.settings__mobile}>
+                      <Tooltip>
+                        <UIButton text="Download" icon="download" />
+                      </Tooltip>
+                      <TopToolbar />
+                    </div>
                   </div>
                 </div>
               )}
@@ -176,6 +185,14 @@ export const Main = () => {
             </div>
           ) : (
             <StartScreen />
+          )}
+          {isReady && !isMobile && !isFullMode && (
+            <div className={css.settings__mobile}>
+              <Tooltip>
+                <UIButton text="Download" icon="download" />
+              </Tooltip>
+              <TopToolbar />
+            </div>
           )}
 
           {isReady && (
