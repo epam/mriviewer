@@ -2,11 +2,31 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-@media screen and (max-width: 767px) {
+.button.screenshot__link {
+  background: #438f56;
+}
+
+.button.light svg {
+  fill: var(--black);
+}
+
+@media screen and (min-width: 768px) {
   .reset {
     display: flex;
     justify-content: end;
   }
+  /*
+  .reset {
+  background: inherit;
+  border: none;
+  color: var(--black);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  font-size: 0.75rem;
+}
+   */
 
 }
 .reset {

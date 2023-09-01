@@ -4,6 +4,8 @@
  */
 
 import React, { useState } from 'react';
+import cx from 'classnames';
+import css from './UiOpenMenu.module.css';
 
 import Screenshot from '../../engine/utils/Screenshot';
 import ViewMode from '../../store/ViewMode';
@@ -45,10 +47,26 @@ export const UiReportMenu = () => {
   return (
     <>
       <Tooltip content="Show tags">
-        <UIButton icon="report" rounded mode="light" disabled={strDisabled} handler={onModalDicomTagsShow} />
+        <UIButton
+          text="About"
+          cx={cx(css.button, css['report-menu__report'])}
+          icon="report"
+          rounded
+          mode="light"
+          disabled={strDisabled}
+          handler={onModalDicomTagsShow}
+        />
       </Tooltip>
       <Tooltip content="Screenshot">
-        <UIButton icon="camera" rounded mode="light" disabled={strDisabled} handler={onModalScreenshot} />
+        <UIButton
+          text="Screenshot"
+          cx={cx(css.button, css['report-menu__camera'])}
+          icon="camera"
+          rounded
+          mode="light"
+          disabled={strDisabled}
+          handler={onModalScreenshot}
+        />
       </Tooltip>
 
       {showModalDicomTags && <UiModalInfo stateVis={showModalDicomTags} onHide={onModalDicomTagsHide} />}

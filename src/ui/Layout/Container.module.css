@@ -2,13 +2,28 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
+.vertical {
+  display: none;
+}
+
 .horizontal {
   display: block;
 }
-/** check!!! */
 
 .container button > svg #clear {
   display: block;
+}
+.container {
+  display: inline-flex;
+  flex-wrap: wrap;
+  width: fit-content;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.horizontal button > svg > use[xlinkHref$="#folder"] {
+  /* Ваши стили для скрытия элемента */
+  display: none;
 }
 
 @media screen and (min-width: 768px) {

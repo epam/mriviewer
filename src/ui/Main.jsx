@@ -26,13 +26,10 @@ import { LeftToolbar } from './LeftToolbar/LeftToolbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { TopToolbar } from './TopToolbar/TopToolbar';
 import { UiAbout } from './Header/UiAbout';
-import { BottomMenu } from './BottomMenu/BottomMenu';
 import StartScreen from './StartScreen/StartScreen';
 import css from './Main.module.css';
 import cx from 'classnames';
 import '../nouislider-custom.css';
-import { UIButton } from './Button/Button';
-import { Tooltip } from './Tooltip/Tooltip';
 
 export const Main = () => {
   const dispatch = useDispatch();
@@ -57,8 +54,6 @@ export const Main = () => {
   );
 
   const isReady = isLoaded && isWebGl20supported;
-  const isMobile = window.innerWidth <= 768;
-
   const onShowModalText = () => {
     dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true });
   };
@@ -168,12 +163,6 @@ export const Main = () => {
                     <div className={css.top}>
                       <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
                     </div>
-                    <div className={css.settings__mobile}>
-                      <Tooltip>
-                        <UIButton text="Download" icon="download" />
-                      </Tooltip>
-                      <TopToolbar />
-                    </div>
                   </div>
                 </div>
               )}
@@ -186,15 +175,6 @@ export const Main = () => {
           ) : (
             <StartScreen />
           )}
-          {isReady && !isMobile && !isFullMode && (
-            <div className={css.settings__mobile}>
-              <Tooltip>
-                <UIButton text="Download" icon="download" />
-              </Tooltip>
-              <TopToolbar />
-            </div>
-          )}
-
           {isReady && (
             <div className={cx(isFullMode && css.fullscreen)}>
               <div className={css.left}>
@@ -204,7 +184,6 @@ export const Main = () => {
               <div className={css.center}>{viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
               <div className={css.bottleft}>{viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
               <RightPanel />
-              <BottomMenu />
             </div>
           )}
           {arrErrors.length > 0 && <UiErrConsole />}
