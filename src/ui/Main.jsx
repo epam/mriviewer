@@ -30,6 +30,7 @@ import StartScreen from './StartScreen/StartScreen';
 import css from './Main.module.css';
 import cx from 'classnames';
 import '../nouislider-custom.css';
+import RecentlyFiles from './StartScreen/RecentlyFiles/RecentlyFiles';
 
 export const Main = () => {
   const dispatch = useDispatch();
@@ -159,6 +160,7 @@ export const Main = () => {
               {isReady && (
                 <div className={cx(isFullMode && css.fullscreen)}>
                   <div className={css.header__panels}>
+                    <RecentlyFiles />
                     <TopToolbar />
                     <div className={css.top}>
                       <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />

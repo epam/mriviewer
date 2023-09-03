@@ -2,9 +2,6 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-.button.screenshot__link {
-  background: #438f56;
-}
 
 .button.light svg {
   fill: var(--black);
@@ -139,12 +136,7 @@
     display: block;
 }
 
-@media screen and (min-width: 748px) {
-  .button:not(.reset) {
-    display: block;
-  }
 
-}
 @media screen and (min-width: 1024px) {
   .reset {
     display: inline-block;

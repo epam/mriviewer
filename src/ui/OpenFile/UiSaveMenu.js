@@ -31,8 +31,8 @@ export const UiSaveMenu = () => {
     <>
       <Tooltip content="Save Nifti">
         <UIButton
-          cx={cx(css.button, css['download__link'])}
           text="Download"
+          cx={cx(css.button, css['download__link'])}
           rounded
           icon="download"
           handler={(evt) => onModalSaveNiftiShow(evt)}

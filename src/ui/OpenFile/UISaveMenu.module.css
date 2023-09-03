@@ -8,3 +8,14 @@
 .button.download__link svg {
     fill: #18191b;
 }
+
+@media screen and (min-width: 768px) {
+    .button.download__link {
+        background-color: var(--beige);
+    }
+    .download__link  > span {
+        display: none;
+    }
+
+
+}

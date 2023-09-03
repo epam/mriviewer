@@ -692,23 +692,42 @@ class Graphics2d extends React.Component {
     this.m_mode2d = this.props.mode2d;
 
     const wrapperStyles = {
-      display: 'flex',
       justifyContent: 'center',
       width: '100%',
-      height: '100%',
+      height: 'calc(100% - 3rem)',
+      overflow: 'scroll',
     };
-
-    if (window.innerWidth > 768) {
-      wrapperStyles.width = `calc(100% - 110px)`;
-      wrapperStyles.height = `calc(100% - 110px)`;
-      wrapperStyles.margin = '6rem';
+    if (window.innerWidth < 768) {
+      wrapperStyles.width = `100%`;
+      wrapperStyles.height = `calc(100% - 5rem)`;
+      wrapperStyles.padding = `0`;
     }
+    if (window.innerWidth >= 768) {
+      const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+
+      if (isLandscape) {
+        wrapperStyles.width = `calc(100% - 3rem)`;
+        wrapperStyles.height = `calc(100% - 3rem)`;
+      } else {
+        wrapperStyles.width = `100%`;
+        wrapperStyles.height = `100%`;
+        wrapperStyles.justifyContent = 'center';
+        wrapperStyles.overflow = 'scroll';
+      }
+    }
+
     const canvasStyles = {
       display: 'block',
-      maxWidth: '100%',
+      width: '150vw',
       border: '2px solid #dc5e47',
       borderRadius: '10px',
     };
+    if (window.innerWidth < 768) {
+      canvasStyles.width = `150vw`;
+      canvasStyles.height = '100%';
+      canvasStyles.margin = `0`;
+      canvasStyles.padding = `0`;
+    }
     return (
       <div style={wrapperStyles}>
         <canvas

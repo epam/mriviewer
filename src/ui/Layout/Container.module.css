@@ -12,6 +12,7 @@
 
 .container button > svg #clear {
   display: block;
+  color: #18191b;
 }
 .container {
   display: inline-flex;
@@ -22,7 +23,6 @@
 }
 
 .horizontal button > svg > use[xlinkHref$="#folder"] {
-  /* Ваши стили для скрытия элемента */
   display: none;
 }
 
@@ -63,6 +63,14 @@
     height: 50px;
     margin: 0 25px 0 0;
   }
+
+  .container button > svg #clear,
+  .container button > svg #edit {
+    display: block;
+    color: #18191b;
+    background: red;
+  }
+
 }
 
 

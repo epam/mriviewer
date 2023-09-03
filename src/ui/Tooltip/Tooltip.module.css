@@ -5,6 +5,7 @@
 
 .wrapper {
   display: inline-block;
+  color: #18191b;
 }
 
 .tooltip {
@@ -63,4 +64,5 @@
   .demo__link {
     display: block;
   }
+
 }
