@@ -707,7 +707,7 @@ class Graphics2d extends React.Component {
 
       if (isLandscape) {
         wrapperStyles.width = `calc(100% - 3rem)`;
-        wrapperStyles.height = `calc(100% - 3rem)`;
+        wrapperStyles.height = `100%`;
       } else {
         wrapperStyles.width = `100%`;
         wrapperStyles.height = `100%`;
@@ -725,6 +725,11 @@ class Graphics2d extends React.Component {
     if (window.innerWidth < 768) {
       canvasStyles.width = `150vw`;
       canvasStyles.height = '100%';
+      canvasStyles.margin = `0`;
+      canvasStyles.padding = `0`;
+    } else {
+      canvasStyles.width = `80vw`;
+      canvasStyles.height = 'calc(100% - 0.5rem)';
       canvasStyles.margin = `0`;
       canvasStyles.padding = `0`;
     }

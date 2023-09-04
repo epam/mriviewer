@@ -2,18 +2,10 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-/* mobile*/
 
 .app {
   position: relative;
 }
-
-/*.header {
-  display: flex;
-  align-items: center;
-  position: relative;
-  z-index: 1000;
-}*/
 
 .header {
   display: flex;
@@ -59,12 +51,6 @@
   fill: var(--black);
 }
 
-/*
-.fullscreen .header__panels {
-  position: absolute;
-  left: 75px;
-}*/
-
 .fullscreen .left,
 .fullscreen .settings {
   top: 20px;
@@ -77,7 +63,6 @@
 .left {
   display: none;
 }
-
 
 .center div {
     position: absolute;
@@ -92,44 +77,6 @@
   display: none;
 }
 
-/*
-@media screen and (min-width: 768px) {
-
-  .header {
-    display: flex;
-    align-items: center;
-    position: relative;
-    padding: 1rem;
-    z-index: 1000;
-  }
-
-  .settings {
-    display: flex;
-    flex-direction: column;
-    z-index: 800;
-    position: absolute;
-    right: 25px;
-    top: 100px;
-    background-color: var(--dark-gray);
-    padding: 25px;
-    width: 400px;
-    opacity: var(--opacity);
-    cursor: all-scroll;
-    border-radius: 24px;
-    transition: opacity 300ms ease-in-out;
-  }
-
-  .center {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 10;
-  }
-
-
-}*/
 @media screen and (min-width: 768px) {
 
   .header {
@@ -146,8 +93,9 @@
 
   .header__panels  {
     display: flex;
-    align-items: center;
-    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 25rem;
   }
   .fullscreen .header__panels {
     position: absolute;
@@ -195,10 +143,7 @@
     bottom: 0;
     z-index: 10;
   }
-
-
 }
-
 
 @media screen and (min-width: 1024px) {
 
@@ -206,18 +151,24 @@
     align-items: flex-start;
   }
 
+  .header__right {
+    align-items: stretch;
+  }
+
   .header__panels  {
+    width: 100%;
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
-    padding: 1rem;
+    padding: 1rem 1.5rem 1rem 0;
   }
 
   .center {
     top: 6rem;
     left: 5rem;
     right: 0;
-    bottom: 0;
+    bottom: 2rem;
     z-index: 10;
   }
 
@@ -236,7 +187,5 @@
     border-radius: 24px;
     transition: opacity 300ms ease-in-out;
   }
-
-
 
 }
