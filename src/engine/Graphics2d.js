@@ -701,8 +701,7 @@ class Graphics2d extends React.Component {
       wrapperStyles.width = `100%`;
       wrapperStyles.height = `calc(100% - 5rem)`;
       wrapperStyles.padding = `0`;
-    }
-    if (window.innerWidth >= 768) {
+    } else if (window.innerWidth >= 768) {
       const isLandscape = window.matchMedia('(orientation: landscape)').matches;
 
       if (isLandscape) {
@@ -727,8 +726,14 @@ class Graphics2d extends React.Component {
       canvasStyles.height = '100%';
       canvasStyles.margin = `0`;
       canvasStyles.padding = `0`;
-    } else {
+    } else if (window.innerWidth >= 768) {
       canvasStyles.width = `80vw`;
+      canvasStyles.height = 'calc(100% - 2.5rem)';
+      canvasStyles.margin = `0`;
+      canvasStyles.padding = `0`;
+    }
+    if (window.innerWidth >= 1024) {
+      canvasStyles.width = `87vw`;
       canvasStyles.height = 'calc(100% - 0.5rem)';
       canvasStyles.margin = `0`;
       canvasStyles.padding = `0`;

@@ -7,23 +7,54 @@
   fill: var(--black);
 }
 
+button:hover,
+.button:focus {
+  background-color: var(--light-orange);
+}
+
+.button.active {
+  color: var(--red);
+}
+.apply {
+  background-color: var(--red);
+  border-radius: 4px;
+}
+
+.button.active svg {
+  fill: var(--red);
+}
+
+.button.light {
+  color: var(--black);
+  background-color: var(--light);
+}
+
+.button.light svg {
+  fill: var(--black);
+}
+
+.button.light.active {
+  color: var(--red);
+}
+
+.button.light:hover,
+.button.light:focus {
+  background-color: var(--light);
+  filter: brightness(80%);
+}
+
+.button.accent {
+  color: var(--white);
+  background-color: var(--red);
+}
+
+
+
 @media screen and (min-width: 768px) {
   .reset {
     display: flex;
     justify-content: end;
   }
-  /*
-  .reset {
-  background: inherit;
-  border: none;
-  color: var(--black);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-  font-size: 0.75rem;
-}
-   */
 
 }
 .reset {
@@ -76,66 +107,9 @@
   fill: var(--white);
 }
 
-.button:hover,
-.button:focus {
-  background-color: var(--light-orange);
-}
-
-.button.active {
-  color: var(--red);
-}
-
-.apply {
-  background-color: var(--red);
-  border-radius: 4px;
-}
-
-.button.active svg {
-  fill: var(--red);
-}
-
-.button.light {
-  color: var(--black);
-  background-color: var(--light);
-}
-
-.button.light svg {
-  fill: var(--black);
-}
-
-.button.light.active {
-  color: var(--red);
-}
-
-.button.light:hover,
-.button.light:focus {
-  background-color: var(--light);
-  filter: brightness(80%);
-}
-
-.button.accent {
-  color: var(--white);
-  background-color: var(--red);
-}
-
-.button.accent svg {
-  fill: var(--white);
-}
-
-.button.accent:hover,
-.button.accent:focus {
-  background-color: var(--red);
-  filter: brightness(85%);
-}
-
-.button.accent.active svg {
-  fill: var(--black);
-}
-
 .button:not(.reset) {
     display: block;
 }
-
 
 @media screen and (min-width: 1024px) {
   .reset {

@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-
 .save-file__area {
   height: 40px;
   display: flex;
@@ -35,6 +34,18 @@
   align-items: center;
   color: #18191b;
 }
+.open-folder__link:hover,
+.button.report-menu__report:hover,
+.button.report-menu__camera:hover {
+  background-color: var(--light-orange);
+}
+
+.open-folder__link:focus,
+.button.report-menu__report:focus,
+.button.report-menu__camera:focus {
+  background-color: var(--light-orange);
+}
+
 
 .open-file__link,
 .open-demo__link {

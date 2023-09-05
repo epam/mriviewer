@@ -5,6 +5,12 @@
     flex-direction: column;
     align-items: center;
 }
+
+.button.download__link:hover,
+.button.download__link:focus {
+    background-color: var(--light-orange);
+}
+
 .button.download__link svg {
     fill: #18191b;
 }
