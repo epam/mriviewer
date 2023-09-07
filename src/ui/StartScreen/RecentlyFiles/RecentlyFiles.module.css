@@ -10,8 +10,9 @@
 }
 
 .header {
-  margin-bottom: 10px;
   display: flex;
+  margin-bottom: 10px;
+  padding-right: 0.5rem;
 }
 
 .files {

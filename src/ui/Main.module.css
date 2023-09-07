@@ -81,7 +81,6 @@
 
   .header {
     display: flex;
-    align-items: flex-start;
     position: relative;
     padding: 1rem;
     z-index: 1000;
@@ -94,7 +93,6 @@
   .header__panels  {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     width: 25rem;
   }
   .fullscreen .header__panels {
@@ -151,6 +149,10 @@
     align-items: flex-start;
   }
 
+  .header  div {
+    margin-bottom: 1rem;
+  }
+
   .header__right {
     align-items: stretch;
   }
@@ -160,7 +162,6 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    align-items: center;
     padding: 1rem 1.5rem 1rem 0;
   }
 

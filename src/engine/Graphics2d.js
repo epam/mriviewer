@@ -691,52 +691,39 @@ class Graphics2d extends React.Component {
     this.m_sliceRatio = this.props.sliderValue;
     this.m_mode2d = this.props.mode2d;
 
-    const wrapperStyles = {
-      justifyContent: 'center',
-      width: '100%',
-      height: 'calc(100% - 3rem)',
-      overflow: 'scroll',
-    };
-    if (window.innerWidth < 768) {
-      wrapperStyles.width = `100%`;
-      wrapperStyles.height = `calc(100% - 5rem)`;
-      wrapperStyles.padding = `0`;
-    } else if (window.innerWidth >= 768) {
-      const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+    const isLandscape = window.matchMedia('(orientation: landscape)').matches;
 
-      if (isLandscape) {
-        wrapperStyles.width = `calc(100% - 3rem)`;
-        wrapperStyles.height = `100%`;
-      } else {
-        wrapperStyles.width = `100%`;
-        wrapperStyles.height = `100%`;
-        wrapperStyles.justifyContent = 'center';
-        wrapperStyles.overflow = 'scroll';
-      }
-    }
+    const wrapperStyles = {
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
+      overflow: 'scroll',
+      padding: '0',
+    };
 
     const canvasStyles = {
       display: 'block',
       width: '150vw',
+      height: '100%',
+      margin: '0',
+      padding: '0',
       border: '2px solid #dc5e47',
       borderRadius: '10px',
     };
+
     if (window.innerWidth < 768) {
-      canvasStyles.width = `150vw`;
+      wrapperStyles.height = `calc(100% - 5rem)`;
+      canvasStyles.width = '150vw';
       canvasStyles.height = '100%';
-      canvasStyles.margin = `0`;
-      canvasStyles.padding = `0`;
     } else if (window.innerWidth >= 768) {
-      canvasStyles.width = `80vw`;
-      canvasStyles.height = 'calc(100% - 2.5rem)';
-      canvasStyles.margin = `0`;
-      canvasStyles.padding = `0`;
-    }
-    if (window.innerWidth >= 1024) {
-      canvasStyles.width = `87vw`;
-      canvasStyles.height = 'calc(100% - 0.5rem)';
-      canvasStyles.margin = `0`;
-      canvasStyles.padding = `0`;
+      if (isLandscape && window.innerWidth >= 1024) {
+        wrapperStyles.width = 'calc(100% - 3rem)';
+        canvasStyles.width = '70%';
+        canvasStyles.height = 'calc(100% - 0.5rem)';
+      } else {
+        canvasStyles.width = '80vw';
+        canvasStyles.height = 'calc(100% - 3rem)';
+      }
     }
     return (
       <div style={wrapperStyles}>
