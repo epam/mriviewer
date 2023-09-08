@@ -14,10 +14,10 @@
 }
 
 .header__logo {
-  margin-right: 25px;
+  display: none;
 }
 .header__panels {
-  display: block;
+  display: none;
 }
 
 .header__right {
@@ -66,20 +66,38 @@
   height: 50px;
   position: absolute;
   right: 0;
-  transform: translate(50%, -50%);
+  top:50%;
+  z-index: 10;
+
 }
-.left > div {
+.left > div > div {
   position: relative;
+}
+
+.left > div > div button {
+  padding: 1rem 2rem;
 }
 .left > div > div:after {
   display: block;
+  content: '';
+  background-image: url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' fill='%23f4f2ea' height='800px' width='800px' version='1.1' id='Layer_1' viewBox='0 0 330 330' xml:space='preserve'><path id='XMLID_92_' d='M111.213,165.004L250.607,25.607c5.858-5.858,5.858-15.355,0-21.213c-5.858-5.858-15.355-5.858-21.213,0.001 l-150,150.004C76.58,157.211,75,161.026,75,165.004c0,3.979,1.581,7.794,4.394,10.607l150,149.996 C232.322,328.536,236.161,330,240,330s7.678-1.464,10.607-4.394c5.858-5.858,5.858-15.355,0-21.213L111.213,165.004z'/></svg>");
   position: absolute;
-  content:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath fill='%23f00' d='M400 256H152V152.9c0-39.6 31.7-72.5 71.3-72.9 40-.4 72.7 32.1 72.7 72v16c0 13.3 10.7 24 24 24h32c13.3 0 24-10.7 24-24v-16C376 68 307.5-.3 223.5 0 139.5.3 72 69.5 72 153.5V256H48c-26.5 0-48 21.5-48 48v160c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V304c0-26.5-21.5-48-48-48zM264 408c0 22.1-17.9 40-40 40s-40-17.9-40-40v-48c0-22.1 17.9-40 40-40s40 17.9 40 40v48z'%3E%3C/path%3E%3C/svg%3E");
-  top:0;
+  top:50%;
   left: 0;
   width: 24px;
   height: 24px;
   background-size: cover;
+  transform: translate(2px, -13px);
+}
+
+.left > div > div:hover::after,
+.left > div > div:active::after{
+  content-fill: "%23dc5e47";
+
+}
+
+.left > div > div:before {
+  display: none;
 }
 
 .left > div:nth-of-type(2) {
@@ -91,11 +109,11 @@
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: -1;
+    z-index: 1;
 }
 
 .settings {
-  display: block;
+  display: none;
 }
 
 @media screen and (min-width: 768px) {
@@ -137,6 +155,7 @@
     display: flex;
     flex-direction: column;
     position: absolute;
+    right: 0;
     left: 25px;
     top: 100px;
     z-index: 900;
