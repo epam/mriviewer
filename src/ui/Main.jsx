@@ -30,6 +30,7 @@ import StartScreen from './StartScreen/StartScreen';
 import css from './Main.module.css';
 import cx from 'classnames';
 import '../nouislider-custom.css';
+import { MobileSettings } from './MobileSettings/MobileSettings';
 
 export const Main = () => {
   const dispatch = useDispatch();
@@ -184,6 +185,7 @@ export const Main = () => {
               <div className={css.center}>{viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
               <div className={css.bottleft}>{viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
               <RightPanel />
+              <MobileSettings />
             </div>
           )}
           {arrErrors.length > 0 && <UiErrConsole />}
