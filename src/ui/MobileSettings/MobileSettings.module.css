@@ -2,14 +2,42 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-.settings__menu {
+
+/*.settings__menu:active {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     position: relative;
-    transform: translate(0,0);
+    justify-content: center;
+    transform: translate(0, 0);
+    background: red;
+    height: 100vh;
+    z-index: 2;
+}
+.settings__menu:focus {
+    opacity: 0;
+    background: yellow;
+    z-index: -2;
+
+}*/
+.buttons__container {
+    background: #858585;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: relative;
+    justify-content: center;
+    transform: translate(320px, 220px);
+    width: 100px;
+    z-index: 2;
 }
 
+
+.settings__menu {
+    position: relative;
+    background: inherit;
+    z-index: 2;
+}
 .settings__menu__button:after {
     display: block;
     content: '';
@@ -18,5 +46,23 @@
     width: 24px;
     height: 24px;
     background-size: cover;
-    transform: translate(2px, -13px);
+    transform: translate(-32px, -22px);
 }
+.settings__menu_block {
+    display: flex;
+    justify-content: space-around;
+    position: absolute;
+    top: 10%;
+    left: 0;
+    right: 0;
+    padding: 10px;
+}
+
+.flex {
+    flex-direction: column;
+}
+
+/*.settings__menu_block:active {
+    opacity: 0;
+    background: pink;
+}*/
