@@ -116,7 +116,7 @@
     position: absolute;
     left: 25px;
     top: 100px;
-    z-index: 900;
+    z-index: 1010;
   }
 
   .bottleft {
@@ -125,7 +125,7 @@
     position: absolute;
     left: 25px;
     bottom: 25px;
-    z-index: 1000;
+    z-index: 1010;
   }
 
 

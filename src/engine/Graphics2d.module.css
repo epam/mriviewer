@@ -1,22 +1,22 @@
-.wrapperStyles {
-    width: 100%;
-    justify-content: center;
-    overflow: scroll;
-    padding: 0;
-    height: calc(100% - 0.5rem);
-    margin: 0;
 
+
+@media screen and (max-width: 768px) {
+
+    .wrapperStyles {
+        width: 100%;
+        height: 100vh;
+        justify-content: center;
+        overflow: scroll;
+    }
+
+    .canvasStyles {
+        display: block;
+        width: 150vw;
+    }
 }
 
-.canvasStyles {
-    display: block;
-    width: 150vw;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
+@media screen and (min-width: 768px )  and (max-width: 1024px) {
 
-@media screen and (min-width: 768px) {
     .wrapperStyles {
         height: calc(100% - 2.5rem);
         width: calc(100% - 3rem);
@@ -24,37 +24,35 @@
         border-radius: 10px;
     }
     .canvasStyles {
-        width: 150vw;
-        height: calc(100% - 3rem);
-    }
-}
-@media screen and(min-width: 768px) {
-    .wrapperStyles {
-        height: calc(100% - 3rem);
-        width: calc(100%- 3rem);
+        aspect-ratio: 1 / 1;
     }
 }
 
 @media screen and (orientation: landscape) and (min-width: 768px) {
+
     .wrapperStyles {
         height: calc(100% - 2.5rem);
         width: calc(100%- 3rem);
+        border: none;
+    }
+    .canvasStyles {
+        aspect-ratio: 1 / 1;
+        border: 2px solid #dc5e47;
+        border-radius: 10px;
     }
 
-    .canvasStyles {
-        width: 80vw;
-        height: calc(100% - 0.5rem);
-    }
 }
 
-@media screen and (orientation: landscape) and (min-width: 1024px) {
+
+@media screen and (min-width: 1024px) and (orientation: landscape) {
+
     .wrapperStyles {
-        width: 80%;
         height: calc(100% - 0.5rem);
-        display: flex;
+        aspect-ratio: 1/1;
     }
+
     .canvasStyles {
-        width: 150vw;
-        height: calc(100% - 0.5rem);
+        margin: 0 auto;
     }
 }
+
