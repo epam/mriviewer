@@ -21,6 +21,8 @@ import Segm2d from './Segm2d';
 
 import { getPalette256 } from './loaders/RoiPalette256';
 
+import css from './Graphics2d.module.css';
+
 class Graphics2d extends React.Component {
   constructor(props) {
     super(props);
@@ -690,50 +692,15 @@ class Graphics2d extends React.Component {
     // const volSet = store.volumeSet;
     this.m_sliceRatio = this.props.sliderValue;
     this.m_mode2d = this.props.mode2d;
-
-    const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-
-    const wrapperStyles = {
-      width: '100%',
-      height: '100%',
-      justifyContent: 'center',
-      overflow: 'scroll',
-      padding: '0',
-    };
-
-    const canvasStyles = {
-      display: 'block',
-      width: '150vw',
-      height: '100%',
-      margin: '0',
-      padding: '0',
-      border: '2px solid #dc5e47',
-      borderRadius: '10px',
-    };
-
-    if (window.innerWidth < 768) {
-      wrapperStyles.height = `calc(100% - 5rem)`;
-      canvasStyles.width = '150vw';
-      canvasStyles.height = '100%';
-    } else if (window.innerWidth >= 768) {
-      if (isLandscape && window.innerWidth >= 1024) {
-        wrapperStyles.width = 'calc(100% - 3rem)';
-        canvasStyles.width = '70%';
-        canvasStyles.height = 'calc(100% - 0.5rem)';
-      } else {
-        canvasStyles.width = '80vw';
-        canvasStyles.height = 'calc(100% - 3rem)';
-      }
-    }
     return (
-      <div style={wrapperStyles}>
+      <div className={css.wrapperStyles}>
         <canvas
           ref={this.m_mount}
-          style={canvasStyles}
           onMouseDown={this.onMouseDown}
           onMouseUp={this.onMouseUp}
           onMouseMove={this.onMouseMove}
           onWheel={this.onMouseWheel}
+          className={css.canvasStyles}
         />
       </div>
     );

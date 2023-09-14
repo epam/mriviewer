@@ -176,7 +176,7 @@
   .settings {
     display: flex;
     flex-direction: column;
-    z-index: 800;
+    z-index: 1100;
     position: absolute;
     right: 25px;
     top: 100px;
