@@ -1,16 +1,19 @@
+/*!
+* Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+* SPDX-License-Identifier: Apache-2.0
+*/
 
-    .wrapperStyles {
-        width: 100%;
-        height: 100vh;
-        justify-content: center;
-        overflow: scroll;
-    }
+ .wrapperStyles {
+    width: 100%;
+     height: 100vh;
+     justify-content: center;
+     overflow: scroll;
+ }
 
-    .canvasStyles {
-        display: block;
-        width: 150vw;
-    }
-
+.canvasStyles {
+    display: block;
+    width: 150vw;
+}
 
 @media screen and (min-width: 768px )  and (max-width: 1023px) {
 
@@ -21,9 +24,9 @@
         border-radius: 10px;
         box-sizing: border-box;
     }
+
     .canvasStyles {
         aspect-ratio: 1 / 1;
-
     }
 }
 
@@ -33,9 +36,9 @@
         height: calc(100% - 2.5rem);
         width: calc(100%- 3rem);
     }
+
     .canvasStyles {
         aspect-ratio: 1 / 1;
-
     }
 
 }
@@ -48,13 +51,13 @@
         width: 80%;
         border: 2px solid #dc5e47;
         border-radius: 10px;
-
     }
 
     .canvasStyles {
         margin: 0 auto;
         box-sizing: border-box;
     }
+
 }
 
 @media screen and (min-width: 1024px) and (orientation: landscape) and (max-width: 2559px) {
@@ -73,9 +76,11 @@
             margin: 0 auto;
             box-sizing: border-box;
     }
+
 }
 
 @media screen and (min-width: 1024px) and (max-width: 2559px) and (orientation: portrait) {
+
     .wrapperStyles {
         width: 90%;
         height: calc(100% - 0.5rem);
@@ -87,8 +92,9 @@
     .canvasStyles {
         aspect-ratio: 1/1;
         width:150vw;
-        }
     }
+
+}
 
 @media screen and (min-width: 2560px) {
     .wrapperStyles {
