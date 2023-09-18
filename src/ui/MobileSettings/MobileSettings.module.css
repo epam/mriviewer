@@ -21,21 +21,31 @@
 
 }*/
 .buttons__container {
-    background: inherit;
     display: flex;
     flex-direction: column;
-    position: relative;
-    transform: translate(320px, 220px);
-    width: 100px;
+    width: 6rem;
     z-index: 2;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    border: 1px solid var(--dark-gray);
+    border-radius: 0.5rem;
+}
+
+.buttons__container button {
+    background: rgba(0,0,0, 0.5);
+    border: none;
+    margin: 0;
+    border-radius: initial;
+    padding-right: 0;
+    padding-left: 1rem;
 }
 
 
 .settings__menu {
-    position: relative;
     background: inherit;
-    z-index: 2;
 }
+
 .settings__menu__button:after {
     display: block;
     content: '';
@@ -44,23 +54,58 @@
     width: 24px;
     height: 24px;
     background-size: cover;
-    transform: translate(-32px, -22px);
+    transform: translate(-6px, -22px);
 }
+
 .settings__menu_block {
     display: flex;
     justify-content: space-around;
     position: absolute;
-    top: 10%;
     left: 0;
     right: 0;
     padding: 10px;
+    z-index: 2;
 }
 
 .flex {
     flex-direction: column;
 }
 
-/*.settings__menu_block:active {
+.settings__menu_block:active {
     opacity: 0;
     background: pink;
-}*/
+}
+
+@media screen and (min-width: 768px){
+    .buttons__container {
+        z-index: 20;
+    }
+
+    .settings__menu_block {
+        display: block;
+    }
+
+    .hide {
+        display: none;
+    }
+
+    .buttons__container {
+        top: 12%;
+        right: 8%;
+    }
+    .settings__menu_block div {
+        display: flex;
+    }
+    .flex {
+        position: absolute;
+        width: 300px;
+        top:10%;
+        left: 20%;
+        z-index: 10;
+    }
+
+    .horizontal {
+        background: #438f56;
+    }
+
+}

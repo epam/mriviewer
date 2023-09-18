@@ -38,7 +38,6 @@
 
   .vertical {
     flex-direction: column;
-    width: 50px;
   }
 
   .vertical:not(:first-child) {
@@ -52,8 +51,6 @@
   .horizontal {
     display: none;
   }
-
-
 }
 
 @media screen and (min-width: 1024px) {

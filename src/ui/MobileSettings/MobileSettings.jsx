@@ -10,6 +10,7 @@ export const MobileSettings = () => {
   const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
   const [is2DMenuOpen, setIs2DMenuOpen] = useState(false);
   const [isCursorMenuOpen, setIsCursorMenuOpen] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.matchMedia('(max-width: 767px)').matches);
   const containerRef = useRef(null);
   const toggleSettingsMenu = () => {
     setIsSettingsMenuOpen(!isSettingsMenuOpen);
@@ -24,13 +25,22 @@ export const MobileSettings = () => {
     setIsSettingsMenuOpen(false); // Закрываем другие меню при открытии этого
     setIsCursorMenuOpen(false);
   };
-
   const toggleCursorMenu = () => {
     setIsCursorMenuOpen(!isCursorMenuOpen);
-    console.log('Toggle Settings Menu');
-    setIsSettingsMenuOpen(false); // Закрываем другие меню при открытии этого
+    setIsSettingsMenuOpen(false);
     setIs2DMenuOpen(false);
   };
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.matchMedia('(max-width: 768px)').matches);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -43,9 +53,7 @@ export const MobileSettings = () => {
       }
     };
 
-    const containerElement = containerRef.current; // Сохраните ссылку на контейнер
-
-    // Добавьте слушателя события click к контейнеру
+    const containerElement = containerRef.current;
     containerElement.addEventListener('click', handleClickOutside);
 
     return () => {
@@ -59,9 +67,11 @@ export const MobileSettings = () => {
         <UIButton icon="settings-linear" cx={css['settings__menu__button']} handler={toggleSettingsMenu}>
           <SVG name="settings-linear" width={42} height={42} />
         </UIButton>
-        <UIButton icon="2D" cx={css['settings__menu__button']} handler={toggle2DMenu}>
-          <SVG name="2D" width={42} height={42} />
-        </UIButton>
+        {isSmallScreen && (
+          <UIButton icon="2D" cx={`${css['settings__menu__button']} ${css.hide}`} handler={toggle2DMenu}>
+            <SVG name="2D" width={42} height={42} />
+          </UIButton>
+        )}
         <UIButton icon="cursor" cx={css['settings__menu__button']} handler={toggleCursorMenu}>
           <SVG name="cursor" width={42} height={42} />
         </UIButton>
@@ -71,8 +81,8 @@ export const MobileSettings = () => {
           <Mode2dSettingsPanel />
         </div>
       )}
-      {is2DMenuOpen && (
-        <div className={css.settings__menu_block}>
+      {(is2DMenuOpen || !isSmallScreen) && (
+        <div className={css.settings__menu_block + '' + css.horizontal}>
           <LeftToolbar />
         </div>
       )}
