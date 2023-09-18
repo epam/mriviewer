@@ -88,7 +88,6 @@
 
   .header {
     display: flex;
-    align-items: flex-start;
     position: relative;
     padding: 1rem;
     z-index: 1000;
@@ -101,7 +100,6 @@
   .header__panels  {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     width: 25rem;
   }
   .fullscreen .header__panels {
@@ -126,7 +124,7 @@
     right: 0;
     left: 25px;
     top: 100px;
-    z-index: 900;
+    z-index: 1010;
   }
 
   .bottleft {
@@ -135,7 +133,7 @@
     position: absolute;
     left: 25px;
     bottom: 25px;
-    z-index: 1000;
+    z-index: 1010;
   }
 
 
@@ -159,6 +157,10 @@
     align-items: flex-start;
   }
 
+  .header  div {
+    margin-bottom: 1rem;
+  }
+
   .header__right {
     align-items: stretch;
   }
@@ -168,7 +170,6 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    align-items: center;
     padding: 1rem 1.5rem 1rem 0;
   }
 
@@ -183,7 +184,7 @@
   .settings {
     display: flex;
     flex-direction: column;
-    z-index: 800;
+    z-index: 1100;
     position: absolute;
     right: 25px;
     top: 100px;
