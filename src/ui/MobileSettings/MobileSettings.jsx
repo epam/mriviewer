@@ -15,14 +15,14 @@ export const MobileSettings = () => {
   const toggleSettingsMenu = () => {
     setIsSettingsMenuOpen(!isSettingsMenuOpen);
     console.log('Toggle Settings Menu');
-    setIs2DMenuOpen(false); // Закрываем другие меню при открытии этого
+    setIs2DMenuOpen(false);
     setIsCursorMenuOpen(false);
   };
 
   const toggle2DMenu = () => {
     setIs2DMenuOpen(!is2DMenuOpen);
     console.log('Toggle Settings Menu');
-    setIsSettingsMenuOpen(false); // Закрываем другие меню при открытии этого
+    setIsSettingsMenuOpen(false);
     setIsCursorMenuOpen(false);
   };
   const toggleCursorMenu = () => {
@@ -57,7 +57,6 @@ export const MobileSettings = () => {
     containerElement.addEventListener('click', handleClickOutside);
 
     return () => {
-      // Удалите слушателя события click при размонтировании компонента
       containerElement.removeEventListener('click', handleClickOutside);
     };
   }, []);
@@ -82,12 +81,12 @@ export const MobileSettings = () => {
         </div>
       )}
       {(is2DMenuOpen || !isSmallScreen) && (
-        <div className={css.settings__menu_block + '' + css.horizontal}>
+        <div className={css.settings__menu_block}>
           <LeftToolbar />
         </div>
       )}
       {isCursorMenuOpen && (
-        <div className={css.settings__menu_block}>
+        <div className={css.settings__menu_block + ' ' + css.horizontal}>
           <TopToolbar />
         </div>
       )}

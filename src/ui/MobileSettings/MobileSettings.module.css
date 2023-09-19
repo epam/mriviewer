@@ -73,16 +73,19 @@
 
 .settings__menu_block:active {
     opacity: 0;
-    background: pink;
 }
 
 @media screen and (min-width: 768px){
+
     .buttons__container {
         z-index: 20;
     }
 
     .settings__menu_block {
         display: block;
+        z-index: 10;
+        width: 5rem;
+        padding-left: 1.2rem;
     }
 
     .hide {
@@ -90,22 +93,33 @@
     }
 
     .buttons__container {
-        top: 12%;
+        top: 15%;
         right: 8%;
     }
+
     .settings__menu_block div {
         display: flex;
+        position: relative;
     }
+
     .flex {
         position: absolute;
         width: 300px;
-        top:10%;
-        left: 20%;
+        top: 13%;
+        left: 12%;
         z-index: 10;
     }
-
     .horizontal {
-        background: #438f56;
+        width: 10rem;
+        position: absolute;
+        top: 15%;
+        left: 12%;
+    }
+
+    .horizontal > div {
+        display: flex;
+        width: 100%;
+
     }
 
 }

@@ -54,6 +54,7 @@
 }
 
 @media screen and (min-width: 1024px) {
+
   .horizontal {
     display: flex;
     flex-direction: row;
