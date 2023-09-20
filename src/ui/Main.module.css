@@ -96,6 +96,7 @@
   .header__logo {
     display: block;
     margin-right: 25px;
+    margin-top: 1rem;
   }
 
   .header__panels  {
@@ -198,4 +199,9 @@
     transition: opacity 300ms ease-in-out;
   }
 
+}
+@media screen and (min-width: 1024px) and (orientation: landscape) {
+  .header__panels {
+    flex-wrap: nowrap;
+  }
 }

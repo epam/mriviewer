@@ -63,15 +63,15 @@ export const MobileSettings = () => {
   return (
     <div className={css.settings__menu} ref={containerRef}>
       <div className={css.buttons__container}>
-        <UIButton icon="settings-linear" cx={css['settings__menu__button']} handler={toggleSettingsMenu}>
+        <UIButton icon="settings-linear" cx={css['settings__menu__button']} handler={toggleSettingsMenu} testId={'buttonSettingsLinear'}>
           <SVG name="settings-linear" width={42} height={42} />
         </UIButton>
         {isSmallScreen && (
-          <UIButton icon="2D" cx={`${css['settings__menu__button']} ${css.hide}`} handler={toggle2DMenu}>
+          <UIButton icon="2D" cx={`${css['settings__menu__button']} ${css.hide}`} handler={toggle2DMenu} testId={'button2D'}>
             <SVG name="2D" width={42} height={42} />
           </UIButton>
         )}
-        <UIButton icon="cursor" cx={css['settings__menu__button']} handler={toggleCursorMenu}>
+        <UIButton icon="cursor" cx={css['settings__menu__button']} handler={toggleCursorMenu} testId={'buttonCursor'}>
           <SVG name="cursor" width={42} height={42} />
         </UIButton>
       </div>

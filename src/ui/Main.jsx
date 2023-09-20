@@ -41,12 +41,12 @@ export const Main = () => {
   const [strAlertTitle, setStrAlertTitle] = useState('');
   const [strAlertText, setStrAlertText] = useState('');
   const [isFullMode, setIsFullMode] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const appRef = useRef();
 
   useEffect(() => {
     function handleResize() {
-      setIsMobile(window.innerWidth <= 1024);
+      setIsMobile(window.innerWidth < 1024);
     }
 
     window.addEventListener('resize', handleResize);

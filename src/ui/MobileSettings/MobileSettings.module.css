@@ -3,23 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/*.settings__menu:active {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    position: relative;
-    justify-content: center;
-    transform: translate(0, 0);
-    background: red;
-    height: 100vh;
-    z-index: 2;
-}
-.settings__menu:focus {
-    opacity: 0;
-    background: yellow;
-    z-index: -2;
-
-}*/
 .buttons__container {
     display: flex;
     flex-direction: column;
@@ -109,17 +92,28 @@
         left: 12%;
         z-index: 10;
     }
+
     .horizontal {
         width: 10rem;
         position: absolute;
-        top: 15%;
-        left: 12%;
+        top: 12%;
+        left: 10%;
     }
 
     .horizontal > div {
         display: flex;
         width: 100%;
-
     }
 
+}
+
+@media screen and (orientation: portrait) and (min-width: 768px) {
+
+    .buttons__container {
+        top: 12%;
+    }
+
+    .horizontal {
+        top: 12%;
+    }
 }
