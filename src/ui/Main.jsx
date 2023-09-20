@@ -54,7 +54,6 @@ export const Main = () => {
   );
 
   const isReady = isLoaded && isWebGl20supported;
-
   const onShowModalText = () => {
     dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true });
   };
@@ -176,7 +175,6 @@ export const Main = () => {
           ) : (
             <StartScreen />
           )}
-
           {isReady && (
             <div className={cx(isFullMode && css.fullscreen)}>
               <div className={css.left}>

@@ -4,17 +4,74 @@
  */
 
 .save-file__area {
-  height: 50px;
+  height: 40px;
   display: flex;
   align-content: center;
   align-items: center;
   justify-content: space-between;
+  color: #18191b;
 }
 
 .save-file__area div {
   margin-right: 10px;
 }
 
+.save-file__area div {
+  background: inherit;
+  color: var(--black);
+}
+
 .filename {
   gap: 8px;
+}
+
+.open-folder__link,
+.button.report-menu__report,
+.button.report-menu__camera  {
+  background: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #18191b;
+}
+.open-folder__link:hover,
+.button.report-menu__report:hover,
+.button.report-menu__camera:hover {
+  background-color: var(--light-orange);
+}
+
+.open-folder__link:focus,
+.button.report-menu__report:focus,
+.button.report-menu__camera:focus {
+  background-color: var(--light-orange);
+}
+
+
+.open-file__link,
+.open-demo__link {
+  display: none;
+}
+
+ @media screen and (min-width: 768px) {
+   .open-folder__link,
+   .button.report-menu__report,
+   .button.report-menu__camera  {
+     background-color: var(--beige);
+   }
+
+   .open-folder__link >  span,
+   .button.report-menu__report >  span,
+   .button.report-menu__camera >  span {
+     display: none;
+   }
+
+ }
+@media screen and (min-width: 1024px) {
+  .open-file__link,
+  .open-demo__link {
+    background-color: var(--beige);
+  }
+  .save-file__area {
+    align-items: normal;
+  }
 }

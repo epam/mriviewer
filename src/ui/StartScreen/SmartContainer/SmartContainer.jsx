@@ -25,8 +25,12 @@ class SmartContainer extends FileReader {
   }
 
   componentDidMount() {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isMobile = window.innerWidth < 768;
+    //const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    //console.log(navigator.userAgent);
+    window.addEventListener('resize', this.handleWindowResize);
     this.setState({ isMobile });
+    console.log(isMobile);
   }
 
   handleDrag(e) {
@@ -45,8 +49,18 @@ class SmartContainer extends FileReader {
     this.handleFileSelected(e);
   }
 
+  handleWindowResize = () => {
+    const isMobile = window.innerWidth < 768;
+    this.setState({ isMobile });
+  };
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleWindowResize);
+  }
+
   render() {
     const { isMobile } = this.state;
+    console.log(isMobile);
 
     return (
       <div

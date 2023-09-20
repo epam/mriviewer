@@ -5,6 +5,7 @@
 
 .wrapper {
   display: inline-block;
+  color: #18191b;
 }
 
 .tooltip {
@@ -56,4 +57,12 @@
 
 .tooltip[data-popper-placement^='right']>.arrow {
   left: -6px;
+}
+
+
+@media screen and (min-width: 768px) {
+  .demo__link {
+    display: block;
+  }
+
 }

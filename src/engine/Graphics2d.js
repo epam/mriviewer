@@ -21,6 +21,8 @@ import Segm2d from './Segm2d';
 
 import { getPalette256 } from './loaders/RoiPalette256';
 
+import css from './Graphics2d.module.css';
+
 class Graphics2d extends React.Component {
   constructor(props) {
     super(props);
@@ -690,28 +692,15 @@ class Graphics2d extends React.Component {
     // const volSet = store.volumeSet;
     this.m_sliceRatio = this.props.sliderValue;
     this.m_mode2d = this.props.mode2d;
-
-    const wrapperStyles = {
-      display: 'flex',
-      justifyContent: 'flex-start',
-      width: `calc(100% - 110px)`,
-      height: `calc(100% - 110px)`,
-      margin: '100px 125px',
-    };
-    const canvasStyles = {
-      maxWidth: '100%',
-      border: '2px solid #dc5e47',
-      borderRadius: '10px',
-    };
     return (
-      <div style={wrapperStyles}>
+      <div className={css.wrapperStyles}>
         <canvas
           ref={this.m_mount}
-          style={canvasStyles}
           onMouseDown={this.onMouseDown}
           onMouseUp={this.onMouseUp}
           onMouseMove={this.onMouseMove}
           onWheel={this.onMouseWheel}
+          className={css.canvasStyles}
         />
       </div>
     );

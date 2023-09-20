@@ -940,14 +940,14 @@ class UiOpenMenu extends FileReader {
       <>
         <Container>
           <Tooltip content="Open file or folder">
-            <UIButton icon="folder" handler={(evt) => this.onButtonOpenLocalFileClick(evt)} />
+            <UIButton text="Open" cx={css['open-folder__link']} icon="folder" handler={(evt) => this.onButtonOpenLocalFileClick(evt)} />
           </Tooltip>
           <Tooltip content="Open external URL">
-            <UIButton icon="link" handler={this.onModalUrlShow} />
+            <UIButton cx={css['open-file__link']} icon="link" handler={this.onModalUrlShow} />
           </Tooltip>
           {NEED_DEMO_MENU && (
             <Tooltip content="Open demo data">
-              <UIButton icon="grid" handler={this.onModalDemoOpenShow} />
+              <UIButton cx={css['open-demo__link']} icon="grid" handler={this.onModalDemoOpenShow} />
             </Tooltip>
           )}
         </Container>
