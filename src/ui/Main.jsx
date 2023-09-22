@@ -26,6 +26,7 @@ import { LeftToolbar } from './LeftToolbar/LeftToolbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { TopToolbar } from './TopToolbar/TopToolbar';
 import { UiAbout } from './Header/UiAbout';
+import { MobileSettings } from './MobileSettings/MobileSettings';
 import StartScreen from './StartScreen/StartScreen';
 import css from './Main.module.css';
 import cx from 'classnames';
@@ -40,8 +41,20 @@ export const Main = () => {
   const [strAlertTitle, setStrAlertTitle] = useState('');
   const [strAlertText, setStrAlertText] = useState('');
   const [isFullMode, setIsFullMode] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const appRef = useRef();
 
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth < 1024);
+    }
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   const [, drop] = useDrop(
     () => ({
       accept: DnDItemTypes.SETTINGS,
@@ -95,7 +108,6 @@ export const Main = () => {
   const onFullScreenChange = () => {
     setIsFullMode(!isFullMode);
   };
-
   useEffect(() => {
     const strSearch = window.location.search;
     if (strSearch.length > 0) {
@@ -141,7 +153,7 @@ export const Main = () => {
     return () => {
       document.removeEventListener('fullscreenchange', onFullScreenChange);
     };
-  }, [isFullMode]);
+  }, [isFullMode, isMobile]);
 
   return (
     <AppContextProvider>
@@ -175,7 +187,7 @@ export const Main = () => {
           ) : (
             <StartScreen />
           )}
-          {isReady && (
+          {isReady && !isMobile && (
             <div className={cx(isFullMode && css.fullscreen)}>
               <div className={css.left}>
                 <LeftToolbar />
@@ -184,6 +196,12 @@ export const Main = () => {
               <div className={css.center}>{viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
               <div className={css.bottleft}>{viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
               <RightPanel />
+            </div>
+          )}
+          {isReady && isMobile && (
+            <div className={cx(isFullMode && css.fullscreen)}>
+              <div className={css.center}>{viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
+              <MobileSettings />
             </div>
           )}
           {arrErrors.length > 0 && <UiErrConsole />}

@@ -14,8 +14,9 @@
 }
 
 .header__logo {
-  margin-right: 25px;
+  display: none;
 }
+
 .header__panels {
   display: none;
 }
@@ -25,14 +26,14 @@
   bottom: 0;
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-direction: row-reverse;
-  z-index: 1000;
   width: 100vw;
   right: 0;
   height: 50px;
   padding: 1rem;
   background-color: var(--beige);
-  align-items: center;
+  z-index: 1000;
 }
 
 .header__right > button {
@@ -57,11 +58,18 @@
 }
 
 .bottleft {
-  display: none;
+  display: block;
 }
 
 .left {
-  display: none;
+  display: block;
+  width: 100px;
+  height: 50px;
+  position: absolute;
+  right: 0;
+  top:50%;
+  z-index: 10;
+
 }
 
 .center div {
@@ -70,9 +78,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 10;
-
+    z-index: 1;
 }
+
 .settings {
   display: none;
 }
@@ -87,7 +95,9 @@
   }
 
   .header__logo {
+    display: block;
     margin-right: 25px;
+    margin-top: 1rem;
   }
 
   .header__panels  {
@@ -95,6 +105,7 @@
     flex-direction: column;
     width: 25rem;
   }
+
   .fullscreen .header__panels {
     position: absolute;
     left: 75px;
@@ -111,11 +122,10 @@
   }
 
   .left {
-    display: flex;
-    flex-direction: column;
+    display: block;
     position: absolute;
     left: 25px;
-    top: 100px;
+    top: 10%;
     z-index: 1010;
   }
 
@@ -130,7 +140,9 @@
 
 
   .settings {
-   display: none;
+    display: block;
+    position: absolute;
+    z-index: 2000;
   }
 
   .center {
@@ -176,7 +188,6 @@
   .settings {
     display: flex;
     flex-direction: column;
-    z-index: 1100;
     position: absolute;
     right: 25px;
     top: 100px;
@@ -187,6 +198,53 @@
     cursor: all-scroll;
     border-radius: 24px;
     transition: opacity 300ms ease-in-out;
+    z-index: 1100;
   }
 
+}
+
+@media screen and (min-width: 1024px) and (orientation: landscape) {
+
+  .header__panels {
+    margin-right: 3rem;
+  }
+
+  .header__panels > div {
+    flex-wrap: nowrap;
+    margin-right: 1rem;
+  }
+
+  .left {
+    top:12%;
+  }
+
+}
+
+@media screen and (min-width: 1024px) and (orientation: portrait) {
+
+  .header__panels {
+    flex-wrap: nowrap;
+  }
+
+  .settings {
+    top: 4rem;
+  }
+
+}
+
+@media screen and (min-width: 1440px) {
+  .header__panels {
+    flex-wrap: nowrap;
+  }
+
+}
+
+@media screen and (min-width: 2560px) and (orientation: landscape) {
+
+  .left {
+    top: 5%;
+  }
+  .settings {
+    top: 4rem;
+  }
 }

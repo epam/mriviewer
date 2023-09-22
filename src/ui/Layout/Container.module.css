@@ -38,7 +38,7 @@
 
   .vertical {
     flex-direction: column;
-    width: 50px;
+
   }
 
   .vertical:not(:first-child) {
