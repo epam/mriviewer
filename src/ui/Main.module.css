@@ -16,6 +16,7 @@
 .header__logo {
   display: none;
 }
+
 .header__panels {
   display: none;
 }
@@ -25,14 +26,14 @@
   bottom: 0;
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-direction: row-reverse;
-  z-index: 1000;
   width: 100vw;
   right: 0;
   height: 50px;
   padding: 1rem;
   background-color: var(--beige);
-  align-items: center;
+  z-index: 1000;
 }
 
 .header__right > button {
@@ -104,6 +105,7 @@
     flex-direction: column;
     width: 25rem;
   }
+
   .fullscreen .header__panels {
     position: absolute;
     left: 75px;
@@ -123,8 +125,8 @@
     display: block;
     position: absolute;
     left: 25px;
-    z-index: 1010;
     top: 10%;
+    z-index: 1010;
   }
 
   .bottleft {
@@ -138,7 +140,7 @@
 
 
   .settings {
-   display: block;
+    display: block;
     position: absolute;
     z-index: 2000;
   }
@@ -186,7 +188,6 @@
   .settings {
     display: flex;
     flex-direction: column;
-    z-index: 1100;
     position: absolute;
     right: 25px;
     top: 100px;
@@ -197,11 +198,53 @@
     cursor: all-scroll;
     border-radius: 24px;
     transition: opacity 300ms ease-in-out;
+    z-index: 1100;
   }
 
 }
+
 @media screen and (min-width: 1024px) and (orientation: landscape) {
+
+  .header__panels {
+    margin-right: 3rem;
+  }
+
+  .header__panels > div {
+    flex-wrap: nowrap;
+    margin-right: 1rem;
+  }
+
+  .left {
+    top:12%;
+  }
+
+}
+
+@media screen and (min-width: 1024px) and (orientation: portrait) {
+
   .header__panels {
     flex-wrap: nowrap;
+  }
+
+  .settings {
+    top: 4rem;
+  }
+
+}
+
+@media screen and (min-width: 1440px) {
+  .header__panels {
+    flex-wrap: nowrap;
+  }
+
+}
+
+@media screen and (min-width: 2560px) and (orientation: landscape) {
+
+  .left {
+    top: 5%;
+  }
+  .settings {
+    top: 4rem;
   }
 }

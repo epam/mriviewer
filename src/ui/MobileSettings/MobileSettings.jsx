@@ -14,14 +14,12 @@ export const MobileSettings = () => {
   const containerRef = useRef(null);
   const toggleSettingsMenu = () => {
     setIsSettingsMenuOpen(!isSettingsMenuOpen);
-    console.log('Toggle Settings Menu');
     setIs2DMenuOpen(false);
     setIsCursorMenuOpen(false);
   };
 
   const toggle2DMenu = () => {
     setIs2DMenuOpen(!is2DMenuOpen);
-    console.log('Toggle Settings Menu');
     setIsSettingsMenuOpen(false);
     setIsCursorMenuOpen(false);
   };
@@ -43,13 +41,12 @@ export const MobileSettings = () => {
   }, []);
 
   useEffect(() => {
+    //TODO: next step is implementation behavior
     const handleClickOutside = (event) => {
-      console.log('click');
       if (containerRef.current && !containerRef.current.contains(event.target)) {
         setIsSettingsMenuOpen(false);
         setIs2DMenuOpen(false);
         setIsCursorMenuOpen(false);
-        console.log(is2DMenuOpen, isCursorMenuOpen, isSettingsMenuOpen);
       }
     };
 

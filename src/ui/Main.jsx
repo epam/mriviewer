@@ -154,7 +154,6 @@ export const Main = () => {
       document.removeEventListener('fullscreenchange', onFullScreenChange);
     };
   }, [isFullMode, isMobile]);
-  console.log(isMobile);
 
   return (
     <AppContextProvider>
