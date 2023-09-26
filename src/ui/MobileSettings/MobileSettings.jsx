@@ -11,6 +11,8 @@ export const MobileSettings = () => {
   const [is2DMenuOpen, setIs2DMenuOpen] = useState(false);
   const [isCursorMenuOpen, setIsCursorMenuOpen] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(window.matchMedia('(max-width: 767px)').matches);
+  const [isMenuHidden, setIsMenuHidden] = useState(false);
+
   const containerRef = useRef(null);
   const toggleSettingsMenu = () => {
     setIsSettingsMenuOpen(!isSettingsMenuOpen);
@@ -28,6 +30,7 @@ export const MobileSettings = () => {
     setIsSettingsMenuOpen(false);
     setIs2DMenuOpen(false);
   };
+
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.matchMedia('(max-width: 768px)').matches);
@@ -41,24 +44,43 @@ export const MobileSettings = () => {
   }, []);
 
   useEffect(() => {
-    //TODO: next step is implementation behavior
     const handleClickOutside = (event) => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
+        console.log('click outside');
+        console.log(containerRef.current.contains(event.target));
         setIsSettingsMenuOpen(false);
         setIs2DMenuOpen(false);
         setIsCursorMenuOpen(false);
+        setTimeout(() => {
+          if (!isMenuHidden) {
+            setIsSettingsMenuOpen(false);
+            setIs2DMenuOpen(false);
+            setIsCursorMenuOpen(false);
+            setIsMenuHidden(true);
+          } else {
+            setIsMenuHidden(false);
+          }
+        }, 1000);
       }
     };
 
     const containerElement = containerRef.current;
+    console.log(containerElement);
+    console.log(containerRef);
+
     containerElement.addEventListener('click', handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
 
     return () => {
       containerElement.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
     };
-  }, []);
+  }, [isMenuHidden]);
+
   return (
-    <div className={css.settings__menu} ref={containerRef}>
+    <div className={`${css.settings__menu} ${isMenuHidden ? css.hidden : css.settings__menu}`} ref={containerRef}>
       <div className={css.buttons__container}>
         <UIButton icon="settings-linear" cx={css['settings__menu__button']} handler={toggleSettingsMenu} testId={'buttonSettingsLinear'}>
           <SVG name="settings-linear" width={42} height={42} />

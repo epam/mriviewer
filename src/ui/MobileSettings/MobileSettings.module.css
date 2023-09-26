@@ -26,6 +26,7 @@
 
 
 .settings__menu {
+    display: block;
     background: inherit;
 }
 
@@ -47,11 +48,15 @@
     left: 0;
     right: 0;
     padding: 10px;
-    z-index: 2;
+    z-index: 20000;
 }
 
 .flex {
     flex-direction: column;
+}
+
+.hidden {
+    display: none;
 }
 
 .settings__menu_block:active {
