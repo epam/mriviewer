@@ -100,7 +100,7 @@ export const MobileSettings = () => {
         </div>
       )}
       {(is2DMenuOpen || !isSmallScreen) && (
-        <div className={css.settings__menu_block}>
+        <div className={`${css.settings__menu_block} ${css.animation}`}>
           <LeftToolbar />
         </div>
       )}
