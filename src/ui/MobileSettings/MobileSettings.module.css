@@ -11,8 +11,12 @@
     position: absolute;
     top: 50%;
     right: 0;
+    opacity: 1;
     border: 1px solid var(--dark-gray);
     border-radius: 0.5rem;
+    animation: onHide 1s ease-in-out;
+    animation-fill-mode: forwards;
+
 }
 
 .buttons__container button {
@@ -24,10 +28,20 @@
     padding-left: 1rem;
 }
 
-
 .settings__menu {
     display: block;
     background: inherit;
+    opacity: 1;
+}
+
+.hidden {
+    display: none;
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    visibility: hidden;
+    animation: onHide 1s ease-in-out;
+    animation-fill-mode: forwards;
 }
 
 .settings__menu__button:after {
@@ -49,19 +63,26 @@
     right: 0;
     padding: 10px;
     z-index: 20000;
+    animation: onHide 1s ease-in-out;
+    animation-fill-mode: forwards;
 }
 
 .flex {
     flex-direction: column;
 }
 
-.hidden {
-    display: none;
+@keyframes onHide {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
-.settings__menu_block:active {
-    opacity: 0;
-}
 
 @media screen and (min-width: 768px){
 
