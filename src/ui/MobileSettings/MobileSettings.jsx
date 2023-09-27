@@ -14,12 +14,12 @@ export const MobileSettings = () => {
   const [isMenuHidden, setIsMenuHidden] = useState(false);
 
   const containerRef = useRef(null);
+  const pressTimer = useRef(null);
   const toggleSettingsMenu = () => {
     setIsSettingsMenuOpen(!isSettingsMenuOpen);
     setIs2DMenuOpen(false);
     setIsCursorMenuOpen(false);
   };
-
   const toggle2DMenu = () => {
     setIs2DMenuOpen(!is2DMenuOpen);
     setIsSettingsMenuOpen(false);
@@ -30,7 +30,36 @@ export const MobileSettings = () => {
     setIsSettingsMenuOpen(false);
     setIs2DMenuOpen(false);
   };
+  const closeAllMenu = () => {
+    setIsSettingsMenuOpen(false);
+    setIs2DMenuOpen(false);
+    setIsCursorMenuOpen(false);
+  };
 
+  useEffect(() => {
+    const onLongPress = () => {
+      setIsMenuHidden((current) => !current);
+      closeAllMenu();
+    };
+
+    const startPress = () => {
+      pressTimer.current = setTimeout(() => {
+        onLongPress();
+      }, 1000);
+    };
+
+    const endPress = () => {
+      clearTimeout(pressTimer.current);
+    };
+
+    document.addEventListener('touchstart', startPress);
+    document.addEventListener('touchend', endPress);
+
+    return () => {
+      document.removeEventListener('touchstart', startPress);
+      document.removeEventListener('touchend', endPress);
+    };
+  }, []);
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.matchMedia('(max-width: 768px)').matches);
@@ -42,48 +71,6 @@ export const MobileSettings = () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
-  useEffect(() => {
-    let touchStartTime;
-    let touchEndTime;
-
-    const handleTouchStart = () => {
-      touchStartTime = new Date().getTime();
-    };
-    const handleClickOutside = () => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        setIsSettingsMenuOpen(false);
-        setIs2DMenuOpen(false);
-        setIsCursorMenuOpen(false);
-        setTimeout(() => {
-          if (!isMenuHidden) {
-            setIsSettingsMenuOpen(false);
-            setIs2DMenuOpen(false);
-            setIsCursorMenuOpen(false);
-            setIsMenuHidden(true);
-          } else {
-            setIsMenuHidden(false);
-          }
-        }, 1000);
-      }
-    };
-
-    const handleTouchEnd = () => {
-      touchEndTime = new Date().getTime();
-      const touchDuration = touchEndTime - touchStartTime;
-
-      if (touchDuration >= 1000) {
-        handleClickOutside();
-      }
-    };
-    document.addEventListener('touchstart', handleTouchStart);
-    document.addEventListener('touchend', handleTouchEnd);
-
-    return () => {
-      document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [isMenuHidden]);
   return (
     <div className={`${css.settings__menu} ${isMenuHidden ? css.hidden : css.settings__menu}`} ref={containerRef}>
       <div className={css.buttons__container}>
