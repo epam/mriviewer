@@ -44,10 +44,15 @@ export const MobileSettings = () => {
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    let touchStartTime;
+    let touchEndTime;
+
+    const handleTouchStart = () => {
+      touchStartTime = new Date().getTime();
+    };
+
+    const handleClickOutside = () => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
-        console.log('click outside');
-        console.log(containerRef.current.contains(event.target));
         setIsSettingsMenuOpen(false);
         setIs2DMenuOpen(false);
         setIsCursorMenuOpen(false);
@@ -64,21 +69,22 @@ export const MobileSettings = () => {
       }
     };
 
-    const containerElement = containerRef.current;
-    console.log(containerElement);
-    console.log(containerRef);
+    const handleTouchEnd = () => {
+      touchEndTime = new Date().getTime();
+      const touchDuration = touchEndTime - touchStartTime;
 
-    containerElement.addEventListener('click', handleClickOutside);
-    document.addEventListener('click', handleClickOutside);
-    document.addEventListener('touchstart', handleClickOutside);
+      if (touchDuration >= 1000) {
+        handleClickOutside();
+      }
+    };
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchend', handleTouchEnd);
 
     return () => {
-      containerElement.removeEventListener('click', handleClickOutside);
-      document.removeEventListener('click', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchend', handleTouchEnd);
     };
   }, [isMenuHidden]);
-
   return (
     <div className={`${css.settings__menu} ${isMenuHidden ? css.hidden : css.settings__menu}`} ref={containerRef}>
       <div className={css.buttons__container}>
