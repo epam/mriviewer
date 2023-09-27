@@ -50,7 +50,6 @@ export const MobileSettings = () => {
     const handleTouchStart = () => {
       touchStartTime = new Date().getTime();
     };
-
     const handleClickOutside = () => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
         setIsSettingsMenuOpen(false);
