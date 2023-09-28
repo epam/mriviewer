@@ -11,8 +11,12 @@
     position: absolute;
     top: 50%;
     right: 0;
+    opacity: 1;
     border: 1px solid var(--dark-gray);
     border-radius: 0.5rem;
+    animation: onHide .6s ease-in-out;
+    animation-fill-mode: forwards;
+
 }
 
 .buttons__container button {
@@ -24,9 +28,17 @@
     padding-left: 1rem;
 }
 
-
 .settings__menu {
+    display: block;
     background: inherit;
+    opacity: 1;
+}
+
+.hidden {
+    display: none;
+    opacity: 0;
+    animation: onHide .6s ease-in-out;
+    animation-fill-mode: forwards;
 }
 
 .settings__menu__button:after {
@@ -47,15 +59,28 @@
     left: 0;
     right: 0;
     padding: 10px;
-    z-index: 2;
+    z-index: 20000;
+    animation: onHide .6s ease-in-out;
+    animation-fill-mode: forwards;
 }
 
 .flex {
     flex-direction: column;
 }
 
-.settings__menu_block:active {
-    opacity: 0;
+@media screen and (max-width: 1024px){
+
+    @keyframes onHide {
+        0% {
+            opacity: 0;
+        }
+        50% {
+            opacity: 0.9;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
 }
 
 @media screen and (min-width: 768px){
@@ -92,6 +117,9 @@
         top: 13%;
         left: 12%;
         z-index: 10;
+    }
+    .animation {
+        animation: none;
     }
 
     .horizontal {
