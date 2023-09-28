@@ -41,7 +41,7 @@ export const Main = () => {
   const [strAlertTitle, setStrAlertTitle] = useState('');
   const [strAlertText, setStrAlertText] = useState('');
   const [isFullMode, setIsFullMode] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const appRef = useRef();
 
   useEffect(() => {
@@ -187,7 +187,7 @@ export const Main = () => {
           ) : (
             <StartScreen />
           )}
-          {isReady && !isMobile && (
+          {isReady && (
             <div className={cx(isFullMode && css.fullscreen)}>
               <div className={css.left}>
                 <LeftToolbar />
