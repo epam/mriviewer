@@ -16,7 +16,6 @@
     border-radius: 0.5rem;
     animation: onHide .6s ease-in-out;
     animation-fill-mode: forwards;
-
 }
 
 .buttons__container button {
@@ -137,7 +136,7 @@
 @media screen and (orientation: portrait) and (min-width: 768px) {
 
     .buttons__container {
-        top: 14%;
+        top: 12%;
     }
 
     .horizontal {
@@ -145,3 +144,9 @@
     }
 }
 
+@media screen and (min-width: 768px)  and (orientation: landscape){
+
+    .settings__menu_block {
+        top: 12%;
+    }
+}

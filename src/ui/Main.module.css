@@ -141,13 +141,6 @@
     z-index: 1010;
   }
 
-
-  .settings {
-    display: block;
-    position: absolute;
-    z-index: 2000;
-  }
-
   .settings {
     display: none;
   }
@@ -225,7 +218,7 @@
   }
 
   .left {
-    top:12%;
+    top:10%;
   }
 
 }
@@ -248,6 +241,7 @@
   }
 
 }
+
 
 @media screen and (min-width: 2560px) and (orientation: landscape) {
 
