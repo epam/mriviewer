@@ -10,7 +10,7 @@ export const MobileSettings = () => {
   const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
   const [is2DMenuOpen, setIs2DMenuOpen] = useState(false);
   const [isCursorMenuOpen, setIsCursorMenuOpen] = useState(false);
-  const [isSmallScreen, setIsSmallScreen] = useState(window.matchMedia('(max-width: 767px)').matches);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.matchMedia('(max-width: 768px)').matches);
   const [isMenuHidden, setIsMenuHidden] = useState(false);
 
   const containerRef = useRef(null);
@@ -41,17 +41,14 @@ export const MobileSettings = () => {
       setIsMenuHidden((current) => !current);
       closeAllMenu();
     };
-
     const startPress = () => {
       pressTimer.current = setTimeout(() => {
         onLongPress();
       }, 1000);
     };
-
     const endPress = () => {
       clearTimeout(pressTimer.current);
     };
-
     document.addEventListener('touchstart', startPress);
     document.addEventListener('touchend', endPress);
 
@@ -71,7 +68,59 @@ export const MobileSettings = () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-  return (
+  return isSmallScreen ? (
+    <div className={`${css.settings__menu} ${isMenuHidden ? css.hidden : css.settings__menu}`} ref={containerRef}>
+      <div className={css.buttons__container}>
+        <UIButton icon="settings-linear" cx={css['settings__menu__button']} handler={toggleSettingsMenu} testId={'buttonSettingsLinear'}>
+          <SVG name="settings-linear" width={42} height={42} />
+        </UIButton>
+        <UIButton icon="2D" cx={`${css['settings__menu__button']} ${css.hide}`} handler={toggle2DMenu} testId={'button2D'}>
+          <SVG name="2D" width={42} height={42} />
+        </UIButton>
+        <UIButton icon="cursor" cx={css['settings__menu__button']} handler={toggleCursorMenu} testId={'buttonCursor'}>
+          <SVG name="cursor" width={42} height={42} />
+        </UIButton>
+      </div>
+      {isSettingsMenuOpen && (
+        <div className={css.settings__menu_block + ' ' + css.flex}>
+          <Mode2dSettingsPanel />
+        </div>
+      )}
+      {(is2DMenuOpen || !isSmallScreen) && (
+        <div className={css.settings__menu_block}>
+          <LeftToolbar />
+        </div>
+      )}
+      {isCursorMenuOpen && (
+        <div className={css.settings__menu_block + ' ' + css.horizontal}>
+          <TopToolbar />
+        </div>
+      )}
+    </div>
+  ) : (
+    <div className={`${css.settings__menu} ${isMenuHidden ? css.hidden : css.settings__menu}`} ref={containerRef}>
+      <div className={css.buttons__container}>
+        <UIButton icon="settings-linear" cx={css['settings__menu__button']} handler={toggleSettingsMenu} testId={'buttonSettingsLinear'}>
+          <SVG name="settings-linear" width={42} height={42} />
+        </UIButton>
+        <UIButton icon="cursor" cx={css['settings__menu__button']} handler={toggleCursorMenu} testId={'buttonCursor'}>
+          <SVG name="cursor" width={42} height={42} />
+        </UIButton>
+      </div>
+      {isSettingsMenuOpen && (
+        <div className={css.settings__menu_block + ' ' + css.flex}>
+          <Mode2dSettingsPanel />
+        </div>
+      )}
+      {isCursorMenuOpen && (
+        <div className={css.settings__menu_block + ' ' + css.horizontal}>
+          <TopToolbar />
+        </div>
+      )}
+    </div>
+  );
+};
+/*
     <div className={`${css.settings__menu} ${isMenuHidden ? css.hidden : css.settings__menu}`} ref={containerRef}>
       <div className={css.buttons__container}>
         <UIButton icon="settings-linear" cx={css['settings__menu__button']} handler={toggleSettingsMenu} testId={'buttonSettingsLinear'}>
@@ -92,7 +141,7 @@ export const MobileSettings = () => {
         </div>
       )}
       {(is2DMenuOpen || !isSmallScreen) && (
-        <div className={`${css.settings__menu_block} ${css.animation}`}>
+        <div className={css.settings__menu_block}>
           <LeftToolbar />
         </div>
       )}
@@ -102,5 +151,4 @@ export const MobileSettings = () => {
         </div>
       )}
     </div>
-  );
-};
+  );*/

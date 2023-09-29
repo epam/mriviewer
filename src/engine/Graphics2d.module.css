@@ -98,7 +98,7 @@
 
 @media screen and (min-width: 2560px) {
     .wrapperStyles {
-        width: 90%;
+        width: 80%;
         border: 2px solid #dc5e47;
         border-radius: 10px;
         display: flex;

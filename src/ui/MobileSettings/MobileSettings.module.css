@@ -16,7 +16,6 @@
     border-radius: 0.5rem;
     animation: onHide .6s ease-in-out;
     animation-fill-mode: forwards;
-
 }
 
 .buttons__container button {
@@ -56,6 +55,7 @@
     display: flex;
     justify-content: space-around;
     position: absolute;
+    top: 0;
     left: 0;
     right: 0;
     padding: 10px;
@@ -118,9 +118,6 @@
         left: 12%;
         z-index: 10;
     }
-    .animation {
-        animation: none;
-    }
 
     .horizontal {
         width: 10rem;
@@ -139,10 +136,17 @@
 @media screen and (orientation: portrait) and (min-width: 768px) {
 
     .buttons__container {
-        top: 14%;
+        top: 12%;
     }
 
     .horizontal {
+        top: 12%;
+    }
+}
+
+@media screen and (min-width: 768px)  and (orientation: landscape){
+
+    .settings__menu_block {
         top: 12%;
     }
 }
