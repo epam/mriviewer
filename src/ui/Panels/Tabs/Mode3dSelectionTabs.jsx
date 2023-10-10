@@ -10,7 +10,6 @@ import Modes3d from '../../../store/Modes3d';
 import { Box, Tab, Tabs } from '@mui/material';
 import { TabPanel } from './TabPanel';
 import css from '../../Form/Slider.module.css';
-import { HistogramProperty } from '../Properties3d/HistogramProperty';
 import { IsosurfaceProperty } from '../Properties3d/IsosurfaceProperty';
 import { AmbientOcclusionProperty } from '../Properties3d/AmbientOcclusionProperty';
 import { SliderCaption } from '../../Form';
@@ -65,12 +64,10 @@ export function Mode3dSelectionTabs() {
         </Tabs>
       </Box>
       <TabPanel index={Modes3d.ISO} value={mode3d}>
-        <HistogramProperty />
         <IsosurfaceProperty />
         <AmbientOcclusionProperty />
       </TabPanel>
       <TabPanel index={Modes3d.RAYCAST} value={mode3d}>
-        <HistogramProperty />
         <SliderCaption caption="Set" />
         <RGBProperty />
         <OpacityProperty />
