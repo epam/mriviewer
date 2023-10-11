@@ -267,7 +267,7 @@ class UiModalWindowCenterWidth extends React.Component {
   } // end render preview
 
   onSliderWindowRange(value) {
-    this.m_updateEnable = false;
+    this.m_updateEnable = true;
     const [min, max] = value;
     this.setState({ windowMin: min });
     this.setState({ windowMax: max });
