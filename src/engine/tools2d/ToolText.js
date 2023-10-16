@@ -65,7 +65,8 @@ class ToolText {
     for (let i = 0; i < numTexts; i++) {
       const objText = this.m_texts[i];
       const vScrProj = ToolDistance.textureToScreen(objText.point.x, objText.point.y, this.m_wScreen, this.m_hScreen, store);
-      const MIN_DIST = 4.0;
+      // const MIN_DIST = 4.0;
+      const MIN_DIST = objText.text.length * 0.8;
       if (this.getDistMm(vScr, vScrProj) <= MIN_DIST) {
         this.m_objEdit = objText;
         return objText.point;
