@@ -13,7 +13,7 @@
 // Imports
 // **********************************************
 
-import ToolDistance from './ToolDistance';
+// import ToolDistance from './ToolDistance';
 
 // **********************************************
 // Class
@@ -91,7 +91,7 @@ class ToolDelete {
         const vDetect = objTool.getEditPoint(vScr, store);
         if (vDetect !== null) {
           // console.log(`ToolEdit. point tracked: ${vDetect.x}, ${vDetect.y}`);
-          this.m_pointTracked = vDetect;
+          this.m_pointTracked = vScr;
           this.m_toolTracked = objTool;
           break;
         }
@@ -124,17 +124,20 @@ class ToolDelete {
    * @param {object} ctx - html5 canvas context
    * @param {object} store - global store with app parameters
    */
-  render(ctx, store) {
+  render(ctx) {
     if (this.m_pointTracked !== null) {
-      const vScr = ToolDistance.textureToScreen(this.m_pointTracked.x, this.m_pointTracked.y, this.m_wScreen, this.m_hScreen, store);
-      const RAD_CIRCLE_EDIT = 4;
-      //ctx.lineWidth = 2;
+      // const vScr = ToolDistance.textureToScreen(this.m_pointTracked.x, this.m_pointTracked.y, this.m_wScreen, this.m_hScreen, store);
+      // const RAD_CIRCLE_EDIT = 10;
+      // ctx.lineWidth = 2;
       //ctx.strokeStyle = 'green';
-      ctx.fillStyle = 'rgb(250, 120, 120)';
+      // ctx.fillStyle = 'rgb(220, 94, 71)';
+      // ctx.arc(vScr.x, vScr.y, RAD_CIRCLE_EDIT, 0.0, 2 * 3.1415962, false);
+      // ctx.fill();
+      const vScr = this.m_pointTracked;
       ctx.beginPath();
-      ctx.arc(vScr.x, vScr.y, RAD_CIRCLE_EDIT, 0.0, 2 * 3.1415962, false);
-      // ctx.stroke();
-      ctx.fill();
+      ctx.font = '45px Arial';
+      ctx.strokeText('X', vScr.x, vScr.y);
+      ctx.stroke();
     }
   } // end render
 } // end class ToolText
