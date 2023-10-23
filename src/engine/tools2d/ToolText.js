@@ -66,8 +66,20 @@ class ToolText {
       const objText = this.m_texts[i];
       const vScrProj = ToolDistance.textureToScreen(objText.point.x, objText.point.y, this.m_wScreen, this.m_hScreen, store);
       // const MIN_DIST = 4.0;
-      const MIN_DIST = objText.text.length * 0.8;
-      if (this.getDistMm(vScr, vScrProj) <= MIN_DIST) {
+
+      // Define the distance by "x" coordinate from the center of the text
+      const MIN_DIST_X = objText.text.length * 4;
+      // Define the distance by "y" coordinate from the text
+      const MIN_DIST_Y = 16;
+      // if (this.getDistMm(vScr, vScrProj) <= MIN_DIST)
+
+      // Check if the point is on the text
+      if (
+        vScr.x >= vScrProj.x - MIN_DIST_X &&
+        vScr.x <= vScrProj.x + MIN_DIST_X &&
+        vScr.y >= vScrProj.y - MIN_DIST_Y &&
+        vScr.y <= vScrProj.y + MIN_DIST_Y
+      ) {
         this.m_objEdit = objText;
         return objText.point;
       }

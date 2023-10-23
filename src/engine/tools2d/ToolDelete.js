@@ -135,8 +135,19 @@ class ToolDelete {
       // ctx.fill();
       const vScr = this.m_pointTracked;
       ctx.beginPath();
-      ctx.font = '45px Arial';
-      ctx.strokeText('X', vScr.x, vScr.y);
+
+      // Set the line style
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = 'red';
+
+      // Draw the "x" symbol
+      ctx.beginPath();
+      ctx.moveTo(vScr.x - 15, vScr.y - 15); // Move to the starting point (x-15, y-15)
+      ctx.lineTo(vScr.x + 15, vScr.y + 15); // Draw a line to (x+15, y+15)
+      ctx.moveTo(vScr.x + 15, vScr.y - 15); // Move to (x+15, y-15)
+      ctx.lineTo(vScr.x - 15, vScr.y + 15);
+
+      // Stroke the line to actually draw the lines
       ctx.stroke();
     }
   } // end render

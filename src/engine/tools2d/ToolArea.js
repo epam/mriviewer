@@ -14,6 +14,7 @@
 // **********************************************
 
 import Modes2d from '../../store/Modes2d';
+import PointerChecker from '../utils/PointerChecker';
 import ToolDistance from './ToolDistance';
 
 // **********************************************
@@ -71,13 +72,33 @@ class ToolArea {
     const numAreas = this.m_areas.length;
     for (let i = 0; i < numAreas; i++) {
       const objArea = this.m_areas[i];
+      const lastPoint = {};
       for (let j = 0; j < objArea.m_points.length; j++) {
-        const vScrProj = ToolDistance.textureToScreen(objArea.m_points[j].x, objArea.m_points[j].y, this.m_wScreen, this.m_hScreen, store);
-        const MIN_DIST = 4.0;
-        if (this.getDistMm(vScr, vScrProj) <= MIN_DIST) {
+        const vScrProj_S = ToolDistance.textureToScreen(
+          objArea.m_points[j].x,
+          objArea.m_points[j].y,
+          this.m_wScreen,
+          this.m_hScreen,
+          store
+        );
+        if (j === 0) {
+          lastPoint.x = vScrProj_S.x;
+          lastPoint.y = vScrProj_S.y;
+        }
+        const vScrProj_E =
+          j < objArea.m_points.length - 1
+            ? ToolDistance.textureToScreen(objArea.m_points[j + 1].x, objArea.m_points[j + 1].y, this.m_wScreen, this.m_hScreen, store)
+            : lastPoint;
+        if (PointerChecker.isPointerOnLine(vScrProj_S, vScrProj_E, vScr)) {
           this.m_objEdit = objArea;
           return objArea.m_points[j];
-        } // if too close pick
+        }
+        // const MIN_DIST = 4.0;
+        // if (this.getDistMm(vScr, vScrProj_S) <= MIN_DIST) {
+        //   this.m_objEdit = objArea;
+        //   return objArea.m_points[j];
+        // }
+        // if too close pick
       } // for (j) all point in area
     } // for (i) all areas
     return null;
