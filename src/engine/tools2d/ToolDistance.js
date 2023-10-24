@@ -69,15 +69,6 @@ class ToolDistance {
         this.m_objEdit = objLine;
         return objLine.vs;
       }
-      // const MIN_DIST = 4.0;
-      // if (this.getDistMm(vScr, vScrS) <= MIN_DIST) {
-      //   this.m_objEdit = objLine;
-      //   return objLine.vs;
-      // }
-      // if (this.getDistMm(vScr, vScrE) <= MIN_DIST) {
-      //   this.m_objEdit = objLine;
-      //   return objLine.ve;
-      // }
     }
     return null;
   }
@@ -204,8 +195,6 @@ class ToolDistance {
     };
     this.m_lines.push(objLine);
     this.m_mouseDown = true;
-    // this.m_pointStart = v;
-    // console.log(`onMouseDown: ${xScr}, ${yScr}`);
   }
 
   onMouseMove(xScr, yScr, store) {

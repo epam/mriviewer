@@ -15,7 +15,6 @@
 
 import ToolDistance from './ToolDistance';
 import StoreActionType from '../../store/ActionTypes';
-// import UiModalText from '../../ui/UiModalText';
 
 // **********************************************
 // Class
@@ -65,14 +64,11 @@ class ToolText {
     for (let i = 0; i < numTexts; i++) {
       const objText = this.m_texts[i];
       const vScrProj = ToolDistance.textureToScreen(objText.point.x, objText.point.y, this.m_wScreen, this.m_hScreen, store);
-      // const MIN_DIST = 4.0;
 
       // Define the distance by "x" coordinate from the center of the text
       const MIN_DIST_X = objText.text.length * 4;
       // Define the distance by "y" coordinate from the text
       const MIN_DIST_Y = 16;
-      // if (this.getDistMm(vScr, vScrProj) <= MIN_DIST)
-
       // Check if the point is on the text
       if (
         vScr.x >= vScrProj.x - MIN_DIST_X &&
@@ -191,29 +187,6 @@ class ToolText {
         ctx.fillText(lines[j], vScr.x, vScr.y + j * LINE_HEIGHT - ((lines.length - 1) * LINE_HEIGHT) / 2);
       }
     } // for (i)
-
-    /*
-    const numRects = this.m_rects.length;
-    for (let i = 0; i < numRects; i++) {
-      const objRect = this.m_rects[i];
-      const vTexMin = objRect.vMin;
-      const vTexMax = objRect.vMax;
-      const vScrMin = ToolDistance.textureToScreen(vTexMin.x, vTexMin.y, this.m_wScreen, this.m_hScreen, store);
-      const vScrMax = ToolDistance.textureToScreen(vTexMax.x, vTexMax.y, this.m_wScreen, this.m_hScreen, store);
-      ctx.beginPath();
-      ctx.moveTo(vScrMin.x, vScrMin.y);
-      ctx.lineTo(vScrMax.x, vScrMin.y);
-      ctx.lineTo(vScrMax.x, vScrMax.y);
-      ctx.lineTo(vScrMin.x, vScrMax.y);
-      ctx.lineTo(vScrMin.x, vScrMin.y);
-      ctx.stroke();
-      // draw text
-      const xText = Math.floor((vScrMin.x + vScrMax.x) * 0.5);
-      const yText = Math.floor((vScrMin.y + vScrMax.y) * 0.5);
-      const strMsg = objRect.area.toFixed(2) + ' mm^2';
-      ctx.fillText(strMsg, xText, yText);
-    } // for (i) all rects
-    */
   } // end render
 } // end class ToolText
 

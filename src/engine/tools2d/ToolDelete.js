@@ -13,8 +13,6 @@
 // Imports
 // **********************************************
 
-// import ToolDistance from './ToolDistance';
-
 // **********************************************
 // Class
 // **********************************************
@@ -90,7 +88,6 @@ class ToolDelete {
         const objTool = tools[i];
         const vDetect = objTool.getEditPoint(vScr, store);
         if (vDetect !== null) {
-          // console.log(`ToolEdit. point tracked: ${vDetect.x}, ${vDetect.y}`);
           this.m_pointTracked = vScr;
           this.m_toolTracked = objTool;
           break;
@@ -101,15 +98,6 @@ class ToolDelete {
         // invoke forced 2d render
         this.m_objGraphics2d.forceUpdate();
       }
-    } else {
-      /*
-      if (this.m_pointTracked !== null) {
-        const vTexNew = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
-        this.m_toolTracked.moveEditPoint(this.m_pointTracked, vTexNew);
-        // invoke forced 2d render
-        this.m_objGraphics2d.forceUpdate();
-      } // if we have tracked point
-      */
     }
   }
 
@@ -126,13 +114,6 @@ class ToolDelete {
    */
   render(ctx) {
     if (this.m_pointTracked !== null) {
-      // const vScr = ToolDistance.textureToScreen(this.m_pointTracked.x, this.m_pointTracked.y, this.m_wScreen, this.m_hScreen, store);
-      // const RAD_CIRCLE_EDIT = 10;
-      // ctx.lineWidth = 2;
-      //ctx.strokeStyle = 'green';
-      // ctx.fillStyle = 'rgb(220, 94, 71)';
-      // ctx.arc(vScr.x, vScr.y, RAD_CIRCLE_EDIT, 0.0, 2 * 3.1415962, false);
-      // ctx.fill();
       const vScr = this.m_pointTracked;
       ctx.beginPath();
 
