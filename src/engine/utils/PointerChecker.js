@@ -13,32 +13,34 @@
  */
 class PointerChecker {
   static isPointerOnLine(vs, ve, vScr) {
+    // The distance to the line by "x" and "y"
+    const MIN_DIST = 10;
+    // The number for define a half of the distance
+    const TWO = 2;
     // Define the center point of the line by "y" coordinate
-    const centerLineY = (vs.y + ve.y) / 2;
+    const centerLineY = (vs.y + ve.y) / TWO;
     // Define the angle slope of the line
     const m = (ve.y - vs.y) / (ve.x - vs.x);
     // Define the intercept of the line
     const b = vs.y - m * vs.x;
     // Define the length of the line by "y"
     const widthY = Math.abs(ve.y - vs.y);
-    // Define the distance to the line by "y"
-    const MIN_DIST_Y = 10;
     // Check if the point is on the border of the line
     if (
       vs.x != ve.x &&
       (vs.x < ve.x ? vScr.x >= vs.x && vScr.x <= ve.x : vScr.x <= vs.x && vScr.x >= ve.x) &&
-      Math.floor(vScr.y) >= Math.floor(m * vScr.x + b) - MIN_DIST_Y &&
-      Math.floor(vScr.y) <= Math.floor(m * vScr.x + b) + MIN_DIST_Y
+      Math.floor(vScr.y) >= Math.floor(m * vScr.x + b) - MIN_DIST &&
+      Math.floor(vScr.y) <= Math.floor(m * vScr.x + b) + MIN_DIST
     ) {
       return true;
     }
     // Check if the point is on the border of the vertical line
     if (
       vs.x === ve.x &&
-      vScr.x <= vs.x + 10 &&
-      vScr.x >= vs.x - 10 &&
-      vScr.y >= centerLineY - widthY / 2 &&
-      vScr.y <= centerLineY + widthY / 2
+      vScr.x <= vs.x + MIN_DIST &&
+      vScr.x >= vs.x - MIN_DIST &&
+      vScr.y >= centerLineY - widthY / TWO &&
+      vScr.y <= centerLineY + widthY / TWO
     ) {
       return true;
     }
