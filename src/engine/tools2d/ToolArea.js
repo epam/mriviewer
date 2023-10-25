@@ -81,7 +81,7 @@ class ToolArea {
           this.m_hScreen,
           store
         );
-        if (j === 0) {
+        if (!j) {
           lastPoint.x = vScrProj_S.x;
           lastPoint.y = vScrProj_S.y;
         }
