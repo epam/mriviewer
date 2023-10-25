@@ -59,7 +59,10 @@ class ToolRect {
   getDistMm(vs, ve) {
     const dx = vs.x - ve.x;
     const dy = vs.y - ve.y;
+    console.log('dx', dx);
+    console.log('dy', dy);
     const dist = Math.sqrt(dx * dx * this.m_xPixelSize * this.m_xPixelSize + dy * dy * this.m_yPixelSize * this.m_yPixelSize);
+    console.log('dist', dist);
     return dist;
   }
 
@@ -78,14 +81,25 @@ class ToolRect {
       const vScrMin = ToolDistance.textureToScreen(objRect.vMin.x, objRect.vMin.y, this.m_wScreen, this.m_hScreen, store);
       const vScrMax = ToolDistance.textureToScreen(objRect.vMax.x, objRect.vMax.y, this.m_wScreen, this.m_hScreen, store);
 
-      const MIN_DIST = 4.0;
-      if (this.getDistMm(vScr, vScrMin) <= MIN_DIST) {
+      // Check if the point is inside or on the border of the rectangle
+      if (
+        (vScrMin.x < vScrMax.x && vScrMin.x <= vScr.x && vScr.x <= vScrMax.x && vScrMin.y <= vScr.y && vScr.y <= vScrMax.y) ||
+        (vScrMin.x < vScrMax.x &&
+          vScrMin.y > vScrMax.y &&
+          vScrMin.x <= vScr.x &&
+          vScr.x <= vScrMax.x &&
+          vScrMin.y >= vScr.y &&
+          vScr.y >= vScrMax.y) ||
+        (vScrMin.x > vScrMax.x && vScrMin.x >= vScr.x && vScr.x >= vScrMax.x && vScrMin.y <= vScr.y && vScr.y <= vScrMax.y) ||
+        (vScrMin.x > vScrMax.x &&
+          vScrMin.y > vScrMax.y &&
+          vScrMin.x >= vScr.x &&
+          vScr.x >= vScrMax.x &&
+          vScrMin.y >= vScr.y &&
+          vScr.y >= vScrMax.y)
+      ) {
         this.m_objEdit = objRect;
         return objRect.vMin;
-      }
-      if (this.getDistMm(vScr, vScrMax) <= MIN_DIST) {
-        this.m_objEdit = objRect;
-        return objRect.vMax;
       }
     }
     return null;

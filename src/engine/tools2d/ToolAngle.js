@@ -13,7 +13,7 @@
 // Imports
 // **********************************************
 
-// import Modes2d from '../../store/Modes2d';
+import PointerChecker from '../utils/PointerChecker';
 import ToolDistance from './ToolDistance';
 
 // **********************************************
@@ -78,18 +78,19 @@ class ToolAngle {
       const vScr0 = ToolDistance.textureToScreen(objAngle.points[0].x, objAngle.points[0].y, this.m_wScreen, this.m_hScreen, store);
       const vScr1 = ToolDistance.textureToScreen(objAngle.points[1].x, objAngle.points[1].y, this.m_wScreen, this.m_hScreen, store);
       const vScr2 = ToolDistance.textureToScreen(objAngle.points[2].x, objAngle.points[2].y, this.m_wScreen, this.m_hScreen, store);
-      const MIN_DIST = 4.0;
-      if (this.getDistMm(vScr, vScr0) <= MIN_DIST) {
+
+      const vScrLine1_S = vScr0;
+      const vScrLine1_E = vScr1;
+      const vScrLine2_S = vScr0;
+      const vScrLine2_E = vScr2;
+
+      if (PointerChecker.isPointerOnLine(vScrLine1_S, vScrLine1_E, vScr)) {
         this.m_objEdit = objAngle;
-        return objAngle.points[0];
+        return objAngle.points;
       }
-      if (this.getDistMm(vScr, vScr1) <= MIN_DIST) {
+      if (PointerChecker.isPointerOnLine(vScrLine2_S, vScrLine2_E, vScr)) {
         this.m_objEdit = objAngle;
-        return objAngle.points[1];
-      }
-      if (this.getDistMm(vScr, vScr2) <= MIN_DIST) {
-        this.m_objEdit = objAngle;
-        return objAngle.points[2];
+        return objAngle.points;
       }
     }
     return null;
@@ -142,11 +143,9 @@ class ToolAngle {
     const M_180 = 180.0;
     const M_PI = 3.1415926535;
     if (cosAlp > 1.0) {
-      // console.log('get Angle > 1');
       return 0.0;
     }
     if (cosAlp < -1.0) {
-      // console.log('get Angle < -1');
       return 180.0;
     }
     const ang = (Math.acos(cosAlp) * M_180) / M_PI;
@@ -163,10 +162,8 @@ class ToolAngle {
       }
 
       this.m_numClicks++;
-      // console.log('1st click: add 3 points');
     } else if (this.m_numClicks === 1) {
       this.m_numClicks++;
-      // console.log(`2st click: points are: ${this.m_points[0].x}, ${this.m_points[0].y} -> ${this.m_points[1].x}, ${this.m_points[1].y}`);
     } else {
       console.log('3rd click: finalize angle');
       // this.m_numClicks === 2
@@ -203,7 +200,6 @@ class ToolAngle {
     for (let idx = this.m_numClicks; idx < NUM_3; idx++) {
       this.m_points[idx].x = vTex.x;
       this.m_points[idx].y = vTex.y;
-      // console.log(`onMouseMove. modify point[${idx}]: now = ${vTex.x}, ${vTex.y}`);
     }
     // invoke redraw
     this.m_objGraphics2d.forceUpdate();
