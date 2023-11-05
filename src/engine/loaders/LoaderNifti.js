@@ -15,7 +15,6 @@
 
 import LoadResult from '../LoadResult';
 import HistogramUtils from '../../ui/Histogram/HistogramUtils';
-import FileLoader from './FileLoader';
 
 // ********************************************************
 // Const
@@ -660,30 +659,6 @@ class LoaderNifti {
 
     return true;
   } // end of readFromBuffer
-
-  /**
-   *
-   * Read Nifti file from URL
-   * @param {object} volDst volume to read
-   * @param {string} strUrl from where
-   * @param {Function} callbackProgress invoke during loading
-   * @param {Function} callbackComplete invoke at the end with final success code
-   */
-  readFromUrl(volDst, strUrl, callbackProgress, callbackComplete) {
-    console.log(`LoadedNifti. staring read ${strUrl}`);
-    this.m_fileLoader = new FileLoader(strUrl);
-    this.m_fileLoader.readFile(
-      (arrBuf) => {
-        const okRead = this.readFromBuffer(volDst, arrBuf, callbackProgress, callbackComplete);
-        return okRead;
-      },
-      (errMsg) => {
-        console.log(`LoadedNifti. Error read file: ${errMsg}`);
-        callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
-      }
-    );
-    return true;
-  } // end of readFromUrl
 } // end class LoaderNifti
 
 export default LoaderNifti;

@@ -10,6 +10,8 @@ import { Nouislider } from '../Nouislider/Nouislider';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from './ModalBase';
 import { UIButton } from '../Button/Button';
 import buttonCss from '../Button/Button.module.css';
+import MriViwer from '../../engine/lib/MRIViewer';
+import { MriEvents } from '../../engine/lib/enums';
 
 const LARGE_NUMBER = 0x3fffffff;
 const DEFAULT_WIN_MIN = 650 - 2000 / 2;
@@ -76,6 +78,9 @@ class UiModalWindowCenterWidth extends React.Component {
       const hashCode = series[i].m_hash;
       loaderDicom.createVolumeFromSlices(volSet, i, hashCode);
     }
+
+    MriViwer.events.emit(MriEvents.VOLUME_PARAMETERS_SET_SUCCESS);
+
     this.props.onHide && this.props.onHide(true);
   }
 

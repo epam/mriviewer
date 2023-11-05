@@ -14,7 +14,6 @@
 // ********************************************************
 
 import LoadResult from '../LoadResult';
-import FileLoader from './FileLoader';
 
 // ********************************************************
 // Const
@@ -341,28 +340,4 @@ export default class LoaderKtx {
     }
     return LoadResult.SUCCESS;
   } // end readFromBuffer
-
-  /**
-   *
-   * Read Ktx file from URL
-   * @param {object} volDst volume to read
-   * @param {string} strUrl from where
-   * @param {Function} callbackProgress invoke during loading
-   * @param {Function} callbackComplete invoke at the end with final success code
-   */
-  readFromUrl(volDst, strUrl, callbackProgress, callbackComplete) {
-    console.log(`LoadedKtx. staring read ${strUrl}`);
-    this.m_fileLoader = new FileLoader(strUrl);
-    this.m_fileLoader.readFile(
-      (arrBuf) => {
-        this.readFromBuffer(volDst, arrBuf, callbackProgress, callbackComplete);
-        return;
-      },
-      (errMsg) => {
-        console.log(`LoaderKtx. Error read file: ${errMsg}`);
-        callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
-        return;
-      }
-    );
-  } // end of readFromUrl
 } // end class

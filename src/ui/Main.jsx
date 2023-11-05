@@ -180,7 +180,7 @@ export const Main = () => {
               )}
               {!isFullMode && (
                 <div className={css.header__right}>
-                  <Header fileNameOnLoad={m_fileNameOnLoad} />
+                  <Header />
                 </div>
               )}
             </div>

@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import cx from 'classnames';
-import css from './UiOpenMenu.module.css';
+import css from './UiReportMenu.module.css';
 
 import Screenshot from '../../engine/utils/Screenshot';
 import ViewMode from '../../store/ViewMode';

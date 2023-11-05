@@ -1,0 +1,9 @@
+.header {
+  display: flex;
+  gap: 5px;
+}
+
+.header_button {
+  font-size: 0;
+  background-color: white;
+}

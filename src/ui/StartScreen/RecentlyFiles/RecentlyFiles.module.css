@@ -1,4 +1,6 @@
 .files_container {
+  display: flex;
+  flex-direction: column;
   margin: 10px 0 0 0;
   background-color: var(--extreme-black);
   font-size: 14px;
@@ -12,6 +14,7 @@
   display: flex;
   margin-bottom: 10px;
   padding-right: 0.5rem;
+  flex-basis: 100%;
 }
 
 .files {
@@ -21,19 +24,15 @@
 .left {
   color: var(--dark-gray4);
   margin-right: 20px;
-}
-
-.element:not(:first-child) {
-  display: none;
+  flex-basis: 50%;
 }
 
 @media screen and (min-width: 768px) {
-
   .files_container {
     display: flex;
     align-items: normal;
     justify-content: flex-start;
-    margin:10px 0 1.1rem 0;
+    margin: 10px 0 1.1rem 0;
     background-color: var(--extreme-black);
     font-size: 14px;
     width: 100%;
@@ -48,10 +47,9 @@
 }
 
 @media screen and (min-width: 1024px) {
-.files_container {
-  margin: 0 0 1rem 0;
-  display: flex;
-  justify-content: normal;
+  .files_container {
+    margin: 0 0 1rem 0;
+    display: flex;
+    justify-content: normal;
   }
 }
-

@@ -38,7 +38,7 @@ const RecentlyFiles = () => {
 
   return files.length ? (
     <div className={css.files_container}>
-      <div className={css.header}>Recently opened file:</div>
+      <div className={css.header}>Recently opened files:</div>
       <div className={css.files}>
         <div className={css.left}>
           {timestamps.map((timestamp, idx) => (

@@ -3,6 +3,7 @@
   height: 100vh;
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -28,7 +29,33 @@
   transform: translateZ(0);
   -webkit-animation: load8 1.1s infinite linear;
   animation: load8 1.1s infinite linear;
-  z-index: 11;
+  z-index: 2001;
+}
+.progress {
+  z-index: 2001;
+  color: white;
+  font-size: 26px;
+  margin-top: -57px;
+}
+.text {
+  z-index: 2001;
+  color: white;
+  font-size: 22px;
+  margin-top: 40px;
+}
+
+.progress_overlay {
+  content: '';
+  width: 200px;
+  height: 200px;
+  z-index: 2000;
+  background-color: black;
+  border-radius: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  opacity: 0.85;
+  transform: translate(-50%, -50%);
 }
 @-webkit-keyframes load8 {
   0% {

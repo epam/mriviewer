@@ -1,0 +1,13 @@
+.dropzone {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  border-radius: 8px;
+}
+
+.dropzone_active {
+  border: 2px dashed var(--red);
+  z-index: 100;
+}
