@@ -63,7 +63,8 @@
   .wrapperStyles {
     display: block;
     height: calc(100% - 0.5rem);
-    width: 80%;
+    width: 43%;
+    overflow: hidden;
     border: 2px solid #dc5e47;
     border-radius: 10px;
   }
