@@ -56,6 +56,8 @@ class Graphics2d extends React.Component {
       stateMouseDown: false,
       xMouse: -1,
       yMouse: -1,
+      startX: 0,
+      startY: 0,
     };
 
     // segm 2d
@@ -458,6 +460,13 @@ class Graphics2d extends React.Component {
     const canvasHeight = objCanvas.height;
     const newImgWidth = canvasWidth / zoom;
     const newImgHeight = canvasHeight / zoom;
+    const indexTools2d = store.indexTools2d;
+
+    if (indexTools2d === Tools2dType.HAND && !this.state.stateMouseDown) {
+      objCanvas.classList.add('cursor-hand');
+    } else {
+      objCanvas.classList.remove('cursor-hand');
+    }
 
     if (!this.m_isMounted) {
       return;
@@ -545,8 +554,12 @@ class Graphics2d extends React.Component {
   }
 
   onMouseUp(evt) {
+    const objCanvas = this.m_mount.current;
     const store = this.props;
     const indexTools2d = store.indexTools2d;
+
+    this.setState({ stateMouseDown: false });
+
     if (indexTools2d === Tools2dType.DISTANCE) {
       const store = this.props;
       const box = this.m_mount.current.getBoundingClientRect();
@@ -589,10 +602,17 @@ class Graphics2d extends React.Component {
       const yScr = evt.clientY - box.top;
       this.m_toolDelete.onMouseUp(xScr, yScr, store);
     }
+    if (store.indexTools2d === Tools2dType.HAND) {
+      objCanvas.classList.remove('cursor-grab');
+      objCanvas.classList.add('cursor-hand');
+    }
   }
 
   onMouseMove(evt) {
     const store = this.props;
+    let xPos = store.render2dxPos;
+    let yPos = store.render2dyPos;
+    const zoom = store.render2dZoom;
     const indexTools2d = store.indexTools2d;
     const box = this.m_mount.current.getBoundingClientRect();
     const xContainer = evt.clientX - box.left;
@@ -618,10 +638,26 @@ class Graphics2d extends React.Component {
     if (indexTools2d === Tools2dType.DELETE) {
       this.m_toolDelete.onMouseMove(xScr, yScr, store);
     }
+    if (indexTools2d === Tools2dType.HAND && this.state.stateMouseDown) {
+      const deltaX = evt.clientX - this.state.startX;
+      const deltaY = evt.clientY - this.state.startY;
+      const newXPos = xPos - deltaX * zoom;
+      const newYPos = yPos - deltaY * zoom;
+
+      this.props.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: newXPos });
+      this.props.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: newYPos });
+
+      this.setState({
+        startX: evt.clientX,
+        startY: evt.clientY,
+      });
+    }
+    store.graphics2d.forceUpdate();
   }
 
   onMouseDown(evt) {
-    const box = this.m_mount.current.getBoundingClientRect();
+    const objCanvas = this.m_mount.current;
+    const box = objCanvas.getBoundingClientRect();
     const xContainer = evt.clientX - box.left;
     const yContainer = evt.clientY - box.top;
     const xScr = xContainer;
@@ -631,6 +667,12 @@ class Graphics2d extends React.Component {
     const store = this.props;
     const indexTools2d = store.indexTools2d;
     // console.log(`onMouseDown. tool index = ${indexTools2d}`);
+
+    this.setState({
+      stateMouseDown: true,
+      startX: evt.clientX,
+      startY: evt.clientY,
+    });
 
     switch (indexTools2d) {
       case Tools2dType.INTENSITY:
@@ -656,6 +698,10 @@ class Graphics2d extends React.Component {
         break;
       case Tools2dType.DELETE:
         this.m_toolDelete.onMouseDown(xScr, yScr, store);
+        break;
+      case Tools2dType.HAND:
+        objCanvas.classList.remove('cursor-hand');
+        objCanvas.classList.add('cursor-grab');
         break;
       default:
       // not defined
