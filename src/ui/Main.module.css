@@ -67,7 +67,7 @@
   height: 50px;
   position: absolute;
   right: 0;
-  top:50%;
+  top: 50%;
   z-index: 10;
 }
 .left {
@@ -75,13 +75,13 @@
 }
 
 .center div {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-    user-select: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  user-select: none;
 }
 
 .settings {
@@ -89,7 +89,6 @@
 }
 
 @media screen and (min-width: 768px) {
-
   .header {
     display: flex;
     position: relative;
@@ -103,7 +102,7 @@
     margin-top: 1rem;
   }
 
-  .header__panels  {
+  .header__panels {
     display: flex;
     flex-direction: column;
     width: 25rem;
@@ -156,20 +155,21 @@
 }
 
 @media screen and (min-width: 1024px) {
-
   .header {
     align-items: flex-start;
   }
 
-  .header  div {
-    margin-bottom: 1rem;
+  .header div {
+    height: auto;
+    padding-bottom: 0;
+    margin-bottom: 0;
   }
 
   .header__right {
     align-items: stretch;
   }
 
-  .header__panels  {
+  .header__panels {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -203,11 +203,9 @@
   .left {
     top: 8%;
   }
-
 }
 
 @media screen and (min-width: 1024px) and (orientation: landscape) {
-
   .header__panels {
     margin-right: 3rem;
   }
@@ -218,13 +216,11 @@
   }
 
   .left {
-    top:10%;
+    top: 10%;
   }
-
 }
 
 @media screen and (min-width: 1024px) and (orientation: portrait) {
-
   .header__panels {
     flex-wrap: wrap;
   }
@@ -232,19 +228,15 @@
   .settings {
     top: 4rem;
   }
-
 }
 
 @media screen and (min-width: 1440px) {
   .header__panels {
     flex-wrap: nowrap;
   }
-
 }
 
-
 @media screen and (min-width: 2560px) and (orientation: landscape) {
-
   .left {
     top: 5%;
   }
