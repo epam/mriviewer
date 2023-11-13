@@ -125,8 +125,8 @@ const ModalInfo = (props) => {
     return getVolInfo(volumeSet, volume);
   }, [volumeSet, volumeIndex]);
 
-  const slicesInfo = dicomInfo?.m_sliceInfo || [];
-  const tagsList = slicesInfo[currentSlice]?.m_tags || [];
+  const slicesInfo = dicomInfo.m_sliceInfo || [];
+  const tagsList = slicesInfo[currentSlice].m_tags || [];
 
   return (
     <Modal isOpen={stateVis} close={onHide}>

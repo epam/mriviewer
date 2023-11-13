@@ -21,7 +21,6 @@
   display: none;
 }
 
-
 @media screen and (min-width: 768px) {
   .subheader {
     margin: 0;
@@ -51,9 +50,7 @@
   }
 
   .container {
+    width: 600px;
     margin-top: 30px;
   }
-
-
 }
-

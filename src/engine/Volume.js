@@ -172,7 +172,7 @@ class Volume extends React.Component {
 
   // do nothing. But we need to implement render() to run Volume tests
   render() {
-    return <p>></p>;
+    return <p></p>;
   }
 } // end class Volume
 

@@ -6,9 +6,16 @@
     "es6": true
   },
   "root": true,
-  "parser": "babel-eslint",
-  "plugins": ["react", "prettier"],
-  "extends": ["eslint:recommended", "plugin:react/recommended", "prettier"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": ["react", "prettier", "@typescript-eslint"],
+  "extends": ["eslint:recommended", "plugin:react/recommended", "prettier", "plugin:@typescript-eslint/recommended"],
   "settings": {
     "react": {
       "createClass": "createReactClass",
@@ -28,6 +35,7 @@
     "react/no-string-refs": "off",
     "react/jsx-no-undef": "off",
     "react/jsx-key": "off",
+    "react/react-in-jsx-scope": "off",
     "no-case-declarations": "off",
     "react/no-unescaped-entities": "off",
     "linebreak-style": "off",
@@ -53,7 +61,7 @@
     "no-multi-spaces": "off",
     "no-prototype-builtins": "off",
     "wrap-iife": ["error", "any"],
-    "no-use-before-define": ["error", "nofunc"],
+    "no-use-before-define": "off",
     "object-property-newline": "off",
     "no-restricted-syntax": "off",
     "no-else-return": "off",
@@ -66,8 +74,11 @@
     "no-plusplus": "off",
     "no-multi-assign": "off",
     "react/no-unknown-property": "off",
-    "lines-between-class-members": ["error", "always"],
+    "lines-between-class-members": ["off"],
     "no-debugger": "warn",
-    "prettier/prettier": ["error"]
+    "prettier/prettier": ["error"],
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off"
   }
 }

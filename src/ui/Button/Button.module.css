@@ -48,14 +48,11 @@ button:hover,
   background-color: var(--red);
 }
 
-
-
 @media screen and (min-width: 768px) {
   .reset {
     display: flex;
     justify-content: flex-end;
   }
-
 }
 .reset {
   display: inline-block;
@@ -66,8 +63,6 @@ button:hover,
   padding: 0;
   cursor: pointer;
   transition: all 250ms ease-in-out, transform 150ms ease;
-  -webkit-appearance: none;
-  -moz-appearance: none;
 }
 
 .reset:focus {
@@ -108,7 +103,31 @@ button:hover,
 }
 
 .button:not(.reset) {
-    display: block;
+  display: block;
+}
+.button:hover,
+.button:focus {
+  background-color: var(--light-orange);
+}
+
+.button.active {
+  color: var(--red);
+}
+
+.button.accent:hover,
+.button.accent:focus {
+  background-color: var(--red);
+  filter: brightness(85%);
+}
+
+.button.light.active {
+  color: var(--red);
+}
+
+.button.light:hover,
+.button.light:focus {
+  background-color: var(--light);
+  filter: brightness(80%);
 }
 
 @media screen and (min-width: 1024px) {
@@ -121,8 +140,6 @@ button:hover,
     padding: 0;
     cursor: pointer;
     transition: all 250ms ease-in-out, transform 150ms ease;
-    -webkit-appearance: none;
-    -moz-appearance: none;
   }
 
   .reset:focus {
@@ -162,15 +179,6 @@ button:hover,
     fill: var(--white);
   }
 
-  .button:hover,
-  .button:focus {
-    background-color: var(--light-orange);
-  }
-
-  .button.active {
-    color: var(--red);
-  }
-
   .apply {
     background-color: var(--red);
     border-radius: 4px;
@@ -189,16 +197,6 @@ button:hover,
     fill: var(--black);
   }
 
-  .button.light.active {
-    color: var(--red);
-  }
-
-  .button.light:hover,
-  .button.light:focus {
-    background-color: var(--light);
-    filter: brightness(80%);
-  }
-
   .button.accent {
     color: var(--white);
     background-color: var(--red);
@@ -208,13 +206,28 @@ button:hover,
     fill: var(--white);
   }
 
-  .button.accent:hover,
-  .button.accent:focus {
-    background-color: var(--red);
-    filter: brightness(85%);
-  }
-
   .button.accent.active svg {
     fill: var(--black);
   }
+}
+
+.button_start_screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  flex-basis: 33%;
+}
+
+.button_select_file {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  z-index: 10;
+  width: 240px;
+  justify-content: center;
+}
+
+.button_select_file svg {
+  margin-right: 10px;
 }

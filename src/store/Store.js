@@ -125,6 +125,10 @@ const medReducer = (state = initialState, action) => {
       return Object.assign({}, state, { showModalAlert: action.showModalAlert });
     case StoreActionType.SET_SPINNER:
       return Object.assign({}, state, { spinner: action.spinner });
+    case StoreActionType.SET_SPINNER_TITLE:
+      return Object.assign({}, state, { spinnerTitle: action.spinnerTitle });
+    case StoreActionType.SET_SPINNER_PROGRESS:
+      return Object.assign({}, state, { spinnerProgress: action.spinnerProgress });
     default:
       return state;
   }

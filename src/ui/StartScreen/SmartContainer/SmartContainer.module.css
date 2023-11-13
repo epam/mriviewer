@@ -15,9 +15,10 @@
 }
 
 .buttons_toolbar {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
 .buttons_toolbar button {
@@ -64,4 +65,3 @@
     background-position: 100% 0, 0 100%, 0 0, 100% 100%;
   }
 }
-
