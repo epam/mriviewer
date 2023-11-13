@@ -19,9 +19,10 @@ const Tools2dType = {
   EDIT: 6,
   DELETE: 7,
   CLEAR: 8,
-  ZOOM: 9,
-  ZOOM_100: 10,
-  FILTER: 11,
-  NONE: 12,
+  ZOOM_IN: 9,
+  ZOOM_OUT: 10,
+  ZOOM_100: 11,
+  FILTER: 12,
+  NONE: 13,
 };
 export default Tools2dType;

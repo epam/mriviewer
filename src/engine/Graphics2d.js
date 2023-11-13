@@ -166,10 +166,6 @@ class Graphics2d extends React.Component {
     let wScreen = 0,
       hScreen = 0;
 
-    const xPos = store.render2dxPos;
-    const yPos = store.render2dyPos;
-    const zoom = store.render2dZoom;
-
     if (mode2d === Modes2d.TRANSVERSE) {
       // calc screen rect based on physics volume slice size (z slice)
       const xyRratio = pbox.x / pbox.y;
@@ -218,17 +214,15 @@ class Graphics2d extends React.Component {
       let zSlice = Math.floor(zDim * sliceRatio);
       zSlice = zSlice < zDim ? zSlice : zDim - 1;
       const zOff = zSlice * xyDim;
-      const xStep = (zoom * xDim) / wScreen;
-      const yStep = (zoom * yDim) / hScreen;
+      const xStep = xDim / wScreen;
+      const yStep = yDim / hScreen;
       let j = 0;
-      let ay = yPos * yDim;
       if (vol.m_bytesPerVoxel === ONE) {
-        for (let y = 0; y < hScreen; y++, ay += yStep) {
-          const ySrc = Math.floor(ay);
+        for (let y = 0; y < hScreen; y++) {
+          const ySrc = Math.floor(y * yStep);
           const yOff = ySrc * xDim;
-          let ax = xPos * xDim;
-          for (let x = 0; x < wScreen; x++, ax += xStep) {
-            const xSrc = Math.floor(ax);
+          for (let x = 0; x < wScreen; x++) {
+            const xSrc = Math.floor(x * xStep);
             const val = dataSrc[zOff + yOff + xSrc];
             dataDst[j + 0] = val;
             dataDst[j + 1] = val;
@@ -238,12 +232,11 @@ class Graphics2d extends React.Component {
           } // for (x)
         } // for (y)
       } else if (vol.m_bytesPerVoxel === FOUR) {
-        for (let y = 0; y < hScreen; y++, ay += yStep) {
-          const ySrc = Math.floor(ay);
+        for (let y = 0; y < hScreen; y++) {
+          const ySrc = Math.floor(y * yStep);
           const yOff = ySrc * xDim;
-          let ax = xPos * xDim;
-          for (let x = 0; x < wScreen; x++, ax += xStep) {
-            const xSrc = Math.floor(ax);
+          for (let x = 0; x < wScreen; x++) {
+            const xSrc = Math.floor(x * xStep);
             const val = dataSrc[(zOff + yOff + xSrc) * FOUR + OFF_3];
             const val4 = val * FOUR;
             const rCol = roiPal256[val4 + 0];
@@ -305,17 +298,15 @@ class Graphics2d extends React.Component {
       let xSlice = Math.floor(xDim * sliceRatio);
       xSlice = xSlice < xDim ? xSlice : xDim - 1;
 
-      const yStep = (zoom * yDim) / wScreen;
-      const zStep = (zoom * zDim) / hScreen;
+      const yStep = yDim / wScreen;
+      const zStep = zDim / hScreen;
       let j = 0;
-      let az = yPos * zDim;
       if (vol.m_bytesPerVoxel === ONE) {
-        for (let y = 0; y < hScreen; y++, az += zStep) {
-          const zSrc = Math.floor(az);
+        for (let y = 0; y < hScreen; y++) {
+          const zSrc = Math.floor(y * zStep);
           const zOff = zSrc * xDim * yDim;
-          let ay = xPos * yDim;
-          for (let x = 0; x < wScreen; x++, ay += yStep) {
-            const ySrc = Math.floor(ay);
+          for (let x = 0; x < wScreen; x++) {
+            const ySrc = Math.floor(x * yStep);
             const yOff = ySrc * xDim;
             const val = dataSrc[zOff + yOff + xSlice];
 
@@ -328,12 +319,11 @@ class Graphics2d extends React.Component {
           } // for (x)
         } // for (y)
       } else if (vol.m_bytesPerVoxel === FOUR) {
-        for (let y = 0; y < hScreen; y++, az += zStep) {
-          const zSrc = Math.floor(az);
+        for (let y = 0; y < hScreen; y++) {
+          const zSrc = Math.floor(y * zStep);
           const zOff = zSrc * xDim * yDim;
-          let ay = xPos * yDim;
-          for (let x = 0; x < wScreen; x++, ay += yStep) {
-            const ySrc = Math.floor(ay);
+          for (let x = 0; x < wScreen; x++) {
+            const ySrc = Math.floor(x * yStep);
             const yOff = ySrc * xDim;
             const val = dataSrc[(zOff + yOff + xSlice) * FOUR + OFF_3];
             const val4 = val * FOUR;
@@ -398,17 +388,15 @@ class Graphics2d extends React.Component {
       ySlice = ySlice < yDim ? ySlice : yDim - 1;
       const yOff = ySlice * xDim;
 
-      const xStep = (zoom * xDim) / wScreen;
-      const zStep = (zoom * zDim) / hScreen;
+      const xStep = xDim / wScreen;
+      const zStep = zDim / hScreen;
       let j = 0;
-      let az = yPos * zDim;
       if (vol.m_bytesPerVoxel === ONE) {
-        for (let y = 0; y < hScreen; y++, az += zStep) {
-          const zSrc = Math.floor(az);
+        for (let y = 0; y < hScreen; y++) {
+          const zSrc = Math.floor(y * zStep);
           const zOff = zSrc * xDim * yDim;
-          let ax = xPos * xDim;
-          for (let x = 0; x < wScreen; x++, ax += xStep) {
-            const xSrc = Math.floor(ax);
+          for (let x = 0; x < wScreen; x++) {
+            const xSrc = Math.floor(x * xStep);
             const val = dataSrc[zOff + yOff + xSrc];
 
             dataDst[j + 0] = val;
@@ -420,12 +408,11 @@ class Graphics2d extends React.Component {
           } // for (x)
         } // for (y)
       } else if (vol.m_bytesPerVoxel === FOUR) {
-        for (let y = 0; y < hScreen; y++, az += zStep) {
-          const zSrc = Math.floor(az);
+        for (let y = 0; y < hScreen; y++) {
+          const zSrc = Math.floor(y * zStep);
           const zOff = zSrc * xDim * yDim;
-          let ax = xPos * xDim;
-          for (let x = 0; x < wScreen; x++, ax += xStep) {
-            const xSrc = Math.floor(ax);
+          for (let x = 0; x < wScreen; x++) {
+            const xSrc = Math.floor(x * xStep);
             const val = dataSrc[(zOff + yOff + xSrc) * FOUR + OFF_3];
             const val4 = val * FOUR;
             const rCol = roiPal256[val4 + 0];
@@ -461,19 +448,25 @@ class Graphics2d extends React.Component {
   }
 
   renderReadyImage() {
+    const objCanvas = this.m_mount.current;
+    const ctx = objCanvas.getContext('2d');
+    const store = this.props;
+    const zoom = store.render2dZoom;
+    const xPos = store.render2dxPos;
+    const yPos = store.render2dyPos;
+    const canvasWidth = objCanvas.width;
+    const canvasHeight = objCanvas.height;
+    const newImgWidth = canvasWidth / zoom;
+    const newImgHeight = canvasHeight / zoom;
+
     if (!this.m_isMounted) {
       return;
     }
-
-    const objCanvas = this.m_mount.current;
     if (objCanvas === null) {
       return;
     }
-    const ctx = objCanvas.getContext('2d');
     // prepare canvas
     this.fillBackground(ctx);
-
-    const store = this.props;
 
     const volSet = store.volumeSet;
     if (volSet.getNumVolumes() === 0) {
@@ -491,35 +484,60 @@ class Graphics2d extends React.Component {
       const h = this.m_toolPick.m_hScreen;
       this.segm2d.render(ctx, w, h, this.imgData);
     } else {
-      ctx.putImageData(this.imgData, 0, 0);
+      createImageBitmap(this.imgData)
+        .then((imageBitmap) => {
+          ctx.drawImage(imageBitmap, xPos, yPos, canvasWidth, canvasHeight, 0, 0, newImgWidth, newImgHeight);
+        })
+        .then(() => {
+          this.m_toolPick.render(ctx);
+          this.m_toolDistance.render(ctx, store);
+          this.m_toolAngle.render(ctx, store);
+          this.m_toolArea.render(ctx, store);
+          this.m_toolRect.render(ctx, store);
+          this.m_toolText.render(ctx, store);
+          this.m_toolEdit.render(ctx, store);
+          this.m_toolDelete.render(ctx, store);
+        });
     }
-
-    // render all tools
-    this.m_toolPick.render(ctx);
-    this.m_toolDistance.render(ctx, store);
-    this.m_toolAngle.render(ctx, store);
-    this.m_toolArea.render(ctx, store);
-    this.m_toolRect.render(ctx, store);
-    this.m_toolText.render(ctx, store);
-    this.m_toolEdit.render(ctx, store);
-    this.m_toolDelete.render(ctx, store);
   }
 
   onMouseWheel(evt) {
+    const objCanvas = this.m_mount.current;
+    const canvasRect = objCanvas.getBoundingClientRect();
+    let xPosNew;
+    let yPosNew;
     const store = this.props;
-    const step = evt.deltaY * 2 ** -10;
-
     const zoom = store.render2dZoom;
-    let zoomNew = zoom + step;
-    let xPosNew = store.render2dxPos - ((step / 4) * evt.clientX) / evt.clientY;
-    let yPosNew = store.render2dyPos - ((step / 4) * evt.clientY) / evt.clientX;
+    const step = evt.deltaY * 2 ** -10;
+    let newZoom = zoom + step;
 
-    console.log(`onMouseWheel.evt = ${xPosNew}, ${yPosNew}`);
-    // console.log(`onMouseWheel. zoom.puml = ${zoom.puml} zoomNew = ${zoomNew}, xyPos = ${xPosNew},${yPosNew}`);
-    if (Math.abs(zoomNew) > 1 || Math.abs(zoomNew) < 0.02 || xPosNew < 0 || yPosNew < 0 || xPosNew > 1 || yPosNew > 1) {
+    if (step < 0) {
+      const mouseX = (evt.clientX - canvasRect.left) * zoom + store.render2dxPos;
+      const mouseY = (evt.clientY - canvasRect.top) * zoom + store.render2dyPos;
+      xPosNew = mouseX - (mouseX - store.render2dxPos) * (newZoom / zoom);
+      yPosNew = mouseY - (mouseY - store.render2dyPos) * (newZoom / zoom);
+    } else {
+      const initialX = canvasRect.width * zoom + store.render2dxPos;
+      const initialY = canvasRect.height * zoom + store.render2dyPos;
+      xPosNew = initialX - (initialX - store.render2dxPos) * (newZoom / zoom);
+      yPosNew = initialY - (initialY - store.render2dyPos) * (newZoom / zoom);
+    }
+
+    if (xPosNew < 0) {
+      xPosNew = 0;
+    }
+    if (yPosNew < 0) {
+      yPosNew = 0;
+    }
+    if (newZoom > 1) {
+      newZoom = 1;
+      xPosNew = 0;
+      yPosNew = 0;
+    }
+    if (newZoom < 0.1) {
       return;
     }
-    store.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: zoomNew });
+    store.dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: newZoom });
     store.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: xPosNew });
     store.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: yPosNew });
 
