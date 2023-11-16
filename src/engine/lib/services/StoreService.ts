@@ -80,11 +80,10 @@ export class MRIStoreService {
     this.dispatchActions(actions);
   }
 
-  public setVolumeLoadFailed(fileName: string, errors: string[]): void {
+  public setVolumeLoadFailed(fileName: string): void {
     const actions = [
-      { type: StoreActionType.SET_ERR_ARRAY, errors },
       { type: StoreActionType.SET_VOLUME_SET, volume: null },
-      { type: StoreActionType.SET_FILENAME, fileName: fileName },
+      { type: StoreActionType.SET_FILENAME, fileName },
       { type: StoreActionType.SET_PROGRESS, progress: 0 },
       { type: StoreActionType.SET_SPINNER, spinner: false },
       { type: StoreActionType.SET_IS_LOADED, isLoaded: false },
