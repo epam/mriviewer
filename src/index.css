@@ -59,3 +59,11 @@ svg {
   vertical-align: middle;
   color: var(--white);
 }
+
+.cursor-grab {
+  cursor: grabbing;
+}
+
+.cursor-hand {
+  cursor: grab;
+}

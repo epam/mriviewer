@@ -13,7 +13,7 @@ import { Container } from './Layout/Container';
 
 const UiZoomTools = (props) => {
   const MIN_ZOOM_THRESHOLD = 0.8;
-  const [activeButton, setActiveButton] = useState(Tools2dType.NONE);
+  const [activeButton, setActiveButton] = useState(Tools2dType.HAND);
 
   const zoomImage = (step, buttonId) => {
     const currentZoom = props.render2dZoom;
