@@ -22,12 +22,11 @@
   overflow: hidden;
 }
 
-.horizontal button > svg > use[xlinkHref$="#folder"] {
+.horizontal button > svg > use[xlinkHref$='#folder'] {
   display: none;
 }
 
 @media screen and (min-width: 768px) {
-
   .container {
     display: inline-flex;
     flex-wrap: wrap;
@@ -38,7 +37,6 @@
 
   .vertical {
     flex-direction: column;
-
   }
 
   .vertical:not(:first-child) {
@@ -52,8 +50,6 @@
   .horizontal {
     display: none;
   }
-
-
 }
 
 @media screen and (min-width: 1024px) {
@@ -71,8 +67,4 @@
     color: #18191b;
     background: red;
   }
-
 }
-
-
-

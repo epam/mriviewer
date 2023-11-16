@@ -8,7 +8,7 @@
 }
 
 .slider {
-    flex: 1;
+  flex: 1;
 }
 
 .caption {
@@ -19,5 +19,4 @@
 }
 
 @media screen and(min-width: 768px) {
-
 }

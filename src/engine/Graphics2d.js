@@ -33,6 +33,7 @@ class Graphics2d extends React.Component {
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseWheel = this.onMouseWheel.bind(this);
+    this.setDataWindow = this.setDataWindow.bind(this);
 
     this.m_sliceRatio = 0.5;
     this.m_mode2d = Modes2d.TRANSVERSE;
@@ -63,6 +64,10 @@ class Graphics2d extends React.Component {
     // segm 2d
     this.segm2d = new Segm2d(this);
     this.m_isSegmented = false;
+    // data window
+    this.m_winRight = 1;
+    this.m_winLeft = 0;
+    this.m_newWin = false;
 
     // tools2d
     this.m_toolPick = new ToolPick(this);
@@ -105,6 +110,13 @@ class Graphics2d extends React.Component {
     return this.m_mount.current.toDataURL();
   }
 
+  setDataWindow(value) {
+    const [min, max] = value;
+    this.m_winLeft = min;
+    this.m_winRight = max;
+    this.forceUpdate();
+  }
+
   prepareImageForRender(volIndexArg) {
     //TODO: center the image by click
     const objCanvas = this.m_mount.current; // Canvas HTML element reference
@@ -125,6 +137,11 @@ class Graphics2d extends React.Component {
 
     const store = this.props;
     const volSet = store.volumeSet;
+    const dicom = store.loaderDicom;
+    if (dicom != null && !this.props.is16bit) {
+      this.m_winRight = dicom.m_winRight;
+      this.m_winLeft = dicom.m_winLeft;
+    }
     // const volIndex = this.m_volumeIndex;
     const volIndex = volIndexArg !== undefined ? volIndexArg : store.volumeIndex;
 
@@ -142,7 +159,10 @@ class Graphics2d extends React.Component {
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
     const xyDim = xDim * yDim;
-    const dataSrc = vol.m_dataArray; // 1 or 4 bytes array of pixels
+    let dataSrc = vol.m_dataArray; // 1 or 4 bytes array of pixels
+    if (dicom != null && this.props.is16bit) {
+      dataSrc = vol.m_dataArray16; // 2 bytes array of pixels
+    }
     if (dataSrc.length !== xDim * yDim * zDim * vol.m_bytesPerVoxel) {
       console.log(`Bad src data len = ${dataSrc.length}, but expect ${xDim}*${yDim}*${zDim}`);
     }
@@ -226,9 +246,16 @@ class Graphics2d extends React.Component {
           for (let x = 0; x < wScreen; x++) {
             const xSrc = Math.floor(x * xStep);
             const val = dataSrc[zOff + yOff + xSrc];
-            dataDst[j + 0] = val;
-            dataDst[j + 1] = val;
-            dataDst[j + 2] = val;
+            let newVal = val;
+            if (dicom != null && this.props.is16bit) {
+              const scale = 255 / ((this.m_winRight - this.m_winLeft) * (dicom.m_maxVal - dicom.m_minVal));
+              newVal = Math.floor((val - this.m_winLeft * (dicom.m_maxVal - dicom.m_minVal)) * scale);
+            }
+            if (newVal < 0) newVal = 0;
+            if (newVal > 255) newVal = 255;
+            dataDst[j + 0] = newVal;
+            dataDst[j + 1] = newVal;
+            dataDst[j + 2] = newVal;
             dataDst[j + 3] = 255; // opacity
             j += 4;
           } // for (x)
@@ -311,12 +338,17 @@ class Graphics2d extends React.Component {
             const ySrc = Math.floor(x * yStep);
             const yOff = ySrc * xDim;
             const val = dataSrc[zOff + yOff + xSlice];
-
-            dataDst[j + 0] = val;
-            dataDst[j + 1] = val;
-            dataDst[j + 2] = val;
+            let newVal = val;
+            if (dicom != null) {
+              const scale = 255 / ((this.m_winRight - this.m_winLeft) * (dicom.m_maxVal - dicom.m_minVal));
+              newVal = Math.floor((val - this.m_winLeft * (dicom.m_maxVal - dicom.m_minVal)) * scale);
+            }
+            if (newVal < 0) newVal = 0;
+            if (newVal > 255) newVal = 255;
+            dataDst[j + 0] = newVal;
+            dataDst[j + 1] = newVal;
+            dataDst[j + 2] = newVal;
             dataDst[j + 3] = 255; // opacity
-
             j += 4;
           } // for (x)
         } // for (y)
@@ -400,12 +432,17 @@ class Graphics2d extends React.Component {
           for (let x = 0; x < wScreen; x++) {
             const xSrc = Math.floor(x * xStep);
             const val = dataSrc[zOff + yOff + xSrc];
-
-            dataDst[j + 0] = val;
-            dataDst[j + 1] = val;
-            dataDst[j + 2] = val;
+            let newVal = val;
+            if (dicom != null) {
+              const scale = 255 / ((this.m_winRight - this.m_winLeft) * (dicom.m_maxVal - dicom.m_minVal));
+              newVal = Math.floor((val - this.m_winLeft * (dicom.m_maxVal - dicom.m_minVal)) * scale);
+            }
+            if (newVal < 0) newVal = 0;
+            if (newVal > 255) newVal = 255;
+            dataDst[j + 0] = newVal;
+            dataDst[j + 1] = newVal;
+            dataDst[j + 2] = newVal;
             dataDst[j + 3] = 255; // opacity
-
             j += 4;
           } // for (x)
         } // for (y)
@@ -752,8 +789,6 @@ class Graphics2d extends React.Component {
    * Main component render func callback
    */
   render() {
-    // const store = this.props;
-    // const volSet = store.volumeSet;
     this.m_sliceRatio = this.props.sliderValue;
     this.m_mode2d = this.props.mode2d;
     return (

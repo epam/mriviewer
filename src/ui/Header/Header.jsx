@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { UIButton } from '../Button/Button';
 import { useOnEvent } from '../hooks/useOnEvent';
 import { ModalSelectFile } from '../Modals/ModalSelectFile';
@@ -14,12 +15,18 @@ import { UiReportMenu } from '../OpenFile/UiReportMenu';
 import { MriEvents } from '../../engine/lib/enums';
 
 import css from './Header.module.css';
+import StoreActionType from '../../store/ActionTypes';
 
 export function Header() {
   const [showOpenFromDeviceModal, setShowOpenFromDeviceModal] = useState(false);
+  const { showModalSelectFiles } = useSelector((state) => state);
+  const dispatch = useDispatch();
 
   const onButtonOpenLocalFileClick = () => {
     setShowOpenFromDeviceModal(true);
+    dispatch({ type: StoreActionType.SET_SHOW_MODAL_SELECT_FILES, showModalSelectFiles: true });
+    dispatch({ type: StoreActionType.SET_SHOW_WINDOW_RANGE, showWindowRangeSlider: false });
+    dispatch({ type: StoreActionType.SET_SHOW_WINDOW_RANGE, showWindowRangeSlider: false });
   };
 
   const onHide = () => {
@@ -41,7 +48,7 @@ export function Header() {
       <Tooltip content="Open demo data">
         <OpenDemoComponent cx={css.header_button} />
       </Tooltip>
-      {showOpenFromDeviceModal && <ModalSelectFile stateVis={showOpenFromDeviceModal} onHide={onHide} />}
+      {showOpenFromDeviceModal && <ModalSelectFile stateVis={showModalSelectFiles} onHide={onHide} />}
     </header>
   );
 }

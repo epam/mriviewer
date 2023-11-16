@@ -154,6 +154,10 @@ class LoaderDicom {
     this.m_padValue = -LARGE_NUMBER;
     this.m_windowCenter = LARGE_NUMBER; // TAG_WINDOW_CENTER
     this.m_windowWidth = LARGE_NUMBER; // TAG_WINDOW_WIDTH
+    this.m_winMin = 0;
+    this.m_winMax = 1;
+    this.m_minVal = 0;
+    this.m_maxVal = 0;
     this.m_rescaleIntercept = 0; // TAG_RESCALE_INTERCEPT, used as v` = v * rescaleSlope + rescaleIntercept
     this.m_rescaleSlope = 1; // TAG_RESCALE_SLOPE
     this.m_rescaleHounsfield = false;
@@ -263,6 +267,7 @@ class LoaderDicom {
     console.assert(volSet instanceof VolumeSet, 'Should be volume set');
     console.assert(typeof indexSelected === 'number', 'index should be number');
     console.assert(typeof hashSelected === 'number', 'index should be number');
+    const is16bit = true;
 
     let volDst = null;
     if (indexSelected < volSet.getNumVolumes()) {
@@ -327,6 +332,7 @@ class LoaderDicom {
     let i;
     let dataSize = 0;
     let dataArray = null;
+    let dataArray16 = null;
 
     // convert big endian in slices
     if (!this.m_littleEndian) {
@@ -395,6 +401,8 @@ class LoaderDicom {
         } // for (i) all slice pixels
       } // for sl
     } // for ser
+    this.m_minVal = minVal;
+    this.m_maxVal = maxVal;
 
     console.log(`Build Volume. min/max value=${minVal}/${maxVal}. Volume dim = ${this.m_xDim}*${this.m_yDim}*${this.m_zDim}`);
     console.log(`Min slice number = ${serie.m_minSlice}`);
@@ -452,12 +460,18 @@ class LoaderDicom {
 
     dataSize = this.m_xDim * this.m_yDim * this.m_zDim;
     dataArray = new Uint8Array(dataSize);
+    if (is16bit) dataArray16 = new Uint16Array(dataSize);
     if (dataArray === null) {
       console.log('no memory');
       return LoadResult.ERROR_NO_MEMORY;
     }
     for (i = 0; i < dataSize; i++) {
       dataArray[i] = 0;
+    }
+    if (is16bit) {
+      for (i = 0; i < dataSize; i++) {
+        dataArray16[i] = 0;
+      }
     }
 
     // convert slices data into volume set data (16 bpp -> 8 bpp, etc)
@@ -480,6 +494,17 @@ class LoaderDicom {
 
       if (dataSrc16 !== null) {
         const offZ = z * xyDim;
+        const BITS_16 = 16;
+        const max16 = 1 << BITS_16;
+        if (is16bit) {
+          for (i = 0; i < xyDim; i++) {
+            let val_16 = dataSrc16[i] * this.m_rescaleSlope + this.m_rescaleIntercept;
+            //let val = (val_16 - minVal) * max16 / (maxVal - minVal);
+            let val = val_16 - minVal;
+            val = Math.floor(val);
+            dataArray16[offZ + i] = val;
+          } // for i
+        }
 
         if (this.m_windowCenter !== LARGE_NUMBER && this.m_windowWidth !== LARGE_NUMBER) {
           const winMin = this.m_windowCenter - this.m_windowWidth * 0.5;
@@ -508,6 +533,11 @@ class LoaderDicom {
             dataArray[offZ + i] = val;
           } // for i
         } // no defined window center, width
+
+        if (this.m_windowCenter !== LARGE_NUMBER && this.m_windowWidth !== LARGE_NUMBER && !this.m_rescaleHounsfield) {
+          this.m_winRight = (-this.m_minVal + this.m_windowCenter + this.m_windowWidth / 2) / (this.m_maxVal - this.m_minVal);
+          this.m_winLeft = (-this.m_minVal + this.m_windowCenter - this.m_windowWidth / 2) / (this.m_maxVal - this.m_minVal);
+        }
       } // if has slice data
     } // for(s) all slices
 
@@ -739,6 +769,7 @@ class LoaderDicom {
     volDst.m_yDim = this.m_yDim;
     volDst.m_zDim = this.m_zDim;
     volDst.m_dataArray = dataArray;
+    volDst.m_dataArray16 = dataArray16;
     volDst.m_dataSize = dataSize;
     volDst.m_bytesPerVoxel = ONE;
     volDst.m_boxSize.x = this.m_boxSize.x;

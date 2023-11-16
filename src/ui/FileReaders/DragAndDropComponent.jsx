@@ -1,20 +1,12 @@
 import { useState } from 'react';
 import css from './DragAndDrop.module.css';
 import { SVG } from '../Button/SVG';
-import UiModalWindowCenterWidth from '../Modals/UiModalWinCW';
 import MriViwer from '../../engine/lib/MRIViewer';
-import { useOnEvent } from '../hooks/useOnEvent';
-import { MriEvents } from '../../engine/lib/enums';
 
 const IMG_DROPZONE_SIZE = 49;
 
 export const DragAndDropComponent = () => {
   const [isActiveDnd, setIsActiveDnd] = useState(false);
-  const [showModalWindowCW, setShowModalWindowCW] = useState(false);
-
-  useOnEvent(MriEvents.FILE_READ_SUCCESS, () => {
-    setShowModalWindowCW(true);
-  });
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -34,7 +26,6 @@ export const DragAndDropComponent = () => {
         onDragLeave={() => setIsActiveDnd(false)}
         onDrop={handleDrop}
       ></div>
-      {showModalWindowCW && <UiModalWindowCenterWidth stateVis={showModalWindowCW} onHide={() => setShowModalWindowCW(false)} />}
     </>
   );
 };
