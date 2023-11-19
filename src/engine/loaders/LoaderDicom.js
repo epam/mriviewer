@@ -26,8 +26,6 @@ import DicomSlice from './dicomslice';
 import DicomSlicesVolume from './dicomslicesvolume';
 import DicomSliceInfo from './dicomsliceinfo';
 import DicomTagInfo from './dicomtaginfo';
-import FileTools from './FileTools';
-import FileLoader from './FileLoader';
 
 // import Volume from '../Volume';
 import VolumeSet from '../VolumeSet';
@@ -38,7 +36,6 @@ import Volume from '../Volume';
 // ********************************************************
 
 const DEBUG_PRINT_TAGS_INFO = false;
-const DEBUG_PRINT_INDI_SLICE_INFO = false;
 const NEED_SCAN_EMPTY_BORDER = false;
 const NEED_APPLY_GAUSS_SMOOTHING = false;
 
@@ -157,6 +154,10 @@ class LoaderDicom {
     this.m_padValue = -LARGE_NUMBER;
     this.m_windowCenter = LARGE_NUMBER; // TAG_WINDOW_CENTER
     this.m_windowWidth = LARGE_NUMBER; // TAG_WINDOW_WIDTH
+    this.m_winMin = 0;
+    this.m_winMax = 1;
+    this.m_minVal = 0;
+    this.m_maxVal = 0;
     this.m_rescaleIntercept = 0; // TAG_RESCALE_INTERCEPT, used as v` = v * rescaleSlope + rescaleIntercept
     this.m_rescaleSlope = 1; // TAG_RESCALE_SLOPE
     this.m_rescaleHounsfield = false;
@@ -235,8 +236,6 @@ class LoaderDicom {
     this.m_sliceLocMin = +1.0e12;
     // eslint-disable-next-line
     this.m_sliceLocMax = -1.0e12;
-
-    this.runLoader = this.runLoader.bind(this);
   }
   getBoxSize() {
     return this.m_boxSize;
@@ -268,6 +267,7 @@ class LoaderDicom {
     console.assert(volSet instanceof VolumeSet, 'Should be volume set');
     console.assert(typeof indexSelected === 'number', 'index should be number');
     console.assert(typeof hashSelected === 'number', 'index should be number');
+    const is16bit = true;
 
     let volDst = null;
     if (indexSelected < volSet.getNumVolumes()) {
@@ -332,6 +332,7 @@ class LoaderDicom {
     let i;
     let dataSize = 0;
     let dataArray = null;
+    let dataArray16 = null;
 
     // convert big endian in slices
     if (!this.m_littleEndian) {
@@ -400,6 +401,8 @@ class LoaderDicom {
         } // for (i) all slice pixels
       } // for sl
     } // for ser
+    this.m_minVal = minVal;
+    this.m_maxVal = maxVal;
 
     console.log(`Build Volume. min/max value=${minVal}/${maxVal}. Volume dim = ${this.m_xDim}*${this.m_yDim}*${this.m_zDim}`);
     console.log(`Min slice number = ${serie.m_minSlice}`);
@@ -457,12 +460,18 @@ class LoaderDicom {
 
     dataSize = this.m_xDim * this.m_yDim * this.m_zDim;
     dataArray = new Uint8Array(dataSize);
+    if (is16bit) dataArray16 = new Uint16Array(dataSize);
     if (dataArray === null) {
       console.log('no memory');
       return LoadResult.ERROR_NO_MEMORY;
     }
     for (i = 0; i < dataSize; i++) {
       dataArray[i] = 0;
+    }
+    if (is16bit) {
+      for (i = 0; i < dataSize; i++) {
+        dataArray16[i] = 0;
+      }
     }
 
     // convert slices data into volume set data (16 bpp -> 8 bpp, etc)
@@ -485,6 +494,17 @@ class LoaderDicom {
 
       if (dataSrc16 !== null) {
         const offZ = z * xyDim;
+        const BITS_16 = 16;
+        const max16 = 1 << BITS_16;
+        if (is16bit) {
+          for (i = 0; i < xyDim; i++) {
+            let val_16 = dataSrc16[i] * this.m_rescaleSlope + this.m_rescaleIntercept;
+            //let val = (val_16 - minVal) * max16 / (maxVal - minVal);
+            let val = val_16 - minVal;
+            val = Math.floor(val);
+            dataArray16[offZ + i] = val;
+          } // for i
+        }
 
         if (this.m_windowCenter !== LARGE_NUMBER && this.m_windowWidth !== LARGE_NUMBER) {
           const winMin = this.m_windowCenter - this.m_windowWidth * 0.5;
@@ -513,6 +533,11 @@ class LoaderDicom {
             dataArray[offZ + i] = val;
           } // for i
         } // no defined window center, width
+
+        if (this.m_windowCenter !== LARGE_NUMBER && this.m_windowWidth !== LARGE_NUMBER && !this.m_rescaleHounsfield) {
+          this.m_winRight = (-this.m_minVal + this.m_windowCenter + this.m_windowWidth / 2) / (this.m_maxVal - this.m_minVal);
+          this.m_winLeft = (-this.m_minVal + this.m_windowCenter - this.m_windowWidth / 2) / (this.m_maxVal - this.m_minVal);
+        }
       } // if has slice data
     } // for(s) all slices
 
@@ -744,6 +769,7 @@ class LoaderDicom {
     volDst.m_yDim = this.m_yDim;
     volDst.m_zDim = this.m_zDim;
     volDst.m_dataArray = dataArray;
+    volDst.m_dataArray16 = dataArray16;
     volDst.m_dataSize = dataSize;
     volDst.m_bytesPerVoxel = ONE;
     volDst.m_boxSize.x = this.m_boxSize.x;
@@ -1865,238 +1891,6 @@ class LoaderDicom {
     }
     return LoadResult.SUCCESS;
   } // end readFromBuffer
-
-  readFromUrl(volSet, strUrl, callbackProgress, callbackComplete) {
-    // check arguments
-    console.assert(volSet != null, 'Null volume');
-    console.assert(volSet instanceof VolumeSet, 'Should be volume set');
-    console.assert(strUrl != null, 'Null string url');
-
-    // console.log(`typeof(strUrl) - ${typeof(strUrl)}`);
-    console.assert(typeof strUrl === 'string', 'Should be string in url');
-
-    if (!FileTools.isValidUrl(strUrl)) {
-      console.log(`readFromUrl: not vaild URL = = ${strUrl} `);
-      return false;
-    }
-    this.m_folder = FileTools.getFolderNameFromUrl(strUrl);
-    const urlFileList = this.m_folder + '/file_list.txt';
-    console.log(`readFromUrl: load file = ${urlFileList} `);
-
-    const fileLoader = new FileLoader(urlFileList);
-    this.m_callbackComplete = callbackComplete;
-    this.m_callbackProgress = callbackProgress;
-    this.m_fileListCounter = 0;
-    fileLoader.readFile(
-      (arrBuf) => {
-        this.m_fileListCounter += 1;
-        if (this.m_fileListCounter === 1) {
-          const okRead = this.readReadyFileList(volSet, arrBuf, callbackProgress, callbackComplete);
-          return okRead;
-        }
-        return true;
-      },
-      (errMsg) => {
-        console.log(`Error read file: ${errMsg}`);
-        callbackComplete(LoadResult.ERROR_CANT_OPEN_URL, null, 0, null);
-        return false;
-      }
-    ); // get file from server
-    return true;
-  }
-  readReadyFileList(volSet, arrBuf, callbackProgress, callbackComplete) {
-    // check arguments
-    console.assert(volSet != null, 'Null volume');
-    console.assert(volSet instanceof VolumeSet, 'Should be volume set');
-    console.assert(arrBuf != null, 'Null array');
-    console.assert(arrBuf.constructor.name === 'ArrayBuffer', 'Should be ArrayBuf in arrBuf');
-
-    const uint8Arr = new Uint8Array(arrBuf);
-    // const strFileContent = new TextDecoder('utf-8').decode(uint8Arr);
-    const strFileContent = String.fromCharCode.apply(null, uint8Arr);
-
-    const LEN_LOG = 64;
-    const strLog = strFileContent.substr(0, LEN_LOG);
-    console.log(`Loaded file list. Started with:  ${strLog} ...`);
-
-    const arrFileNames = strFileContent.split('\n');
-
-    let numFiles = arrFileNames.length;
-    // check last empty elements
-    const MIN_FILE_NAME_SIZE = 4;
-    for (let i = numFiles - 1; i >= 0; i--) {
-      if (arrFileNames[i].endsWith('\r')) {
-        arrFileNames[i] = arrFileNames[i].substring(0, arrFileNames[i].length - 1);
-      }
-      if (arrFileNames[i].length < MIN_FILE_NAME_SIZE) {
-        arrFileNames.pop();
-      }
-    }
-    numFiles = arrFileNames.length;
-
-    this.m_zDim = numFiles;
-    console.log(`Loaded file list. ${numFiles} files will be loaded. 1st file in list is = ${arrFileNames[0]}`);
-    console.log(`Loaded file list. Last file in list is = ${arrFileNames[numFiles - 1]}`);
-
-    // declare slices array
-    for (let i = 0; i < numFiles; i++) {
-      // this.m_slices[i] = null;
-      this.m_errors[i] = -1;
-      this.m_loaders[i] = null;
-    }
-
-    // physical dimension
-    this.m_pixelSpacing = {
-      x: 0.0,
-      y: 0.0,
-      z: 0.0,
-    };
-    this.m_filesLoadedCounter = 0;
-    this.m_numFailsLoad = 0;
-    this.m_numLoadedFiles = numFiles;
-
-    this.m_imagePosMin = {
-      // eslint-disable-next-line
-      x: +1.0e12,
-      // eslint-disable-next-line
-      y: +1.0e12,
-      // eslint-disable-next-line
-      z: +1.0e12,
-    };
-    this.m_imagePosMax = {
-      // eslint-disable-next-line
-      x: -1.0e12,
-      // eslint-disable-next-line
-      y: -1.0e12,
-      // eslint-disable-next-line
-      z: -1.0e12,
-    };
-
-    // eslint-disable-next-line
-    this.m_sliceLocMin = +1.0e12;
-    // eslint-disable-next-line
-    this.m_sliceLocMax = -1.0e12;
-
-    for (let i = 0; i < this.m_numLoadedFiles && this.m_numFailsLoad < 1; i++) {
-      const urlFile = `${this.m_folder}/${arrFileNames[i]}`;
-      // console.log(`Loading (${i})-th url: ${urlFile}`);
-      this.m_loaders[i] = new FileLoader(urlFile);
-      const loader = this.m_loaders[i];
-      const NOT_FROM_GOOGLE = false;
-      // let volDst = volSet.getVolume(0);
-      //if (volDst === null) {
-      //  volDst = new Volume();
-      //  volSet.addVolume(volDst);
-      // }
-      const okLoader = this.runLoader(volSet, arrFileNames[i], loader, i, callbackProgress, callbackComplete, NOT_FROM_GOOGLE);
-      if (!okLoader) {
-        return false;
-      }
-    } // for i all files-slices in folder
-    return true;
-  } // end readReadyFileList(arrBuf)
-  /**
-   * Run loader to read dicom file
-   * @param {object} volSet - destination volum set
-   * @param {string} fileName - File to read
-   * @param {object} loader - loader object with file inside
-   * @param {number} i - index of file in files array
-   * @param {func} callbackProgress - callback for continiuos load reporting
-   * @param {func} callbackComplete - callback after load finish
-   * @param {bool} fromGoogle - true, if from google store
-   *
-   */
-  runLoader(volSet, fileName, loader, i, callbackProgress, callbackComplete, fromGoogle) {
-    this.m_fromGoogle = fromGoogle;
-    // console.log(`Loading url: ${fileName}`);
-    loader.readFile(
-      (fileArrBu) => {
-        const ratioLoaded = this.m_filesLoadedCounter / this.m_numLoadedFiles;
-        const VAL_MASK = 7;
-        if (callbackProgress !== undefined && (this.m_filesLoadedCounter & VAL_MASK) === 0) {
-          callbackProgress(ratioLoaded);
-        }
-        if (callbackProgress !== undefined && this.m_filesLoadedCounter + 1 === this.m_numLoadedFiles) {
-          callbackProgress(1.0);
-        }
-        this.m_newTagEvent.detail.fileName = fileName;
-
-        let status;
-        if (this.m_fromGoogle) {
-          status = this.readFromGoogleBuffer(i, fileName, ratioLoaded, fileArrBu, callbackProgress, callbackComplete);
-        } else {
-          status = this.readFromBuffer(i, fileName, ratioLoaded, fileArrBu, callbackProgress, callbackComplete);
-        }
-
-        if (status !== LoadResult.SUCCESS && this.m_numFailsLoad === 0) {
-          this.m_numFailsLoad += 1;
-          if (callbackComplete !== null) {
-            callbackComplete(status, null, 0, null, fileName);
-            return false;
-          }
-        }
-        // update total files counter
-        this.m_filesLoadedCounter += 1;
-        if (DEBUG_PRINT_INDI_SLICE_INFO) {
-          console.log(`Loaded local indi slice: ${fileName}. Total loaded slices: ${this.m_filesLoadedCounter}`);
-        }
-        // console.log(`!!!!!!!!! m_filesLoadedCounter = ${this.m_filesLoadedCounter} / ${this.m_numLoadedFiles}`);
-
-        if (this.m_filesLoadedCounter === this.m_numLoadedFiles) {
-          // Finalize physic dimension
-          if (DEBUG_PRINT_TAGS_INFO) {
-            console.log(`slice location (min, max) = ${this.m_sliceLocMin}, ${this.m_sliceLocMax}`);
-          }
-          const imagePosBox = {
-            x: this.m_imagePosMax.x - this.m_imagePosMin.x,
-            y: this.m_imagePosMax.y - this.m_imagePosMin.y,
-            z: this.m_imagePosMax.z - this.m_imagePosMin.z,
-          };
-          const TOO_MIN = 0.00001;
-          let zBox;
-          if (Math.abs(this.m_pixelSpacing.z) > TOO_MIN) {
-            zBox = this.m_pixelSpacing.z * this.m_zDim;
-          } else {
-            zBox = imagePosBox.z;
-            if (Math.abs(zBox) < TOO_MIN) {
-              zBox = imagePosBox.x;
-              if (Math.abs(zBox) < TOO_MIN) {
-                zBox = imagePosBox.y;
-              }
-            }
-          } // if pixel spacing 0
-          if (zBox < TOO_MIN) {
-            zBox = 1.0;
-          }
-
-          this.m_pixelSpacing.z = zBox / this.m_zDim;
-          this.m_boxSize.z = this.m_zDim * this.m_pixelSpacing.z;
-          this.m_boxSize.x = this.m_xDim * this.m_pixelSpacing.x;
-          this.m_boxSize.y = this.m_yDim * this.m_pixelSpacing.y;
-          console.log(`Volume local phys dim: ${this.m_boxSize.x} * ${this.m_boxSize.y} * ${this.m_boxSize.z}`);
-          // TODO: add hash
-          let series = this.m_slicesVolume.getSeries();
-          if (series.length === 0) {
-            this.m_slicesVolume.buildSeriesInfo();
-            series = this.m_slicesVolume.getSeries();
-          }
-          const indexSerie = 0;
-          const hash = series[indexSerie].m_hash;
-          const errStatus = this.createVolumeFromSlices(volSet, indexSerie, hash);
-          if (callbackComplete !== null) {
-            callbackComplete(errStatus);
-            return true;
-          }
-        } // if last file was loaded
-        return true;
-      },
-      (errMsg) => {
-        console.log(`Error read file: ${errMsg}`);
-        return false;
-      }
-    ); // end of readfile
-    return true;
-  } // end runLoader
 } // end class LoaderDicom
 
 export default LoaderDicom;

@@ -1,0 +1,39 @@
+.save-file__area {
+  height: 40px;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: space-between;
+  color: #18191b;
+  padding-left: 1rem;
+}
+
+.button.report-menu__report,
+.button.report-menu__camera {
+  background: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #18191b;
+}
+.button.report-menu__report:hover,
+.button.report-menu__camera:hover {
+  background-color: var(--light-orange);
+}
+
+.button.report-menu__report:focus,
+.button.report-menu__camera:focus {
+  background-color: var(--light-orange);
+}
+
+@media screen and (min-width: 768px) {
+  .button.report-menu__report,
+  .button.report-menu__camera {
+    background-color: var(--beige);
+  }
+
+  .button.report-menu__report > span,
+  .button.report-menu__camera > span {
+    display: none;
+  }
+}

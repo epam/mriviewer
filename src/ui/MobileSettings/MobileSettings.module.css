@@ -1,0 +1,147 @@
+/*!
+ * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+.buttons__container {
+  display: flex;
+  flex-direction: column;
+  width: 6rem;
+  z-index: 2;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  opacity: 1;
+  border: 1px solid var(--dark-gray);
+  border-radius: 0.5rem;
+  animation: onHide 0.6s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+.buttons__container button {
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  margin: 0;
+  border-radius: initial;
+  padding-right: 0;
+  padding-left: 1rem;
+}
+
+.settings__menu {
+  display: block;
+  background: inherit;
+  opacity: 1;
+}
+
+.hidden {
+  display: none;
+  opacity: 0;
+  animation: onHide 0.6s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+.settings__menu__button:after {
+  display: block;
+  content: '';
+  background-image: url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' fill='%23f4f2ea' height='800px' width='800px' version='1.1' id='Layer_1' viewBox='0 0 330 330' xml:space='preserve'><path id='XMLID_92_' d='M111.213,165.004L250.607,25.607c5.858-5.858,5.858-15.355,0-21.213c-5.858-5.858-15.355-5.858-21.213,0.001 l-150,150.004C76.58,157.211,75,161.026,75,165.004c0,3.979,1.581,7.794,4.394,10.607l150,149.996 C232.322,328.536,236.161,330,240,330s7.678-1.464,10.607-4.394c5.858-5.858,5.858-15.355,0-21.213L111.213,165.004z'/></svg>");
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background-size: cover;
+  transform: translate(-6px, -22px);
+}
+
+.settings__menu_block {
+  display: flex;
+  justify-content: space-around;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  z-index: 20000;
+  animation: onHide 0.6s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+.flex {
+  flex-direction: column;
+}
+
+@media screen and (max-width: 1024px) {
+  @keyframes onHide {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .buttons__container {
+    z-index: 20;
+  }
+
+  .settings__menu_block {
+    display: block;
+    top: 6rem;
+    width: 5rem;
+    padding-left: 1.2rem;
+    z-index: 10;
+  }
+
+  .hide {
+    display: none;
+  }
+
+  .buttons__container {
+    top: 15%;
+    right: 8%;
+  }
+
+  .settings__menu_block div {
+    display: flex;
+    position: relative;
+  }
+
+  .flex {
+    position: absolute;
+    width: 300px;
+    top: 13%;
+    left: 12%;
+    z-index: 10;
+  }
+
+  .horizontal {
+    width: 10rem;
+    position: absolute;
+    top: 13%;
+    left: 10%;
+  }
+
+  .horizontal > div {
+    display: flex;
+    width: 100%;
+  }
+}
+
+@media screen and (orientation: portrait) and (min-width: 768px) {
+  .buttons__container {
+    top: 12%;
+  }
+
+  .horizontal {
+    top: 12%;
+  }
+}
+
+@media screen and (min-width: 768px) and (orientation: landscape) {
+  .settings__menu_block {
+    top: 12%;
+  }
+}

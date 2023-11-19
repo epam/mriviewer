@@ -14,6 +14,7 @@
 // **********************************************
 
 import Modes2d from '../../store/Modes2d';
+import PointerChecker from '../utils/PointerChecker';
 
 // **********************************************
 // Class
@@ -64,14 +65,9 @@ class ToolDistance {
       const objLine = this.m_lines[i];
       const vScrS = ToolDistance.textureToScreen(objLine.vs.x, objLine.vs.y, this.m_wScreen, this.m_hScreen, store);
       const vScrE = ToolDistance.textureToScreen(objLine.ve.x, objLine.ve.y, this.m_wScreen, this.m_hScreen, store);
-      const MIN_DIST = 4.0;
-      if (this.getDistMm(vScr, vScrS) <= MIN_DIST) {
+      if (PointerChecker.isPointerOnLine(vScrS, vScrE, vScr)) {
         this.m_objEdit = objLine;
         return objLine.vs;
-      }
-      if (this.getDistMm(vScr, vScrE) <= MIN_DIST) {
-        this.m_objEdit = objLine;
-        return objLine.ve;
       }
     }
     return null;
@@ -115,9 +111,11 @@ class ToolDistance {
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
+    const objCanvas = store.graphics2d.m_mount.current;
+    const canvasRect = objCanvas.getBoundingClientRect();
     const zoom = store.render2dZoom;
-    const xPos = store.render2dxPos;
-    const yPos = store.render2dyPos;
+    const xPos = store.render2dxPos / canvasRect.width;
+    const yPos = store.render2dyPos / canvasRect.height;
 
     const vTex = {
       x: 0.0,
@@ -152,9 +150,11 @@ class ToolDistance {
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
+    const objCanvas = store.graphics2d.m_mount.current;
+    const canvasRect = objCanvas.getBoundingClientRect();
     const zoom = store.render2dZoom;
-    const xPos = store.render2dxPos;
-    const yPos = store.render2dyPos;
+    const xPos = store.render2dxPos / canvasRect.width;
+    const yPos = store.render2dyPos / canvasRect.height;
     if (mode2d === Modes2d.TRANSVERSE) {
       // z const
       vScr.x = (xTex / xDim - xPos) / zoom;
@@ -199,8 +199,6 @@ class ToolDistance {
     };
     this.m_lines.push(objLine);
     this.m_mouseDown = true;
-    // this.m_pointStart = v;
-    // console.log(`onMouseDown: ${xScr}, ${yScr}`);
   }
 
   onMouseMove(xScr, yScr, store) {

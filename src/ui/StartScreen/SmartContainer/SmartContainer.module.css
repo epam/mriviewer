@@ -1,14 +1,12 @@
 .smart_container {
-  margin: 0 15px;
-  padding: 35px 15px 15px;
-  background-color: var(--black);
+  margin: 0 1rem;
+  padding: 1.05rem 1rem 1rem;
   border: none;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  border: 2px dashed transparent;
   transition: 0.25s all ease;
 }
 
@@ -18,7 +16,13 @@
 
 .buttons_toolbar {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.buttons_toolbar button {
+  background-color: inherit;
 }
 
 .button_start_screen {
@@ -28,12 +32,14 @@
 }
 
 .button_start_screen svg {
-  margin-bottom: 5px;
+  margin-bottom: 0.3rem;
 }
 
 @media screen and (min-width: 768px) {
   .smart_container {
     margin: 0;
+    background-color: var(--black);
+    border: 2px dashed transparent;
   }
 
   .button_start_screen {
@@ -43,6 +49,11 @@
   .button_start_screen svg {
     margin-right: 5px;
     margin-bottom: 0;
+  }
+
+  .buttons_toolbar {
+    flex-direction: row;
+    width: 100%;
   }
 }
 

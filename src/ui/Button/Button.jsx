@@ -30,7 +30,7 @@ export const UIButton = ({ icon, caption, handler, active, rounded, type, mode, 
       caption={icon && caption}
     >
       {icon ? <SVG name={icon} title={caption} /> : caption}
-      {text ? text : ''}
+      {text ? <span>{text}</span> : ''}
     </ButtonContainer>
   );
 };

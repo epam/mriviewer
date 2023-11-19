@@ -14,6 +14,7 @@
 // **********************************************
 
 import Modes2d from '../../store/Modes2d';
+import PointerChecker from '../utils/PointerChecker';
 import ToolDistance from './ToolDistance';
 
 // **********************************************
@@ -71,13 +72,27 @@ class ToolArea {
     const numAreas = this.m_areas.length;
     for (let i = 0; i < numAreas; i++) {
       const objArea = this.m_areas[i];
+      const lastPoint = {};
       for (let j = 0; j < objArea.m_points.length; j++) {
-        const vScrProj = ToolDistance.textureToScreen(objArea.m_points[j].x, objArea.m_points[j].y, this.m_wScreen, this.m_hScreen, store);
-        const MIN_DIST = 4.0;
-        if (this.getDistMm(vScr, vScrProj) <= MIN_DIST) {
+        const vScrProj_S = ToolDistance.textureToScreen(
+          objArea.m_points[j].x,
+          objArea.m_points[j].y,
+          this.m_wScreen,
+          this.m_hScreen,
+          store
+        );
+        if (!j) {
+          lastPoint.x = vScrProj_S.x;
+          lastPoint.y = vScrProj_S.y;
+        }
+        const vScrProj_E =
+          j < objArea.m_points.length - 1
+            ? ToolDistance.textureToScreen(objArea.m_points[j + 1].x, objArea.m_points[j + 1].y, this.m_wScreen, this.m_hScreen, store)
+            : lastPoint;
+        if (PointerChecker.isPointerOnLine(vScrProj_S, vScrProj_E, vScr)) {
           this.m_objEdit = objArea;
           return objArea.m_points[j];
-        } // if too close pick
+        }
       } // for (j) all point in area
     } // for (i) all areas
     return null;
@@ -94,11 +109,8 @@ class ToolArea {
     const y = vVolOld.y;
     vVolOld.x = vVolNew.x;
     vVolOld.y = vVolNew.y;
-    //const vObjSelfInters = ToolArea.getSelfIntersectPoint(this.m_objEdit.m_points);
-    //if (vObjSelfInters !== null) {
     const hasInters = ToolArea.hasSelfIntersection(this.m_objEdit.m_points);
     if (hasInters) {
-      // console.log('ToolArea. self inters found');
       vVolOld.x = x;
       vVolOld.y = y;
     }
@@ -242,7 +254,6 @@ class ToolArea {
         m_vIntersection: vInter,
         m_lineIndex: 0,
       };
-      // console.log('getSelfIntersection: detect with start');
       return objInter;
     }
     return null;
@@ -444,7 +455,6 @@ class ToolArea {
       const objArea = this.m_areas[a];
       const isClosed = objArea.m_isClosed;
       const numPoints = isClosed ? objArea.m_points.length + 1 : objArea.m_points.length;
-      // console.log(`ToolArea. render ${numPoints} points in poly`);
 
       // calc area centroid in screen
       let xScrCenter = 0.0;
@@ -454,7 +464,6 @@ class ToolArea {
       for (let i = 0; i < numPoints; i++) {
         const iPoly = i < objArea.m_points.length ? i : 0;
         const vTex0 = objArea.m_points[iPoly];
-        // console.log(`ToolArea. render point ${vTex0.x}, ${vTex0.y} `);
         const vScr = ToolDistance.textureToScreen(vTex0.x, vTex0.y, this.m_wScreen, this.m_hScreen, store);
         if (i === 0) {
           ctx.moveTo(vScr.x, vScr.y);
@@ -474,13 +483,6 @@ class ToolArea {
       // draw area
       if (isClosed) {
         const strMsg = objArea.m_area.toFixed(2) + ' mm^2';
-        // const SHIFT_UP = 8;
-        //const vTex0 = objArea.m_points[0];
-        //const vs0 = ToolDistance.textureToScreen(vTex0.x, vTex0.y, this.m_wScreen, this.m_hScreen, store);
-        //const xText = vs0.x;
-        //const yText = vs0.y - SHIFT_UP;
-        // ctx.fillText(strMsg, xText, yText);
-
         ctx.fillText(strMsg, xScrCenter, yScrCenter);
       } // if this poly closed
     } // for (a) all polys

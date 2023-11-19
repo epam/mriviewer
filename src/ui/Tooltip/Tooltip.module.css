@@ -5,6 +5,7 @@
 
 .wrapper {
   display: inline-block;
+  color: #18191b;
 }
 
 .tooltip {
@@ -42,18 +43,48 @@
   transform: rotate(45deg);
 }
 
-.tooltip[data-popper-placement^='top']>.arrow {
+.tooltip[data-popper-placement^='top'] > .arrow {
   bottom: -6px;
+  display: none;
 }
 
-.tooltip[data-popper-placement^='bottom']>.arrow {
+.tooltip[data-popper-placement^='bottom'] > .arrow {
   top: -6px;
+  display: none;
 }
 
-.tooltip[data-popper-placement^='left']>.arrow {
+.tooltip[data-popper-placement^='left'] > .arrow {
   right: -6px;
+  display: none;
 }
 
-.tooltip[data-popper-placement^='right']>.arrow {
+.tooltip[data-popper-placement^='right'] > .arrow {
   left: -6px;
+  display: none;
+}
+
+@media screen and (min-width: 768px) {
+  .demo__link {
+    display: block;
+  }
+
+  .tooltip[data-popper-placement^='top'] > .arrow {
+    bottom: -6px;
+    display: none;
+  }
+
+  .tooltip[data-popper-placement^='bottom'] > .arrow {
+    top: -6px;
+    display: none;
+  }
+
+  .tooltip[data-popper-placement^='left'] > .arrow {
+    right: -6px;
+    display: none;
+  }
+
+  .tooltip[data-popper-placement^='right'] > .arrow {
+    left: -6px;
+    display: none;
+  }
 }

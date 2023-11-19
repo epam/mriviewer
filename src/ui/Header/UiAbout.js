@@ -24,7 +24,7 @@ export const UiAbout = () => {
   const { graphics2d } = useSelector((state) => state);
 
   const onShow = () => {
-    graphics2d?.clear();
+    graphics2d.clear();
     setModalShow(true);
   };
 

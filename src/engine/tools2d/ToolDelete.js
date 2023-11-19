@@ -13,8 +13,6 @@
 // Imports
 // **********************************************
 
-import ToolDistance from './ToolDistance';
-
 // **********************************************
 // Class
 // **********************************************
@@ -90,8 +88,7 @@ class ToolDelete {
         const objTool = tools[i];
         const vDetect = objTool.getEditPoint(vScr, store);
         if (vDetect !== null) {
-          // console.log(`ToolEdit. point tracked: ${vDetect.x}, ${vDetect.y}`);
-          this.m_pointTracked = vDetect;
+          this.m_pointTracked = vScr;
           this.m_toolTracked = objTool;
           break;
         }
@@ -101,15 +98,6 @@ class ToolDelete {
         // invoke forced 2d render
         this.m_objGraphics2d.forceUpdate();
       }
-    } else {
-      /*
-      if (this.m_pointTracked !== null) {
-        const vTexNew = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
-        this.m_toolTracked.moveEditPoint(this.m_pointTracked, vTexNew);
-        // invoke forced 2d render
-        this.m_objGraphics2d.forceUpdate();
-      } // if we have tracked point
-      */
     }
   }
 
@@ -124,17 +112,24 @@ class ToolDelete {
    * @param {object} ctx - html5 canvas context
    * @param {object} store - global store with app parameters
    */
-  render(ctx, store) {
+  render(ctx) {
     if (this.m_pointTracked !== null) {
-      const vScr = ToolDistance.textureToScreen(this.m_pointTracked.x, this.m_pointTracked.y, this.m_wScreen, this.m_hScreen, store);
-      const RAD_CIRCLE_EDIT = 4;
-      //ctx.lineWidth = 2;
-      //ctx.strokeStyle = 'green';
-      ctx.fillStyle = 'rgb(250, 120, 120)';
+      const vScr = this.m_pointTracked;
       ctx.beginPath();
-      ctx.arc(vScr.x, vScr.y, RAD_CIRCLE_EDIT, 0.0, 2 * 3.1415962, false);
-      // ctx.stroke();
-      ctx.fill();
+
+      // Set the line style
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = 'red';
+
+      // Draw the "x" symbol
+      ctx.beginPath();
+      ctx.moveTo(vScr.x - 15, vScr.y - 15); // Move to the starting point (x-15, y-15)
+      ctx.lineTo(vScr.x + 15, vScr.y + 15); // Draw a line to (x+15, y+15)
+      ctx.moveTo(vScr.x + 15, vScr.y - 15); // Move to (x+15, y-15)
+      ctx.lineTo(vScr.x - 15, vScr.y + 15);
+
+      // Stroke the line to actually draw the lines
+      ctx.stroke();
     }
   } // end render
 } // end class ToolText

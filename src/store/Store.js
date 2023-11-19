@@ -47,6 +47,11 @@ export const initialState = {
   dicomSeries: [],
   loaderDicom: null,
   spinner: false, //true when mock data is loading
+  is16bit: false, //true when dicom files are loaded
+  showWindowRangeSlider: false,
+  showModalConfirmation: false,
+  showModalWindowCW: false,
+  showModalSelectFiles: false,
 };
 //
 // App reducer
@@ -125,6 +130,20 @@ const medReducer = (state = initialState, action) => {
       return Object.assign({}, state, { showModalAlert: action.showModalAlert });
     case StoreActionType.SET_SPINNER:
       return Object.assign({}, state, { spinner: action.spinner });
+    case StoreActionType.SET_IS_16_BIT:
+      return Object.assign({}, state, { is16bit: action.is16bit });
+    case StoreActionType.SET_SHOW_WINDOW_RANGE:
+      return Object.assign({}, state, { showWindowRangeSlider: action.showWindowRangeSlider });
+    case StoreActionType.SET_SHOW_MODAL_CONFIRMATION:
+      return Object.assign({}, state, { showModalConfirmation: action.showModalConfirmation });
+    case StoreActionType.SET_SHOW_MODAL_WINDOW_WC:
+      return Object.assign({}, state, { showModalWindowCW: action.showModalWindowCW });
+    case StoreActionType.SET_SHOW_MODAL_SELECT_FILES:
+      return Object.assign({}, state, { showModalSelectFiles: action.showModalSelectFiles });
+    case StoreActionType.SET_SPINNER_TITLE:
+      return Object.assign({}, state, { spinnerTitle: action.spinnerTitle });
+    case StoreActionType.SET_SPINNER_PROGRESS:
+      return Object.assign({}, state, { spinnerProgress: action.spinnerProgress });
     default:
       return state;
   }

@@ -1,0 +1,107 @@
+/*!
+* Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
+* SPDX-License-Identifier: Apache-2.0
+*/
+
+.wrapperStyles {
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+  overflow: scroll;
+}
+
+.canvasStyles {
+  display: block;
+  width: 150vw;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .wrapperStyles {
+    height: calc(100% - 2.5rem);
+    width: calc(100% - 3rem);
+    border: 2px solid #dc5e47;
+    border-radius: 10px;
+    box-sizing: border-box;
+  }
+
+  .canvasStyles {
+    aspect-ratio: 1 / 1;
+    width: 100vh;
+  }
+}
+
+@media screen and (orientation: landscape) and (min-width: 768px) and (max-width: 1023px) {
+  .wrapperStyles {
+    height: calc(100% - 2.5rem);
+    width: calc(100%- 3rem);
+  }
+
+  .canvasStyles {
+    aspect-ratio: 1 / 1;
+  }
+}
+
+@media screen and (min-width: 1024px) and (orientation: landscape) {
+  .wrapperStyles {
+    height: calc(100% - 0.5rem);
+    width: 80%;
+    border: 2px solid #dc5e47;
+    border-radius: 10px;
+  }
+
+  .canvasStyles {
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+}
+
+@media screen and (min-width: 1024px) and (orientation: landscape) and (max-width: 2559px) {
+  .wrapperStyles {
+    display: block;
+    height: calc(100% - 0.5rem);
+    width: 43%;
+    overflow: hidden;
+    border: 2px solid #dc5e47;
+    border-radius: 10px;
+  }
+
+  .canvasStyles {
+    width: auto;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 2559px) and (orientation: portrait) {
+  .wrapperStyles {
+    width: 90%;
+    height: calc(100% - 0.5rem);
+    border: 2px solid #dc5e47;
+    border-radius: 10px;
+    display: block;
+  }
+
+  .canvasStyles {
+    aspect-ratio: 1/1;
+    width: 150vw;
+  }
+}
+
+@media screen and (min-width: 2560px) {
+  .wrapperStyles {
+    width: 80%;
+    border: 2px solid #dc5e47;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .canvasStyles {
+    aspect-ratio: 1/1;
+    width: auto;
+  }
+}

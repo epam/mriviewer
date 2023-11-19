@@ -10,32 +10,46 @@
 .header {
   display: flex;
   align-items: center;
-  position: relative;
-  margin: 25px 25px 0;
   z-index: 1000;
 }
 
 .header__logo {
-  margin-right: 25px;
+  display: none;
 }
 
 .header__panels {
-  display: flex;
-  z-index: 1000;
-  margin-top: 17px;
+  display: none;
 }
 
 .header__right {
+  position: absolute;
+  bottom: 0;
   display: flex;
-  flex-wrap: nowrap;
+  justify-content: center;
   align-items: center;
-  margin-left: auto;
-  margin-top: 17px;
+  flex-direction: row-reverse;
+  width: 100vw;
+  right: 0;
+  height: 50px;
+  padding: 1rem;
+  background-color: var(--beige);
+  z-index: 1000;
 }
 
-.fullscreen .header__panels {
-  position: absolute;
-  left: 75px;
+.header__right > button {
+  background: inherit;
+  border: none;
+  color: var(--black);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  font-size: 0.75rem;
+  line-height: 12.1px;
+}
+
+.header__right button svg {
+  fill: var(--black);
 }
 
 .fullscreen .left,
@@ -43,45 +57,190 @@
   top: 20px;
 }
 
-.left {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  left: 25px;
-  top: 100px;
-  z-index: 900;
+.bottleft {
+  display: block;
 }
 
-.center {
+.left {
+  display: block;
+  width: 100px;
+  height: 50px;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  z-index: 10;
+}
+.left {
+  display: none;
+}
+
+.center div {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 10;
+  z-index: 1;
+  user-select: none;
 }
 
 .settings {
-  display: flex;
-  flex-direction: column;
-  z-index: 800;
-  position: absolute;
-  right: 25px;
-  top: 100px;
-  background-color: var(--dark-gray);
-  padding: 25px;
-  width: 400px;
-  opacity: var(--opacity);
-  cursor: all-scroll;
-  border-radius: 24px;
-  transition: opacity 300ms ease-in-out;
+  display: none;
 }
 
-.bottleft {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  left: 25px;
-  bottom: 25px;
-  z-index: 1000;
+@media screen and (min-width: 768px) {
+  .header {
+    display: flex;
+    position: relative;
+    padding: 1rem;
+    z-index: 1000;
+  }
+
+  .header__logo {
+    display: block;
+    margin-right: 25px;
+    margin-top: 1rem;
+  }
+
+  .header__panels {
+    display: flex;
+    flex-direction: column;
+    width: 25rem;
+  }
+
+  .fullscreen .header__panels {
+    position: absolute;
+    left: 75px;
+  }
+
+  .header__right {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    align-items: center;
+    margin-left: auto;
+    position: static;
+    background: inherit;
+  }
+
+  .left {
+    display: block;
+    position: absolute;
+    left: 25px;
+    top: 12%;
+    z-index: 1010;
+  }
+
+  .bottleft {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 25px;
+    bottom: 2rem;
+    z-index: 1010;
+  }
+
+  .settings {
+    display: none;
+  }
+
+  .center {
+    position: absolute;
+    top: 6rem;
+    left: 5rem;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .header {
+    align-items: flex-start;
+  }
+
+  .header div {
+    height: auto;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+
+  .header__right {
+    align-items: stretch;
+  }
+
+  .header__panels {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 1rem 1.5rem 1rem 0;
+  }
+
+  .center {
+    top: 6rem;
+    left: 5rem;
+    right: 0;
+    bottom: 2rem;
+    z-index: 10;
+  }
+
+  .settings {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    right: 25px;
+    top: 100px;
+    background-color: var(--dark-gray);
+    padding: 25px;
+    width: 400px;
+    opacity: var(--opacity);
+    cursor: all-scroll;
+    border-radius: 24px;
+    transition: opacity 300ms ease-in-out;
+    z-index: 1100;
+  }
+  .left {
+    top: 8%;
+  }
+}
+
+@media screen and (min-width: 1024px) and (orientation: landscape) {
+  .header__panels {
+    margin-right: 3rem;
+  }
+
+  .header__panels > div {
+    flex-wrap: nowrap;
+    margin-right: 1rem;
+  }
+
+  .left {
+    top: 10%;
+  }
+}
+
+@media screen and (min-width: 1024px) and (orientation: portrait) {
+  .header__panels {
+    flex-wrap: wrap;
+  }
+
+  .settings {
+    top: 4rem;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .header__panels {
+    flex-wrap: nowrap;
+  }
+}
+
+@media screen and (min-width: 2560px) and (orientation: landscape) {
+  .left {
+    top: 5%;
+  }
+  .settings {
+    top: 4rem;
+  }
 }

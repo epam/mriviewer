@@ -2,7 +2,18 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
+.vertical {
+  display: none;
+}
 
+.horizontal {
+  display: block;
+}
+
+.container button > svg #clear {
+  display: block;
+  color: #18191b;
+}
 .container {
   display: inline-flex;
   flex-wrap: wrap;
@@ -11,18 +22,49 @@
   overflow: hidden;
 }
 
-.vertical {
-  flex-direction: column;
-  width: 50px;
+.horizontal button > svg > use[xlinkHref$='#folder'] {
+  display: none;
 }
 
-.vertical:not(:first-child) {
-  margin-top: 25px;
+@media screen and (min-width: 768px) {
+  .container {
+    display: inline-flex;
+    flex-wrap: wrap;
+    width: fit-content;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .vertical {
+    flex-direction: column;
+  }
+
+  .vertical:not(:first-child) {
+    margin-top: 25px;
+  }
+
+  .container button {
+    display: flex;
+  }
+
+  .horizontal {
+    display: none;
+  }
 }
 
-.horizontal {
-  flex-direction: row;
-  flex-shrink: 0;
-  height: 50px;
-  margin: 0 25px 0 0;
+@media screen and (min-width: 1024px) {
+  .horizontal {
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+    height: 50px;
+    margin: 0 25px 0 0;
+  }
+
+  .container button > svg #clear,
+  .container button > svg #edit {
+    display: block;
+    color: #18191b;
+    background: red;
+  }
 }

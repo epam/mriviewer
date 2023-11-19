@@ -374,7 +374,7 @@ class LoaderDcmDaikon {
     const tagSLT = image.tags[ind];
     if (tagSLT !== undefined) {
       let arrThick = tagSLT.value;
-      if (arrThick.length === 1) {
+      if (arrThick && arrThick.length === 1) {
         this.m_loaderDicom.m_pixelSpacing.z = parseFloat(arrThick[0]);
       }
       // console.log('val pad = ' + valPad);
