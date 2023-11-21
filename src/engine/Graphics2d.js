@@ -470,8 +470,8 @@ class Graphics2d extends React.Component {
     }
 
     // centering: setting canvas image size, to match its HTML element's size
-    objCanvas.width = wScreen;
-    objCanvas.height = hScreen;
+    objCanvas.width = this.m_mount.current.clientWidth;
+    objCanvas.height = this.m_mount.current.clientHeight;
     // check is segmentation 2d mode is active
     // const isSegm = store.graphics2dModeSegmentation;
     // console.log("Segm2d mode = " + isSegm);
@@ -481,9 +481,10 @@ class Graphics2d extends React.Component {
   } // prepareImageForRender
 
   fillBackground(ctx) {
-    const { hRender, wRender } = this.state;
+    const w = this.m_mount.current.clientWidth;
+    const h = this.m_mount.current.clientHeight;
     ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, wRender, hRender);
+    ctx.fillRect(0, 0, w, h);
   }
 
   renderReadyImage() {
@@ -491,8 +492,6 @@ class Graphics2d extends React.Component {
     const ctx = objCanvas.getContext('2d');
     const store = this.props;
     const zoom = store.render2dZoom;
-    const xPos = store.render2dxPos;
-    const yPos = store.render2dyPos;
     const canvasWidth = objCanvas.width;
     const canvasHeight = objCanvas.height;
     const newImgWidth = canvasWidth / zoom;
@@ -532,6 +531,10 @@ class Graphics2d extends React.Component {
     } else {
       createImageBitmap(this.imgData)
         .then((imageBitmap) => {
+          const centerX = (canvasWidth - this.imgData.width) / 2;
+          const centerY = (canvasHeight - this.imgData.height) / 2;
+          const xPos = store.render2dxPos - centerX;
+          const yPos = store.render2dyPos - centerY;
           ctx.drawImage(imageBitmap, xPos, yPos, canvasWidth, canvasHeight, 0, 0, newImgWidth, newImgHeight);
         })
         .then(() => {
@@ -554,7 +557,7 @@ class Graphics2d extends React.Component {
     let yPosNew;
     const store = this.props;
     const zoom = store.render2dZoom;
-    const step = evt.deltaY * 2 ** -10;
+    const step = (evt.deltaY * 2 ** -10) / 2;
     let newZoom = zoom + step;
 
     if (step < 0) {
