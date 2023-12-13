@@ -24,5 +24,6 @@ const Tools2dType = {
   ZOOM_100: 11,
   FILTER: 12,
   HAND: 13,
+  PAINT: 14,
 };
 export default Tools2dType;

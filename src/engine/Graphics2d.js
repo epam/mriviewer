@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import Modes2d from '../store/Modes2d';
 import StoreActionType from '../store/ActionTypes';
 import ToolPick from './tools2d/ToolPick';
+import ToolPaint from './tools2d/ToolPaint';
 import ToolDistance from './tools2d/ToolDistance';
 import ToolAngle from './tools2d/ToolAngle';
 import ToolArea from './tools2d/ToolArea';
@@ -71,6 +72,7 @@ class Graphics2d extends React.Component {
 
     // tools2d
     this.m_toolPick = new ToolPick(this);
+    this.m_toolPaint = new ToolPaint(this);
     this.m_toolDistance = new ToolDistance(this);
     this.m_toolAngle = new ToolAngle(this);
     this.m_toolArea = new ToolArea(this);
@@ -205,6 +207,7 @@ class Graphics2d extends React.Component {
       // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
 
       this.m_toolPick.setScreenDim(wScreen, hScreen);
+      this.m_toolPaint.setScreenDim(wScreen, hScreen);
       this.m_toolDistance.setScreenDim(wScreen, hScreen);
       this.m_toolAngle.setScreenDim(wScreen, hScreen);
       this.m_toolArea.setScreenDim(wScreen, hScreen);
@@ -296,6 +299,7 @@ class Graphics2d extends React.Component {
       // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
 
       this.m_toolPick.setScreenDim(wScreen, hScreen);
+      this.m_toolPaint.setScreenDim(wScreen, hScreen);
       this.m_toolDistance.setScreenDim(wScreen, hScreen);
       this.m_toolAngle.setScreenDim(wScreen, hScreen);
       this.m_toolArea.setScreenDim(wScreen, hScreen);
@@ -390,6 +394,7 @@ class Graphics2d extends React.Component {
       // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
 
       this.m_toolPick.setScreenDim(wScreen, hScreen);
+      this.m_toolPaint.setScreenDim(wScreen, hScreen);
       this.m_toolDistance.setScreenDim(wScreen, hScreen);
       this.m_toolAngle.setScreenDim(wScreen, hScreen);
       this.m_toolArea.setScreenDim(wScreen, hScreen);
@@ -539,6 +544,7 @@ class Graphics2d extends React.Component {
         })
         .then(() => {
           this.m_toolPick.render(ctx);
+          this.m_toolPaint.render(ctx, store);
           this.m_toolDistance.render(ctx, store);
           this.m_toolAngle.render(ctx, store);
           this.m_toolArea.render(ctx, store);
@@ -566,10 +572,10 @@ class Graphics2d extends React.Component {
       xPosNew = mouseX - (mouseX - store.render2dxPos) * (newZoom / zoom);
       yPosNew = mouseY - (mouseY - store.render2dyPos) * (newZoom / zoom);
     } else {
-      const initialX = canvasRect.width * zoom + store.render2dxPos;
-      const initialY = canvasRect.height * zoom + store.render2dyPos;
-      xPosNew = initialX - (initialX - store.render2dxPos) * (newZoom / zoom);
-      yPosNew = initialY - (initialY - store.render2dyPos) * (newZoom / zoom);
+      const centerX = (canvasRect.width * newZoom) / 2 + store.render2dxPos;
+      const centerY = (canvasRect.height * newZoom) / 2 + store.render2dyPos;
+      xPosNew = centerX - (centerX - store.render2dxPos) * (newZoom / zoom);
+      yPosNew = centerY - (centerY - store.render2dyPos) * (newZoom / zoom);
     }
 
     if (xPosNew < 0) {
@@ -600,6 +606,13 @@ class Graphics2d extends React.Component {
 
     this.setState({ stateMouseDown: false });
 
+    if (indexTools2d === Tools2dType.PAINT) {
+      const store = this.props;
+      const box = this.m_mount.current.getBoundingClientRect();
+      const xScr = evt.clientX - box.left;
+      const yScr = evt.clientY - box.top;
+      this.m_toolPaint.onMouseUp(xScr, yScr, store);
+    }
     if (indexTools2d === Tools2dType.DISTANCE) {
       const store = this.props;
       const box = this.m_mount.current.getBoundingClientRect();
@@ -660,6 +673,9 @@ class Graphics2d extends React.Component {
     const xScr = xContainer;
     const yScr = yContainer;
 
+    if (indexTools2d === Tools2dType.PAINT) {
+      this.m_toolPaint.onMouseMove(xScr, yScr, store);
+    }
     if (indexTools2d === Tools2dType.DISTANCE) {
       this.m_toolDistance.onMouseMove(xScr, yScr, store);
     }
@@ -718,6 +734,9 @@ class Graphics2d extends React.Component {
       case Tools2dType.INTENSITY:
         this.m_toolPick.onMouseDown(xScr, yScr, store);
         break;
+      case Tools2dType.PAINT:
+        this.m_toolPaint.onMouseDown(xScr, yScr, store);
+        break;
       case Tools2dType.DISTANCE:
         this.m_toolDistance.onMouseDown(xScr, yScr, store);
         break;
@@ -754,6 +773,7 @@ class Graphics2d extends React.Component {
    * Invoke clear all tools
    */
   clear() {
+    this.m_toolPaint.clear();
     this.m_toolDistance.clear();
     this.m_toolAngle.clear();
     this.m_toolArea.clear();
