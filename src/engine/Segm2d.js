@@ -14,7 +14,7 @@
 // ********************************************************
 
 import * as tf from '@tensorflow/tfjs';
-const PATH_MODEL = 'http://lugachai.ru/med3web/tfjs/model.json';
+const PATH_MODEL = 'https://lugachai.ru/med3web/tfjs/model.json';
 
 // ********************************************************
 // Const
