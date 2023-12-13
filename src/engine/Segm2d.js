@@ -14,7 +14,7 @@
 // ********************************************************
 
 import * as tf from '@tensorflow/tfjs';
-import PATH_MODEL from './PATH_MODEL.json';
+const PATH_MODEL = 'http://lugachai.ru/med3web/tfjs/model.json';
 
 // ********************************************************
 // Const
@@ -35,7 +35,6 @@ const STAGE_MODEL_IS_LOADING = 1;
 const STAGE_MODEL_READY = 2;
 const STAGE_IMAGE_PROCESSED = 3;
 const STAGE_SEGMENTATION_READY = 4;
-// const STAGE_READY_NEXT_IMAGE = 5;
 
 const OUT_W = 240;
 const OUT_H = 160;
@@ -136,6 +135,9 @@ class Segm2d {
   }
 
   async startApplyImage() {
+    if (this.stage === STAGE_SEGMENTATION_READY) {
+      return;
+    }
     this.stage = STAGE_IMAGE_PROCESSED;
     console.log('Start apply segm to image ...');
 
@@ -267,9 +269,9 @@ class Segm2d {
   getStageString() {
     return [
       'Wait. Model is not loaded', // const STAGE_MODEL_NOT_LOADED = 0;
-      'Wait. Model is loading ...', // const STAGE_MODEL_IS_LOADING = 1;
+      'Loading TensorFlow model from server...', // const STAGE_MODEL_IS_LOADING = 1;
       'Model is ready', // const STAGE_MODEL_READY = 2;
-      'Image is processed ...', // const STAGE_IMAGE_PROCESSED = 3;
+      'Image is processed...', // const STAGE_IMAGE_PROCESSED = 3;
       'Segmentation is ready', // const STAGE_SEGMENTATION_READY = 4;
     ][this.stage];
   }
@@ -288,7 +290,6 @@ class Segm2d {
     const strMessage = this.getStageString();
     console.log('Segm2d render. stage = ' + strMessage);
 
-    /*
     // load model
     if (this.model === null) {
       this.onLoadModel();
@@ -299,7 +300,6 @@ class Segm2d {
         return;
       }
     } // if model non null
-    */
 
     if (this.stage === STAGE_SEGMENTATION_READY && this.pixels !== null) {
       // draw pixels array on screen
@@ -315,26 +315,32 @@ class Segm2d {
     }
 
     // clear screen
-    ctx.fillStyle = 'rgb(64, 64, 64)';
-    ctx.fillRect(0, 0, w, h);
-    // draw cross
-    ctx.strokeStyle = '#FF0000';
+    ctx.fillStyle = '#242424';
+    drawRoundedRect(ctx, 30, 0, w, h, 20);
 
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(w - 1, h - 1);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(w - 1, 0);
-    ctx.lineTo(0, h - 1);
-    ctx.stroke();
     // draw wait message
     const strMsgPrint = this.getStageString();
-    ctx.font = '24px serif';
-    ctx.fillStyle = 'rgb(64, 255, 64)';
-    ctx.fillText(strMsgPrint, w / 2, h / 2);
+    ctx.font = '24px sans-serif';
+    ctx.fillStyle = '#dc5e47';
+    const textWidth = ctx.measureText(strMsgPrint).width;
+    const x = (w - textWidth) / 2;
+    const y = h / 2;
+    ctx.fillText(strMsgPrint, x, y);
   }
+}
+
+function drawRoundedRect(ctx, x, y, width, height, borderRadius) {
+  if (width < 2 * borderRadius) borderRadius = width / 2;
+  if (height < 2 * borderRadius) borderRadius = height / 2;
+  ctx.beginPath();
+  ctx.moveTo(x + borderRadius, y);
+  ctx.arcTo(x + width, y, x + width, y + height, borderRadius);
+  ctx.arcTo(x + width, y + height, x, y + height, borderRadius);
+  ctx.arcTo(x, y + height, x, y, borderRadius);
+  ctx.arcTo(x, y, x + width, y, borderRadius);
+  ctx.closePath();
+  ctx.stroke();
+  ctx.fill();
 }
 
 export default Segm2d;
