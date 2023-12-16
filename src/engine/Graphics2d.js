@@ -27,6 +27,7 @@ class Graphics2d extends React.Component {
   constructor(props) {
     super(props);
 
+    this.store = props;
     this.m_mount = React.createRef();
 
     this.onMouseDown = this.onMouseDown.bind(this);
@@ -527,7 +528,7 @@ class Graphics2d extends React.Component {
     if (isSegm) {
       const w = this.m_toolPick.m_wScreen;
       const h = this.m_toolPick.m_hScreen;
-      this.segm2d.render(ctx, w, h, this.imgData);
+      this.segm2d.renderImage(ctx, w, h, this.imgData);
     } else {
       createImageBitmap(this.imgData)
         .then((imageBitmap) => {
@@ -692,6 +693,12 @@ class Graphics2d extends React.Component {
         startY: evt.clientY,
       });
     }
+
+    if (this.m_isSegmented && this.segm2d.model) {
+      // We do not need update segmented image (with model)
+      // on mouse move event to performance issues.
+      return;
+    }
     store.graphics2d.forceUpdate();
   }
 
@@ -767,13 +774,14 @@ class Graphics2d extends React.Component {
    * Invoke forced rendering, after some tool visual changes
    */
   forceUpdate(volIndex) {
-    // console.log('forceUpdate ...');
+    console.log('forceUpdate ...');
     this.prepareImageForRender(volIndex);
     // this.forceRender();
     if (this.m_isSegmented) {
       // need to draw segmented image
       if (this.segm2d.model !== null) {
-        // we have loaded model: applt it to image
+        // we have loaded model: apply it to image
+        // TODO update image only on some specific events: zoom, explore
         this.segm2d.startApplyImage();
       }
     } else {

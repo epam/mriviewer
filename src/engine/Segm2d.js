@@ -14,7 +14,9 @@
 // ********************************************************
 
 import * as tf from '@tensorflow/tfjs';
-const PATH_MODEL = 'https://lugachai.ru/med3web/tfjs/model.json';
+import StoreActionType from '../store/ActionTypes';
+
+const BRAIN_MODEl = 'https://daentjnvnffrh.cloudfront.net/models/brain/model.json';
 
 // ********************************************************
 // Const
@@ -45,9 +47,11 @@ const NUM_CLASSES = 96;
 // ********************************************************
 
 class Segm2d {
-  constructor(objGraphics2d) {
+  constructor(props) {
     this.stage = STAGE_MODEL_NOT_LOADED;
-    this.objGraphics2d = objGraphics2d;
+    this.objGraphics2d = props;
+    this.store = props.store;
+
     this.model = null;
     this.tensorIndices = null;
     this.imgData = null;
@@ -116,14 +120,14 @@ class Segm2d {
     } // for (y)
   }
 
-  //
   // Load model
   async onLoadModel() {
     this.stage = STAGE_MODEL_IS_LOADING;
     this.pixels = null;
 
     console.log('Loading tfjs model...');
-    const modelLoaded = await tf.loadLayersModel(PATH_MODEL, { strict: false });
+    this.store.dispatch({ type: StoreActionType.SET_PROGRESS_INFO, titleProgressBar: 'Loading tfjs model...' });
+    const modelLoaded = await tf.loadLayersModel(BRAIN_MODEl, { strict: false, onProgress: this.onTFLoadProgress.bind(this) });
 
     this.model = modelLoaded;
     this.stage = STAGE_MODEL_READY;
@@ -135,9 +139,6 @@ class Segm2d {
   }
 
   async startApplyImage() {
-    if (this.stage === STAGE_SEGMENTATION_READY) {
-      return;
-    }
     this.stage = STAGE_IMAGE_PROCESSED;
     console.log('Start apply segm to image ...');
 
@@ -280,7 +281,7 @@ class Segm2d {
     this.srcImageData = imgData;
   }
 
-  render(ctx, w, h, imgData) {
+  renderImage(ctx, w, h, imgData) {
     this.srcImageData = imgData;
     this.wSrc = w;
     this.hSrc = h;
@@ -291,7 +292,7 @@ class Segm2d {
     console.log('Segm2d render. stage = ' + strMessage);
 
     // load model
-    if (this.model === null) {
+    if (this.model === null && this.stage === STAGE_MODEL_NOT_LOADED) {
       this.onLoadModel();
     } else {
       // change slider or similar: need to rebuild segm for the new source image
@@ -326,6 +327,14 @@ class Segm2d {
     const x = (w - textWidth) / 2;
     const y = h / 2;
     ctx.fillText(strMsgPrint, x, y);
+  }
+
+  onTFLoadProgress(progress) {
+    this.store.dispatch({ type: StoreActionType.SET_PROGRESS, progress });
+    if (progress === 1) {
+      this.store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
+      this.store.dispatch({ type: StoreActionType.SET_PROGRESS_INFO, titleProgressBar: null });
+    }
   }
 }
 
