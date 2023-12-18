@@ -29,9 +29,8 @@ export const UiSaveMenu = () => {
   };
   return (
     <>
-      <Tooltip content="Save Nifti">
+      <Tooltip content="Download">
         <UIButton
-          text="Download"
           cx={cx(css.button, css['download__link'])}
           rounded
           icon="download"
