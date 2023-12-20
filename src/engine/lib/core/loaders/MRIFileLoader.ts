@@ -174,7 +174,7 @@ export class MRIFileLoader {
 
       xhr.onerror = () => {
         this.handleVolumeLoadFailed(`Failed to fetch file from URL: ${url}`);
-        reject(new Error());
+        reject();
       };
 
       xhr.responseType = 'blob';
