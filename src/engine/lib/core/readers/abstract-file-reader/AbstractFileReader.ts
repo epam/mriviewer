@@ -75,7 +75,7 @@ export abstract class AbstractFileReader {
    */
   public handleVolumeReadFailed(error: string) {
     this.events.emit(MriEvents.FILE_READ_ERROR, { error });
-    this.store.setVolumeLoadFailed(this.fileName, [error]);
+    this.store.setVolumeLoadFailed(this.fileName);
   }
 
   /**
