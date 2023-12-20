@@ -27,9 +27,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: row-reverse;
-  width: 100vw;
-  right: 0;
+  flex-direction: row;
+  width: 96vw;
   height: 50px;
   padding: 1rem;
   background-color: var(--beige);
@@ -116,12 +115,14 @@
 
   .header__right {
     display: flex;
+    flex-direction: row-reverse;
     justify-content: flex-start;
     flex-wrap: nowrap;
     align-items: center;
     margin-left: auto;
     position: static;
     background: inherit;
+    right: 0;
   }
 
   .left {

@@ -1,10 +1,25 @@
 .header {
   display: flex;
   gap: 5px;
+  width: 95%;
+  min-width: 432px;
+  justify-content: space-between;
   z-index: 12;
 }
 
 .header_button {
   font-size: 0;
-  background-color: white;
+  background-color: inherit;
+}
+
+@media screen and (min-width: 768px) {
+  .header {
+    gap: 5px;
+    justify-content: flex-end;
+  }
+
+  .header_button {
+    font-size: 0;
+    background-color: white;
+  }
 }
