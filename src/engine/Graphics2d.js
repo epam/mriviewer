@@ -674,6 +674,8 @@ class Graphics2d extends React.Component {
     const xScr = xContainer;
     const yScr = yContainer;
 
+    this.m_toolPick.onMouseMove(xScr, yScr, store);
+
     if (indexTools2d === Tools2dType.PAINT) {
       this.m_toolPaint.onMouseMove(xScr, yScr, store);
     }
