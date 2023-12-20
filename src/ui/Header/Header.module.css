@@ -1,6 +1,7 @@
 .header {
   display: flex;
   gap: 5px;
+  z-index: 12;
 }
 
 .header_button {
