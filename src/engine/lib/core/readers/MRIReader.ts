@@ -10,8 +10,11 @@ export class MRIReader {
     if (data && data.length && data[0] instanceof File) {
       this.fileReader.read(data as File[]);
     } else if (isValidUrl(data as string)) {
-      const files: File[] = await this.fileLoader.load(data as string);
-      this.fileReader.read(files);
+      const files: File[] | null = await this.fileLoader.load(data as string);
+
+      if (files) {
+        this.fileReader.read(files);
+      }
     } else {
       throw new Error('Invalid input. Expected a File or URL.');
     }

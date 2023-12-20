@@ -8,7 +8,6 @@ import StoreActionType from '../store/ActionTypes';
 import FullScreenToggle from './Toolbars/FullScreen';
 import UiModalText from './Modals/UiModalText';
 import UiModalAlert from './Modals/ModalAlert';
-import UiErrConsole from './UiErrConsole';
 import ModeView from '../store/ViewMode';
 import Graphics2d from '../engine/Graphics2d';
 import BrowserDetector from '../engine/utils/BrowserDetector';
@@ -28,6 +27,9 @@ import { TopToolbar } from './TopToolbar/TopToolbar';
 import { UiAbout } from './Header/UiAbout';
 import { MobileSettings } from './MobileSettings/MobileSettings';
 import StartScreen from './StartScreen/StartScreen';
+import MriViwer from '../engine/lib/MRIViewer';
+import { MriEvents } from '../engine/lib/enums';
+
 import css from './Main.module.css';
 import cx from 'classnames';
 import '../nouislider-custom.css';
@@ -38,8 +40,9 @@ import UiModalConfirmation from './Modals/UiModalConfirmation';
 
 export const Main = () => {
   const dispatch = useDispatch();
-  const { arrErrors, isLoaded, progress, spinner, viewMode, showModalText, showModalAlert, showModalWindowCW, showModalConfirmation } =
-    useSelector((state) => state);
+  const { isLoaded, progress, spinner, viewMode, showModalText, showModalAlert, showModalWindowCW, showModalConfirmation } = useSelector(
+    (state) => state
+  );
 
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
   const [isWebGl20supported, setIsWebGl20supported] = useState(true);
@@ -48,6 +51,7 @@ export const Main = () => {
   const [isFullMode, setIsFullMode] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const appRef = useRef();
+  const mriViwer = useRef(MriViwer).current;
 
   useEffect(() => {
     function handleResize() {
@@ -60,6 +64,23 @@ export const Main = () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    const handleFileReadError = (eventData) => {
+      setStrAlertTitle('File Read Error');
+      setStrAlertText(eventData.error);
+      onShowModalAlert();
+    };
+
+    // Subscribe to the FILE_READ_ERROR event
+    mriViwer.events.on(MriEvents.FILE_READ_ERROR, handleFileReadError);
+
+    // Clean up
+    return () => {
+      mriViwer.events.off(MriEvents.FILE_READ_ERROR, handleFileReadError);
+    };
+  }, []);
+
   const [, drop] = useDrop(
     () => ({
       accept: DnDItemTypes.SETTINGS,
@@ -215,7 +236,6 @@ export const Main = () => {
               <MobileSettings />
             </div>
           )}
-          {arrErrors.length > 0 && <UiErrConsole />}
           {showModalText && (
             <UiModalText stateVis={showModalText} onHide={onHideModalText.bind(this)} onShow={onShowModalText.bind(this)} />
           )}

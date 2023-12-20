@@ -46,9 +46,8 @@ export const UiReportMenu = () => {
   const strDisabled = !isLoadedLocal;
   return (
     <>
-      <Tooltip content="Show tags">
+      <Tooltip content="About">
         <UIButton
-          text="About"
           cx={cx(css.button, css['report-menu__report'])}
           icon="report"
           rounded
@@ -59,7 +58,6 @@ export const UiReportMenu = () => {
       </Tooltip>
       <Tooltip content="Screenshot">
         <UIButton
-          text="Screenshot"
           cx={cx(css.button, css['report-menu__camera'])}
           icon="camera"
           rounded

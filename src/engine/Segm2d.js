@@ -14,7 +14,9 @@
 // ********************************************************
 
 import * as tf from '@tensorflow/tfjs';
-import PATH_MODEL from './PATH_MODEL.json';
+import StoreActionType from '../store/ActionTypes';
+
+const BRAIN_MODEl = 'https://daentjnvnffrh.cloudfront.net/models/brain/model.json';
 
 // ********************************************************
 // Const
@@ -35,7 +37,6 @@ const STAGE_MODEL_IS_LOADING = 1;
 const STAGE_MODEL_READY = 2;
 const STAGE_IMAGE_PROCESSED = 3;
 const STAGE_SEGMENTATION_READY = 4;
-// const STAGE_READY_NEXT_IMAGE = 5;
 
 const OUT_W = 240;
 const OUT_H = 160;
@@ -46,9 +47,11 @@ const NUM_CLASSES = 96;
 // ********************************************************
 
 class Segm2d {
-  constructor(objGraphics2d) {
+  constructor(props) {
     this.stage = STAGE_MODEL_NOT_LOADED;
-    this.objGraphics2d = objGraphics2d;
+    this.objGraphics2d = props;
+    this.store = props.store;
+
     this.model = null;
     this.tensorIndices = null;
     this.imgData = null;
@@ -117,14 +120,14 @@ class Segm2d {
     } // for (y)
   }
 
-  //
   // Load model
   async onLoadModel() {
     this.stage = STAGE_MODEL_IS_LOADING;
     this.pixels = null;
 
     console.log('Loading tfjs model...');
-    const modelLoaded = await tf.loadLayersModel(PATH_MODEL, { strict: false });
+    this.store.dispatch({ type: StoreActionType.SET_PROGRESS_INFO, titleProgressBar: 'Loading tfjs model...' });
+    const modelLoaded = await tf.loadLayersModel(BRAIN_MODEl, { strict: false, onProgress: this.onTFLoadProgress.bind(this) });
 
     this.model = modelLoaded;
     this.stage = STAGE_MODEL_READY;
@@ -267,9 +270,9 @@ class Segm2d {
   getStageString() {
     return [
       'Wait. Model is not loaded', // const STAGE_MODEL_NOT_LOADED = 0;
-      'Wait. Model is loading ...', // const STAGE_MODEL_IS_LOADING = 1;
+      'Loading TensorFlow model from server...', // const STAGE_MODEL_IS_LOADING = 1;
       'Model is ready', // const STAGE_MODEL_READY = 2;
-      'Image is processed ...', // const STAGE_IMAGE_PROCESSED = 3;
+      'Image is processed...', // const STAGE_IMAGE_PROCESSED = 3;
       'Segmentation is ready', // const STAGE_SEGMENTATION_READY = 4;
     ][this.stage];
   }
@@ -278,7 +281,7 @@ class Segm2d {
     this.srcImageData = imgData;
   }
 
-  render(ctx, w, h, imgData) {
+  renderImage(ctx, w, h, imgData) {
     this.srcImageData = imgData;
     this.wSrc = w;
     this.hSrc = h;
@@ -288,9 +291,8 @@ class Segm2d {
     const strMessage = this.getStageString();
     console.log('Segm2d render. stage = ' + strMessage);
 
-    /*
     // load model
-    if (this.model === null) {
+    if (this.model === null && this.stage === STAGE_MODEL_NOT_LOADED) {
       this.onLoadModel();
     } else {
       // change slider or similar: need to rebuild segm for the new source image
@@ -299,7 +301,6 @@ class Segm2d {
         return;
       }
     } // if model non null
-    */
 
     if (this.stage === STAGE_SEGMENTATION_READY && this.pixels !== null) {
       // draw pixels array on screen
@@ -315,26 +316,40 @@ class Segm2d {
     }
 
     // clear screen
-    ctx.fillStyle = 'rgb(64, 64, 64)';
-    ctx.fillRect(0, 0, w, h);
-    // draw cross
-    ctx.strokeStyle = '#FF0000';
+    ctx.fillStyle = '#242424';
+    drawRoundedRect(ctx, 30, 0, w, h, 20);
 
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(w - 1, h - 1);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(w - 1, 0);
-    ctx.lineTo(0, h - 1);
-    ctx.stroke();
     // draw wait message
     const strMsgPrint = this.getStageString();
-    ctx.font = '24px serif';
-    ctx.fillStyle = 'rgb(64, 255, 64)';
-    ctx.fillText(strMsgPrint, w / 2, h / 2);
+    ctx.font = '24px sans-serif';
+    ctx.fillStyle = '#dc5e47';
+    const textWidth = ctx.measureText(strMsgPrint).width;
+    const x = (w - textWidth) / 2;
+    const y = h / 2;
+    ctx.fillText(strMsgPrint, x, y);
   }
+
+  onTFLoadProgress(progress) {
+    this.store.dispatch({ type: StoreActionType.SET_PROGRESS, progress });
+    if (progress === 1) {
+      this.store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
+      this.store.dispatch({ type: StoreActionType.SET_PROGRESS_INFO, titleProgressBar: null });
+    }
+  }
+}
+
+function drawRoundedRect(ctx, x, y, width, height, borderRadius) {
+  if (width < 2 * borderRadius) borderRadius = width / 2;
+  if (height < 2 * borderRadius) borderRadius = height / 2;
+  ctx.beginPath();
+  ctx.moveTo(x + borderRadius, y);
+  ctx.arcTo(x + width, y, x + width, y + height, borderRadius);
+  ctx.arcTo(x + width, y + height, x, y + height, borderRadius);
+  ctx.arcTo(x, y + height, x, y, borderRadius);
+  ctx.arcTo(x, y, x + width, y, borderRadius);
+  ctx.closePath();
+  ctx.stroke();
+  ctx.fill();
 }
 
 export default Segm2d;

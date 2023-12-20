@@ -48,10 +48,20 @@ button:hover,
   background-color: var(--red);
 }
 
+.button > svg {
+  width: 42px;
+  height: 42px;
+}
+
 @media screen and (min-width: 768px) {
   .reset {
     display: flex;
     justify-content: flex-end;
+  }
+
+  .button > svg {
+    width: 24px;
+    height: 24px;
   }
 }
 .reset {
@@ -80,11 +90,6 @@ button:hover,
   vertical-align: center;
   font-size: 14px;
   border-radius: 36px;
-}
-
-.button > svg {
-  width: 24px;
-  height: 24px;
 }
 
 .rounded {

@@ -24,7 +24,7 @@ export class MRIFileLoader {
    * @param {string} url - The URL of the file to load.
    * @returns {Promise<File[]>} A promise that resolves to an array of Files or rejects with an error.
    */
-  async load(url: string): Promise<File[]> {
+  async load(url: string): Promise<File[] | null> {
     this.filesLoaded = 0;
     this.filesProgressByLength = false;
     this.store.setLoadingProgress(0);
@@ -52,15 +52,16 @@ export class MRIFileLoader {
    * @param {string} url - The URL from which to fetch the file.
    * @returns {Promise<File[]>} A promise that resolves to an array containing the fetched file as a File object.
    */
-  async fetchSingleFile(url: string): Promise<File[]> {
+  async fetchSingleFile(url: string): Promise<File[] | null> {
     const response = await this.fetchWithProgress(url, this.callbackLoadProgress);
 
     if (!response.ok) {
       this.handleVolumeLoadFailed(`Failed to fetch file from URL: ${url}`);
-      return [];
+      return null;
     }
 
     const blob = await response.blob();
+
     const fileName = getFileNameFromUrl(url);
     const file = new File([blob], fileName, {
       type: blob.type,
@@ -91,14 +92,15 @@ export class MRIFileLoader {
    * @param {string} txtUrl - The URL of the .txt file containing the list of file URLs.
    * @returns {Promise<File[]>} A promise that resolves to an array of File objects.
    */
-  async fetchTxtFile(txtUrl: string): Promise<File[]> {
+  async fetchTxtFile(txtUrl: string): Promise<File[] | null> {
     this.filesProgressByLength = true;
     const base = txtUrl.substring(0, txtUrl.lastIndexOf('/') + 1);
     const fileNames = await this.fetchTxtContent(txtUrl);
     this.filesLength = fileNames.length;
     const filePromises = fileNames.map((filename: string) => this.fetchSingleFile(base + filename));
     const files = await Promise.all(filePromises);
-    return files.flat();
+    const validFalies = files.filter(Boolean) as Array<File[]>;
+    return validFalies.flat();
   }
 
   /**
@@ -131,7 +133,9 @@ export class MRIFileLoader {
 
     const files = await Promise.all(filePromises);
 
-    return files.flat();
+    const validFalies = files.filter(Boolean) as Array<File[]>;
+
+    return validFalies.flat();
   }
 
   /**
@@ -154,6 +158,10 @@ export class MRIFileLoader {
       };
 
       xhr.onload = () => {
+        if (xhr.status === 403) {
+          return this.handleVolumeLoadFailed(`Error 403 Forbiden, failed to fetch file from URL: ${url}`);
+        }
+
         if (this.filesProgressByLength) {
           this.filesLoaded = this.filesLoaded + 1;
           const percentComplete = this.filesLoaded / this.filesLength;
@@ -166,7 +174,7 @@ export class MRIFileLoader {
 
       xhr.onerror = () => {
         this.handleVolumeLoadFailed(`Failed to fetch file from URL: ${url}`);
-        reject(new Error());
+        reject();
       };
 
       xhr.responseType = 'blob';
@@ -189,6 +197,6 @@ export class MRIFileLoader {
    */
   handleVolumeLoadFailed(error: string) {
     this.events.emit(MriEvents.FILE_READ_ERROR, { error });
-    this.store.setVolumeLoadFailed(this.fileName, [error]);
+    this.store.setVolumeLoadFailed(this.fileName);
   }
 }

@@ -31,12 +31,10 @@ export const SegmentationProperty = () => {
 
   return (
     <>
-      You can use automatic 2d image segmentation only for brain-like data
       <SwitchRow>
-        Segmentation 2d (brain only)
+        <b>AI Brain Segmentation (Beta):</b>
         <Switch value={isSegmented} onValueChange={toggleSegmentation} />
       </SwitchRow>
-      Switch checker above on and see segmentation result on right
     </>
   );
 };
