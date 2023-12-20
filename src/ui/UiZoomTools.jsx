@@ -27,10 +27,10 @@ const UiZoomTools = (props) => {
       xPosNew = props.render2dxPos + (canvasRect.width / 2) * Math.abs(step);
       yPosNew = props.render2dyPos + (canvasRect.height / 2) * Math.abs(step);
     } else if (buttonId === Tools2dType.ZOOM_OUT && newZoom < 1) {
-      const initialX = canvasRect.width * currentZoom + props.render2dxPos;
-      const initialY = canvasRect.height * currentZoom + props.render2dyPos;
-      xPosNew = initialX - (initialX - props.render2dxPos) * (newZoom / currentZoom);
-      yPosNew = initialY - (initialY - props.render2dyPos) * (newZoom / currentZoom);
+      const centerX = (canvasRect.width * newZoom) / 2 + props.render2dxPos;
+      const centerY = (canvasRect.height * newZoom) / 2 + props.render2dyPos;
+      xPosNew = centerX - (centerX - props.render2dxPos) * (newZoom / currentZoom);
+      yPosNew = centerY - (centerY - props.render2dyPos) * (newZoom / currentZoom);
     }
 
     if (xPosNew < 0) {

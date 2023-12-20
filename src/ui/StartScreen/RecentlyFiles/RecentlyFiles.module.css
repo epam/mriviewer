@@ -23,8 +23,24 @@
 
 .left {
   color: var(--dark-gray4);
-  margin-right: 20px;
-  flex-basis: 50%;
+  margin-right: 2%;
+  flex-basis: 40%;
+  overflow: hidden;
+}
+.right {
+  flex-basis: 58%;
+  overflow: hidden;
+}
+
+.element {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.element:not(:first-child) {
+  margin-top: 10px;
 }
 
 @media screen and (min-width: 768px) {

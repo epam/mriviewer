@@ -52,6 +52,7 @@ export const initialState = {
   showModalConfirmation: false,
   showModalWindowCW: false,
   showModalSelectFiles: false,
+  selectedColor: '#ffff00',
 };
 //
 // App reducer
@@ -144,6 +145,8 @@ const medReducer = (state = initialState, action) => {
       return Object.assign({}, state, { spinnerTitle: action.spinnerTitle });
     case StoreActionType.SET_SPINNER_PROGRESS:
       return Object.assign({}, state, { spinnerProgress: action.spinnerProgress });
+    case StoreActionType.SET_SELECTED_COLOR:
+      return Object.assign({}, state, { selectedColor: action.selectedColor });
     default:
       return state;
   }
