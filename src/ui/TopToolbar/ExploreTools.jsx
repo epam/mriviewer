@@ -48,6 +48,12 @@ const ExploreTools = (props) => {
       id: Tools2dType.INTENSITY,
     },
     {
+      icon: 'paint',
+      caption: 'Paint',
+      handler: mediator.bind(null, Tools2dType.PAINT),
+      id: Tools2dType.PAINT,
+    },
+    {
       icon: 'line',
       caption: 'Measure distance between voxels',
       handler: mediator.bind(null, Tools2dType.DISTANCE),

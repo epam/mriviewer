@@ -75,12 +75,13 @@ class ToolDelete {
         y: yScr,
       };
 
+      const toolPaint = this.m_objGraphics2d.m_toolPaint;
       const toolDist = this.m_objGraphics2d.m_toolDistance;
       const toolAngle = this.m_objGraphics2d.m_toolAngle;
       const toolArea = this.m_objGraphics2d.m_toolArea;
       const toolRect = this.m_objGraphics2d.m_toolRect;
       const toolText = this.m_objGraphics2d.m_toolText;
-      const tools = [toolDist, toolAngle, toolArea, toolRect, toolText];
+      const tools = [toolPaint, toolDist, toolAngle, toolArea, toolRect, toolText];
       const trackedBefore = this.m_pointTracked !== null;
       this.m_pointTracked = null;
       const numTools = tools.length;

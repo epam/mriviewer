@@ -53,5 +53,6 @@ const StoreActionType = {
   SET_SHOW_MODAL_CONFIRMATION: 41,
   SET_SHOW_MODAL_WINDOW_WC: 42,
   SET_SHOW_MODAL_SELECT_FILES: 43,
+  SET_SELECTED_COLOR: 44,
 };
 export default StoreActionType;

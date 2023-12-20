@@ -1,9 +1,10 @@
 .header {
   display: flex;
-  gap: 3vw;
+  gap: 5px;
   width: 95%;
   min-width: 432px;
   justify-content: space-between;
+  z-index: 12;
 }
 
 .header_button {
