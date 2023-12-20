@@ -3,57 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-.reset {
-  display: inline-block;
-  border: none;
-  margin: 0;
-  text-decoration: none;
-  background-color: transparent;
-  padding: 0;
-  cursor: pointer;
-  transition: all 250ms ease-in-out, transform 150ms ease;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+.button.light svg {
+  fill: var(--black);
 }
 
-.reset:focus {
-  outline: none;
-}
-
-.button {
-  margin-right: 5px;
-  margin-bottom: 5px;
-  background-color: var(--black);
-  padding: 12px 13px;
-  color: var(--white);
-  font-family: inherit;
-  text-align: center;
-  vertical-align: center;
-  font-size: 14px;
-  border-radius: 36px;
-}
-
-.button > svg {
-  width: 24px;
-  height: 24px;
-}
-
-.rounded {
-  overflow: hidden;
-  border-radius: 50%;
-}
-
-.captionButton {
-  padding: 5px 10px;
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-.button svg {
-  fill: var(--white);
-}
-
-.button:hover,
+button:hover,
 .button:focus {
   background-color: var(--light-orange);
 }
@@ -61,7 +15,6 @@
 .button.active {
   color: var(--red);
 }
-
 .apply {
   background-color: var(--red);
   border-radius: 4px;
@@ -95,8 +48,75 @@
   background-color: var(--red);
 }
 
-.button.accent svg {
+.button > svg {
+  width: 42px;
+  height: 42px;
+}
+
+@media screen and (min-width: 768px) {
+  .reset {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .button > svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+.reset {
+  display: inline-block;
+  border: none;
+  margin: 0;
+  text-decoration: none;
+  background-color: transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: all 250ms ease-in-out, transform 150ms ease;
+}
+
+.reset:focus {
+  outline: none;
+}
+
+.button {
+  margin-right: 5px;
+  margin-bottom: 5px;
+  background-color: var(--black);
+  padding: 12px 13px;
+  color: var(--white);
+  font-family: inherit;
+  text-align: center;
+  vertical-align: center;
+  font-size: 14px;
+  border-radius: 36px;
+}
+
+.rounded {
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.captionButton {
+  padding: 5px 10px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.button svg {
   fill: var(--white);
+}
+
+.button:not(.reset) {
+  display: block;
+}
+.button:hover,
+.button:focus {
+  background-color: var(--light-orange);
+}
+
+.button.active {
+  color: var(--red);
 }
 
 .button.accent:hover,
@@ -105,6 +125,114 @@
   filter: brightness(85%);
 }
 
-.button.accent.active svg {
-  fill: var(--black);
+.button.light.active {
+  color: var(--red);
+}
+
+.button.light:hover,
+.button.light:focus {
+  background-color: var(--light);
+  filter: brightness(80%);
+}
+
+@media screen and (min-width: 1024px) {
+  .reset {
+    display: inline-block;
+    border: none;
+    margin: 0;
+    text-decoration: none;
+    background-color: transparent;
+    padding: 0;
+    cursor: pointer;
+    transition: all 250ms ease-in-out, transform 150ms ease;
+  }
+
+  .reset:focus {
+    outline: none;
+  }
+
+  .button {
+    margin-right: 5px;
+    margin-bottom: 5px;
+    background-color: var(--black);
+    padding: 12px 13px;
+    color: var(--white);
+    font-family: inherit;
+    text-align: center;
+    vertical-align: center;
+    font-size: 14px;
+    border-radius: 36px;
+  }
+
+  .button > svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .rounded {
+    overflow: hidden;
+    border-radius: 50%;
+  }
+
+  .captionButton {
+    padding: 5px 10px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .button svg {
+    fill: var(--white);
+  }
+
+  .apply {
+    background-color: var(--red);
+    border-radius: 4px;
+  }
+
+  .button.active svg {
+    fill: var(--red);
+  }
+
+  .button.light {
+    color: var(--black);
+    background-color: var(--light);
+  }
+
+  .button.light svg {
+    fill: var(--black);
+  }
+
+  .button.accent {
+    color: var(--white);
+    background-color: var(--red);
+  }
+
+  .button.accent svg {
+    fill: var(--white);
+  }
+
+  .button.accent.active svg {
+    fill: var(--black);
+  }
+}
+
+.button_start_screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  flex-basis: 33%;
+}
+
+.button_select_file {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  z-index: 10;
+  width: 240px;
+  justify-content: center;
+}
+
+.button_select_file svg {
+  margin-right: 10px;
 }

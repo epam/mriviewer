@@ -11,6 +11,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', sans-serif;
+  font-size: 15px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;
@@ -28,6 +29,7 @@ code {
   --black: #18191b;
 
   /* Additional colors */
+  --beige: #f4f2ea;
   --gray: #636666;
   --dark-gray: #282a2d;
   --dark-gray2: #46494e;
@@ -56,4 +58,12 @@ svg {
   display: inline-block;
   vertical-align: middle;
   color: var(--white);
+}
+
+.cursor-grab {
+  cursor: grabbing;
+}
+
+.cursor-hand {
+  cursor: grab;
 }

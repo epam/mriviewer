@@ -2,6 +2,25 @@
  * Copyright 2021 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
+.confirmation {
+  top: 58%;
+  position: absolute;
+  width: 28rem;
+  left: 50%;
+  line-height: 1.5;
+  transform: translate(-50%, -50%);
+  color: var(--white);
+  border-radius: 15px;
+  background-color: var(--dark-gray);
+  transition: 1s ease-out;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+}
+
+.close_body {
+  display: flex-block;
+}
 
 .overlay {
   position: fixed;
@@ -29,6 +48,10 @@
   flex-direction: column;
 }
 
+.modalWindowRange {
+  margin-top: 2rem;
+}
+
 .header,
 .body,
 .footer {
@@ -49,7 +72,7 @@
 }
 
 .footer {
-  justify-content: flex-end;
+  justify-content: right;
   border-top: 1px solid var(--gray);
 }
 
@@ -107,7 +130,7 @@
   margin: 0;
   padding: 0;
   display: flex;
-  align-items: center;
+  flex-direction: column;
 }
 
 .input {
@@ -152,6 +175,10 @@
   color: var(--white);
 }
 
+.text_center {
+  text-align: center;
+}
+
 .helperText {
   font-size: 14px;
   margin-top: 8px;
@@ -170,4 +197,39 @@
   .row label {
     font-size: 16px;
   }
+}
+.body_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.label_text {
+  margin: 5px 0;
+}
+
+.invalid {
+  border-color: red;
+  box-shadow: 0 0 5px red;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.select_file_wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20xp;
+  padding: 30px;
+}
+
+.select_file_row {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  margin-top: 30px;
 }

@@ -22,6 +22,8 @@ export const Mode2dToolbar = () => {
     graphics2d.clear();
 
     dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: 1.0 });
+    dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: 0.0 });
+    dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: 0.0 });
 
     // build render image
     graphics2d.forceUpdate();

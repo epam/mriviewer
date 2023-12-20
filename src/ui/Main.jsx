@@ -8,7 +8,6 @@ import StoreActionType from '../store/ActionTypes';
 import FullScreenToggle from './Toolbars/FullScreen';
 import UiModalText from './Modals/UiModalText';
 import UiModalAlert from './Modals/ModalAlert';
-import UiErrConsole from './UiErrConsole';
 import ModeView from '../store/ViewMode';
 import Graphics2d from '../engine/Graphics2d';
 import BrowserDetector from '../engine/utils/BrowserDetector';
@@ -26,21 +25,61 @@ import { LeftToolbar } from './LeftToolbar/LeftToolbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { TopToolbar } from './TopToolbar/TopToolbar';
 import { UiAbout } from './Header/UiAbout';
+import { MobileSettings } from './MobileSettings/MobileSettings';
 import StartScreen from './StartScreen/StartScreen';
+import MriViwer from '../engine/lib/MRIViewer';
+import { MriEvents } from '../engine/lib/enums';
+
 import css from './Main.module.css';
 import cx from 'classnames';
 import '../nouislider-custom.css';
+import UiModalWindowCenterWidth from './Modals/UiModalWindowCenterWidth';
+import { useOnEvent } from './hooks/useOnEvent';
+import { mriEventsService } from '../engine/lib/services';
+import UiModalConfirmation from './Modals/UiModalConfirmation';
 
 export const Main = () => {
   const dispatch = useDispatch();
-  const { arrErrors, isLoaded, progress, spinner, viewMode, showModalText, showModalAlert } = useSelector((state) => state);
+  const { isLoaded, progress, spinner, viewMode, showModalText, showModalAlert, showModalWindowCW, showModalConfirmation } = useSelector(
+    (state) => state
+  );
 
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
   const [isWebGl20supported, setIsWebGl20supported] = useState(true);
   const [strAlertTitle, setStrAlertTitle] = useState('');
   const [strAlertText, setStrAlertText] = useState('');
   const [isFullMode, setIsFullMode] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const appRef = useRef();
+  const mriViwer = useRef(MriViwer).current;
+
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth < 1024);
+    }
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleFileReadError = (eventData) => {
+      setStrAlertTitle('File Read Error');
+      setStrAlertText(eventData.error);
+      onShowModalAlert();
+    };
+
+    // Subscribe to the FILE_READ_ERROR event
+    mriViwer.events.on(MriEvents.FILE_READ_ERROR, handleFileReadError);
+
+    // Clean up
+    return () => {
+      mriViwer.events.off(MriEvents.FILE_READ_ERROR, handleFileReadError);
+    };
+  }, []);
 
   const [, drop] = useDrop(
     () => ({
@@ -54,7 +93,6 @@ export const Main = () => {
   );
 
   const isReady = isLoaded && isWebGl20supported;
-
   const onShowModalText = () => {
     dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true });
   };
@@ -96,7 +134,6 @@ export const Main = () => {
   const onFullScreenChange = () => {
     setIsFullMode(!isFullMode);
   };
-
   useEffect(() => {
     const strSearch = window.location.search;
     if (strSearch.length > 0) {
@@ -142,7 +179,13 @@ export const Main = () => {
     return () => {
       document.removeEventListener('fullscreenchange', onFullScreenChange);
     };
-  }, [isFullMode]);
+  }, [isFullMode, isMobile]);
+
+  const onHide = () => {
+    dispatch({ type: StoreActionType.SET_SHOW_MODAL_WINDOW_WC, showModalWindowCW: false });
+  };
+
+  useOnEvent(mriEventsService.FILE_READ_SUCCESS, onHide);
 
   return (
     <AppContextProvider>
@@ -169,14 +212,13 @@ export const Main = () => {
               )}
               {!isFullMode && (
                 <div className={css.header__right}>
-                  <Header fileNameOnLoad={m_fileNameOnLoad} />
+                  <Header />
                 </div>
               )}
             </div>
           ) : (
             <StartScreen />
           )}
-
           {isReady && (
             <div className={cx(isFullMode && css.fullscreen)}>
               <div className={css.left}>
@@ -188,7 +230,12 @@ export const Main = () => {
               <RightPanel />
             </div>
           )}
-          {arrErrors.length > 0 && <UiErrConsole />}
+          {isReady && isMobile && (
+            <div className={cx(isFullMode && css.fullscreen)}>
+              <div className={css.center}>{viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
+              <MobileSettings />
+            </div>
+          )}
           {showModalText && (
             <UiModalText stateVis={showModalText} onHide={onHideModalText.bind(this)} onShow={onShowModalText.bind(this)} />
           )}
@@ -201,6 +248,8 @@ export const Main = () => {
               text={strAlertText}
             />
           )}
+          {showModalWindowCW && <UiModalWindowCenterWidth stateVis={showModalWindowCW} onHide={onHide} />}
+          {showModalConfirmation && <UiModalConfirmation />}
         </div>
       </div>
     </AppContextProvider>

@@ -58,9 +58,16 @@ class ToolPick {
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
+    const objCanvas = store.graphics2d.m_mount.current;
+    const canvasRect = objCanvas.getBoundingClientRect();
+    const canvasWidth = canvasRect.width;
+    const canvasHeight = canvasRect.height;
+    const centerX = (canvasWidth - store.graphics2d.imgData.width) / 2;
+    const centerY = (canvasHeight - store.graphics2d.imgData.height) / 2;
+    const xPos = (store.render2dxPos - centerX) / store.graphics2d.imgData.width;
+    const yPos = (store.render2dyPos - centerY) / store.graphics2d.imgData.height;
     const zoom = store.render2dZoom;
-    const xPos = store.render2dxPos;
-    const yPos = store.render2dyPos;
+
     if (mode2d === Modes2d.TRANSVERSE) {
       // z: const
       vTex.x = Math.floor((xPos + xScr * zoom) * xDim);
@@ -90,16 +97,16 @@ class ToolPick {
 
     const xRatioImage = xScr / this.m_wScreen;
     const yRatioImage = yScr / this.m_hScreen;
-    if (xRatioImage > 1.0 || yRatioImage > 1.0) {
-      // out if rendered image
-      return;
-    }
     const vTex = this.screenToTexture(xRatioImage, yRatioImage, store);
 
     const volSet = store.volumeSet;
     const vol = volSet.getVolume(store.volumeIndex);
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
+
+    if (vTex.x < 0 || vTex.y < 0 || vTex.z < 0 || vTex.x >= vol.m_xDim || vTex.y >= vol.m_yDim) {
+      return;
+    }
     /*
     if (mode2d === Modes2d.SAGGITAL) {
       // x

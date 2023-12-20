@@ -82,18 +82,7 @@ class SelectVolumeProperty extends React.Component {
                 onClick={() => {
                   this.onClickRow(i);
                 }}
-                active
-              >
-                {strVo} <UiVolIcon index={i} />{' '}
-              </p>
-            );
-          } else {
-            jsxListItem = (
-              <p
-                key={i}
-                onClick={() => {
-                  this.onClickRow(i);
-                }}
+                data-active="true" // use a data attribute instead
               >
                 {strVo} <UiVolIcon index={i} />{' '}
               </p>

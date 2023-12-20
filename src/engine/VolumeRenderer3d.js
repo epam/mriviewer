@@ -1406,7 +1406,7 @@ export default class VolumeRenderer3d {
 
   onMouseDown(xx, yy) {
     if (this.Tool23D) {
-      this.graphics23d.onMouseDown(xx / this.windowWidth, yy / this.windowHeight);
+      this.graphics23d.onMouseDown(xx / this.windowWidth, -yy / this.windowHeight);
       return;
     }
     this.orbitControl.onMouseDown(xx, yy);
@@ -1418,14 +1418,14 @@ export default class VolumeRenderer3d {
     this.eraserMouseDown = true;
     if (this.isEraseMode && this.eraserStart) {
       this.lockEraserBuffersUpdating = true;
-      this.volumeUpdater.eraser.eraseStart(xx, yy, this.windowWidth, this.matVolumeRender.uniforms.isoThreshold.value, true);
+      this.volumeUpdater.eraser.eraseStart(xx, -yy, this.windowWidth, this.matVolumeRender.uniforms.isoThreshold.value, true);
     }
   }
 
   onMouseMove(xx, yy) {
     //this.tools23d.onMouseMove(xx / this.windowWidth, yy / this.windowHeight);
     if (this.Tool23D) {
-      this.graphics23d.onMouseMove(xx / this.windowWidth, yy / this.windowHeight);
+      this.graphics23d.onMouseMove(xx / this.windowWidth, -yy / this.windowHeight);
       return;
     }
     if (this.checkFrameBufferMode !== CHECK_MODE_RESULT_OK) {
@@ -1435,13 +1435,13 @@ export default class VolumeRenderer3d {
     if (!(this.isEraseMode && this.eraserMouseDown && this.eraserStart)) {
       this.orbitControl.onMouseMove(xx, yy);
     } else {
-      this.volumeUpdater.eraser.eraseStart(xx, yy, this.windowWidth, this.matVolumeRender.uniforms.isoThreshold.value, false);
+      this.volumeUpdater.eraser.eraseStart(xx, -yy, this.windowWidth, this.matVolumeRender.uniforms.isoThreshold.value, false);
     }
   }
 
   onMouseUp(xx, yy) {
     if (this.Tool23D) {
-      this.graphics23d.onMouseUp(xx / this.windowWidth, yy / this.windowHeight);
+      this.graphics23d.onMouseUp(xx / this.windowWidth, -yy / this.windowHeight);
       return;
     }
     //this.tools23d.onMouseUp(xx / this.windowWidth, yy / this.windowHeight);

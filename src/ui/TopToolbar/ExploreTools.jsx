@@ -36,16 +36,22 @@ const ExploreTools = (props) => {
 
   const buttons = [
     {
-      id: Tools2dType.NONE,
-      icon: 'cursor',
+      id: Tools2dType.HAND,
+      icon: 'hand',
       caption: 'Explore model',
-      handler: mediator.bind(null, Tools2dType.NONE),
+      handler: mediator.bind(null, Tools2dType.HAND),
     },
     {
       icon: 'target',
       caption: 'Get voxel intensity',
       handler: mediator.bind(null, Tools2dType.INTENSITY),
       id: Tools2dType.INTENSITY,
+    },
+    {
+      icon: 'paint',
+      caption: 'Paint',
+      handler: mediator.bind(null, Tools2dType.PAINT),
+      id: Tools2dType.PAINT,
     },
     {
       icon: 'line',

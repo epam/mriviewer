@@ -10,6 +10,8 @@ import { useSelector } from 'react-redux';
 import { UiModalSaveNifti } from '../Modals/UiModalSaveNifti';
 import { UIButton } from '../Button/Button';
 import { Tooltip } from '../Tooltip/Tooltip';
+import css from './UISaveMenu.module.css';
+import cx from 'classnames';
 
 export const UiSaveMenu = () => {
   /**
@@ -27,8 +29,14 @@ export const UiSaveMenu = () => {
   };
   return (
     <>
-      <Tooltip content="Save Nifti">
-        <UIButton rounded icon="download" handler={(evt) => onModalSaveNiftiShow(evt)} mode={isLoaded ? 'accent' : ''} />
+      <Tooltip content="Download">
+        <UIButton
+          cx={cx(css.button, css['download__link'])}
+          rounded
+          icon="download"
+          handler={(evt) => onModalSaveNiftiShow(evt)}
+          mode={isLoaded ? 'accent' : ''}
+        />
       </Tooltip>
       <UiModalSaveNifti stateVis={showModalSaveNifti} onHide={onModalSaveNiftiHide} />
     </>
