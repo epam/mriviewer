@@ -23,6 +23,7 @@ const Tools2dType = {
   ZOOM_OUT: 10,
   ZOOM_100: 11,
   FILTER: 12,
-  NONE: 13,
+  HAND: 13,
+  PAINT: 14,
 };
 export default Tools2dType;

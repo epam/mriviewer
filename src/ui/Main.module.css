@@ -68,7 +68,7 @@
   position: absolute;
   right: 0;
   top: 50%;
-  z-index: 10;
+  z-index: 2;
 }
 .left {
   display: none;
@@ -81,6 +81,7 @@
   right: 0;
   bottom: 0;
   z-index: 1;
+  width: 100%;
   user-select: none;
 }
 
@@ -127,8 +128,7 @@
     display: block;
     position: absolute;
     left: 25px;
-    top: 12%;
-    z-index: 1010;
+    top: 15%;
   }
 
   .bottleft {
@@ -198,7 +198,7 @@
     cursor: all-scroll;
     border-radius: 24px;
     transition: opacity 300ms ease-in-out;
-    z-index: 1100;
+    z-index: 11;
   }
   .left {
     top: 8%;
@@ -216,7 +216,7 @@
   }
 
   .left {
-    top: 10%;
+    top: 15%;
   }
 }
 

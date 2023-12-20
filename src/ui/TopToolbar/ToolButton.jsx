@@ -9,7 +9,7 @@ import { Tooltip } from '../Tooltip/Tooltip';
 import { useToolbarContext } from './ToolbarContext';
 
 export const ToolButton = (props) => {
-  const { onChange, content, icon } = props;
+  const { onChange, content, icon, text } = props;
   const { activeTool, setActiveTool } = useToolbarContext();
 
   const handleChange = () => {
@@ -20,7 +20,7 @@ export const ToolButton = (props) => {
   return (
     <>
       <Tooltip content={content}>
-        <UIButton active={activeTool === icon} handler={handleChange} icon={icon} />
+        <UIButton active={activeTool === icon} handler={handleChange} icon={icon} text={text} />
       </Tooltip>
     </>
   );

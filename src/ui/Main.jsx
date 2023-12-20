@@ -33,10 +33,16 @@ import { MriEvents } from '../engine/lib/enums';
 import css from './Main.module.css';
 import cx from 'classnames';
 import '../nouislider-custom.css';
+import UiModalWindowCenterWidth from './Modals/UiModalWindowCenterWidth';
+import { useOnEvent } from './hooks/useOnEvent';
+import { mriEventsService } from '../engine/lib/services';
+import UiModalConfirmation from './Modals/UiModalConfirmation';
 
 export const Main = () => {
   const dispatch = useDispatch();
-  const { isLoaded, progress, spinner, viewMode, showModalText, showModalAlert } = useSelector((state) => state);
+  const { isLoaded, progress, spinner, viewMode, showModalText, showModalAlert, showModalWindowCW, showModalConfirmation } = useSelector(
+    (state) => state
+  );
 
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
   const [isWebGl20supported, setIsWebGl20supported] = useState(true);
@@ -175,6 +181,12 @@ export const Main = () => {
     };
   }, [isFullMode, isMobile]);
 
+  const onHide = () => {
+    dispatch({ type: StoreActionType.SET_SHOW_MODAL_WINDOW_WC, showModalWindowCW: false });
+  };
+
+  useOnEvent(mriEventsService.FILE_READ_SUCCESS, onHide);
+
   return (
     <AppContextProvider>
       <div ref={appRef} style={{ height: '100%' }}>
@@ -236,6 +248,8 @@ export const Main = () => {
               text={strAlertText}
             />
           )}
+          {showModalWindowCW && <UiModalWindowCenterWidth stateVis={showModalWindowCW} onHide={onHide} />}
+          {showModalConfirmation && <UiModalConfirmation />}
         </div>
       </div>
     </AppContextProvider>

@@ -113,9 +113,13 @@ class ToolDistance {
     const zDim = vol.m_zDim;
     const objCanvas = store.graphics2d.m_mount.current;
     const canvasRect = objCanvas.getBoundingClientRect();
+    const canvasWidth = canvasRect.width;
+    const canvasHeight = canvasRect.height;
+    const centerX = (canvasWidth - wScr) / 2;
+    const centerY = (canvasHeight - hScr) / 2;
+    const xPos = (store.render2dxPos - centerX) / wScr;
+    const yPos = (store.render2dyPos - centerY) / hScr;
     const zoom = store.render2dZoom;
-    const xPos = store.render2dxPos / canvasRect.width;
-    const yPos = store.render2dyPos / canvasRect.height;
 
     const vTex = {
       x: 0.0,
@@ -152,9 +156,14 @@ class ToolDistance {
     const zDim = vol.m_zDim;
     const objCanvas = store.graphics2d.m_mount.current;
     const canvasRect = objCanvas.getBoundingClientRect();
+    const canvasWidth = canvasRect.width;
+    const canvasHeight = canvasRect.height;
+    const centerX = (canvasWidth - wScr) / 2;
+    const centerY = (canvasHeight - hScr) / 2;
+    const xPos = (store.render2dxPos - centerX) / wScr;
+    const yPos = (store.render2dyPos - centerY) / hScr;
     const zoom = store.render2dZoom;
-    const xPos = store.render2dxPos / canvasRect.width;
-    const yPos = store.render2dyPos / canvasRect.height;
+
     if (mode2d === Modes2d.TRANSVERSE) {
       // z const
       vScr.x = (xTex / xDim - xPos) / zoom;

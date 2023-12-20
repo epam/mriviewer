@@ -66,6 +66,8 @@ export class MRIStoreService {
       { type: StoreActionType.SET_LOADER_DICOM, loaderDicom },
       { type: StoreActionType.SET_VOLUME_INDEX, volumeIndex },
       { type: StoreActionType.SET_SPINNER, spinner: false },
+      { type: StoreActionType.SET_IS_16_BIT, is16bit: true },
+      { type: StoreActionType.SET_SHOW_MODAL_CONFIRMATION, showModalConfirmation: true },
     ];
 
     this.dispatchActions(actions);

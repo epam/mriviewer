@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import Modes2d from '../store/Modes2d';
 import StoreActionType from '../store/ActionTypes';
 import ToolPick from './tools2d/ToolPick';
+import ToolPaint from './tools2d/ToolPaint';
 import ToolDistance from './tools2d/ToolDistance';
 import ToolAngle from './tools2d/ToolAngle';
 import ToolArea from './tools2d/ToolArea';
@@ -27,12 +28,14 @@ class Graphics2d extends React.Component {
   constructor(props) {
     super(props);
 
+    this.store = props;
     this.m_mount = React.createRef();
 
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseWheel = this.onMouseWheel.bind(this);
+    this.setDataWindow = this.setDataWindow.bind(this);
 
     this.m_sliceRatio = 0.5;
     this.m_mode2d = Modes2d.TRANSVERSE;
@@ -56,14 +59,21 @@ class Graphics2d extends React.Component {
       stateMouseDown: false,
       xMouse: -1,
       yMouse: -1,
+      startX: 0,
+      startY: 0,
     };
 
     // segm 2d
     this.segm2d = new Segm2d(this);
     this.m_isSegmented = false;
+    // data window
+    this.m_winRight = 1;
+    this.m_winLeft = 0;
+    this.m_newWin = false;
 
     // tools2d
     this.m_toolPick = new ToolPick(this);
+    this.m_toolPaint = new ToolPaint(this);
     this.m_toolDistance = new ToolDistance(this);
     this.m_toolAngle = new ToolAngle(this);
     this.m_toolArea = new ToolArea(this);
@@ -103,6 +113,13 @@ class Graphics2d extends React.Component {
     return this.m_mount.current.toDataURL();
   }
 
+  setDataWindow(value) {
+    const [min, max] = value;
+    this.m_winLeft = min;
+    this.m_winRight = max;
+    this.forceUpdate();
+  }
+
   prepareImageForRender(volIndexArg) {
     //TODO: center the image by click
     const objCanvas = this.m_mount.current; // Canvas HTML element reference
@@ -123,6 +140,11 @@ class Graphics2d extends React.Component {
 
     const store = this.props;
     const volSet = store.volumeSet;
+    const dicom = store.loaderDicom;
+    if (dicom != null && !this.props.is16bit) {
+      this.m_winRight = dicom.m_winRight;
+      this.m_winLeft = dicom.m_winLeft;
+    }
     // const volIndex = this.m_volumeIndex;
     const volIndex = volIndexArg !== undefined ? volIndexArg : store.volumeIndex;
 
@@ -140,7 +162,10 @@ class Graphics2d extends React.Component {
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
     const xyDim = xDim * yDim;
-    const dataSrc = vol.m_dataArray; // 1 or 4 bytes array of pixels
+    let dataSrc = vol.m_dataArray; // 1 or 4 bytes array of pixels
+    if (dicom != null && this.props.is16bit) {
+      dataSrc = vol.m_dataArray16; // 2 bytes array of pixels
+    }
     if (dataSrc.length !== xDim * yDim * zDim * vol.m_bytesPerVoxel) {
       console.log(`Bad src data len = ${dataSrc.length}, but expect ${xDim}*${yDim}*${zDim}`);
     }
@@ -183,6 +208,7 @@ class Graphics2d extends React.Component {
       // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
 
       this.m_toolPick.setScreenDim(wScreen, hScreen);
+      this.m_toolPaint.setScreenDim(wScreen, hScreen);
       this.m_toolDistance.setScreenDim(wScreen, hScreen);
       this.m_toolAngle.setScreenDim(wScreen, hScreen);
       this.m_toolArea.setScreenDim(wScreen, hScreen);
@@ -224,9 +250,16 @@ class Graphics2d extends React.Component {
           for (let x = 0; x < wScreen; x++) {
             const xSrc = Math.floor(x * xStep);
             const val = dataSrc[zOff + yOff + xSrc];
-            dataDst[j + 0] = val;
-            dataDst[j + 1] = val;
-            dataDst[j + 2] = val;
+            let newVal = val;
+            if (dicom != null && this.props.is16bit) {
+              const scale = 255 / ((this.m_winRight - this.m_winLeft) * (dicom.m_maxVal - dicom.m_minVal));
+              newVal = Math.floor((val - this.m_winLeft * (dicom.m_maxVal - dicom.m_minVal)) * scale);
+            }
+            if (newVal < 0) newVal = 0;
+            if (newVal > 255) newVal = 255;
+            dataDst[j + 0] = newVal;
+            dataDst[j + 1] = newVal;
+            dataDst[j + 2] = newVal;
             dataDst[j + 3] = 255; // opacity
             j += 4;
           } // for (x)
@@ -267,6 +300,7 @@ class Graphics2d extends React.Component {
       // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
 
       this.m_toolPick.setScreenDim(wScreen, hScreen);
+      this.m_toolPaint.setScreenDim(wScreen, hScreen);
       this.m_toolDistance.setScreenDim(wScreen, hScreen);
       this.m_toolAngle.setScreenDim(wScreen, hScreen);
       this.m_toolArea.setScreenDim(wScreen, hScreen);
@@ -309,12 +343,17 @@ class Graphics2d extends React.Component {
             const ySrc = Math.floor(x * yStep);
             const yOff = ySrc * xDim;
             const val = dataSrc[zOff + yOff + xSlice];
-
-            dataDst[j + 0] = val;
-            dataDst[j + 1] = val;
-            dataDst[j + 2] = val;
+            let newVal = val;
+            if (dicom != null) {
+              const scale = 255 / ((this.m_winRight - this.m_winLeft) * (dicom.m_maxVal - dicom.m_minVal));
+              newVal = Math.floor((val - this.m_winLeft * (dicom.m_maxVal - dicom.m_minVal)) * scale);
+            }
+            if (newVal < 0) newVal = 0;
+            if (newVal > 255) newVal = 255;
+            dataDst[j + 0] = newVal;
+            dataDst[j + 1] = newVal;
+            dataDst[j + 2] = newVal;
             dataDst[j + 3] = 255; // opacity
-
             j += 4;
           } // for (x)
         } // for (y)
@@ -356,6 +395,7 @@ class Graphics2d extends React.Component {
       // console.log(`gra2d. render: wScreen*hScreen = ${wScreen} * ${hScreen}, but w*h=${w}*${h} `);
 
       this.m_toolPick.setScreenDim(wScreen, hScreen);
+      this.m_toolPaint.setScreenDim(wScreen, hScreen);
       this.m_toolDistance.setScreenDim(wScreen, hScreen);
       this.m_toolAngle.setScreenDim(wScreen, hScreen);
       this.m_toolArea.setScreenDim(wScreen, hScreen);
@@ -398,12 +438,17 @@ class Graphics2d extends React.Component {
           for (let x = 0; x < wScreen; x++) {
             const xSrc = Math.floor(x * xStep);
             const val = dataSrc[zOff + yOff + xSrc];
-
-            dataDst[j + 0] = val;
-            dataDst[j + 1] = val;
-            dataDst[j + 2] = val;
+            let newVal = val;
+            if (dicom != null) {
+              const scale = 255 / ((this.m_winRight - this.m_winLeft) * (dicom.m_maxVal - dicom.m_minVal));
+              newVal = Math.floor((val - this.m_winLeft * (dicom.m_maxVal - dicom.m_minVal)) * scale);
+            }
+            if (newVal < 0) newVal = 0;
+            if (newVal > 255) newVal = 255;
+            dataDst[j + 0] = newVal;
+            dataDst[j + 1] = newVal;
+            dataDst[j + 2] = newVal;
             dataDst[j + 3] = 255; // opacity
-
             j += 4;
           } // for (x)
         } // for (y)
@@ -431,8 +476,8 @@ class Graphics2d extends React.Component {
     }
 
     // centering: setting canvas image size, to match its HTML element's size
-    objCanvas.width = wScreen;
-    objCanvas.height = hScreen;
+    objCanvas.width = this.m_mount.current.clientWidth;
+    objCanvas.height = this.m_mount.current.clientHeight;
     // check is segmentation 2d mode is active
     // const isSegm = store.graphics2dModeSegmentation;
     // console.log("Segm2d mode = " + isSegm);
@@ -442,9 +487,10 @@ class Graphics2d extends React.Component {
   } // prepareImageForRender
 
   fillBackground(ctx) {
-    const { hRender, wRender } = this.state;
+    const w = this.m_mount.current.clientWidth;
+    const h = this.m_mount.current.clientHeight;
     ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, wRender, hRender);
+    ctx.fillRect(0, 0, w, h);
   }
 
   renderReadyImage() {
@@ -452,12 +498,17 @@ class Graphics2d extends React.Component {
     const ctx = objCanvas.getContext('2d');
     const store = this.props;
     const zoom = store.render2dZoom;
-    const xPos = store.render2dxPos;
-    const yPos = store.render2dyPos;
     const canvasWidth = objCanvas.width;
     const canvasHeight = objCanvas.height;
     const newImgWidth = canvasWidth / zoom;
     const newImgHeight = canvasHeight / zoom;
+    const indexTools2d = store.indexTools2d;
+
+    if (indexTools2d === Tools2dType.HAND && !this.state.stateMouseDown) {
+      objCanvas.classList.add('cursor-hand');
+    } else {
+      objCanvas.classList.remove('cursor-hand');
+    }
 
     if (!this.m_isMounted) {
       return;
@@ -482,14 +533,19 @@ class Graphics2d extends React.Component {
     if (isSegm) {
       const w = this.m_toolPick.m_wScreen;
       const h = this.m_toolPick.m_hScreen;
-      this.segm2d.render(ctx, w, h, this.imgData);
+      this.segm2d.renderImage(ctx, w, h, this.imgData);
     } else {
       createImageBitmap(this.imgData)
         .then((imageBitmap) => {
+          const centerX = (canvasWidth - this.imgData.width) / 2;
+          const centerY = (canvasHeight - this.imgData.height) / 2;
+          const xPos = store.render2dxPos - centerX;
+          const yPos = store.render2dyPos - centerY;
           ctx.drawImage(imageBitmap, xPos, yPos, canvasWidth, canvasHeight, 0, 0, newImgWidth, newImgHeight);
         })
         .then(() => {
           this.m_toolPick.render(ctx);
+          this.m_toolPaint.render(ctx, store);
           this.m_toolDistance.render(ctx, store);
           this.m_toolAngle.render(ctx, store);
           this.m_toolArea.render(ctx, store);
@@ -508,7 +564,7 @@ class Graphics2d extends React.Component {
     let yPosNew;
     const store = this.props;
     const zoom = store.render2dZoom;
-    const step = evt.deltaY * 2 ** -10;
+    const step = (evt.deltaY * 2 ** -10) / 2;
     let newZoom = zoom + step;
 
     if (step < 0) {
@@ -517,10 +573,10 @@ class Graphics2d extends React.Component {
       xPosNew = mouseX - (mouseX - store.render2dxPos) * (newZoom / zoom);
       yPosNew = mouseY - (mouseY - store.render2dyPos) * (newZoom / zoom);
     } else {
-      const initialX = canvasRect.width * zoom + store.render2dxPos;
-      const initialY = canvasRect.height * zoom + store.render2dyPos;
-      xPosNew = initialX - (initialX - store.render2dxPos) * (newZoom / zoom);
-      yPosNew = initialY - (initialY - store.render2dyPos) * (newZoom / zoom);
+      const centerX = (canvasRect.width * newZoom) / 2 + store.render2dxPos;
+      const centerY = (canvasRect.height * newZoom) / 2 + store.render2dyPos;
+      xPosNew = centerX - (centerX - store.render2dxPos) * (newZoom / zoom);
+      yPosNew = centerY - (centerY - store.render2dyPos) * (newZoom / zoom);
     }
 
     if (xPosNew < 0) {
@@ -545,8 +601,19 @@ class Graphics2d extends React.Component {
   }
 
   onMouseUp(evt) {
+    const objCanvas = this.m_mount.current;
     const store = this.props;
     const indexTools2d = store.indexTools2d;
+
+    this.setState({ stateMouseDown: false });
+
+    if (indexTools2d === Tools2dType.PAINT) {
+      const store = this.props;
+      const box = this.m_mount.current.getBoundingClientRect();
+      const xScr = evt.clientX - box.left;
+      const yScr = evt.clientY - box.top;
+      this.m_toolPaint.onMouseUp(xScr, yScr, store);
+    }
     if (indexTools2d === Tools2dType.DISTANCE) {
       const store = this.props;
       const box = this.m_mount.current.getBoundingClientRect();
@@ -589,10 +656,17 @@ class Graphics2d extends React.Component {
       const yScr = evt.clientY - box.top;
       this.m_toolDelete.onMouseUp(xScr, yScr, store);
     }
+    if (store.indexTools2d === Tools2dType.HAND) {
+      objCanvas.classList.remove('cursor-grab');
+      objCanvas.classList.add('cursor-hand');
+    }
   }
 
   onMouseMove(evt) {
     const store = this.props;
+    let xPos = store.render2dxPos;
+    let yPos = store.render2dyPos;
+    const zoom = store.render2dZoom;
     const indexTools2d = store.indexTools2d;
     const box = this.m_mount.current.getBoundingClientRect();
     const xContainer = evt.clientX - box.left;
@@ -600,6 +674,9 @@ class Graphics2d extends React.Component {
     const xScr = xContainer;
     const yScr = yContainer;
 
+    if (indexTools2d === Tools2dType.PAINT) {
+      this.m_toolPaint.onMouseMove(xScr, yScr, store);
+    }
     if (indexTools2d === Tools2dType.DISTANCE) {
       this.m_toolDistance.onMouseMove(xScr, yScr, store);
     }
@@ -618,10 +695,32 @@ class Graphics2d extends React.Component {
     if (indexTools2d === Tools2dType.DELETE) {
       this.m_toolDelete.onMouseMove(xScr, yScr, store);
     }
+    if (indexTools2d === Tools2dType.HAND && this.state.stateMouseDown) {
+      const deltaX = evt.clientX - this.state.startX;
+      const deltaY = evt.clientY - this.state.startY;
+      const newXPos = xPos - deltaX * zoom;
+      const newYPos = yPos - deltaY * zoom;
+
+      this.props.dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: newXPos });
+      this.props.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: newYPos });
+
+      this.setState({
+        startX: evt.clientX,
+        startY: evt.clientY,
+      });
+    }
+
+    if (this.m_isSegmented && this.segm2d.model) {
+      // We do not need update segmented image (with model)
+      // on mouse move event to performance issues.
+      return;
+    }
+    store.graphics2d.forceUpdate();
   }
 
   onMouseDown(evt) {
-    const box = this.m_mount.current.getBoundingClientRect();
+    const objCanvas = this.m_mount.current;
+    const box = objCanvas.getBoundingClientRect();
     const xContainer = evt.clientX - box.left;
     const yContainer = evt.clientY - box.top;
     const xScr = xContainer;
@@ -632,9 +731,18 @@ class Graphics2d extends React.Component {
     const indexTools2d = store.indexTools2d;
     // console.log(`onMouseDown. tool index = ${indexTools2d}`);
 
+    this.setState({
+      stateMouseDown: true,
+      startX: evt.clientX,
+      startY: evt.clientY,
+    });
+
     switch (indexTools2d) {
       case Tools2dType.INTENSITY:
         this.m_toolPick.onMouseDown(xScr, yScr, store);
+        break;
+      case Tools2dType.PAINT:
+        this.m_toolPaint.onMouseDown(xScr, yScr, store);
         break;
       case Tools2dType.DISTANCE:
         this.m_toolDistance.onMouseDown(xScr, yScr, store);
@@ -657,6 +765,10 @@ class Graphics2d extends React.Component {
       case Tools2dType.DELETE:
         this.m_toolDelete.onMouseDown(xScr, yScr, store);
         break;
+      case Tools2dType.HAND:
+        objCanvas.classList.remove('cursor-hand');
+        objCanvas.classList.add('cursor-grab');
+        break;
       default:
       // not defined
     } // switch
@@ -668,6 +780,7 @@ class Graphics2d extends React.Component {
    * Invoke clear all tools
    */
   clear() {
+    this.m_toolPaint.clear();
     this.m_toolDistance.clear();
     this.m_toolAngle.clear();
     this.m_toolArea.clear();
@@ -681,13 +794,14 @@ class Graphics2d extends React.Component {
    * Invoke forced rendering, after some tool visual changes
    */
   forceUpdate(volIndex) {
-    // console.log('forceUpdate ...');
+    console.log('forceUpdate ...');
     this.prepareImageForRender(volIndex);
     // this.forceRender();
     if (this.m_isSegmented) {
       // need to draw segmented image
       if (this.segm2d.model !== null) {
-        // we have loaded model: applt it to image
+        // we have loaded model: apply it to image
+        // TODO update image only on some specific events: zoom, explore
         this.segm2d.startApplyImage();
       }
     } else {
@@ -706,8 +820,6 @@ class Graphics2d extends React.Component {
    * Main component render func callback
    */
   render() {
-    // const store = this.props;
-    // const volSet = store.volumeSet;
     this.m_sliceRatio = this.props.sliderValue;
     this.m_mode2d = this.props.mode2d;
     return (

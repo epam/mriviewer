@@ -1,19 +1,9 @@
-import { useState } from 'react';
 import { UIButton } from '../Button/Button';
-import { useOnEvent } from '../hooks/useOnEvent';
-import UiModalWindowCenterWidth from '../Modals/UiModalWinCW';
+// import { useOnEvent } from '../hooks/useOnEvent';
 import MriViwer from '../../engine/lib/MRIViewer';
-import { MriEvents } from '../../engine/lib/enums';
+// import { MriEvents } from '../../engine/lib/enums';
 
 export const OpenFromDeviceComponent = ({ cx, text, type }) => {
-  const [showModalWindowCW, setShowModalWindowCW] = useState(false);
-
-  const onHide = () => {
-    setShowModalWindowCW(false);
-  };
-
-  useOnEvent(MriEvents.FILE_READ_SUCCESS, onHide);
-
   const onFileSelect = (evt) => {
     MriViwer.read(evt.target.files);
   };
@@ -39,7 +29,6 @@ export const OpenFromDeviceComponent = ({ cx, text, type }) => {
   return (
     <>
       <UIButton icon="folder" text={text} cx={cx} handler={onButtonOpenLocalFileClick} />
-      {showModalWindowCW && <UiModalWindowCenterWidth stateVis={showModalWindowCW} onHide={onHide} />}
     </>
   );
 };

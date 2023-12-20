@@ -19,6 +19,7 @@ class Volume extends React.Component {
     this.m_zDim = 0;
     this.m_bytesPerVoxel = 0;
     this.m_dataArray = null;
+    this.m_dataArray16 = null;
     this.m_dataSize = 0;
     this.m_boxSize = {
       x: 0.0,

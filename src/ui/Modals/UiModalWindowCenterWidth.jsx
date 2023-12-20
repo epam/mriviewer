@@ -6,16 +6,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Nouislider } from '../Nouislider/Nouislider';
-import { Modal, ModalBody, ModalFooter, ModalHeader } from './ModalBase';
+import { Modal, ModalFooter } from './ModalBase';
 import { UIButton } from '../Button/Button';
+import { applyWindowRangeData } from '../../engine/utils/SettingsGraphics2d';
+import UiModalWindowRange from './UiModalWindowRange';
+import StoreActionType from '../../store/ActionTypes';
+
 import buttonCss from '../Button/Button.module.css';
 import MriViwer from '../../engine/lib/MRIViewer';
 import { MriEvents } from '../../engine/lib/enums';
-
-const LARGE_NUMBER = 0x3fffffff;
-const DEFAULT_WIN_MIN = 650 - 2000 / 2;
-const DEFAULT_WIN_MAX = 650 + 2000 / 2;
+import modalCss from './Modals.module.css';
+import { DEFAULT_WIN_MAX, DEFAULT_WIN_MIN, LARGE_NUMBER } from '../Constants/WindowSet.constants';
 
 class UiModalWindowCenterWidth extends React.Component {
   constructor(props) {
@@ -52,6 +53,7 @@ class UiModalWindowCenterWidth extends React.Component {
   //
   onButtonCancel() {
     // console.log('TODO: on Cancel ...');
+    this.props.dispatch({ type: StoreActionType.SET_IS_16_BIT, is16bit: true });
     this.reset();
     this.props.onHide && this.props.onHide(false);
   }
@@ -59,25 +61,8 @@ class UiModalWindowCenterWidth extends React.Component {
   //
   onButtonApply() {
     // console.log('TODO: on Apply ...');
-
     this.reset();
-
-    const store = this.props;
-    const loaderDicom = store.loaderDicom;
-    const volSet = store.volumeSet;
-
-    // set loader features according current modal properties (window min, max)
-    loaderDicom.m_windowCenter = (this.state.windowMin + this.state.windowMax) * 0.5;
-    loaderDicom.m_windowWidth = this.state.windowMax - this.state.windowMin;
-
-    // apply for single slice dicom read
-    // select 1st slice and hash
-    const series = loaderDicom.m_slicesVolume.getSeries();
-    const numSeries = series.length;
-    for (let i = 0; i < numSeries; i++) {
-      const hashCode = series[i].m_hash;
-      loaderDicom.createVolumeFromSlices(volSet, i, hashCode);
-    }
+    applyWindowRangeData(this.props, this.state.windowMin, this.state.windowMax);
 
     MriViwer.events.emit(MriEvents.VOLUME_PARAMETERS_SET_SUCCESS);
 
@@ -339,7 +324,6 @@ class UiModalWindowCenterWidth extends React.Component {
 
   // render
   render() {
-    //const stateVis = true;
     const stateVis = this.props.stateVis;
 
     const stylePreview = {
@@ -355,35 +339,21 @@ class UiModalWindowCenterWidth extends React.Component {
       },
     };
 
-    let valMin = 0;
-    let valMax = 5000;
-    let valDelta = valMax - valMin;
-    let valStep = 50;
-    if (this.m_dataMin !== LARGE_NUMBER) {
-      valMin = this.m_dataMin;
-      valMax = this.m_dataMax;
-      valDelta = valMax - valMin;
-      valStep = Math.floor(valDelta / 32);
-    }
-
-    const rangeTwo = {
-      min: Math.floor(valMin - valDelta / 4),
-      max: Math.floor(valMax + valDelta / 4),
-    };
-    const wMin = Math.floor(this.state.windowMin);
-    const wMax = Math.floor(this.state.windowMax);
-    const wArr = [wMin, wMax];
-
     return (
       <Modal isOpen={stateVis} customStyles={modalStyle} close={this.onButtonCancel}>
-        <ModalHeader title="Select window center and width to display DICOM" close={this.onButtonCancel} />
-        <ModalBody>
-          Window range
-          <Nouislider onChange={this.onSliderWindowRange.bind(this)} range={rangeTwo} value={wArr} step={valStep} connect={true} />
-          <p className="text-center">
-            <canvas ref={this.m_objCanvas} style={stylePreview} width="500px" height="400px" />
-          </p>
-        </ModalBody>
+        <UiModalWindowRange
+          onChange={this.onSliderWindowRange.bind(this)}
+          connect={true}
+          title="Select window center and width to display DICOM"
+          m_dataMin={this.m_dataMin}
+          m_dataMax={this.m_dataMax}
+          windowMin={this.state.windowMin}
+          windowMax={this.state.windowMax}
+          close={this.onButtonCancel}
+        />
+        <p className={modalCss.text_center}>
+          <canvas ref={this.m_objCanvas} style={stylePreview} width="500px" height="400px" />
+        </p>
         <ModalFooter>
           <UIButton handler={this.onButtonApply} caption="Apply" cx={buttonCss.apply} />
         </ModalFooter>
