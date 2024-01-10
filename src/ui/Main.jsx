@@ -37,6 +37,7 @@ import UiModalWindowCenterWidth from './Modals/UiModalWindowCenterWidth';
 import { useOnEvent } from './hooks/useOnEvent';
 import { mriEventsService } from '../engine/lib/services';
 import UiModalConfirmation from './Modals/UiModalConfirmation';
+import PositionTool3D from './Toolbars/PositionTool3D';
 
 export const Main = () => {
   const dispatch = useDispatch();
@@ -206,6 +207,7 @@ export const Main = () => {
                     <TopToolbar />
                     <div className={css.top}>
                       <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
+                      {viewMode === ModeView.VIEW_3D && <PositionTool3D />}
                     </div>
                   </div>
                 </div>
