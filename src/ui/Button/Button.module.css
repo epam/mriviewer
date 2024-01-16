@@ -49,8 +49,8 @@ button:hover,
 }
 
 .button > svg {
-  width: 42px;
-  height: 42px;
+  width: 24px;
+  height: 24px;
 }
 
 @media screen and (min-width: 768px) {

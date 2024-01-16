@@ -53,6 +53,8 @@
 
 .settings__menu_block {
   display: flex;
+  flex-direction: column;
+  gap: 4vh;
   justify-content: space-around;
   position: absolute;
   top: 0;
