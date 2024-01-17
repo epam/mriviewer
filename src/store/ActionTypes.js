@@ -54,5 +54,6 @@ const StoreActionType = {
   SET_SHOW_MODAL_WINDOW_WC: 42,
   SET_SHOW_MODAL_SELECT_FILES: 43,
   SET_SELECTED_COLOR: 44,
+  SET_DEFAULT_3D_POSITION: 45,
 };
 export default StoreActionType;

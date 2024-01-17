@@ -1462,4 +1462,9 @@ export default class VolumeRenderer3d {
     }
     this.renderState = this.RENDER_STATE.ONCE;
   }
+
+  resetPosition() {
+    this.camera.position.set(0.0, 0.0, 1.5);
+    this.orbitControl.m_mesh.quaternion.set(0, 0, 0, 1);
+  }
 } // class Graphics3d
