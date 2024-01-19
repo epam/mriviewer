@@ -36,7 +36,7 @@
   z-index: 1004;
   position: absolute;
   width: 93%;
-  top: 15vh;
+  top: 9vh;
   left: 49%;
   margin: 0 5px;
   transform: translateX(-50%);
@@ -187,7 +187,6 @@
 @media screen and (min-width: 768px) {
   .modal {
     width: 600px;
-    top: calc(50vh - 180px);
   }
 
   .cards {
