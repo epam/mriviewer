@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { UIButton } from '../Button/Button';
-import UIModalUrl from '../Modals/ModalUrl';
+import ModalUrl from '../Modals/ModalUrl';
 import MriViwer from '../../engine/lib/MRIViewer';
 
 export const OpenFromURLComponent = ({ cx }) => {
@@ -22,7 +22,7 @@ export const OpenFromURLComponent = ({ cx }) => {
   return (
     <>
       <UIButton icon="link" text="Open From URL" cx={cx} handler={onModalUrlShow} />
-      {showModalUrl && <UIModalUrl stateVis={showModalUrl} onHide={onModalUrlHide} loadUrl={onClickLoadUrl} />}
+      {showModalUrl && <ModalUrl stateVis={showModalUrl} onHide={onModalUrlHide} loadUrl={onClickLoadUrl} />}
     </>
   );
 };
