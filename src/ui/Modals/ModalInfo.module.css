@@ -81,6 +81,9 @@
   width: 100%;
   border-collapse: collapse;
   border: 1px solid var(--light);
+  display: block;
+  overflow-y: scroll;
+  height: 50vh;
 }
 
 .thead {
@@ -106,4 +109,18 @@
   font-size: 14px;
   border: 1px dashed var(--light);
   word-break: break-word;
+  width: 172px;
+}
+
+::-webkit-scrollbar
+{
+  width: 10px;
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+  background-color: #dc5e47;
 }
