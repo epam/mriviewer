@@ -196,6 +196,7 @@ export const Main = () => {
 
   useOnEvent(mriEventsService.FILE_READ_SUCCESS, onHide);
 
+  //Alret message does not catch all cases then loaded image, which does not contain lungs
   useEffect(() => {
     if (lungsSeedStatus) {
       setStrAlertTitle('Attention!');
