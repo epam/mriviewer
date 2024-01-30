@@ -6,23 +6,25 @@
 import SeedPoints from '../../../../engine/actvolume/lungsfill/seedPoints';
 import FloodFillTool from '../../../../engine/actvolume/lungsfill/floodfill';
 
-const getSeedPointOnCentralSlice = (volTexSrc, xDim, yDim, zDim) => {
+const getSeedPointOnCentralSlice = (volTexSrc, xDim, yDim, zDim, setSeed) => {
   let vSeed = { x: 0, y: 0, z: 0 };
   const seedPoints = new SeedPoints(volTexSrc, xDim, yDim, zDim);
   const resFind = seedPoints.findSeedPointOnCentralSlice(vSeed);
   if (resFind) {
     console.log('Lungs Central fill run: seed point not found');
+    setSeed(true);
     return false;
   }
   return vSeed;
 };
 
-const getSeedPointOnFirstSlice = (volTexSrc, xDim, yDim, zDim) => {
+const getSeedPointOnFirstSlice = (volTexSrc, xDim, yDim, zDim, setSeed) => {
   let vSeed = { x: 0, y: 0, z: 0 };
   const seedPoints = new SeedPoints(volTexSrc, xDim, yDim, zDim);
   const resFind = seedPoints.findSeedPointOnFirstSlice(vSeed);
   if (resFind) {
     console.log('Airway fill run: seed point not found');
+    setSeed(true);
     return false;
   }
   return vSeed;
@@ -111,7 +113,7 @@ const detectNonEmptyBox = (xDim, yDim, zDim, volTexMask) => {
   return { xBorderMin, xBorderMax, yBorderMin, yBorderMax };
 };
 
-export const lungsFillJob = (volume) => {
+export const lungsFillJob = (volume, setSeed) => {
   let xDim = volume.m_xDim;
   let yDim = volume.m_yDim;
   let zDim = volume.m_zDim;
@@ -197,7 +199,7 @@ export const lungsFillJob = (volume) => {
 
   const run = () => {
     if (getProgress() === 0) {
-      seedOnCentralSlice = getSeedPointOnCentralSlice(volTexSrc, xDim, yDim, zDim);
+      seedOnCentralSlice = getSeedPointOnCentralSlice(volTexSrc, xDim, yDim, zDim, setSeed);
       if (!seedOnCentralSlice) {
         setProgress(0);
         return true;
@@ -231,7 +233,7 @@ export const lungsFillJob = (volume) => {
         volTexMask1[i] = volTexSrc[i];
       }
 
-      seedOnFirstSlice = getSeedPointOnFirstSlice(volTexSrc, xDim, yDim, zDim);
+      seedOnFirstSlice = getSeedPointOnFirstSlice(volTexSrc, xDim, yDim, zDim, setSeed);
       if (!seedOnFirstSlice) {
         setProgress(0);
         return true;
