@@ -33,6 +33,7 @@ export const LungsTool = () => {
   useEffect(() => {
     if (isSeed) {
       dispatch({ type: StoreActionType.SET_LUNGS_SEED_STATUS, lungsSeedStatus: true });
+      setSeed(false);
     }
   }, [isSeed]);
   return (
