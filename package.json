@@ -46,7 +46,7 @@
     "react-modal": "^3.14.2",
     "react-popper": "^2.2.5",
     "react-redux": "7.2.4",
-    "react-scripts": "4.0.3",
+    "react-scripts": "5.0.1",
     "redux": "4.1.0",
     "seedrandom": "^2.4.4",
     "three": "0.101.1"
