@@ -4,8 +4,6 @@
  */
 
 const config = {
-  // special demo dialog file locations
-
   demoUrls: [
     'https://cdn.mri-viewer.opensource.epam.com/demo/01_lungs/20101108.ktx',
     'https://cdn.mri-viewer.opensource.epam.com/demo/02_brain_set/brain256.ktx',
