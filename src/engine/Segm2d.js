@@ -16,7 +16,7 @@
 import * as tf from '@tensorflow/tfjs';
 import StoreActionType from '../store/ActionTypes';
 
-const BRAIN_MODEl = 'https://daentjnvnffrh.cloudfront.net/models/brain/model.json';
+const BRAIN_MODEl = 'https://cdn.mri-viewer.opensource.epam.com/models/brain/model.json';
 
 // ********************************************************
 // Const
