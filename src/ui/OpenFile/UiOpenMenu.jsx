@@ -817,7 +817,7 @@ class UiOpenMenu extends FileReader {
       return;
     }
 
-    const DEMO_URL = 'https://daentjnvnffrh.cloudfront.net/demo/';
+    const DEMO_URL = 'https://cdn.mri-viewer.opensource.epam.com/demo/';
 
     let fileName =
       DEMO_URL +
