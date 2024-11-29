@@ -54,6 +54,7 @@ export const initialState = {
   showModalSelectFiles: false,
   selectedColor: '#ffff00',
   isDefault3dPosition: false,
+  lungsSeedStatus: false,
 };
 //
 // App reducer
@@ -150,6 +151,9 @@ const medReducer = (state = initialState, action) => {
       return Object.assign({}, state, { selectedColor: action.selectedColor });
     case StoreActionType.SET_DEFAULT_3D_POSITION:
       return Object.assign({}, state, { isDefault3dPosition: action.isDefault3dPosition });
+    case StoreActionType.SET_LUNGS_SEED_STATUS:
+      return Object.assign({}, state, { lungsSeedStatus: action.lungsSeedStatus });
+
     default:
       return state;
   }
