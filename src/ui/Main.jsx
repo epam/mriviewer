@@ -41,9 +41,17 @@ import PositionTool3D from './Toolbars/PositionTool3D';
 
 export const Main = () => {
   const dispatch = useDispatch();
-  const { isLoaded, progress, spinner, viewMode, showModalText, showModalAlert, showModalWindowCW, showModalConfirmation } = useSelector(
-    (state) => state
-  );
+  const {
+    isLoaded,
+    progress,
+    spinner,
+    viewMode,
+    showModalText,
+    showModalAlert,
+    showModalWindowCW,
+    showModalConfirmation,
+    lungsSeedStatus,
+  } = useSelector((state) => state);
 
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
   const [isWebGl20supported, setIsWebGl20supported] = useState(true);
@@ -187,6 +195,16 @@ export const Main = () => {
   };
 
   useOnEvent(mriEventsService.FILE_READ_SUCCESS, onHide);
+
+  //Alret message does not catch all cases then loaded image, which does not contain lungs
+  useEffect(() => {
+    if (lungsSeedStatus) {
+      setStrAlertTitle('Attention!');
+      setStrAlertText(' Please note, the uploaded image may not contain lungs!');
+      onShowModalAlert();
+      dispatch({ type: StoreActionType.SET_LUNGS_SEED_STATUS, lungsSeedStatus: false });
+    }
+  });
 
   return (
     <AppContextProvider>
