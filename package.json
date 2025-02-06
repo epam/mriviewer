@@ -18,6 +18,9 @@
   },
   "homepage": "https://mriviewer.opensource.epam.com/",
   "private": false,
+  "workspaces": [
+    "e2e-tests"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -29,6 +32,8 @@
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{js,jsx,html,css}\"",
     "docker": "npm run build && docker run --name mri-viewer -v ./build:/usr/share/nginx/html:ro -d -p 8080:80 nginx",
+    "docker:test:build": "docker build -t e2e-tests -f e2e-tests/Dockerfile .",
+    "docker:test": "docker run --rm -p -v $(pwd):/app e2e-tests sh -c 'npm run serve & sleep 5 && cd e2e-tests && npm run test'",
     "prepare": "husky install"
   },
   "dependencies": {

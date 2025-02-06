@@ -1,0 +1,13 @@
+version: '3'
+services:
+  mriviewer-app:
+    build:
+      dockerfile: ./Dockerfile-app
+    volumes:
+      - ../:/app
+  mriviewer-autotests:
+    build:
+      dockerfile: ./Dockerfile-tests
+    container_name: mriviewer-e2e-tests
+    volumes:
+      - ../:/app
