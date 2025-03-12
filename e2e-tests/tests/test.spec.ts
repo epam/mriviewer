@@ -1,15 +1,14 @@
 import { test, expect } from '@playwright/test';
+import { openHomePage } from './helpers/page';
 
 test('has title', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await openHomePage(page);
 
-  // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/MRI Viewer Dicom 2d\/3d browser/);
 });
 
 test('should open initial screen view', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+  await openHomePage(page);
 
-  // Expect a title "to contain" a substring.
   await expect(page).toHaveScreenshot();
 });

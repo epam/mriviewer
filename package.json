@@ -25,6 +25,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "serve": "serve -s build",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:watch": "vitest --watch",
@@ -32,8 +33,6 @@
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{js,jsx,html,css}\"",
     "docker": "npm run build && docker run --name mri-viewer -v ./build:/usr/share/nginx/html:ro -d -p 8080:80 nginx",
-    "docker:test:build": "docker build -t e2e-tests -f e2e-tests/Dockerfile .",
-    "docker:test": "docker run --rm -p -v $(pwd):/app e2e-tests sh -c 'npm run serve & sleep 5 && cd e2e-tests && npm run test'",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -82,6 +81,7 @@
     "jsdom": "^26.0.0",
     "lint-staged": "^11.0.0",
     "prettier": "^2.4.1",
+    "serve": "^14.2.4",
     "typescript": "^4.9.5",
     "vite": "^6.2.2",
     "vite-plugin-glsl": "^1.3.3",

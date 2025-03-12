@@ -7,7 +7,7 @@
     "test": "npx playwright test",
     "test:update": "npx playwright test --update-snapshots",
     "docker:build": "docker-compose build --no-cache",
-    "docker:test": "docker-compose run --rm mriviewer-autotests bash /app/e2e-tests/test_run.sh",
+    "docker:test": "docker-compose run --rm mriviewer-autotests bash test_run.sh",
     "docker:test:update": "docker-compose build mriviewer-e2e-tests"
   },
   "author": "",
