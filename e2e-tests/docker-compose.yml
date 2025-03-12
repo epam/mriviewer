@@ -2,6 +2,7 @@ version: '3'
 services:
   mriviewer-app:
     build:
+      context: ./
       dockerfile: ./Dockerfile-app
     volumes:
       - ../:/mriviewer
@@ -18,6 +19,7 @@ services:
       mriviewer-app:
         condition: service_healthy  # Ensure the app is ready before tests r
     build:
+      context: ./
       dockerfile: ./Dockerfile-tests
     container_name: mriviewer-e2e-tests
     volumes:
