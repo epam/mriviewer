@@ -17,10 +17,12 @@ jobs:
       run: npm ci
     - name: Build the app
       run: npm run build
+    - name: Install Docker Compose
+      run: sudo apt-get update && sudo apt-get install -y docker-compose
     - name: Prepare for tests run
-      run: cd e2e-tests && npm run docker:build && npm run docker:test
+      run: cd e2e-tests && npm run docker:build
     - name: Run Playwright tests
-      run: npx playwright test
+      run: npm run docker:test
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
