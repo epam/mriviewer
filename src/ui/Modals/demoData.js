@@ -7,7 +7,7 @@ export const demoData = [
   {
     id: 0,
     tooltip: 'Lungs 20101108 from ktx',
-    image: 'images/thumb_lungs.png',
+    image: 'images/unk.png',
     alt: 'lungs',
   },
   {

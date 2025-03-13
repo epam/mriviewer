@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { OpenFromDeviceButtonComponent, DragAndDropComponent, OpenFromURLComponent } from '../../FileReaders';
+import { OpenFromDeviceButtonComponent, DragAndDropComponent, OpenFromURLComponent, OpenDemoComponent } from '../../FileReaders';
 import RecentlyFiles from '../RecentlyFiles/RecentlyFiles';
 
 import css from './SmartContainer.module.css';
@@ -14,6 +14,7 @@ const SmartContainer = () => {
       <div className={css.buttons_toolbar}>
         <OpenFromDeviceButtonComponent cx={buttonCss.button_start_screen} />
         <OpenFromURLComponent cx={buttonCss.button_start_screen} />
+        <OpenDemoComponent cx={buttonCss.button_start_screen} />
       </div>
       <RecentlyFiles />
     </div>

@@ -1,4 +1,4 @@
 #!/bin/sh
 set -ex
 npm i
-npm run test
+npm run test:update
