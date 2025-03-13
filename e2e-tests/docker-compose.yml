@@ -10,7 +10,7 @@ services:
     ports:
       - "3000:3000"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:3001" ]  # Adjust port if needed
+      test: [ "CMD", "curl", "-f", "http://localhost:3000" ]  # Adjust port if needed
       interval: 1s
       retries: 10
 

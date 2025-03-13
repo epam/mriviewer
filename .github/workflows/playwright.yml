@@ -23,6 +23,8 @@ jobs:
       run: cd e2e-tests && npm run docker:build
     - name: Run Playwright tests
       run: cd e2e-tests && npm run docker:test
+    - name: Debug Containers
+      run: docker ps -a && docker logs mriviewer-app
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
