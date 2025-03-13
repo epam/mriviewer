@@ -25,7 +25,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "serve": "serve -s -p 3001 build",
+    "serve": "serve -s -p 3000 build",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:watch": "vitest --watch",
