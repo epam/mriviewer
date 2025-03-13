@@ -12,9 +12,3 @@ test('should open initial screen view', async ({ page }) => {
 
   await expect(page).toHaveScreenshot();
 });
-
-test('should fail test', async ({ page }) => {
-  await openHomePage(page);
-
-  await expect(page).toHaveScreenshot();
-});
