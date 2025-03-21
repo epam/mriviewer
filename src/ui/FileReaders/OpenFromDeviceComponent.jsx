@@ -1,11 +1,11 @@
 import { UIButton } from '../Button/Button';
 // import { useOnEvent } from '../hooks/useOnEvent';
-import MriViwer from '../../engine/lib/MRIViewer';
+import MriViewer from '../../engine/lib/MRIViewer';
 // import { MriEvents } from '../../engine/lib/enums';
 
 export const OpenFromDeviceComponent = ({ cx, text, type }) => {
   const onFileSelect = (evt) => {
-    MriViwer.read(evt.target.files);
+    MriViewer.read(evt.target.files);
   };
 
   const onButtonOpenLocalFileClick = (e) => {

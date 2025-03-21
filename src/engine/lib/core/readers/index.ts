@@ -1,3 +1,3 @@
-import mriReader, { MRIReader } from './MRIReader';
+import mriReaderInstance, { MRIReader } from './MRIReader';
 
-export { mriReader, MRIReader };
+export { mriReaderInstance, MRIReader };

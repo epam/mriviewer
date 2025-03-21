@@ -10,8 +10,10 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom/extend-expect';
+import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
-window.IntersectionObserver = jest.fn(() => ({
+window.IntersectionObserver = vi.fn(() => ({
   root: null,
   rootMargin: '',
   thresholds: [],

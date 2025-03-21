@@ -1,14 +1,14 @@
-import { MRIReader, mriReader } from './core/readers';
+import { MRIReader, mriReaderInstance } from './core/readers';
 import { MRIEventsService } from './services';
 import mriEventsService from './services/EventsService';
 
-export class MRIViwer {
+export class MRIViewer {
   public mriReader: MRIReader;
   public events: MRIEventsService;
 
   constructor() {
     this.events = mriEventsService;
-    this.mriReader = mriReader;
+    this.mriReader = mriReaderInstance;
   }
 
   read(data: File[] | string): void {
@@ -17,7 +17,7 @@ export class MRIViwer {
 }
 
 // Create the singleton instance and freeze it
-const MriViwer = new MRIViwer();
-Object.freeze(MriViwer);
+const MriViewerInstance = new MRIViewer();
+Object.freeze(MriViewerInstance);
 
-export default MriViwer;
+export default MriViewerInstance;

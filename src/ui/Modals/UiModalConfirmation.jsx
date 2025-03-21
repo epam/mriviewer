@@ -13,7 +13,7 @@ import { applyWindowRangeData } from '../../engine/utils/SettingsGraphics2d';
 import StoreActionType from '../../store/ActionTypes';
 import css from './Modals.module.css';
 import { MriEvents } from '../../engine/lib/enums';
-import MriViwer from '../../engine/lib/MRIViewer';
+import MriViewer from '../../engine/lib/MRIViewer';
 
 const UiModalConfirmation = () => {
   const dispatch = useDispatch();
@@ -26,7 +26,7 @@ const UiModalConfirmation = () => {
     dispatch({ type: StoreActionType.SET_IS_LOADED, isLoaded: true });
     dispatch({ type: StoreActionType.SET_SHOW_MODAL_SELECT_FILES, showModalSelectFiles: false });
     applyWindowRangeData(store, 0, 1);
-    MriViwer.events.emit(MriEvents.VOLUME_PARAMETERS_SET_SUCCESS);
+    MriViewer.events.emit(MriEvents.VOLUME_PARAMETERS_SET_SUCCESS);
   };
 
   const onButtonClickNo = (e) => {

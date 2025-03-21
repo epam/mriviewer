@@ -4,11 +4,11 @@
  */
 
 import { lungsFillJob } from './lungsFillJob';
-jest.mock('../../../../engine/actvolume/lungsfill/seedPoints', () => {
+vi.mock('../../../../engine/actvolume/lungsfill/seedPoints', () => {
   return function () {
     return {
-      findSeedPointOnCentralSlice: jest.fn(() => false),
-      findSeedPointOnFirstSlice: jest.fn(() => false),
+      findSeedPointOnCentralSlice: vi.fn(() => false),
+      findSeedPointOnFirstSlice: vi.fn(() => false),
     };
   };
 });

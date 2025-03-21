@@ -16,21 +16,21 @@ import { RoiSelectProperty } from './Properties3d/RoiSelectProperty';
 import { RGBProperty } from './Properties3d/RGBProperty';
 import { OpacityProperty } from './Properties3d/OpacityProperty';
 
-jest.mock('./Tabs/Mode3dSelectionTabs', () => ({ Mode3dSelectionTabs: jest.fn(() => <div>Mode3dSelectionTabs</div>) }));
-jest.mock('./Properties3d/RoiSelectProperty', () => ({ RoiSelectProperty: jest.fn(() => <div>RoiSelectProperty</div>) }));
-jest.mock('./Properties3d/RGBProperty', () => ({ RGBProperty: jest.fn(() => <div>RGBProperty</div>) }));
-jest.mock('./Properties3d/OpacityProperty', () => ({ OpacityProperty: jest.fn(() => <div>OpacityProperty</div>) }));
-jest.mock('./Properties3d/CutProperty', () => ({ CutProperty: jest.fn(() => null) }));
-jest.mock('./Properties3d/BrightnessProperty', () => ({ BrightnessProperty: jest.fn(() => null) }));
-jest.mock('./Properties3d/QualityProperty', () => ({ QualityProperty: jest.fn(() => null) }));
-jest.mock('./Properties3d/ContrastProperty', () => ({ ContrastProperty: jest.fn(() => null) }));
+vi.mock('./Tabs/Mode3dSelectionTabs', () => ({ Mode3dSelectionTabs: vi.fn(() => <div>Mode3dSelectionTabs</div>) }));
+vi.mock('./Properties3d/RoiSelectProperty', () => ({ RoiSelectProperty: vi.fn(() => <div>RoiSelectProperty</div>) }));
+vi.mock('./Properties3d/RGBProperty', () => ({ RGBProperty: vi.fn(() => <div>RGBProperty</div>) }));
+vi.mock('./Properties3d/OpacityProperty', () => ({ OpacityProperty: vi.fn(() => <div>OpacityProperty</div>) }));
+vi.mock('./Properties3d/CutProperty', () => ({ CutProperty: vi.fn(() => null) }));
+vi.mock('./Properties3d/BrightnessProperty', () => ({ BrightnessProperty: vi.fn(() => null) }));
+vi.mock('./Properties3d/QualityProperty', () => ({ QualityProperty: vi.fn(() => null) }));
+vi.mock('./Properties3d/ContrastProperty', () => ({ ContrastProperty: vi.fn(() => null) }));
 
-jest.mock('../../utils/useNeedShow3d');
+vi.mock('../../utils/useNeedShow3d');
 const mockedUseNeedShow3d = useNeedShow3d;
 
 describe('Test ModeFast3dSettingsPanel', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should render', () => {
