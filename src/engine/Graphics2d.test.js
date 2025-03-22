@@ -7,7 +7,9 @@ import ToolArea from './tools2d/ToolArea';
 import VolumeSet from './VolumeSet';
 import Volume from './Volume';
 import Graphics2d from './Graphics2d';
-vi.mock('./Graphics2d', () => vi.fn(() => {}));
+vi.mock('./Graphics2d', () => ({
+  default: vi.fn(() => ({})),
+}));
 
 describe('ToolArea. test line intersect', () => {
   beforeEach(() => {
