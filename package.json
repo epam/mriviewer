@@ -114,5 +114,8 @@
     "not dead",
     "not ie > 1",
     "not op_mini all"
-  ]
+  ],
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.36.0"
+  }
 }
