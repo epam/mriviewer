@@ -1,14 +1,14 @@
 import { useEffect, useRef } from 'react';
-import MriViwer from '../../engine/lib/MRIViewer';
+import MriViewer from '../../engine/lib/MRIViewer';
 
 export function useOnEvent(event, callback) {
-  const mriViwer = useRef(MriViwer).current;
+  const mriViewer = useRef(MriViewer).current;
 
   useEffect(() => {
-    mriViwer.events.on(event, callback);
+    mriViewer.events.on(event, callback);
 
     return () => {
-      mriViwer.events.off(event, callback);
+      mriViewer.events.off(event, callback);
     };
   }, [callback]);
 }

@@ -24,10 +24,10 @@ import { AppContextProvider } from './App/AppContext';
 import { LeftToolbar } from './LeftToolbar/LeftToolbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { TopToolbar } from './TopToolbar/TopToolbar';
-import { UiAbout } from './Header/UiAbout';
+import { UiAbout } from './Header/UiAbout.jsx';
 import { MobileSettings } from './MobileSettings/MobileSettings';
 import StartScreen from './StartScreen/StartScreen';
-import MriViwer from '../engine/lib/MRIViewer';
+import MriViewer from '../engine/lib/MRIViewer';
 import { MriEvents } from '../engine/lib/enums';
 
 import css from './Main.module.css';
@@ -60,7 +60,7 @@ export const Main = () => {
   const [isFullMode, setIsFullMode] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const appRef = useRef();
-  const mriViwer = useRef(MriViwer).current;
+  const mriViewer = useRef(MriViewer).current;
 
   useEffect(() => {
     function handleResize() {
@@ -82,11 +82,11 @@ export const Main = () => {
     };
 
     // Subscribe to the FILE_READ_ERROR event
-    mriViwer.events.on(MriEvents.FILE_READ_ERROR, handleFileReadError);
+    mriViewer.events.on(MriEvents.FILE_READ_ERROR, handleFileReadError);
 
     // Clean up
     return () => {
-      mriViwer.events.off(MriEvents.FILE_READ_ERROR, handleFileReadError);
+      mriViewer.events.off(MriEvents.FILE_READ_ERROR, handleFileReadError);
     };
   }, []);
 

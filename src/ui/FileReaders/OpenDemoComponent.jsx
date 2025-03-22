@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { UIButton } from '../Button/Button';
 import UiModalDemo from '../Modals/ModalDemo';
 import config from '../../config/config';
-import MriViwer from '../../engine/lib/MRIViewer';
+import MriViewer from '../../engine/lib/MRIViewer';
 
 export const OpenDemoComponent = ({ cx }) => {
   const [showModalDemo, setShowModalDemo] = useState(false);
@@ -17,7 +17,7 @@ export const OpenDemoComponent = ({ cx }) => {
 
   const onDemoSelected = (index) => {
     const fileUrl = config.demoUrls[index];
-    MriViwer.read(fileUrl);
+    MriViewer.read(fileUrl);
   };
 
   return (

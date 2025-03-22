@@ -12,29 +12,29 @@ import { UIButton } from '../Button/Button';
 import { useNeedShow3d } from '../../utils/useNeedShow3d';
 import ViewMode from '../../store/ViewMode';
 
-jest.mock('../../utils/useNeedShow3d');
+vi.mock('../../utils/useNeedShow3d');
 const mockedUseNeedShow3d = useNeedShow3d;
 
-jest.mock('react-modal', () => ({
-  setAppElement: jest.fn(),
+vi.mock('react-modal', () => ({
+  setAppElement: vi.fn(),
 }));
 
-jest.mock('../LeftToolbar/LeftToolbar', () => ({
-  LeftToolBar: jest.fn(() => <div>LeftToolBar</div>),
+vi.mock('../LeftToolbar/LeftToolbar', () => ({
+  LeftToolBar: vi.fn(() => <div>LeftToolBar</div>),
 }));
 
-jest.mock('../LeftToolbar/LeftToolbar', () => ({
-  LeftToolBar: jest.fn(() => <div>LeftToolBar</div>),
+vi.mock('../LeftToolbar/LeftToolbar', () => ({
+  LeftToolBar: vi.fn(() => <div>LeftToolBar</div>),
 }));
 
-jest.mock('./MobileSettings', () => ({ MobileSettings: jest.fn(() => <div>3 buttons</div>) }));
+vi.mock('./MobileSettings', () => ({ MobileSettings: vi.fn(() => <div>3 buttons</div>) }));
 
 const rootElement = document.createElement('div');
 rootElement.id = 'root';
 document.body.appendChild(rootElement);
 describe('MobileSettings', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('test render component', () => {
@@ -64,7 +64,7 @@ describe('MobileSettings', () => {
   });
 
   it('should call the toggleSettingsMenu function when clicked', () => {
-    const toggleSettingsMenu = jest.fn();
+    const toggleSettingsMenu = vi.fn();
     const { getByTestId } = render(<UIButton icon="settings-linear" handler={toggleSettingsMenu} testId="buttonSettingsLinear" />);
     const button = getByTestId('buttonSettingsLinear');
     fireEvent.click(button);
@@ -73,7 +73,7 @@ describe('MobileSettings', () => {
   });
 
   it('should call the toggleSettingsMenu function when clicked', () => {
-    const toggle2DMenu = jest.fn();
+    const toggle2DMenu = vi.fn();
     const { getByTestId } = render(<UIButton icon="settings-linear" handler={toggle2DMenu} testId="button2D" />);
     const button = getByTestId('button2D');
     fireEvent.click(button);
@@ -82,7 +82,7 @@ describe('MobileSettings', () => {
   });
 
   it('should call the toggleSettingsMenu function when clicked', () => {
-    const toggleCursorMenu = jest.fn();
+    const toggleCursorMenu = vi.fn();
     const { getByTestId } = render(<UIButton icon="button2D" handler={toggleCursorMenu} testId="buttonCursor" />);
     const button = getByTestId('buttonCursor');
     fireEvent.click(button);

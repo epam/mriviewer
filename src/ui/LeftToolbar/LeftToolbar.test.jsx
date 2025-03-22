@@ -6,17 +6,17 @@ import { ModeSwitcherToolbar } from './ModeSwitcherToolbar';
 import { ModeFast3dToolbar } from './ModeFast3dToolbar';
 import { Mode2dToolbar } from './Mode2dToolbar';
 
-jest.mock('./ModeSwitcherToolbar', () => ({
-  ModeSwitcherToolbar: jest.fn(() => <div>ModeSwitcherToolbar</div>),
+vi.mock('./ModeSwitcherToolbar', () => ({
+  ModeSwitcherToolbar: vi.fn(() => <div>ModeSwitcherToolbar</div>),
 }));
-jest.mock('./ModeFast3dToolbar', () => ({
-  ModeFast3dToolbar: jest.fn(() => <div>ModeFast3dToolbar</div>),
+vi.mock('./ModeFast3dToolbar', () => ({
+  ModeFast3dToolbar: vi.fn(() => <div>ModeFast3dToolbar</div>),
 }));
-jest.mock('./Mode2dToolbar', () => ({
-  Mode2dToolbar: jest.fn(() => <div>Mode2dToolbar</div>),
+vi.mock('./Mode2dToolbar', () => ({
+  Mode2dToolbar: vi.fn(() => <div>Mode2dToolbar</div>),
 }));
 
-jest.mock('../../utils/useNeedShow3d');
+vi.mock('../../utils/useNeedShow3d');
 const mockedUseNeedShow3d = useNeedShow3d;
 describe('test leftToolbar', () => {
   it('should be render modeFast3Dtollbar', () => {

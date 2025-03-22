@@ -6,11 +6,11 @@ import ViewMode from '../../store/ViewMode';
 import { useNeedShow3d } from '../../utils/useNeedShow3d';
 import { mriLocalStorageService } from '../../engine/lib/services';
 
-jest.mock('../../utils/useNeedShow3d');
-jest.mock('../../engine/lib/services/LocalStorageService', () => {
+vi.mock('../../utils/useNeedShow3d');
+vi.mock('../../engine/lib/services/LocalStorageService', () => {
   return {
-    getViewMode: jest.fn(),
-    saveViewMode: jest.fn(),
+    getViewMode: vi.fn(),
+    saveViewMode: vi.fn(),
   };
 });
 

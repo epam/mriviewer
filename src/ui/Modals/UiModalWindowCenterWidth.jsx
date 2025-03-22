@@ -13,7 +13,7 @@ import UiModalWindowRange from './UiModalWindowRange';
 import StoreActionType from '../../store/ActionTypes';
 
 import buttonCss from '../Button/Button.module.css';
-import MriViwer from '../../engine/lib/MRIViewer';
+import MriViewer from '../../engine/lib/MRIViewer';
 import { MriEvents } from '../../engine/lib/enums';
 import modalCss from './Modals.module.css';
 import { DEFAULT_WIN_MAX, DEFAULT_WIN_MIN, LARGE_NUMBER } from '../Constants/WindowSet.constants';
@@ -64,7 +64,7 @@ class UiModalWindowCenterWidth extends React.Component {
     this.reset();
     applyWindowRangeData(this.props, this.state.windowMin, this.state.windowMax);
 
-    MriViwer.events.emit(MriEvents.VOLUME_PARAMETERS_SET_SUCCESS);
+    MriViewer.events.emit(MriEvents.VOLUME_PARAMETERS_SET_SUCCESS);
 
     this.props.onHide && this.props.onHide(true);
   }
