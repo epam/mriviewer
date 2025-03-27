@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Container } from '../Layout/Container';
 import { buttonsBuilder } from '../Button/Button';
@@ -29,6 +29,8 @@ const ExploreTools = (props) => {
     }
 
     if (buttonId === Tools2dType.CLEAR) {
+      const confirmClear = window.confirm('Are you sure you want to clear all objects?');
+      if (!confirmClear) return;
       const gra2d = props.graphics2d;
       gra2d.clear();
     }
