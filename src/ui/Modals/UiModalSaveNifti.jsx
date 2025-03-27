@@ -16,7 +16,6 @@ export function UiModalSaveNifti(props) {
   const { stateVis, onHide } = props;
   const [fileName, setFileName] = useState('dump');
   const { volumeSet, volumeIndex, volumeRenderer } = useSelector((state) => state);
-
   const onSaveNifti = () => {
     const vol = volumeSet.getVolume(volumeIndex);
 
