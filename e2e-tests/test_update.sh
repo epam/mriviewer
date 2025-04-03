@@ -1,2 +1,2 @@
 #!/bin/sh
-npm run test:update
+npm run test:update "$@"
