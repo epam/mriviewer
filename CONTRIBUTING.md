@@ -69,7 +69,7 @@ It needs to update screenshots or to check the result in same environment as in 
    - Using "test" script to see the test result and log - `test=<test_file_name>:<test_row_number> npm run docker:test` (e.g. `test=test.spec.ts:10 npm run docker:test`)
    - Using "test:update" script to generate screenshots - `test=<test_file_name>:<test_row_number> npm run docker:test:update` (e.g. `test=test.spec.ts:10 npm run docker:test:update`)
 
-#### Debug tests locally without docker
+### Debug tests locally without docker
 It needs to go through the tests step by step and visually check the test behaviour in the browser.
 
 1. Open terminal
@@ -78,7 +78,6 @@ It needs to go through the tests step by step and visually check the test behavi
    - If you see such error please follow the instructions provided in it and install playwrite locally
      ![error-tests-exec-1.png](docs/images/error-tests-exec-1.png)
 
---- 
 ### Additional information
 
 #### Detailed commands description
