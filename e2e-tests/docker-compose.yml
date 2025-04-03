@@ -13,7 +13,6 @@ services:
       test: [ "CMD", "curl", "-f", "http://localhost:3000" ]  # Adjust port if needed
       interval: 1s
       retries: 10
-    restart: no
 
   mriviewer-autotests:
     depends_on:
