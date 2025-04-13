@@ -1,0 +1,27 @@
+version: '3'
+services:
+  mriviewer-app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-app
+    volumes:
+      - ../:/mriviewer
+    command: [ "npm", "run", "serve" ]  # Start the server
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000" ]  # Adjust port if needed
+      interval: 1s
+      retries: 10
+
+  mriviewer-autotests:
+    depends_on:
+      mriviewer-app:
+        condition: service_healthy  # Ensure the app is ready before tests r
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-tests
+    container_name: mriviewer-e2e-tests
+    volumes:
+      - ./:/mriviewer-tests
+
