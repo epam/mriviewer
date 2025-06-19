@@ -8,4 +8,7 @@ export const TEST_IDS = {
   CANVAS: 'canvas',
   RIGHT_SETTINGS_PANEL: 'right-settings-panel',
   TOP_TOOLBAR: 'top-toolbar',
+  OPEN_DOWNLOAD_FILE_MODAL_BUTTON: 'open-download-file-modal-button',
+  DOWNLOAD_FILE_MODAL: 'download-file-modal',
+  DOWNLOAD_FILE_BUTTON: 'download-file-button',
 };

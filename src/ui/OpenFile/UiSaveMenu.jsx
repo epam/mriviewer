@@ -12,6 +12,7 @@ import { UIButton } from '../Button/Button';
 import { Tooltip } from '../Tooltip/Tooltip';
 import css from './UISaveMenu.module.css';
 import cx from 'classnames';
+import { TEST_IDS } from '../../utils/testIds.js';
 
 export const UiSaveMenu = () => {
   /**
@@ -36,6 +37,7 @@ export const UiSaveMenu = () => {
           icon="download"
           handler={(evt) => onModalSaveNiftiShow(evt)}
           mode={isLoaded ? 'accent' : ''}
+          testId={TEST_IDS.OPEN_DOWNLOAD_FILE_MODAL_BUTTON}
         />
       </Tooltip>
       <UiModalSaveNifti stateVis={showModalSaveNifti} onHide={onModalSaveNiftiHide} />

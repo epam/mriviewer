@@ -109,4 +109,16 @@ test.describe('Displaying a 2D model', () => {
       height: VIEWPORT_SIZE.height,
     });
   });
+
+  test('should download the image a 2D model ', async ({ page }) => {
+    const homePage = new HomePage(page);
+    const viewerPage2d = new ViewerPage2d(page);
+
+    await homePage.open16BitsFileFromDevice(DCM_FILE_PATHS);
+
+    const file = await viewerPage2d.downloadNiftiFile();
+
+    expect(file.stats.size).toBe(4096348);
+    expect(file.name).toBe('dump.nii');
+  });
 });
