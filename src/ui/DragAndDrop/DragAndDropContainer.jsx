@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import css from '../Main.module.css';
 
-export const DragAndDropContainer = ({ children }) => {
+export const DragAndDropContainer = ({ children, testId }) => {
   const [position, setPosition] = useState({ top: 15, right: 1 });
   const [isDragging, setIsDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -41,6 +41,7 @@ export const DragAndDropContainer = ({ children }) => {
         right: `${position.right}%`,
       }}
       className={css.settings}
+      data-testid={testId}
     >
       {children}
     </div>

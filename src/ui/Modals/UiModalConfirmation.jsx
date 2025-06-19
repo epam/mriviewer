@@ -14,6 +14,7 @@ import StoreActionType from '../../store/ActionTypes';
 import css from './Modals.module.css';
 import { MriEvents } from '../../engine/lib/enums';
 import MriViewer from '../../engine/lib/MRIViewer';
+import { TEST_IDS } from '../../utils/testIds.js';
 
 const UiModalConfirmation = () => {
   const dispatch = useDispatch();
@@ -37,14 +38,14 @@ const UiModalConfirmation = () => {
   };
 
   return (
-    <Modal cx={{ className: css.confirmation }} isOpen={true}>
+    <Modal cx={{ className: css.confirmation }} isOpen={true} testId={TEST_IDS.IMAGE_QUALITY_MODAL}>
       <ModalBody>
         <p>16-bit images can hold more colors per channel than 8-bit, which gives better image quality.</p>
         <p>At the same time it uses more computer resources.</p>
         <p>Do you want to activate 16-bit rendering for uploaded files?</p>
       </ModalBody>
       <ModalFooter>
-        <UIButton handler={onButtonClickYes} caption="Yes" />
+        <UIButton handler={onButtonClickYes} caption="Yes" testId={TEST_IDS.IMAGE_QUALITY_MODAL_YES_BUTTON} />
         <UIButton handler={onButtonClickNo} caption="No" />
       </ModalFooter>
     </Modal>
