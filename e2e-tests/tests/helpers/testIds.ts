@@ -11,4 +11,6 @@ export const TEST_IDS = {
   OPEN_DOWNLOAD_FILE_MODAL_BUTTON: 'open-download-file-modal-button',
   DOWNLOAD_FILE_MODAL: 'download-file-modal',
   DOWNLOAD_FILE_BUTTON: 'download-file-button',
+  SWITCH_TO_3D_VIEWER_BUTTON: 'Button3D',
+  CANVAS_3D: '3d-canvas',
 };

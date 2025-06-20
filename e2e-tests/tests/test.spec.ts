@@ -48,6 +48,9 @@ test('should open dialog with demo data', async ({ page }) => {
 });
 
 test.describe('Displaying a 2D model', () => {
+  const EXPECTED_NIFTI_FILE_SIZE = 4096348;
+  const EXPECTED_NIFTI_FILE_NAME = 'dump.nii';
+
   test.use({ viewport: VIEWPORT_SIZE });
 
   test.beforeEach(async ({ page }) => {
@@ -58,7 +61,7 @@ test.describe('Displaying a 2D model', () => {
     const homePage = new HomePage(page);
     await homePage.showOpenFromDeviceModal();
 
-    await takeElementScreenshot(homePage.openFromDeviceModal);
+    await takeElementScreenshot(page, homePage.openFromDeviceModal);
   });
 
   // TODO discuss tests naming with QA (should start from "should" word)
@@ -66,7 +69,7 @@ test.describe('Displaying a 2D model', () => {
     const homePage = new HomePage(page);
     await homePage.openFileFromDevice(DCM_FILE_PATHS);
 
-    await takeElementScreenshot(homePage.imageQualityModal);
+    await takeElementScreenshot(page, homePage.imageQualityModal);
   });
 
   test('should check the image', async ({ page }) => {
@@ -75,7 +78,7 @@ test.describe('Displaying a 2D model', () => {
 
     await homePage.open16BitsFileFromDevice(DCM_FILE_PATHS);
 
-    await takeElementScreenshot(viewerPage2d.canvas);
+    await takeElementScreenshot(page, viewerPage2d.canvas);
   });
 
   test('should check the slider', async ({ page }) => {
@@ -84,7 +87,7 @@ test.describe('Displaying a 2D model', () => {
 
     await homePage.open16BitsFileFromDevice(DCM_FILE_PATHS);
 
-    await takeElementScreenshot(viewerPage2d.rightSettingsPanel);
+    await takeElementScreenshot(page, viewerPage2d.rightSettingsPanel);
   });
 
   test('should check the upper toolbar', async ({ page }) => {
@@ -93,7 +96,7 @@ test.describe('Displaying a 2D model', () => {
 
     await homePage.open16BitsFileFromDevice(DCM_FILE_PATHS);
 
-    await takeElementScreenshot(viewerPage2d.topToolbar);
+    await takeElementScreenshot(page, viewerPage2d.topToolbar);
   });
 
   test('should check the left toolbar', async ({ page }) => {
@@ -110,6 +113,16 @@ test.describe('Displaying a 2D model', () => {
     });
   });
 
+  test('should check the 3D viewer', async ({ page }) => {
+    const homePage = new HomePage(page);
+    const viewerPage2d = new ViewerPage2d(page);
+
+    await homePage.open16BitsFileFromDevice(DCM_FILE_PATHS);
+    await viewerPage2d.switchTo3DViewer();
+
+    await takeElementScreenshot(page, viewerPage2d.canvas3D);
+  });
+
   test('should download the image a 2D model ', async ({ page }) => {
     const homePage = new HomePage(page);
     const viewerPage2d = new ViewerPage2d(page);
@@ -118,7 +131,20 @@ test.describe('Displaying a 2D model', () => {
 
     const file = await viewerPage2d.downloadNiftiFile();
 
-    expect(file.stats.size).toBe(4096348);
-    expect(file.name).toBe('dump.nii');
+    expect(file.stats.size).toBe(EXPECTED_NIFTI_FILE_SIZE);
+    expect(file.name).toBe(EXPECTED_NIFTI_FILE_NAME);
+  });
+
+  test('should download the image a 3D model ', async ({ page }) => {
+    const homePage = new HomePage(page);
+    const viewerPage2d = new ViewerPage2d(page);
+
+    await homePage.open16BitsFileFromDevice(DCM_FILE_PATHS);
+    await viewerPage2d.switchTo3DViewer();
+
+    const file = await viewerPage2d.downloadNiftiFile();
+
+    expect(file.stats.size).toBe(EXPECTED_NIFTI_FILE_SIZE);
+    expect(file.name).toBe(EXPECTED_NIFTI_FILE_NAME);
   });
 });

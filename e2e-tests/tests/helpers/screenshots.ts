@@ -1,7 +1,9 @@
 import { expect, Page } from '@playwright/test';
 import { Locator } from 'playwright';
+import { moveMouseAway } from './mouse';
 
-export async function takeElementScreenshot(element: Locator) {
+export async function takeElementScreenshot(page: Page, element: Locator) {
+  await moveMouseAway(page);
   await expect(element).toHaveScreenshot();
 }
 
