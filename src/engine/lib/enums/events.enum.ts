@@ -9,6 +9,7 @@ export enum MriEvents {
 
 export enum MriExtensions {
   DCM = 'dcm',
+  DICOM = 'dicom',
   KTX = 'ktx',
   NII = 'nii',
   HDR = 'hdr',
