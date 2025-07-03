@@ -38,6 +38,7 @@ export class MultiFileReader extends SingleFileReader {
 
     switch (this.fileExtension) {
       case '':
+      case MriExtensions.DICOM:
       case MriExtensions.DCM:
         this.loader = new LoaderDicom(this.filesLength);
         this.store.setDicomLoader(this.loader);

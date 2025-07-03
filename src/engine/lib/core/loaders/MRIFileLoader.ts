@@ -35,6 +35,7 @@ export class MRIFileLoader {
       case MriExtensions.KTX:
       case MriExtensions.NII:
       case MriExtensions.DCM:
+      case MriExtensions.DICOM:
       case MriExtensions.ZIP:
         return await this.fetchSingleFile(url);
       case MriExtensions.TXT:

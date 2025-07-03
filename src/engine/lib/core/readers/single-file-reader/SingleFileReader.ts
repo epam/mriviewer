@@ -53,6 +53,7 @@ export class SingleFileReader extends AbstractFileReader {
     switch (this.fileExtension) {
       case '':
       case MriExtensions.DCM:
+      case MriExtensions.DICOM:
       case MriExtensions.TXT:
         this.readFromDicom(data);
         break;
