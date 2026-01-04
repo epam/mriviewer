@@ -58,7 +58,7 @@ class ToolPick {
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
-    const objCanvas = store.graphics2d.m_mount.current;
+    const objCanvas = store.graphics2d.canvas;
     const canvasRect = objCanvas.getBoundingClientRect();
     const zoom = store.render2dZoom;
     const xPos = store.render2dxPos / canvasRect.width;

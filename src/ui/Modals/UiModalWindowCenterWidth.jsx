@@ -344,7 +344,7 @@ class UiModalWindowCenterWidth extends React.Component {
         <UiModalWindowRange
           onChange={this.onSliderWindowRange.bind(this)}
           connect={true}
-          title="Select window center and width to display DICOM"
+          title="Select window range to display DICOM"
           m_dataMin={this.m_dataMin}
           m_dataMax={this.m_dataMax}
           windowMin={this.state.windowMin}

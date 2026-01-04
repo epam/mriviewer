@@ -1,5 +1,4 @@
 import LoadResult from '../../../../LoadResult';
-import VolumeSet from '../../../../VolumeSet';
 import LoaderDicom from '../../../../loaders/LoaderDicom';
 import LoaderHdr from '../../../../loaders/LoaderHdr';
 import MriViwer from '../../../MRIViewer';
@@ -13,6 +12,8 @@ import {
   mriLocalStorageService,
   mriStoreService,
 } from '../../../services';
+import mriVolumeService, { MRIVolumeService } from '../../../services/VolumeService';
+import { ActiveViewService, activeViewService } from '../../graphics/ActiveViewService';
 
 /**
  * AbstractFileReader is an abstract class designed to be extended by specific file reader
@@ -23,20 +24,18 @@ import {
  * @abstract
  */
 export abstract class AbstractFileReader {
-  // VolumeData
-  volumeSet = new VolumeSet();
-  volumeIndex: number = 0;
   // FileData
   fileName = '';
   fileExtension: MriExtensions | '' = '';
   // File Handlers
   loader: LoaderDicom | LoaderHdr | undefined;
   fileReader: FileReader = new FileReader();
-
   // Services
   store: MRIStoreService = mriStoreService;
   events: MRIEventsService = mriEventsService;
+  volumeService: MRIVolumeService = mriVolumeService;
   localStorage: MRILocalStorageService = mriLocalStorageService;
+  activeViewService: ActiveViewService = activeViewService;
 
   constructor() {
     this.callbackReadProgress = this.callbackReadProgress.bind(this);
@@ -48,23 +47,17 @@ export abstract class AbstractFileReader {
    * and updates the local storage with the recent file.
    */
   public handleVolumeLoadSuccess() {
-    const volume = this.volumeSet.getVolume(this.volumeIndex);
-
-    if (!volume.m_dataArray) return;
+    const volume = this.volumeService.getActiveVolume();
 
     if (volumeConfig.setTextureSize4X) {
       volume.makeDimensions4x();
     }
 
     this.callbackReadProgress(1);
-    MriViwer.events.emit(MriEvents.VOLUME_LOAD_SUCCESS);
-    this.store.setVolume(this.volumeSet, this.volumeIndex, this.fileName);
 
+    this.store.setVolume(this.volumeService.volumeSet, this.volumeService.volumeIndex, this.fileName);
     this.localStorage.saveRecentFiles(this.fileName);
-
-    if (this.store.getState().graphics2d) {
-      this.store.getState().graphics2d.forceUpdate();
-    }
+    MriViwer.events.emit(MriEvents.VOLUME_LOAD_SUCCESS);
   }
 
   /**

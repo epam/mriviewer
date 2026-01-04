@@ -19,7 +19,7 @@ export const Mode2dToolbar = () => {
   const onMode = (indexMode) => {
     dispatch({ type: StoreActionType.SET_MODE_2D, mode2d: indexMode });
     graphics2d.m_mode2d = indexMode;
-    graphics2d.clear();
+    graphics2d.tools.clear();
 
     dispatch({ type: StoreActionType.SET_2D_ZOOM, render2dZoom: 1.0 });
     dispatch({ type: StoreActionType.SET_2D_X_POS, render2dxPos: 0.0 });
@@ -27,8 +27,6 @@ export const Mode2dToolbar = () => {
 
     // build render image
     graphics2d.forceUpdate();
-    // render just builded image
-    graphics2d.forceRender();
   };
 
   const onModeSaggital = () => {

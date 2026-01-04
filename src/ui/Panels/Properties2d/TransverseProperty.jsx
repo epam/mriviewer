@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
 import { Nouislider } from '../../Nouislider/Nouislider';
 import { SliderRow } from '../../Form';
 import { useDispatch, useSelector } from 'react-redux';
 import Modes2d from '../../../store/Modes2d';
 import StoreActionType from '../../../store/ActionTypes';
+import { activeViewService } from '../../../engine/lib/core/graphics/ActiveViewService';
 
 export const TransverseProperty = () => {
   const dispatch = useDispatch();
@@ -42,13 +42,10 @@ export const TransverseProperty = () => {
     const ratio = value / slideRangeMax;
     dispatch({ type: StoreActionType.SET_SLIDER_2D, sliceRatio: ratio });
     // clear all 2d tools
-    graphics2d.clear();
+    graphics2d.tools.clear();
 
     // re-render (and rebuild segm if present)
-    graphics2d.forceUpdate();
-
-    // render just builded image
-    graphics2d.forceRender();
+    activeViewService.updateAllViews();
   };
 
   const start = [Math.floor(sliceRatio * slideRangeMax)];

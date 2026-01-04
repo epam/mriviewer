@@ -18,7 +18,7 @@ const UiZoomTools = (props) => {
   const zoomImage = (step, buttonId) => {
     const currentZoom = props.render2dZoom;
     let newZoom = Math.round((currentZoom + step) * 10) / 10;
-    const objCanvas = props.graphics2d.m_mount.current;
+    const objCanvas = props.graphics2d.canvas;
     const canvasRect = objCanvas.getBoundingClientRect();
     let xPosNew;
     let yPosNew;
@@ -67,7 +67,6 @@ const UiZoomTools = (props) => {
 
   useEffect(() => {
     props.graphics2d.forceUpdate();
-    props.graphics2d.forceRender();
   }, [props.render2dZoom]);
 
   const buttons = [

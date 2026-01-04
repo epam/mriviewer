@@ -48,10 +48,6 @@
   flex-direction: column;
 }
 
-.modalWindowRange {
-  margin-top: 2rem;
-}
-
 .header,
 .body,
 .footer {
@@ -90,6 +86,23 @@
   margin: 0;
   font-size: 16px;
   font-weight: 600;
+}
+
+.modalWindowRange .header {
+  padding: 0;
+  border-bottom: none;
+}
+
+.modalWindowRange .header h5 {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  border-bottom: none;
+}
+
+.modalWindowRange .body {
+  padding: 0;
+  margin: 30px 0;
 }
 
 .close:hover svg,

@@ -54,7 +54,7 @@ export class MRIStoreService {
       { type: StoreActionType.SET_PROGRESS, progress: 0 },
       { type: StoreActionType.SET_SPINNER, spinner: false },
       { type: StoreActionType.SET_IS_LOADED, isLoaded: true },
-      { type: StoreActionType.SET_ERR_ARRAY, arrErrors: [] },
+      { type: StoreActionType.SET_ERR_ARRAY, arrErrors: [] as string[] },
     ];
 
     this.dispatchActions(actions);
@@ -85,7 +85,7 @@ export class MRIStoreService {
   public setVolumeLoadFailed(fileName: string, errors: string[]): void {
     const actions = [
       { type: StoreActionType.SET_ERR_ARRAY, errors },
-      { type: StoreActionType.SET_VOLUME_SET, volume: null },
+      { type: StoreActionType.SET_VOLUME_SET, volume: null as null },
       { type: StoreActionType.SET_FILENAME, fileName: fileName },
       { type: StoreActionType.SET_PROGRESS, progress: 0 },
       { type: StoreActionType.SET_SPINNER, spinner: false },

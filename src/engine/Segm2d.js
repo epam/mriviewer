@@ -261,7 +261,7 @@ class Segm2d {
     this.stage = STAGE_SEGMENTATION_READY;
     console.log('Segm complete now ');
 
-    this.objGraphics2d.forceRender();
+    this.objGraphics2d.forceUpdate();
   }
 
   getStageString() {

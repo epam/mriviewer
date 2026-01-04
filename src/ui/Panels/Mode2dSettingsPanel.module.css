@@ -1,0 +1,73 @@
+.settingsPanel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  position: absolute;
+  right: 25px;
+  top: 100px;
+  opacity: var(--opacity);
+  background-color: var(--dark-gray);
+  padding: 25px;
+  width: 400px;
+  border-radius: 24px;
+  transition: opacity 300ms ease-in-out;
+  z-index: 1000;
+}
+
+.settingsPanelVertical {
+  display: flex;
+  flex-direction: column;
+}
+
+.settingsPanelHorizontal {
+  display: flex;
+  flex-direction: row;
+  gap: 25px;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  top: initial;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  max-height: 250px;
+}
+
+.settingsPanelHorizontal .sliderWrapper {
+  flex-basis: 33%;
+}
+
+.sliderWrapper > * {
+  width: 100%;
+}
+
+.sliderWrapper p {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.sliderWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+}
+
+.selectVolumeBlock {
+  flex-basis: 33%;
+}
+
+.selectVolumeBlock div {
+  padding: 0;
+}
+
+.selectVolumeBlock h2 {
+  margin: 0;
+  padding: 0 0 25px;
+}

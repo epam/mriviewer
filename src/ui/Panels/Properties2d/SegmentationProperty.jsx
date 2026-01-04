@@ -2,7 +2,7 @@
  * Copyright 2022 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { Switch, SwitchRow } from '../../Form';
@@ -18,7 +18,6 @@ export const SegmentationProperty = () => {
     if (graphics2d !== null) {
       graphics2d.m_isSegmented = value;
       graphics2d.forceUpdate();
-      graphics2d.forceRender();
 
       const { segm2d } = graphics2d;
       if (segm2d !== null && value) {

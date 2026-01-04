@@ -3,17 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-
-export const VOLUME_ICON_SIDE = 64;
 /**
  * Class Volume
  *
  * Result volume, loaded from Dicom, Ktx, Nifti, ... files
  */
-class Volume extends React.Component {
-  constructor(props) {
-    super(props);
+class Volume {
+  constructor() {
     this.m_xDim = 0;
     this.m_yDim = 0;
     this.m_zDim = 0;
@@ -26,10 +22,6 @@ class Volume extends React.Component {
       y: 0.0,
       z: 0.0,
     };
-    // icon to show
-    this.m_xIcon = 0;
-    this.m_yIcon = 0;
-    this.m_dataIcon = null;
   }
 
   createEmptyBytesVolume(xDim, yDim, zDim) {
@@ -50,45 +42,6 @@ class Volume extends React.Component {
     }
   }
 
-  // Create icon for volume
-  createIcon() {
-    console.assert(this.m_xDim > 0);
-    console.assert(this.m_yDim > 0);
-    console.assert(this.m_zDim > 0);
-    console.assert(this.m_dataArray !== null);
-    const sizeSrcMax = this.m_xDim > this.m_yDim ? this.m_xDim : this.m_yDim;
-    const scale = sizeSrcMax / VOLUME_ICON_SIDE;
-
-    // central slice
-    const zCenter = Math.floor(this.m_zDim / 2);
-    const zOff = zCenter * this.m_xDim * this.m_yDim;
-
-    this.m_xIcon = VOLUME_ICON_SIDE;
-    this.m_yIcon = this.m_xIcon;
-    const numPixelsIcon = this.m_xIcon * this.m_yIcon;
-    this.m_dataIcon = new Uint8Array(numPixelsIcon);
-    for (let i = 0; i < numPixelsIcon; i++) {
-      this.m_dataIcon[i] = 0;
-    }
-    // actual size in icon (dest image)
-    const wDst = Math.floor((VOLUME_ICON_SIDE * this.m_xDim) / sizeSrcMax);
-    const hDst = Math.floor((VOLUME_ICON_SIDE * this.m_yDim) / sizeSrcMax);
-    // top left corner in dst image
-    const xDstL = Math.floor(this.m_xIcon / 2 - wDst / 2);
-    const yDstT = Math.floor(this.m_yIcon / 2 - hDst / 2);
-    for (let yDst = 0; yDst < hDst; yDst++) {
-      const ySrc = Math.floor(yDst * scale);
-      for (let xDst = 0; xDst < wDst; xDst++) {
-        const xSrc = Math.floor(xDst * scale);
-        const val = this.m_dataArray[xSrc + ySrc * this.m_xDim + zOff];
-        // write result
-        const xWrite = xDst + xDstL;
-        const yWrite = yDst + yDstT;
-        this.m_dataIcon[xWrite + yWrite * this.m_xIcon] = val;
-      } // for xDst
-    } // for yDst
-  } // end createIcon
-
   //
   // Make each volume texture size equal to 4 * N
   //
@@ -104,7 +57,6 @@ class Volume extends React.Component {
       return; // do nothing
     } // if new size the same as current
     // perfom convert adding black pixels
-    console.log(`Volume. makeDimensions4x. Convert into ${xDimNew}*${yDimNew}*${zDimNew}`);
     const xyzDimNew = xDimNew * yDimNew * zDimNew;
     const bytesPerVoxel = this.m_bytesPerVoxel;
     const bufSizeBytes = xyzDimNew * bytesPerVoxel;
@@ -120,10 +72,6 @@ class Volume extends React.Component {
     const OFF_1 = 1;
     const OFF_2 = 2;
     const OFF_3 = 3;
-
-    console.log(`Volume info: xyzDim = ${this.m_xDim}*${this.m_yDim}*${this.m_zDim}`);
-    console.log(`Volume info: bpp = ${this.m_bytesPerVoxel}`);
-    console.log(`Volume info: dataSize = ${this.m_dataSize}`);
 
     const xyDim = this.m_xDim * this.m_yDim;
     if (this.m_bytesPerVoxel === ONE) {
@@ -169,12 +117,7 @@ class Volume extends React.Component {
     this.m_zDim = zDimNew;
     this.m_dataArray = datArrayNew;
     this.m_dataSize = xyzDimNew;
-  } // end
-
-  // do nothing. But we need to implement render() to run Volume tests
-  render() {
-    return <p></p>;
   }
-} // end class Volume
+}
 
 export default Volume;

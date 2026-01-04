@@ -27,9 +27,7 @@ import DicomSlicesVolume from './dicomslicesvolume';
 import DicomSliceInfo from './dicomsliceinfo';
 import DicomTagInfo from './dicomtaginfo';
 
-// import Volume from '../Volume';
-import VolumeSet from '../VolumeSet';
-import Volume from '../Volume';
+import { mriVolumeService } from '../lib/services';
 
 // ********************************************************
 // Const
@@ -262,22 +260,9 @@ class LoaderDicom {
    * @return {LoadResult} LoadResult.SUCCESS if success
    */
   createVolumeFromSlices(volSet, indexSelected, hashSelected) {
-    // check arguments
-    console.assert(volSet != null, 'Null volume');
-    console.assert(volSet instanceof VolumeSet, 'Should be volume set');
-    console.assert(typeof indexSelected === 'number', 'index should be number');
-    console.assert(typeof hashSelected === 'number', 'index should be number');
     const is16bit = true;
 
-    let volDst = null;
-    if (indexSelected < volSet.getNumVolumes()) {
-      volDst = volSet.getVolume(indexSelected);
-    } else {
-      volDst = new Volume();
-      volSet.addVolume(volDst);
-      volDst = volSet.getVolume(indexSelected);
-      console.assert(volDst !== null);
-    }
+    const volDst = mriVolumeService.getActiveVolume();
 
     const numSeries = this.m_slicesVolume.m_series.length;
     // get serie with given hash
@@ -787,8 +772,6 @@ class LoaderDicom {
     volDst.m_institutionName = this.m_dicomInfo.m_institutionName;
     volDst.m_operatorsName = this.m_dicomInfo.m_operatorsName;
     volDst.m_physicansName = this.m_dicomInfo.m_physicansName;
-
-    volDst.createIcon();
 
     return LoadResult.SUCCESS;
   } // end createVolumeFromSlices

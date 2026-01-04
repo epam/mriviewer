@@ -1,6 +1,5 @@
 import StoreActionType from '../../../../../store/ActionTypes';
 import LoadResult from '../../../../LoadResult';
-import Volume from '../../../../Volume';
 import LoaderDcmDaikon from '../../../../loaders/LoaderDcmDaikon';
 import LoaderDicom from '../../../../loaders/LoaderDicom';
 import LoaderKtx from '../../../../loaders/LoaderKtx';
@@ -41,7 +40,7 @@ export class SingleFileReader extends AbstractFileReader {
    */
   readSingleFile() {
     const data = this.fileReader.result as ArrayBuffer;
-    this.volumeSet.addVolume(new Volume());
+    this.volumeService.addNewVolume();
     this.readFileData(data);
   }
 
@@ -75,7 +74,7 @@ export class SingleFileReader extends AbstractFileReader {
    */
   readFromKtx(content: ArrayBuffer) {
     const loader = new LoaderKtx();
-    const vol = this.volumeSet.getVolume(0);
+    const vol = this.volumeService.getActiveVolume();
     const ret = loader.readFromBuffer(vol, content, this.callbackReadProgress, this.callbackReadComplete);
     return ret;
   }
@@ -87,7 +86,7 @@ export class SingleFileReader extends AbstractFileReader {
    */
   readFromNifti(content: ArrayBuffer) {
     const loader = new LoaderNifti();
-    const vol = this.volumeSet.getVolume(0);
+    const vol = this.volumeService.getActiveVolume();
     const ret = loader.readFromBuffer(vol, content, this.callbackReadProgress, this.callbackReadComplete);
     return ret;
   }
@@ -149,7 +148,7 @@ export class SingleFileReader extends AbstractFileReader {
     }
 
     this.callbackReadProgress(1);
-    this.store.setSingleDicom(this.volumeSet, this.volumeIndex, this.loader);
+    this.store.setSingleDicom(this.volumeService.volumeSet, this.volumeService.volumeIndex, this.loader);
     this.events.emit(MriEvents.FILE_READ_SUCCESS);
   }
 

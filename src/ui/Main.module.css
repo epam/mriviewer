@@ -53,7 +53,7 @@
 }
 
 .fullscreen .left,
-.fullscreen .settings {
+.fullscreen {
   top: 20px;
 }
 
@@ -82,10 +82,6 @@
   bottom: 0;
   z-index: 1;
   user-select: none;
-}
-
-.settings {
-  display: none;
 }
 
 @media screen and (min-width: 768px) {
@@ -128,7 +124,7 @@
     position: absolute;
     left: 25px;
     top: 12%;
-    z-index: 1010;
+    z-index: 100;
   }
 
   .bottleft {
@@ -137,11 +133,7 @@
     position: absolute;
     left: 25px;
     bottom: 2rem;
-    z-index: 1010;
-  }
-
-  .settings {
-    display: none;
+    z-index: 100;
   }
 
   .center {
@@ -185,21 +177,6 @@
     z-index: 10;
   }
 
-  .settings {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    right: 25px;
-    top: 100px;
-    background-color: var(--dark-gray);
-    padding: 25px;
-    width: 400px;
-    opacity: var(--opacity);
-    cursor: all-scroll;
-    border-radius: 24px;
-    transition: opacity 300ms ease-in-out;
-    z-index: 1100;
-  }
   .left {
     top: 8%;
   }
@@ -224,10 +201,6 @@
   .header__panels {
     flex-wrap: wrap;
   }
-
-  .settings {
-    top: 4rem;
-  }
 }
 
 @media screen and (min-width: 1440px) {
@@ -239,8 +212,5 @@
 @media screen and (min-width: 2560px) and (orientation: landscape) {
   .left {
     top: 5%;
-  }
-  .settings {
-    top: 4rem;
   }
 }

@@ -14,7 +14,6 @@
 // **********************************************
 
 import ToolDistance from './ToolDistance';
-import StoreActionType from '../../store/ActionTypes';
 
 // **********************************************
 // Class
@@ -148,8 +147,6 @@ class ToolText {
    */
   onMouseDown(xScr, yScr, store) {
     this.m_pointPressed = ToolDistance.screenToTexture(xScr, yScr, this.m_wScreen, this.m_hScreen, store);
-
-    store.dispatch({ type: StoreActionType.SET_MODAL_TEXT, showModalText: true });
   }
 
   onMouseMove() {

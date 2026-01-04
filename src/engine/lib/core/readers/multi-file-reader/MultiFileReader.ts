@@ -33,7 +33,7 @@ export class MultiFileReader extends SingleFileReader {
     this.files = this.getFilesOrderToRead(files);
     this.filesLength = this.files.length;
     this.setFileData(this.files[0]);
-    this.volumeSet.addVolume(new Volume());
+    this.volumeService.addNewVolume();
     this.readFile(0);
 
     switch (this.fileExtension) {
@@ -135,14 +135,14 @@ export class MultiFileReader extends SingleFileReader {
       detectedIntensity = fname.endsWith('_intn');
     }
 
-    let volDst = this.volumeSet.getVolume(0);
+    let volDst = this.volumeService.getActiveVolume();
 
     if (this.fileIndex > VALID_NUM_FILES_2) {
       volDst = this.volumeRoi;
     }
 
     if (detectedIntensity) {
-      volDst = this.volumeSet.getVolume(0);
+      volDst = this.volumeService.getActiveVolume();
     }
 
     if (detectedMask && this.filesLength !== VALID_NUM_FILES_4) {
@@ -156,7 +156,7 @@ export class MultiFileReader extends SingleFileReader {
         ? (this.loader as LoaderHdr).readFromBufferHeader(volDst, content, this.callbackReadProgress, this.callbackReadComplete)
         : (this.loader as LoaderHdr).readFromBufferImage(volDst, content, this.callbackReadProgress, this.callbackReadComplete);
 
-    volDst = this.volumeSet.getVolume(0);
+    volDst = this.volumeService.getActiveVolume();
 
     if (readSuccess && this.fileIndex === this.filesLength) {
       const loaderHdr = this.loader as LoaderHdr;

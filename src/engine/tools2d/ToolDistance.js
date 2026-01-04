@@ -103,7 +103,6 @@ class ToolDistance {
     const yRel = yScr / hScr;
 
     const mode2d = store.mode2d;
-
     const volSet = store.volumeSet;
     const volIndex = store.volumeIndex;
     const vol = volSet.getVolume(volIndex);
@@ -111,7 +110,7 @@ class ToolDistance {
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
-    const objCanvas = store.graphics2d.m_mount.current;
+    const objCanvas = store.graphics2d.canvas;
     const canvasRect = objCanvas.getBoundingClientRect();
     const zoom = store.render2dZoom;
     const xPos = store.render2dxPos / canvasRect.width;
@@ -150,7 +149,7 @@ class ToolDistance {
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
-    const objCanvas = store.graphics2d.m_mount.current;
+    const objCanvas = store.graphics2d.canvas;
     const canvasRect = objCanvas.getBoundingClientRect();
     const zoom = store.render2dZoom;
     const xPos = store.render2dxPos / canvasRect.width;

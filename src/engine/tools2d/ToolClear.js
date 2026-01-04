@@ -23,7 +23,7 @@ class ToolClear {
   }
 
   clear() {
-    this.m_objGraphics2d.clear();
+    this.m_objGraphics2d.tools.clear();
   }
 }
 export default ToolClear;

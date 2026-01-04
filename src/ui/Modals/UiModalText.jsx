@@ -29,7 +29,7 @@ class UiModalText extends React.Component {
 
   onTextEntered() {
     const store = this.props;
-    const gra = store.graphics2d;
+    const gra = store.graphics2d.tools;
     const toolText = gra.m_toolText;
     const multiLineText = this.setMultiLineText(this.state.text, 80); // change the limit here
     toolText.setText(multiLineText);

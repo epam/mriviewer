@@ -25,12 +25,10 @@ const ExploreTools = (props) => {
       props.dispatch({ type: StoreActionType.SET_2D_Y_POS, render2dyPos: 0.0 });
 
       props.graphics2d.forceUpdate();
-      props.graphics2d.forceRender();
     }
 
     if (buttonId === Tools2dType.CLEAR) {
-      const gra2d = props.graphics2d;
-      gra2d.clear();
+      props.graphics2d.tools.clear();
     }
   };
 
