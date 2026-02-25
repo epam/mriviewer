@@ -38,6 +38,7 @@ import { useOnEvent } from './hooks/useOnEvent';
 import { mriEventsService } from '../engine/lib/services';
 import UiModalConfirmation from './Modals/UiModalConfirmation';
 import PositionTool3D from './Toolbars/PositionTool3D';
+import { TEST_IDS } from '../utils/testIds.js';
 
 export const Main = () => {
   const dispatch = useDispatch();
@@ -213,7 +214,7 @@ export const Main = () => {
           {progress > 0 ? <UIProgressBar /> : null}
           {spinner ? <Spinner /> : null}
           {isReady ? (
-            <div className={css.header}>
+            <div className={css.header} data-testid={TEST_IDS.TOP_TOOLBAR}>
               {!isFullMode && (
                 <div className={css.header__logo}>
                   <UiAbout />

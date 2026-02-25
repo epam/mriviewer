@@ -5,6 +5,8 @@
 
 // import * as THREE from 'three';
 
+import { TEST_IDS } from '../utils/testIds.js';
+
 /**
  * OpenGL, WebGL renderer selector
  * @module lib/scripts/graphics3d/glselector
@@ -23,6 +25,7 @@ export default class GlSelector {
    */
   createWebGLContext() {
     this.canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
+    this.canvas.setAttribute('data-testid', TEST_IDS.CANVAS_3D);
     let context = this.canvas.getContext('webgl2');
     this.m_useWebGL2 = 1;
     if (context == null) {
