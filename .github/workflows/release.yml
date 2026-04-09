@@ -14,7 +14,7 @@ jobs:
         working-directory: web
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Fetch all history for all tags and branches
         run: git fetch --prune --unshallow
@@ -31,12 +31,12 @@ jobs:
           configFilePath: web/GitVersion.yml
 
       - name: Use Node.js 16
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: 16.x
 
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
