@@ -26,7 +26,7 @@
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{js,jsx,html,css}\"",
     "docker": "npm run build && docker run --name mri-viewer -v ./build:/usr/share/nginx/html:ro -d -p 8080:80 nginx",
-    "prepare": "husky install"
+    "prepare": "cd .. && husky install web/.husky"
   },
   "dependencies": {
     "@babel/runtime": "^7.23.1",
