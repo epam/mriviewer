@@ -23,13 +23,28 @@ due to NIfTI, HDR, etc. file standards support
 - :hospital: Medical centers can create their clients database, based on this viewer.
 
 
+## Repository Structure
+
+This is a monorepo. Sub-projects are organized as follows:
+
+```
+mriviewer/
+├── web/          # React web application (HTML5 viewer)
+├── visionos/     # Swift/SwiftUI app for Apple Vision Pro (future)
+├── mri-core/     # C++ + WASM core processing library (future)
+├── scripts/      # Shared automation and tooling scripts
+├── assets/       # Shared assets (images, models, etc.)
+└── docs/         # Architecture diagrams and documentation
+```
+
 ## Installation
 
-It works as a standalone HTML5 web application. The latest version can be used with
+The web app lives in `web/`. It works as a standalone HTML5 web application. The latest version can be used with
 WebGL-enabled desktop browsers (Chrome, Firefox, Opera) and allows limited usage
 with mobile browsers (Android Chrome). Version for Safari (macOS, iOS) is planned for future.
 
 ```
+cd web
 npm install
 npm run start
 ```
