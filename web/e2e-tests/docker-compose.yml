@@ -5,7 +5,7 @@ services:
       context: ./
       dockerfile: ./Dockerfile-app
     volumes:
-      - ../:/mriviewer
+      - ../../:/mriviewer
     command: [ "npm", "run", "serve" ]  # Start the server
     ports:
       - "3000:3000"
