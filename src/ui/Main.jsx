@@ -24,10 +24,10 @@ import { AppContextProvider } from './App/AppContext';
 import { LeftToolbar } from './LeftToolbar/LeftToolbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { TopToolbar } from './TopToolbar/TopToolbar';
-import { UiAbout } from './Header/UiAbout';
+import { UiAbout } from './Header/UiAbout.jsx';
 import { MobileSettings } from './MobileSettings/MobileSettings';
 import StartScreen from './StartScreen/StartScreen';
-import MriViwer from '../engine/lib/MRIViewer';
+import MriViewer from '../engine/lib/MRIViewer';
 import { MriEvents } from '../engine/lib/enums';
 
 import css from './Main.module.css';
@@ -37,12 +37,22 @@ import UiModalWindowCenterWidth from './Modals/UiModalWindowCenterWidth';
 import { useOnEvent } from './hooks/useOnEvent';
 import { mriEventsService } from '../engine/lib/services';
 import UiModalConfirmation from './Modals/UiModalConfirmation';
+import PositionTool3D from './Toolbars/PositionTool3D';
+import { TEST_IDS } from '../utils/testIds.js';
 
 export const Main = () => {
   const dispatch = useDispatch();
-  const { isLoaded, progress, spinner, viewMode, showModalText, showModalAlert, showModalWindowCW, showModalConfirmation } = useSelector(
-    (state) => state
-  );
+  const {
+    isLoaded,
+    progress,
+    spinner,
+    viewMode,
+    showModalText,
+    showModalAlert,
+    showModalWindowCW,
+    showModalConfirmation,
+    lungsSeedStatus,
+  } = useSelector((state) => state);
 
   const [m_fileNameOnLoad, setM_fileNameOnLoad] = useState(false);
   const [isWebGl20supported, setIsWebGl20supported] = useState(true);
@@ -51,7 +61,7 @@ export const Main = () => {
   const [isFullMode, setIsFullMode] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const appRef = useRef();
-  const mriViwer = useRef(MriViwer).current;
+  const mriViewer = useRef(MriViewer).current;
 
   useEffect(() => {
     function handleResize() {
@@ -73,11 +83,11 @@ export const Main = () => {
     };
 
     // Subscribe to the FILE_READ_ERROR event
-    mriViwer.events.on(MriEvents.FILE_READ_ERROR, handleFileReadError);
+    mriViewer.events.on(MriEvents.FILE_READ_ERROR, handleFileReadError);
 
     // Clean up
     return () => {
-      mriViwer.events.off(MriEvents.FILE_READ_ERROR, handleFileReadError);
+      mriViewer.events.off(MriEvents.FILE_READ_ERROR, handleFileReadError);
     };
   }, []);
 
@@ -187,6 +197,16 @@ export const Main = () => {
 
   useOnEvent(mriEventsService.FILE_READ_SUCCESS, onHide);
 
+  //Alret message does not catch all cases then loaded image, which does not contain lungs
+  useEffect(() => {
+    if (lungsSeedStatus) {
+      setStrAlertTitle('Attention!');
+      setStrAlertText(' Please note, the uploaded image may not contain lungs!');
+      onShowModalAlert();
+      dispatch({ type: StoreActionType.SET_LUNGS_SEED_STATUS, lungsSeedStatus: false });
+    }
+  });
+
   return (
     <AppContextProvider>
       <div ref={appRef} style={{ height: '100%' }}>
@@ -194,7 +214,7 @@ export const Main = () => {
           {progress > 0 ? <UIProgressBar /> : null}
           {spinner ? <Spinner /> : null}
           {isReady ? (
-            <div className={css.header}>
+            <div className={css.header} data-testid={TEST_IDS.TOP_TOOLBAR}>
               {!isFullMode && (
                 <div className={css.header__logo}>
                   <UiAbout />
@@ -206,6 +226,7 @@ export const Main = () => {
                     <TopToolbar />
                     <div className={css.top}>
                       <FullScreenToggle isFullMode={isFullMode} handler={() => handleFullMode()} />
+                      {viewMode === ModeView.VIEW_3D && <PositionTool3D />}
                     </div>
                   </div>
                 </div>

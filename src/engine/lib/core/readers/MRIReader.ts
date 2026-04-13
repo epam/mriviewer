@@ -22,7 +22,7 @@ export class MRIReader {
 }
 
 // Create the singleton instance and freeze it
-const mriReader = new MRIReader();
-Object.freeze(mriReader);
+const mriReaderInstance = new MRIReader();
+Object.freeze(mriReaderInstance);
 
-export default mriReader;
+export default mriReaderInstance;

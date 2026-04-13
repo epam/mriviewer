@@ -1,5 +1,6 @@
 export class MRILocalStorageService {
   RECENT_FILES_KEY: string = 'recentFiles';
+  VIEW_MODE_KEY: string = 'viewMode';
 
   constructor() {
     this.saveRecentFiles = this.saveRecentFiles.bind(this);
@@ -20,6 +21,14 @@ export class MRILocalStorageService {
 
   setData(key: string, data: any): void {
     this.localStorage.setItem(key, JSON.stringify(data));
+  }
+
+  saveViewMode(viewMode: string): void {
+    this.setData(this.VIEW_MODE_KEY, viewMode);
+  }
+
+  getViewMode(): string {
+    return this.getData(this.VIEW_MODE_KEY) || '';
   }
 
   saveRecentFiles(fileName: string): void {

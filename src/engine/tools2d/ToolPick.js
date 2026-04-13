@@ -23,7 +23,8 @@ class ToolPick {
     this.m_objGraphics2d = objGra;
     this.m_wScreen = 0;
     this.m_hScreen = 0;
-    this.m_strMessage = '';
+    this.m_strMessageOnClick = '';
+    this.m_strMessageOnMove = '';
     this.m_xMessage = 0;
     this.m_yMessage = 0;
     this.m_timeStart = 0;
@@ -89,12 +90,11 @@ class ToolPick {
     return vTex;
   }
 
-  onMouseDown(xScr, yScr, store) {
+  getMessageText(xScr, yScr, store) {
     if (this.m_wScreen === 0 || this.m_hScreen === 0) {
       console.log('ToolPick. onMouseDown. Bad screen size');
       return;
     }
-
     const xRatioImage = xScr / this.m_wScreen;
     const yRatioImage = yScr / this.m_hScreen;
     const vTex = this.screenToTexture(xRatioImage, yRatioImage, store);
@@ -105,7 +105,7 @@ class ToolPick {
     const yDim = vol.m_yDim;
 
     if (vTex.x < 0 || vTex.y < 0 || vTex.z < 0 || vTex.x >= vol.m_xDim || vTex.y >= vol.m_yDim) {
-      return;
+      return 'x: 0  y: 0  z: 0  val: 0';
     }
     /*
     if (mode2d === Modes2d.SAGGITAL) {
@@ -138,20 +138,37 @@ class ToolPick {
       off = off * FOUR;
       val = vol.m_dataArray[off];
     }
+    return `x: ${vTex.x.toString()}  y: ${vTex.y.toString()}  z: ${vTex.z.toString()}  val: ${val.toString()}`;
+  }
 
+  onMouseDown(xScr, yScr, store) {
+    const message = this.getMessageText(xScr, yScr, store);
+    if (!message) return;
+    this.m_strMessageOnClick = message;
     this.m_xMessage = xScr;
     this.m_yMessage = yScr;
-    this.m_strMessage = 'x,y,z = ' + vTex.x.toString() + ', ' + vTex.y.toString() + ', ' + vTex.z.toString() + '. val = ' + val.toString();
-    // console.log(`ToolPick. onMouseDown. ${this.m_strMessage}`);
     this.m_timeStart = Date.now();
     setTimeout(this.onTimerEnd, 6000);
   } // end onMouseDown
+
+  onMouseMove(xScr, yScr, store) {
+    const message = this.getMessageText(xScr, yScr, store);
+    if (!message) return;
+    this.m_strMessageOnMove = message;
+  }
 
   onTimerEnd() {
     this.m_objGraphics2d.forceUpdate();
   }
 
   render(ctx) {
+    ctx.fillStyle = 'white';
+    const FONT_SZ = 16;
+    ctx.font = FONT_SZ.toString() + 'px Arial';
+    ctx.textBaseline = 'bottom';
+    ctx.textAlign = 'left';
+    ctx.fillText(this.m_strMessageOnMove, 0, this.m_hScreen);
+
     if (this.m_timeStart === 0) {
       return;
     }
@@ -162,10 +179,7 @@ class ToolPick {
     if (timeDelta < TIME_SHOW_MS) {
       // render message
       // console.log('ToolPick. Render message on ctx');
-      ctx.fillStyle = 'white';
-      const FONT_SZ = 16;
-      ctx.font = FONT_SZ.toString() + 'px Arial';
-      const sizeTextRect = ctx.measureText(this.m_strMessage);
+      const sizeTextRect = ctx.measureText(this.m_strMessageOnClick);
       // console.log(`ToolPick. draw text. x = ${this.m_xMessage}, szRect = ${sizeTextRect.width}, wScr = ${this.m_wScreen}`);
       if (this.m_xMessage + sizeTextRect.width < this.m_wScreen) {
         ctx.textAlign = 'left';
@@ -178,7 +192,7 @@ class ToolPick {
         ctx.textBaseline = 'bottom';
       }
 
-      ctx.fillText(this.m_strMessage, this.m_xMessage, this.m_yMessage);
+      ctx.fillText(this.m_strMessageOnClick, this.m_xMessage, this.m_yMessage);
     }
   }
 }

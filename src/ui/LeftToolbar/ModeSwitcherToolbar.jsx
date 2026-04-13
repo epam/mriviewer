@@ -2,7 +2,7 @@
  * Copyright 2022 EPAM Systems, Inc. (https://www.epam.com/)
  * SPDX-License-Identifier: Apache-2.0
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tooltip } from '../Tooltip/Tooltip';
 import { UIButton } from '../Button/Button';
 import { Container } from '../Layout/Container';
@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import StoreActionType from '../../store/ActionTypes';
 import ViewMode from '../../store/ViewMode';
 import { useNeedShow3d } from '../../utils/useNeedShow3d';
+import { mriLocalStorageService } from '../../engine/lib/services';
 
 export function ModeSwitcherToolbar() {
   const dispatch = useDispatch();
@@ -19,7 +20,15 @@ export function ModeSwitcherToolbar() {
 
   const setMode = (indexMode) => {
     dispatch({ type: StoreActionType.SET_MODE_VIEW, viewMode: indexMode });
+    mriLocalStorageService.saveViewMode(indexMode);
   };
+
+  useEffect(() => {
+    const savedMode = mriLocalStorageService.getViewMode();
+    if (savedMode) {
+      setMode(savedMode);
+    }
+  }, []);
 
   const set2dMode = () => {
     setMode(ViewMode.VIEW_2D);

@@ -2,7 +2,7 @@
   "name": "mri-viewer",
   "fullName": "MRI Viewer 2d/3d Dicom and other medical formats web viewer/editor",
   "description": "MRI Viewer is unique 2d/3d medical volume data web viewer application. You can inspect data both in 2d and 3d modes.",
-  "version": "1.0.2",
+  "version": "2.4.0",
   "author": "EPAM Systems <mri@epam.com>",
   "year": "2023",
   "license": "Apache-2.0",
@@ -18,11 +18,18 @@
   },
   "homepage": "https://mriviewer.opensource.epam.com/",
   "private": false,
+  "workspaces": [
+    "e2e-tests"
+  ],
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --detectOpenHandles",
-    "debugtest": "DEBUG=true react-scripts test",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "serve -s -p 3000 dist",
+    "test": "vitest src",
+    "test:ui": "npm run test -- --ui",
+    "test:watch": "npm run test --watch",
+    "debugtest": "cross-env DEBUG=true vitest",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{js,jsx,html,css}\"",
     "docker": "npm run build && docker run --name mri-viewer -v ./build:/usr/share/nginx/html:ro -d -p 8080:80 nginx",
@@ -46,7 +53,6 @@
     "react-modal": "^3.14.2",
     "react-popper": "^2.2.5",
     "react-redux": "7.2.4",
-    "react-scripts": "4.0.3",
     "redux": "4.1.0",
     "seedrandom": "^2.4.4",
     "three": "0.101.1"
@@ -54,24 +60,35 @@
   "devDependencies": {
     "@babel/core": "7.14.3",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-react-jsx": "^7.25.9",
     "@babel/plugin-transform-runtime": "^7.22.15",
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^12.1.0",
+    "@babel/preset-react": "^7.26.3",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^12.1.5",
     "@testing-library/react-hooks": "^7.0.2",
     "@testing-library/user-event": "^13.2.1",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/ui": "^3.0.9",
+    "cross-env": "^7.0.3",
     "eslint": "^7.27.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "7.x.x",
     "husky": "^7.0.0",
+    "jsdom": "^26.0.0",
     "lint-staged": "^11.0.0",
     "prettier": "^2.4.1",
-    "typescript": "^4.9.5"
+    "serve": "^14.2.4",
+    "typescript": "^4.9.5",
+    "vite": "^6.2.2",
+    "vite-plugin-glsl": "^1.3.3",
+    "vitest": "^3.0.9"
   },
+  "type": "module",
   "jest": {
     "resetMocks": false,
     "coverageReporters": [
@@ -103,5 +120,8 @@
     "not dead",
     "not ie > 1",
     "not op_mini all"
-  ]
+  ],
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.36.0"
+  }
 }

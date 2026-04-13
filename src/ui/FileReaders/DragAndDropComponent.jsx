@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import css from './DragAndDrop.module.css';
 import { SVG } from '../Button/SVG';
-import MriViwer from '../../engine/lib/MRIViewer';
+import MriViewer from '../../engine/lib/MRIViewer';
 
 const IMG_DROPZONE_SIZE = 49;
 
@@ -13,7 +13,7 @@ export const DragAndDropComponent = () => {
     setIsActiveDnd(false);
 
     const files = e.dataTransfer.files;
-    MriViwer.read(files);
+    MriViewer.read(files);
   };
 
   return (

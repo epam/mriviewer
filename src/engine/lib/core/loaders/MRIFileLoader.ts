@@ -35,6 +35,7 @@ export class MRIFileLoader {
       case MriExtensions.KTX:
       case MriExtensions.NII:
       case MriExtensions.DCM:
+      case MriExtensions.DICOM:
       case MriExtensions.ZIP:
         return await this.fetchSingleFile(url);
       case MriExtensions.TXT:
@@ -99,8 +100,8 @@ export class MRIFileLoader {
     this.filesLength = fileNames.length;
     const filePromises = fileNames.map((filename: string) => this.fetchSingleFile(base + filename));
     const files = await Promise.all(filePromises);
-    const validFalies = files.filter(Boolean) as Array<File[]>;
-    return validFalies.flat();
+    const validFiles = files.filter(Boolean) as Array<File[]>;
+    return validFiles.flat();
   }
 
   /**
@@ -133,9 +134,9 @@ export class MRIFileLoader {
 
     const files = await Promise.all(filePromises);
 
-    const validFalies = files.filter(Boolean) as Array<File[]>;
+    const validFiles = files.filter(Boolean) as Array<File[]>;
 
-    return validFalies.flat();
+    return validFiles.flat();
   }
 
   /**

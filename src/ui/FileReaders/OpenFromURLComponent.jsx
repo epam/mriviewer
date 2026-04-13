@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { UIButton } from '../Button/Button';
-import UIModalUrl from '../Modals/ModalUrl';
-import MriViwer from '../../engine/lib/MRIViewer';
+import ModalUrl from '../Modals/ModalUrl';
+import MriViewer from '../../engine/lib/MRIViewer';
 
 export const OpenFromURLComponent = ({ cx }) => {
   const [showModalUrl, setShowModalUrl] = useState(false);
@@ -16,13 +16,13 @@ export const OpenFromURLComponent = ({ cx }) => {
 
   const onClickLoadUrl = (url) => {
     setShowModalUrl(false);
-    MriViwer.read(url);
+    MriViewer.read(url);
   };
 
   return (
     <>
       <UIButton icon="link" text="Open From URL" cx={cx} handler={onModalUrlShow} />
-      {showModalUrl && <UIModalUrl stateVis={showModalUrl} onHide={onModalUrlHide} loadUrl={onClickLoadUrl} />}
+      {showModalUrl && <ModalUrl stateVis={showModalUrl} onHide={onModalUrlHide} loadUrl={onClickLoadUrl} />}
     </>
   );
 };

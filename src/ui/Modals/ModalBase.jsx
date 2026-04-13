@@ -12,7 +12,7 @@ import css from './Modals.module.css';
 
 ReactModal.setAppElement('#root');
 
-export const Modal = ({ isOpen, close, children, customStyles = {}, cx = { className: css.modal } }) => {
+export const Modal = ({ isOpen, close, children, testId, customStyles = {}, cx = { className: css.modal } }) => {
   return (
     <ReactModal
       isOpen={isOpen}
@@ -21,6 +21,11 @@ export const Modal = ({ isOpen, close, children, customStyles = {}, cx = { class
       className={cx.className}
       overlayClassName={css.overlay}
       onRequestClose={close}
+      contentElement={(props, children) => (
+        <div {...props} data-testid={testId}>
+          {children}
+        </div>
+      )}
     >
       {children}
     </ReactModal>
