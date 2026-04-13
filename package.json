@@ -2,7 +2,7 @@
   "name": "mri-viewer",
   "fullName": "MRI Viewer 2d/3d Dicom and other medical formats web viewer/editor",
   "description": "MRI Viewer is unique 2d/3d medical volume data web viewer application. You can inspect data both in 2d and 3d modes.",
-  "version": "1.0.2",
+  "version": "2.4.0",
   "author": "EPAM Systems <mri@epam.com>",
   "year": "2023",
   "license": "Apache-2.0",
