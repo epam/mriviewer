@@ -1,0 +1,21 @@
+{
+  "name": "e2e-tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:debug": "npx playwright test --debug",
+    "test:update": "npx playwright test --update-snapshots --",
+    "docker:build": "docker-compose build --no-cache && docker-compose run --rm mriviewer-app bash e2e-tests/app_prepare.sh && docker-compose run --rm mriviewer-autotests bash test_prepare.sh && docker-compose down",
+    "docker:test": "docker-compose run --rm mriviewer-autotests bash test_run.sh $test && docker-compose down",
+    "docker:test:update": "docker-compose run --rm mriviewer-autotests bash test_update.sh $test && docker-compose down"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.50.1",
+    "@types/node": "^22.13.1",
+    "playwright": "^1.50.1"
+  }
+}

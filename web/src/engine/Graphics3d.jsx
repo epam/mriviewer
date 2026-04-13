@@ -51,6 +51,12 @@ class Graphics3d extends React.Component {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    if (!prevProps.isDefault3dPosition && this.props.isDefault3dPosition && this.m_volumeRenderer3D) {
+      this.m_volumeRenderer3D.resetPosition();
+      this.props.dispatch({ type: StoreActionType.SET_DEFAULT_3D_POSITION, isDefault3dPosition: false });
+    }
+  }
   setVolRenderToStore(VolRender) {
     const store = this.props;
     store.dispatch({ type: StoreActionType.SET_VOLUME_Renderer, volumeRenderer: VolRender });

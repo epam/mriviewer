@@ -4,7 +4,7 @@ import Volume from '../../../../Volume';
 import LoaderDcmDaikon from '../../../../loaders/LoaderDcmDaikon';
 import LoaderDicom from '../../../../loaders/LoaderDicom';
 import LoaderKtx from '../../../../loaders/LoaderKtx';
-import LoaderNifti from '../../../../loaders/LoaderNifti';
+import LoaderNifti from '../../../../loaders/loaderNifti/LoaderNifti';
 import { MriEvents, MriExtensions } from '../../../enums';
 import { AbstractFileReader } from '../abstract-file-reader/AbstractFileReader';
 
@@ -53,6 +53,7 @@ export class SingleFileReader extends AbstractFileReader {
     switch (this.fileExtension) {
       case '':
       case MriExtensions.DCM:
+      case MriExtensions.DICOM:
       case MriExtensions.TXT:
         this.readFromDicom(data);
         break;

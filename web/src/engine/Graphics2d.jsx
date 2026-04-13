@@ -23,6 +23,7 @@ import Segm2d from './Segm2d';
 import { getPalette256 } from './loaders/RoiPalette256';
 
 import css from './Graphics2d.module.css';
+import { TEST_IDS } from '../utils/testIds.js';
 
 class Graphics2d extends React.Component {
   constructor(props) {
@@ -674,6 +675,8 @@ class Graphics2d extends React.Component {
     const xScr = xContainer;
     const yScr = yContainer;
 
+    this.m_toolPick.onMouseMove(xScr, yScr, store);
+
     if (indexTools2d === Tools2dType.PAINT) {
       this.m_toolPaint.onMouseMove(xScr, yScr, store);
     }
@@ -825,6 +828,7 @@ class Graphics2d extends React.Component {
     return (
       <div className={css.wrapperStyles}>
         <canvas
+          data-testid={TEST_IDS.CANVAS}
           ref={this.m_mount}
           onMouseDown={this.onMouseDown}
           onMouseUp={this.onMouseUp}

@@ -15,6 +15,7 @@ import { ModeFast3dSettingsPanel } from './ModeFast3dSettingsPanel';
 import UiModalWindowRange from '../Modals/UiModalWindowRange';
 
 import modalCss from '../Modals/Modals.module.css';
+import { TEST_IDS } from '../../utils/testIds.js';
 
 export const RightPanel = () => {
   const { viewMode, showWindowRangeSlider, graphics2d } = useSelector((state) => state);
@@ -29,7 +30,7 @@ export const RightPanel = () => {
   };
 
   return (
-    <DragAndDropContainer>
+    <DragAndDropContainer testId={TEST_IDS.RIGHT_SETTINGS_PANEL}>
       {viewMode === ViewMode.VIEW_2D && <Mode2dSettingsPanel />}
       {viewMode === ViewMode.VIEW_3D_LIGHT && <ModeFast3dSettingsPanel />}
       {viewMode === ViewMode.VIEW_3D && <Mode3dSettingsPanel />}

@@ -2,7 +2,7 @@ import LoadResult from '../../../../LoadResult';
 import VolumeSet from '../../../../VolumeSet';
 import LoaderDicom from '../../../../loaders/LoaderDicom';
 import LoaderHdr from '../../../../loaders/LoaderHdr';
-import MriViwer from '../../../MRIViewer';
+import MriViewer from '../../../MRIViewer';
 import { volumeConfig } from '../../../config/volume.config';
 import { MriEvents, MriExtensions } from '../../../enums';
 import {
@@ -57,7 +57,7 @@ export abstract class AbstractFileReader {
     }
 
     this.callbackReadProgress(1);
-    MriViwer.events.emit(MriEvents.VOLUME_LOAD_SUCCESS);
+    MriViewer.events.emit(MriEvents.VOLUME_LOAD_SUCCESS);
     this.store.setVolume(this.volumeSet, this.volumeIndex, this.fileName);
 
     this.localStorage.saveRecentFiles(this.fileName);

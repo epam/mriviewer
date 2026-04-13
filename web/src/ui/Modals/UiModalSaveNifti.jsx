@@ -7,14 +7,16 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import SaverNifti from '../../engine/savers/SaverNifti';
-import { Modal, ModalBody, ModalHeader } from './ModalBase';
+import { Modal, ModalBody, ModalFooter, ModalHeader } from './ModalBase';
 import { UIButton } from '../Button/Button';
+import buttonCss from '../Button/Button.module.css';
+import modalCss from './Modals.module.css';
+import { TEST_IDS } from '../../utils/testIds.js';
 
 export function UiModalSaveNifti(props) {
   const { stateVis, onHide } = props;
   const [fileName, setFileName] = useState('dump');
   const { volumeSet, volumeIndex, volumeRenderer } = useSelector((state) => state);
-
   const onSaveNifti = () => {
     const vol = volumeSet.getVolume(volumeIndex);
 
@@ -40,14 +42,17 @@ export function UiModalSaveNifti(props) {
     const niiArr = SaverNifti.writeBuffer(volData, volSize);
     const textToSaveAsBlob = new Blob([niiArr], { type: 'application/octet-stream' });
     const textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-    const goodSuffix = fileName.trim().endsWith('.nii');
-    if (!goodSuffix) {
-      setFileName((prev) => `${prev.trim()}.nii`);
+    const isExtensionValid = fileName.trim().endsWith('.nii');
+    let fileNameWithExtension = fileName;
+
+    if (!isExtensionValid) {
+      fileNameWithExtension = `${fileName}.nii`;
+      setFileName(fileNameWithExtension);
     }
     // console.log(`Save to file ${fileName}`);
 
     const downloadLink = document.createElement('a');
-    downloadLink.download = fileName;
+    downloadLink.download = fileNameWithExtension;
     downloadLink.innerHTML = 'Download File';
     downloadLink.href = textToSaveAsURL;
     downloadLink.onclick = (event) => document.body.removeChild(event.target);
@@ -68,23 +73,26 @@ export function UiModalSaveNifti(props) {
   };
 
   return (
-    <Modal show={stateVis} onHide={onHide}>
+    <Modal isOpen={stateVis} onHide={onHide} testId={TEST_IDS.DOWNLOAD_FILE_MODAL}>
+      <ModalHeader title="Save to Nifty" />
       <ModalBody>
-        <ModalHeader title="Save to Nifty" />
+        <label className={modalCss.input_label_left}>Enter file name:</label>
         <input
           required
           type="text"
           placeholder="Enter file name here"
+          className={modalCss.input}
           value={fileName}
           onChange={onTexChange}
           onKeyUp={(evt) => {
             handleFormSubmit(evt);
           }}
         />
-        .nii
-        <UIButton handler={onSaveNifti} caption="Save" />
-        <UIButton handler={onHide} caption="Cancel" />
       </ModalBody>
+      <ModalFooter>
+        <UIButton handler={onSaveNifti} caption="Save" mode={'accent'} cx={buttonCss.apply} testId={TEST_IDS.DOWNLOAD_FILE_BUTTON} />
+        <UIButton handler={onHide} caption="Cancel" cx={buttonCss.cancel} />
+      </ModalFooter>
     </Modal>
   );
 }

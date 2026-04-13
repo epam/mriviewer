@@ -35,11 +35,11 @@ class UiModalBilateral extends React.Component {
     this.state = {
       showModalGauss: false,
       text: 'dump',
+      koefDistValue: 3.0,
+      koefValValue: 0.1,
     };
 
     this.m_kernelSize = 10;
-    this.m_koefDist = 3.0;
-    this.m_koefVal = 0.1;
   }
 
   onButtonStart() {
@@ -82,7 +82,7 @@ class UiModalBilateral extends React.Component {
     // gauss.testSimple();
 
     const kernelSize = this.m_kernelSize;
-    gauss.start(vol, kernelSize, this.m_koefDist, this.m_koefVal);
+    gauss.start(vol, kernelSize, this.state.koefDistValue, this.state.koefValValue);
     this.m_gauss = gauss;
     store.dispatch({ type: StoreActionType.SET_PROGRESS, progress: 0 });
     const UPDATE_DELAY_MSEC = 150;
@@ -150,12 +150,12 @@ class UiModalBilateral extends React.Component {
 
   onChangeSliderKoefDist(value) {
     this.m_updateEnable = false;
-    this.m_koefDist = value;
+    this.setState({ koefDistValue: value });
   }
 
   onChangeSliderKoefVal(value) {
     this.m_updateEnable = false;
-    this.m_koefVal = value;
+    this.setState({ koefValValue: value });
   }
 
   //
@@ -164,18 +164,25 @@ class UiModalBilateral extends React.Component {
     const onHideFunc = this.props.onHide;
     this.m_hideFunc = onHideFunc;
 
-    const defaultDist = 3;
-    const defaultVal = 0.1;
-
     return (
       <Modal isOpen={stateVis} close={onHideFunc}>
         <ModalHeader title="Bilateral filtration" />
 
         <ModalBody>
           Select koefficient distance (kd)
-          <Nouislider onChange={this.onChangeSliderKoefDist.bind(this)} range={{ min: 0.5, max: 3.0 }} value={defaultDist} step={0.00001} />
+          <Nouislider
+            onChange={this.onChangeSliderKoefDist.bind(this)}
+            range={{ min: 0.5, max: 3.0 }}
+            value={this.state.koefDistValue}
+            step={0.00001}
+          />
           Select koefficient value (kv)
-          <Nouislider onChange={this.onChangeSliderKoefVal.bind(this)} range={{ min: 0.1, max: 4.0 }} value={defaultVal} step={0.00001} />
+          <Nouislider
+            onChange={this.onChangeSliderKoefVal.bind(this)}
+            range={{ min: 0.1, max: 4.0 }}
+            value={this.state.koefValValue}
+            step={0.00001}
+          />
           <p>
             <b>Hints to setup values:</b> <br />
             kd = 0.5, kv = 0.1 ={'>'} original image <br />
