@@ -63,7 +63,7 @@ E2E testing is based on Playwright framework. Tests execution is configured to r
 It needs to update screenshots or to check the result in same environment as in CI/CD pipeline.
 
 1. Open terminal
-2. Go to e2e-tests folder - `cd e2e-tests`
+2. Go to e2e-tests folder - `cd web/e2e-tests`
 3. Prepare project for testing - `npm run docker:build`
 4. Run test in docker 
    - Using "test" script to see the test result and log - `test=<test_file_name>:<test_row_number> npm run docker:test` (e.g. `test=test.spec.ts:10 npm run docker:test`)
@@ -73,7 +73,7 @@ It needs to update screenshots or to check the result in same environment as in 
 It needs to go through the tests step by step and visually check the test behaviour in the browser.
 
 1. Open terminal
-2. Go to e2e-tests folder - `cd e2e-tests`
+2. Go to e2e-tests folder - `cd web/e2e-tests`
 3. Run test in debug mode locally without docker - `npm run test:debug -- <test_file_name>:<test_row_number>` (e.g. `npm run test:debug -- test1.spec.ts:10`)
    - If you see such error please follow the instructions provided in it and install playwrite locally
      ![error-tests-exec-1.png](docs/images/error-tests-exec-1.png)
