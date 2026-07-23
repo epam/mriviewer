@@ -24,6 +24,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      # NEW STEP: Set up Node.js and configure EPAM's private NPM registry
+      - name: Setup Node and Configure EPAM Registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          # This configures .npmrc to route @epam scoped packages to the EPAM Artifactory registry
+          registry-url: 'https://artifactory.epam.com/artifactory/api/npm/npm-repos/'
+          scope: '@epam'
+
       - name: CodeMie AI Review VisionOS
         continue-on-error: true
         env:
@@ -32,6 +41,8 @@ jobs:
           CODEMIE_PROVIDER: "litellm"
           CODEMIE_MODEL: "gpt-4o"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Pass the registry token if authentication is required by EPAM Artifactory (usually automated on self-hosted runners)
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         run: |
           npx @epam/codemie-cli review-pr \
             --repo "${{ github.repository }}" \
