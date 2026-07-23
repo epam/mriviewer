@@ -3,10 +3,10 @@ name: "AI Code Review: MRI Viewer Platforms"
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: [develop, 'release/**', master]
+    branches: [develop, "release/**", master]
     paths:
-      - 'visionos/**'
-      - '!visionos/**/*.md'
+      - "visionos/**"
+      - "!visionos/**/*.md"
 
 permissions:
   contents: write # Allows CodeMie to post comments/reviews directly to the PR
@@ -26,7 +26,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: CodeMie AI Review VisionOS
         continue-on-error: true
@@ -41,7 +41,10 @@ jobs:
           # 1. Install the official public CodeMie CLI package globally
           npm install -g @codemieai/code --registry=https://registry.npmjs.org/
 
-          # 2. Run review by dynamically reading rules from visionos/REVIEW_RULES.md into the task prompt
+          # 2. Quietly install and compile the Claude agent dependencies
+          codemie install claude --supported
+
+          # 3. Run review by dynamically reading rules from visionos/REVIEW_RULES.md into the task prompt
           codemie-claude \
             --task "Perform a code review on this pull request. You MUST strictly follow the custom project review guidelines defined here: $(cat visionos/REVIEW_RULES.md)" \
             --silent \
