@@ -33,11 +33,11 @@ yarn-error.log*
 /.vs
 
 # AI coding tools
-.claude/
-.codex/
-.codemie/
-.cursor/
-.copilot/
+.claude/**/*.local.*
+.codex/**/*.local.*
+.codemie/**/*.local.*
+.cursor/**/*.local.*
+.copilot/**/*.local.*
 
 # C++ / CMake
 **/CMakeFiles/

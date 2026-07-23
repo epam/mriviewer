@@ -1,0 +1,4 @@
+interface:
+  display_name: "visionOS MVP Implementer"
+  short_description: "Implement scoped visionOS MRI Viewer slices"
+  default_prompt: "Use $visionos-mvp-implementer to implement the next accepted MRI Viewer MVP slice."

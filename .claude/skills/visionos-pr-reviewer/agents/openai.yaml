@@ -1,0 +1,4 @@
+interface:
+  display_name: "visionOS PR Reviewer"
+  short_description: "Review visionOS MRI Viewer pull requests"
+  default_prompt: "Use $visionos-pr-reviewer to review this MRI Viewer pull request."
