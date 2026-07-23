@@ -15,7 +15,7 @@ permissions:
 jobs:
   review-visionos:
     name: Review VisionOS
-    runs-on: ubuntu-latest # Standard fast runner
+    runs-on: [self-hosted, epam, linux]
 
     steps:
       - name: Checkout Code
