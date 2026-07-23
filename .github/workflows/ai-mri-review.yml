@@ -9,33 +9,41 @@ on:
       - '!visionos/**/*.md'
 
 permissions:
-  contents: read
+  contents: write # Allows CodeMie to post comments/reviews directly to the PR
   pull-requests: write
 
 jobs:
   review-visionos:
     name: Review VisionOS
-    # Since we are using the public package, we can use standard fast GitHub runners!
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest # Standard fast runner
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Fetches full history so CodeMie can generate git diffs
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
       - name: CodeMie AI Review VisionOS
         continue-on-error: true
         env:
+          # Authenticate CodeMie via your DIAL API Key
           CODEMIE_API_KEY: ${{ secrets.DIAL_API_KEY }}
           CODEMIE_BASE_URL: "https://ai.epam.com/openai"
           CODEMIE_PROVIDER: "litellm"
           CODEMIE_MODEL: "gpt-4o"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Use the public @codemieai/code package which doesn't need EPAM Artifactory
-          npx @codemieai/code review-pr \
-            --repo "${{ github.repository }}" \
-            --pr "${{ github.event.number }}" \
-            --path "visionos" \
+          # 1. Install the official public CodeMie CLI package globally
+          npm install -g @codemieai/code --registry=https://registry.npmjs.org/
+
+          # 2. Run CodeMie review in headless mode
+          codemie-claude \
+            --task "Review the changes in this pull request. Look for security flaws, memory leaks, and style improvements in the visionos directory." \
+            --silent \
+            --dangerously-skip-permissions
             --rules "visionos/REVIEW_RULES.md"
