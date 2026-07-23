@@ -9,28 +9,24 @@ on:
       - "!visionos/**/*.md"
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
 
 jobs:
   review-visionos:
     name: Review VisionOS
-    runs-on: [self-hosted, epam-private-vpc, linux-x64]
+    runs-on: ubuntu-latest # Standard fast runner
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Fetches history so CodeMie can generate git diffs
 
-      # Configure Node.js to use EPAM's Private Artifactory registry
-      - name: Setup Node and Configure EPAM Artifactory
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          # This configures npm to pull @epam scoped packages from EPAM Artifactory
-          registry-url: "https://artifactory.epam.com/artifactory/api/npm/npm/"
-          scope: "@epam"
 
       - name: CodeMie AI Review VisionOS
         continue-on-error: true
@@ -40,11 +36,12 @@ jobs:
           CODEMIE_PROVIDER: "litellm"
           CODEMIE_MODEL: "gpt-4o"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Authenticates the runner with EPAM's Artifactory registry using your GitHub token
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npx @epam/codemie-cli review-pr \
-            --repo "${{ github.repository }}" \
-            --pr "${{ github.event.number }}" \
-            --path "visionos" \
-            --rules "visionos/REVIEW_RULES.md"
+          # 1. Install official public CodeMie CLI package globally
+          npm install -g @codemieai/code --registry=https://registry.npmjs.org/
+
+          # 2. Run review by dynamically reading rules from visionos/REVIEW_RULES.md into the task prompt
+          codemie-claude \
+            --task "Perform a code review on this pull request. You MUST strictly follow the custom project review guidelines defined here: $(cat visionos/REVIEW_RULES.md)" \
+            --silent \
+            --dangerously-skip-permissions
