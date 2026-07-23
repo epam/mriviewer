@@ -15,22 +15,14 @@ permissions:
 jobs:
   review-visionos:
     name: Review VisionOS
-    runs-on: [self-hosted, epam-private-vpc, linux-x64]
+    # Since we are using the public package, we can use standard fast GitHub runners!
+    runs-on: ubuntu-latest 
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      # Configure Node.js to use EPAM's Private Artifactory registry
-      - name: Setup Node and Configure EPAM Artifactory
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          # This configures npm to pull @epam scoped packages from EPAM Artifactory
-          registry-url: 'https://artifactory.epam.com/artifactory/api/npm/npm/'
-          scope: '@epam'
 
       - name: CodeMie AI Review VisionOS
         continue-on-error: true
@@ -40,10 +32,9 @@ jobs:
           CODEMIE_PROVIDER: "litellm"
           CODEMIE_MODEL: "gpt-4o"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Authenticates the runner with EPAM's Artifactory registry using your GitHub token
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         run: |
-          npx @epam/codemie-cli review-pr \
+          # Use the public @codemieai/code package which doesn't need EPAM Artifactory
+          npx @codemieai/code review-pr \
             --repo "${{ github.repository }}" \
             --pr "${{ github.event.number }}" \
             --path "visionos" \
