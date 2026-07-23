@@ -1,0 +1,38 @@
+name: "AI Code Review: MRI Viewer Platforms"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [develop, "release/**", master]
+    paths:
+      - "visionos/**"
+      - "!visionos/**/*.md"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review-visionos:
+    name: Review VisionOS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: CodeMie AI Review VisionOS
+        continue-on-error: true
+        env:
+          CODEMIE_API_KEY: ${{ secrets.DIAL_API_KEY }}
+          CODEMIE_BASE_URL: "https://ai.epam.com/openai"
+          CODEMIE_PROVIDER: "litellm"
+          CODEMIE_MODEL: "gpt-4o"
+        run: |
+          npx @epam/codemie-cli review-pr \
+            --repo "${{ github.repository }}" \
+            --pr "${{ github.event.number }}" \
+            --path "visionos" \
+            --rules "visionos/REVIEW_RULES.md"
