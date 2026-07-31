@@ -14,9 +14,13 @@ name: 'CodeQL'
 on:
   push:
     branches: [master, develop]
+    paths-ignore:
+      - 'visionos/**'
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [master, develop]
+    paths-ignore:
+      - 'visionos/**'
   schedule:
     - cron: '41 13 * * 4'
 
