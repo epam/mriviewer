@@ -21,8 +21,8 @@ User selects DICOM files via the `OpenFromDeviceComponent`. The `MRIReaderFactor
 The loaders apply a **targeted sign-flip** (Approach A):
 
 - The six direction cosines are parsed alongside `ImagePositionPatient (0020,0032)`.
-- Per-axis flip flags are derived from the signs of the row cosine (X) and column cosine (Y). Only axes with a negative cosine are flipped during the pixel copy / volume assembly.
-- The flip is **gated on the signs of the row/column direction cosines**: any orientation whose row cosine (`cosines[0]`) and column cosine (`cosines[4]`) are both non-negative — identity (`1,0,0,0,1,0`) included, as well as the tag being absent — takes the original code path and produces a byte-for-byte unchanged voxel buffer. This avoids a double-flip against the renderer's X-negation in `VolumeRenderer3d.js` and guarantees no regression for standard axial series.
+- Per-axis flip flags are derived from the row and column direction cosines: the X axis flips only when the row cosine is dominated by its X component and that component is negative; the Y axis flips only when the column cosine is dominated by its Y component and that component is negative.
+- The flip is **gated on axis-dominant negative cosines**: identity (`1,0,0,0,1,0`), the tag being absent, and any non-axis-aligned (in-plane rotated or non-axial primary) orientation all take the original code path and produce a byte-for-byte unchanged voxel buffer. Restricting the flip to axis-dominant components avoids spuriously mirroring rotated acquisitions and avoids a double-flip against the renderer's X-negation in `VolumeRenderer3d.js`, guaranteeing no regression for standard axial series.
 - The same flip helper is shared by the multi-file series path (`LoaderDicom.js`) and the single-file daikon path (`LoaderDcmDaikon.js`) so both behave identically.
 
 This is intentionally **not** a general oblique-reorientation engine — it corrects sign-flipped axis-aligned acquisitions only.

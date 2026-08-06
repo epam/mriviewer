@@ -889,10 +889,16 @@ class LoaderDicom {
     if (cosines === null || cosines.length < 6) {
       return flip;
     }
-    const ROW_X = 0;
-    const COL_Y = 4;
-    flip.x = cosines[ROW_X] < 0.0;
-    flip.y = cosines[COL_Y] < 0.0;
+    const rowX = cosines[0];
+    const rowY = cosines[1];
+    const rowZ = cosines[2];
+    const colX = cosines[3];
+    const colY = cosines[4];
+    const colZ = cosines[5];
+    const rowXDominant = Math.abs(rowX) > Math.abs(rowY) && Math.abs(rowX) > Math.abs(rowZ);
+    const colYDominant = Math.abs(colY) > Math.abs(colX) && Math.abs(colY) > Math.abs(colZ);
+    flip.x = rowXDominant && rowX < 0.0;
+    flip.y = colYDominant && colY < 0.0;
     return flip;
   }
   static computeDestIndex(srcIndex, xDim, yDim, flip) {

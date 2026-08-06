@@ -60,6 +60,20 @@ describe('LoaderDicom orientation parsing', () => {
     expect(flip.y).toBe(true);
   });
 
+  it('in-plane rotated orientation does not trigger a flip', () => {
+    const flip = LoaderDicom.getOrientationFlipFlags([-0.17, 0.98, 0, -0.98, -0.17, 0]);
+    expect(flip.x).toBe(false);
+    expect(flip.y).toBe(false);
+    expect(flip.z).toBe(false);
+  });
+
+  it('non-axial primary orientation does not trigger a spurious in-plane flip', () => {
+    const flip = LoaderDicom.getOrientationFlipFlags([0, 1, 0, 0, 0, -1]);
+    expect(flip.x).toBe(false);
+    expect(flip.y).toBe(false);
+    expect(flip.z).toBe(false);
+  });
+
   it('missing orientation defaults to no flip', () => {
     const flip = LoaderDicom.getOrientationFlipFlags(null);
     expect(flip.x).toBe(false);
