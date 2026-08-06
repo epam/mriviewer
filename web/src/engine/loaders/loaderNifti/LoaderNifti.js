@@ -83,7 +83,16 @@ class LoaderNifti {
 
     const { xDim, yDim, zDim } = this.volumeManager.getVolumeDimensions();
     const numVoxels = xDim * yDim * zDim;
-    const dataOff = NIFTI_HEADER_SIZE;
+
+    let dataOff = headerInfo.voxOffset;
+    if (!Number.isFinite(dataOff) || dataOff < NIFTI_HEADER_SIZE) {
+      dataOff = NIFTI_HEADER_SIZE;
+    }
+    const bytesPerVoxel = headerInfo.bitPix / BITS_IN_BYTE;
+    if (dataOff + numVoxels * bytesPerVoxel > bufLen) {
+      if (callbackComplete) callbackComplete(LoadResult.BAD_HEADER, null, 0, null);
+      return false;
+    }
 
     const progressMask = this.dataProcessor.computeProgressMask(numVoxels);
     let valMax = this.dataProcessor.findMaxValue(bufBytes, headerInfo.dataType, dataOff, numVoxels, progressMask, callbackProgress);
