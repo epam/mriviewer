@@ -7,9 +7,26 @@
 // Imports
 // ********************************************************
 
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import LoaderDcmDaikon from './LoaderDcmDaikon';
 import LoaderDicom from './LoaderDicom';
 import LoadResult from '../LoadResult';
+
+const THIS_DIR = dirname(fileURLToPath(import.meta.url));
+
+// Resolve a precompressed DICOM fixture. Prefer the co-located, git-excluded
+// __fixtures__ copy; fall back to daikon's bundled test data (always present
+// after `npm install`) so the committed test runs on a fresh checkout.
+const readFixtureBuffer = (fileName) => {
+  const local = resolve(THIS_DIR, '__fixtures__', fileName);
+  const vendored = resolve(THIS_DIR, '../../../node_modules/daikon/tests/data', fileName);
+  const path = existsSync(local) ? local : vendored;
+  const buf = readFileSync(path);
+  return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+};
 
 // ********************************************************
 // Helpers
@@ -478,6 +495,45 @@ describe('LoaderDcmDaikon pixel copy (bits/samples/planar)', () => {
     for (let i = 0; i < ROWS * COLS; i++) {
       expect(slice.m_image[i]).toBe(pixels[i]);
     }
+  });
+});
+
+describe('LoaderDcmDaikon JPEG / JPEG 2000 real fixtures', () => {
+  const loadFixture = (fileName) => {
+    const arrBuf = readFixtureBuffer(fileName);
+    const loader = new LoaderDicom(1);
+    const daikonLoader = new LoaderDcmDaikon();
+    const ret = daikonLoader.readSlice(loader, 0, fileName, arrBuf);
+    return { loader, ret };
+  };
+
+  const expectPlausibleSlice = (loader) => {
+    const series = loader.m_slicesVolume.getSeries();
+    expect(series.length).toBe(1);
+    const slice = series[0].m_slices[0];
+    expect(slice.m_image).not.toBeNull();
+    expect(slice.m_xDim).toBeGreaterThan(0);
+    expect(slice.m_yDim).toBeGreaterThan(0);
+    expect(slice.m_image.length).toBe(slice.m_xDim * slice.m_yDim);
+    let nonZero = 0;
+    for (let i = 0; i < slice.m_image.length; i++) {
+      if (slice.m_image[i] !== 0) {
+        nonZero++;
+      }
+    }
+    expect(nonZero).toBeGreaterThan(0);
+  };
+
+  it('loads a JPEG Lossless (SEL1) compressed DICOM slice', () => {
+    const { loader, ret } = loadFixture('jpeg_lossless_sel1.dcm');
+    expect(ret).toBe(LoadResult.SUCCESS);
+    expectPlausibleSlice(loader);
+  });
+
+  it('loads a JPEG 2000 compressed DICOM slice', () => {
+    const { loader, ret } = loadFixture('jpeg_2000.dcm');
+    expect(ret).toBe(LoadResult.SUCCESS);
+    expectPlausibleSlice(loader);
   });
 });
 
