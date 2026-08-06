@@ -21,7 +21,6 @@ import Tools2dType from './tools2d/ToolTypes';
 import Segm2d from './Segm2d';
 
 import { getPalette256 } from './loaders/RoiPalette256';
-import { computeCanvasLayout } from './canvasSizing';
 import { observeCanvasResize } from './resizeObserver';
 
 import css from './Graphics2d.module.css';
@@ -497,12 +496,9 @@ class Graphics2d extends React.Component {
       } // end if 4 bpp
     }
 
-    // centering: setting canvas backing store to its HTML element's size, scaled by devicePixelRatio
-    const dpr = window.devicePixelRatio || 1;
-    const imageAspect = imgData.height > 0 ? imgData.width / imgData.height : 1;
-    const layout = computeCanvasLayout(this.m_mount.current.clientWidth, this.m_mount.current.clientHeight, imageAspect, dpr);
-    objCanvas.width = layout.backingW;
-    objCanvas.height = layout.backingH;
+    // centering: setting canvas image size, to match its HTML element's size
+    objCanvas.width = this.m_mount.current.clientWidth;
+    objCanvas.height = this.m_mount.current.clientHeight;
     // check is segmentation 2d mode is active
     // const isSegm = store.graphics2dModeSegmentation;
     // console.log("Segm2d mode = " + isSegm);
@@ -523,6 +519,10 @@ class Graphics2d extends React.Component {
     const ctx = objCanvas.getContext('2d');
     const store = this.props;
     const zoom = store.render2dZoom;
+    const canvasWidth = objCanvas.width;
+    const canvasHeight = objCanvas.height;
+    const newImgWidth = canvasWidth / zoom;
+    const newImgHeight = canvasHeight / zoom;
     const indexTools2d = store.indexTools2d;
 
     if (indexTools2d === Tools2dType.HAND && !this.state.stateMouseDown) {
@@ -558,12 +558,11 @@ class Graphics2d extends React.Component {
     } else {
       createImageBitmap(this.imgData)
         .then((imageBitmap) => {
-          const dpr = window.devicePixelRatio || 1;
-          const imageAspect = this.imgData.height > 0 ? this.imgData.width / this.imgData.height : 1;
-          const layout = computeCanvasLayout(objCanvas.clientWidth, objCanvas.clientHeight, imageAspect, dpr, zoom);
-          const dstX = layout.offsetX + store.render2dxPos;
-          const dstY = layout.offsetY + store.render2dyPos;
-          ctx.drawImage(imageBitmap, 0, 0, this.imgData.width, this.imgData.height, dstX, dstY, layout.drawW, layout.drawH);
+          const centerX = (canvasWidth - this.imgData.width) / 2;
+          const centerY = (canvasHeight - this.imgData.height) / 2;
+          const xPos = store.render2dxPos - centerX;
+          const yPos = store.render2dyPos - centerY;
+          ctx.drawImage(imageBitmap, xPos, yPos, canvasWidth, canvasHeight, 0, 0, newImgWidth, newImgHeight);
         })
         .then(() => {
           this.m_toolPick.render(ctx);

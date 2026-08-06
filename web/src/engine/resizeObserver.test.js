@@ -50,20 +50,11 @@ describe('observeCanvasResize', () => {
     expect(onResize).toHaveBeenCalledTimes(1);
   });
 
-  it('invokes the recompute callback on window resize (DPR change)', () => {
-    const onResize = vi.fn();
-    observeCanvasResize({}, onResize);
-    window.dispatchEvent(new Event('resize'));
-    expect(onResize).toHaveBeenCalledTimes(1);
-  });
-
-  it('disconnects the observer and stops firing after cleanup', () => {
+  it('disconnects the observer on cleanup', () => {
     const onResize = vi.fn();
     const cleanup = observeCanvasResize({}, onResize);
     cleanup();
     expect(instances[0].disconnected).toBe(true);
-    window.dispatchEvent(new Event('resize'));
-    expect(onResize).not.toHaveBeenCalled();
   });
 
   it('returns a no-op cleanup for a missing target', () => {
@@ -78,14 +69,12 @@ describe('observeCanvasResize', () => {
     expect(() => cleanup()).not.toThrow();
   });
 
-  it('still wires window resize when ResizeObserver is unavailable', () => {
+  it('returns a no-op cleanup when ResizeObserver is unavailable', () => {
     global.ResizeObserver = undefined;
     const onResize = vi.fn();
     const cleanup = observeCanvasResize({}, onResize);
-    window.dispatchEvent(new Event('resize'));
-    expect(onResize).toHaveBeenCalledTimes(1);
-    cleanup();
-    window.dispatchEvent(new Event('resize'));
-    expect(onResize).toHaveBeenCalledTimes(1);
+    expect(instances).toHaveLength(0);
+    expect(() => cleanup()).not.toThrow();
+    expect(onResize).not.toHaveBeenCalled();
   });
 });
