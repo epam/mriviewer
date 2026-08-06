@@ -79,4 +79,33 @@ describe('computeCanvasLayout', () => {
     expect(layout.backingH).toBe(300);
     expect(layout.drawW).toBeGreaterThan(0);
   });
+
+  describe('backing-store dims (Graphics2d prepareImageForRender)', () => {
+    it('matches todays dims (clientWidth/clientHeight) when dpr=1', () => {
+      const clientWidth = 640;
+      const clientHeight = 480;
+      const layout = computeCanvasLayout(clientWidth, clientHeight, 4 / 3, 1);
+      expect(layout.backingW).toBe(clientWidth);
+      expect(layout.backingH).toBe(clientHeight);
+    });
+
+    it('scales backing dims by dpr independent of image aspect', () => {
+      const clientWidth = 640;
+      const clientHeight = 480;
+      const square = computeCanvasLayout(clientWidth, clientHeight, 1, 3);
+      const wide = computeCanvasLayout(clientWidth, clientHeight, 3, 3);
+      expect(square.backingW).toBe(clientWidth * 3);
+      expect(square.backingH).toBe(clientHeight * 3);
+      expect(wide.backingW).toBe(square.backingW);
+      expect(wide.backingH).toBe(square.backingH);
+    });
+
+    it('rounds fractional dpr backing dims to integers', () => {
+      const layout = computeCanvasLayout(300, 200, 1, 1.5);
+      expect(layout.backingW).toBe(450);
+      expect(layout.backingH).toBe(300);
+      expect(Number.isInteger(layout.backingW)).toBe(true);
+      expect(Number.isInteger(layout.backingH)).toBe(true);
+    });
+  });
 });

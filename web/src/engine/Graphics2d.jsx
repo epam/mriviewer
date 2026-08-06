@@ -21,6 +21,7 @@ import Tools2dType from './tools2d/ToolTypes';
 import Segm2d from './Segm2d';
 
 import { getPalette256 } from './loaders/RoiPalette256';
+import { computeCanvasLayout } from './canvasSizing';
 
 import css from './Graphics2d.module.css';
 import { TEST_IDS } from '../utils/testIds.js';
@@ -476,9 +477,17 @@ class Graphics2d extends React.Component {
       } // end if 4 bpp
     }
 
-    // centering: setting canvas image size, to match its HTML element's size
-    objCanvas.width = this.m_mount.current.clientWidth;
-    objCanvas.height = this.m_mount.current.clientHeight;
+    // centering: setting canvas backing store to its HTML element's size, scaled by devicePixelRatio
+    const dpr = window.devicePixelRatio || 1;
+    const imageAspect = imgData.height > 0 ? imgData.width / imgData.height : 1;
+    const layout = computeCanvasLayout(
+      this.m_mount.current.clientWidth,
+      this.m_mount.current.clientHeight,
+      imageAspect,
+      dpr
+    );
+    objCanvas.width = layout.backingW;
+    objCanvas.height = layout.backingH;
     // check is segmentation 2d mode is active
     // const isSegm = store.graphics2dModeSegmentation;
     // console.log("Segm2d mode = " + isSegm);
