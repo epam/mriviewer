@@ -415,9 +415,6 @@ class LoaderDcmDaikon {
       // console.log('val pad = ' + valPad);
     }
 
-    // add volume slice to slices volume (and manage series)
-    this.m_loaderDicom.m_slicesVolume.addSlice(volSlice);
-
     // check correct read image
     // daikon auto-decompresses compressed pixel data (JPEG / JPEG2000 / JPEG-LS / RLE)
     // inside getRawData(); undecodable or truncated data throws here.
@@ -431,12 +428,24 @@ class LoaderDcmDaikon {
     if (pixels === undefined || pixels === null) {
       return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
     }
+    // Multiframe and palette-color pixel data expand daikon's buffer beyond the
+    // single-plane / declared-samples-per-pixel layout the copy loop below assumes,
+    // which would silently render only frame 0 (multiframe) or garbage (palette).
+    // Reject them explicitly instead of loading partial/incorrect pixels.
+    if (image.getNumberOfFrames() > 1) {
+      console.log('Multiframe compressed Dicom is not supported');
+      return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
+    }
+    if (image.isPalette()) {
+      console.log('Palette-color Dicom is not supported');
+      return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
+    }
     const numBytesPixelsRead = pixels.byteLength;
     const VAL_8 = 8;
     const bytesPerSample = Math.max(1, Math.floor(bits / VAL_8));
     // Accept daikon's already-decompressed buffer: its length can be larger than
     // the naive expectation (bitsAllocated rounding, planar/interleaved expansion,
-    // multiframe or padding). Bail only when there is not even enough data to fill
+    // trailing padding). Bail only when there is not even enough data to fill
     // one plane of pixels for the declared samples-per-pixel.
     const numBytesPixelsExpected = xDim * yDim * bytesPerSample * this.m_loaderDicom.m_samplesPerPixel;
     if (numBytesPixelsRead < numBytesPixelsExpected) {
@@ -455,11 +464,16 @@ class LoaderDcmDaikon {
     const numPixels = xDim * yDim;
     const samplesPerPixel = this.m_loaderDicom.m_samplesPerPixel;
     const signed = this.m_loaderDicom.m_pixelRepresentaionSigned;
+    // Build the typed-array view with an explicit sample count so a buffer whose
+    // total byteLength is not a clean multiple of bytesPerSample (truncated/padded
+    // compressed stream) cannot throw a RangeError; the size check above guarantees
+    // at least numSamples samples are present.
+    const numSamples = numPixels * samplesPerPixel;
     let pixSrc;
     if (bytesPerSample === 1) {
-      pixSrc = signed && samplesPerPixel === 1 ? new Int8Array(pixels) : new Uint8Array(pixels);
+      pixSrc = signed && samplesPerPixel === 1 ? new Int8Array(pixels, 0, numSamples) : new Uint8Array(pixels, 0, numSamples);
     } else {
-      pixSrc = new Uint16Array(pixels);
+      pixSrc = new Uint16Array(pixels, 0, numSamples);
     }
     if (samplesPerPixel === 1) {
       for (let i = 0; i < numPixels; i++) {
@@ -482,6 +496,9 @@ class LoaderDcmDaikon {
     // store x, y dims
     volSlice.m_xDim = xDim;
     volSlice.m_yDim = yDim;
+    // add volume slice to slices volume (and manage series) only after pixels are
+    // fully populated, so error returns above never leave a half-built slice behind.
+    this.m_loaderDicom.m_slicesVolume.addSlice(volSlice);
     return LoadResult.SUCCESS;
   } // end load single slice
 

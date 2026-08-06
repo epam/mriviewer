@@ -122,6 +122,7 @@ const buildDicomBuffer = ({
   pixelRepresentation = 0,
   photometric = samplesPerPixel === 3 ? 'RGB' : 'MONOCHROME2',
   transferSyntax = TRANSFER_SYNTAX_EXPLICIT_LITTLE,
+  numberOfFrames = 1,
   pixels,
 }) => {
   const preamble = new Uint8Array(128);
@@ -135,6 +136,7 @@ const buildDicomBuffer = ({
   const dataset = [
     elementShort(0x0028, 0x0002, 'US', usBytes(samplesPerPixel)),
     elementShort(0x0028, 0x0004, 'CS', csBytes(photometric)),
+    elementShort(0x0028, 0x0008, 'IS', asciiEven(String(numberOfFrames), 0x20)),
     elementShort(0x0028, 0x0010, 'US', usBytes(rows)),
     elementShort(0x0028, 0x0011, 'US', usBytes(cols)),
     elementShort(0x0028, 0x0100, 'US', usBytes(bitsAllocated)),
@@ -432,6 +434,53 @@ describe('LoaderDcmDaikon size check and sample validation', () => {
 
     const { ret } = readSlice(arrBuf, 'spp2.dcm');
     expect(ret).toBe(LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED);
+  });
+});
+
+describe('LoaderDcmDaikon multiframe / palette rejection', () => {
+  const readSlice = (arrBuf, name) => {
+    const loader = new LoaderDicom(1);
+    const daikonLoader = new LoaderDcmDaikon();
+    const ret = daikonLoader.readSlice(loader, 0, name, arrBuf);
+    return { loader, ret };
+  };
+
+  it('rejects a multiframe buffer instead of silently loading frame 0', () => {
+    const COLS = 4;
+    const ROWS = 3;
+    const numPixels = ROWS * COLS;
+    const FRAMES = 2;
+    const pixels = [];
+    for (let i = 0; i < numPixels * FRAMES; i++) {
+      pixels.push((i * 17 + 1) & 0x0fff);
+    }
+    const arrBuf = buildDicomBuffer({ rows: ROWS, cols: COLS, numberOfFrames: FRAMES, pixels });
+
+    const { loader, ret } = readSlice(arrBuf, 'multiframe.dcm');
+    expect(ret).toBe(LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED);
+    // no half-built slice must be left behind in the volume
+    expect(loader.m_slicesVolume.getSeries().length).toBe(0);
+  });
+
+  it('rejects a palette-color buffer instead of rendering garbage', () => {
+    const COLS = 4;
+    const ROWS = 3;
+    const numPixels = ROWS * COLS;
+    const pixels = [];
+    for (let i = 0; i < numPixels; i++) {
+      pixels.push((i * 11 + 1) & 0xff);
+    }
+    const arrBuf = buildDicomBuffer({
+      rows: ROWS,
+      cols: COLS,
+      bitsAllocated: 8,
+      photometric: 'PALETTE COLOR',
+      pixels,
+    });
+
+    const { loader, ret } = readSlice(arrBuf, 'palette.dcm');
+    expect(ret).toBe(LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED);
+    expect(loader.m_slicesVolume.getSeries().length).toBe(0);
   });
 });
 

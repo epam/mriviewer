@@ -35,12 +35,25 @@ Decompression is handled by daikon; the engine adds no new decoders.
 | JPEG-LS Lossless | `1.2.840.10008.1.2.4.80` | Untested against real fixtures |
 | JPEG-LS Near-Lossless | `1.2.840.10008.1.2.4.81` | Untested against real fixtures |
 
+## Rejected (explicit, no silent misload)
+
+These decode through daikon but do not fit the single-plane, single-frame pixel
+copy, so the loader returns `ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED` rather than
+render partial or garbled data:
+
+| Case | Why | Detection |
+|---|---|---|
+| Multiframe | Only frame 0 would be copied | `NumberOfFrames > 1` |
+| Palette color | daikon expands to RGB while `SamplesPerPixel` stays 1 | `PhotometricInterpretation` contains `PALETTE` |
+
 ## Follow-ups
 
 - **DEFLATE (`.1.2.1.99`)** — still unsupported; requires an inflate pass
   before parsing the data set.
-- **Multiframe** — pixel copy currently handles the common single-frame case;
-  multiframe encapsulated data needs per-frame validation and fixtures.
+- **Multiframe** — currently rejected; full support needs per-frame validation,
+  a multi-slice volume mapping, and fixtures.
+- **Palette color** — currently rejected; full support needs consuming daikon's
+  RGB-expanded buffer (samples-per-pixel derived from the buffer, not the tag).
 - **Planar RGB edge cases** — RGB is copied as interleaved; planar
   configuration `1` (color-by-plane) paths need dedicated fixtures/coverage.
 - **Big Endian 16-bit** — the pixel copy reads samples via a native
