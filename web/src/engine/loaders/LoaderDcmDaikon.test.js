@@ -258,17 +258,7 @@ const buildRleDicomBuffer = ({
   const fragmentItem = encapItem(0xfffe, 0xe000, fragment);
   const seqDelim = encapItem(0xfffe, 0xe0dd, null);
 
-  const all = concatBytes([
-    preamble,
-    dicm,
-    metaLenTag,
-    metaTs,
-    ...dataset,
-    pdHead,
-    offsetTableItem,
-    fragmentItem,
-    seqDelim,
-  ]);
+  const all = concatBytes([preamble, dicm, metaLenTag, metaTs, ...dataset, pdHead, offsetTableItem, fragmentItem, seqDelim]);
   return all.buffer.slice(all.byteOffset, all.byteOffset + all.byteLength);
 };
 
@@ -362,6 +352,132 @@ describe('LoaderDcmDaikon RLE-compressed', () => {
       ret = daikonLoader.readSlice(loader, 0, 'bad.dcm', truncated);
     }).not.toThrow();
     expect(ret).not.toBe(LoadResult.SUCCESS);
+  });
+});
+
+describe('LoaderDcmDaikon pixel copy (bits/samples/planar)', () => {
+  const readSlice = (arrBuf, name) => {
+    const loader = new LoaderDicom(1);
+    const daikonLoader = new LoaderDcmDaikon();
+    const ret = daikonLoader.readSlice(loader, 0, name, arrBuf);
+    return { loader, ret };
+  };
+
+  const firstSlice = (loader) => {
+    const series = loader.m_slicesVolume.getSeries();
+    return series[0].m_slices[0];
+  };
+
+  it('loads a minimal uncompressed 8-bit grayscale DICOM slice', () => {
+    const COLS = 4;
+    const ROWS = 3;
+    const pixels = [];
+    for (let i = 0; i < ROWS * COLS; i++) {
+      pixels.push((i * 17) & 0xff);
+    }
+    const arrBuf = buildDicomBuffer({ rows: ROWS, cols: COLS, bitsAllocated: 8, pixels });
+
+    const { loader, ret } = readSlice(arrBuf, 'g8.dcm');
+    expect(ret).toBe(LoadResult.SUCCESS);
+
+    const slice = firstSlice(loader);
+    expect(slice.m_image.length).toBe(ROWS * COLS);
+    for (let i = 0; i < ROWS * COLS; i++) {
+      expect(slice.m_image[i]).toBe(pixels[i]);
+    }
+  });
+
+  it('loads a minimal RLE 8-bit grayscale DICOM slice', () => {
+    const COLS = 4;
+    const ROWS = 3;
+    const pixels = [];
+    for (let i = 0; i < ROWS * COLS; i++) {
+      pixels.push((i * 23 + 5) & 0xff);
+    }
+    const arrBuf = buildRleDicomBuffer({ rows: ROWS, cols: COLS, bitsAllocated: 8, pixels });
+
+    const { loader, ret } = readSlice(arrBuf, 'g8rle.dcm');
+    expect(ret).toBe(LoadResult.SUCCESS);
+
+    const slice = firstSlice(loader);
+    expect(slice.m_image.length).toBe(ROWS * COLS);
+    for (let i = 0; i < ROWS * COLS; i++) {
+      expect(slice.m_image[i]).toBe(pixels[i]);
+    }
+  });
+
+  it('loads a minimal uncompressed 8-bit RGB DICOM slice (averaged to grayscale)', () => {
+    const COLS = 4;
+    const ROWS = 3;
+    const numPixels = ROWS * COLS;
+    const pixels = [];
+    for (let i = 0; i < numPixels; i++) {
+      pixels.push((i * 7) & 0xff);
+      pixels.push((i * 13 + 3) & 0xff);
+      pixels.push((i * 5 + 9) & 0xff);
+    }
+    const arrBuf = buildDicomBuffer({ rows: ROWS, cols: COLS, bitsAllocated: 8, samplesPerPixel: 3, pixels });
+
+    const { loader, ret } = readSlice(arrBuf, 'rgb8.dcm');
+    expect(ret).toBe(LoadResult.SUCCESS);
+
+    const slice = firstSlice(loader);
+    expect(slice.m_image.length).toBe(numPixels);
+    for (let i = 0; i < numPixels; i++) {
+      const r = pixels[i * 3 + 0];
+      const g = pixels[i * 3 + 1];
+      const b = pixels[i * 3 + 2];
+      expect(slice.m_image[i]).toBe(Math.floor((r + g + b) / 3));
+    }
+  });
+
+  it('loads a minimal RLE 8-bit RGB DICOM slice (averaged to grayscale)', () => {
+    const COLS = 4;
+    const ROWS = 3;
+    const numPixels = ROWS * COLS;
+    const pixels = [];
+    for (let i = 0; i < numPixels; i++) {
+      pixels.push((i * 11) & 0xff);
+      pixels.push((i * 3 + 7) & 0xff);
+      pixels.push((i * 19 + 1) & 0xff);
+    }
+    const arrBuf = buildRleDicomBuffer({ rows: ROWS, cols: COLS, bitsAllocated: 8, samplesPerPixel: 3, pixels });
+
+    const { loader, ret } = readSlice(arrBuf, 'rgb8rle.dcm');
+    expect(ret).toBe(LoadResult.SUCCESS);
+
+    const slice = firstSlice(loader);
+    expect(slice.m_image.length).toBe(numPixels);
+    let nonZero = 0;
+    for (let i = 0; i < numPixels; i++) {
+      const r = pixels[i * 3 + 0];
+      const g = pixels[i * 3 + 1];
+      const b = pixels[i * 3 + 2];
+      expect(slice.m_image[i]).toBe(Math.floor((r + g + b) / 3));
+      if (slice.m_image[i] !== 0) {
+        nonZero++;
+      }
+    }
+    expect(nonZero).toBeGreaterThan(0);
+  });
+
+  it('keeps the uncompressed 16-bit grayscale path byte-for-byte identical', () => {
+    const COLS = 5;
+    const ROWS = 4;
+    const pixels = [];
+    for (let i = 0; i < ROWS * COLS; i++) {
+      pixels.push((i * 619) & 0xffff);
+    }
+    const arrBuf = buildDicomBuffer({ rows: ROWS, cols: COLS, bitsAllocated: 16, pixels });
+
+    const { loader, ret } = readSlice(arrBuf, 'g16.dcm');
+    expect(ret).toBe(LoadResult.SUCCESS);
+
+    const slice = firstSlice(loader);
+    expect(slice.m_image.length).toBe(ROWS * COLS);
+    for (let i = 0; i < ROWS * COLS; i++) {
+      expect(slice.m_image[i]).toBe(pixels[i]);
+    }
   });
 });
 

@@ -454,19 +454,22 @@ class LoaderDcmDaikon {
     // copy pixels (ArrayBuffer) into volSlice.m_image
     const numPixels = xDim * yDim;
     if (this.m_loaderDicom.m_samplesPerPixel === 1) {
-      const pixSrc = new Uint16Array(pixels);
+      // daikon's decompressed grayscale buffer holds 1 byte/pixel for 8-bit
+      // (bitsAllocated 8) and 2 bytes/pixel (little-endian) for 16-bit.
+      const pixSrc = bytesPerSample === 1 ? new Uint8Array(pixels) : new Uint16Array(pixels);
       for (let i = 0; i < numPixels; i++) {
         volSlice.m_image[i] = pixSrc[i];
       } // for i
     } // if 1 sample per pixel
     else if (this.m_loaderDicom.m_samplesPerPixel === 3) {
-      const pixSrc = new Uint8Array(pixels);
+      // daikon returns interleaved samples; step by bytesPerSample per component.
+      const pixSrc = bytesPerSample === 1 ? new Uint8Array(pixels) : new Uint16Array(pixels);
       let j = 0;
       for (let i = 0; i < numPixels; i++, j += 3) {
-        const bVal = pixSrc[j + 0];
-        const gVal = pixSrc[j + 1];
-        const rVal = pixSrc[j + 2];
-        volSlice.m_image[i] = Math.floor((bVal + gVal + rVal) / 3);
+        const c0 = pixSrc[j + 0];
+        const c1 = pixSrc[j + 1];
+        const c2 = pixSrc[j + 2];
+        volSlice.m_image[i] = Math.floor((c0 + c1 + c2) / 3);
       } // for i
     } // if samples per pixel is 3
     // store x, y dims
