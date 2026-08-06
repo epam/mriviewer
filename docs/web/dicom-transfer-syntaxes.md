@@ -16,7 +16,7 @@ Related work: issues #202 and #232 (compressed DICOM failed to load with
 |---|---|---|
 | Implicit VR Little Endian | `1.2.840.10008.1.2` | Uncompressed |
 | Explicit VR Little Endian | `1.2.840.10008.1.2.1` | Uncompressed |
-| Explicit VR Big Endian | `1.2.840.10008.1.2.2` | Uncompressed |
+| Explicit VR Big Endian | `1.2.840.10008.1.2.2` | Uncompressed; 8-bit only — 16-bit byte order unverified (see follow-ups) |
 | JPEG Baseline (8-bit) | `1.2.840.10008.1.2.4.50` | Lossy |
 | JPEG Baseline (12-bit) | `1.2.840.10008.1.2.4.51` | Lossy |
 | JPEG Lossless | `1.2.840.10008.1.2.4.57` | Lossless |
@@ -43,4 +43,9 @@ Decompression is handled by daikon; the engine adds no new decoders.
   multiframe encapsulated data needs per-frame validation and fixtures.
 - **Planar RGB edge cases** — RGB is copied as interleaved; planar
   configuration `1` (color-by-plane) paths need dedicated fixtures/coverage.
-- **JPEG-LS** — the UIDs are recognized but lack real-fixture regression tests.
+- **Big Endian 16-bit** — the pixel copy reads samples via a native
+  little-endian `Uint16Array`, so 16-bit Explicit VR Big Endian data would be
+  byte-swapped; needs an endianness-aware read plus a real fixture.
+- **JPEG-LS (`.4.80`/`.4.81`)** — not explicitly recognized in `LoaderDicom.js`
+  (no UID constants); like every syntax the buffer is still handed to daikon's
+  decoder, but decoding is untested and unverified against real fixtures.

@@ -368,7 +368,70 @@ describe('LoaderDcmDaikon RLE-compressed', () => {
     expect(() => {
       ret = daikonLoader.readSlice(loader, 0, 'bad.dcm', truncated);
     }).not.toThrow();
-    expect(ret).not.toBe(LoadResult.SUCCESS);
+    expect(ret).toBe(LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED);
+  });
+});
+
+describe('LoaderDcmDaikon size check and sample validation', () => {
+  const readSlice = (arrBuf, name) => {
+    const loader = new LoaderDicom(1);
+    const daikonLoader = new LoaderDcmDaikon();
+    const ret = daikonLoader.readSlice(loader, 0, name, arrBuf);
+    return { loader, ret };
+  };
+
+  it('accepts a decompressed buffer larger than the naive expectation', () => {
+    const COLS = 4;
+    const ROWS = 3;
+    const numPixels = ROWS * COLS;
+    const pixels = [];
+    for (let i = 0; i < numPixels + 8; i++) {
+      pixels.push((i * 17 + 1) & 0xff);
+    }
+    const arrBuf = buildDicomBuffer({ rows: ROWS, cols: COLS, bitsAllocated: 8, pixels });
+
+    const { loader, ret } = readSlice(arrBuf, 'oversize.dcm');
+    expect(ret).toBe(LoadResult.SUCCESS);
+
+    const slice = loader.m_slicesVolume.getSeries()[0].m_slices[0];
+    expect(slice.m_image.length).toBe(numPixels);
+    for (let i = 0; i < numPixels; i++) {
+      expect(slice.m_image[i]).toBe(pixels[i]);
+    }
+  });
+
+  it('rejects a buffer smaller than one plane with ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED', () => {
+    const COLS = 4;
+    const ROWS = 3;
+    const pixels = [];
+    for (let i = 0; i < 4; i++) {
+      pixels.push((i * 9 + 1) & 0xff);
+    }
+    const arrBuf = buildDicomBuffer({ rows: ROWS, cols: COLS, bitsAllocated: 8, pixels });
+
+    const { ret } = readSlice(arrBuf, 'undersize.dcm');
+    expect(ret).toBe(LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED);
+  });
+
+  it('rejects an unsupported samples-per-pixel count', () => {
+    const COLS = 4;
+    const ROWS = 3;
+    const numPixels = ROWS * COLS;
+    const pixels = [];
+    for (let i = 0; i < numPixels * 2; i++) {
+      pixels.push((i * 7 + 1) & 0xff);
+    }
+    const arrBuf = buildDicomBuffer({
+      rows: ROWS,
+      cols: COLS,
+      bitsAllocated: 8,
+      samplesPerPixel: 2,
+      photometric: 'MONOCHROME2',
+      pixels,
+    });
+
+    const { ret } = readSlice(arrBuf, 'spp2.dcm');
+    expect(ret).toBe(LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED);
   });
 });
 
@@ -476,6 +539,31 @@ describe('LoaderDcmDaikon pixel copy (bits/samples/planar)', () => {
       }
     }
     expect(nonZero).toBeGreaterThan(0);
+  });
+
+  it('loads a minimal uncompressed 16-bit RGB DICOM slice (averaged to grayscale)', () => {
+    const COLS = 4;
+    const ROWS = 3;
+    const numPixels = ROWS * COLS;
+    const pixels = [];
+    for (let i = 0; i < numPixels; i++) {
+      pixels.push((i * 257) & 0xffff);
+      pixels.push((i * 613 + 3) & 0xffff);
+      pixels.push((i * 331 + 9) & 0xffff);
+    }
+    const arrBuf = buildDicomBuffer({ rows: ROWS, cols: COLS, bitsAllocated: 16, samplesPerPixel: 3, pixels });
+
+    const { loader, ret } = readSlice(arrBuf, 'rgb16.dcm');
+    expect(ret).toBe(LoadResult.SUCCESS);
+
+    const slice = firstSlice(loader);
+    expect(slice.m_image.length).toBe(numPixels);
+    for (let i = 0; i < numPixels; i++) {
+      const r = pixels[i * 3 + 0];
+      const g = pixels[i * 3 + 1];
+      const b = pixels[i * 3 + 2];
+      expect(slice.m_image[i]).toBe(Math.floor((r + g + b) / 3));
+    }
   });
 
   it('keeps the uncompressed 16-bit grayscale path byte-for-byte identical', () => {

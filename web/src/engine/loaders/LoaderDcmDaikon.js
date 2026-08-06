@@ -425,7 +425,7 @@ class LoaderDcmDaikon {
     try {
       pixels = image.getRawData();
     } catch (err) {
-      console.log('Error decompress Dicom pixel data via Diakon parser');
+      console.log('Error decompress Dicom pixel data via Daikon parser');
       return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
     }
     if (pixels === undefined || pixels === null) {
@@ -440,7 +440,7 @@ class LoaderDcmDaikon {
     // one plane of pixels for the declared samples-per-pixel.
     const numBytesPixelsExpected = xDim * yDim * bytesPerSample * this.m_loaderDicom.m_samplesPerPixel;
     if (numBytesPixelsRead < numBytesPixelsExpected) {
-      console.log('Error read Dicom via Diakon parser');
+      console.log('Error read Dicom via Daikon parser');
       return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
     }
 
@@ -453,17 +453,20 @@ class LoaderDcmDaikon {
 
     // copy pixels (ArrayBuffer) into volSlice.m_image
     const numPixels = xDim * yDim;
-    if (this.m_loaderDicom.m_samplesPerPixel === 1) {
-      // daikon's decompressed grayscale buffer holds 1 byte/pixel for 8-bit
-      // (bitsAllocated 8) and 2 bytes/pixel (little-endian) for 16-bit.
-      const pixSrc = bytesPerSample === 1 ? new Uint8Array(pixels) : new Uint16Array(pixels);
+    const samplesPerPixel = this.m_loaderDicom.m_samplesPerPixel;
+    const signed = this.m_loaderDicom.m_pixelRepresentaionSigned;
+    let pixSrc;
+    if (bytesPerSample === 1) {
+      pixSrc = signed && samplesPerPixel === 1 ? new Int8Array(pixels) : new Uint8Array(pixels);
+    } else {
+      pixSrc = new Uint16Array(pixels);
+    }
+    if (samplesPerPixel === 1) {
       for (let i = 0; i < numPixels; i++) {
         volSlice.m_image[i] = pixSrc[i];
       } // for i
     } // if 1 sample per pixel
-    else if (this.m_loaderDicom.m_samplesPerPixel === 3) {
-      // daikon returns interleaved samples; step by bytesPerSample per component.
-      const pixSrc = bytesPerSample === 1 ? new Uint8Array(pixels) : new Uint16Array(pixels);
+    else if (samplesPerPixel === 3) {
       let j = 0;
       for (let i = 0; i < numPixels; i++, j += 3) {
         const c0 = pixSrc[j + 0];
@@ -472,6 +475,10 @@ class LoaderDcmDaikon {
         volSlice.m_image[i] = Math.floor((c0 + c1 + c2) / 3);
       } // for i
     } // if samples per pixel is 3
+    else {
+      console.log('Error: unsupported samples per pixel in Daikon-decompressed Dicom');
+      return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
+    } // unsupported samples per pixel
     // store x, y dims
     volSlice.m_xDim = xDim;
     volSlice.m_yDim = yDim;
