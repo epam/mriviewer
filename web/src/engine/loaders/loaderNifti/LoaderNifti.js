@@ -145,9 +145,6 @@ class LoaderNifti {
       m_boxSize: this.volumeManager.getBoxSize(),
     });
 
-    console.log('DATA');
-    console.log(dataArray);
-    console.log(dataArray.slice(0, 1000));
     console.log(`Nifti header read OK. Volume pixels = ${xDim} * ${yDim} * ${zDim}`);
 
     const header = {

@@ -120,4 +120,54 @@ describe('LoaderNiftiTests', () => {
     expect(completeCode).toBe(LoadResult.SUCCESS);
     expect(volDst.m_xDim).toBe(4);
   });
+
+  it('delivers WRONG_HEADER_MAGIC (not undefined) for a bad magic', () => {
+    const arrBuf = buildNiftiBuffer({ x: 4, y: 4, z: 4, voxOffset: 352 });
+    const bytes = new Uint8Array(arrBuf);
+    bytes[MAGIC_OFFSET + 0] = 0;
+    bytes[MAGIC_OFFSET + 1] = 0;
+    bytes[MAGIC_OFFSET + 2] = 0;
+
+    const loader = new LoaderNifti();
+    let completeCode = 'unset';
+    const ok = loader.readFromBuffer({}, arrBuf, null, (code) => {
+      completeCode = code;
+    });
+
+    expect(ok).toBe(false);
+    expect(completeCode).toBe(LoadResult.WRONG_HEADER_MAGIC);
+    expect(completeCode).not.toBeUndefined();
+  });
+
+  it('delivers WRONG_HEADER_DATA_TYPE (not undefined) for an unsupported data type', () => {
+    const arrBuf = buildNiftiBuffer({ x: 4, y: 4, z: 4, voxOffset: 352 });
+    const view = new DataView(arrBuf);
+    view.setInt16(70, 999, true);
+
+    const loader = new LoaderNifti();
+    let completeCode = 'unset';
+    const ok = loader.readFromBuffer({}, arrBuf, null, (code) => {
+      completeCode = code;
+    });
+
+    expect(ok).toBe(false);
+    expect(completeCode).toBe(LoadResult.WRONG_HEADER_DATA_TYPE);
+    expect(completeCode).not.toBeUndefined();
+  });
+
+  it('delivers WRONG_HEADER_DIMENSIONS (not undefined) for too few dimensions', () => {
+    const arrBuf = buildNiftiBuffer({ x: 4, y: 4, z: 4, voxOffset: 352 });
+    const view = new DataView(arrBuf);
+    view.setInt16(40, 2, true);
+
+    const loader = new LoaderNifti();
+    let completeCode = 'unset';
+    const ok = loader.readFromBuffer({}, arrBuf, null, (code) => {
+      completeCode = code;
+    });
+
+    expect(ok).toBe(false);
+    expect(completeCode).toBe(LoadResult.WRONG_HEADER_DIMENSIONS);
+    expect(completeCode).not.toBeUndefined();
+  });
 });
