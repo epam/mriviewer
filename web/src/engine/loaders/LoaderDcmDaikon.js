@@ -41,6 +41,41 @@ class LoaderDcmDaikon {
     this.m_loaderDicom = null;
   }
 
+  static orientationFlipFromTagValue(tagValue) {
+    const NO_FLIP = { x: false, y: false, z: false };
+    if (tagValue === null || tagValue === undefined || tagValue.length === undefined) {
+      return NO_FLIP;
+    }
+    const NUM_COMPONENTS_6 = 6;
+    if (tagValue.length !== NUM_COMPONENTS_6) {
+      return NO_FLIP;
+    }
+    const cosines = Array.prototype.map.call(tagValue, (val) => parseFloat(val));
+    if (cosines.some((val) => Number.isNaN(val))) {
+      return NO_FLIP;
+    }
+    return LoaderDicom.getOrientationFlipFlags(cosines);
+  }
+
+  static copySlicePixels(volSliceImage, pixels, xDim, yDim, samplesPerPixel, flip) {
+    const numPixels = xDim * yDim;
+    if (samplesPerPixel === 1) {
+      const pixSrc = new Uint16Array(pixels);
+      for (let i = 0; i < numPixels; i++) {
+        volSliceImage[LoaderDicom.computeDestIndex(i, xDim, yDim, flip)] = pixSrc[i];
+      }
+    } else if (samplesPerPixel === 3) {
+      const pixSrc = new Uint8Array(pixels);
+      let j = 0;
+      for (let i = 0; i < numPixels; i++, j += 3) {
+        const bVal = pixSrc[j + 0];
+        const gVal = pixSrc[j + 1];
+        const rVal = pixSrc[j + 2];
+        volSliceImage[LoaderDicom.computeDestIndex(i, xDim, yDim, flip)] = Math.floor((bVal + gVal + rVal) / 3);
+      }
+    }
+  }
+
   //
   // see example read
   // https://github.com/mbarnig/dumpDICOMDIRarchive/blob/master/dumpDICOMDIR.js
@@ -404,6 +439,11 @@ class LoaderDcmDaikon {
       } // if 3 components in array
     } // if tag exists
 
+    // get image orientation (row / column direction cosines) to detect axis flip
+    ind = daikon.Utils.dec2hex(daikon.Tag.TAG_IMAGE_ORIENTATION[0]) + daikon.Utils.dec2hex(daikon.Tag.TAG_IMAGE_ORIENTATION[1]);
+    const tagImOri = image.tags[ind];
+    const orientationFlip = LoaderDcmDaikon.orientationFlipFromTagValue(tagImOri !== undefined ? tagImOri.value : null);
+
     // read transfer syntax (detect big endian)
     ind = daikon.Utils.dec2hex(daikon.Tag.TAG_TRANSFER_SYNTAX[0]) + daikon.Utils.dec2hex(daikon.Tag.TAG_TRANSFER_SYNTAX[1]);
     const tagTraSyn = image.tags[ind];
@@ -435,24 +475,8 @@ class LoaderDcmDaikon {
       volSlice.m_image = new Uint16Array(xDim * yDim);
     }
 
-    // copy pixels (ArrayBuffer) into volSlice.m_image
-    const numPixels = xDim * yDim;
-    if (this.m_loaderDicom.m_samplesPerPixel === 1) {
-      const pixSrc = new Uint16Array(pixels);
-      for (let i = 0; i < numPixels; i++) {
-        volSlice.m_image[i] = pixSrc[i];
-      } // for i
-    } // if 1 sample per pixel
-    else if (this.m_loaderDicom.m_samplesPerPixel === 3) {
-      const pixSrc = new Uint8Array(pixels);
-      let j = 0;
-      for (let i = 0; i < numPixels; i++, j += 3) {
-        const bVal = pixSrc[j + 0];
-        const gVal = pixSrc[j + 1];
-        const rVal = pixSrc[j + 2];
-        volSlice.m_image[i] = Math.floor((bVal + gVal + rVal) / 3);
-      } // for i
-    } // if samples per pixel is 3
+    // copy pixels (ArrayBuffer) into volSlice.m_image, applying orientation flip
+    LoaderDcmDaikon.copySlicePixels(volSlice.m_image, pixels, xDim, yDim, this.m_loaderDicom.m_samplesPerPixel, orientationFlip);
     // store x, y dims
     volSlice.m_xDim = xDim;
     volSlice.m_yDim = yDim;
