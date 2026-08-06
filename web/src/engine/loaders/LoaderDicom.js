@@ -896,6 +896,20 @@ class LoaderDicom {
     flip.y = cosines[COL_Y] < 0.0;
     return flip;
   }
+  static computeDestIndex(srcIndex, xDim, yDim, flip) {
+    if (!flip.x && !flip.y) {
+      return srcIndex;
+    }
+    let x = srcIndex % xDim;
+    let y = Math.floor(srcIndex / xDim);
+    if (flip.x) {
+      x = xDim - 1 - x;
+    }
+    if (flip.y) {
+      y = yDim - 1 - y;
+    }
+    return y * xDim + x;
+  }
   static getUtf8StringAt(dataView, offset, lengthBuf) {
     let str = '';
     let i = 0;
@@ -1901,12 +1915,13 @@ class LoaderDicom {
     const NUM_1 = 1;
     const NUM_3 = 3;
 
+    const flip = this.m_orientationFlip;
     let i;
     if (this.m_bitsPerPixel === BITS_8) {
       if (this.m_samplesPerPixel === NUM_1) {
         for (i = 0; i < numPixels; i++) {
           const val = imageSrc.getUint8(i);
-          imageDst[i] = val;
+          imageDst[LoaderDicom.computeDestIndex(i, this.m_xDim, this.m_yDim, flip)] = val;
         }
         // if 1 sample per pixel
       } else if (this.m_samplesPerPixel === NUM_3) {
@@ -1919,7 +1934,7 @@ class LoaderDicom {
           // assert(b0 < 256);
           // assert(b1 < 256);
           // assert(b2 < 256);
-          imageDst[i] = Math.floor((b0 + b1 + b2) / 3);
+          imageDst[LoaderDicom.computeDestIndex(i, this.m_xDim, this.m_yDim, flip)] = Math.floor((b0 + b1 + b2) / 3);
         }
       }
     } else if (this.m_bitsPerPixel === BITS_16) {
@@ -1927,7 +1942,7 @@ class LoaderDicom {
       for (i = 0; i < numPixels; i++) {
         let val = imageSrc.getUint16(i2, this.m_littleEndian);
         i2 += SIZE_SHORT;
-        imageDst[i] = val;
+        imageDst[LoaderDicom.computeDestIndex(i, this.m_xDim, this.m_yDim, flip)] = val;
       } // end for i pixels
     } else {
       // if 16 bpp
