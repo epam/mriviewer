@@ -85,6 +85,53 @@ describe('LoaderNiftiTests', () => {
     expect(volDst.m_dataArray[interiorIndex]).toBeGreaterThan(200);
   });
 
+  it('loads a real pre-fix self-saved file (header vox_offset = 352 but data physically at 348, 4-byte-short buffer)', () => {
+    const x = 4;
+    const y = 4;
+    const z = 4;
+    const numVoxels = x * y * z;
+    const PHYSICAL_DATA_OFF = 348;
+    const bufLen = PHYSICAL_DATA_OFF + numVoxels;
+    const arrBuf = new ArrayBuffer(bufLen);
+    const view = new DataView(arrBuf);
+    const bytes = new Uint8Array(arrBuf);
+
+    view.setInt32(0, HEADER_SIZE, true);
+    view.setInt16(40, 3, true);
+    view.setInt16(42, x, true);
+    view.setInt16(44, y, true);
+    view.setInt16(46, z, true);
+    view.setInt16(70, NIFTI_DATA_TYPE_UINT8, true);
+    view.setInt16(72, 8, true);
+    view.setFloat32(80, 1.0, true);
+    view.setFloat32(84, 1.0, true);
+    view.setFloat32(88, 1.0, true);
+    view.setFloat32(VOX_OFFSET_FIELD, 352, true);
+
+    bytes[MAGIC_OFFSET + 0] = 110;
+    bytes[MAGIC_OFFSET + 1] = 43;
+    bytes[MAGIC_OFFSET + 2] = 49;
+    bytes[MAGIC_OFFSET + 3] = 0;
+
+    for (let i = 0; i < numVoxels; i++) {
+      bytes[PHYSICAL_DATA_OFF + i] = 250;
+    }
+
+    const loader = new LoaderNifti();
+    const volDst = {};
+    let completeCode = null;
+    const ok = loader.readFromBuffer(volDst, arrBuf, null, (code) => {
+      completeCode = code;
+    });
+
+    expect(ok).toBe(true);
+    expect(completeCode).toBe(LoadResult.SUCCESS);
+    expect(volDst.m_xDim).toBe(4);
+
+    const interiorIndex = 1 * 16 + 1 * 4 + 1;
+    expect(volDst.m_dataArray[interiorIndex]).toBeGreaterThan(200);
+  });
+
   it('rejects vox_offset past end of buffer with a proper error code (no crash)', () => {
     const arrBuf = buildNiftiBuffer({ x: 4, y: 4, z: 4, voxOffset: 352 });
     const view = new DataView(arrBuf);

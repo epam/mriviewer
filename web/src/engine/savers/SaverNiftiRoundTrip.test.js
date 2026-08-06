@@ -86,6 +86,7 @@ describe('SaverNiftiRoundTripTests', () => {
     const lowVoxel = volDst.m_dataArray[idx(4, 4, 5, x, y)];
 
     expect(highVoxel).toBeGreaterThan(0);
+    expect(lowVoxel).toBeGreaterThan(0);
     expect(highVoxel).toBeGreaterThanOrEqual(lowVoxel);
   });
 });
