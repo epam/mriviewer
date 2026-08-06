@@ -131,7 +131,7 @@
     display: block;
     position: absolute;
     left: 25px;
-    top: 15%;
+    top: max(15%, 7rem);
   }
 
   .bottleft {
@@ -200,7 +200,7 @@
     z-index: 11;
   }
   .left {
-    top: 8%;
+    top: max(8%, 7rem);
   }
 }
 
@@ -215,7 +215,7 @@
   }
 
   .left {
-    top: 15%;
+    top: max(15%, 7rem);
   }
 }
 
@@ -237,7 +237,7 @@
 
 @media screen and (min-width: 2560px) and (orientation: landscape) {
   .left {
-    top: 5%;
+    top: max(5%, 7rem);
   }
   .settings {
     top: 4rem;
