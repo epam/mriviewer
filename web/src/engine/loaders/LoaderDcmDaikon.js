@@ -439,7 +439,6 @@ class LoaderDcmDaikon {
       } // if 3 components in array
     } // if tag exists
 
-    // get image orientation (row / column direction cosines) to detect axis flip
     ind = daikon.Utils.dec2hex(daikon.Tag.TAG_IMAGE_ORIENTATION[0]) + daikon.Utils.dec2hex(daikon.Tag.TAG_IMAGE_ORIENTATION[1]);
     const tagImOri = image.tags[ind];
     const orientationFlip = LoaderDcmDaikon.orientationFlipFromTagValue(tagImOri !== undefined ? tagImOri.value : null);
@@ -475,7 +474,6 @@ class LoaderDcmDaikon {
       volSlice.m_image = new Uint16Array(xDim * yDim);
     }
 
-    // copy pixels (ArrayBuffer) into volSlice.m_image, applying orientation flip
     LoaderDcmDaikon.copySlicePixels(volSlice.m_image, pixels, xDim, yDim, this.m_loaderDicom.m_samplesPerPixel, orientationFlip);
     // store x, y dims
     volSlice.m_xDim = xDim;

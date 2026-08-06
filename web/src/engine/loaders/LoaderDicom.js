@@ -238,7 +238,6 @@ class LoaderDicom {
     // eslint-disable-next-line
     this.m_sliceLocMax = -1.0e12;
 
-    this.m_imageOrientation = null;
     this.m_orientationFlip = {
       x: false,
       y: false,
@@ -1385,6 +1384,11 @@ class LoaderDicom {
     this.m_bitsPerPixel = -1;
     this.m_windowCenter = -1;
     this.m_windowWidth = -1;
+    this.m_orientationFlip = {
+      x: false,
+      y: false,
+      z: false,
+    };
     let pixelBitMask = 0;
     let pixelPaddingValue = 0;
     let pixelsTagReaded = false;
@@ -1663,14 +1667,12 @@ class LoaderDicom {
         }
       }
 
-      // get important tag: image orientation (row / column direction cosines)
       if (tag.m_group === TAG_IMAGE_ORIENTATION[0] && tag.m_element === TAG_IMAGE_ORIENTATION[1] && tag.m_value !== null) {
         const dataLen = tag.m_value.byteLength;
         const dv = new DataView(tag.m_value);
         const strImageOrientation = LoaderDicom.getStringAt(dv, 0, dataLen);
         const cosines = LoaderDicom.parseDirectionCosines(strImageOrientation);
         if (cosines !== null) {
-          this.m_imageOrientation = cosines;
           this.m_orientationFlip = LoaderDicom.getOrientationFlipFlags(cosines);
           if (DEBUG_PRINT_TAGS_INFO) {
             console.log(`TAG. image orientation = ${cosines.join(', ')}`);
