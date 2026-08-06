@@ -14,7 +14,7 @@
 // ********************************************************
 
 import LoadResult from '../../LoadResult';
-import { BITS_IN_BYTE, KTX_GL_RED, KTX_UNSIGNED_BYTE, NIFTI_HEADER_SIZE } from './constants';
+import { BITS_IN_BYTE, KTX_GL_RED, KTX_UNSIGNED_BYTE, NIFTI_HEADER_SIZE, NIFTI_SPEC_MIN_DATA_OFFSET } from './constants';
 import { NiftiHeaderReader } from './NiftiHeaderReader';
 import { NiftiValidator } from './NiftiValidator';
 import { NiftiDataProcessor } from './NiftiDataProcessor';
@@ -83,7 +83,21 @@ class LoaderNifti {
 
     const { xDim, yDim, zDim } = this.volumeManager.getVolumeDimensions();
     const numVoxels = xDim * yDim * zDim;
-    const dataOff = NIFTI_HEADER_SIZE;
+
+    let dataOff = headerInfo.voxOffset;
+    if (!Number.isFinite(dataOff) || dataOff < NIFTI_HEADER_SIZE) {
+      dataOff = NIFTI_HEADER_SIZE;
+    }
+    dataOff = Math.floor(dataOff);
+    const bytesPerVoxel = headerInfo.bitPix / BITS_IN_BYTE;
+    const dataBytes = numVoxels * bytesPerVoxel;
+    if (dataOff + dataBytes > bufLen) {
+      if (dataOff <= NIFTI_SPEC_MIN_DATA_OFFSET && NIFTI_HEADER_SIZE + dataBytes <= bufLen) {
+        dataOff = NIFTI_HEADER_SIZE;
+      } else {
+        return this.validator.reportError(LoadResult.BAD_HEADER, callbackComplete, 'Nifti voxel data past end of buffer');
+      }
+    }
 
     const progressMask = this.dataProcessor.computeProgressMask(numVoxels);
     let valMax = this.dataProcessor.findMaxValue(bufBytes, headerInfo.dataType, dataOff, numVoxels, progressMask, callbackProgress);
@@ -136,9 +150,6 @@ class LoaderNifti {
       m_boxSize: this.volumeManager.getBoxSize(),
     });
 
-    console.log('DATA');
-    console.log(dataArray);
-    console.log(dataArray.slice(0, 1000));
     console.log(`Nifti header read OK. Volume pixels = ${xDim} * ${yDim} * ${zDim}`);
 
     const header = {

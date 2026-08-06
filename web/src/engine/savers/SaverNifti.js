@@ -18,6 +18,7 @@
 const IS_LITTLE_ENDIAN = true;
 
 const HEADER_SIZE = 348;
+const DATA_OFFSET = 352;
 const BYTES_PER_ELEMENT = 2;
 const SIZE_DWORD = 4;
 const SIZE_SHORT = 2;
@@ -96,7 +97,7 @@ class SaverNifti {
       console.log(`SaverNifti. bad input volume data range: [${valMin} .. ${valMax}]`);
     }
 
-    const arrBuf = new ArrayBuffer(HEADER_SIZE + volumeData.length * BYTES_PER_ELEMENT);
+    const arrBuf = new ArrayBuffer(DATA_OFFSET + volumeData.length * BYTES_PER_ELEMENT);
     const bufBytes = new Uint8Array(arrBuf);
 
     let bufOff = 0;
@@ -161,8 +162,7 @@ class SaverNifti {
     bufOff += SIZE_DWORD * 4;
 
     // voxoffset
-    const VOX_OFFSET = 352;
-    SaverNifti.writeFloatToBuffer(VOX_OFFSET, arrBuf, bufOff);
+    SaverNifti.writeFloatToBuffer(DATA_OFFSET, arrBuf, bufOff);
     bufOff += SIZE_DWORD;
 
     // sclSlope
@@ -213,7 +213,7 @@ class SaverNifti {
     for (let i = 0; i < volumeData.length; i++) {
       volDataUInt16[i] = Math.round(volumeData[i] * scaleTo16Bit);
     }
-    const bufBytes16 = new Uint16Array(arrBuf, bufOff);
+    const bufBytes16 = new Uint16Array(arrBuf, DATA_OFFSET);
     bufBytes16.set(volDataUInt16);
 
     return arrBuf;
