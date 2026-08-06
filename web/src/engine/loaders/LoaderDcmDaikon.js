@@ -419,11 +419,27 @@ class LoaderDcmDaikon {
     this.m_loaderDicom.m_slicesVolume.addSlice(volSlice);
 
     // check correct read image
-    const pixels = image.getRawData();
+    // daikon auto-decompresses compressed pixel data (JPEG / JPEG2000 / JPEG-LS / RLE)
+    // inside getRawData(); undecodable or truncated data throws here.
+    let pixels = null;
+    try {
+      pixels = image.getRawData();
+    } catch (err) {
+      console.log('Error decompress Dicom pixel data via Diakon parser');
+      return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
+    }
+    if (pixels === undefined || pixels === null) {
+      return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
+    }
     const numBytesPixelsRead = pixels.byteLength;
     const VAL_8 = 8;
-    const numBytesPixelsExpected = xDim * yDim * Math.floor(bits / VAL_8) * this.m_loaderDicom.m_samplesPerPixel;
-    if (numBytesPixelsRead !== numBytesPixelsExpected) {
+    const bytesPerSample = Math.max(1, Math.floor(bits / VAL_8));
+    // Accept daikon's already-decompressed buffer: its length can be larger than
+    // the naive expectation (bitsAllocated rounding, planar/interleaved expansion,
+    // multiframe or padding). Bail only when there is not even enough data to fill
+    // one plane of pixels for the declared samples-per-pixel.
+    const numBytesPixelsExpected = xDim * yDim * bytesPerSample * this.m_loaderDicom.m_samplesPerPixel;
+    if (numBytesPixelsRead < numBytesPixelsExpected) {
       console.log('Error read Dicom via Diakon parser');
       return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
     }

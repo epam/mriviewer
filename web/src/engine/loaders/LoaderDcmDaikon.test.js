@@ -16,6 +16,7 @@ import LoadResult from '../LoadResult';
 // ********************************************************
 
 const TRANSFER_SYNTAX_EXPLICIT_LITTLE = '1.2.840.10008.1.2.1';
+const TRANSFER_SYNTAX_COMPRESSION_RLE = '1.2.840.10008.1.2.5';
 
 const concatBytes = (arrays) => {
   const total = arrays.reduce((sum, a) => sum + a.length, 0);
@@ -132,6 +133,145 @@ const buildDicomBuffer = ({
   return all.buffer.slice(all.byteOffset, all.byteOffset + all.byteLength);
 };
 
+// Encode a byte array as a DICOM RLE segment using literal runs only.
+const rleEncodeLiteralSegment = (bytes) => {
+  const out = [];
+  let i = 0;
+  const MAX_RUN = 128;
+  while (i < bytes.length) {
+    const n = Math.min(MAX_RUN, bytes.length - i);
+    out.push(n - 1);
+    for (let k = 0; k < n; k++) {
+      out.push(bytes[i + k] & 0xff);
+    }
+    i += n;
+  }
+  return out;
+};
+
+// Build a single-frame DICOM RLE fragment (64-byte header + segments).
+const buildRleFragment = (pixels, bitsAllocated, samplesPerPixel) => {
+  const segments = [];
+  if (samplesPerPixel === 3) {
+    for (let c = 0; c < 3; c++) {
+      const plane = [];
+      for (let i = 0; i < pixels.length / 3; i++) {
+        plane.push(pixels[i * 3 + c] & 0xff);
+      }
+      segments.push(plane);
+    }
+  } else if (bitsAllocated === 16) {
+    const high = [];
+    const low = [];
+    for (let i = 0; i < pixels.length; i++) {
+      high.push((pixels[i] >> 8) & 0xff);
+      low.push(pixels[i] & 0xff);
+    }
+    segments.push(high);
+    segments.push(low);
+  } else {
+    segments.push(pixels.map((v) => v & 0xff));
+  }
+
+  const numSegments = segments.length;
+  const HEADER_SIZE = 64;
+  const encodedSegments = segments.map((s) => rleEncodeLiteralSegment(s));
+
+  const offsets = [];
+  let running = HEADER_SIZE;
+  for (let s = 0; s < numSegments; s++) {
+    offsets.push(running);
+    running += encodedSegments[s].length;
+  }
+
+  const header = new Uint8Array(HEADER_SIZE);
+  const hv = new DataView(header.buffer);
+  hv.setUint32(0, numSegments, true);
+  for (let s = 0; s < numSegments; s++) {
+    hv.setUint32(4 + s * 4, offsets[s], true);
+  }
+
+  const parts = [header];
+  for (let s = 0; s < numSegments; s++) {
+    parts.push(Uint8Array.from(encodedSegments[s]));
+  }
+  let fragment = concatBytes(parts);
+  if (fragment.length % 2 !== 0) {
+    fragment = concatBytes([fragment, new Uint8Array([0])]);
+  }
+  return fragment;
+};
+
+// group,element,length(u32),value — encapsulation item (FFFE,E000 / E0DD)
+const encapItem = (group, element, valueBytes) => {
+  const head = new Uint8Array(8);
+  const dv = new DataView(head.buffer);
+  dv.setUint16(0, group, true);
+  dv.setUint16(2, element, true);
+  dv.setUint32(4, valueBytes ? valueBytes.length >>> 0 : 0, true);
+  return valueBytes ? concatBytes([head, valueBytes]) : head;
+};
+
+//
+// Synthesize a minimal RLE-encapsulated explicit-VR little-endian DICOM buffer.
+//
+const buildRleDicomBuffer = ({
+  rows,
+  cols,
+  bitsAllocated = 16,
+  samplesPerPixel = 1,
+  pixelRepresentation = 0,
+  photometric = samplesPerPixel === 3 ? 'RGB' : 'MONOCHROME2',
+  pixels,
+}) => {
+  const preamble = new Uint8Array(128);
+  const dicm = new Uint8Array([0x44, 0x49, 0x43, 0x4d]);
+
+  const tsBytes = uiBytes(TRANSFER_SYNTAX_COMPRESSION_RLE);
+  const metaTs = elementShort(0x0002, 0x0010, 'UI', tsBytes);
+  const metaLenTag = elementShort(0x0002, 0x0000, 'UL', ulBytes(metaTs.length));
+
+  const highBit = bitsAllocated - 1;
+  const dataset = [
+    elementShort(0x0028, 0x0002, 'US', usBytes(samplesPerPixel)),
+    elementShort(0x0028, 0x0004, 'CS', csBytes(photometric)),
+    elementShort(0x0028, 0x0010, 'US', usBytes(rows)),
+    elementShort(0x0028, 0x0011, 'US', usBytes(cols)),
+    elementShort(0x0028, 0x0100, 'US', usBytes(bitsAllocated)),
+    elementShort(0x0028, 0x0101, 'US', usBytes(bitsAllocated)),
+    elementShort(0x0028, 0x0102, 'US', usBytes(highBit)),
+    elementShort(0x0028, 0x0103, 'US', usBytes(pixelRepresentation)),
+  ];
+
+  const fragment = buildRleFragment(pixels, bitsAllocated, samplesPerPixel);
+
+  // Pixel Data (7FE0,0010) OB, undefined length (encapsulated)
+  const pdHead = new Uint8Array(12);
+  const pdv = new DataView(pdHead.buffer);
+  pdv.setUint16(0, 0x7fe0, true);
+  pdv.setUint16(2, 0x0010, true);
+  pdHead[4] = 'O'.charCodeAt(0);
+  pdHead[5] = 'B'.charCodeAt(0);
+  pdv.setUint32(8, 0xffffffff, true);
+
+  const offsetTableItem = encapItem(0xfffe, 0xe000, null);
+  const fragmentItem = encapItem(0xfffe, 0xe000, fragment);
+  const seqDelim = encapItem(0xfffe, 0xe0dd, null);
+
+  const all = concatBytes([
+    preamble,
+    dicm,
+    metaLenTag,
+    metaTs,
+    ...dataset,
+    pdHead,
+    offsetTableItem,
+    fragmentItem,
+    seqDelim,
+  ]);
+  return all.buffer.slice(all.byteOffset, all.byteOffset + all.byteLength);
+};
+
 // ********************************************************
 // Tests
 // ********************************************************
@@ -169,4 +309,60 @@ describe('LoaderDcmDaikon uncompressed baseline', () => {
   });
 });
 
-export { buildDicomBuffer };
+describe('LoaderDcmDaikon RLE-compressed', () => {
+  it('loads a minimal RLE-encapsulated 16-bit grayscale DICOM slice', () => {
+    const COLS = 4;
+    const ROWS = 3;
+    const pixels = [];
+    for (let i = 0; i < ROWS * COLS; i++) {
+      pixels.push((i * 257) & 0x0fff);
+    }
+    const arrBuf = buildRleDicomBuffer({ rows: ROWS, cols: COLS, pixels });
+
+    const loader = new LoaderDicom(1);
+    const daikonLoader = new LoaderDcmDaikon();
+    const ret = daikonLoader.readSlice(loader, 0, 'rle.dcm', arrBuf);
+
+    expect(ret).toBe(LoadResult.SUCCESS);
+    expect(loader.m_xDim).toBe(COLS);
+    expect(loader.m_yDim).toBe(ROWS);
+
+    const series = loader.m_slicesVolume.getSeries();
+    expect(series.length).toBe(1);
+    const slices = series[0].m_slices;
+    expect(slices.length).toBe(1);
+    const slice = slices[0];
+    expect(slice.m_image).not.toBeNull();
+    expect(slice.m_image.length).toBe(ROWS * COLS);
+    let nonZero = 0;
+    for (let i = 0; i < ROWS * COLS; i++) {
+      expect(slice.m_image[i]).toBe(pixels[i]);
+      if (slice.m_image[i] !== 0) {
+        nonZero++;
+      }
+    }
+    expect(nonZero).toBeGreaterThan(0);
+  });
+
+  it('fails gracefully (no crash) on a truncated/garbage compressed buffer', () => {
+    const COLS = 4;
+    const ROWS = 3;
+    const pixels = [];
+    for (let i = 0; i < ROWS * COLS; i++) {
+      pixels.push((i * 257) & 0x0fff);
+    }
+    const arrBuf = buildRleDicomBuffer({ rows: ROWS, cols: COLS, pixels });
+    // truncate the buffer mid-fragment to corrupt the encapsulated pixel data
+    const truncated = arrBuf.slice(0, arrBuf.byteLength - 30);
+
+    const loader = new LoaderDicom(1);
+    const daikonLoader = new LoaderDcmDaikon();
+    let ret;
+    expect(() => {
+      ret = daikonLoader.readSlice(loader, 0, 'bad.dcm', truncated);
+    }).not.toThrow();
+    expect(ret).not.toBe(LoadResult.SUCCESS);
+  });
+});
+
+export { buildDicomBuffer, buildRleDicomBuffer };
