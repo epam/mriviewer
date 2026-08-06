@@ -2,8 +2,12 @@ name: Playwright Tests
 on:
   push:
     branches: [ develop, master ]
+    paths:
+      - 'web/**'
   pull_request:
     branches: [ develop, master ]
+    paths:
+      - 'web/**'
 jobs:
   test:
     timeout-minutes: 20
