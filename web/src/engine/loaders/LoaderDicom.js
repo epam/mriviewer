@@ -72,6 +72,7 @@ const TAG_RESCALE_TYPE = [0x0028, 0x1054];
 const TAG_PIXEL_REPRESENTATION = [0x0028, 0x0103];
 
 const TAG_IMAGE_POSITION = [0x0020, 0x0032];
+const TAG_IMAGE_ORIENTATION = [0x0020, 0x0037];
 const TAG_SLICE_LOCATION = [0x0020, 0x1041];
 const TAG_SAMPLES_PER_PIXEL = [0x0028, 0x0002];
 const TAG_SERIES_DESCRIPTION = [0x0008, 0x103e];
@@ -236,6 +237,13 @@ class LoaderDicom {
     this.m_sliceLocMin = +1.0e12;
     // eslint-disable-next-line
     this.m_sliceLocMax = -1.0e12;
+
+    this.m_imageOrientation = null;
+    this.m_orientationFlip = {
+      x: false,
+      y: false,
+      z: false,
+    };
   }
   getBoxSize() {
     return this.m_boxSize;
@@ -857,6 +865,36 @@ class LoaderDicom {
       }
     }
     return str;
+  }
+  static parseDirectionCosines(strValue) {
+    if (typeof strValue !== 'string') {
+      return null;
+    }
+    const strArr = strValue.split('\\');
+    const NUM_COMPONENTS_6 = 6;
+    if (strArr.length !== NUM_COMPONENTS_6) {
+      return null;
+    }
+    const cosines = strArr.map((str) => parseFloat(str));
+    if (cosines.some((val) => Number.isNaN(val))) {
+      return null;
+    }
+    return cosines;
+  }
+  static getOrientationFlipFlags(cosines) {
+    const flip = {
+      x: false,
+      y: false,
+      z: false,
+    };
+    if (cosines === null || cosines.length < 6) {
+      return flip;
+    }
+    const ROW_X = 0;
+    const COL_Y = 4;
+    flip.x = cosines[ROW_X] < 0.0;
+    flip.y = cosines[COL_Y] < 0.0;
+    return flip;
   }
   static getUtf8StringAt(dataView, offset, lengthBuf) {
     let str = '';
@@ -1607,6 +1645,21 @@ class LoaderDicom {
           this.m_imagePosMax.z = zPos > this.m_imagePosMax.z ? zPos : this.m_imagePosMax.z;
           if (DEBUG_PRINT_TAGS_INFO) {
             console.log(`TAG. image position x,y,z = ${xPos}, ${yPos}, ${zPos}`);
+          }
+        }
+      }
+
+      // get important tag: image orientation (row / column direction cosines)
+      if (tag.m_group === TAG_IMAGE_ORIENTATION[0] && tag.m_element === TAG_IMAGE_ORIENTATION[1] && tag.m_value !== null) {
+        const dataLen = tag.m_value.byteLength;
+        const dv = new DataView(tag.m_value);
+        const strImageOrientation = LoaderDicom.getStringAt(dv, 0, dataLen);
+        const cosines = LoaderDicom.parseDirectionCosines(strImageOrientation);
+        if (cosines !== null) {
+          this.m_imageOrientation = cosines;
+          this.m_orientationFlip = LoaderDicom.getOrientationFlipFlags(cosines);
+          if (DEBUG_PRINT_TAGS_INFO) {
+            console.log(`TAG. image orientation = ${cosines.join(', ')}`);
           }
         }
       }
