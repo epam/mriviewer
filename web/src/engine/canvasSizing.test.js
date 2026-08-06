@@ -108,4 +108,45 @@ describe('computeCanvasLayout', () => {
       expect(Number.isInteger(layout.backingH)).toBe(true);
     });
   });
+
+  describe('dest rect + offsets (Graphics2d renderReadyImage blit)', () => {
+    it('draws a non-square (wide) image without distortion inside a square container', () => {
+      const imageAspect = 16 / 9;
+      const layout = computeCanvasLayout(600, 600, imageAspect, 1, 1);
+      expect(layout.drawW / layout.drawH).toBeCloseTo(imageAspect);
+      expect(layout.drawW).toBeCloseTo(600);
+      expect(layout.drawH).toBeCloseTo(600 / imageAspect);
+      expect(layout.offsetX).toBeCloseTo(0);
+      expect(layout.offsetY).toBeCloseTo((600 - layout.drawH) / 2);
+    });
+
+    it('draws a non-square (tall) image without distortion inside a square container', () => {
+      const imageAspect = 9 / 16;
+      const layout = computeCanvasLayout(600, 600, imageAspect, 1, 1);
+      expect(layout.drawW / layout.drawH).toBeCloseTo(imageAspect);
+      expect(layout.drawH).toBeCloseTo(600);
+      expect(layout.drawW).toBeCloseTo(600 * imageAspect);
+      expect(layout.offsetY).toBeCloseTo(0);
+      expect(layout.offsetX).toBeCloseTo((600 - layout.drawW) / 2);
+    });
+
+    it('keeps the dest rect centered within the DPR-scaled backing store', () => {
+      const imageAspect = 2;
+      const layout = computeCanvasLayout(500, 400, imageAspect, 2, 1);
+      expect(layout.offsetX).toBeCloseTo((layout.backingW - layout.drawW) / 2);
+      expect(layout.offsetY).toBeCloseTo((layout.backingH - layout.drawH) / 2);
+      expect(layout.drawW / layout.drawH).toBeCloseTo(imageAspect);
+    });
+
+    it('scales the dest rect by zoom while preserving aspect and centering', () => {
+      const imageAspect = 4 / 3;
+      const base = computeCanvasLayout(800, 600, imageAspect, 1, 1);
+      const zoomed = computeCanvasLayout(800, 600, imageAspect, 1, 1.5);
+      expect(zoomed.drawW).toBeCloseTo(base.drawW * 1.5);
+      expect(zoomed.drawH).toBeCloseTo(base.drawH * 1.5);
+      expect(zoomed.drawW / zoomed.drawH).toBeCloseTo(imageAspect);
+      expect(zoomed.offsetX).toBeCloseTo((zoomed.backingW - zoomed.drawW) / 2);
+      expect(zoomed.offsetY).toBeCloseTo((zoomed.backingH - zoomed.drawH) / 2);
+    });
+  });
 });
