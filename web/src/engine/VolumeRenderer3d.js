@@ -5,6 +5,8 @@
 import * as THREE from 'three';
 
 import GlSelector from './GlSelector';
+import { detect3dCapabilities } from './gl/detect3dCapabilities';
+import { decide3dCapabilityGate } from './gl/gate3dCapability';
 import OrbitControl from './orbitcontrol';
 import MaterialBF from './gfx/matbackface';
 import MaterialFF from './gfx/matfrontface';
@@ -114,7 +116,10 @@ export default class VolumeRenderer3d {
     // this.canvas3d = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
     const glSelector = new GlSelector();
     this.context = glSelector.createWebGLContext();
-    this.isWebGL2 = glSelector.useWebGL2();
+    this.capabilities = detect3dCapabilities(this.context);
+    this.capabilityGate = decide3dCapabilityGate(this.capabilities);
+    this.isWebGL2 = this.capabilityGate.isWebGL2;
+    this.renderErrorReason = this.capabilityGate.error;
     this.canvas3d = glSelector.getCanvas();
     this.renderer = new THREE.WebGLRenderer({
       antialias: false,
@@ -801,7 +806,16 @@ export default class VolumeRenderer3d {
    * @param (object) nonEmptyBoxMin - Min corner for non empty box in volume
    * @param (bool) isRoiVolume) - is roi volume
    */
+  getRenderErrorReason() {
+    return this.renderErrorReason;
+  }
+
   initWithVolume(volume, box, nonEmptyBoxMin, nonEmptyBoxMax, isRoiVolume, isFULL3D) {
+    if (!this.capabilityGate || !this.capabilityGate.proceed) {
+      this.renderErrorReason = this.capabilityGate ? this.capabilityGate.error : decide3dCapabilityGate(null).error;
+      console.log(`3D render blocked: missing capability (${this.renderErrorReason})`);
+      return;
+    }
     let sideMax = box.x > box.y ? box.x : box.y;
     sideMax = box.z > sideMax ? box.z : sideMax;
     this.vBoxVirt.x = box.x / sideMax;
