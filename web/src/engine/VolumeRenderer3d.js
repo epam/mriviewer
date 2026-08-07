@@ -982,6 +982,7 @@ export default class VolumeRenderer3d {
     } else {
       console.log('cant create float texture');
       this.renderErrorReason = RENDER_ERROR.COLOR_BUFFER_FLOAT;
+      return;
     }
 
     this.createClipPlaneGeometry();
