@@ -17,8 +17,12 @@ describe('render3dErrorMessage', () => {
     expect(render3dErrorMessage(RENDER_ERROR.COLOR_BUFFER_FLOAT)).toMatch(/float color buffer/i);
   });
 
-  it('maps the shader reason to a shader-failure message', () => {
-    expect(render3dErrorMessage(RENDER_ERROR.SHADER)).toMatch(/shader/i);
+  it('maps the shader reason to the exact shader-failure message', () => {
+    expect(render3dErrorMessage(RENDER_ERROR.SHADER)).toBe('3D shaders failed to load.');
+  });
+
+  it('maps the framebuffer reason to the exact framebuffer message', () => {
+    expect(render3dErrorMessage(RENDER_ERROR.FRAMEBUFFER)).toBe('3D render target (framebuffer) is incomplete.');
   });
 
   it('falls back to a generic message for an unknown reason', () => {

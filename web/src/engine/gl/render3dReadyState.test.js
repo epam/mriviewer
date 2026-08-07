@@ -29,6 +29,11 @@ describe('evaluateReadyState', () => {
     const r = evaluateReadyState({ ...base, materialsReady: false, elapsedMs: SCENE_READY_TIMEOUT_MS + 1 });
     expect(r).toEqual({ ready: false, timedOut: true, error: RENDER_ERROR.SHADER });
   });
+
+  it('does not time out when timing is not numeric (never surfaces a false shader error)', () => {
+    const r = evaluateReadyState({ ...base, readyCounter: 3, elapsedMs: undefined, timeoutMs: undefined });
+    expect(r).toEqual({ ready: false, timedOut: false, error: RENDER_ERROR.NONE });
+  });
 });
 
 describe('mapFramebufferStatus', () => {

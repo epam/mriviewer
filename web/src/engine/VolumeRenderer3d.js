@@ -850,6 +850,8 @@ export default class VolumeRenderer3d {
     this.renderScene = SCENE_TYPE_RAYCAST;
     this.sceneReadyCounter = 0;
     this.sceneReadyStartTime = Date.now();
+    this.renderErrorReason = null;
+    this.checkFrameBufferMode = CHECK_MODE_NOT_CHECKED;
     this.renderCounter = 0;
     let matBfThreeGS = null;
     let matFfThreeGS = null;
@@ -1319,6 +1321,9 @@ export default class VolumeRenderer3d {
     if (!this.isReadyToRender()) {
       this.evaluateReadyTimeout();
       return;
+    }
+    if (this.renderErrorReason === RENDER_ERROR.SHADER) {
+      this.renderErrorReason = null;
     }
     const matReady = this.matVolumeRender !== null && this.matBF !== null && this.matFF !== null && this.matRenderToTexture !== null;
     if (!matReady) {

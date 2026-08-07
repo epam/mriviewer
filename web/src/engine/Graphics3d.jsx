@@ -23,6 +23,7 @@ class Graphics3d extends React.Component {
     this.stop = this.stop.bind(this);
     this.animate = this.animate.bind(this);
     this.renderScene = this.renderScene.bind(this);
+    this.syncRenderError = this.syncRenderError.bind(this);
     this.setVolRenderToStore = this.setVolRenderToStore.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
@@ -90,7 +91,17 @@ class Graphics3d extends React.Component {
     this.m_material.wireframe = (this.m_mode3d === Modes3d.ISO);*/
 
     this.renderScene();
+    this.syncRenderError();
     this.m_frameId = window.requestAnimationFrame(this.animate);
+  }
+
+  syncRenderError() {
+    if (this.m_volumeRenderer3D !== null && typeof this.m_volumeRenderer3D.getRenderErrorReason === 'function') {
+      const reason = this.m_volumeRenderer3D.getRenderErrorReason() || null;
+      if (reason !== this.state.renderError) {
+        this.setState({ renderError: reason });
+      }
+    }
   }
 
   renderScene() {

@@ -51,9 +51,10 @@ renderer only wires them into the existing flow.
   context and returns `{ webgl2, colorBufferFloat, reason }`. Pure; testable with
   stub `gl` objects.
 - **`gate3dCapability.js`** — `decide3dCapabilityGate(caps)` turns detected
-  capabilities into a decision `{ proceed, isWebGL2, error }`. This value replaces
-  the former hardcoded `volumeFilter3d.js` `isWebGL2 = 1`, so `isWebGL2` now
-  reflects the real context.
+  capabilities into a decision `{ proceed, isWebGL2, error }`. The gate's
+  `isWebGL2` replaces `glSelector.useWebGL2()` in `VolumeRenderer3d.js`. Separately,
+  `volumeFilter3d.js`'s former hardcoded `isWebGL2 = 1` is now derived from
+  `isWebGL2Context(context)`, so both paths reflect the real context.
 - **`render3dReadyState.js`** — `evaluateReadyState(...)` detects a stuck
   `sceneReadyCounter` (async shader compile never completed) via a
   `SCENE_READY_TIMEOUT_MS` timeout and surfaces `shader`;
