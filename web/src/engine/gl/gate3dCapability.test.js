@@ -1,11 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { decide3dCapabilityGate, gate3dCapabilityFromGl, RENDER_ERROR } from './gate3dCapability';
 
-function makeWebGL2(extPresent) {
+function makeWebGL2(extPresent, floatLinearPresent = extPresent) {
   return {
     texImage3D() {},
     getExtension(name) {
       if (name === 'EXT_color_buffer_float' && extPresent) {
+        return {};
+      }
+      if (name === 'OES_texture_float_linear' && floatLinearPresent) {
         return {};
       }
       return null;
@@ -22,9 +25,21 @@ function makeWebGL1() {
 }
 
 describe('decide3dCapabilityGate', () => {
-  it('proceeds on full WebGL2 + float color buffer capability', () => {
-    const gate = decide3dCapabilityGate({ webgl2: true, colorBufferFloat: true, reason: RENDER_ERROR.NONE });
+  it('proceeds on full WebGL2 + float color buffer + float-linear capability', () => {
+    const gate = decide3dCapabilityGate({ webgl2: true, colorBufferFloat: true, floatLinear: true, reason: RENDER_ERROR.NONE });
     expect(gate).toEqual({ proceed: true, isWebGL2: 1, error: RENDER_ERROR.NONE });
+  });
+
+  it('blocks and reports floatLinear when float-linear filtering is missing', () => {
+    const gate = decide3dCapabilityGate({
+      webgl2: true,
+      colorBufferFloat: true,
+      floatLinear: false,
+      reason: RENDER_ERROR.FLOAT_LINEAR,
+    });
+    expect(gate.proceed).toBe(false);
+    expect(gate.isWebGL2).toBe(1);
+    expect(gate.error).toBe(RENDER_ERROR.FLOAT_LINEAR);
   });
 
   it('blocks and reports webgl2 when the context is not WebGL2', () => {
@@ -63,6 +78,12 @@ describe('gate3dCapabilityFromGl', () => {
     const gate = gate3dCapabilityFromGl(makeWebGL2(false));
     expect(gate.proceed).toBe(false);
     expect(gate.error).toBe(RENDER_ERROR.COLOR_BUFFER_FLOAT);
+  });
+
+  it('blocks a WebGL2 context lacking OES_texture_float_linear', () => {
+    const gate = gate3dCapabilityFromGl(makeWebGL2(true, false));
+    expect(gate.proceed).toBe(false);
+    expect(gate.error).toBe(RENDER_ERROR.FLOAT_LINEAR);
   });
 
   it('blocks a null context', () => {

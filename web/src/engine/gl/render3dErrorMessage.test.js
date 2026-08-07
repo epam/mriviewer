@@ -17,6 +17,10 @@ describe('render3dErrorMessage', () => {
     expect(render3dErrorMessage(RENDER_ERROR.COLOR_BUFFER_FLOAT)).toMatch(/float color buffer/i);
   });
 
+  it('maps the floatLinear reason to a float-linear filtering message', () => {
+    expect(render3dErrorMessage(RENDER_ERROR.FLOAT_LINEAR)).toMatch(/OES_texture_float_linear/);
+  });
+
   it('maps the shader reason to the exact shader-failure message', () => {
     expect(render3dErrorMessage(RENDER_ERROR.SHADER)).toBe('3D shaders failed to load.');
   });

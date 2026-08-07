@@ -18,6 +18,7 @@ into `THREE.FloatType` render targets. Both need a fully-featured WebGL2 context
 |---|---|
 | **WebGL2 context** | `DataTexture3D` / `texImage3D` is WebGL2-only. WebGL1 cannot upload the volume texture. |
 | **`EXT_color_buffer_float`** | Float render targets (front/back face position buffers) require this extension to be color-renderable. |
+| **`OES_texture_float_linear`** | The float front/back-face targets are sampled with `LinearFilter` (`texture2D`) inside the ray-casting shaders; without this extension WebGL2 treats the RGBA32F textures as incomplete and samples them as black — a silent black volume. |
 | **Shaders compile & link** | The scene becomes ready only after the ray-casting materials finish async compile. |
 | **Complete framebuffer** | The offscreen render targets must report `FRAMEBUFFER_COMPLETE`. |
 
@@ -36,6 +37,7 @@ as an overlay in `Graphics3d.jsx` instead of a black canvas.
 |---|---|---|
 | `webgl2` | Context is not WebGL2 (WebGL1 fallback, or no context) | *3D rendering requires WebGL2, which is not available in this browser.* |
 | `colorBufferFloat` | WebGL2 present but `EXT_color_buffer_float` missing | *3D rendering requires float color buffer support (EXT_color_buffer_float), which is unavailable on this device.* |
+| `floatLinear` | WebGL2 + `EXT_color_buffer_float` present but `OES_texture_float_linear` missing | *3D rendering requires linear filtering of float textures (OES_texture_float_linear), which is unavailable on this device.* |
 | `shader` | Scene never reaches ready state within the timeout (shader compile/link failed) | *3D shaders failed to load.* |
 | `framebuffer` | Render target reports an incomplete framebuffer | *3D render target (framebuffer) is incomplete.* |
 | `null` (`NONE`) | Everything OK — normal render | *(no overlay)* |
@@ -48,7 +50,7 @@ The logic lives in pure, unit-tested helpers under `web/src/engine/gl/`; the
 renderer only wires them into the existing flow.
 
 - **`detect3dCapabilities.js`** — `detect3dCapabilities(gl)` inspects the live
-  context and returns `{ webgl2, colorBufferFloat, reason }`. Pure; testable with
+  context and returns `{ webgl2, colorBufferFloat, floatLinear, reason }`. Pure; testable with
   stub `gl` objects.
 - **`gate3dCapability.js`** — `decide3dCapabilityGate(caps)` turns detected
   capabilities into a decision `{ proceed, isWebGL2, error }`. The gate's

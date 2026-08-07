@@ -4,6 +4,7 @@ export const RENDER_ERROR = {
   NONE: CAP_REASON.OK,
   WEBGL2: CAP_REASON.WEBGL2,
   COLOR_BUFFER_FLOAT: CAP_REASON.COLOR_BUFFER_FLOAT,
+  FLOAT_LINEAR: CAP_REASON.FLOAT_LINEAR,
   SHADER: 'shader',
   FRAMEBUFFER: 'framebuffer',
 };
@@ -14,6 +15,9 @@ export function decide3dCapabilityGate(caps) {
   }
   if (caps.colorBufferFloat !== true) {
     return { proceed: false, isWebGL2: 1, error: RENDER_ERROR.COLOR_BUFFER_FLOAT };
+  }
+  if (caps.floatLinear !== true) {
+    return { proceed: false, isWebGL2: 1, error: RENDER_ERROR.FLOAT_LINEAR };
   }
   return { proceed: true, isWebGL2: 1, error: RENDER_ERROR.NONE };
 }

@@ -1,11 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { detect3dCapabilities, isWebGL2Context, hasColorBufferFloat, CAP_REASON } from './detect3dCapabilities';
+import { detect3dCapabilities, isWebGL2Context, hasColorBufferFloat, hasFloatLinear, CAP_REASON } from './detect3dCapabilities';
 
-function makeWebGL2(extPresent) {
+function makeWebGL2(extPresent, floatLinearPresent = extPresent) {
   return {
     texImage3D() {},
     getExtension(name) {
       if (name === 'EXT_color_buffer_float' && extPresent) {
+        return {};
+      }
+      if (name === 'OES_texture_float_linear' && floatLinearPresent) {
         return {};
       }
       return null;
@@ -22,9 +25,17 @@ function makeWebGL1() {
 }
 
 describe('detect3dCapabilities', () => {
-  it('reports ok for WebGL2 with EXT_color_buffer_float', () => {
+  it('reports ok for WebGL2 with EXT_color_buffer_float and OES_texture_float_linear', () => {
     const caps = detect3dCapabilities(makeWebGL2(true));
-    expect(caps).toEqual({ webgl2: true, colorBufferFloat: true, reason: CAP_REASON.OK });
+    expect(caps).toEqual({ webgl2: true, colorBufferFloat: true, floatLinear: true, reason: CAP_REASON.OK });
+  });
+
+  it('reports floatLinear reason for WebGL2 with color buffer float but no float-linear filtering', () => {
+    const caps = detect3dCapabilities(makeWebGL2(true, false));
+    expect(caps.webgl2).toBe(true);
+    expect(caps.colorBufferFloat).toBe(true);
+    expect(caps.floatLinear).toBe(false);
+    expect(caps.reason).toBe('floatLinear');
   });
 
   it('reports webgl2 reason for a WebGL1 context', () => {
@@ -57,5 +68,11 @@ describe('detect3dCapabilities', () => {
     expect(hasColorBufferFloat(makeWebGL2(true))).toBe(true);
     expect(hasColorBufferFloat(makeWebGL2(false))).toBe(false);
     expect(hasColorBufferFloat(null)).toBe(false);
+  });
+
+  it('hasFloatLinear reflects the extension presence', () => {
+    expect(hasFloatLinear(makeWebGL2(true, true))).toBe(true);
+    expect(hasFloatLinear(makeWebGL2(true, false))).toBe(false);
+    expect(hasFloatLinear(null)).toBe(false);
   });
 });
