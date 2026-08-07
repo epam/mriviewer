@@ -4,6 +4,7 @@ export const RENDER_ERROR = {
   NONE: CAP_REASON.OK,
   WEBGL2: CAP_REASON.WEBGL2,
   COLOR_BUFFER_FLOAT: CAP_REASON.COLOR_BUFFER_FLOAT,
+  SHADER: 'shader',
 };
 
 export function decide3dCapabilityGate(caps) {

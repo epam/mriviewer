@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import GlSelector from './GlSelector';
 import { detect3dCapabilities } from './gl/detect3dCapabilities';
-import { decide3dCapabilityGate } from './gl/gate3dCapability';
+import { decide3dCapabilityGate, RENDER_ERROR } from './gl/gate3dCapability';
 import OrbitControl from './orbitcontrol';
 import MaterialBF from './gfx/matbackface';
 import MaterialFF from './gfx/matfrontface';
@@ -975,6 +975,7 @@ export default class VolumeRenderer3d {
       this.bufferRenderToTextureCPU = new Float32Array(VAL_4 * this.xSmallTexSize * this.ySmallTexSize);
     } else {
       console.log('cant create float texture');
+      this.renderErrorReason = RENDER_ERROR.COLOR_BUFFER_FLOAT;
     }
 
     this.createClipPlaneGeometry();
