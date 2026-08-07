@@ -5,6 +5,9 @@
 import * as THREE from 'three';
 
 import GlSelector from './GlSelector';
+import { detect3dCapabilities } from './gl/detect3dCapabilities';
+import { decide3dCapabilityGate, RENDER_ERROR } from './gl/gate3dCapability';
+import { evaluateReadyState, mapFramebufferStatus, SCENE_READY_TIMEOUT_MS } from './gl/render3dReadyState';
 import OrbitControl from './orbitcontrol';
 import MaterialBF from './gfx/matbackface';
 import MaterialFF from './gfx/matfrontface';
@@ -44,6 +47,7 @@ const OPACITY_SCALE = 175.0;
 // Special values to check frame buffer
 const CHECK_MODE_NOT_CHECKED = 0;
 const CHECK_MODE_RESULT_OK = 1;
+const CHECK_MODE_RESULT_FAIL = 2;
 
 // When scene is ready (how much materials are created via arrow functions)
 const SCENE_READY_COUNTER_OK = 5;
@@ -63,6 +67,7 @@ export default class VolumeRenderer3d {
   constructor(props) {
     this.curFileDataType = props.curFileDataType;
     this.sceneReadyCounter = 0;
+    this.sceneReadyStartTime = null;
     this.renderCounter = 0;
     this.scene = new THREE.Scene();
     this.sceneClipPlane = new THREE.Scene();
@@ -114,7 +119,10 @@ export default class VolumeRenderer3d {
     // this.canvas3d = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
     const glSelector = new GlSelector();
     this.context = glSelector.createWebGLContext();
-    this.isWebGL2 = glSelector.useWebGL2();
+    this.capabilities = detect3dCapabilities(this.context);
+    this.capabilityGate = decide3dCapabilityGate(this.capabilities);
+    this.isWebGL2 = this.capabilityGate.isWebGL2;
+    this.renderErrorReason = this.capabilityGate.error;
     this.canvas3d = glSelector.getCanvas();
     this.renderer = new THREE.WebGLRenderer({
       antialias: false,
@@ -801,7 +809,16 @@ export default class VolumeRenderer3d {
    * @param (object) nonEmptyBoxMin - Min corner for non empty box in volume
    * @param (bool) isRoiVolume) - is roi volume
    */
+  getRenderErrorReason() {
+    return this.renderErrorReason;
+  }
+
   initWithVolume(volume, box, nonEmptyBoxMin, nonEmptyBoxMax, isRoiVolume, isFULL3D) {
+    if (!this.capabilityGate || !this.capabilityGate.proceed) {
+      this.renderErrorReason = this.capabilityGate ? this.capabilityGate.error : decide3dCapabilityGate(null).error;
+      console.log(`3D render blocked: missing capability (${this.renderErrorReason})`);
+      return;
+    }
     let sideMax = box.x > box.y ? box.x : box.y;
     sideMax = box.z > sideMax ? box.z : sideMax;
     this.vBoxVirt.x = box.x / sideMax;
@@ -832,6 +849,9 @@ export default class VolumeRenderer3d {
 
     this.renderScene = SCENE_TYPE_RAYCAST;
     this.sceneReadyCounter = 0;
+    this.sceneReadyStartTime = Date.now();
+    this.renderErrorReason = null;
+    this.checkFrameBufferMode = CHECK_MODE_NOT_CHECKED;
     this.renderCounter = 0;
     let matBfThreeGS = null;
     let matFfThreeGS = null;
@@ -961,6 +981,8 @@ export default class VolumeRenderer3d {
       this.bufferRenderToTextureCPU = new Float32Array(VAL_4 * this.xSmallTexSize * this.ySmallTexSize);
     } else {
       console.log('cant create float texture');
+      this.renderErrorReason = RENDER_ERROR.COLOR_BUFFER_FLOAT;
+      return;
     }
 
     this.createClipPlaneGeometry();
@@ -1253,6 +1275,43 @@ export default class VolumeRenderer3d {
     return true;
   }
 
+  /** Evaluate a stuck ready-state and surface a shader error instead of a permanent silent black screen */
+  evaluateReadyTimeout() {
+    if (this.renderErrorReason) {
+      return;
+    }
+    const elapsedMs = this.sceneReadyStartTime === null ? 0 : Date.now() - this.sceneReadyStartTime;
+    const state = evaluateReadyState({
+      readyCounter: this.sceneReadyCounter,
+      expectedCounter: SCENE_READY_COUNTER_OK,
+      materialsReady: this.matVolumeRender !== null && this.matBF !== null && this.matFF !== null && this.matRenderToTexture !== null,
+      elapsedMs,
+      timeoutMs: SCENE_READY_TIMEOUT_MS,
+    });
+    if (state.timedOut) {
+      this.renderErrorReason = state.error;
+      console.log('3D scene not ready after timeout (shaders failed to load)');
+    }
+  }
+
+  /** Run a real framebuffer completeness check on the back-face render target */
+  runFrameBufferCheck() {
+    const gl = this.renderer && typeof this.renderer.getContext === 'function' ? this.renderer.getContext() : null;
+    if (!gl || typeof gl.checkFramebufferStatus !== 'function') {
+      return CHECK_MODE_RESULT_OK;
+    }
+    this.renderer.setRenderTarget(this.bfTexture);
+    const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    this.renderer.setRenderTarget(null);
+    const result = mapFramebufferStatus(status, gl.FRAMEBUFFER_COMPLETE);
+    if (!result.ok) {
+      this.renderErrorReason = this.renderErrorReason || result.error;
+      console.log(`3D framebuffer incomplete (status=${status})`);
+      return CHECK_MODE_RESULT_FAIL;
+    }
+    return CHECK_MODE_RESULT_OK;
+  }
+
   /** Render 3d scene */
   render() {
     /*if (this.sceneReadyCounter !== SCENE_READY_COUNTER_OK) {
@@ -1261,7 +1320,11 @@ export default class VolumeRenderer3d {
       return;
     }*/
     if (!this.isReadyToRender()) {
+      this.evaluateReadyTimeout();
       return;
+    }
+    if (this.renderErrorReason === RENDER_ERROR.SHADER) {
+      this.renderErrorReason = null;
     }
     const matReady = this.matVolumeRender !== null && this.matBF !== null && this.matFF !== null && this.matRenderToTexture !== null;
     if (!matReady) {
@@ -1269,8 +1332,10 @@ export default class VolumeRenderer3d {
     } else {
       // check once render target
       if (this.checkFrameBufferMode === CHECK_MODE_NOT_CHECKED) {
-        // const isGood = true;// GlCheck.checkFrameBuffer(this.renderer, this.bfTexture);
-        this.checkFrameBufferMode = CHECK_MODE_RESULT_OK;
+        this.checkFrameBufferMode = this.runFrameBufferCheck();
+      }
+      if (this.checkFrameBufferMode === CHECK_MODE_RESULT_FAIL) {
+        return;
       }
 
       if (this.renderScene === SCENE_TYPE_RAYCAST) {
