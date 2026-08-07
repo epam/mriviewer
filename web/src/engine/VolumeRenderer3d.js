@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import GlSelector from './GlSelector';
 import { detect3dCapabilities } from './gl/detect3dCapabilities';
 import { decide3dCapabilityGate, RENDER_ERROR } from './gl/gate3dCapability';
+import { evaluateReadyState, mapFramebufferStatus, SCENE_READY_TIMEOUT_MS } from './gl/render3dReadyState';
 import OrbitControl from './orbitcontrol';
 import MaterialBF from './gfx/matbackface';
 import MaterialFF from './gfx/matfrontface';
@@ -46,6 +47,7 @@ const OPACITY_SCALE = 175.0;
 // Special values to check frame buffer
 const CHECK_MODE_NOT_CHECKED = 0;
 const CHECK_MODE_RESULT_OK = 1;
+const CHECK_MODE_RESULT_FAIL = 2;
 
 // When scene is ready (how much materials are created via arrow functions)
 const SCENE_READY_COUNTER_OK = 5;
@@ -65,6 +67,7 @@ export default class VolumeRenderer3d {
   constructor(props) {
     this.curFileDataType = props.curFileDataType;
     this.sceneReadyCounter = 0;
+    this.sceneReadyStartTime = null;
     this.renderCounter = 0;
     this.scene = new THREE.Scene();
     this.sceneClipPlane = new THREE.Scene();
@@ -846,6 +849,7 @@ export default class VolumeRenderer3d {
 
     this.renderScene = SCENE_TYPE_RAYCAST;
     this.sceneReadyCounter = 0;
+    this.sceneReadyStartTime = Date.now();
     this.renderCounter = 0;
     let matBfThreeGS = null;
     let matFfThreeGS = null;
@@ -1268,6 +1272,43 @@ export default class VolumeRenderer3d {
     return true;
   }
 
+  /** Evaluate a stuck ready-state and surface a shader error instead of a permanent silent black screen */
+  evaluateReadyTimeout() {
+    if (this.renderErrorReason) {
+      return;
+    }
+    const elapsedMs = this.sceneReadyStartTime === null ? 0 : Date.now() - this.sceneReadyStartTime;
+    const state = evaluateReadyState({
+      readyCounter: this.sceneReadyCounter,
+      expectedCounter: SCENE_READY_COUNTER_OK,
+      materialsReady: this.matVolumeRender !== null && this.matBF !== null && this.matFF !== null && this.matRenderToTexture !== null,
+      elapsedMs,
+      timeoutMs: SCENE_READY_TIMEOUT_MS,
+    });
+    if (state.timedOut) {
+      this.renderErrorReason = state.error;
+      console.log('3D scene not ready after timeout (shaders failed to load)');
+    }
+  }
+
+  /** Run a real framebuffer completeness check on the back-face render target */
+  runFrameBufferCheck() {
+    const gl = this.renderer && typeof this.renderer.getContext === 'function' ? this.renderer.getContext() : null;
+    if (!gl || typeof gl.checkFramebufferStatus !== 'function') {
+      return CHECK_MODE_RESULT_OK;
+    }
+    this.renderer.setRenderTarget(this.bfTexture);
+    const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    this.renderer.setRenderTarget(null);
+    const result = mapFramebufferStatus(status, gl.FRAMEBUFFER_COMPLETE);
+    if (!result.ok) {
+      this.renderErrorReason = this.renderErrorReason || result.error;
+      console.log(`3D framebuffer incomplete (status=${status})`);
+      return CHECK_MODE_RESULT_FAIL;
+    }
+    return CHECK_MODE_RESULT_OK;
+  }
+
   /** Render 3d scene */
   render() {
     /*if (this.sceneReadyCounter !== SCENE_READY_COUNTER_OK) {
@@ -1276,6 +1317,7 @@ export default class VolumeRenderer3d {
       return;
     }*/
     if (!this.isReadyToRender()) {
+      this.evaluateReadyTimeout();
       return;
     }
     const matReady = this.matVolumeRender !== null && this.matBF !== null && this.matFF !== null && this.matRenderToTexture !== null;
@@ -1284,8 +1326,10 @@ export default class VolumeRenderer3d {
     } else {
       // check once render target
       if (this.checkFrameBufferMode === CHECK_MODE_NOT_CHECKED) {
-        // const isGood = true;// GlCheck.checkFrameBuffer(this.renderer, this.bfTexture);
-        this.checkFrameBufferMode = CHECK_MODE_RESULT_OK;
+        this.checkFrameBufferMode = this.runFrameBufferCheck();
+      }
+      if (this.checkFrameBufferMode === CHECK_MODE_RESULT_FAIL) {
+        return;
       }
 
       if (this.renderScene === SCENE_TYPE_RAYCAST) {

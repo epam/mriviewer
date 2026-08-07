@@ -5,6 +5,7 @@ export const RENDER_ERROR_MESSAGE = {
   [RENDER_ERROR.COLOR_BUFFER_FLOAT]:
     '3D rendering requires float color buffer support (EXT_color_buffer_float), which is unavailable on this device.',
   [RENDER_ERROR.SHADER]: '3D shaders failed to load.',
+  [RENDER_ERROR.FRAMEBUFFER]: '3D render target (framebuffer) is incomplete.',
 };
 
 export function render3dErrorMessage(reason) {
