@@ -3,10 +3,10 @@ name: "AI Code Review: MRI Viewer Platforms"
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: [develop, "release/**", master]
+    branches: [develop, 'release/**', master]
     paths:
-      - "visionos/**"
-      - "!visionos/**/*.md"
+      - 'visionos/**'
+      - '!visionos/**/*.md'
 
 permissions:
   contents: read
@@ -14,7 +14,7 @@ permissions:
 jobs:
   review-visionos:
     name: Review VisionOS
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Standard fast runner
 
     steps:
       - name: VisionOS review status
