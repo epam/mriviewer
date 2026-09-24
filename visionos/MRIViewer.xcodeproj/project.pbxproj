@@ -26,6 +26,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+				Shaders.metal,
 			);
 			target = 93B512DF2FE42FA00048024E /* MRIViewer */;
 		};
