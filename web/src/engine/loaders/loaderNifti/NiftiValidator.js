@@ -55,7 +55,7 @@ export class NiftiValidator {
 
   reportError(type, callback, message) {
     console.log(`Nifti error: ${message}`);
-    if (callback) callback(LoadResult[type], null, 0, null);
+    if (callback) callback(type, null, 0, null);
     return false;
   }
 }
