@@ -9,6 +9,7 @@ import ViewMode from '../store/ViewMode';
 import Modes3d from '../store/Modes3d';
 import StoreActionType from '../store/ActionTypes';
 import VolumeRenderer3d from './VolumeRenderer3d';
+import { render3dErrorMessage } from './gl/render3dErrorMessage';
 //import DistanceTool from '../tools23d/distancetool'
 
 class Graphics3d extends React.Component {
@@ -22,6 +23,7 @@ class Graphics3d extends React.Component {
     this.stop = this.stop.bind(this);
     this.animate = this.animate.bind(this);
     this.renderScene = this.renderScene.bind(this);
+    this.syncRenderError = this.syncRenderError.bind(this);
     this.setVolRenderToStore = this.setVolRenderToStore.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
@@ -48,6 +50,7 @@ class Graphics3d extends React.Component {
     this.state = {
       wRender: 0,
       hRender: 0,
+      renderError: null,
     };
   }
 
@@ -88,7 +91,17 @@ class Graphics3d extends React.Component {
     this.m_material.wireframe = (this.m_mode3d === Modes3d.ISO);*/
 
     this.renderScene();
+    this.syncRenderError();
     this.m_frameId = window.requestAnimationFrame(this.animate);
+  }
+
+  syncRenderError() {
+    if (this.m_volumeRenderer3D !== null && typeof this.m_volumeRenderer3D.getRenderErrorReason === 'function') {
+      const reason = this.m_volumeRenderer3D.getRenderErrorReason() || null;
+      if (reason !== this.state.renderError) {
+        this.setState({ renderError: reason });
+      }
+    }
   }
 
   renderScene() {
@@ -168,6 +181,12 @@ class Graphics3d extends React.Component {
       //  return;
       //}
       this.isLoaded = true;
+    }
+    if (this.m_volumeRenderer3D !== null && typeof this.m_volumeRenderer3D.getRenderErrorReason === 'function') {
+      const reason = this.m_volumeRenderer3D.getRenderErrorReason();
+      if (reason) {
+        this.setState({ renderError: reason });
+      }
     }
     this.start();
     // setup keyboard
@@ -361,6 +380,27 @@ class Graphics3d extends React.Component {
       width: '100%',
       height: '100%',
       display: 'block',
+      position: 'relative',
+    };
+
+    let renderErrorReason = this.state.renderError;
+    if (this.m_volumeRenderer3D !== null && typeof this.m_volumeRenderer3D.getRenderErrorReason === 'function') {
+      renderErrorReason = this.m_volumeRenderer3D.getRenderErrorReason() || renderErrorReason;
+    }
+    const errorMessage = render3dErrorMessage(renderErrorReason);
+
+    const errorStyleObj = {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      maxWidth: '80%',
+      padding: '12px 16px',
+      textAlign: 'center',
+      color: '#fff',
+      background: 'rgba(150, 0, 0, 0.85)',
+      borderRadius: '4px',
+      pointerEvents: 'none',
     };
 
     return (
@@ -382,7 +422,13 @@ class Graphics3d extends React.Component {
         onKeyDown={(evt) => this.onKeyDown(evt)}
         onKeyUp={(evt) => this.onKeyUp(evt)}
         onWheel={this._onWheel.bind(this)}
-      />
+      >
+        {errorMessage !== null ? (
+          <div style={errorStyleObj} role="alert" data-testid="graphics3d-render-error">
+            {errorMessage}
+          </div>
+        ) : null}
+      </div>
     );
   }
 }
