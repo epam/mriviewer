@@ -81,10 +81,10 @@ struct VolumeScaffoldView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .frame(minHeight: 520)
         .overlay {
-            RoundedRectangle(cornerRadius: 5)
+            Rectangle()
                 .stroke(Color.white.opacity(0.82), lineWidth: 10)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 5))
+        .clipShape(Rectangle())
     }
 
     private var renderModePanel: some View {
@@ -95,17 +95,20 @@ struct VolumeScaffoldView: View {
 
             HStack(spacing: 6) {
                 ForEach(DummyRenderMode.allCases) { mode in
-                    Button(mode.rawValue) {
+                    Button {
                         viewModel.renderMode = mode
+                    } label: {
+                        Text(mode.rawValue)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(viewModel.renderMode == mode ? Color.white : Color.black.opacity(0.68))
+                        .frame(maxWidth: .infinity, minHeight: 38)
+                        .background(
+                            viewModel.renderMode == mode ? ScaffoldTheme.accent : Color.black.opacity(0.04),
+                            in: Rectangle()
+                        )
                     }
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(viewModel.renderMode == mode ? Color.white : Color.black.opacity(0.68))
-                    .frame(maxWidth: .infinity, minHeight: 38)
-                    .background(
-                        viewModel.renderMode == mode ? ScaffoldTheme.accent : Color.black.opacity(0.04),
-                        in: RoundedRectangle(cornerRadius: 5)
-                    )
-                    .buttonStyle(.plain)
+                    .buttonStyle(ScaffoldButtonStyle())
+                    .accessibilityAddTraits(viewModel.renderMode == mode ? .isSelected : [])
                 }
             }
         }
@@ -161,9 +164,9 @@ private struct CalloutLabel: View {
             .foregroundStyle(.white.opacity(0.78))
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(.black.opacity(0.32), in: RoundedRectangle(cornerRadius: 3))
+            .background(.black.opacity(0.32), in: Rectangle())
             .overlay {
-                RoundedRectangle(cornerRadius: 3)
+                Rectangle()
                     .stroke(Color.white.opacity(0.28), lineWidth: 1)
             }
     }
@@ -174,7 +177,7 @@ private extension View {
         self
             .padding(15)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.white.opacity(0.93), in: RoundedRectangle(cornerRadius: 5))
+            .background(Color.white.opacity(0.93), in: Rectangle())
             .environment(\.colorScheme, .light)
     }
 }

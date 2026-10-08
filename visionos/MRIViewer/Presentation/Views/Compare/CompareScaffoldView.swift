@@ -87,7 +87,7 @@ private struct ComparisonViewport: View {
             .foregroundStyle(Color.black.opacity(0.4))
         }
         .padding(14)
-        .background(Color.white.opacity(0.93), in: RoundedRectangle(cornerRadius: 5))
+        .background(Color.white.opacity(0.93), in: Rectangle())
         .environment(\.colorScheme, .light)
     }
 }

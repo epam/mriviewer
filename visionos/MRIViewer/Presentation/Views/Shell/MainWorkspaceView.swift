@@ -26,7 +26,7 @@ struct MainWorkspaceView: View {
                         .padding(.bottom, 18)
                     }
                 }
-                .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+                .clipShape(Rectangle())
             }
         }
         .padding(18)
@@ -42,6 +42,7 @@ struct MainWorkspaceView: View {
             }
             .ignoresSafeArea()
         }
+        .buttonBorderShape(.roundedRectangle(radius: 0))
         .preferredColorScheme(.dark)
     }
 
@@ -61,7 +62,7 @@ struct MainWorkspaceView: View {
         }
         .padding(.horizontal, 18)
         .frame(height: 66)
-        .scaffoldPanel(cornerRadius: 24)
+        .scaffoldPanel()
     }
 
     @ViewBuilder
@@ -121,12 +122,12 @@ private struct AppSidebarView: View {
                 .padding(.horizontal, 10)
                 .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(ScaffoldButtonStyle())
             .accessibilityLabel(viewModel.isSidebarExpanded ? "Collapse sidebar" : "Expand sidebar")
         }
         .padding(12)
         .frame(width: width)
-        .scaffoldPanel(cornerRadius: 26)
+        .scaffoldPanel()
         .animation(.snappy(duration: 0.28), value: viewModel.isSidebarExpanded)
     }
 }
@@ -157,12 +158,13 @@ private struct SidebarButton: View {
             .padding(.horizontal, 10)
             .background(
                 isSelected ? ScaffoldTheme.accent.opacity(0.82) : Color.clear,
-                in: RoundedRectangle(cornerRadius: 15, style: .continuous)
+                in: Rectangle()
             )
-            .contentShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(ScaffoldButtonStyle())
         .accessibilityLabel(section.title)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 
@@ -182,18 +184,18 @@ private struct WorkspaceModePicker: View {
                         .frame(width: 48, height: 42)
                         .background(
                             selection == mode ? ScaffoldTheme.accent : Color.clear,
-                            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            in: Rectangle()
                         )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(ScaffoldButtonStyle())
                 .accessibilityLabel(mode.title)
                 .accessibilityAddTraits(selection == mode ? .isSelected : [])
             }
         }
         .padding(7)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 17, style: .continuous))
+        .background(.ultraThinMaterial, in: Rectangle())
         .overlay {
-            RoundedRectangle(cornerRadius: 17, style: .continuous)
+            Rectangle()
                 .stroke(Color.white.opacity(0.12), lineWidth: 1)
         }
         .shadow(color: .black.opacity(0.32), radius: 18, y: 8)

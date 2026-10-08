@@ -11,26 +11,35 @@ enum ScaffoldTheme {
     static let secondaryText = Color.white.opacity(0.58)
 }
 
+struct ScaffoldButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .contentShape(.interaction, Rectangle())
+            .contentShape(.hoverEffect, Rectangle())
+            .opacity(configuration.isPressed ? 0.8 : 1)
+            .hoverEffect(.highlight)
+    }
+}
+
 struct ScaffoldPanelModifier: ViewModifier {
-    let cornerRadius: CGFloat
     let raised: Bool
 
     func body(content: Content) -> some View {
         content
             .background(
                 (raised ? ScaffoldTheme.panelRaised : ScaffoldTheme.panel).opacity(0.92),
-                in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                in: Rectangle()
             )
             .overlay {
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                Rectangle()
                     .stroke(ScaffoldTheme.border, lineWidth: 1)
             }
     }
 }
 
 extension View {
-    func scaffoldPanel(cornerRadius: CGFloat = 22, raised: Bool = false) -> some View {
-        modifier(ScaffoldPanelModifier(cornerRadius: cornerRadius, raised: raised))
+    func scaffoldPanel(raised: Bool = false) -> some View {
+        modifier(ScaffoldPanelModifier(raised: raised))
     }
 }
 
@@ -40,7 +49,7 @@ struct BrandLockupView: View {
     var body: some View {
         HStack(spacing: 12) {
             ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                Rectangle()
                     .fill(ScaffoldTheme.accent.opacity(0.16))
                 Image(systemName: "brain.head.profile")
                     .font(.system(size: compact ? 18 : 24, weight: .semibold))
@@ -135,7 +144,7 @@ struct ScanPlaceholderView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                     .padding(12)
             }
-            .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+            .clipShape(Rectangle())
         }
         .accessibilityLabel("Placeholder medical scan")
     }

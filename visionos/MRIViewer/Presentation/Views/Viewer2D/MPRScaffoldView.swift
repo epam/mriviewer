@@ -83,7 +83,7 @@ private struct SliceViewport: View {
         }
         .padding(13)
         .foregroundStyle(.black)
-        .background(Color.white.opacity(0.93), in: RoundedRectangle(cornerRadius: 5, style: .continuous))
+        .background(Color.white.opacity(0.93), in: Rectangle())
         .environment(\.colorScheme, .light)
     }
 }
