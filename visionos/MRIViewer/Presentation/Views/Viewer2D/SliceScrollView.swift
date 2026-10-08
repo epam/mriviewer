@@ -15,7 +15,7 @@ struct SliceScrollView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(0..<series.sliceCount, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 4)
+                        Rectangle()
                             .fill(i == selectedIndex ? Color.accentColor : Color.secondary.opacity(0.3))
                             .frame(width: 48, height: 48)
                             .overlay(Text("\(i + 1)").font(.caption2))

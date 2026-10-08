@@ -69,7 +69,7 @@ private struct LoadDataScaffoldView: View {
                     .tint(ScaffoldTheme.accent)
             }
             .frame(maxWidth: .infinity, minHeight: 280)
-            .scaffoldPanel(cornerRadius: 20)
+            .scaffoldPanel()
         }
     }
 }
@@ -99,14 +99,14 @@ private struct SourceCard: View {
             .frame(maxWidth: .infinity, minHeight: 158, alignment: .topLeading)
             .background(
                 isSelected ? ScaffoldTheme.accent.opacity(0.16) : Color.white.opacity(0.035),
-                in: RoundedRectangle(cornerRadius: 18)
+                in: Rectangle()
             )
             .overlay {
-                RoundedRectangle(cornerRadius: 18)
+                Rectangle()
                     .stroke(isSelected ? ScaffoldTheme.accentBright : ScaffoldTheme.border, lineWidth: 1)
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(ScaffoldButtonStyle())
     }
 }
 
@@ -134,7 +134,7 @@ private struct SettingsScaffoldView: View {
                     isOn: $viewModel.showGestureHints
                 )
             }
-            .scaffoldPanel(cornerRadius: 20)
+            .scaffoldPanel()
 
             HStack(spacing: 16) {
                 SettingPickerCard(
@@ -189,7 +189,7 @@ private struct SettingPickerCard: View {
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .scaffoldPanel(cornerRadius: 20)
+        .scaffoldPanel()
     }
 }
 
@@ -199,7 +199,7 @@ private struct AboutScaffoldView: View {
             HStack(spacing: 24) {
                 BrandLockupView()
                     .padding(26)
-                    .scaffoldPanel(cornerRadius: 22, raised: true)
+                    .scaffoldPanel(raised: true)
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text("MRI Viewer is a visionOS interface concept for reviewing volumetric medical imaging as a set of focused, floating instruments.")
@@ -233,7 +233,7 @@ private struct AboutMetric: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .scaffoldPanel(cornerRadius: 18)
+        .scaffoldPanel()
     }
 }
 
@@ -255,7 +255,7 @@ private struct GestureSetupScaffoldView: View {
                     .tint(ScaffoldTheme.accent)
             }
             .padding(18)
-            .scaffoldPanel(cornerRadius: 18)
+            .scaffoldPanel()
         }
     }
 }
@@ -285,7 +285,7 @@ private struct GestureCard: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, minHeight: 210, alignment: .topLeading)
-        .scaffoldPanel(cornerRadius: 20)
+        .scaffoldPanel()
     }
 }
 
@@ -322,10 +322,10 @@ private struct TutorialScaffoldView: View {
                             .padding(12)
                             .background(
                                 currentStep == index ? ScaffoldTheme.accent.opacity(0.12) : Color.clear,
-                                in: RoundedRectangle(cornerRadius: 14)
+                                in: Rectangle()
                             )
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(ScaffoldButtonStyle())
                     }
                 }
                 .frame(width: 300)
@@ -352,7 +352,7 @@ private struct TutorialScaffoldView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, minHeight: 360)
-                .scaffoldPanel(cornerRadius: 22)
+                .scaffoldPanel()
             }
         }
     }

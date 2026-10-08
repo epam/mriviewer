@@ -57,7 +57,7 @@ struct StudyBrowserScaffoldView: View {
             }
             .padding(.horizontal, 16)
             .frame(height: 52)
-            .background(Color.white.opacity(0.07), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .background(Color.white.opacity(0.07), in: Rectangle())
 
             HStack(spacing: 5) {
                 ForEach(StudyFilter.allCases) { filter in
@@ -71,18 +71,18 @@ struct StudyBrowserScaffoldView: View {
                             .frame(minWidth: 68, minHeight: 38)
                             .background(
                                 viewModel.selectedFilter == filter ? ScaffoldTheme.accent : Color.white.opacity(0.035),
-                                in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                in: Rectangle()
                             )
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(ScaffoldButtonStyle())
                     .accessibilityAddTraits(viewModel.selectedFilter == filter ? .isSelected : [])
                 }
             }
             .padding(6)
-            .background(Color.white.opacity(0.045), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .background(Color.white.opacity(0.045), in: Rectangle())
         }
         .padding(12)
-        .scaffoldPanel(cornerRadius: 18, raised: true)
+        .scaffoldPanel(raised: true)
     }
 }
 
@@ -101,13 +101,13 @@ private struct AddStudyCard: View {
                     .foregroundStyle(.white.opacity(0.72))
             }
             .frame(maxWidth: .infinity, minHeight: 226)
-            .background(Color.white.opacity(0.055), in: RoundedRectangle(cornerRadius: 4, style: .continuous))
+            .background(Color.white.opacity(0.055), in: Rectangle())
             .overlay {
-                RoundedRectangle(cornerRadius: 4, style: .continuous)
+                Rectangle()
                     .stroke(Color.white.opacity(0.10), style: StrokeStyle(lineWidth: 1, dash: [7, 5]))
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(ScaffoldButtonStyle())
     }
 }
 
@@ -161,16 +161,17 @@ private struct StudyCardView: View {
                 }
             }
             .padding(12)
-            .background(Color.white.opacity(0.92), in: RoundedRectangle(cornerRadius: 5, style: .continuous))
+            .background(isSelected ? Color(red: 0.78, green: 0.89, blue: 0.98) : Color.white.opacity(0.92), in: Rectangle())
             .environment(\.colorScheme, .light)
             .overlay {
-                RoundedRectangle(cornerRadius: 5, style: .continuous)
+                Rectangle()
                     .stroke(isSelected ? ScaffoldTheme.accentBright : Color.clear, lineWidth: 3)
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(ScaffoldButtonStyle())
         .accessibilityLabel("\(study.patientName), \(study.modality) \(study.bodyRegion), \(study.status.rawValue)")
         .accessibilityHint("Open the multi-planar viewer")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 
@@ -186,11 +187,11 @@ private struct MetadataTag: View {
             .padding(.vertical, 3)
             .background(
                 emphasized ? ScaffoldTheme.accent.opacity(0.09) : Color.black.opacity(0.035),
-                in: RoundedRectangle(cornerRadius: 3)
+                in: Rectangle()
             )
             .overlay {
                 if emphasized {
-                    RoundedRectangle(cornerRadius: 3)
+                    Rectangle()
                         .stroke(ScaffoldTheme.accent.opacity(0.65), lineWidth: 1)
                 }
             }
@@ -210,13 +211,16 @@ private struct PaginationView: View {
             .disabled(page == 1)
 
             ForEach(1...3, id: \.self) { value in
-                Button("\(value)") { page = value }
-                    .frame(width: 36, height: 36)
-                    .background(
-                        page == value ? ScaffoldTheme.accent : Color.white.opacity(0.05),
-                        in: RoundedRectangle(cornerRadius: 8)
-                    )
-                    .buttonStyle(.plain)
+                Button { page = value } label: {
+                    Text("\(value)")
+                        .frame(width: 36, height: 36)
+                        .background(
+                            page == value ? ScaffoldTheme.accent : Color.white.opacity(0.05),
+                            in: Rectangle()
+                        )
+                }
+                .buttonStyle(ScaffoldButtonStyle())
+                .accessibilityAddTraits(page == value ? .isSelected : [])
             }
 
             Button {

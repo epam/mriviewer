@@ -44,7 +44,7 @@ private struct FormatBadge: View {
             .padding(.vertical, 4)
             .background(badgeColor.opacity(0.2))
             .foregroundStyle(badgeColor)
-            .clipShape(Capsule())
+            .clipShape(Rectangle())
     }
 
     private var badgeColor: Color {
