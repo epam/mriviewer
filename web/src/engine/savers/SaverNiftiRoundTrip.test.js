@@ -95,9 +95,27 @@ describe('SaverNiftiRoundTripTests', () => {
     });
   });
 
+  it('the oracle rejects the same input intensity landing on two different outputs', () => {
+    const input = new Uint8Array([10, 10, 30, 40]);
+    const output = new Uint8Array([5, 7, 9, 12]);
+    expect(isStrictlyIncreasingMapping(input, output, [0, 1, 2, 3])).toBe(false);
+  });
+
   it('the oracle rejects two distinct inputs collapsing to one output', () => {
     const input = new Uint8Array([10, 20, 30, 40]);
     const output = new Uint8Array([5, 9, 9, 12]);
     expect(isStrictlyIncreasingMapping(input, output, [0, 1, 2, 3])).toBe(false);
+  });
+
+  it('the oracle rejects distinct inputs whose order is reversed', () => {
+    const input = new Uint8Array([10, 20, 30, 40]);
+    const output = new Uint8Array([5, 9, 8, 12]);
+    expect(isStrictlyIncreasingMapping(input, output, [0, 1, 2, 3])).toBe(false);
+  });
+
+  it('the oracle accepts a consistent strictly increasing mapping with repeated inputs', () => {
+    const input = new Uint8Array([10, 10, 30, 40]);
+    const output = new Uint8Array([5, 5, 9, 12]);
+    expect(isStrictlyIncreasingMapping(input, output, [0, 1, 2, 3])).toBe(true);
   });
 });

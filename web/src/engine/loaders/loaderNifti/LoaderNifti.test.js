@@ -181,8 +181,11 @@ describe('LoaderNiftiTests', () => {
     it('reads a legacy layout (data at 348, buffer exactly 348 + data) with every voxel at its own position and warns', () => {
       const { data, buf } = fresh();
       const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const legacy = dropPad(buf);
+      expect(new DataView(legacy).getFloat32(VOX_OFFSET_FIELD, true)).toBe(352);
+      expect(legacy.byteLength).toBe(HEADER_SIZE + X * Y * Z * 2);
 
-      const { volDst, ok, code } = load(dropPad(buf));
+      const { volDst, ok, code } = load(legacy);
 
       expect(ok).toBe(true);
       expect(code).toBe(LoadResult.SUCCESS);

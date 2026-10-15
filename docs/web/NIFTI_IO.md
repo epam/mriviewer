@@ -83,6 +83,7 @@ Out of scope for #11 — tracked as future work:
 ## Tests
 
 - `web/src/engine/savers/SaverNifti.test.js`
+- `web/src/engine/savers/SaverNiftiRoundTrip.test.js` (position-coded save→read oracle; helpers in `web/src/engine/savers/niftiTestHelpers.js`)
 - `web/src/engine/loaders/loaderNifti/LoaderNifti.test.js`
 - `web/src/engine/loaders/loaderNifti/NiftiValidator.test.js`
 
