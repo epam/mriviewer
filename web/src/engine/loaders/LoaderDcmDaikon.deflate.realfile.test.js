@@ -6,16 +6,25 @@ import LoaderDcmDaikon from './LoaderDcmDaikon';
 
 const FIXTURE = path.resolve(__dirname, '../../../e2e-tests/tests/test-data/dcm/1-01.dcm');
 const DIM = 320;
-const META_END = 340;
+const PREAMBLE_AND_MAGIC = 132;
+const GROUP_LENGTH_ELEMENT_AT = 132;
 const GROUP_LENGTH_VALUE_AT = 140;
-const GROUP_LENGTH_COUNTED_FROM = 144;
+const DATA_SET_AFTER_GROUP_LENGTH = 144;
 const TRANSFER_SYNTAX_TAG = [0x02, 0x00, 0x10, 0x00, 0x55, 0x49];
+const GROUP_LENGTH_TAG = [0x02, 0x00, 0x00, 0x00, 0x55, 0x4c];
 const DEFLATE_UID = '1.2.840.10008.1.2.1.99';
 
 const toArrayBuffer = (buf) => buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
 
-const findTransferSyntax = (bytes) => {
-  for (let i = 132; i < META_END; i++) {
+const metaEndOf = (bytes) => {
+  if (!GROUP_LENGTH_TAG.every((b, k) => bytes[GROUP_LENGTH_ELEMENT_AT + k] === b)) {
+    throw new Error('file meta group length element not found at the expected position');
+  }
+  return DATA_SET_AFTER_GROUP_LENGTH + bytes.readUInt32LE(GROUP_LENGTH_VALUE_AT);
+};
+
+const findTransferSyntax = (bytes, metaEnd) => {
+  for (let i = PREAMBLE_AND_MAGIC; i < metaEnd; i++) {
     if (TRANSFER_SYNTAX_TAG.every((b, k) => bytes[i + k] === b)) {
       return i;
     }
@@ -24,14 +33,15 @@ const findTransferSyntax = (bytes) => {
 };
 
 const toDeflated = (bytes) => {
-  const at = findTransferSyntax(bytes);
+  const metaEnd = metaEndOf(bytes);
+  const at = findTransferSyntax(bytes, metaEnd);
   const oldLength = bytes.readUInt16LE(at + 6);
   const head = Buffer.from(bytes.subarray(0, at + 6));
   const lengthBytes = Buffer.alloc(2);
   lengthBytes.writeUInt16LE(DEFLATE_UID.length, 0);
-  const meta = Buffer.concat([head, lengthBytes, Buffer.from(DEFLATE_UID, 'latin1'), bytes.subarray(at + 8 + oldLength, META_END)]);
-  meta.writeUInt32LE(meta.length - GROUP_LENGTH_COUNTED_FROM, GROUP_LENGTH_VALUE_AT);
-  const dataset = Buffer.from(pako.deflateRaw(bytes.subarray(META_END)));
+  const meta = Buffer.concat([head, lengthBytes, Buffer.from(DEFLATE_UID, 'latin1'), bytes.subarray(at + 8 + oldLength, metaEnd)]);
+  meta.writeUInt32LE(meta.length - DATA_SET_AFTER_GROUP_LENGTH, GROUP_LENGTH_VALUE_AT);
+  const dataset = Buffer.from(pako.deflateRaw(bytes.subarray(metaEnd)));
   return Buffer.concat([meta, dataset]);
 };
 

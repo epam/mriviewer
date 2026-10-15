@@ -12,19 +12,27 @@ Related work: issues #202 and #232 (compressed DICOM failed to load with
 
 ## Supported
 
-| Transfer syntax | UID | Notes |
-|---|---|---|
-| Implicit VR Little Endian | `1.2.840.10008.1.2` | Uncompressed |
-| Explicit VR Little Endian | `1.2.840.10008.1.2.1` | Uncompressed |
-| Explicit VR Big Endian | `1.2.840.10008.1.2.2` | Uncompressed; 8-bit only — 16-bit byte order unverified (see follow-ups) |
-| JPEG Baseline (8-bit) | `1.2.840.10008.1.2.4.50` | Lossy |
-| JPEG Baseline (12-bit) | `1.2.840.10008.1.2.4.51` | Lossy |
-| JPEG Lossless | `1.2.840.10008.1.2.4.57` | Lossless |
-| JPEG Lossless, SV1 | `1.2.840.10008.1.2.4.70` | Lossless |
-| JPEG 2000 Lossless | `1.2.840.10008.1.2.4.90` | |
-| JPEG 2000 | `1.2.840.10008.1.2.4.91` | |
-| RLE Lossless | `1.2.840.10008.1.2.5` | Run-length encapsulated |
-| Deflated Explicit VR Little Endian | `1.2.840.10008.1.2.1.99` | daikon inflates the data set (`pako.inflateRaw`) while parsing; covered by `LoaderDcmDaikon.deflate.realfile.test.js`, which deflates a real fixture and compares pixels |
+"Tested" means a test in `web/src/engine/loaders/` loads a file of that syntax and checks the result.
+Rows marked "not tested" are handed to daikon and expected to work, but nothing in this repo
+proves it.
+
+| Transfer syntax | UID | Coverage | Notes |
+|---|---|---|---|
+| Implicit VR Little Endian | `1.2.840.10008.1.2` | not tested | Uncompressed |
+| Explicit VR Little Endian | `1.2.840.10008.1.2.1` | tested: synthetic buffers and a real file | Uncompressed |
+| Explicit VR Big Endian | `1.2.840.10008.1.2.2` | not tested | Uncompressed; 8-bit only, 16-bit byte order unverified (see follow-ups) |
+| JPEG Baseline (8-bit) | `1.2.840.10008.1.2.4.50` | not tested | Lossy |
+| JPEG Baseline (12-bit) | `1.2.840.10008.1.2.4.51` | not tested | Lossy |
+| JPEG Lossless | `1.2.840.10008.1.2.4.57` | not tested | Lossless |
+| JPEG Lossless, SV1 | `1.2.840.10008.1.2.4.70` | tested: real fixture `jpeg_lossless_sel1.dcm` | Lossless |
+| JPEG 2000 Lossless | `1.2.840.10008.1.2.4.90` | not tested | |
+| JPEG 2000 | `1.2.840.10008.1.2.4.91` | tested: real fixture `jpeg_2000.dcm` | |
+| RLE Lossless | `1.2.840.10008.1.2.5` | tested: synthetic 8/16-bit grayscale and 8-bit RGB | Run-length encapsulated |
+| Deflated Explicit VR Little Endian | `1.2.840.10008.1.2.1.99` | tested: a real file, deflated by the test | daikon inflates the data set (`pako.inflateRaw`) while parsing; see `LoaderDcmDaikon.deflate.realfile.test.js` |
+
+`LoaderDicom.js` recognizes the deflate UID (it sets `m_needsDeflate`) but never reads that flag
+and never inflates. Deflated files work only because every read goes through daikon; do not feed
+a deflated file to `LoaderDicom.readFromBuffer` directly.
 
 Decompression is handled by daikon; the engine adds no new decoders.
 
@@ -35,8 +43,8 @@ Decompression is handled by daikon; the engine adds no new decoders.
 | JPEG-LS Lossless | `1.2.840.10008.1.2.4.80` | daikon bundles a JPEG-LS decoder and selects it for this UID; no fixture, so unverified in this app |
 | JPEG-LS Near-Lossless | `1.2.840.10008.1.2.4.81` | same as above |
 
-The UIDs are not recognized in `LoaderDicom.js` (no constants); like every syntax the
-buffer is handed to daikon. If decoding fails or returns too few bytes the loader returns
+The JPEG-LS UIDs have no constants in `LoaderDicom.js`; like every syntax the buffer is handed
+to daikon. If decoding fails or returns too few bytes the loader returns
 `ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED`.
 
 ## Rejected (explicit, no silent misload)
