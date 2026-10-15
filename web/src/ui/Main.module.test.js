@@ -1,15 +1,28 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const currentDir = path.dirname(fileURLToPath(import.meta.url));
+const currentDir = import.meta.dirname;
 
 const REM_TO_PX = 16;
 const LOGO_AREA_BOTTOM_PX = 101;
 const VIEWPORT_HEIGHTS_PX = [600, 720, 768, 900, 1032, 1080, 1440];
 
+const css = fs.readFileSync(path.join(currentDir, 'Main.module.css'), 'utf8');
+
+function readCustomProperty(name) {
+  const declaration = css.match(new RegExp(`${name}:\\s*([^;]+);`));
+  if (!declaration) {
+    throw new Error(`Custom property ${name} is not declared`);
+  }
+  return declaration[1].trim();
+}
+
 function resolveLengthToPx(token, viewportHeightPx) {
   const value = token.trim();
+  const asVar = value.match(/^var\((--[\w-]+)\)$/);
+  if (asVar) {
+    return resolveLengthToPx(readCustomProperty(asVar[1]), viewportHeightPx);
+  }
   const asMax = value.match(/^max\((.*)\)$/i);
   if (asMax) {
     return Math.max(...asMax[1].split(',').map((part) => resolveLengthToPx(part, viewportHeightPx)));
@@ -27,12 +40,11 @@ function resolveLengthToPx(token, viewportHeightPx) {
 }
 
 function collectLeftToolbarTops() {
-  const css = fs.readFileSync(path.join(currentDir, 'Main.module.css'), 'utf8');
   const leftRule = /\.left\s*\{([^}]*)\}/g;
   const tops = [];
   let match;
   while ((match = leftRule.exec(css)) !== null) {
-    const top = match[1].match(/top:\s*([^;]+);/);
+    const top = match[1].match(/(?:^|[\s;{])top:\s*([^;]+);/);
     if (top) {
       tops.push(top[1].trim());
     }
@@ -45,6 +57,15 @@ describe('Main layout: left toolbar vs app logo (issue #237)', () => {
 
   it('declares a vertical offset for the left toolbar', () => {
     expect(tops.length).toBeGreaterThan(0);
+  });
+
+  it('shares one custom property for the minimum offset instead of repeating a literal', () => {
+    const guardedTops = tops.filter((top) => top.startsWith('max('));
+    expect(guardedTops.length).toBeGreaterThan(0);
+    guardedTops.forEach((top) => {
+      expect(top).toContain('var(--left-min-top)');
+    });
+    expect(css.match(/7rem/g)).toHaveLength(1);
   });
 
   it('keeps the left toolbar below the logo on every tested viewport height', () => {
