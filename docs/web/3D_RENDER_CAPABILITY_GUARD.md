@@ -22,8 +22,17 @@ into `THREE.FloatType` render targets. Both need a fully-featured WebGL2 context
 | **Shaders compile & link** | The scene becomes ready only after the ray-casting materials finish async compile. |
 | **Complete framebuffer** | The offscreen render targets must report `FRAMEBUFFER_COMPLETE`. |
 
-On fully-capable WebGL2 hardware the render path behaves exactly as before — only
-the failure paths changed.
+On fully-capable WebGL2 hardware the render path is the same except for two additions that
+run on every device, not only on failing ones:
+
+- **A real framebuffer check.** `render()` used to hard-code the framebuffer check to OK. It now
+  calls `checkFramebufferStatus` once on the back-face target. A device that reports the
+  extensions but cannot make that target complete used to render something and now stops
+  rendering on every frame and shows the `framebuffer` overlay.
+- **A ready timeout.** `evaluateReadyTimeout()` runs while the scene is not ready. After
+  `SCENE_READY_TIMEOUT_MS` (10 s) it reports `shader`. A legitimately slow first frame (large
+  volume, cold shader cache) therefore shows "3D shaders failed to load." until the materials
+  arrive; the overlay clears by itself once the scene becomes ready.
 
 ---
 
@@ -54,9 +63,12 @@ renderer only wires them into the existing flow.
   stub `gl` objects.
 - **`gate3dCapability.js`** — `decide3dCapabilityGate(caps)` turns detected
   capabilities into a decision `{ proceed, isWebGL2, error }`. The gate's
-  `isWebGL2` replaces `glSelector.useWebGL2()` in `VolumeRenderer3d.js`. Separately,
-  `volumeFilter3d.js`'s former hardcoded `isWebGL2 = 1` is now derived from
-  `isWebGL2Context(context)`, so both paths reflect the real context.
+  `isWebGL2` replaces `glSelector.useWebGL2()` in `VolumeRenderer3d.js`.
+- **`volumeFilter3d.js` behaviour change.** `isWebGL2` used to be assigned `1` unconditionally; it
+  is now `isWebGL2Context(this.context) ? 1 : 0` and feeds `mat.defines.useWebGL2`, which selects
+  the shader branch (`#if useWebGL2 == 0` in `gfx/mattex2d.js`). On a WebGL1 context the filter
+  now compiles the WebGL1 branch where it previously always compiled the WebGL2 branch. On
+  WebGL2 contexts nothing changes. No test covers the WebGL1 filter path.
 - **`render3dReadyState.js`** — `evaluateReadyState(...)` detects a stuck
   `sceneReadyCounter` (async shader compile never completed) via a
   `SCENE_READY_TIMEOUT_MS` timeout and surfaces `shader`;
@@ -83,13 +95,23 @@ The device or browser genuinely lacks the capability. Confirm via
 lack `EXT_color_buffer_float`. This is a hardware/driver limitation, not a bug.
 
 ### "3D shaders failed to load" (env-specific black screen — #238)
-This is the most likely signal behind **#238**, where 3D works on **Prod** but
-shows black on **Dev/Tst**. The capability is present, yet the scene never becomes
-ready — the ray-casting shader chunks did not compile or load.
+This may be the signal behind **#238**, where 3D works on **Prod** but shows black on
+**Dev/Tst**. The capability is present, yet the scene never becomes ready.
 
-Working hypothesis: a **deploy / CDN / asset-loading difference** between
-environments (e.g. shader chunks served from a different base path, blocked by CSP,
-or 404/MIME-mismatched by the CDN) — **not reproducible from this repo alone**.
+Two readings, not distinguished by this repo:
+
+1. A **deploy / CDN / asset-loading difference** between environments (shader chunks served from
+   a different base path, blocked by CSP, or 404/MIME-mismatched by the CDN).
+2. A **renderer that cannot draw the scene at all**. The checked-in e2e baseline
+   `web/e2e-tests/tests/test.spec.ts-snapshots/Displaying-a-2D-model-should-check-the-3D-viewer-1-chromium-linux.png`
+   is a black 3D canvas next to a fully drawn settings panel, so the 3D viewer already renders
+   nothing in the headless Chromium that the e2e job uses. A software-rendered environment can
+   therefore reproduce the black screen without any deploy difference.
+
+To tell them apart: the three capability reasons (`webgl2`, `colorBufferFloat`, `floatLinear`)
+mean the context lacks something and are reported immediately. `shader` means the capabilities
+were present and the scene still was not ready after 10 s, which can also be a slow first frame.
+Check `about:gpu` and the capability reason first; only then look at deploy differences.
 
 When the `shader` error appears in a given environment, check:
 - Network tab for failed/`404`/wrong-MIME shader or chunk requests.
@@ -113,4 +135,12 @@ Reproduce with a smaller volume and check console for GL errors.
   **#238** (env-specific black 3D on Dev/Tst — diagnosable via the `shader` error).
 - Empty-volume black-3D caused by `ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED` is a
   **separate** loader-side cause tracked in the compressed-DICOM plan.
-- Plan: `docs/plans/20260807-3d-render-capability-guard.md`.
+- Issue status: this guard only makes the failures visible; it does not fix #208 or #238. Link them
+  as `Refs`, not `Closes`.
+
+## Tests
+
+- `web/src/engine/gl/*.test.js`: the pure helpers.
+- `web/src/engine/VolumeRenderer3d.test.js`: the wiring, through the real class with a stubbed WebGL
+  layer: the capability gate in `initWithVolume`, the framebuffer check and the ready timeout.
+- `web/src/engine/Graphics3d.test.jsx`: the overlay and its messages.
