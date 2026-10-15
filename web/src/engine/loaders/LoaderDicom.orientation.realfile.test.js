@@ -33,6 +33,13 @@ const withOrientation = (bytes, value) => {
   return out.buffer.slice(out.byteOffset, out.byteOffset + out.byteLength);
 };
 
+const withoutOrientation = (bytes) => {
+  const at = findOrientationTag(bytes);
+  const oldLength = bytes.readUInt16LE(at + VALUE_LENGTH_OFFSET);
+  const out = Buffer.concat([bytes.subarray(0, at), bytes.subarray(at + VALUE_OFFSET + oldLength)]);
+  return out.buffer.slice(out.byteOffset, out.byteOffset + out.byteLength);
+};
+
 const readWithLoaderDicom = (arrBuf) => {
   const loader = new LoaderDicom(1);
   const ret = loader.readFromBuffer(
@@ -84,7 +91,10 @@ const UNCHANGED = [
   { name: 'coronal with negated row axis', value: '-1\\0\\0\\0\\0\\-1' },
   { name: 'in-plane rotation of 150 degrees', value: '-0.866\\0.5\\0\\-0.5\\-0.866\\0' },
   { name: 'in-plane rotation of 170 degrees', value: '-0.985\\0.17\\0\\-0.17\\-0.985\\0' },
-  { name: 'axial with a 2 degree tilt', value: '-0.9994\\0.0349\\0\\-0.0349\\0.9994\\0' },
+  { name: 'negated axial rotated by 2 degrees in-plane', value: '-0.99939\\0.0349\\0\\-0.0349\\-0.99939\\0' },
+  { name: 'a malformed value with 5 components', value: '1\\0\\0\\0\\1' },
+  { name: 'a non-numeric value', value: 'a\\b\\c\\d\\e\\f' },
+  { name: 'the orientation tag being absent', value: undefined },
 ];
 
 describe.each([
@@ -106,8 +116,8 @@ describe.each([
 
   it.each(UNCHANGED)('leaves the image untouched for $name', ({ value }) => {
     const bytes = loadFixture();
-    const source =
-      value === null ? bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) : withOrientation(bytes, value);
+    const own = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+    const source = value === null ? own : value === undefined ? withoutOrientation(bytes) : withOrientation(bytes, value);
     expect(firstDifference(read(source), reference)).toBe(-1);
   });
 });

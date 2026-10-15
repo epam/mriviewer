@@ -78,9 +78,22 @@ describe('LoaderDicom orientation parsing', () => {
     ['coronal with a negated row axis', [-1, 0, 0, 0, 0, -1]],
     ['in-plane rotation of 150 degrees', [-0.866, 0.5, 0, -0.5, -0.866, 0]],
     ['in-plane rotation of 170 degrees', [-0.985, 0.17, 0, -0.17, -0.985, 0]],
-    ['axial with a 2 degree tilt', [-0.9994, 0.0349, 0, -0.0349, 0.9994, 0]],
+    ['negated axial rotated by 2 degrees in-plane', [-0.99939, 0.0349, 0, -0.0349, -0.99939, 0]],
   ])('does not flip for %s', (_name, cosines) => {
     expect(LoaderDicom.getOrientationFlipFlags(cosines)).toEqual({ x: false, y: false, z: false });
+  });
+
+  const negatedAxialRotatedBy = (degrees) => {
+    const rad = (degrees * Math.PI) / 180;
+    return [-Math.cos(rad), Math.sin(rad), 0, -Math.sin(rad), -Math.cos(rad), 0];
+  };
+
+  it('flips for a negated axial image rotated by 0.5 degrees, inside the tolerance', () => {
+    expect(LoaderDicom.getOrientationFlipFlags(negatedAxialRotatedBy(0.5))).toEqual({ x: true, y: true, z: false });
+  });
+
+  it('does not flip for a negated axial image rotated by 0.6 degrees, outside the tolerance', () => {
+    expect(LoaderDicom.getOrientationFlipFlags(negatedAxialRotatedBy(0.6))).toEqual({ x: false, y: false, z: false });
   });
 
   it('flips for a negated axis within the alignment tolerance', () => {
