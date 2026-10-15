@@ -24,16 +24,20 @@ Related work: issues #202 and #232 (compressed DICOM failed to load with
 | JPEG 2000 Lossless | `1.2.840.10008.1.2.4.90` | |
 | JPEG 2000 | `1.2.840.10008.1.2.4.91` | |
 | RLE Lossless | `1.2.840.10008.1.2.5` | Run-length encapsulated |
+| Deflated Explicit VR Little Endian | `1.2.840.10008.1.2.1.99` | daikon inflates the data set (`pako.inflateRaw`) while parsing; covered by `LoaderDcmDaikon.deflate.realfile.test.js`, which deflates a real fixture and compares pixels |
 
 Decompression is handled by daikon; the engine adds no new decoders.
 
-## Not supported
+## Present in daikon, not verified here
 
 | Transfer syntax | UID | Notes |
 |---|---|---|
-| Deflated Explicit VR Little Endian | `1.2.840.10008.1.2.1.99` | DEFLATE — out of scope |
-| JPEG-LS Lossless | `1.2.840.10008.1.2.4.80` | Untested against real fixtures |
-| JPEG-LS Near-Lossless | `1.2.840.10008.1.2.4.81` | Untested against real fixtures |
+| JPEG-LS Lossless | `1.2.840.10008.1.2.4.80` | daikon bundles a JPEG-LS decoder and selects it for this UID; no fixture, so unverified in this app |
+| JPEG-LS Near-Lossless | `1.2.840.10008.1.2.4.81` | same as above |
+
+The UIDs are not recognized in `LoaderDicom.js` (no constants); like every syntax the
+buffer is handed to daikon. If decoding fails or returns too few bytes the loader returns
+`ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED`.
 
 ## Rejected (explicit, no silent misload)
 
@@ -46,19 +50,29 @@ render partial or garbled data:
 | Multiframe | Only frame 0 would be copied | `NumberOfFrames > 1` |
 | Palette color | daikon expands to RGB while `SamplesPerPixel` stays 1 | `PhotometricInterpretation` contains `PALETTE` |
 
+## Status of the linked issues
+
+- **#202** (compressed images failed with `ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED`): addressed
+  for the syntaxes in the Supported table.
+- **#232** (3D view fails for some DICOM datasets): only partly addressed. Multiframe and
+  palette color are rejected rather than loaded, and the remaining 3D issues are tracked
+  separately. Do not treat #232 as closed by this change.
+
 ## Follow-ups
 
-- **DEFLATE (`.1.2.1.99`)** — still unsupported; requires an inflate pass
-  before parsing the data set.
-- **Multiframe** — currently rejected; full support needs per-frame validation,
-  a multi-slice volume mapping, and fixtures.
-- **Palette color** — currently rejected; full support needs consuming daikon's
+- **Multiframe**: currently rejected; full support needs per-frame validation, a
+  multi-slice volume mapping, and fixtures.
+- **Palette color**: currently rejected; full support needs consuming daikon's
   RGB-expanded buffer (samples-per-pixel derived from the buffer, not the tag).
-- **Planar RGB edge cases** — RGB is copied as interleaved; planar
-  configuration `1` (color-by-plane) paths need dedicated fixtures/coverage.
-- **Big Endian 16-bit** — the pixel copy reads samples via a native
-  little-endian `Uint16Array`, so 16-bit Explicit VR Big Endian data would be
-  byte-swapped; needs an endianness-aware read plus a real fixture.
-- **JPEG-LS (`.4.80`/`.4.81`)** — not explicitly recognized in `LoaderDicom.js`
-  (no UID constants); like every syntax the buffer is still handed to daikon's
-  decoder, but decoding is untested and unverified against real fixtures.
+- **Planar RGB**: for `SamplesPerPixel = 3` the loader always treats the buffer as
+  interleaved (`R G B R G B ...`) and averages each consecutive triple. It never reads
+  `PlanarConfiguration` (0028,0006). If daikon hands back color-by-plane data
+  (`PlanarConfiguration = 1`: all R, then all G, then all B) the averages mix neighbouring
+  pixels of one channel and the image is silently wrong; the loader does not detect this.
+  Whether daikon re-interleaves for each syntax is not verified. Needs fixtures for
+  planar configuration 1, then either a de-planarizing copy or an explicit rejection.
+- **Big Endian 16-bit**: the pixel copy reads samples via a native little-endian
+  `Uint16Array`, so 16-bit Explicit VR Big Endian data would be byte-swapped; needs an
+  endianness-aware read plus a real fixture.
+- **JPEG-LS (`.4.80`/`.4.81`)**: needs real fixtures to move from "present in daikon" to
+  supported.
