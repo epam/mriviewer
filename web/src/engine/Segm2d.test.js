@@ -68,7 +68,7 @@ describe('Segm2d.renderImage after the canvas size changed', () => {
     }
   });
 
-  it('keeps the cache dimensions in sync so a repeated render at the same size is stable', () => {
+  it('renders the same pixels at the same size on repeated renders', () => {
     const segm = makeReadySegm(4, 2);
     const ctx = makeCtx();
 
@@ -76,9 +76,48 @@ describe('Segm2d.renderImage after the canvas size changed', () => {
     const first = Array.from(ctx.drawn.data);
     segm.renderImage(ctx, 8, 4, null);
 
-    expect(segm.pixelsWidth).toBe(8);
-    expect(segm.pixelsHeight).toBe(4);
     expect(Array.from(ctx.drawn.data)).toEqual(first);
+  });
+
+  it('does not degrade the segmentation across a shrink followed by a restore', () => {
+    const segm = makeReadySegm(16, 8);
+    const ctx = makeCtx();
+
+    segm.renderImage(ctx, 16, 8, null);
+    const original = Array.from(ctx.drawn.data);
+    segm.renderImage(ctx, 4, 2, null);
+    segm.renderImage(ctx, 16, 8, null);
+
+    expect(Array.from(ctx.drawn.data)).toEqual(original);
+  });
+
+  it('gives the same pixels after many resizes as after a single resize to the final size', () => {
+    const direct = makeReadySegm(16, 8);
+    const directCtx = makeCtx();
+    direct.renderImage(directCtx, 6, 3, null);
+
+    const chained = makeReadySegm(16, 8);
+    const chainedCtx = makeCtx();
+    [
+      [4, 2],
+      [32, 16],
+      [5, 3],
+      [12, 6],
+      [6, 3],
+    ].forEach(([w, h]) => chained.renderImage(chainedCtx, w, h, null));
+
+    expect(Array.from(chainedCtx.drawn.data)).toEqual(Array.from(directCtx.drawn.data));
+  });
+
+  it('keeps the generated cache untouched when the canvas size changes', () => {
+    const segm = makeReadySegm(4, 2);
+    const before = Array.from(segm.pixels);
+
+    segm.renderImage(makeCtx(), 8, 4, null);
+
+    expect(segm.pixelsWidth).toBe(4);
+    expect(segm.pixelsHeight).toBe(2);
+    expect(Array.from(segm.pixels)).toEqual(before);
   });
 
   it('draws the cache as is when the size did not change', () => {

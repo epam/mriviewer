@@ -56,12 +56,20 @@ subscribe/cleanup behavior unit-testable without a browser. See `resizeObserver.
 
 ## Segmentation cache on resize
 
-`Segm2d` caches the colored segmentation in `pixels` at the canvas size it was computed for
-(`pixelsWidth` x `pixelsHeight`). When the canvas is rebuilt at a new size, `renderImage`
-resamples that cache to the new size with `resamplePixels.js` (nearest neighbour, no model
-re-run, so the random palette stays stable). Without it the cache was copied with the new
-row width and the segmentation was scrambled. Covered by `Segm2d.test.js` and
-`resamplePixels.test.js` using position-coded pixels.
+`Segm2d` keeps the colored segmentation in `pixels` at the canvas size it was generated for
+(`pixelsWidth` x `pixelsHeight`). That buffer is never modified by a resize. When the canvas
+is rebuilt at another size, `renderImage` draws a nearest-neighbour resample of it
+(`resamplePixels.js`), memoised per target size in `fittedPixels`. Every resample reads the
+generated buffer, not the previous resample, so any sequence of resizes that ends at a given
+size draws the same pixels as a single resize to that size, and returning to the generation
+size is exact. The model is not re-run, so the random palette stays stable.
+
+Limits: sizes larger than the generation size are upsampled and add no detail; the buffer is
+regenerated only by the existing triggers (segmentation toggle, slice change, mode change).
+Before this change the cache was copied with the new row width and the segmentation was
+scrambled. Covered by `Segm2d.test.js` (grow, shrink, shrink then restore, many resizes) and
+`resamplePixels.test.js`, all on position-coded pixels. A Playwright check of resize while
+segmentation is active is not included.
 
 ---
 
