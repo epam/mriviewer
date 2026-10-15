@@ -44,15 +44,20 @@ byte 352  voxel data (vox_offset = 352, spec minimum)
 - Reads `vox_offset` from the header and uses it as the data offset. Values are
   clamped to `>= 348` and validated to stay within the buffer; an offset past the
   end of the buffer yields a `BAD_HEADER` error code instead of a crash.
-- Backward compatible: files saved by the app *before* this fix declared
-  `vox_offset = 352` in the header but wrote voxel data at byte **348** in a buffer
-  only `348 + N*2` bytes long. When the declared offset (`<= 352`) overruns the
-  buffer but the data fits at byte 348, the loader falls back to 348, so these
-  legacy files still load correctly.
-- Intensities are normalized to 8-bit via a histogram-based last-max-peak, which
-  recovers the full range from the saver's `4095/255` up-scale. The save→read
-  round-trip preserves dimensions and relative voxel intensities (not exact 8-bit
-  equality — assert on the `4095/255` scale).
+- Backward compatible, but strict: files saved by the app *before* this fix declared
+  `vox_offset = 352` in the header but wrote voxel data at byte **348**, in a buffer of
+  exactly `348 + N*bytesPerVoxel` bytes. Only that exact size is accepted as the legacy
+  layout: the loader reads from byte 348 and logs `console.warn`. Any other file whose
+  declared offset overruns the buffer, including a spec-valid file truncated by 1-3 bytes,
+  yields `BAD_HEADER` instead of voxels shifted by 4 bytes. A spec-valid file truncated by
+  exactly 4 bytes has the same size as a legacy file and cannot be told apart; it is read
+  as legacy, with the warning.
+- Intensities are normalized to 8-bit via a histogram-based last-max-peak, so the
+  loaded values are a rescaled copy of the saved ones, not equal to them. The save→read
+  round-trip preserves dimensions, and each voxel keeps its own position: the mapping from
+  saved to loaded intensity is a single function, strictly increasing, so distinct inputs
+  stay distinct and keep their order (on the interior; border voxels are cleared). The
+  tests check exactly that, on position-coded data.
 
 ## Error codes
 

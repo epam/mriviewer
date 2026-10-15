@@ -6,11 +6,12 @@
 import SaverNifti from './SaverNifti';
 import LoaderNifti from '../loaders/loaderNifti/LoaderNifti';
 import LoadResult from '../LoadResult';
+import { voxelIndex, makePositionCodedVolume, interiorIndices, isStrictlyIncreasingMapping } from './niftiTestHelpers';
 
 const DATA_OFFSET = 352;
 const SCALE_TO_16BIT = 4095 / 255;
 
-const idx = (x, y, z, xDim, yDim) => z * xDim * yDim + y * xDim + x;
+const idx = voxelIndex;
 
 const roundTrip = (volumeData, volumeSize) => {
   const arrBuf = SaverNifti.writeBuffer(volumeData, volumeSize);
@@ -60,33 +61,43 @@ describe('SaverNiftiRoundTripTests', () => {
     expect(written).toBe(Math.round(inputValue * SCALE_TO_16BIT));
   });
 
-  it('relative voxel intensities are recoverable (higher input -> higher output)', () => {
-    const x = 8;
-    const y = 8;
+  it('maps every distinct input intensity to a distinct, order-preserving output at its own voxel', () => {
+    const x = 10;
+    const y = 9;
     const z = 8;
-    const HIGH = 255;
-    const LOW = 64;
-    const volumeData = new Uint8Array(x * y * z);
-    for (let zz = 0; zz < z; zz++) {
-      const value = zz < z / 2 ? HIGH : LOW;
-      for (let yy = 0; yy < y; yy++) {
-        for (let xx = 0; xx < x; xx++) {
-          volumeData[idx(xx, yy, zz, x, y)] = value;
-        }
-      }
-    }
+    const volumeData = makePositionCodedVolume(x, y, z);
     const volumeSize = { x, y, z, pixdim1: 1.0, pixdim2: 1.0, pixdim3: 1.0 };
 
     const { volDst, ok, completeCode } = roundTrip(volumeData, volumeSize);
 
     expect(ok).toBe(true);
     expect(completeCode).toBe(LoadResult.SUCCESS);
+    const interior = interiorIndices(x, y, z);
+    expect(new Set(interior.map((i) => volumeData[i])).size).toBeGreaterThan(50);
+    expect(isStrictlyIncreasingMapping(volumeData, volDst.m_dataArray, interior)).toBe(true);
+  });
 
-    const highVoxel = volDst.m_dataArray[idx(4, 4, 2, x, y)];
-    const lowVoxel = volDst.m_dataArray[idx(4, 4, 5, x, y)];
+  it('the oracle rejects a volume shifted by one voxel along x, y or z', () => {
+    const x = 10;
+    const y = 9;
+    const z = 8;
+    const volumeData = makePositionCodedVolume(x, y, z);
+    const volumeSize = { x, y, z, pixdim1: 1.0, pixdim2: 1.0, pixdim3: 1.0 };
+    const { volDst } = roundTrip(volumeData, volumeSize);
+    const interior = interiorIndices(x, y, z);
 
-    expect(highVoxel).toBeGreaterThan(0);
-    expect(lowVoxel).toBeGreaterThan(0);
-    expect(highVoxel).toBeGreaterThanOrEqual(lowVoxel);
+    [1, x, x * y].forEach((shift) => {
+      const shifted = new Uint8Array(volDst.m_dataArray.length);
+      for (let i = 0; i < shifted.length; i++) {
+        shifted[i] = volDst.m_dataArray[(i + shift) % shifted.length];
+      }
+      expect(isStrictlyIncreasingMapping(volumeData, shifted, interior)).toBe(false);
+    });
+  });
+
+  it('the oracle rejects two distinct inputs collapsing to one output', () => {
+    const input = new Uint8Array([10, 20, 30, 40]);
+    const output = new Uint8Array([5, 9, 9, 12]);
+    expect(isStrictlyIncreasingMapping(input, output, [0, 1, 2, 3])).toBe(false);
   });
 });

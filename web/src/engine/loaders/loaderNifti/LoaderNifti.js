@@ -92,7 +92,9 @@ class LoaderNifti {
     const bytesPerVoxel = headerInfo.bitPix / BITS_IN_BYTE;
     const dataBytes = numVoxels * bytesPerVoxel;
     if (dataOff + dataBytes > bufLen) {
-      if (dataOff <= NIFTI_SPEC_MIN_DATA_OFFSET && NIFTI_HEADER_SIZE + dataBytes <= bufLen) {
+      const isLegacyLayout = dataOff <= NIFTI_SPEC_MIN_DATA_OFFSET && bufLen === NIFTI_HEADER_SIZE + dataBytes;
+      if (isLegacyLayout) {
+        console.warn('Nifti loader. Legacy self-saved layout detected (header vox_offset 352, data at byte 348).');
         dataOff = NIFTI_HEADER_SIZE;
       } else {
         return this.validator.reportError(LoadResult.BAD_HEADER, callbackComplete, 'Nifti voxel data past end of buffer');

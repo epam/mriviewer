@@ -5,6 +5,8 @@
 
 import LoaderNifti from './LoaderNifti';
 import LoadResult from '../../LoadResult';
+import SaverNifti from '../../savers/SaverNifti';
+import { makePositionCodedVolume, interiorIndices, isStrictlyIncreasingMapping } from '../../savers/niftiTestHelpers';
 
 const HEADER_SIZE = 348;
 const MAGIC_OFFSET = 344;
@@ -149,6 +151,69 @@ describe('LoaderNiftiTests', () => {
 
     expect(ok).toBe(false);
     expect(completeCode).toBe(LoadResult.BAD_HEADER);
+  });
+
+  describe('self-saved files from before the vox_offset fix', () => {
+    const X = 10;
+    const Y = 9;
+    const Z = 8;
+    const PAD = 4;
+    const fresh = () => {
+      const data = makePositionCodedVolume(X, Y, Z);
+      const buf = SaverNifti.writeBuffer(data, { x: X, y: Y, z: Z, pixdim1: 1, pixdim2: 1, pixdim3: 1 });
+      return { data, buf };
+    };
+    const load = (buf) => {
+      const volDst = {};
+      let code = null;
+      const ok = new LoaderNifti().readFromBuffer(volDst, buf, null, (c) => {
+        code = c;
+      });
+      return { volDst, ok, code };
+    };
+    const dropPad = (buf) => {
+      const legacy = new Uint8Array(buf.byteLength - PAD);
+      legacy.set(new Uint8Array(buf, 0, HEADER_SIZE), 0);
+      legacy.set(new Uint8Array(buf, HEADER_SIZE + PAD), HEADER_SIZE);
+      return legacy.buffer;
+    };
+
+    it('reads a legacy layout (data at 348, buffer exactly 348 + data) with every voxel at its own position and warns', () => {
+      const { data, buf } = fresh();
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      const { volDst, ok, code } = load(dropPad(buf));
+
+      expect(ok).toBe(true);
+      expect(code).toBe(LoadResult.SUCCESS);
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(isStrictlyIncreasingMapping(data, volDst.m_dataArray, interiorIndices(X, Y, Z))).toBe(true);
+      warn.mockRestore();
+    });
+
+    it.each([1, 2, 3])('rejects a spec-valid file truncated by %i byte(s) instead of reading shifted voxels', (cut) => {
+      const { buf } = fresh();
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      const { ok, code } = load(buf.slice(0, buf.byteLength - cut));
+
+      expect(ok).toBe(false);
+      expect(code).toBe(LoadResult.BAD_HEADER);
+      expect(warn).not.toHaveBeenCalled();
+      warn.mockRestore();
+    });
+
+    it('does not warn for a complete spec-valid file', () => {
+      const { data, buf } = fresh();
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      const { volDst, ok } = load(buf);
+
+      expect(ok).toBe(true);
+      expect(warn).not.toHaveBeenCalled();
+      expect(isStrictlyIncreasingMapping(data, volDst.m_dataArray, interiorIndices(X, Y, Z))).toBe(true);
+      warn.mockRestore();
+    });
   });
 
   it('clamps a too-small vox_offset up to the header size', () => {
