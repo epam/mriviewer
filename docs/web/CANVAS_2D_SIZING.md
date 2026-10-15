@@ -54,6 +54,17 @@ subscribe/cleanup behavior unit-testable without a browser. See `resizeObserver.
 
 ---
 
+## Segmentation cache on resize
+
+`Segm2d` caches the colored segmentation in `pixels` at the canvas size it was computed for
+(`pixelsWidth` x `pixelsHeight`). When the canvas is rebuilt at a new size, `renderImage`
+resamples that cache to the new size with `resamplePixels.js` (nearest neighbour, no model
+re-run, so the random palette stays stable). Without it the cache was copied with the new
+row width and the segmentation was scrambled. Covered by `Segm2d.test.js` and
+`resamplePixels.test.js` using position-coded pixels.
+
+---
+
 ## Not covered — HiDPI backing-store scaling
 
 Scaling the backing store by `window.devicePixelRatio` for crisper HiDPI rendering was
