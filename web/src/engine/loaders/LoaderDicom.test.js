@@ -74,6 +74,20 @@ describe('LoaderDicom orientation parsing', () => {
     expect(flip.z).toBe(false);
   });
 
+  it.each([
+    ['coronal with a negated row axis', [-1, 0, 0, 0, 0, -1]],
+    ['in-plane rotation of 150 degrees', [-0.866, 0.5, 0, -0.5, -0.866, 0]],
+    ['in-plane rotation of 170 degrees', [-0.985, 0.17, 0, -0.17, -0.985, 0]],
+    ['axial with a 2 degree tilt', [-0.9994, 0.0349, 0, -0.0349, 0.9994, 0]],
+  ])('does not flip for %s', (_name, cosines) => {
+    expect(LoaderDicom.getOrientationFlipFlags(cosines)).toEqual({ x: false, y: false, z: false });
+  });
+
+  it('flips for a negated axis within the alignment tolerance', () => {
+    const flip = LoaderDicom.getOrientationFlipFlags([-0.9999, 0.005, 0, -0.005, 0.9999, 0]);
+    expect(flip).toEqual({ x: true, y: false, z: false });
+  });
+
   it('missing orientation defaults to no flip', () => {
     const flip = LoaderDicom.getOrientationFlipFlags(null);
     expect(flip.x).toBe(false);

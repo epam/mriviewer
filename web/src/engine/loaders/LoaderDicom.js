@@ -73,6 +73,7 @@ const TAG_PIXEL_REPRESENTATION = [0x0028, 0x0103];
 
 const TAG_IMAGE_POSITION = [0x0020, 0x0032];
 const TAG_IMAGE_ORIENTATION = [0x0020, 0x0037];
+const AXIS_ALIGNED_TOLERANCE = 0.01;
 const TAG_SLICE_LOCATION = [0x0020, 0x1041];
 const TAG_SAMPLES_PER_PIXEL = [0x0028, 0x0002];
 const TAG_SERIES_DESCRIPTION = [0x0008, 0x103e];
@@ -895,10 +896,18 @@ class LoaderDicom {
     const colX = cosines[3];
     const colY = cosines[4];
     const colZ = cosines[5];
-    const rowXDominant = Math.abs(rowX) > Math.abs(rowY) && Math.abs(rowX) > Math.abs(rowZ);
-    const colYDominant = Math.abs(colY) > Math.abs(colX) && Math.abs(colY) > Math.abs(colZ);
-    flip.x = rowXDominant && rowX < 0.0;
-    flip.y = colYDominant && colY < 0.0;
+    const isAxialAxisAligned =
+      Math.abs(rowX) >= 1 - AXIS_ALIGNED_TOLERANCE &&
+      Math.abs(colY) >= 1 - AXIS_ALIGNED_TOLERANCE &&
+      Math.abs(rowY) <= AXIS_ALIGNED_TOLERANCE &&
+      Math.abs(rowZ) <= AXIS_ALIGNED_TOLERANCE &&
+      Math.abs(colX) <= AXIS_ALIGNED_TOLERANCE &&
+      Math.abs(colZ) <= AXIS_ALIGNED_TOLERANCE;
+    if (!isAxialAxisAligned) {
+      return flip;
+    }
+    flip.x = rowX < 0.0;
+    flip.y = colY < 0.0;
     return flip;
   }
   static computeDestIndex(srcIndex, xDim, yDim, flip) {
