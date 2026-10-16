@@ -17,6 +17,7 @@ import * as THREE from 'three';
 
 import CLIP_VERTEX_SHADER from '../shaders/clipplane.vert';
 import CLIP_FRAGMENT_SHADER from '../shaders/clipplane.frag';
+import ShaderSourceLoader from './shaderSourceLoader';
 
 /** Class @class MaterialClipPlane for volume clip plane rendering */
 export default class MaterialClipPlane {
@@ -39,9 +40,9 @@ export default class MaterialClipPlane {
     // Init uniforms
     this.m_uniforms.texBF.value = textureBF;
     // create shader loaders
-    const vertexLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const vertexLoader = new ShaderSourceLoader();
     vertexLoader.setResponseType('text');
-    const fragmentLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const fragmentLoader = new ShaderSourceLoader();
     fragmentLoader.setResponseType('text');
 
     vertexLoader.load(CLIP_VERTEX_SHADER, (strVertexSh) => {

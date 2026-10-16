@@ -17,6 +17,7 @@ import * as THREE from 'three';
 
 import RENDER_TEXTURE_VERTEX_SHADER from '../shaders/ssao.vert';
 import RENDER_TEXTURE_FRAGMENT_SHADER from '../shaders/ssao.frag';
+import ShaderSourceLoader from './shaderSourceLoader';
 
 /** Class @class MaterialRenderSSAO for
  * ambient occlusion computation
@@ -68,9 +69,9 @@ export default class MaterialRenderSSAO {
     }
     this.m_uniforms.offsets.value = offsets;
     // create shader loaders
-    const vertexLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const vertexLoader = new ShaderSourceLoader();
     vertexLoader.setResponseType('text');
-    const fragmentLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const fragmentLoader = new ShaderSourceLoader();
     fragmentLoader.setResponseType('text');
 
     vertexLoader.load(RENDER_TEXTURE_VERTEX_SHADER, (strVertexSh) => {

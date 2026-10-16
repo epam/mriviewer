@@ -17,6 +17,7 @@ import * as THREE from 'three';
 
 import RENDER_TEXTURE_VERTEX_SHADER from '../shaders/rendertotexture.vert';
 import RENDER_TEXTURE_FRAGMENT_SHADER from '../shaders/rendertotexture.frag';
+import ShaderSourceLoader from './shaderSourceLoader';
 
 /** Class @class MaterialRenderToTexture for
  * rough isosurface computation: a ray-casting optimization
@@ -79,9 +80,9 @@ export default class MaterialRenderToTexture {
     this.m_uniforms.texFF.value = texFrontface;
     this.m_uniforms.ssaoOffsets.value = offsets;
     // create shader loaders
-    const vertexLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const vertexLoader = new ShaderSourceLoader();
     vertexLoader.setResponseType('text');
-    const fragmentLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const fragmentLoader = new ShaderSourceLoader();
     fragmentLoader.setResponseType('text');
 
     vertexLoader.load(RENDER_TEXTURE_VERTEX_SHADER, (strVertexSh) => {

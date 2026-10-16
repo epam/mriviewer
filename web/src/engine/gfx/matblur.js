@@ -17,6 +17,7 @@ import * as THREE from 'three';
 
 import BLUR_VERTEX_SHADER from '../shaders/blur.vert';
 import BLUR_FRAGMENT_SHADER from '../shaders/blur.frag';
+import ShaderSourceLoader from './shaderSourceLoader';
 
 /** Class @class MaterialBlur for volume slice blurring */
 export default class MaterialBlur {
@@ -66,9 +67,9 @@ export default class MaterialBlur {
     this.m_uniforms.texSegInUse.value = texRoiId;
     this.m_uniforms.texelSize.value = texelSize;
     // create shader loaders
-    const vertexLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const vertexLoader = new ShaderSourceLoader();
     vertexLoader.setResponseType('text');
-    const fragmentLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const fragmentLoader = new ShaderSourceLoader();
     fragmentLoader.setResponseType('text');
 
     vertexLoader.load(BLUR_VERTEX_SHADER, (strVertexSh) => {

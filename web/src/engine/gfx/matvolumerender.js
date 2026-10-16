@@ -17,6 +17,7 @@ import * as THREE from 'three';
 
 import VOL_RENDER_VERTEX_SHADER from '../shaders/volumerender.vert';
 import VOL_RENDER_FRAGMENT_SHADER from '../shaders/volumerender.frag';
+import ShaderSourceLoader from './shaderSourceLoader';
 
 /** Class @class MaterialVolumeRender for create skull volume render shader material */
 export default class MaterialVolumeRender {
@@ -81,9 +82,9 @@ export default class MaterialVolumeRender {
     this.m_uniforms.ssaoOffsets.value = offsets;
 
     // create shader loaders
-    const vertexLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const vertexLoader = new ShaderSourceLoader();
     vertexLoader.setResponseType('text');
-    const fragmentLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const fragmentLoader = new ShaderSourceLoader();
     fragmentLoader.setResponseType('text');
 
     vertexLoader.load(VOL_RENDER_VERTEX_SHADER, (strVertexSh) => {
