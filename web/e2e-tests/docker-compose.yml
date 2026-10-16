@@ -11,7 +11,7 @@ services:
     ports:
       - "3000:3000"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:3000" ]  # Adjust port if needed
+      test: [ "CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" ]
       interval: 1s
       retries: 10
 
