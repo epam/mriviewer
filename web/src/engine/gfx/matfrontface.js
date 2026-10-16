@@ -16,6 +16,7 @@
 import * as THREE from 'three';
 import FRONT_FACE_VERTEX_SHADER from '../shaders/frontface.vert';
 import FRONT_FACE_FRAGMENT_SHADER from '../shaders/frontface.frag';
+import ShaderSourceLoader from './shaderSourceLoader';
 
 /** Class @class MaterialFF for volume frontface rendering */
 export default class MaterialFF {
@@ -40,9 +41,9 @@ export default class MaterialFF {
     // Init uniforms
     this.m_uniforms.texBF.value = textureBF;
     // create shader loaders
-    const vertexLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const vertexLoader = new ShaderSourceLoader();
     vertexLoader.setResponseType('text');
-    const fragmentLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const fragmentLoader = new ShaderSourceLoader();
     fragmentLoader.setResponseType('text');
     vertexLoader.load(FRONT_FACE_VERTEX_SHADER, (strVertexSh) => {
       this.m_strShaderVertex = strVertexSh;

@@ -17,6 +17,7 @@ import * as THREE from 'three';
 
 import AO_VERTEX_SHADER from '../shaders/createAO.vert';
 import AO_FRAGMENT_SHADER from '../shaders/createAO.frag';
+import ShaderSourceLoader from './shaderSourceLoader';
 
 /** Class @class MaterialBlur for volume slice blurring */
 export default class MaterialAO {
@@ -58,9 +59,9 @@ export default class MaterialAO {
     this.m_uniforms.vectorsSize.value = vectorsSize;
     this.m_uniforms.isoThreshold.value = isoThreshold;
     // create shader loaders
-    const vertexLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const vertexLoader = new ShaderSourceLoader();
     vertexLoader.setResponseType('text');
-    const fragmentLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const fragmentLoader = new ShaderSourceLoader();
     fragmentLoader.setResponseType('text');
 
     vertexLoader.load(AO_VERTEX_SHADER, (strVertexSh) => {

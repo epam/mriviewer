@@ -17,6 +17,7 @@ import * as THREE from 'three';
 
 import INTERP_VERTEX_SHADER from '../shaders/interpolation.vert';
 import INTERP_FRAGMENT_SHADER from '../shaders/interpolation.frag';
+import ShaderSourceLoader from './shaderSourceLoader';
 
 /** Class @class MaterialVolumeRender for create skull volume render shader material */
 export default class MaterialInterpolation {
@@ -43,9 +44,9 @@ export default class MaterialInterpolation {
     this.m_uniforms.texIsoSurface.value = renderTexture;
 
     // create shader loaders
-    const vertexLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const vertexLoader = new ShaderSourceLoader();
     vertexLoader.setResponseType('text');
-    const fragmentLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const fragmentLoader = new ShaderSourceLoader();
     fragmentLoader.setResponseType('text');
 
     vertexLoader.load(INTERP_VERTEX_SHADER, (strVertexSh) => {

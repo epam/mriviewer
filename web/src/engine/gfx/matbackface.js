@@ -17,6 +17,7 @@ import * as THREE from 'three';
 
 import BACK_FACE_VERTEX_SHADER from '../shaders/backface.vert';
 import BACK_FACE_FRAGMENT_SHADER from '../shaders/backface.frag';
+import ShaderSourceLoader from './shaderSourceLoader';
 
 /** Class @class MaterialBF for volume backface rendering */
 export default class MaterialBF {
@@ -35,9 +36,9 @@ export default class MaterialBF {
     // Init uniforms
 
     // create shader loaders
-    const vertexLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const vertexLoader = new ShaderSourceLoader();
     vertexLoader.setResponseType('text');
-    const fragmentLoader = new THREE.FileLoader(THREE.DefaultLoadingManager);
+    const fragmentLoader = new ShaderSourceLoader();
     fragmentLoader.setResponseType('text');
 
     vertexLoader.load(BACK_FACE_VERTEX_SHADER, (strVertexSh) => {
