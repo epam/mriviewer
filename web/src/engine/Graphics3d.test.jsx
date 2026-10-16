@@ -67,6 +67,18 @@ describe('Graphics3d render error overlay', () => {
     expect(overlay.getAttribute('role')).toBe('alert');
   });
 
+  it('sizes the overlay to its text so inherited stretch rules cannot blow it up', () => {
+    rendererState.reason = 'shader';
+
+    renderWithState(<Graphics3d />, { volumeSet: new VolumeSet() });
+
+    const { style } = screen.getByTestId(ERROR_TEST_ID);
+    expect(style.right).toBe('auto');
+    expect(style.bottom).toBe('auto');
+    expect(style.width).toBe('auto');
+    expect(style.height).toBe('auto');
+  });
+
   it('shows a generic message for an unknown reason instead of nothing', () => {
     rendererState.reason = 'something-new';
 
