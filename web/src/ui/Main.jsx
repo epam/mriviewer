@@ -216,7 +216,7 @@ export const Main = () => {
           {isReady ? (
             <div className={css.header} data-testid={TEST_IDS.TOP_TOOLBAR}>
               {!isFullMode && (
-                <div className={css.header__logo}>
+                <div className={css.header__logo} data-testid={TEST_IDS.APP_LOGO}>
                   <UiAbout />
                 </div>
               )}
@@ -242,12 +242,14 @@ export const Main = () => {
           )}
           {isReady && (
             <div className={cx(isFullMode && css.fullscreen)}>
-              <div className={css.left}>
+              <div className={css.left} data-testid={TEST_IDS.LEFT_TOOLBAR}>
                 <LeftToolbar />
               </div>
 
               <div className={css.center}>{viewMode === ModeView.VIEW_2D ? <Graphics2d /> : <Graphics3d />}</div>
-              <div className={css.bottleft}>{viewMode === ModeView.VIEW_2D && <ZoomTools />}</div>
+              <div className={css.bottleft} data-testid={TEST_IDS.ZOOM_TOOLS}>
+                {viewMode === ModeView.VIEW_2D && <ZoomTools />}
+              </div>
               <RightPanel />
             </div>
           )}

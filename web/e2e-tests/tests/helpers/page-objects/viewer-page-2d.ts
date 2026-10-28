@@ -14,6 +14,9 @@ export class ViewerPage2d {
   readonly downloadFileModal: Locator;
   readonly downloadFileButton: Locator;
   readonly switchTo3DButton: Locator;
+  readonly appLogo: Locator;
+  readonly leftToolbar: Locator;
+  readonly zoomTools: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -25,6 +28,9 @@ export class ViewerPage2d {
     this.downloadFileModal = page.getByTestId(TEST_IDS.DOWNLOAD_FILE_MODAL);
     this.downloadFileButton = page.getByTestId(TEST_IDS.DOWNLOAD_FILE_BUTTON);
     this.switchTo3DButton = page.getByTestId(TEST_IDS.SWITCH_TO_3D_VIEWER_BUTTON);
+    this.appLogo = page.getByTestId(TEST_IDS.APP_LOGO);
+    this.leftToolbar = page.getByTestId(TEST_IDS.LEFT_TOOLBAR);
+    this.zoomTools = page.getByTestId(TEST_IDS.ZOOM_TOOLS);
   }
 
   async openDownloadFileModal() {
@@ -49,6 +55,11 @@ export class ViewerPage2d {
     const stats = fs.statSync(savePath);
 
     return { content, name: filename, stats };
+  }
+
+  async getBoundingBoxes(container: Locator) {
+    const boxes = await Promise.all((await container.getByRole('button').all()).map((button) => button.boundingBox()));
+    return boxes.filter((box): box is NonNullable<typeof box> => box !== null);
   }
 
   async switchTo3DViewer() {
