@@ -25,7 +25,7 @@ jobs:
           ssh://git@github.com/
       - run: node --version
       - run: npm --version
-      - run: npm ci --no-optional
+      - run: npm ci
       - run: npm run build
       - run: npm run lint
       - run: npm test
