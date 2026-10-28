@@ -8,6 +8,10 @@ on:
     branches:
       - develop
 
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
