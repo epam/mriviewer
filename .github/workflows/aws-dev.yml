@@ -4,8 +4,7 @@
 name: Deploy DEV
 
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
       - develop
 
