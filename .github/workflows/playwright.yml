@@ -1,0 +1,33 @@
+name: Playwright Tests
+on:
+  push:
+    branches: [ develop, master ]
+    paths:
+      - 'web/**'
+      - '.github/workflows/playwright.yml'
+  pull_request:
+    branches: [ develop, master ]
+    paths:
+      - 'web/**'
+      - '.github/workflows/playwright.yml'
+jobs:
+  test:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+    - name: Verify Docker Compose
+      run: docker compose version
+    - name: Prepare for tests run
+      run: cd web/e2e-tests && npm run docker:build
+    - name: Run Playwright tests
+      run: cd web/e2e-tests && npm run docker:test
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: web/e2e-tests/playwright-report/
+        retention-days: 30

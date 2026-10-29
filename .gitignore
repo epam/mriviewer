@@ -1,19 +1,19 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
-/.pnp
+**/node_modules
+.pnp
 .pnp.js
 
 # testing
-/coverage
+**/coverage
 
 # production
-/build
-/dist
+**/build
+**/dist
 
 # doc
-/esdoc
+**/esdoc
 
 # misc
 .DS_Store
@@ -31,3 +31,34 @@ yarn-error.log*
 /.vscode
 /mriviewer.sln
 /.vs
+
+# AI coding tools
+.claude/
+.codex/
+.codemie/
+.cursor/
+.copilot/
+
+# C++ / CMake
+**/CMakeFiles/
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/*.o
+**/*.a
+**/*.so
+**/*.dylib
+mri-core/build/
+
+# Xcode / Swift / VisionOS
+DerivedData/
+xcuserdata/
+**/*.xcuserstate
+**/*.xcworkspace/xcuserdata/
+**/*.xcodeproj/xcuserdata/
+**/*.pbxuser
+**/*.mode1v3
+**/*.mode2v3
+**/*.perspectivev3
+.build/
+Pods/
+Carthage/Build/
