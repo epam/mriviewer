@@ -74,7 +74,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/ui": "^5.0.5",
     "cross-env": "^7.0.3",
-    "eslint": "^7.27.0",
+    "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "7.x.x",
