@@ -18,7 +18,8 @@ updates:
         applies-to: "version-updates"
         patterns:
           - "*"
-        # Three.js 0.x updates require a separate renderer migration.
+        # Review 0.x packages with known breaking minor updates separately.
+        # Dependabot requires these exceptions to be listed by package name.
         exclude-patterns:
           - "three"
         update-types:
