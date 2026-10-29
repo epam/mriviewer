@@ -34,8 +34,8 @@ describe('test leftToolbar', () => {
     // eslint-disable-next-line react/react-in-jsx-scope
     const { store } = renderWithState(<LeftToolbar />, { viewMode: ViewMode.VIEW_2D });
     expect(store.getState().viewMode).toBe(ViewMode.VIEW_2D);
-    expect(ModeSwitcherToolbar).toBeCalledTimes(2);
-    expect(ModeFast3dToolbar).toBeCalledTimes(1);
+    expect(ModeSwitcherToolbar).toBeCalledTimes(1);
+    expect(ModeFast3dToolbar).toBeCalledTimes(0);
     expect(Mode2dToolbar).toBeCalledTimes(1);
   });
 });
