@@ -72,7 +72,7 @@
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "@vitejs/plugin-react": "^4.3.4",
-    "@vitest/ui": "^3.0.9",
+    "@vitest/ui": "^5.0.5",
     "cross-env": "^7.0.3",
     "eslint": "^7.27.0",
     "eslint-config-prettier": "^10.1.8",
