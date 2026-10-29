@@ -54,7 +54,7 @@
     "react-popper": "^2.2.5",
     "react-redux": "7.2.4",
     "redux": "4.1.0",
-    "seedrandom": "^2.4.4",
+    "seedrandom": "^3.0.5",
     "three": "0.101.1"
   },
   "devDependencies": {
