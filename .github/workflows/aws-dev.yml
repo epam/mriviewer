@@ -4,39 +4,37 @@
 name: Deploy DEV
 
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
       - develop
     paths:
       - 'web/**'
 
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     defaults:
       run:
         working-directory: web
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js 22.x
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v5
         with:
-          node-version: 22.x
+          node-version: 24.x
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
       - name: Reconfigure git to use HTTP authentication
         run: >
           git config --global url."https://github.com/".insteadOf
           ssh://git@github.com/
-      - name: Cache Node.js modules
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
-            ${{ runner.OS }}-
       - run: node --version
       - run: npm --version
       - run: npm ci
@@ -46,7 +44,7 @@ jobs:
         env:
           CI: true
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
