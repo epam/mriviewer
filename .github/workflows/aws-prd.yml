@@ -24,6 +24,7 @@ jobs:
         with:
           node-version: 24.x
           cache: 'npm'
+          cache-dependency-path: web/package-lock.json
       - name: Reconfigure git to use HTTP authentication
         run: >
           git config --global url."https://github.com/".insteadOf
@@ -48,3 +49,4 @@ jobs:
       - name: Invalidate cache with the AWS CLI
         run: |
           aws cloudfront create-invalidation --distribution-id E3O0OMPB0HHSIG --paths "/*"
+          

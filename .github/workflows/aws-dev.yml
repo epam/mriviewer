@@ -24,6 +24,7 @@ jobs:
         with:
           node-version: 24.x
           cache: 'npm'
+          cache-dependency-path: web/package-lock.json
       - name: Reconfigure git to use HTTP authentication
         run: >
           git config --global url."https://github.com/".insteadOf
