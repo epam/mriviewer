@@ -55,7 +55,7 @@
     "react-redux": "7.2.4",
     "redux": "4.1.0",
     "seedrandom": "^2.4.4",
-    "three": "0.186.1"
+    "three": "0.101.1"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",

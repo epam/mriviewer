@@ -15,6 +15,9 @@ updates:
         applies-to: "version-updates"
         patterns:
           - "*"
+        # Three.js 0.x updates can break renderer APIs; review separately.
+        exclude-patterns:
+          - "three"
         update-types:
           - "minor"
           - "patch"
@@ -22,6 +25,8 @@ updates:
         applies-to: "security-updates"
         patterns:
           - "*"
+        exclude-patterns:
+          - "three"
         update-types:
           - "minor"
           - "patch"
