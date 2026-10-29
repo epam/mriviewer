@@ -13,12 +13,14 @@ import '@testing-library/jest-dom/extend-expect';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
-window.IntersectionObserver = vi.fn(() => ({
-  root: null,
-  rootMargin: '',
-  thresholds: [],
-  disconnect: () => null,
-  observe: () => null,
-  takeRecords: () => [],
-  unobserve: () => null,
-}));
+window.IntersectionObserver = vi.fn(function IntersectionObserverMock() {
+  return {
+    root: null,
+    rootMargin: '',
+    thresholds: [],
+    disconnect: () => null,
+    observe: () => null,
+    takeRecords: () => [],
+    unobserve: () => null,
+  };
+});
