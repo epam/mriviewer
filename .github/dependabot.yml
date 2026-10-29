@@ -1,0 +1,27 @@
+version: 2
+
+updates:
+  - package-ecosystem: "npm"
+    directory: "/web"
+    # Use the default branch (develop), including for security updates.
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tbilisi"
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      security-minor-and-patch:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
