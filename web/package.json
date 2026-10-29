@@ -75,7 +75,7 @@
     "@vitest/ui": "^3.0.9",
     "cross-env": "^7.0.3",
     "eslint": "^7.27.0",
-    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "7.x.x",
     "husky": "^7.0.0",
