@@ -3,7 +3,34 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/web"
+    # The default branch (develop) receives both version and security updates.
     schedule:
       interval: "weekly"
-    # Updates are manual; security alerts remain enabled in repository Settings.
-    open-pull-requests-limit: 0
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tbilisi"
+    open-pull-requests-limit: 5
+    # Include transitive dependencies in the weekly update check.
+    allow:
+      - dependency-type: "all"
+    groups:
+      minor-and-patch:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        # Three.js 0.x updates require a separate renderer migration.
+        exclude-patterns:
+          - "three"
+        update-types:
+          - "minor"
+          - "patch"
+      security-minor-and-patch:
+        # Critical-only PR creation is controlled by a repository auto-triage rule.
+        applies-to: "security-updates"
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "three"
+        update-types:
+          - "minor"
+          - "patch"
