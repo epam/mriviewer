@@ -1,9 +1,10 @@
 # This workflow deploys application to the AWS DEV environment.
-# Runs on each pull request to "develop" branch.
+# Runs on web changes pushed to develop or manually for a selected branch.
 
 name: Deploy DEV
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - develop
