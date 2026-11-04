@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  // Existing Three.js FileLoader calls expect shader asset URLs.
+  assetsInclude: ['**/*.vert', '**/*.frag'],
   test: {
     globals: true,
     environment: 'jsdom',

@@ -321,7 +321,7 @@ export default class VolumeRenderer3d {
     if (this.renderer === null) {
       return null;
     }
-    let screenshotImage;
+    let screenshotImage = null;
     if (typeof width === 'undefined') {
       screenshotImage = this.renderer.domElement.toDataURL('image/png');
     } else {
@@ -833,10 +833,10 @@ export default class VolumeRenderer3d {
     this.renderScene = SCENE_TYPE_RAYCAST;
     this.sceneReadyCounter = 0;
     this.renderCounter = 0;
-    let matBfThreeGS;
-    let matFfThreeGS;
-    let matIntetpl;
-    let matScreenTex;
+    let matBfThreeGS = null;
+    let matFfThreeGS = null;
+    let matIntetpl = null;
+    let matScreenTex = null;
     if (this.sceneClipPlane) {
       this.sceneClipPlane = new THREE.Scene();
     }

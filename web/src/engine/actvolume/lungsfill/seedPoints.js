@@ -80,7 +80,8 @@ export default class SeedPoints {
     yMax = yMaxNew;
     const NUM_COLORS = 8;
     const histogram = new Float32Array(NUM_COLORS);
-    for (y = yMin; y <= yMax; y++) {
+    let goodHistogramDetected = false;
+    for (y = yMin; y <= yMax && !goodHistogramDetected; y++) {
       // clear histogram
       for (x = 0; x < NUM_COLORS; x++) {
         histogram[x] = 0;
@@ -102,6 +103,7 @@ export default class SeedPoints {
       // but we should have enough whites
       const BARRIER = 0.7;
       if (histogram[0] < BARRIER) {
+        goodHistogramDetected = true;
         break;
       }
     } // for (y) all possible hor lines

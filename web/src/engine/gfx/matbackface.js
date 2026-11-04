@@ -15,8 +15,8 @@
 // absoulte imports
 import * as THREE from 'three';
 
-import BACK_FACE_VERTEX_SHADER from '../shaders/backface.vert?url';
-import BACK_FACE_FRAGMENT_SHADER from '../shaders/backface.frag?url';
+import BACK_FACE_VERTEX_SHADER from '../shaders/backface.vert';
+import BACK_FACE_FRAGMENT_SHADER from '../shaders/backface.frag';
 
 /** Class @class MaterialBF for volume backface rendering */
 export default class MaterialBF {

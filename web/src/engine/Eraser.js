@@ -111,7 +111,7 @@ export default class Eraser {
     let nY = 0;
     let nZ = 0;
     let normFactor = 0;
-    let offDst;
+    let offDst = 0;
     const VAL_2 = 2; // getting normal of surface
     for (let k = -Math.min(GAUSS_R, targetZ); k <= Math.min(GAUSS_R, this.zDim - 1 - targetZ); k++) {
       for (let j = -Math.min(GAUSS_R, targetY); j <= Math.min(GAUSS_R, this.yDim - 1 - targetY); j++) {
@@ -153,7 +153,7 @@ export default class Eraser {
         this.queue = [];
         this.queue.push(this.point);
         const normalBack = -5;
-        let backZ;
+        let backZ = 0;
         backZ = normalBack;
         let deleteflag = false;
         while (this.queue.length > 0) {
@@ -229,7 +229,7 @@ export default class Eraser {
       if (Math.sqrt(RotPoint.x * RotPoint.x + RotPoint.y * RotPoint.y) > rxy || RotPoint.z > lastDepth || RotPoint.z < lastback) {
         continue;
       }
-      let offDst;
+      let offDst = 0;
       for (let x = this.point.x - 1; x <= this.point.x + 1; x++) {
         for (let y = this.point.y - 1; y <= this.point.y + 1; y++) {
           for (let z = this.point.z - 1; z <= this.point.z + 1; z++) {

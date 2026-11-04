@@ -1,9 +1,7 @@
-type MRIEventListener = (data: any) => void;
-
 export class MRIEventsService {
-  private events: { [key: string]: MRIEventListener[] } = {};
+  private events: { [key: string]: Function[] } = {};
 
-  on(eventName: string, fn: MRIEventListener): () => void {
+  on(eventName: string, fn: Function): Function {
     if (!this.events[eventName]) {
       this.events[eventName] = [];
     }
@@ -11,7 +9,7 @@ export class MRIEventsService {
     return () => this.off(eventName, fn);
   }
 
-  off(eventName: string, fn: MRIEventListener): void {
+  off(eventName: string, fn: Function): void {
     if (!this.events[eventName]) return;
     this.events[eventName] = this.events[eventName].filter((subscriber) => subscriber !== fn);
   }

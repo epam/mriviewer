@@ -26,7 +26,7 @@ export class NiftiDataProcessor {
     let valMax = 0,
       j = 0;
     for (let i = 0; i < count; i++) {
-      let val;
+      let val = 0;
       if (type === NIFTI_DATA_TYPE_INT16 || type === NIFTI_DATA_TYPE_UINT16) {
         val = this.headerReader.readShortFromBuffer(buf, offset + j);
         j += 2;

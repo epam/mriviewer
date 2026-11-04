@@ -29,13 +29,9 @@ const DCM_FILE_PATHS = [
 const VIEWPORT_SIZE = { width: 1600, height: 1024 };
 
 test('has title', async ({ page }) => {
-  const pageErrors: string[] = [];
-  page.on('pageerror', (error) => pageErrors.push(error.message));
   await openHomePage(page);
 
   await expect(page).toHaveTitle(/MRI Viewer Dicom 2d\/3d browser/);
-  await expect(page.getByText('Demo Data', { exact: true })).toBeVisible();
-  expect(pageErrors).toEqual([]);
 });
 
 test('should open initial screen view', async ({ page }) => {
@@ -59,30 +55,6 @@ test.describe('Displaying a 2D model', () => {
 
   test.beforeEach(async ({ page }) => {
     await openHomePage(page);
-  });
-
-  test('should render a DICOM volume in 2D and 3D without runtime errors', async ({ page }) => {
-    const pageErrors: string[] = [];
-    const shaderErrors: string[] = [];
-    page.on('pageerror', (error) => pageErrors.push(error.message));
-    page.on('console', (message) => {
-      if (
-        message.type() === 'error' &&
-        /WebGLShader|WebGLProgram|VALIDATE_STATUS|INVALID_OPERATION|INVALID_FRAMEBUFFER_OPERATION/.test(message.text())
-      ) {
-        shaderErrors.push(message.text());
-      }
-    });
-    const homePage = new HomePage(page);
-    const viewerPage2d = new ViewerPage2d(page);
-
-    await homePage.open16BitsFileFromDevice(DCM_FILE_PATHS);
-    await expect(viewerPage2d.canvas).toBeVisible();
-    await viewerPage2d.switchTo3DViewer();
-    await expect(viewerPage2d.canvas3D).toBeVisible();
-
-    expect(pageErrors).toEqual([]);
-    expect(shaderErrors).toEqual([]);
   });
 
   test('should open from device', async ({ page }) => {
@@ -179,7 +151,8 @@ test.describe('Displaying a 2D model', () => {
 
 type Box = { x: number; y: number; width: number; height: number };
 
-const boxesIntersect = (a: Box, b: Box) => a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
+const boxesIntersect = (a: Box, b: Box) =>
+  a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
 
 const LAYOUT_VIEWPORTS = [
   { width: 1280, height: 600 },

@@ -26,6 +26,16 @@ export default [
       ...js.configs.recommended.rules,
       ...tsPlugin.configs.recommended.rules,
       ...prettierConfig.rules,
+      // Keep the previous lint policy for rules that became recommended in the
+      // new toolchain; adopting them would require unrelated engine cleanups.
+      'no-constant-binary-expression': 'off',
+      'no-unassigned-vars': 'off',
+      'no-useless-assignment': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
+      // These replace ban-types, which was disabled in the previous config.
+      '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/no-unsafe-function-type': 'off',
+      '@typescript-eslint/no-wrapper-object-types': 'off',
       // Keep the existing React 18/class-component policy with the replacement plugin.
       'no-case-declarations': 'off',
       'linebreak-style': 'off',

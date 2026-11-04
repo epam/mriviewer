@@ -64,7 +64,7 @@ class BrowserDetector {
     // this.m_isSafari = /safari|applewebkit/i.test(this.m_strUserAgent);
     this.m_isSafari = this.m_strUserAgent.search('safari') >= 0 && this.m_strUserAgent.search('chrome') < 0;
     /** @property {boolean} m_isIE - IE ver 6-11 */
-    this.m_isIE = !!document.documentMode;
+    this.m_isIE = false || !!document.documentMode;
     /** @property {boolean} m_isChrome - Chrome browser */
     this.m_isChrome = /chrome/i.test(navigator.userAgent);
     this.m_isEdge = navigator.appVersion.indexOf('Edge') > -1;

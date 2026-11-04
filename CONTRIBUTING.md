@@ -85,19 +85,6 @@ It needs to go through the tests step by step and visually check the test behavi
 
 ### Additional information
 
-To run functional browser tests against a local production build without Docker:
-
-1. In `web`, run `npm ci`, `npm run build`, then `npm run serve`.
-2. In another terminal, run:
-
-   ```sh
-   cd web/e2e-tests
-   npx playwright install chromium
-   MRI_VIEWER_BASE_URL=http://127.0.0.1:3000 npx playwright test --grep 'has title|without runtime errors|download the image|Left toolbar layout'
-   ```
-
-The screenshot baselines use the Linux Docker environment described above. `MRI_VIEWER_BASE_URL` can also point the tests at another running instance; its default is the Docker service URL.
-
 #### Detailed commands description
 - `npm run docker:build` will create docker images for application and for testing. It will also run scripts to prepare environment (install dependencies for application and testing and build application).
 - `[test=<test_file_name>:<test_row_number>] npm run docker:test` will run tests in docker container.

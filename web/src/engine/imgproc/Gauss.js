@@ -111,7 +111,7 @@ class GaussSmoother {
   // return ratio in [0..1]
   getRatio() {
     const zDim = this.m_vol.m_zDim;
-    let ratio01;
+    let ratio01 = 0.0;
     if (this.m_needHw) {
       ratio01 = this.m_bilateralHw.m_z / zDim;
     } else {

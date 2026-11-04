@@ -15,8 +15,8 @@
 // absoulte imports
 import * as THREE from 'three';
 
-import RENDER_TEXTURE_VERTEX_SHADER from '../shaders/ssao.vert?url';
-import RENDER_TEXTURE_FRAGMENT_SHADER from '../shaders/ssao.frag?url';
+import RENDER_TEXTURE_VERTEX_SHADER from '../shaders/ssao.vert';
+import RENDER_TEXTURE_FRAGMENT_SHADER from '../shaders/ssao.frag';
 
 /** Class @class MaterialRenderSSAO for
  * ambient occlusion computation

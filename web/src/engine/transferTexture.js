@@ -55,7 +55,7 @@ export default class TransferTexture {
    * Create 2D texture containing transfer func colors
    */
   createTransferFuncTexture() {
-    let textureOut;
+    let textureOut = null;
     let alpha = 0;
     const SCALE = 255;
     const SCALE1 = 12.0;
@@ -162,7 +162,7 @@ export default class TransferTexture {
    * @param colorArray 256 RGBA roi colors
    */
   createRoiColorMap(colorArray) {
-    let textureOut;
+    let textureOut = null;
     if (colorArray !== null) {
       //textureOut = new THREE.DataTexture(colorArray, this.numRois, 1, THREE.RGBAFormat);
       textureOut = new THREE.DataTexture(colorArray, 256, 1, THREE.RGBAFormat);

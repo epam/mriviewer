@@ -15,8 +15,8 @@
 // absoulte imports
 import * as THREE from 'three';
 
-import RENDER_TEXTURE_VERTEX_SHADER from '../shaders/rendertotexture.vert?url';
-import RENDER_TEXTURE_FRAGMENT_SHADER from '../shaders/rendertotexture.frag?url';
+import RENDER_TEXTURE_VERTEX_SHADER from '../shaders/rendertotexture.vert';
+import RENDER_TEXTURE_FRAGMENT_SHADER from '../shaders/rendertotexture.frag';
 
 /** Class @class MaterialRenderToTexture for
  * rough isosurface computation: a ray-casting optimization

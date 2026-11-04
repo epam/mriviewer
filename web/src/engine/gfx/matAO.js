@@ -15,8 +15,8 @@
 // absoulte imports
 import * as THREE from 'three';
 
-import AO_VERTEX_SHADER from '../shaders/createAO.vert?url';
-import AO_FRAGMENT_SHADER from '../shaders/createAO.frag?url';
+import AO_VERTEX_SHADER from '../shaders/createAO.vert';
+import AO_FRAGMENT_SHADER from '../shaders/createAO.frag';
 
 /** Class @class MaterialBlur for volume slice blurring */
 export default class MaterialAO {

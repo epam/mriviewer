@@ -91,6 +91,7 @@ export default class ActiveVolume {
     } else {
       console.log(`generateFromFaces returned ${resBoolFill} !`);
     }
+    volTexDst = null;
   }
 
   /**
@@ -937,6 +938,7 @@ export default class ActiveVolume {
       this.m_colorProbability[i] = ActiveVolume.smoothStep(indDarkColor, indDarkColorMax, i);
     }
     // Debug here
+    indDarkColorMax++;
     return 1;
   }
 

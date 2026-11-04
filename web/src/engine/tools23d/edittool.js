@@ -174,7 +174,7 @@ export default class EditTool {
     let newLine = null;
     let newLine2 = null;
     let countLine = -1;
-    let countLine2;
+    let countLine2 = -1;
     for (let i = 0; i < distancesV.length; ++i) {
       /*console.log("kek");
       console.log(`${distancesV[i].line.getxS()}`);
@@ -278,6 +278,7 @@ export default class EditTool {
       if (newLine !== null) {
         this.m_scene.remove(areaD[countLine].line.getRenderObject());
         areaD[countLine].line = newLine;
+        newLine = null;
       }
       if (newLine2 !== null) {
         this.m_scene.remove(areaD[countLine2].line.getRenderObject());
@@ -313,6 +314,7 @@ export default class EditTool {
     }
 
     countLine = -1;
+    countLine2 = -1;
     for (let n = 0; n < anglesA.length; ++n) {
       if (this.m_runningState) {
         //console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -335,10 +337,12 @@ export default class EditTool {
       if (newLine != null) {
         this.m_scene.remove(anglesA[countLine].line1.getRenderObject());
         anglesA[countLine].line1 = newLine;
+        newLine = null;
       }
       if (newLine2 != null) {
         this.m_scene.remove(anglesA[countLine].line2.getRenderObject());
         anglesA[countLine].line2 = newLine2;
+        newLine2 = null;
       }
       this.m_scene.remove(anglesA[countLine].text);
       const len1 = Math.sqrt(
@@ -380,6 +384,7 @@ export default class EditTool {
       this.m_scene.add(anglesA[countLine].text);
     }
 
+    countLine = -1;
     for (let i = 0; i < textTool.m_textArr.length; ++i) {
       if (
         textTool.m_textArr[i].m_xMin <= x &&
