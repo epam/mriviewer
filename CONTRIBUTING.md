@@ -18,6 +18,11 @@ https://stackoverflow.com/questions/41920324/adding-spaces-between-imports-and-b
 
 We are following [GitHub's Collaborating with Issues and Pull Requests Guide](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests)
 
+## Web deployment
+
+See [Web deployment](docs/web/deployment.md) for environment URLs, deployment verification
+and local AWS configuration notes.
+
 ## Demo data customization
 
 ### To add custom models to Demo files
