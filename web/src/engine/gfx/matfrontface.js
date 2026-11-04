@@ -14,8 +14,8 @@
 
 // absoulte imports
 import * as THREE from 'three';
-import FRONT_FACE_VERTEX_SHADER from '../shaders/frontface.vert';
-import FRONT_FACE_FRAGMENT_SHADER from '../shaders/frontface.frag';
+import FRONT_FACE_VERTEX_SHADER from '../shaders/frontface.vert?url';
+import FRONT_FACE_FRAGMENT_SHADER from '../shaders/frontface.frag?url';
 
 /** Class @class MaterialFF for volume frontface rendering */
 export default class MaterialFF {

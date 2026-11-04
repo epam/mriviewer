@@ -55,7 +55,9 @@ class UiModalWindowCenterWidth extends React.Component {
     // console.log('TODO: on Cancel ...');
     this.props.dispatch({ type: StoreActionType.SET_IS_16_BIT, is16bit: true });
     this.reset();
-    this.props.onHide && this.props.onHide(false);
+    if (this.props.onHide) {
+      this.props.onHide(false);
+    }
   }
 
   //
@@ -66,7 +68,9 @@ class UiModalWindowCenterWidth extends React.Component {
 
     MriViewer.events.emit(MriEvents.VOLUME_PARAMETERS_SET_SUCCESS);
 
-    this.props.onHide && this.props.onHide(true);
+    if (this.props.onHide) {
+      this.props.onHide(true);
+    }
   }
 
   //
@@ -171,7 +175,7 @@ class UiModalWindowCenterWidth extends React.Component {
       valSrc = valSrc === loaderDicom.m_padValue ? 0 : valSrc;
       const valScaled = valSrc * loaderDicom.m_rescaleSlope + loaderDicom.m_rescaleIntercept;
 
-      let val = 0;
+      let val;
       if (loaderDicom.m_rescaleHounsfield) {
         // rescale for hounsfield units
         val = Math.floor(((valScaled - winMin) * 255) / ww);

@@ -365,7 +365,7 @@ export default class VolumeClipper {
     for (i = 0; i < MAX_INTERSECTIONS_PER_LINE; i++) {
       vaIntersections[i] = new THREE.Vector3(0.0, 0.0, 0.0);
     }
-    let numIntersections = 0;
+    let numIntersections;
 
     const pixelsSrc = volTexSrc;
     const pixelsDst = volTexDst;

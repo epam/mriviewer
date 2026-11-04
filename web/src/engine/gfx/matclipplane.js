@@ -15,8 +15,8 @@
 // absoulte imports
 import * as THREE from 'three';
 
-import CLIP_VERTEX_SHADER from '../shaders/clipplane.vert';
-import CLIP_FRAGMENT_SHADER from '../shaders/clipplane.frag';
+import CLIP_VERTEX_SHADER from '../shaders/clipplane.vert?url';
+import CLIP_FRAGMENT_SHADER from '../shaders/clipplane.frag?url';
 
 /** Class @class MaterialClipPlane for volume clip plane rendering */
 export default class MaterialClipPlane {

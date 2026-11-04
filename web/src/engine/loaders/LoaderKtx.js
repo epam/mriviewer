@@ -265,7 +265,6 @@ export default class LoaderKtx {
           yMax = LoaderKtx.readFloat(bufBytes, udataOff);
           udataOff += SIZE_DWORD;
           zMax = LoaderKtx.readFloat(bufBytes, udataOff);
-          udataOff += SIZE_DWORD;
           this.m_boxSize.x = xMax - xMin;
           this.m_boxSize.y = yMax - yMin;
           this.m_boxSize.z = zMax - zMin;

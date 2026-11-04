@@ -165,7 +165,7 @@ export default class AngleTool {
    * @param (float) y - mouse y coordinate
    */
   onMouseMove(x, y) {
-    let angle = null;
+    let angle;
     switch (this.m_state) {
       case angleToolState.WAITING:
         break;

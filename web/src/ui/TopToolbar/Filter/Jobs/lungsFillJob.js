@@ -137,9 +137,9 @@ export const lungsFillJob = (volume, setSeed) => {
 
     let x, y, z;
     let x1, y1, z1;
-    let zOff = 0;
-    let yOff = 0;
-    let count = 0;
+    let zOff;
+    let yOff;
+    let count;
     for (z = 0; z < zDim; z++) {
       for (y = yBorderMin; y < yBorderMax; y++) {
         for (x = xBorderMin; x < xBorderMax; x++) {
@@ -166,10 +166,10 @@ export const lungsFillJob = (volume, setSeed) => {
 
     let x, y, z;
     let x1, y1, z1;
-    let zOff = 0;
-    let yOff = 0;
-    let off = 0;
-    let count = 0;
+    let zOff;
+    let yOff;
+    let off;
+    let count;
     for (z = 0; z < zDim; z++) {
       for (y = yBorderMin; y < yBorderMax; y++) {
         for (x = xBorderMin; x < xBorderMax; x++) {

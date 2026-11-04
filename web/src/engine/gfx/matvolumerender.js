@@ -15,8 +15,8 @@
 // absoulte imports
 import * as THREE from 'three';
 
-import VOL_RENDER_VERTEX_SHADER from '../shaders/volumerender.vert';
-import VOL_RENDER_FRAGMENT_SHADER from '../shaders/volumerender.frag';
+import VOL_RENDER_VERTEX_SHADER from '../shaders/volumerender.vert?url';
+import VOL_RENDER_FRAGMENT_SHADER from '../shaders/volumerender.frag?url';
 
 /** Class @class MaterialVolumeRender for create skull volume render shader material */
 export default class MaterialVolumeRender {

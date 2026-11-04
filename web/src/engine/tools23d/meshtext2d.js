@@ -17,6 +17,7 @@ export default class MeshText2D extends Text2D {
   constructor(strText) {
     super(strText);
     this.m_mesh = null;
+    this.m_boxMesh = null;
     this.m_material = null;
     this.m_renderedTextHeight = 0.0;
     this.m_xMin = 3.0;
@@ -89,6 +90,13 @@ export default class MeshText2D extends Text2D {
       this.remove(this.m_mesh);
       this.m_mesh = null;
       this.m_material = null;
+    }
+    if (this.m_boxMesh !== null) {
+      this.remove(this.m_boxMesh);
+      this.m_boxGeometry.dispose();
+      this.m_boxMaterial.dispose();
+      this.m_matTextureBox.m_uniforms.texture1.value.dispose();
+      this.m_boxMesh = null;
     }
 
     this.m_canvas.drawText(this.m_text, strTextColor);
@@ -193,7 +201,7 @@ export default class MeshText2D extends Text2D {
         this.m_boxGeometry.vertices.push(vb1);
         this.m_boxGeometry.vertices.push(vb2);
         this.m_boxGeometry.vertices.push(vb3);
-        let boxNormal;
+        const boxNormal = new THREE.Vector3();
         THREE.Triangle.getNormal(vb0, vb1, vb2, boxNormal);
 
         // eslint-disable-next-line

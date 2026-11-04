@@ -44,8 +44,8 @@ describe('MobileSettings', () => {
     expect(store.getState().viewMode).toBe(ViewMode.VIEW_2D);
   });
 
-  it('renders without errors', async () => {
-    const { container } = await render(<MobileSettings />);
+  it('renders without errors', () => {
+    const { container } = render(<MobileSettings />);
 
     expect(container).toBeInTheDocument();
   });

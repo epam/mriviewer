@@ -145,7 +145,7 @@ export class MRIFileLoader {
    * @param {Function} onProgress - Callback function to report progress.
    * @returns {Promise<Response>} A promise that resolves to the Response object of the request.
    */
-  async fetchWithProgress(url: string, onProgress: Function): Promise<Response> {
+  async fetchWithProgress(url: string, onProgress: (progress: number) => void): Promise<Response> {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
 

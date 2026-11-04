@@ -58,7 +58,7 @@ export default class MaterialTexturePlain2d {
   /** Simple material constructor
    * @return {object} Three.js material with this shader
    */
-  create(tex) {
+  create(tex, onReady) {
     // Init uniforms
     this.m_uniforms.texture1.value = tex;
 
@@ -72,5 +72,8 @@ export default class MaterialTexturePlain2d {
       fragmentShader: this.m_strShaderFragment,
     });
     this.m_material.needsUpdate = true;
+    if (onReady) {
+      onReady(this.m_material);
+    }
   }
 }

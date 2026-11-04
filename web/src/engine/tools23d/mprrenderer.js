@@ -194,7 +194,6 @@ export default class MprRenderer {
       let hScreen = (wScreen * hPhys) / wPhys;
       if (hScreen > this.m_height) {
         hScreen = this.m_height;
-        wScreen = (hScreen * wPhys) / hPhys;
       }
       // console.log(`Proportion is: ${wScreen} * ${hScreen}`);
       // normalize to [0..1]

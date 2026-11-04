@@ -10,7 +10,7 @@ export class NiftiHeaderReader {
   }
 
   readIntFromBuffer(buf, off) {
-    let res = 0;
+    let res;
     if (this.m_littleEndian) {
       res = buf[off + 0] | (buf[off + 1] << 8) | (buf[off + 2] << 16) | (buf[off + 3] << 24);
     } else {
@@ -20,7 +20,7 @@ export class NiftiHeaderReader {
   }
 
   readShortFromBuffer(buf, off) {
-    let res = 0;
+    let res;
     if (this.m_littleEndian) {
       res = buf[off + 0] | (buf[off + 1] << 8);
     } else {

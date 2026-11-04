@@ -52,8 +52,8 @@ export default class PickTool {
     const yDim = this.m_volHeader.m_pixelHeight;
     const zDim = this.m_volHeader.m_pixelDepth;
 
-    let w = 0;
-    let h = 0;
+    let w;
+    let h;
 
     let x = 0;
     let y = 0;

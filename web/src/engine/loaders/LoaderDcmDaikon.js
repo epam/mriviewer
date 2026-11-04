@@ -47,7 +47,7 @@ class LoaderDcmDaikon {
   //
   loadDicomfir(fileName, strContent) {
     const dataFile = new DataView(strContent);
-    let image = null;
+    let image;
     try {
       image = daikon.Series.parseImage(dataFile);
     } catch (err) {
@@ -90,7 +90,7 @@ class LoaderDcmDaikon {
   loadSingleSlice(fileIndex, fileName, strContent) {
     // console.log("loadSingleSlice [" + fileIndex.toString() + "]");
     const dataFile = new DataView(strContent);
-    let image = null;
+    let image;
     try {
       image = daikon.Series.parseImage(dataFile);
     } catch (err) {

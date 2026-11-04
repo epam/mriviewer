@@ -193,7 +193,6 @@ class SaverNifti {
     bufOff += SIZE_SHORT;
     // m_sformCode
     SaverNifti.writeShortToBuffer(FORM_CODE, arrBuf, bufOff);
-    bufOff += SIZE_SHORT;
 
     // 4 last bytes are magic
     bufOff = HEADER_SIZE - SIZE_DWORD;

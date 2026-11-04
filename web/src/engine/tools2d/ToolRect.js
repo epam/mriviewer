@@ -143,8 +143,7 @@ class ToolRect {
     const xDim = vol.m_xDim;
     const yDim = vol.m_yDim;
     const zDim = vol.m_zDim;
-    let xScale = 0.0,
-      yScale = 0.0;
+    let xScale, yScale;
     if (mode2d === Modes2d.TRANSVERSE) {
       // z const
       xScale = xSize / xDim;

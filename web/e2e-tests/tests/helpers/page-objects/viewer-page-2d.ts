@@ -1,7 +1,6 @@
-import { Page } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import { Locator } from 'playwright';
 import { TEST_IDS } from '../testIds';
-import path from 'path';
 import * as fs from 'node:fs';
 
 export class ViewerPage2d {
@@ -43,16 +42,11 @@ export class ViewerPage2d {
     // Trigger download and wait for it
     const [download] = await Promise.all([this.page.waitForEvent('download'), this.downloadFileButton.click()]);
 
-    // Save the downloaded file to a known location
+    // Playwright owns this temporary file and cleans it up after the test.
     const downloadPath = await download.path();
     const filename = download.suggestedFilename();
-    const savePath = path.join(__dirname, 'downloads', filename);
-
-    fs.mkdirSync(path.dirname(savePath), { recursive: true });
-    fs.copyFileSync(downloadPath, savePath);
-
-    const content = fs.readFileSync(savePath, 'utf-8');
-    const stats = fs.statSync(savePath);
+    const content = fs.readFileSync(downloadPath, 'utf-8');
+    const stats = fs.statSync(downloadPath);
 
     return { content, name: filename, stats };
   }
@@ -63,6 +57,41 @@ export class ViewerPage2d {
   }
 
   async switchTo3DViewer() {
-    return this.switchTo3DButton.click();
+    await this.switchTo3DButton.click();
+    await this.waitForRendered3DVolume();
+  }
+
+  async waitForRendered3DVolume() {
+    await expect
+      .poll(async () => {
+        // Read the composited screenshot: WebGL contexts may clear their drawing
+        // buffer after presenting a frame, making readPixels return a blank image.
+        const screenshot = await this.canvas3D.screenshot();
+        return this.page.evaluate(async (png) => {
+          const image = new Image();
+          image.src = `data:image/png;base64,${png}`;
+          await image.decode();
+          const canvas = document.createElement('canvas');
+          canvas.width = image.width;
+          canvas.height = image.height;
+          const context = canvas.getContext('2d')!;
+          context.drawImage(image, 0, 0);
+          // The right settings panel overlays the canvas. Sample the central
+          // volume area so UI controls cannot make a blank render pass.
+          const pixels = context.getImageData(
+            Math.floor(canvas.width * 0.25),
+            Math.floor(canvas.height * 0.25),
+            Math.floor(canvas.width * 0.35),
+            Math.floor(canvas.height * 0.5)
+          ).data;
+          const colors = new Set<number>();
+          for (let i = 0; i < pixels.length; i += 4) {
+            colors.add((pixels[i] << 16) | (pixels[i + 1] << 8) | pixels[i + 2]);
+            if (colors.size > 2) return colors.size;
+          }
+          return colors.size;
+        }, screenshot.toString('base64'));
+      })
+      .toBeGreaterThan(2);
   }
 }

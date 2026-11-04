@@ -276,11 +276,6 @@ class LoaderHdr {
     const pixDim2 = LoaderHdr.readFloatFromBuffer(bufBytes, bufOff);
     bufOff += SIZE_DWORD;
     const pixDim3 = LoaderHdr.readFloatFromBuffer(bufBytes, bufOff);
-    bufOff += SIZE_DWORD;
-
-    // read rest of pixDim
-    const NUM_REST_PIX_DIM = 4;
-    bufOff += SIZE_DWORD * NUM_REST_PIX_DIM;
 
     volumeDst.m_boxSize.x = volumeDst.m_xDim * pixDim1;
     volumeDst.m_boxSize.y = volumeDst.m_yDim * pixDim2;

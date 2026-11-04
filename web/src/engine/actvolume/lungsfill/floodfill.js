@@ -66,17 +66,17 @@ export default class FloodFill {
       const zOff = z * xyDim;
 
       // get leftmost
-      let xL = 0;
-      for (x = vTaken.x; x >= 0 && !FloodFill.isVisible(pixelsDst, x + yOff + zOff, threshold); x--) {
-        xL = x + 1;
+      x = vTaken.x;
+      while (x >= 0 && !FloodFill.isVisible(pixelsDst, x + yOff + zOff, threshold)) {
+        x--;
       }
-      xL = x + 1;
+      const xL = x + 1;
       // get rightmost
-      let xR = 0;
-      for (x = vTaken.x; x < xDim && !FloodFill.isVisible(pixelsDst, x + yOff + zOff, threshold); x++) {
-        xR = x - 1;
+      x = vTaken.x;
+      while (x < xDim && !FloodFill.isVisible(pixelsDst, x + yOff + zOff, threshold)) {
+        x++;
       }
-      xR = x - 1;
+      const xR = x - 1;
 
       let setYLess = VIS;
       let setYMore = VIS;

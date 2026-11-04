@@ -169,7 +169,7 @@ export default class VolumeFilter3d {
 
   getIntensity(pointX, pointY, pointZ, undoFlag) {
     const full = 255;
-    let offDst = 0;
+    let offDst;
     if (this.isWebGL2 === 0) {
       const yTile = Math.floor(pointZ / this.zDimSqrt);
       const xTile = pointZ - this.zDimSqrt * yTile;
@@ -192,7 +192,7 @@ export default class VolumeFilter3d {
     const mainX = targetX;
     const mainY = targetY;
     const mainZ = targetZ;
-    let offDst = 0;
+    let offDst;
     if (this.isWebGL2 === 0) {
       const yTile = Math.floor(mainZ / this.zDimSqrt);
       const xTile = mainZ - this.zDimSqrt * yTile;

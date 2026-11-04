@@ -9,7 +9,7 @@ import LoaderHdr from '../../loaders/LoaderHdr';
 
 export class MRIStoreService {
   private store: Store;
-  public dispatch: Function;
+  public dispatch: Store['dispatch'];
 
   constructor() {
     this.store = store;

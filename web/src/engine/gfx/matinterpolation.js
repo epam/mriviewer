@@ -15,8 +15,8 @@
 // absoulte imports
 import * as THREE from 'three';
 
-import INTERP_VERTEX_SHADER from '../shaders/interpolation.vert';
-import INTERP_FRAGMENT_SHADER from '../shaders/interpolation.frag';
+import INTERP_VERTEX_SHADER from '../shaders/interpolation.vert?url';
+import INTERP_FRAGMENT_SHADER from '../shaders/interpolation.frag?url';
 
 /** Class @class MaterialVolumeRender for create skull volume render shader material */
 export default class MaterialInterpolation {

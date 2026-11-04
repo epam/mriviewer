@@ -90,7 +90,7 @@ export default class FloodFillTool {
         const yOff = y * xDim;
 
         let xL = -1;
-        let xR = -1;
+        let xR;
         let x;
         for (x = 0; x < xDim - 1; x++) {
           const isStartInside = pixels[x + yOff + zOff] > 0 && pixels[x + 1 + yOff + zOff] === 0;

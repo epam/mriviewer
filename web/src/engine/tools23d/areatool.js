@@ -177,7 +177,7 @@ export default class AreaTool {
   calculateArea(length) {
     let sum1 = 0;
     let sum2 = 0;
-    let result = 0;
+    let result;
     const MINIMUM_COUNT_OF_VERTEX = 2;
     if (length > MINIMUM_COUNT_OF_VERTEX) {
       for (let i = this.last_length; i < length - 1; ++i) {

@@ -178,7 +178,7 @@ class Graphics2d extends React.Component {
     const OFF_3 = 3;
 
     let imgData = null;
-    let dataDst = null;
+    let dataDst;
 
     const roiPal256 = getPalette256();
 
@@ -189,8 +189,7 @@ class Graphics2d extends React.Component {
     if (pbox.x * pbox.y * pbox.z < TOO_SMALL) {
       console.log(`Bad physical dimensions for rendered volume = ${pbox.x}*${pbox.y}*${pbox.z} `);
     }
-    let wScreen = 0,
-      hScreen = 0;
+    let wScreen, hScreen;
 
     if (mode2d === Modes2d.TRANSVERSE) {
       // calc screen rect based on physics volume slice size (z slice)
