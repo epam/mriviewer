@@ -43,7 +43,6 @@ const ColorizedSlider = styled(Slider)(() => ({
   },
 }));
 
-// eslint-disable-next-line react/display-name
 export const Nouislider = (props) => {
   const { range, step, onChange, getAriaValueText, value } = props;
   const onSliderChange = (event, value) => {
