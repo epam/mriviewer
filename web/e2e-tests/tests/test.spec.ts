@@ -148,3 +148,51 @@ test.describe('Displaying a 2D model', () => {
     expect(file.name).toBe(EXPECTED_NIFTI_FILE_NAME);
   });
 });
+
+type Box = { x: number; y: number; width: number; height: number };
+
+const boxesIntersect = (a: Box, b: Box) =>
+  a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
+
+const LAYOUT_VIEWPORTS = [
+  { width: 1280, height: 600 },
+  { width: 1280, height: 720 },
+  { width: 1440, height: 757 },
+  { width: 2560, height: 937 },
+  { width: 3440, height: 1032 },
+];
+
+test.describe('Left toolbar layout in 2D mode', () => {
+  for (const viewport of LAYOUT_VIEWPORTS) {
+    test.describe(`${viewport.width}x${viewport.height}`, () => {
+      test.use({ viewport });
+
+      test.beforeEach(async ({ page }) => {
+        await openHomePage(page);
+        await new HomePage(page).open16BitsFileFromDevice(DCM_FILE_PATHS);
+      });
+
+      test('should not overlap the app logo', async ({ page }) => {
+        const viewerPage2d = new ViewerPage2d(page);
+
+        const logoBox = await viewerPage2d.appLogo.boundingBox();
+        const toolbarBoxes = await viewerPage2d.getBoundingBoxes(viewerPage2d.leftToolbar);
+
+        expect(logoBox).not.toBeNull();
+        expect(toolbarBoxes.length).toBeGreaterThan(0);
+        toolbarBoxes.forEach((box) => expect(boxesIntersect(box, logoBox as Box)).toBe(false));
+      });
+
+      test('should not overlap the zoom controls', async ({ page }) => {
+        const viewerPage2d = new ViewerPage2d(page);
+
+        const toolbarBoxes = await viewerPage2d.getBoundingBoxes(viewerPage2d.leftToolbar);
+        const zoomBoxes = await viewerPage2d.getBoundingBoxes(viewerPage2d.zoomTools);
+
+        expect(toolbarBoxes.length).toBeGreaterThan(0);
+        expect(zoomBoxes.length).toBeGreaterThan(0);
+        toolbarBoxes.forEach((toolbarBox) => zoomBoxes.forEach((zoomBox) => expect(boxesIntersect(toolbarBox, zoomBox)).toBe(false)));
+      });
+    });
+  }
+});
