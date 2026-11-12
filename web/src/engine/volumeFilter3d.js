@@ -11,6 +11,7 @@
 import * as THREE from 'three';
 import MaterialBlur from './gfx/matblur';
 import GlSelector from './GlSelector';
+import { isWebGL2Context } from './gl/detect3dCapabilities';
 import AmbientTexture from './ambientTexture';
 import TransferTexture from './transferTexture';
 import Eraser from './Eraser';
@@ -38,6 +39,7 @@ export default class VolumeFilter3d {
     this.cameraOrtho = new THREE.OrthographicCamera(this.xDim / -2, this.xDim / 2, this.yDim / 2, this.yDim / -2, 0.1, 100);
     const glSelector = new GlSelector();
     this.context = glSelector.createWebGLContext();
+    this.isWebGL2 = isWebGL2Context(this.context) ? 1 : 0;
     this.canvas3d = glSelector.getCanvas();
     this.rendererBlur = new THREE.WebGLRenderer({
       canvas: this.canvas3d,
@@ -313,7 +315,6 @@ export default class VolumeFilter3d {
    * @return (object) Created texture
    */
   createUpdatableVolumeTex(volume, isRoiVolume, roiColors) {
-    this.isWebGL2 = 1;
     this.arrPixels = volume.m_dataArray;
     const xDim = volume.m_xDim;
     const yDim = volume.m_yDim;
