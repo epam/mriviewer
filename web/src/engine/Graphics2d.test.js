@@ -8,7 +8,7 @@ import VolumeSet from './VolumeSet';
 import Volume from './Volume';
 import Graphics2d from './Graphics2d';
 vi.mock('./Graphics2d', () => ({
-  default: vi.fn(() => ({})),
+  default: vi.fn(function Graphics2dMock() {}),
 }));
 
 describe('ToolArea. test line intersect', () => {
