@@ -90,7 +90,10 @@ export class NiftiHeaderReader {
     bufOff += 4;
     const pixdim3 = this.readFloatFromBuffer(bufBytes, bufOff);
 
-    return { numDimensions, xDim, yDim, zDim, dataType, bitPix, pixdim1, pixdim2, pixdim3 };
+    const VOX_OFFSET_POS = 108;
+    const voxOffset = this.readFloatFromBuffer(bufBytes, VOX_OFFSET_POS);
+
+    return { numDimensions, xDim, yDim, zDim, dataType, bitPix, pixdim1, pixdim2, pixdim3, voxOffset };
   }
 
   readDescription(bufBytes) {

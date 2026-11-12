@@ -48,7 +48,7 @@ test('should open dialog with demo data', async ({ page }) => {
 });
 
 test.describe('Displaying a 2D model', () => {
-  const EXPECTED_NIFTI_FILE_SIZE = 4096348;
+  const EXPECTED_NIFTI_FILE_SIZE = 4096352;
   const EXPECTED_NIFTI_FILE_NAME = 'dump.nii';
 
   test.use({ viewport: VIEWPORT_SIZE });
