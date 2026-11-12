@@ -2,8 +2,14 @@ name: Playwright Tests
 on:
   push:
     branches: [ develop, master ]
+    paths:
+      - 'web/**'
+      - '.github/workflows/playwright.yml'
   pull_request:
     branches: [ develop, master ]
+    paths:
+      - 'web/**'
+      - '.github/workflows/playwright.yml'
 jobs:
   test:
     timeout-minutes: 20
@@ -12,9 +18,9 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: 20
-    - name: Install Docker Compose
-      run: sudo apt-get update && sudo apt-get install -y docker-compose
+        node-version: 22
+    - name: Verify Docker Compose
+      run: docker compose version
     - name: Prepare for tests run
       run: cd web/e2e-tests && npm run docker:build
     - name: Run Playwright tests
