@@ -21,6 +21,7 @@ import Tools2dType from './tools2d/ToolTypes';
 import Segm2d from './Segm2d';
 
 import { getPalette256 } from './loaders/RoiPalette256';
+import { observeCanvasResize } from './resizeObserver';
 
 import css from './Graphics2d.module.css';
 import { TEST_IDS } from '../utils/testIds.js';
@@ -48,6 +49,10 @@ class Graphics2d extends React.Component {
 
     // mounted
     this.m_isMounted = false;
+
+    // resize handling
+    this.m_disconnectResize = null;
+    this.handleResize = this.handleResize.bind(this);
 
     // animation
     // this.animate = this.animate.bind(this);
@@ -98,10 +103,25 @@ class Graphics2d extends React.Component {
       this.setState({ wRender: w });
       this.setState({ hRender: h });
     }
+
+    const canvasWrapper = this.m_mount.current.parentNode;
+    this.m_disconnectResize = observeCanvasResize(canvasWrapper, this.handleResize);
   }
 
   componentWillUnmount() {
     this.m_isMounted = false;
+    if (this.m_disconnectResize) {
+      this.m_disconnectResize();
+      this.m_disconnectResize = null;
+    }
+  }
+
+  handleResize() {
+    if (!this.m_isMounted) {
+      return;
+    }
+    this.prepareImageForRender();
+    this.renderReadyImage();
   }
 
   componentDidUpdate() {

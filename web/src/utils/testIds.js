@@ -13,4 +13,7 @@ export const TEST_IDS = {
   DOWNLOAD_FILE_BUTTON: 'download-file-button',
   SWITCH_TO_3D_VIEWER_BUTTON: 'Button3D',
   CANVAS_3D: '3d-canvas',
+  APP_LOGO: 'app-logo',
+  LEFT_TOOLBAR: 'left-toolbar',
+  ZOOM_TOOLS: 'zoom-tools',
 };

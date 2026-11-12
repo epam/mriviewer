@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import glslPlugin from 'vite-plugin-glsl';
 
 export default defineConfig({
-  plugins: [react(), glslPlugin()],
+  plugins: [react()],
+  // Existing Three.js FileLoader calls expect shader asset URLs.
+  assetsInclude: ['**/*.vert', '**/*.frag'],
   test: {
     globals: true,
     environment: 'jsdom',
