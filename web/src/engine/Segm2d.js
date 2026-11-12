@@ -15,6 +15,7 @@
 
 import * as tf from '@tensorflow/tfjs';
 import StoreActionType from '../store/ActionTypes';
+import { resamplePixels } from './resamplePixels';
 
 const BRAIN_MODEl = 'https://cdn.mri-viewer.opensource.epam.com/models/brain/model.json';
 
@@ -56,6 +57,9 @@ class Segm2d {
     this.tensorIndices = null;
     this.imgData = null;
     this.pixels = null;
+    this.pixelsWidth = 0;
+    this.pixelsHeight = 0;
+    this.fittedPixels = null;
 
     // source image for segmentation
     this.srcImageData = null;
@@ -124,6 +128,9 @@ class Segm2d {
   async onLoadModel() {
     this.stage = STAGE_MODEL_IS_LOADING;
     this.pixels = null;
+    this.pixelsWidth = 0;
+    this.pixelsHeight = 0;
+    this.fittedPixels = null;
 
     console.log('Loading tfjs model...');
     this.store.dispatch({ type: StoreActionType.SET_PROGRESS_INFO, titleProgressBar: 'Loading tfjs model...' });
@@ -241,6 +248,9 @@ class Segm2d {
 
     // convert 96-classes output image into colors image
     this.pixels = new Uint8ClampedArray(this.wSrc * this.hSrc * 4);
+    this.pixelsWidth = this.wSrc;
+    this.pixelsHeight = this.hSrc;
+    this.fittedPixels = null;
     const pixels = this.pixels;
 
     const w = this.wSrc;
@@ -281,6 +291,21 @@ class Segm2d {
     this.srcImageData = imgData;
   }
 
+  getPixelsForSize(w, h) {
+    if (this.pixelsWidth === w && this.pixelsHeight === h) {
+      return this.pixels;
+    }
+    const fitted = this.fittedPixels;
+    if (fitted === null || fitted.width !== w || fitted.height !== h) {
+      this.fittedPixels = {
+        width: w,
+        height: h,
+        data: resamplePixels(this.pixels, this.pixelsWidth, this.pixelsHeight, w, h),
+      };
+    }
+    return this.fittedPixels.data;
+  }
+
   renderImage(ctx, w, h, imgData) {
     this.srcImageData = imgData;
     this.wSrc = w;
@@ -303,13 +328,14 @@ class Segm2d {
     } // if model non null
 
     if (this.stage === STAGE_SEGMENTATION_READY && this.pixels !== null) {
+      const pixelsToDraw = this.getPixelsForSize(w, h);
       // draw pixels array on screen
       this.imgData = ctx.createImageData(w, h);
       const pixDst = this.imgData.data;
       // this.imgData.data = this.pixels;
       const numBytes = w * h * 4;
       for (let i = 0; i < numBytes; i++) {
-        pixDst[i] = this.pixels[i];
+        pixDst[i] = pixelsToDraw[i];
       }
       ctx.putImageData(this.imgData, 0, 0);
       return;
