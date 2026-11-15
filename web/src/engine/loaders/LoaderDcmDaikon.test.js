@@ -678,6 +678,11 @@ describe('LoaderDcmDaikon JPEG / JPEG 2000 / JPEG-LS real fixtures', () => {
     expect(ret).toBe(LoadResult.SUCCESS);
     expectPlausibleSlice(loader);
   });
+
+  it('rejects the multiframe JPEG Baseline fixture instead of loading frame 0', () => {
+    const { ret } = loadFixture('jpeg_baseline_8bit.dcm');
+    expect(ret).toBe(LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED);
+  });
 });
 
 export { buildDicomBuffer, buildRleDicomBuffer };

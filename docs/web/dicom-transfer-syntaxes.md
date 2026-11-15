@@ -23,7 +23,7 @@ proves it.
 | Implicit VR Little Endian | `1.2.840.10008.1.2` | not tested | Uncompressed |
 | Explicit VR Little Endian | `1.2.840.10008.1.2.1` | tested: synthetic buffers and a real file | Uncompressed |
 | Explicit VR Big Endian | `1.2.840.10008.1.2.2` | not tested | Uncompressed; 8-bit only, 16-bit byte order unverified (see follow-ups) |
-| JPEG Baseline (8-bit) | `1.2.840.10008.1.2.4.50` | not tested | Lossy |
+| JPEG Baseline (8-bit) | `1.2.840.10008.1.2.4.50` | daikon decodes it; the only real fixture here is multiframe | Lossy |
 | JPEG Baseline (12-bit) | `1.2.840.10008.1.2.4.51` | not tested | Lossy |
 | JPEG Lossless | `1.2.840.10008.1.2.4.57` | not tested | Lossless |
 | JPEG Lossless, SV1 | `1.2.840.10008.1.2.4.70` | tested: real fixture `jpeg_lossless_sel1.dcm` | Lossless |
@@ -59,6 +59,9 @@ render partial or garbled data:
 |---|---|---|
 | Multiframe | Only frame 0 would be copied | `NumberOfFrames > 1` |
 | Palette color | daikon expands to RGB while `SamplesPerPixel` stays 1 | `PhotometricInterpretation` contains `PALETTE` |
+
+Covered by tests: a synthetic multiframe buffer, a synthetic palette buffer, and the real
+96-frame JPEG Baseline fixture `jpeg_baseline_8bit.dcm`.
 
 ## Status of the linked issues
 
