@@ -5,7 +5,9 @@ Covers which DICOM transfer syntaxes the web engine loads. Every DICOM read
 (`web/src/engine/loaders/LoaderDcmDaikon.js`), and `daikon.Image.getRawData()`
 auto-decompresses the encapsulated pixel data. The loader trusts that
 decompressed output and copies it according to `bitsAllocated`,
-`samplesPerPixel`, and planar configuration.
+`samplesPerPixel`, and planar configuration. The same copy applies the in-plane
+row/column flip derived from `ImageOrientationPatient` (#250), so orientation
+handling is shared by the compressed and uncompressed single-file paths.
 
 Related work: issues #202 and #232 (compressed DICOM failed to load with
 `ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED`).
