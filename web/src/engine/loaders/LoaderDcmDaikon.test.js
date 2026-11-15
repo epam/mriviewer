@@ -635,7 +635,7 @@ describe('LoaderDcmDaikon pixel copy (bits/samples/planar)', () => {
   });
 });
 
-describe('LoaderDcmDaikon JPEG / JPEG 2000 real fixtures', () => {
+describe('LoaderDcmDaikon JPEG / JPEG 2000 / JPEG-LS real fixtures', () => {
   const loadFixture = (fileName) => {
     const arrBuf = readFixtureBuffer(fileName);
     const loader = new LoaderDicom(1);
@@ -669,6 +669,12 @@ describe('LoaderDcmDaikon JPEG / JPEG 2000 real fixtures', () => {
 
   it('loads a JPEG 2000 compressed DICOM slice', () => {
     const { loader, ret } = loadFixture('jpeg_2000.dcm');
+    expect(ret).toBe(LoadResult.SUCCESS);
+    expectPlausibleSlice(loader);
+  });
+
+  it('loads a JPEG-LS near-lossless compressed DICOM slice', () => {
+    const { loader, ret } = loadFixture('jpeg_ls.dcm');
     expect(ret).toBe(LoadResult.SUCCESS);
     expectPlausibleSlice(loader);
   });

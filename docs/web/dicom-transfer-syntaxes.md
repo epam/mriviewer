@@ -29,6 +29,7 @@ proves it.
 | JPEG Lossless, SV1 | `1.2.840.10008.1.2.4.70` | tested: real fixture `jpeg_lossless_sel1.dcm` | Lossless |
 | JPEG 2000 Lossless | `1.2.840.10008.1.2.4.90` | not tested | |
 | JPEG 2000 | `1.2.840.10008.1.2.4.91` | tested: real fixture `jpeg_2000.dcm` | |
+| JPEG-LS Near-Lossless | `1.2.840.10008.1.2.4.81` | tested: real fixture `jpeg_ls.dcm` | daikon's bundled charls decoder |
 | RLE Lossless | `1.2.840.10008.1.2.5` | tested: synthetic 8/16-bit grayscale and 8-bit RGB | Run-length encapsulated |
 | Deflated Explicit VR Little Endian | `1.2.840.10008.1.2.1.99` | tested: a real file, deflated by the test | daikon inflates the data set (`pako.inflateRaw`) while parsing; see `LoaderDcmDaikon.deflate.realfile.test.js` |
 
@@ -42,10 +43,9 @@ Decompression is handled by daikon; the engine adds no new decoders.
 
 | Transfer syntax | UID | Notes |
 |---|---|---|
-| JPEG-LS Lossless | `1.2.840.10008.1.2.4.80` | daikon bundles a JPEG-LS decoder and selects it for this UID; no fixture, so unverified in this app |
-| JPEG-LS Near-Lossless | `1.2.840.10008.1.2.4.81` | same as above |
+| JPEG-LS Lossless | `1.2.840.10008.1.2.4.80` | daikon routes it to the same charls decoder as `.4.81`; no lossless-mode fixture, so unverified in this app |
 
-The JPEG-LS UIDs have no constants in `LoaderDicom.js`; like every syntax the buffer is handed
+Neither JPEG-LS UID has a constant in `LoaderDicom.js`; like every syntax the buffer is handed
 to daikon. If decoding fails or returns too few bytes the loader returns
 `ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED`.
 
@@ -84,5 +84,5 @@ render partial or garbled data:
 - **Big Endian 16-bit**: the pixel copy reads samples via a native little-endian
   `Uint16Array`, so 16-bit Explicit VR Big Endian data would be byte-swapped; needs an
   endianness-aware read plus a real fixture.
-- **JPEG-LS (`.4.80`/`.4.81`)**: needs real fixtures to move from "present in daikon" to
-  supported.
+- **JPEG-LS lossless (`.4.80`)**: `.4.81` is covered by a real fixture; a lossless-mode
+  fixture is still missing.
