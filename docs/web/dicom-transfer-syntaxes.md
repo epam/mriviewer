@@ -30,6 +30,7 @@ proves it.
 | JPEG 2000 Lossless | `1.2.840.10008.1.2.4.90` | not tested | |
 | JPEG 2000 | `1.2.840.10008.1.2.4.91` | tested: real fixture `jpeg_2000.dcm` | |
 | JPEG-LS Near-Lossless | `1.2.840.10008.1.2.4.81` | tested: real fixture `jpeg_ls.dcm` | daikon's bundled charls decoder |
+| JPEG-LS Lossless | `1.2.840.10008.1.2.4.80` | manual check only, no bundled fixture | pydicom `MR_small_jpeg_ls_lossless.dcm` loads; not in CI |
 | RLE Lossless | `1.2.840.10008.1.2.5` | tested: synthetic 8/16-bit grayscale and 8-bit RGB | Run-length encapsulated |
 | Deflated Explicit VR Little Endian | `1.2.840.10008.1.2.1.99` | tested: a real file, deflated by the test | daikon inflates the data set (`pako.inflateRaw`) while parsing; see `LoaderDcmDaikon.deflate.realfile.test.js` |
 
@@ -38,12 +39,6 @@ and never inflates. Deflated files work only because every read goes through dai
 a deflated file to `LoaderDicom.readFromBuffer` directly.
 
 Decompression is handled by daikon; the engine adds no new decoders.
-
-## Present in daikon, not verified here
-
-| Transfer syntax | UID | Notes |
-|---|---|---|
-| JPEG-LS Lossless | `1.2.840.10008.1.2.4.80` | daikon routes it to the same charls decoder as `.4.81`; no lossless-mode fixture, so unverified in this app |
 
 Neither JPEG-LS UID has a constant in `LoaderDicom.js`; like every syntax the buffer is handed
 to daikon. If decoding fails or returns too few bytes the loader returns
@@ -62,6 +57,19 @@ render partial or garbled data:
 
 Covered by tests: a synthetic multiframe buffer, a synthetic palette buffer, and the real
 96-frame JPEG Baseline fixture `jpeg_baseline_8bit.dcm`.
+
+## Public datasets used for manual checks
+
+The committed tests use the fixtures bundled with the `daikon` package
+(`node_modules/daikon/tests/data`, fetched by `npm install`). Cases with no
+bundled fixture were checked against these public files:
+
+- RLE 8-bit RGB, RLE 16-bit gray, JPEG-LS lossless: [pydicom test files](https://github.com/pydicom/pydicom/tree/main/src/pydicom/data/test_files)
+  (`SC_rgb_rle.dcm`, `MR_small_RLE.dcm`, `MR_small_jpeg_ls_lossless.dcm`).
+- RLE 16-bit RGB and 32-bit RLE, both refused by daikon: `SC_rgb_rle_16bit.dcm`,
+  `rtdose_rle.dcm` from the same folder.
+- JPEG Baseline RGB without `BitsAllocated`, now an error code instead of a crash:
+  `SC_rgb_jpeg.dcm`.
 
 ## Status of the linked issues
 
