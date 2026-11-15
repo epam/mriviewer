@@ -9,6 +9,13 @@ decompressed output and copies it according to `bitsAllocated`,
 row/column flip derived from `ImageOrientationPatient` (#250), so orientation
 handling is shared by the compressed and uncompressed single-file paths.
 
+Multiframe datasets are supported: every frame becomes its own slice. Frames are
+assumed to be evenly spaced along the slice normal by `SpacingBetweenSlices`
+(0018,0088), falling back to `SliceThickness` (0018,0050) and then to 1 mm.
+Whether the pixel data is encapsulated is derived from the transfer syntax
+(`1.2.840.10008.1.2`, `.1`, `.2` are native; anything else is compressed and
+decoded by daikon), so the same frame splitting works for both.
+
 Related work: issues #202 and #232 (compressed DICOM failed to load with
 `ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED`).
 
@@ -23,7 +30,7 @@ proves it.
 | Implicit VR Little Endian | `1.2.840.10008.1.2` | not tested | Uncompressed |
 | Explicit VR Little Endian | `1.2.840.10008.1.2.1` | tested: synthetic buffers and a real file | Uncompressed |
 | Explicit VR Big Endian | `1.2.840.10008.1.2.2` | not tested | Uncompressed; 8-bit only, 16-bit byte order unverified (see follow-ups) |
-| JPEG Baseline (8-bit) | `1.2.840.10008.1.2.4.50` | daikon decodes it; the only real fixture here is multiframe | Lossy |
+| JPEG Baseline (8-bit) | `1.2.840.10008.1.2.4.50` | tested: real 96-frame fixture `jpeg_baseline_8bit.dcm` | Lossy, multiframe |
 | JPEG Baseline (12-bit) | `1.2.840.10008.1.2.4.51` | not tested | Lossy |
 | JPEG Lossless | `1.2.840.10008.1.2.4.57` | not tested | Lossless |
 | JPEG Lossless, SV1 | `1.2.840.10008.1.2.4.70` | tested: real fixture `jpeg_lossless_sel1.dcm` | Lossless |
@@ -46,17 +53,12 @@ to daikon. If decoding fails or returns too few bytes the loader returns
 
 ## Rejected (explicit, no silent misload)
 
-These decode through daikon but do not fit the single-plane, single-frame pixel
-copy, so the loader returns `ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED` rather than
-render partial or garbled data:
+Palette color decodes through daikon but does not fit the pixel copy, so the
+loader returns `ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED` rather than render
+garbage: daikon expands to RGB while `SamplesPerPixel` stays 1, which is
+detected through `PhotometricInterpretation`.
 
-| Case | Why | Detection |
-|---|---|---|
-| Multiframe | Only frame 0 would be copied | `NumberOfFrames > 1` |
-| Palette color | daikon expands to RGB while `SamplesPerPixel` stays 1 | `PhotometricInterpretation` contains `PALETTE` |
-
-Covered by tests: a synthetic multiframe buffer, a synthetic palette buffer, and the real
-96-frame JPEG Baseline fixture `jpeg_baseline_8bit.dcm`.
+Nothing else is rejected for being multiframe anymore.
 
 ## Public datasets used for manual checks
 
@@ -73,16 +75,20 @@ bundled fixture were checked against these public files:
 
 ## Status of the linked issues
 
-- **#202** (compressed images failed with `ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED`): addressed
-  for the syntaxes in the Supported table.
-- **#232** (3D view fails for some DICOM datasets): only partly addressed. Multiframe and
-  palette color are rejected rather than loaded, and the remaining 3D issues are tracked
-  separately. Do not treat #232 as closed by this change.
+- **#202** (compressed images failed with `ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED`): the
+  reported symptom came from multiframe datasets, not from compression alone — the loader
+  copied only frame 0 and rejected the rest. Multiframe now loads frame by frame; a real
+  96-frame JPEG Baseline fixture and a packed 74-slice CBCT file both produce full volumes.
+- **#232** (3D view fails for some DICOM datasets): multiframe is no longer rejected, which
+  covers the common cone-beam case. Per-frame functional groups and palette color remain
+  open, so this is still a partial fix.
 
 ## Follow-ups
 
-- **Multiframe**: currently rejected; full support needs per-frame validation, a
-  multi-slice volume mapping, and fixtures.
+- **Enhanced multiframe**: frames are placed on a uniform grid from
+  `SpacingBetweenSlices`/`SliceThickness`. Enhanced CT/MR store per-frame positions
+  (functional group sequences) instead; those datasets load but the frame spacing can be
+  wrong. Needs per-frame position parsing.
 - **Palette color**: currently rejected; full support needs consuming daikon's
   RGB-expanded buffer (samples-per-pixel derived from the buffer, not the tag).
 - **Planar RGB**: for `SamplesPerPixel = 3` the loader always treats the buffer as

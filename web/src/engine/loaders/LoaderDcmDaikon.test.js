@@ -452,7 +452,7 @@ describe('LoaderDcmDaikon size check and sample validation', () => {
   });
 });
 
-describe('LoaderDcmDaikon multiframe / palette rejection', () => {
+describe('LoaderDcmDaikon multiframe and palette handling', () => {
   const readSlice = (arrBuf, name) => {
     const loader = new LoaderDicom(1);
     const daikonLoader = new LoaderDcmDaikon();
@@ -460,11 +460,11 @@ describe('LoaderDcmDaikon multiframe / palette rejection', () => {
     return { loader, ret };
   };
 
-  it('rejects a multiframe buffer instead of silently loading frame 0', () => {
+  it('splits a multiframe buffer into one slice per frame', () => {
     const COLS = 4;
     const ROWS = 3;
     const numPixels = ROWS * COLS;
-    const FRAMES = 2;
+    const FRAMES = 3;
     const pixels = [];
     for (let i = 0; i < numPixels * FRAMES; i++) {
       pixels.push((i * 17 + 1) & 0x0fff);
@@ -472,9 +472,36 @@ describe('LoaderDcmDaikon multiframe / palette rejection', () => {
     const arrBuf = buildDicomBuffer({ rows: ROWS, cols: COLS, numberOfFrames: FRAMES, pixels });
 
     const { loader, ret } = readSlice(arrBuf, 'multiframe.dcm');
-    expect(ret).toBe(LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED);
-    // no half-built slice must be left behind in the volume
-    expect(loader.m_slicesVolume.getSeries().length).toBe(0);
+    expect(ret).toBe(LoadResult.SUCCESS);
+
+    const series = loader.m_slicesVolume.getSeries();
+    expect(series.length).toBe(1);
+    expect(series[0].m_slices.length).toBe(FRAMES);
+    for (let f = 0; f < FRAMES; f++) {
+      const slice = series[0].m_slices[f];
+      expect(slice.m_image.length).toBe(numPixels);
+      for (let i = 0; i < numPixels; i++) {
+        expect(slice.m_image[i]).toBe(pixels[f * numPixels + i]);
+      }
+    }
+  });
+
+  it('numbers multiframe slices consecutively and spaces them along the slice normal', () => {
+    const COLS = 2;
+    const ROWS = 2;
+    const FRAMES = 4;
+    const pixels = new Array(COLS * ROWS * FRAMES).fill(1);
+    const arrBuf = buildDicomBuffer({ rows: ROWS, cols: COLS, numberOfFrames: FRAMES, pixels });
+
+    const { loader, ret } = readSlice(arrBuf, 'multiframe-4.dcm');
+    expect(ret).toBe(LoadResult.SUCCESS);
+
+    const slices = loader.m_slicesVolume.getSeries()[0].m_slices;
+    expect(slices.map((s) => s.m_sliceNumber)).toEqual([0, 1, 2, 3]);
+    const locations = slices.map((s) => s.m_sliceLocation);
+    for (let i = 1; i < locations.length; i++) {
+      expect(locations[i]).toBeGreaterThan(locations[i - 1]);
+    }
   });
 
   it('rejects a palette-color buffer instead of rendering garbage', () => {
@@ -694,9 +721,14 @@ describe('LoaderDcmDaikon JPEG / JPEG 2000 / JPEG-LS real fixtures', () => {
     expectPlausibleSlice(loader);
   });
 
-  it('rejects the multiframe JPEG Baseline fixture instead of loading frame 0', () => {
-    const { ret } = loadFixture('jpeg_baseline_8bit.dcm');
-    expect(ret).toBe(LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED);
+  it('loads the 96-frame JPEG Baseline fixture as a 96-slice volume', () => {
+    const { loader, ret } = loadFixture('jpeg_baseline_8bit.dcm');
+    expect(ret).toBe(LoadResult.SUCCESS);
+    const series = loader.m_slicesVolume.getSeries();
+    expect(series.length).toBe(1);
+    expect(series[0].m_slices.length).toBe(96);
+    expect(series[0].m_slices[0].m_xDim).toBe(512);
+    expect(series[0].m_slices[0].m_yDim).toBe(512);
   });
 });
 
