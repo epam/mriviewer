@@ -65,6 +65,9 @@ class LoaderDcmDaikon {
     const numSamples = numPixels * samplesPerPixel;
     const VAL_2 = 2;
     const sampleSize = bytesPerSample === undefined ? (pixels.byteLength >= numSamples * VAL_2 ? VAL_2 : 1) : bytesPerSample;
+    if (sampleSize !== 1 && sampleSize !== VAL_2) {
+      return false;
+    }
     if (pixels.byteLength < numSamples * sampleSize) {
       return false;
     }
@@ -154,7 +157,7 @@ class LoaderDcmDaikon {
     const xDim = image.getCols();
     const bits = image.getBitsAllocated();
     if (bits !== 8 && bits !== 16) {
-      console.log('Parse Dicom data. Strange bits per pixel = ' + bits.toString());
+      console.log(`Parse Dicom data. Strange bits per pixel = ${bits}`);
     }
     // data for hash code evaluate
     const patientName = image.getPatientName();
@@ -495,7 +498,7 @@ class LoaderDcmDaikon {
     }
     const numBytesPixelsRead = pixels.byteLength;
     const VAL_8 = 8;
-    const bytesPerSample = Math.max(1, Math.floor(bits / VAL_8));
+    const bytesPerSample = Math.max(1, Math.floor((Number.isFinite(bits) ? bits : 16) / VAL_8));
     // Accept daikon's already-decompressed buffer: its length can be larger than
     // the naive expectation (bitsAllocated rounding, planar/interleaved expansion,
     // trailing padding). Bail only when there is not even enough data to fill

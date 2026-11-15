@@ -123,6 +123,7 @@ const buildDicomBuffer = ({
   photometric = samplesPerPixel === 3 ? 'RGB' : 'MONOCHROME2',
   transferSyntax = TRANSFER_SYNTAX_EXPLICIT_LITTLE,
   numberOfFrames = 1,
+  omitBitsAllocated = false,
   pixels,
 }) => {
   const preamble = new Uint8Array(128);
@@ -133,15 +134,20 @@ const buildDicomBuffer = ({
   const metaLenTag = elementShort(0x0002, 0x0000, 'UL', ulBytes(metaTs.length));
 
   const highBit = bitsAllocated - 1;
+  const bitsTags = omitBitsAllocated
+    ? []
+    : [
+        elementShort(0x0028, 0x0100, 'US', usBytes(bitsAllocated)),
+        elementShort(0x0028, 0x0101, 'US', usBytes(bitsAllocated)),
+        elementShort(0x0028, 0x0102, 'US', usBytes(highBit)),
+      ];
   const dataset = [
     elementShort(0x0028, 0x0002, 'US', usBytes(samplesPerPixel)),
     elementShort(0x0028, 0x0004, 'CS', csBytes(photometric)),
     elementShort(0x0028, 0x0008, 'IS', asciiEven(String(numberOfFrames), 0x20)),
     elementShort(0x0028, 0x0010, 'US', usBytes(rows)),
     elementShort(0x0028, 0x0011, 'US', usBytes(cols)),
-    elementShort(0x0028, 0x0100, 'US', usBytes(bitsAllocated)),
-    elementShort(0x0028, 0x0101, 'US', usBytes(bitsAllocated)),
-    elementShort(0x0028, 0x0102, 'US', usBytes(highBit)),
+    ...bitsTags,
     elementShort(0x0028, 0x0103, 'US', usBytes(pixelRepresentation)),
   ];
 
@@ -434,6 +440,15 @@ describe('LoaderDcmDaikon size check and sample validation', () => {
 
     const { ret } = readSlice(arrBuf, 'spp2.dcm');
     expect(ret).toBe(LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED);
+  });
+
+  it('tolerates a missing BitsAllocated tag instead of throwing', () => {
+    const pixels = [1, 2, 3, 4];
+    const arrBuf = buildDicomBuffer({ rows: 2, cols: 2, omitBitsAllocated: true, pixels });
+
+    expect(() => readSlice(arrBuf, 'nobits.dcm')).not.toThrow();
+    const { ret } = readSlice(arrBuf, 'nobits.dcm');
+    expect(ret).toBe(LoadResult.SUCCESS);
   });
 });
 

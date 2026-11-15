@@ -89,3 +89,8 @@ Covered by tests: a synthetic multiframe buffer, a synthetic palette buffer, and
   endianness-aware read plus a real fixture.
 - **JPEG-LS lossless (`.4.80`)**: `.4.81` is covered by a real fixture; a lossless-mode
   fixture is still missing.
+- **RLE 16-bit RGB and 32-bit RLE**: daikon's RLE decoder rejects those segment layouts
+  (it expects a different segment count than 6 or 4) and throws; the loader turns that into
+  `ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED`. Checked against the public pydicom files
+  `SC_rgb_rle_16bit.dcm` and `rtdose_rle.dcm`. Supporting them needs an RLE decoder that
+  handles per-channel segments or 32-bit samples.
