@@ -1,0 +1,21 @@
+name: "AI Code Review: MRI Viewer Platforms"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [develop, 'release/**', master]
+    paths:
+      - 'visionos/**'
+      - '!visionos/**/*.md'
+
+permissions:
+  contents: read
+
+jobs:
+  review-visionos:
+    name: Review VisionOS
+    runs-on: ubuntu-latest # Standard fast runner
+
+    steps:
+      - name: VisionOS review status
+        run: echo "VisionOS automated review is not configured yet."
