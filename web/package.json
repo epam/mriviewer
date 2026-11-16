@@ -41,7 +41,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^5.4.3",
     "@popperjs/core": "^2.9.2",
-    "@tensorflow/tfjs": "^3.6.0",
+    "@tensorflow/tfjs": "^4.22.0",
     "classnames": "^2.3.1",
     "daikon": "^1.2.42",
     "jszip": "^3.10.2",
