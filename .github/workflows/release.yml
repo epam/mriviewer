@@ -5,73 +5,81 @@ on:
     tags:
       - 'v*.*.*'
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    defaults:
+      run:
+        working-directory: web
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
 
-      - name: Fetch all history for all tags and branches
-        run: git fetch --prune --unshallow
-
-      - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v0.9.7
+      - name: Use Node.js 24
+        uses: actions/setup-node@v5
         with:
-          versionSpec: '5.x'
+          node-version: 24.x
+          cache: npm
+          cache-dependency-path: web/package-lock.json
 
-      - name: Use GitVersion
-        uses: gittools/actions/gitversion/execute@v0.9.7
-        id: gitversion
-
-      - name: Use Node.js 16
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16.x
-
-      - name: Cache Node.js modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
-            ${{ runner.OS }}-
+      - name: Verify release version
+        id: version
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import { appendFileSync, readFileSync } from 'node:fs';
+          const version = process.env.GITHUB_REF_NAME.replace(/^v/, '');
+          assert.match(version, /^\d+\.\d+\.\d+$/);
+          const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+          const lock = JSON.parse(readFileSync('package-lock.json', 'utf8'));
+          assert.equal(pkg.version, version, 'Tag must match package.json version');
+          assert.equal(lock.version, version, 'Tag must match package-lock.json version');
+          assert.equal(lock.packages[''].version, version, 'Tag must match lockfile root version');
+          appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\n`);
+          NODE
 
       - run: node --version
 
-      - run: npm install
+      - run: npm ci
 
       - run: npm run build
 
-      - run: npm test
+      - run: npm run lint
+
+      - run: npm test -- --run
         env:
           CI: true
 
-      - run: mv ./build ./docker/build
+      - run: cp -R ./dist ./docker/dist
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        id: buildx
+        uses: docker/setup-buildx-action@v4
 
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build and push
         id: docker_build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v7
         with:
-          context: ./docker/
-          file: ./docker/Dockerfile
+          context: ./web/docker/
+          file: ./web/docker/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: |
             lifescience/mri-viewer:latest
-            lifescience/mri-viewer:${{ steps.gitversion.outputs.MajorMinorPatch }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+            lifescience/mri-viewer:${{ steps.version.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
