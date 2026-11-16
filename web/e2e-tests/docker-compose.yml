@@ -22,6 +22,8 @@ services:
       context: ./
       dockerfile: ./Dockerfile-tests
     container_name: mriviewer-e2e-tests
+    environment:
+      CI: ${CI:-}
     volumes:
       - ./:/mriviewer-tests
 
