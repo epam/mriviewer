@@ -3,7 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import LoaderDicom from './LoaderDicom';
+import { describe, expect, it } from 'vitest';
+
+import LoaderDicom, { TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_12BIT } from './LoaderDicom';
+
+describe('LoaderDicom transfer-syntax constants', () => {
+  it('exposes the canonical JPEG baseline 12-bit UID without stray characters', () => {
+    expect(TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_12BIT).toBe('1.2.840.10008.1.2.4.51');
+  });
+
+  it('does not carry a leading quote regression', () => {
+    expect(TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_12BIT.startsWith('"')).toBe(false);
+    expect(TRANSFER_SYNTAX_COMPRESSION_JPEG_BASELINE_12BIT).toMatch(/^[0-9.]+$/);
+  });
+});
 
 describe('LoaderDicom orientation parsing', () => {
   const _tagStream = (strValue) => {

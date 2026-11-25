@@ -57,23 +57,103 @@ class LoaderDcmDaikon {
     return LoaderDicom.getOrientationFlipFlags(cosines);
   }
 
-  static copySlicePixels(volSliceImage, pixels, xDim, yDim, samplesPerPixel, flip) {
-    const numPixels = xDim * yDim;
-    if (samplesPerPixel === 1) {
-      const pixSrc = new Uint16Array(pixels);
-      for (let i = 0; i < numPixels; i++) {
-        volSliceImage[LoaderDicom.computeDestIndex(i, xDim, yDim, flip)] = pixSrc[i];
-      }
-    } else if (samplesPerPixel === 3) {
-      const pixSrc = new Uint8Array(pixels);
-      let j = 0;
-      for (let i = 0; i < numPixels; i++, j += 3) {
-        const bVal = pixSrc[j + 0];
-        const gVal = pixSrc[j + 1];
-        const rVal = pixSrc[j + 2];
-        volSliceImage[LoaderDicom.computeDestIndex(i, xDim, yDim, flip)] = Math.floor((bVal + gVal + rVal) / 3);
+  static sliceNormalFromTagValue(tagValue) {
+    const NO_NORMAL = [0, 0, 1];
+    const NUM_COMPONENTS_6 = 6;
+    if (tagValue === null || tagValue === undefined || tagValue.length !== NUM_COMPONENTS_6) {
+      return NO_NORMAL;
+    }
+    const cosines = Array.prototype.map.call(tagValue, (val) => parseFloat(val));
+    if (cosines.some((val) => Number.isNaN(val))) {
+      return NO_NORMAL;
+    }
+    const nx = cosines[1] * cosines[5] - cosines[2] * cosines[4];
+    const ny = cosines[2] * cosines[3] - cosines[0] * cosines[5];
+    const nz = cosines[0] * cosines[4] - cosines[1] * cosines[3];
+    const length = Math.sqrt(nx * nx + ny * ny + nz * nz);
+    if (!Number.isFinite(length) || length === 0) {
+      return NO_NORMAL;
+    }
+    return [nx / length, ny / length, nz / length];
+  }
+
+  static isCompressedTransferSyntax(transferSyntax) {
+    if (transferSyntax === null || transferSyntax === undefined || transferSyntax === '') {
+      return false;
+    }
+    const NATIVE_SYNTAXES = ['1.2.840.10008.1.2', '1.2.840.10008.1.2.1', '1.2.840.10008.1.2.2'];
+    return !NATIVE_SYNTAXES.includes(transferSyntax);
+  }
+
+  static frameSpacingFromTags(image, fallbackSpacing) {
+    const TAG_SPACING_BETWEEN_SLICES = [0x0018, 0x0088];
+    const ind = daikon.Utils.dec2hex(TAG_SPACING_BETWEEN_SLICES[0]) + daikon.Utils.dec2hex(TAG_SPACING_BETWEEN_SLICES[1]);
+    const tag = image.tags[ind];
+    if (tag !== undefined && tag.value !== null) {
+      const value = parseFloat(tag.value[0]);
+      if (Number.isFinite(value) && value !== 0) {
+        return Math.abs(value);
       }
     }
+    if (Number.isFinite(fallbackSpacing) && fallbackSpacing !== 0) {
+      return Math.abs(fallbackSpacing);
+    }
+    return 1;
+  }
+
+  static cloneSliceMetadata(source) {
+    const target = new DicomSlice();
+    target.m_sliceNumber = source.m_sliceNumber;
+    target.m_sliceLocation = source.m_sliceLocation;
+    target.m_patientName = source.m_patientName;
+    target.m_studyDescr = source.m_studyDescr;
+    target.m_studyDate = source.m_studyDate;
+    target.m_seriesTime = source.m_seriesTime;
+    target.m_seriesDescr = source.m_seriesDescr;
+    target.m_bodyPartExamined = source.m_bodyPartExamined;
+    target.m_hash = source.m_hash;
+    target.m_xDim = source.m_xDim;
+    target.m_yDim = source.m_yDim;
+    return target;
+  }
+
+  static copySlicePixels(volSliceImage, pixels, xDim, yDim, samplesPerPixel, flip, bytesPerSample, signed, byteOffset = 0) {
+    if (samplesPerPixel !== 1 && samplesPerPixel !== 3) {
+      return false;
+    }
+    const numPixels = xDim * yDim;
+    const numSamples = numPixels * samplesPerPixel;
+    const VAL_2 = 2;
+    const sampleSize = bytesPerSample === undefined ? (pixels.byteLength - byteOffset >= numSamples * VAL_2 ? VAL_2 : 1) : bytesPerSample;
+    if (sampleSize !== 1 && sampleSize !== VAL_2) {
+      return false;
+    }
+    if (pixels.byteLength - byteOffset < numSamples * sampleSize) {
+      return false;
+    }
+    let pixSrc;
+    if (sampleSize === 1) {
+      pixSrc =
+        signed === true && samplesPerPixel === 1
+          ? new Int8Array(pixels, byteOffset, numSamples)
+          : new Uint8Array(pixels, byteOffset, numSamples);
+    } else {
+      pixSrc = new Uint16Array(pixels, byteOffset, numSamples);
+    }
+    if (samplesPerPixel === 1) {
+      for (let i = 0; i < numPixels; i++) {
+        volSliceImage[LoaderDicom.computeDestIndex(i, xDim, yDim, flip)] = pixSrc[i];
+      } // for i
+    } else {
+      let j = 0;
+      for (let i = 0; i < numPixels; i++, j += 3) {
+        const c0 = pixSrc[j + 0];
+        const c1 = pixSrc[j + 1];
+        const c2 = pixSrc[j + 2];
+        volSliceImage[LoaderDicom.computeDestIndex(i, xDim, yDim, flip)] = Math.floor((c0 + c1 + c2) / 3);
+      } // for i
+    }
+    return true;
   }
 
   //
@@ -140,7 +220,7 @@ class LoaderDcmDaikon {
     const xDim = image.getCols();
     const bits = image.getBitsAllocated();
     if (bits !== 8 && bits !== 16) {
-      console.log('Parse Dicom data. Strange bits per pixel = ' + bits.toString());
+      console.log(`Parse Dicom data. Strange bits per pixel = ${bits}`);
     }
     // data for hash code evaluate
     const patientName = image.getPatientName();
@@ -316,7 +396,8 @@ class LoaderDcmDaikon {
     // slice location detect (to correct slices order on z)
     ind = daikon.Utils.dec2hex(daikon.Tag.TAG_SLICE_LOCATION[0]) + daikon.Utils.dec2hex(daikon.Tag.TAG_SLICE_LOCATION[1]);
     const tagSLoc = image.tags[ind];
-    if (tagSLoc !== undefined) {
+    const hasSliceLocationTag = tagSLoc !== undefined && tagSLoc.value !== null;
+    if (hasSliceLocationTag) {
       let sliceLoc = tagSLoc.value[0];
       volSlice.m_sliceLocation = sliceLoc;
       this.m_sliceLocMin = sliceLoc < this.m_sliceLocMin ? sliceLoc : this.m_sliceLocMin;
@@ -416,6 +497,7 @@ class LoaderDcmDaikon {
     }
 
     // get image position (x,y,z), help to detect volume physical size
+    let basePosition = null;
     ind = daikon.Utils.dec2hex(daikon.Tag.TAG_IMAGE_POSITION[0]) + daikon.Utils.dec2hex(daikon.Tag.TAG_IMAGE_POSITION[1]);
     const tagImPos = image.tags[ind];
     if (tagImPos !== undefined) {
@@ -427,6 +509,7 @@ class LoaderDcmDaikon {
         const yPos = tagImPos.value[1];
         // eslint-disable-next-line
         const zPos = tagImPos.value[2];
+        basePosition = [xPos, yPos, zPos];
         this.m_loaderDicom.m_imagePosMin.x = xPos < this.m_loaderDicom.m_imagePosMin.x ? xPos : this.m_loaderDicom.m_imagePosMin.x;
         this.m_loaderDicom.m_imagePosMin.y = yPos < this.m_loaderDicom.m_imagePosMin.y ? yPos : this.m_loaderDicom.m_imagePosMin.y;
         this.m_loaderDicom.m_imagePosMin.z = zPos < this.m_loaderDicom.m_imagePosMin.z ? zPos : this.m_loaderDicom.m_imagePosMin.z;
@@ -441,11 +524,15 @@ class LoaderDcmDaikon {
 
     ind = daikon.Utils.dec2hex(daikon.Tag.TAG_IMAGE_ORIENTATION[0]) + daikon.Utils.dec2hex(daikon.Tag.TAG_IMAGE_ORIENTATION[1]);
     const tagImOri = image.tags[ind];
-    const orientationFlip = LoaderDcmDaikon.orientationFlipFromTagValue(tagImOri !== undefined ? tagImOri.value : null);
+    const orientationValue = tagImOri !== undefined ? tagImOri.value : null;
+    const orientationFlip = LoaderDcmDaikon.orientationFlipFromTagValue(orientationValue);
+    const sliceNormal = LoaderDcmDaikon.sliceNormalFromTagValue(orientationValue);
 
     // read transfer syntax (detect big endian)
     ind = daikon.Utils.dec2hex(daikon.Tag.TAG_TRANSFER_SYNTAX[0]) + daikon.Utils.dec2hex(daikon.Tag.TAG_TRANSFER_SYNTAX[1]);
     const tagTraSyn = image.tags[ind];
+    const transferSyntax = tagTraSyn !== undefined && tagTraSyn.value !== null ? String(tagTraSyn.value[0]) : null;
+    const isCompressed = LoaderDcmDaikon.isCompressedTransferSyntax(transferSyntax);
     if (tagTraSyn !== undefined) {
       let arrStrTra = tagTraSyn.value;
       if (arrStrTra[0] === '1.2.840.10008.1.2.2') {
@@ -453,31 +540,98 @@ class LoaderDcmDaikon {
       }
       // console.log('val pad = ' + valPad);
     }
-
-    // add volume slice to slices volume (and manage series)
-    this.m_loaderDicom.m_slicesVolume.addSlice(volSlice);
+    if (isCompressed) {
+      console.log(`Compressed transfer syntax ${transferSyntax} is decoded by the Daikon parser`);
+    }
 
     // check correct read image
-    const pixels = image.getRawData();
-    const numBytesPixelsRead = pixels.byteLength;
+    // daikon auto-decompresses compressed pixel data (JPEG / JPEG2000 / JPEG-LS / RLE)
+    // inside getRawData(); native syntaxes are returned as stored. Undecodable or
+    // truncated data throws here.
+    let pixels = null;
+    try {
+      pixels = image.getRawData();
+    } catch (err) {
+      console.log('Error decompress Dicom pixel data via Daikon parser');
+      return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
+    }
+    if (pixels === undefined || pixels === null) {
+      return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
+    }
+    if (image.isPalette()) {
+      console.log('Palette-color Dicom is not supported');
+      return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
+    }
     const VAL_8 = 8;
-    const numBytesPixelsExpected = xDim * yDim * Math.floor(bits / VAL_8) * this.m_loaderDicom.m_samplesPerPixel;
-    if (numBytesPixelsRead !== numBytesPixelsExpected) {
-      console.log('Error read Dicom via Diakon parser');
+    const bytesPerSample = Math.max(1, Math.floor((Number.isFinite(bits) ? bits : 16) / VAL_8));
+    const samplesPerPixel = this.m_loaderDicom.m_samplesPerPixel;
+    const frameBytes = xDim * yDim * bytesPerSample * samplesPerPixel;
+    const numFrames = Math.max(1, Number(image.getNumberOfFrames()) || 1);
+    // Accept daikon's already-decompressed buffer: its length can be larger than the
+    // naive expectation (bitsAllocated rounding, padding), so require only enough
+    // bytes for every declared frame instead of an exact match.
+    if (pixels.byteLength < frameBytes * numFrames) {
+      console.log(`Error read Dicom via Daikon parser: ${pixels.byteLength} bytes for ${numFrames} frames of ${frameBytes}`);
       return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
     }
 
-    // create pixels storage in volume
-    if (this.m_loaderDicom.m_pixelRepresentaionSigned) {
-      volSlice.m_image = new Int16Array(xDim * yDim);
-    } else {
-      volSlice.m_image = new Uint16Array(xDim * yDim);
+    // frames of a multiframe dataset sit one slice apart along the slice normal,
+    // so each frame becomes its own slice of the volume
+    const frameSpacing = LoaderDcmDaikon.frameSpacingFromTags(image, this.m_loaderDicom.m_pixelSpacing.z);
+    const baseSliceNumber = volSlice.m_sliceNumber;
+    let baseSliceLocation = volSlice.m_sliceLocation;
+    if (!hasSliceLocationTag) {
+      baseSliceLocation =
+        basePosition === null ? 0 : basePosition[0] * sliceNormal[0] + basePosition[1] * sliceNormal[1] + basePosition[2] * sliceNormal[2];
+      this.m_sliceLocMin = baseSliceLocation;
+      this.m_sliceLocMax = baseSliceLocation;
     }
 
-    LoaderDcmDaikon.copySlicePixels(volSlice.m_image, pixels, xDim, yDim, this.m_loaderDicom.m_samplesPerPixel, orientationFlip);
-    // store x, y dims
-    volSlice.m_xDim = xDim;
-    volSlice.m_yDim = yDim;
+    for (let frame = 0; frame < numFrames; frame++) {
+      const slice = frame === 0 ? volSlice : LoaderDcmDaikon.cloneSliceMetadata(volSlice);
+      if (this.m_loaderDicom.m_pixelRepresentaionSigned) {
+        slice.m_image = new Int16Array(xDim * yDim);
+      } else {
+        slice.m_image = new Uint16Array(xDim * yDim);
+      }
+      const copied = LoaderDcmDaikon.copySlicePixels(
+        slice.m_image,
+        pixels,
+        xDim,
+        yDim,
+        samplesPerPixel,
+        orientationFlip,
+        bytesPerSample,
+        this.m_loaderDicom.m_pixelRepresentaionSigned,
+        frame * frameBytes
+      );
+      if (!copied) {
+        console.log('Error: unsupported pixel layout in Daikon-decompressed Dicom');
+        return LoadResult.ERROR_COMPRESSED_IMAGE_NOT_SUPPORTED;
+      }
+      slice.m_xDim = xDim;
+      slice.m_yDim = yDim;
+      if (numFrames > 1) {
+        slice.m_sliceNumber = baseSliceNumber + frame;
+        slice.m_sliceLocation = baseSliceLocation + frame * frameSpacing;
+        this.m_sliceLocMin = slice.m_sliceLocation < this.m_sliceLocMin ? slice.m_sliceLocation : this.m_sliceLocMin;
+        this.m_sliceLocMax = slice.m_sliceLocation > this.m_sliceLocMax ? slice.m_sliceLocation : this.m_sliceLocMax;
+        if (basePosition !== null) {
+          const xPos = basePosition[0] + sliceNormal[0] * frame * frameSpacing;
+          const yPos = basePosition[1] + sliceNormal[1] * frame * frameSpacing;
+          const zPos = basePosition[2] + sliceNormal[2] * frame * frameSpacing;
+          this.m_loaderDicom.m_imagePosMin.x = xPos < this.m_loaderDicom.m_imagePosMin.x ? xPos : this.m_loaderDicom.m_imagePosMin.x;
+          this.m_loaderDicom.m_imagePosMin.y = yPos < this.m_loaderDicom.m_imagePosMin.y ? yPos : this.m_loaderDicom.m_imagePosMin.y;
+          this.m_loaderDicom.m_imagePosMin.z = zPos < this.m_loaderDicom.m_imagePosMin.z ? zPos : this.m_loaderDicom.m_imagePosMin.z;
+          this.m_loaderDicom.m_imagePosMax.x = xPos > this.m_loaderDicom.m_imagePosMax.x ? xPos : this.m_loaderDicom.m_imagePosMax.x;
+          this.m_loaderDicom.m_imagePosMax.y = yPos > this.m_loaderDicom.m_imagePosMax.y ? yPos : this.m_loaderDicom.m_imagePosMax.y;
+          this.m_loaderDicom.m_imagePosMax.z = zPos > this.m_loaderDicom.m_imagePosMax.z ? zPos : this.m_loaderDicom.m_imagePosMax.z;
+        }
+      }
+      // add volume slice to slices volume (and manage series) only after pixels are
+      // fully populated, so error returns above never leave a half-built slice behind.
+      this.m_loaderDicom.m_slicesVolume.addSlice(slice);
+    }
     return LoadResult.SUCCESS;
   } // end load single slice
 
