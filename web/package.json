@@ -36,7 +36,7 @@
     "prepare": "cd .. && husky install web/.husky"
   },
   "dependencies": {
-    "@babel/runtime": "^7.23.1",
+    "@babel/runtime": "^8.1.2",
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^5.4.3",
